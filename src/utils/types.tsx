@@ -3,7 +3,7 @@ import { DtlsParameters } from 'mediasoup-client/lib/Transport';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	loginEnabled: false,
-	developmentPort: 3443,
+	developmentPort: 8443,
 	productionPort: 443,
 	serverHostname: undefined,
 	resolution: 'medium',

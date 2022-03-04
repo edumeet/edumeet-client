@@ -30,11 +30,10 @@ interface ServerClientEvents {
 }
 
 interface ClientServerEvents {
-	request: ({	method,	data }: SocketOutboundRequest,
-		response: (
-			error: Error,
-			resonse: any
-		) => void
+	request: (request: SocketOutboundRequest, result: (
+		timeout: Error | null,
+		serverError: any | null,
+		responseData: any) => void
 	) => void;
 }
 
@@ -51,7 +50,9 @@ export class SignalingService extends EventEmitter {
 	connect({ url }: { url: string}): void {
 		logger.debug('connect() [url:%s]', url);
 
-		this.socket = io(url);
+		this.socket = io(url, {
+			transports: [ 'websocket' ]
+		});
 		this._handleSocket();
 	}
 
@@ -87,8 +88,9 @@ export class SignalingService extends EventEmitter {
 			if (!this.socket) {
 				reject('No socket connection');
 			} else {
-				this.socket.timeout(edumeetConfig.requestTimeout).emit('request', socketMessage, (error, response) => {
-					if (error) reject(new SocketTimeoutError('Request timed out'));
+				this.socket.timeout(edumeetConfig.requestTimeout).emit('request', socketMessage, (timeout, serverError, response) => {
+					if (timeout) reject(new SocketTimeoutError('Request timed out'));
+					else if (serverError) reject(serverError);
 					else resolve(response);
 				});
 			}

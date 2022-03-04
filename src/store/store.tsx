@@ -18,6 +18,7 @@ import createPermissionsMiddleware from './middleware/permissionsMiddleware';
 import lobbySlice from './slices/lobbySlice';
 import settingsSlice from './slices/settingsSlice';
 import drawerSlice from './slices/drawerSlice';
+import uiSlice from './slices/uiSlice';
 import { EdumeetConfig } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 
@@ -38,6 +39,7 @@ const signalingService = new SignalingService();
 const reducer = combineReducers({
 	signaling: signalingSlice.reducer,
 	settings: settingsSlice.reducer,
+	ui: uiSlice.reducer,
 	webrtc: webrtcSlice.reducer,
 	room: roomSlice.reducer,
 	drawer: drawerSlice.reducer,
