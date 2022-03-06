@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
@@ -7,12 +6,12 @@ import randomString from 'random-string';
 import RoomNameField from '../../components/roomnamefield/RoomNameField';
 import StyledBackground from '../../components/StyledBackground';
 import StyledDialog from '../../components/dialog/StyledDialog';
-import { RootState } from '../../store/store';
 import LoginButton from '../../components/loginbutton/LoginButton';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { useAppSelector } from '../../store/hooks';
 
 const LandingPage = () => {
-	const loggedIn = useSelector((state: RootState) => state.permissions.loggedIn);
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const navigate = useNavigate();
 	const [ roomId, setRoomId ] = useState(randomString({ length: 8 }).toLowerCase());
 

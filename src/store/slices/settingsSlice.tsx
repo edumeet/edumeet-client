@@ -5,10 +5,12 @@ export interface SettingsState {
 	displayName?: string;
 	advancedMode?: boolean;
 	drawerOverlayed: boolean;
+	permanentTopBar: boolean;
 }
 
 const initialState: SettingsState = {
-	drawerOverlayed: edumeetConfig.drawerOverlayed
+	drawerOverlayed: edumeetConfig.drawerOverlayed,
+	permanentTopBar: true
 };
 
 const settingsSlice = createSlice({
@@ -23,6 +25,9 @@ const settingsSlice = createSlice({
 		}),
 		toggleDrawerOverlayed: ((state) => {
 			state.drawerOverlayed = !state.drawerOverlayed;
+		}),
+		togglePermanentTopBar: ((state) => {
+			state.permanentTopBar = !state.permanentTopBar;
 		}),
 	},
 });

@@ -137,7 +137,7 @@ const createMediasoupMiddleware = ({ signalingService }: MiddlewareOptions) => {
 				});
 			}
 
-			if (roomActions.joined.match(action)) {
+			if (roomActions.updateRoom.match(action) && action.payload.joined) {
 				try {
 					const routerRtpCapabilities = await signalingService.sendRequest('getRouterRtpCapabilities');
 

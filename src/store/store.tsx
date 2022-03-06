@@ -21,6 +21,8 @@ import drawerSlice from './slices/drawerSlice';
 import uiSlice from './slices/uiSlice';
 import { EdumeetConfig } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
+import peersSlice from './slices/peersSlice';
+import producersSlice from './slices/producersSlice';
 
 export interface MiddlewareOptions {
 	signalingService: SignalingService;
@@ -37,16 +39,18 @@ const persistConfig = {
 const signalingService = new SignalingService();
 
 const reducer = combineReducers({
-	signaling: signalingSlice.reducer,
-	settings: settingsSlice.reducer,
-	ui: uiSlice.reducer,
-	webrtc: webrtcSlice.reducer,
-	room: roomSlice.reducer,
+	consumers: consumersSlice.reducer,
 	drawer: drawerSlice.reducer,
 	lobby: lobbySlice.reducer,
-	permissions: permissionsSlice.reducer,
 	me: meSlice.reducer,
-	consumers: consumersSlice.reducer,
+	peers: peersSlice.reducer,
+	permissions: permissionsSlice.reducer,
+	producers: producersSlice.reducer,
+	room: roomSlice.reducer,
+	settings: settingsSlice.reducer,
+	signaling: signalingSlice.reducer,
+	ui: uiSlice.reducer,
+	webrtc: webrtcSlice.reducer,
 });
 
 const pReducer = persistReducer<any, any>(persistConfig, reducer);
@@ -77,5 +81,5 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
-export type RootDispatch = typeof store.dispatch;
+export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

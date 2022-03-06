@@ -15,7 +15,7 @@ const createFilesharingMiddleware = ({ signalingService }: MiddlewareOptions) =>
 	const middleware: Middleware = ({ dispatch, getState }) =>
 		(next) => (action) => {
 			if (WebTorrent.WEBRTC_SUPPORT) {
-				if (roomActions.joined.match(action)) {
+				if (roomActions.updateRoom.match(action) && action.payload.joined) {
 					dispatch(webrtcActions.setTorrentSupport({ torrentSupport: true }));
 
 					const turnServers = getState().room.turnServers;

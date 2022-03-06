@@ -1,4 +1,4 @@
-import { RootDispatch, RootState } from '../store';
+import { AppDispatch, RootState } from '../store';
 import { Logger } from '../../utils/logger';
 
 const logger = new Logger('MediaService');
@@ -13,6 +13,6 @@ export interface UpdateWebcamOptions {
 }
 
 export const updateWebcam = (options: UpdateWebcamOptions) =>
-	async (dispatch: RootDispatch, getState: RootState /* , { signalingService } */) => {
+	async (dispatch: AppDispatch, getState: RootState /* , { signalingService } */) => {
 		logger.debug('updateWebcam() [options:%o]', options);
 	};

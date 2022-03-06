@@ -56,7 +56,7 @@ const createLobbyMiddleware = ({ signalingService }: MiddlewareOptions) => {
 							case 'lobby:changeDisplayName': {
 								const { peerId, displayName } = notification.data;
 
-								dispatch(lobbyActions.setDisplayName({ id: peerId, displayName }));
+								dispatch(lobbyActions.updatePeer({ id: peerId, displayName }));
 
 								break;
 							}
@@ -64,7 +64,7 @@ const createLobbyMiddleware = ({ signalingService }: MiddlewareOptions) => {
 							case 'lobby:changePicture': {
 								const { peerId, picture } = notification.data;
 
-								dispatch(lobbyActions.setPicture({ id: peerId, picture }));
+								dispatch(lobbyActions.updatePeer({ id: peerId, picture }));
 		
 								break;
 							}

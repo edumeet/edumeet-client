@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
 import { FormattedMessage } from 'react-intl';
 import { Button, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
 import LoginButton from '../../components/loginbutton/LoginButton';
@@ -10,6 +8,7 @@ import StyledDialog from '../../components/dialog/StyledDialog';
 import { signalingActions } from '../../store/slices/signalingSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 interface JoinOptions {
 	roomId: string;
@@ -17,10 +16,10 @@ interface JoinOptions {
 
 // eslint-disable-next-line no-empty-pattern
 const Join = ({ roomId }: JoinOptions) => {
-	const loggedIn = useSelector((state: RootState) => state.permissions.loggedIn);
-	const stateDisplayName = useSelector((state: RootState) => state.settings.displayName);
-	const peerId = useSelector((state: RootState) => state.me.id);
-	const dispatch = useDispatch();
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
+	const peerId = useAppSelector((state) => state.me.id);
+	const dispatch = useAppDispatch();
 	const [ displayName, setDisplayName ] = useState(stateDisplayName || '');
 
 	const handleJoin = () => {

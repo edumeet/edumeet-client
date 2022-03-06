@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import fscreen from 'fscreen';
 import Notifications from '../../components/notifications/Notifications';
 import MeetingDrawer from '../../components/meetingdrawer/MeetingDrawer';
@@ -10,15 +9,15 @@ import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import LockDialog from '../../components/lockdialog/LockDialog';
 import Settings from '../../components/settingsdialog/SettingsDialog';
 import TopBar from '../../components/topbar/TopBar';
-import { RootState } from '../../store/store';
 import { uiActions } from '../../store/slices/uiSlice';
 import StyledBackground from '../../components/StyledBackground';
 import { Drawer, Hidden, SwipeableDrawer } from '@mui/material';
 import { styled, useTheme } from '@mui/system';
 import { drawerActions } from '../../store/slices/drawerSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
-	'.MuiDrawer-paper': {
+	paper: {
 		width: '30vw',
 		[theme.breakpoints.down('lg')]: {
 			width: '30vw'
@@ -36,7 +35,7 @@ const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
 }));
 
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
-	'.MuiDrawer-paper': {
+	paper: {
 		width: '30vw',
 		[theme.breakpoints.down('lg')]: {
 			width: '30vw'
@@ -74,17 +73,17 @@ const container = window !== undefined ? window.document.body : undefined;
 
 const Room = () => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const theme = useTheme();
-	const toolbarsVisible = useSelector((state: RootState) => state.ui.toolbarsVisible);
-	const browser = useSelector((state: RootState) => state.me.browser);
-	const ui = useSelector((state: RootState) => state.ui);
-	const settings = useSelector((state: RootState) => state.settings);
-	const drawer = useSelector((state: RootState) => state.drawer);
+	const toolbarsVisible = useAppSelector((state) => state.ui.toolbarsVisible);
+	const browser = useAppSelector((state) => state.me.browser);
+	const ui = useAppSelector((state) => state.ui);
+	const settings = useAppSelector((state) => state.settings);
+	const drawer = useAppSelector((state) => state.drawer);
 
 	const handleMovement = () => {
 		if (!toolbarsVisible) {
-			dispatch(uiActions.setToolbarsVisible({ toolbarsVisible: true }));
+			dispatch(uiActions.setUi({ toolbarsVisible: true }));
 		}
 	};
 

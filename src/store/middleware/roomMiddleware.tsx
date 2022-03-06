@@ -35,21 +35,20 @@ const createRoomMiddleware = ({ signalingService }: MiddlewareOptions) => {
 								const { turnServers } = notification.data;
 
 								dispatch(webrtcActions.setTurnServers({ turnServers }));
-								dispatch(roomActions.setInLobby({ inLobby: false }));
-								dispatch(roomActions.joined());
+								dispatch(roomActions.updateRoom({ inLobby: false, joined: true }));
 
 								break;
 							}
 
 							case 'enteredLobby': {
-								dispatch(roomActions.setInLobby({ inLobby: true }));
+								dispatch(roomActions.updateRoom({ inLobby: true }));
 
 								// TODO: send displayname and picture
 								break;
 							}
 
 							case 'overRoomLimit': {
-								dispatch(roomActions.setOverRoomLimit({ overRoomLimit: true }));
+								dispatch(roomActions.updateRoom({ overRoomLimit: true }));
 
 								break;
 							}

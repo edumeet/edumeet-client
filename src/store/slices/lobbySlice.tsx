@@ -4,7 +4,7 @@ export interface LobbyPeer {
 	id: string;
 	displayName?: string;
 	picture?: string;
-	promotionInProgress: boolean;
+	promotionInProgress?: boolean;
 }
 
 export interface LobbyState {
@@ -19,41 +19,22 @@ const lobbySlice = createSlice({
 	name: 'lobby',
 	initialState,
 	reducers: {
-		addPeer: ((
-			state,
-			action: PayloadAction<{
-				id: string,
-				displayName?: string,
-				picture?: string,
-			}>
-		) => {
+		addPeer: ((state, action: PayloadAction<LobbyPeer>) => {
 			state.peers[action.payload.id] = {
 				...action.payload
-			} as LobbyPeer;
+			};
 		}),
-		removePeer: ((state, action: PayloadAction<{ id: string }>) => {
+		removePeer: ((state, action: PayloadAction<LobbyPeer>) => {
 			delete state.peers[action.payload.id];
 		}),
-		setDisplayName: ((
-			state,
-			action: PayloadAction<{ id: string, displayName: string }>
-		) => {
-			if (state.peers[action.payload.id]) {
-				state.peers[action.payload.id].displayName = action.payload.displayName;
-			}
-		}),
-		setPicture: ((state, action: PayloadAction<{ id: string, picture: string }>) => {
-			if (state.peers[action.payload.id]) {
-				state.peers[action.payload.id].picture = action.payload.picture;
-			}
-		}),
-		setPromotionInProgress: ((
-			state,
-			action: PayloadAction<{ id: string, promotionInProgress: boolean }>
-		) => {
-			if (state.peers[action.payload.id]) {
-				state.peers[action.payload.id].promotionInProgress =
-					action.payload.promotionInProgress;
+		updatePeer: ((state, action: PayloadAction<LobbyPeer>) => {
+			const peer = state.peers[action.payload.id];
+
+			if (peer) {
+				state.peers[action.payload.id] = {
+					...peer,
+					...action.payload
+				};
 			}
 		}),
 	},

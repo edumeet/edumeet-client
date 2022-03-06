@@ -1,18 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Permission, Role, RoleTypes } from '../../utils/roles';
+import { Permission, Role } from '../../utils/roles';
 
 export interface PermissionsState {
-	roles: Set<RoleTypes>;
-	loginEnabled: boolean;
-	loggedIn: boolean;
-	locked: boolean;
-	signInRequired: boolean;
-	roomPermissions?: Record<Permission, Role>;
+	roles: Set<number>; // Role IDs
+	loginEnabled?: boolean;
+	loggedIn?: boolean;
+	locked?: boolean;
+	signInRequired?: boolean;
+	userRoles?: Map<number, Role>;
+	roomPermissions?: Record<string, Role[]>;
 	allowWhenRoleMissing?: Permission[];
 }
 
 const initialState: PermissionsState = {
-	roles: new Set<RoleTypes>(),
+	roles: new Set<number>(),
 	loginEnabled: true,
 	loggedIn: false,
 	locked: false,
@@ -41,9 +42,15 @@ const permissionsSlice = createSlice({
 		setSignInRequired: ((state, action: PayloadAction<{ signInRequired: boolean }>) => {
 			state.signInRequired = action.payload.signInRequired;
 		}),
+		setUserRoles: ((
+			state,
+			action: PayloadAction<{ userRoles: Map<number, Role> }>
+		) => {
+			state.userRoles = action.payload.userRoles;
+		}),
 		setRoomPermissions: ((
 			state,
-			action: PayloadAction<{ roomPermissions: Record<Permission, Role> }>
+			action: PayloadAction<{ roomPermissions: Record<Permission, Role[]> }>
 		) => {
 			state.roomPermissions = action.payload.roomPermissions;
 		}),
