@@ -1,6 +1,5 @@
 import { AccountCircle } from '@mui/icons-material';
 import { Badge, Menu, MenuItem } from '@mui/material';
-import { styled } from '@mui/system';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -46,10 +45,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import HelpIcon from '@mui/icons-material/Help';
 import { uiActions } from '../../store/slices/uiSlice';
 import { drawerActions } from '../../store/slices/drawerSlice';
-
-const MoreActions = styled('p')(({ theme }) => ({
-	margin: theme.spacing(0.5, 0, 0.5, 1.5)
-}));
+import MoreActions from '../moreactions/MoreActions';
 
 interface MobileMenuProps {
 	fullscreen: boolean;

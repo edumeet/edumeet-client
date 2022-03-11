@@ -15,8 +15,8 @@ export interface RoomState {
 	closeMeetingInProgress?: boolean;
 	clearChatInProgress?: boolean;
 	clearFileSharingInProgress?: boolean;
-	selectedPeers: Set<string>;
-	spotlights: Set<string>;
+	selectedPeers: string[];
+	spotlights: string[];
 	state: RoomConnectionState;
 }
 
@@ -24,8 +24,8 @@ type RoomUpdate = Omit<RoomState, 'state' | 'selectedPeers' | 'spotlights'>;
 
 const initialState: RoomState = {
 	state: 'new',
-	selectedPeers: new Set<string>(),
-	spotlights: new Set<string>()
+	selectedPeers: [],
+	spotlights: []
 };
 
 const roomSlice = createSlice({
@@ -33,7 +33,7 @@ const roomSlice = createSlice({
 	initialState,
 	reducers: {
 		updateRoom: ((state, action: PayloadAction<RoomUpdate>) => {
-			state = { ...state, ...action.payload } as RoomState;
+			return { ...state, ...action.payload };
 		}),
 		setRoomState: ((
 			state,
@@ -44,16 +44,18 @@ const roomSlice = createSlice({
 			state.state = action.payload.state;
 		}),
 		selectPeer: ((state, action: PayloadAction<{ peerId: string }>) => {
-			state.selectedPeers.add(action.payload.peerId);
+			state.selectedPeers.push(action.payload.peerId);
 		}),
 		deselectPeer: ((state, action: PayloadAction<{ peerId: string }>) => {
-			state.selectedPeers.delete(action.payload.peerId);
+			state.selectedPeers =
+				state.selectedPeers.filter((peer) => peer !== action.payload.peerId);
 		}),
 		spotlightPeer: ((state, action: PayloadAction<{ peerId: string }>) => {
-			state.spotlights.add(action.payload.peerId);
+			state.spotlights.push(action.payload.peerId);
 		}),
 		deSpotlightPeer: ((state, action: PayloadAction<{ peerId: string }>) => {
-			state.spotlights.delete(action.payload.peerId);
+			state.spotlights =
+				state.spotlights.filter((peer) => peer !== action.payload.peerId);
 		}),
 	},
 });

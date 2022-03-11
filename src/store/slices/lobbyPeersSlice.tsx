@@ -7,31 +7,27 @@ export interface LobbyPeer {
 	promotionInProgress?: boolean;
 }
 
-export interface LobbyState {
-	peers: Record<string, LobbyPeer>;
-}
+export type LobbyPeersState = Record<string, LobbyPeer>;
 
-const initialState: LobbyState = {
-	peers: {},
-};
+const initialState: LobbyPeersState = {};
 
-const lobbySlice = createSlice({
-	name: 'lobby',
+const lobbyPeersSlice = createSlice({
+	name: 'lobbyPeers',
 	initialState,
 	reducers: {
 		addPeer: ((state, action: PayloadAction<LobbyPeer>) => {
-			state.peers[action.payload.id] = {
+			state[action.payload.id] = {
 				...action.payload
 			};
 		}),
 		removePeer: ((state, action: PayloadAction<LobbyPeer>) => {
-			delete state.peers[action.payload.id];
+			delete state[action.payload.id];
 		}),
 		updatePeer: ((state, action: PayloadAction<LobbyPeer>) => {
-			const peer = state.peers[action.payload.id];
+			const peer = state[action.payload.id];
 
 			if (peer) {
-				state.peers[action.payload.id] = {
+				state[action.payload.id] = {
 					...peer,
 					...action.payload
 				};
@@ -40,5 +36,5 @@ const lobbySlice = createSlice({
 	},
 });
 
-export const lobbyActions = lobbySlice.actions;
-export default lobbySlice;
+export const lobbyPeersActions = lobbyPeersSlice.actions;
+export default lobbyPeersSlice;

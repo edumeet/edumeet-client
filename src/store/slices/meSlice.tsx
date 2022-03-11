@@ -4,7 +4,7 @@ import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 
 export interface MeState {
 	id: string;
-	browser: DeviceInfo;
+	browser: Omit<DeviceInfo, 'bowser'>;
 	picture?: string;
 	canSendMic: boolean;
 	canSendWebcam: boolean;

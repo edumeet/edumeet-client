@@ -2,7 +2,7 @@ import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from '../../utils/logger';
 import { MiddlewareOptions } from '../store';
-import { lobbyActions, LobbyPeer } from '../slices/lobbySlice';
+import { lobbyPeersActions, LobbyPeer } from '../slices/lobbyPeersSlice';
 
 const logger = new Logger('LobbyMiddleware');
 
@@ -22,7 +22,7 @@ const createLobbyMiddleware = ({ signalingService }: MiddlewareOptions) => {
 							case 'parkedPeer': {
 								const { peerId } = notification.data;
 
-								dispatch(lobbyActions.addPeer({ id: peerId }));
+								dispatch(lobbyPeersActions.addPeer({ id: peerId }));
 
 								break;
 							}
@@ -31,7 +31,7 @@ const createLobbyMiddleware = ({ signalingService }: MiddlewareOptions) => {
 								const { lobbyPeers } = notification.data;
 
 								lobbyPeers?.forEach((peer: LobbyPeer) => {
-									dispatch(lobbyActions.addPeer({ ...peer }));
+									dispatch(lobbyPeersActions.addPeer({ ...peer }));
 								});
 
 								break;
@@ -40,7 +40,7 @@ const createLobbyMiddleware = ({ signalingService }: MiddlewareOptions) => {
 							case 'lobby:peerClosed': {
 								const { peerId } = notification.data;
 
-								dispatch(lobbyActions.removePeer({ id: peerId }));
+								dispatch(lobbyPeersActions.removePeer({ id: peerId }));
 
 								break;
 							}
@@ -48,7 +48,7 @@ const createLobbyMiddleware = ({ signalingService }: MiddlewareOptions) => {
 							case 'lobby:promotedPeer': {
 								const { peerId } = notification.data;
 
-								dispatch(lobbyActions.removePeer({ id: peerId }));
+								dispatch(lobbyPeersActions.removePeer({ id: peerId }));
 
 								break;
 							}
@@ -56,7 +56,7 @@ const createLobbyMiddleware = ({ signalingService }: MiddlewareOptions) => {
 							case 'lobby:changeDisplayName': {
 								const { peerId, displayName } = notification.data;
 
-								dispatch(lobbyActions.updatePeer({ id: peerId, displayName }));
+								dispatch(lobbyPeersActions.updatePeer({ id: peerId, displayName }));
 
 								break;
 							}
@@ -64,7 +64,7 @@ const createLobbyMiddleware = ({ signalingService }: MiddlewareOptions) => {
 							case 'lobby:changePicture': {
 								const { peerId, picture } = notification.data;
 
-								dispatch(lobbyActions.updatePeer({ id: peerId, picture }));
+								dispatch(lobbyPeersActions.updatePeer({ id: peerId, picture }));
 		
 								break;
 							}

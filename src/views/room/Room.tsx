@@ -9,7 +9,6 @@ import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import LockDialog from '../../components/lockdialog/LockDialog';
 import Settings from '../../components/settingsdialog/SettingsDialog';
 import TopBar from '../../components/topbar/TopBar';
-import { uiActions } from '../../store/slices/uiSlice';
 import StyledBackground from '../../components/StyledBackground';
 import { Drawer, Hidden, SwipeableDrawer } from '@mui/material';
 import { styled, useTheme } from '@mui/system';
@@ -75,33 +74,20 @@ const Room = () => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
-	const toolbarsVisible = useAppSelector((state) => state.ui.toolbarsVisible);
 	const browser = useAppSelector((state) => state.me.browser);
 	const ui = useAppSelector((state) => state.ui);
 	const settings = useAppSelector((state) => state.settings);
 	const drawer = useAppSelector((state) => state.drawer);
-
-	const handleMovement = () => {
-		if (!toolbarsVisible) {
-			dispatch(uiActions.setUi({ toolbarsVisible: true }));
-		}
-	};
 
 	useEffect(() => {
 		if (fscreen.fullscreenEnabled) {
 			fscreen.addEventListener('fullscreenchange', handleFullscreenChange);
 		}
 
-		window.addEventListener('mousemove', handleMovement);
-		window.addEventListener('touchstart', handleMovement);
-
 		return () => {
 			if (fscreen.fullscreenEnabled) {
 				fscreen.removeEventListener('fullscreenchange', handleFullscreenChange);
 			}
-	
-			window.removeEventListener('mousemove', handleMovement);
-			window.removeEventListener('touchstart', handleMovement);
 		};
 	}, []);
 

@@ -16,44 +16,40 @@ export interface Peer {
 	raisedHandInProgress?: boolean;
 	raisedHand?: boolean;
 	raisedHandTimestamp?: Date;
-	consumers: Set<string>; // Consumer IDs
-	roles: Set<number>; // Role IDs
+	consumers: string[]; // Consumer IDs
+	roles: number[]; // Role IDs
 }
 
 type PeerUpdate = Omit<Peer, 'consumers' | 'roles'>;
 
-export interface PeersState {
-	peers: Record<string, Peer>,
-}
+export type PeersState = Record<string, Peer>;
 
 const initialPeer: Peer = {
 	id: 'invalid',
-	consumers: new Set<string>(),
-	roles: new Set<number>()
+	consumers: [],
+	roles: []
 };
 
-const initialState: PeersState = {
-	peers: {},
-};
+const initialState: PeersState = {};
 
 const peersSlice = createSlice({
 	name: 'peers',
 	initialState,
 	reducers: {
 		addPeer: ((state, action: PayloadAction<PeerUpdate>) => {
-			state.peers[action.payload.id] = {
+			state[action.payload.id] = {
 				...initialPeer,
 				...action.payload
 			};
 		}),
 		removePeer: ((state, action: PayloadAction<PeerUpdate>) => {
-			delete state.peers[action.payload.id];
+			delete state[action.payload.id];
 		}),
 		updatePeer: ((state, action: PayloadAction<PeerUpdate>) => {
-			const peer = state.peers[action.payload.id];
+			const peer = state[action.payload.id];
 
 			if (peer) {
-				state.peers[action.payload.id] = {
+				state[action.payload.id] = {
 					...peer,
 					...action.payload
 				};
@@ -65,7 +61,7 @@ const peersSlice = createSlice({
 		) => {
 			const { id, consumerId } = action.payload;
 
-			state.peers[id].consumers.add(consumerId);
+			state[id].consumers.push(consumerId);
 		}),
 		removeConsumer: ((
 			state,
@@ -73,17 +69,19 @@ const peersSlice = createSlice({
 		) => {
 			const { id, consumerId } = action.payload;
 
-			state.peers[id].consumers.delete(consumerId);
+			state[id].consumers =
+				state[id].consumers.filter((consumer) => consumer !== consumerId);
 		}),
 		addRole: ((state, action: PayloadAction<{ id: string, roleId: number }>) => {
 			const { id, roleId } = action.payload;
 
-			state.peers[id].roles.add(roleId);
+			state[id].roles.push(roleId);
 		}),
 		removeRole: ((state, action: PayloadAction<{ id: string, roleId: number }>) => {
 			const { id, roleId } = action.payload;
 
-			state.peers[id].roles.delete(roleId);
+			state[id].roles =
+				state[id].roles.filter((role) => role !== roleId);
 		}),
 	},
 });

@@ -11,7 +11,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import * as serviceWorker from './serviceWorker';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { detectDevice } from 'mediasoup-client';
-import { supportedBrowsers, deviceInfo } from './utils/deviceInfo';
+import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
 import { Logger } from './utils/logger';
 import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
@@ -27,7 +27,7 @@ const theme = createTheme();
 const device = deviceInfo();
 const unsupportedBrowser = 
 	!detectDevice() ||
-	!device.bowser.satisfies(supportedBrowsers);
+	!browserInfo.satisfies(supportedBrowsers);
 const webrtcUnavailable =
 	!navigator.mediaDevices ||
 	!navigator.mediaDevices.getUserMedia ||

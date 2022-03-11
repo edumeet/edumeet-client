@@ -3,7 +3,7 @@ import { MenuItem } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { permissionsActions } from '../../store/slices/permissionsSlice';
-import { MoreActions } from '../topbar/TopBar';
+import MoreActions from '../moreactions/MoreActions';
 
 interface LoginMenuProps {
 	onClick: () => void;

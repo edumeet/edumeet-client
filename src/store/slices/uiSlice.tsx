@@ -5,7 +5,6 @@ export type SettingsTab = 'media' | 'appearance' | 'advanced';
 export interface UiState {
 	fullScreenConsumer?: string;
 	windowConsumer?: string;
-	toolbarsVisible?: boolean;
 	settingsOpen?: boolean;
 	extraVideoOpen?: boolean;
 	hideSelfView?: boolean;
@@ -28,7 +27,7 @@ const uiSlice = createSlice({
 	initialState,
 	reducers: {
 		setUi: ((state, action: PayloadAction<UiUpdate>) => {
-			state = { ...state, ...action.payload };
+			return { ...state, ...action.payload };
 		}),
 		setCurrentSettingsTab: ((
 			state,

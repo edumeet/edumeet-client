@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { Permission, Role } from '../utils/roles';
 import { StateConsumer } from './slices/consumersSlice';
-import { LobbyPeer } from './slices/lobbySlice';
+import { LobbyPeer } from './slices/lobbyPeersSlice';
 import { Peer } from './slices/peersSlice';
 import { StateProducer } from './slices/producersSlice';
 import { RootState } from './store';
@@ -9,9 +9,9 @@ import { RootState } from './store';
 // eslint-disable-next-line no-unused-vars
 type Selector<S> = (state: RootState) => S;
 
-const meRolesSelect: Selector<Set<number>> =
+const meRolesSelect: Selector<number[]> =
 	(state) => state.permissions.roles;
-const userRolesSelect: Selector<Map<number, Role> | undefined> =
+const userRolesSelect: Selector<Record<number, Role> | undefined> =
 	(state) => state.permissions.userRoles;
 const roomPermissionsSelect: Selector<Record<Permission, Role[]> | undefined> =
 	(state) => state.permissions.roomPermissions;
@@ -23,7 +23,7 @@ const producersSelect: Selector<Record<string, StateProducer>> =
 	(state) => state.producers;
 const consumersSelect: Selector<Record<string, StateConsumer>> =
 	(state) => state.consumers;
-const spotlightsSelector: Selector<Set<string>> =
+const spotlightsSelector: Selector<string[]> =
 	(state) => state.room.spotlights;
 const peersSelector: Selector<Record<string, Peer>> =
 	(state) => state.peers;
@@ -113,7 +113,7 @@ export const spotlightScreenConsumerSelector = createSelector(
 	consumersValuesSelector,
 	(spotlights, consumers) =>
 		consumers.filter(
-			(consumer) => consumer.source === 'screen' && spotlights.has(consumer.peerId)
+			(consumer) => consumer.source === 'screen' && spotlights.includes(consumer.peerId)
 		)
 );
 
@@ -122,7 +122,7 @@ export const spotlightExtraVideoConsumerSelector = createSelector(
 	consumersValuesSelector,
 	(spotlights, consumers) =>
 		consumers.filter(
-			(consumer) => consumer.source === 'extravideo' && spotlights.has(consumer.peerId)
+			(consumer) => consumer.source === 'extravideo' && spotlights.includes(consumer.peerId)
 		)
 );
 
@@ -131,7 +131,7 @@ export const passiveMicConsumerSelector = createSelector(
 	consumersValuesSelector,
 	(spotlights, consumers) =>
 		consumers.filter(
-			(consumer) => consumer.source === 'mic' && !spotlights.has(consumer.peerId)
+			(consumer) => consumer.source === 'mic' && !spotlights.includes(consumer.peerId)
 		)
 );
 
@@ -142,7 +142,7 @@ export const highestRoleLevelSelector = createSelector(
 		let level = 0;
 
 		for (const role of roles) {
-			const tmpLevel = userRoles?.get(role)?.level;
+			const tmpLevel = userRoles?.[role]?.level;
 
 			if (tmpLevel && tmpLevel > level)
 				level = tmpLevel;
@@ -154,21 +154,21 @@ export const highestRoleLevelSelector = createSelector(
 
 export const spotlightsLengthSelector = createSelector(
 	spotlightsSelector,
-	(spotlights) => spotlights.size
+	(spotlights) => spotlights.length
 );
 
 export const spotlightPeersSelector = createSelector(
 	spotlightsSelector,
 	peersKeySelector,
 	(spotlights, peers) =>
-		peers.filter((peerId) => spotlights.has(peerId))
+		peers.filter((peerId) => spotlights.includes(peerId))
 );
 
 export const spotlightSortedPeersSelector = createSelector(
 	spotlightsSelector,
 	peersValueSelector,
 	(spotlights, peers) =>
-		peers.filter((peer) => spotlights.has(peer.id) && !peer.raisedHand)
+		peers.filter((peer) => spotlights.includes(peer.id) && !peer.raisedHand)
 			.sort((a, b) => String(a.displayName || '')
 				.localeCompare(String(b.displayName || ''))
 			)
@@ -184,12 +184,12 @@ export const participantListSelector = createSelector(
 					(b.raisedHandTimestamp?.getTime() || 0)
 				);
 		const spotlightSortedPeers =
-			peers.filter((peer) => spotlights.has(peer.id) && !peer.raisedHand)
+			peers.filter((peer) => spotlights.includes(peer.id) && !peer.raisedHand)
 				.sort((a, b) => String(a.displayName || '')
 					.localeCompare(String(b.displayName || ''))
 				);
 		const peersSorted =
-			peers.filter((peer) => !spotlights.has(peer.id) && !peer.raisedHand)
+			peers.filter((peer) => !spotlights.includes(peer.id) && !peer.raisedHand)
 				.sort((a, b) => String(a.displayName || '')
 					.localeCompare(String(b.displayName || ''))
 				);
@@ -216,7 +216,7 @@ export const passivePeersSelector = createSelector(
 	spotlightsSelector,
 	peersValueSelector,
 	(spotlights, peers) =>
-		peers.filter((peer) => !spotlights.has(peer.id))
+		peers.filter((peer) => !spotlights.includes(peer.id))
 			.sort((a, b) => String(a.displayName || '').localeCompare(String(b.displayName || '')))
 );
 
@@ -271,11 +271,11 @@ export const makePeerConsumerSelector = () => {
 	return createSelector(
 		getPeerConsumers,
 		consumersSelect,
-		(consumers: Set<string>, allConsumers: Record<string, StateConsumer>) => {
+		(consumers: string[], allConsumers: Record<string, StateConsumer>) => {
 			if (!consumers)
 				return null;
 
-			const consumersArray = [ ...consumers ]
+			const consumersArray = consumers
 				.map((consumerId) => allConsumers[consumerId]);
 			const micConsumer =
 				consumersArray.find((consumer) => consumer.source === 'mic');
@@ -301,7 +301,7 @@ export const makePermissionSelector = (permission: Permission) => {
 			if (!roomPermissions)
 				return false;
 
-			const permitted = [ ...roles ].some((roleId) =>
+			const permitted = roles.some((roleId) =>
 				roomPermissions[permission].some((permissionRole: Role) =>
 					roleId === permissionRole.id
 				)
@@ -314,17 +314,19 @@ export const makePermissionSelector = (permission: Permission) => {
 				return false;
 
 			// Allow if config is set, and no one is present
-			return allowWhenRoleMissing.includes(permission) &&
+			if (allowWhenRoleMissing.includes(permission) &&
 				peers.filter(
 					(peer) =>
-						[ ...peer.roles ].some(
-							(roleId) =>
-								roomPermissions[permission]
-									.some((permissionRole: Role) =>
-										roleId === permissionRole.id
-									)
+						peer.roles.some(
+							(roleId) => roomPermissions[permission].some((permissionRole) =>
+								roleId === permissionRole.id
+							)
 						)
-				).length === 0;
+				).length === 0
+			)
+				return true;
+
+			return false;
 		}
 	);
 };

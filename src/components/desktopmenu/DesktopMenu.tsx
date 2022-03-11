@@ -1,7 +1,6 @@
 import { MenuItem, Paper, Popover } from '@mui/material';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { styled } from '@mui/system';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { makePermissionSelector } from '../../store/selectors';
 import { uiActions } from '../../store/slices/uiSlice';
@@ -23,10 +22,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import SelfViewOnIcon from '@mui/icons-material/Videocam';
 import SelfViewOffIcon from '@mui/icons-material/VideocamOff';
-
-const MoreActions = styled('p')(({ theme }) => ({
-	margin: theme.spacing(0.5, 0, 0.5, 1.5)
-}));
+import MoreActions from '../moreactions/MoreActions';
 
 interface DesktopmenuProps {
 	anchorEl: HTMLElement | null | undefined;

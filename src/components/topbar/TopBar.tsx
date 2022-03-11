@@ -117,7 +117,6 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps) =>
 
 	const {
 		settingsOpen,
-		toolbarsVisible,
 		lockDialogOpen,
 		leaveOpen
 	} = useAppSelector((state) => state.ui);
@@ -199,7 +198,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps) =>
 							marginLeft: '90vw'
 						},
 					}),
-					...(toolbarsVisible || permanentTopBar ? {
+					...(permanentTopBar ? {
 						opacity: 1,
 						transition: 'opacity .5s'
 					} : {

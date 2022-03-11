@@ -15,7 +15,7 @@ import signalingSlice from './slices/signalingSlice';
 import webrtcSlice from './slices/webrtcSlice';
 import permissionsSlice from './slices/permissionsSlice';
 import createPermissionsMiddleware from './middleware/permissionsMiddleware';
-import lobbySlice from './slices/lobbySlice';
+import lobbyPeersSlice from './slices/lobbyPeersSlice';
 import settingsSlice from './slices/settingsSlice';
 import drawerSlice from './slices/drawerSlice';
 import uiSlice from './slices/uiSlice';
@@ -41,7 +41,7 @@ const signalingService = new SignalingService();
 const reducer = combineReducers({
 	consumers: consumersSlice.reducer,
 	drawer: drawerSlice.reducer,
-	lobby: lobbySlice.reducer,
+	lobbyPeers: lobbyPeersSlice.reducer,
 	me: meSlice.reducer,
 	peers: peersSlice.reducer,
 	permissions: permissionsSlice.reducer,
