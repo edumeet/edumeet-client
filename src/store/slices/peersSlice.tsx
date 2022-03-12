@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Role } from '../../utils/roles';
 
 export interface Peer {
 	id: string;
@@ -24,8 +23,7 @@ type PeerUpdate = Omit<Peer, 'consumers' | 'roles'>;
 
 export type PeersState = Record<string, Peer>;
 
-const initialPeer: Peer = {
-	id: 'invalid',
+const initialPeer: Omit<Peer, 'id'> = {
 	consumers: [],
 	roles: []
 };

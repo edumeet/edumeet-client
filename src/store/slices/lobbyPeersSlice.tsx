@@ -15,6 +15,12 @@ const lobbyPeersSlice = createSlice({
 	name: 'lobbyPeers',
 	initialState,
 	reducers: {
+		addPeers: ((state, action: PayloadAction<Record<string, LobbyPeer>>) => {
+			return {
+				...state,
+				...action.payload
+			};
+		}),
 		addPeer: ((state, action: PayloadAction<LobbyPeer>) => {
 			state[action.payload.id] = {
 				...action.payload

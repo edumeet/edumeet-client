@@ -23,7 +23,7 @@ export const supportedBrowsers = {
 	'samsung internet for android': '>=11.1.1.52',
 };
 
-export const deviceInfo = () => {
+export const deviceInfo = (): DeviceInfo => {
 	let flag;
 
 	if (browserInfo.satisfies({ chrome: '>=0', chromium: '>=0' }))

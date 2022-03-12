@@ -1,4 +1,4 @@
-const AudioPeers = () => {
+const AudioPeers = (): JSX.Element => {
 	return (<div />);
 };
 

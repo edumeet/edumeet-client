@@ -6,11 +6,13 @@ import { permissionsActions } from '../slices/permissionsSlice';
 
 const logger = new Logger('PermissionsMiddleware');
 
-const createPermissionsMiddleware = ({ signalingService }: MiddlewareOptions) => {
+const createPermissionsMiddleware = ({
+	signalingService
+}: MiddlewareOptions): Middleware => {
 	logger.debug('createPermissionsMiddleware()');
 
 	const middleware: Middleware = ({ dispatch, getState }) =>
-		(next) => (action) => {
+		(next) => async (action) => {
 			if (signalingActions.connected.match(action)) {
 				signalingService.on('notification', (notification) => {
 					logger.debug(
@@ -20,20 +22,29 @@ const createPermissionsMiddleware = ({ signalingService }: MiddlewareOptions) =>
 					try {
 						switch (notification.method) {
 							case 'signInRequired': {
-								dispatch(permissionsActions.setLoggedIn({ loggedIn: false }));
+								dispatch(permissionsActions.setLoggedIn({
+									loggedIn: false,
+									local: true
+								}));
 								dispatch(permissionsActions.setSignInRequired({ signInRequired: true }));
 
 								break;
 							}
 
 							case 'lockRoom': {
-								dispatch(permissionsActions.setLocked({ locked: true }));
+								dispatch(permissionsActions.setLocked({
+									locked: true,
+									local: true
+								}));
 			
 								break;
 							}
 
 							case 'unlockRoom': {
-								dispatch(permissionsActions.setLocked({ locked: true }));
+								dispatch(permissionsActions.setLocked({
+									locked: false,
+									local: true
+								}));
 	
 								break;
 							}
@@ -56,6 +67,20 @@ const createPermissionsMiddleware = ({ signalingService }: MiddlewareOptions) =>
 				} else { // Logout
 					logger.debug('Logout!');
 					window.open(`/auth/logout?peerId=${peerId}&roomId=${roomId}`, 'logoutWindow');
+				}
+			}
+
+			if (permissionsActions.setLocked.match(action) && !action.payload.local) {
+				try {
+					if (action.payload.locked) {
+						await signalingService.sendRequest('lockRoom');
+					} else {
+						await signalingService.sendRequest('unlockRoom');
+					}
+				} catch (error) {
+					logger.error('permissionsActions.setLocked [error:"%o"]', error);
+
+					return;
 				}
 			}
 

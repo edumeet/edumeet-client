@@ -1,6 +1,6 @@
 import StyledBackground from '../../components/StyledBackground';
 
-const Lobby = () => {
+const Lobby = (): JSX.Element => {
 	return (<StyledBackground />);
 };
 

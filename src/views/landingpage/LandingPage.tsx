@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import randomString from 'random-string';
-import RoomNameField from '../../components/roomnamefield/RoomNameField';
 import StyledBackground from '../../components/StyledBackground';
 import StyledDialog from '../../components/dialog/StyledDialog';
 import LoginButton from '../../components/loginbutton/LoginButton';
 import edumeetConfig from '../../utils/edumeetConfig';
-import { useAppSelector } from '../../store/hooks';
+import TextInputField from '../../components/textInputField/TextInputField';
+import { JoinMessage, LogoutMessage, roomNameLabel } from '../../components/translated/translatedComponents';
 
-const LandingPage = () => {
-	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+const LandingPage = (): JSX.Element => {
+	const intl = useIntl();
 	const navigate = useNavigate();
 	const [ roomId, setRoomId ] = useState(randomString({ length: 8 }).toLowerCase());
 
@@ -51,10 +51,7 @@ const LandingPage = () => {
 												<LoginButton />
 											</Grid>
 											<Grid item>
-												<FormattedMessage
-													id={loggedIn ? 'label.logout' : 'label.login'}
-													defaultMessage={loggedIn ? 'Logout' : 'Login'}
-												/>
+												<LogoutMessage />
 											</Grid>
 										</Grid>
 									</Grid>
@@ -64,7 +61,12 @@ const LandingPage = () => {
 					</Grid>
 				</DialogTitle>
 				<DialogContent>
-					<RoomNameField roomId={roomId} setRoomId={setRoomId} />
+					<TextInputField
+						label={roomNameLabel(intl)}
+						value={roomId}
+						setValue={setRoomId}
+						randomizeOnBlank
+					/>
 				</DialogContent>
 				<DialogActions>
 					<Grid
@@ -81,10 +83,7 @@ const LandingPage = () => {
 								color='primary'
 								disabled={!roomId}
 							>
-								<FormattedMessage
-									id='label.join'
-									defaultMessage='Join'
-								/>
+								<JoinMessage />
 							</Button>
 
 						</Grid>

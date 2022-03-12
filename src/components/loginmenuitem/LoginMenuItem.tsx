@@ -1,15 +1,21 @@
 import { AccountCircle } from '@mui/icons-material';
 import { MenuItem } from '@mui/material';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { permissionsActions } from '../../store/slices/permissionsSlice';
 import MoreActions from '../moreactions/MoreActions';
+import {
+	loginLabel,
+	LoginMessage,
+	logoutLabel,
+	LogoutMessage
+} from '../translated/translatedComponents';
 
 interface LoginMenuProps {
 	onClick: () => void;
 }
 
-const LoginMenuItem = ({ onClick }: LoginMenuProps) => {
+const LoginMenuItem = ({ onClick }: LoginMenuProps): JSX.Element => {
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const dispatch = useAppDispatch();
@@ -20,37 +26,22 @@ const LoginMenuItem = ({ onClick }: LoginMenuProps) => {
 		dispatch(permissionsActions.setLoggedIn({ loggedIn: !loggedIn }));
 	};
 
-	const loginTooltip = loggedIn ?
-		intl.formatMessage({
-			id: 'tooltip.logout',
-			defaultMessage: 'Log out'
-		})
-		:
-		intl.formatMessage({
-			id: 'tooltip.login',
-			defaultMessage: 'Log in'
-		});
+	const loginButtonLabel = loggedIn ? logoutLabel(intl) : loginLabel(intl);
 
 	return (
 		loginEnabled &&
 			<MenuItem
-				aria-label={loginTooltip}
+				aria-label={loginButtonLabel}
 				onClick={itemOnClick}
 			>
 				<AccountCircle />
 				{ loggedIn ?
 					<MoreActions>
-						<FormattedMessage
-							id='tooltip.logout'
-							defaultMessage='Log out'
-						/>
+						<LogoutMessage />
 					</MoreActions>
 					:
 					<MoreActions>
-						<FormattedMessage
-							id='tooltip.login'
-							defaultMessage='Log in'
-						/>
+						<LoginMessage />
 					</MoreActions>
 				}
 			</MenuItem>

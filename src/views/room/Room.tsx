@@ -70,7 +70,7 @@ const StyledNav = styled('nav')(({ theme }) => ({
 
 const container = window !== undefined ? window.document.body : undefined;
 
-const Room = () => {
+const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
 	const dispatch = useAppDispatch();
 	const theme = useTheme();

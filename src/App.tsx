@@ -4,7 +4,7 @@ import Join from './views/join/Join';
 import Lobby from './views/lobby/Lobby';
 import Room from './views/room/Room';
 
-const App = () => {
+const App = (): JSX.Element => {
 	const joined = useAppSelector((state) => state.room.joined);
 	const inLobby = useAppSelector((state) => state.room.inLobby);
 

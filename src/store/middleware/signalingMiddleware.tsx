@@ -5,7 +5,9 @@ import { Logger } from '../../utils/logger';
 
 const logger = new Logger('SignalingMiddleware');
 
-const createSignalingMiddleware = ({ signalingService }: MiddlewareOptions) => {
+const createSignalingMiddleware = ({
+	signalingService
+}: MiddlewareOptions): Middleware => {
 	logger.debug('createSignalingMiddleware()');
 
 	const middleware: Middleware = ({ dispatch, getState }) =>

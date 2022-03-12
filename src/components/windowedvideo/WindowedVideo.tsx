@@ -2,7 +2,7 @@ interface WindowedVideoProps {
 	advancedMode?: boolean;
 }
 
-const WindowedVideo = ({ advancedMode }: WindowedVideoProps) => {
+const WindowedVideo = ({ advancedMode }: WindowedVideoProps): JSX.Element => {
 	return (<div />);
 };
 

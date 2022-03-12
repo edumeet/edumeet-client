@@ -1,26 +1,32 @@
 import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Button, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
 import LoginButton from '../../components/loginbutton/LoginButton';
-import DisplayNameField from '../../components/displaynamefield/DisplayNameField';
+import TextInputField from '../../components/textInputField/TextInputField';
 import StyledBackground from '../../components/StyledBackground';
 import StyledDialog from '../../components/dialog/StyledDialog';
 import { signalingActions } from '../../store/slices/signalingSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { JoinMessage, LoginMessage, LogoutMessage, yourNameLabel } from '../../components/translated/translatedComponents';
+import { AccountCircle } from '@mui/icons-material';
 
 interface JoinOptions {
 	roomId: string;
 }
 
-// eslint-disable-next-line no-empty-pattern
-const Join = ({ roomId }: JoinOptions) => {
+const Join = ({ roomId }: JoinOptions): JSX.Element => {
+	const intl = useIntl();
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 	const peerId = useAppSelector((state) => state.me.id);
 	const dispatch = useAppDispatch();
 	const [ displayName, setDisplayName ] = useState(stateDisplayName || '');
+
+	const handleDisplayNameChange = (name: string) => {
+		setDisplayName(name.trim() ? name : name.trim());
+	};
 
 	const handleJoin = () => {
 		const encodedRoomId = encodeURIComponent(roomId);
@@ -62,10 +68,7 @@ const Join = ({ roomId }: JoinOptions) => {
 												<LoginButton />
 											</Grid>
 											<Grid item>
-												<FormattedMessage
-													id={loggedIn ? 'label.logout' : 'label.login'}
-													defaultMessage={loggedIn ? 'Logout' : 'Login'}
-												/>
+												{ loggedIn ? <LogoutMessage />:<LoginMessage /> }
 											</Grid>
 										</Grid>
 									</Grid>
@@ -75,9 +78,11 @@ const Join = ({ roomId }: JoinOptions) => {
 					</Grid>
 				</DialogTitle>
 				<DialogContent>
-					<DisplayNameField
-						displayName={displayName}
-						setDisplayName={setDisplayName}
+					<TextInputField
+						label={yourNameLabel(intl)}
+						value={displayName}
+						setValue={handleDisplayNameChange}
+						adornment={<AccountCircle />}
 					/>
 				</DialogContent>
 				<DialogActions>
@@ -96,10 +101,7 @@ const Join = ({ roomId }: JoinOptions) => {
 								disabled={!displayName}
 								fullWidth
 							>
-								<FormattedMessage
-									id='label.join'
-									defaultMessage='Join'
-								/>
+								<JoinMessage />
 							</Button>
 
 						</Grid>

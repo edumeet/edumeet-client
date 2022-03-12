@@ -63,7 +63,7 @@ const MobileMenu = ({
 	anchorEl,
 	open,
 	onClose
-}: MobileMenuProps) => {
+}: MobileMenuProps): JSX.Element => {
 	const intl = useIntl();
 	const dispatch = useAppDispatch();
 

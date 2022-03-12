@@ -1,4 +1,4 @@
-const SettingsDialog = () => {
+const SettingsDialog = (): JSX.Element => {
 	return (<div />);
 };
 

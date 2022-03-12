@@ -3,7 +3,7 @@ import { IconButton } from '@mui/material';
 import { permissionsActions } from '../../store/slices/permissionsSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
-const LoginButton = () => {
+const LoginButton = (): JSX.Element => {
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const dispatch = useAppDispatch();
 

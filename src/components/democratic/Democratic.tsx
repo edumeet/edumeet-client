@@ -2,7 +2,7 @@ interface DemocraticProps {
 	advancedMode?: boolean;
 }
 
-const Democratic = ({ advancedMode }: DemocraticProps) => {
+const Democratic = ({ advancedMode }: DemocraticProps): JSX.Element => {
 	return (<div />);
 };
 

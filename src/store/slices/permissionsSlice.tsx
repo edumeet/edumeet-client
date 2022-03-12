@@ -24,6 +24,9 @@ const permissionsSlice = createSlice({
 	name: 'permissions',
 	initialState,
 	reducers: {
+		addRoles: ((state, action: PayloadAction<{ roles: number[] }>) => {
+			state.roles = action.payload.roles;
+		}),
 		addRole: ((state, action: PayloadAction<{ roleId: number }>) => {
 			state.roles.push(action.payload.roleId);
 		}),
@@ -34,10 +37,16 @@ const permissionsSlice = createSlice({
 		setLoginEnabled: ((state, action: PayloadAction<{ loginEnabled: boolean }>) => {
 			state.loginEnabled = action.payload.loginEnabled;
 		}),
-		setLoggedIn: ((state, action: PayloadAction<{ loggedIn: boolean }>) => {
+		setLoggedIn: ((state, action: PayloadAction<{
+			loggedIn: boolean,
+			local?: boolean
+		}>) => {
 			state.loggedIn = action.payload.loggedIn;
 		}),
-		setLocked: ((state, action: PayloadAction<{ locked: boolean }>) => {
+		setLocked: ((state, action: PayloadAction<{
+			locked: boolean,
+			local?: boolean
+		}>) => {
 			state.locked = action.payload.locked;
 		}),
 		setSignInRequired: ((state, action: PayloadAction<{ signInRequired: boolean }>) => {

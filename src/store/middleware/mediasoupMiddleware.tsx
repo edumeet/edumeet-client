@@ -12,7 +12,9 @@ import { webrtcActions } from '../slices/webrtcSlice';
 
 const logger = new Logger('MediasoupMiddleware');
 
-const createMediasoupMiddleware = ({ signalingService }: MiddlewareOptions) => {
+const createMediasoupMiddleware = ({
+	signalingService
+}: MiddlewareOptions): Middleware => {
 	logger.debug('createMediasoupMiddleware()');
 
 	const mediasoup: Device = new Device();
@@ -143,12 +145,6 @@ const createMediasoupMiddleware = ({ signalingService }: MiddlewareOptions) => {
 
 					await mediasoup.load({ routerRtpCapabilities });
 
-					dispatch(
-						webrtcActions.setRtpCapabilities({
-							rtpCapabilities: mediasoup.rtpCapabilities
-						})
-					);
-
 					{
 						const {
 							id,
@@ -224,6 +220,13 @@ const createMediasoupMiddleware = ({ signalingService }: MiddlewareOptions) => {
 								.catch(errback);
 						});
 					}
+
+					// This will trigger "join" in roomMiddleware
+					dispatch(
+						webrtcActions.setRtpCapabilities({
+							rtpCapabilities: mediasoup.rtpCapabilities
+						})
+					);
 				} catch (error) {
 					logger.error('error on starting mediasoup transports [error:%o]', error);
 				}

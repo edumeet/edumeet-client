@@ -38,7 +38,7 @@ const DesktopMenu = ({
 	currentMenu,
 	onClose,
 	onExited
-}: DesktopmenuProps) => {
+}: DesktopmenuProps): JSX.Element => {
 	const intl = useIntl();
 	const dispatch = useAppDispatch();
 

@@ -267,6 +267,7 @@ export const meProducersSelector = createSelector(
 		})
 );
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const makePeerConsumerSelector = () => {
 	return createSelector(
 		getPeerConsumers,
@@ -291,42 +292,43 @@ export const makePeerConsumerSelector = () => {
 	);
 };
 
-export const makePermissionSelector = (permission: Permission) => {
-	return createSelector(
-		meRolesSelect,
-		roomPermissionsSelect,
-		roomAllowWhenRoleMissing,
-		peersValueSelector,
-		(roles, roomPermissions, allowWhenRoleMissing, peers) => {
-			if (!roomPermissions)
-				return false;
+export const makePermissionSelector =
+	(permission: Permission): Selector<boolean> => {
+		return createSelector(
+			meRolesSelect,
+			roomPermissionsSelect,
+			roomAllowWhenRoleMissing,
+			peersValueSelector,
+			(roles, roomPermissions, allowWhenRoleMissing, peers) => {
+				if (!roomPermissions)
+					return false;
 
-			const permitted = roles.some((roleId) =>
-				roomPermissions[permission].some((permissionRole: Role) =>
-					roleId === permissionRole.id
-				)
-			);
+				const permitted = roles.some((roleId) =>
+					roomPermissions[permission].some((permissionRole: Role) =>
+						roleId === permissionRole.id
+					)
+				);
 
-			if (permitted)
-				return true;
+				if (permitted)
+					return true;
 
-			if (!allowWhenRoleMissing)
-				return false;
+				if (!allowWhenRoleMissing)
+					return false;
 
-			// Allow if config is set, and no one is present
-			if (allowWhenRoleMissing.includes(permission) &&
-				peers.filter(
-					(peer) =>
-						peer.roles.some(
-							(roleId) => roomPermissions[permission].some((permissionRole) =>
-								roleId === permissionRole.id
+				// Allow if config is set, and no one is present
+				if (allowWhenRoleMissing.includes(permission) &&
+					peers.filter(
+						(peer) =>
+							peer.roles.some(
+								(roleId) => roomPermissions[permission].some((permissionRole) =>
+									roleId === permissionRole.id
+								)
 							)
-						)
-				).length === 0
-			)
-				return true;
+					).length === 0
+				)
+					return true;
 
-			return false;
-		}
-	);
-};
+				return false;
+			}
+		);
+	};

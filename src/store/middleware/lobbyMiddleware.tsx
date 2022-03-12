@@ -6,7 +6,9 @@ import { lobbyPeersActions, LobbyPeer } from '../slices/lobbyPeersSlice';
 
 const logger = new Logger('LobbyMiddleware');
 
-const createLobbyMiddleware = ({ signalingService }: MiddlewareOptions) => {
+const createLobbyMiddleware = ({
+	signalingService
+}: MiddlewareOptions): Middleware => {
 	logger.debug('createLobbyMiddleware()');
 
 	const middleware: Middleware = ({ dispatch, getState }) =>

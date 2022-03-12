@@ -7,7 +7,9 @@ import { MiddlewareOptions } from '../store';
 
 const logger = new Logger('FilesharingMiddleware');
 
-const createFilesharingMiddleware = ({ signalingService }: MiddlewareOptions) => {
+const createFilesharingMiddleware = ({
+	signalingService
+}: MiddlewareOptions): Middleware => {
 	logger.debug('createFilesharingMiddleware()');
 
 	let webTorrent: any;

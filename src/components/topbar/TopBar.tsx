@@ -103,7 +103,11 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 	padding: theme.spacing(0, 1)
 }));
 
-const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps) => {
+const TopBar = ({
+	fullscreenEnabled,
+	fullscreen,
+	onFullscreen
+}: TopBarProps): JSX.Element => {
 	const intl = useIntl();
 	const theme = useTheme();
 	const dispatch = useAppDispatch();

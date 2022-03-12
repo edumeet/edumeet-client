@@ -1,4 +1,4 @@
-const Notifications = () => {
+const Notifications = (): JSX.Element => {
 	return (<div />);
 };
 

@@ -52,7 +52,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 const UnsupportedBrowser = ({
 	platform,
 	webrtcUnavailable,
-}: UnsupportedBrowserOptions) => {
+}: UnsupportedBrowserOptions): JSX.Element => {
 	// const dispatch = useDispatch();
 	if (platform !== 'desktop')
 		dense = true;

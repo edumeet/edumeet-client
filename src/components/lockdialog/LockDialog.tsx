@@ -1,4 +1,4 @@
-const LockDialog = () => {
+const LockDialog = (): JSX.Element => {
 	return (<div />);
 };
 
