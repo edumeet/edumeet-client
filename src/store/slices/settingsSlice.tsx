@@ -6,11 +6,13 @@ export interface SettingsState {
 	advancedMode?: boolean;
 	drawerOverlayed: boolean;
 	permanentTopBar: boolean;
+	aspectRatio: number;
 }
 
 const initialState: SettingsState = {
 	drawerOverlayed: edumeetConfig.drawerOverlayed,
-	permanentTopBar: true
+	permanentTopBar: true,
+	aspectRatio: 1.778 // 16:9, TODO: make configurable
 };
 
 const settingsSlice = createSlice({

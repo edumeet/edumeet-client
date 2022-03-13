@@ -136,3 +136,54 @@ export const lockRoomLabel = (intl: IntlShape): string => intl.formatMessage({
 
 export const LockMessage = (): JSX.Element =>
 	<FormattedMessage id='tooltip.lockRoom' defaultMessage='Lock room' />;
+
+export const audioUnsupportedLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'device.audioUnsupported',
+	defaultMessage: 'Audio unsupported'
+});
+
+export const activateAudioLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'device.activateAudio',
+	defaultMessage: 'Activate audio'
+});
+
+export const muteAudioLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'device.muteAudio',
+	defaultMessage: 'Mute audio'
+});
+
+export const unmuteAudioLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'device.unMuteAudio',
+	defaultMessage: 'Unmute audio'
+});
+
+export const videoUnsupportedLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'device.videoUnsupported',
+	defaultMessage: 'Video unsupported'
+});
+
+export const stopVideoLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'device.stopVideo',
+	defaultMessage: 'Stop video'
+});
+
+export const startVideoLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'device.startVideo',
+	defaultMessage: 'Start video'
+});
+
+export const screenSharingUnsupportedLabel = (intl: IntlShape): string =>
+	intl.formatMessage({
+		id: 'device.screenSharingUnsupported',
+		defaultMessage: 'Screen sharing not supported'
+	});
+
+export const stopScreenSharingLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'device.stopScreenSharing',
+	defaultMessage: 'Stop screen sharing'
+});
+
+export const startScreenSharingLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'device.startScreenSharing',
+	defaultMessage: 'Start screen sharing'
+});
