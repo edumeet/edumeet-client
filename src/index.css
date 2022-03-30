@@ -5,7 +5,7 @@
 	--peer-border: 0px /* solid rgba(49, 49, 49, 0.9) */;
 	--peer-empty-avatar: url('./images/buddy.svg');
 	--peer-bg-color: rgba(49, 49, 49, 0.9);
-	--peer-video-bg-color: rgba(19, 19, 19, 1);
+	--peer-video-bg-color: rgba(49, 49, 49, 0.9);
 
 	--active-speaker-border-color: rgba(255, 255, 255, 1.0);
 	--selected-peer-border-color: rgba(55, 126, 255, 1.0);

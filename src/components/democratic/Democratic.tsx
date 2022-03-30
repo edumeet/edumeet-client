@@ -31,7 +31,7 @@ const Democratic = ({
 	const boxes = useAppSelector(videoBoxesSelector);
 	const spotlightPeers = useAppSelector(spotlightPeersSelector);
 	const [ dimensions, setDimensions ] =
-		useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 0, peerHeight: 0 });
+		useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
 	const updateDimensions = (): void => {
 		const { current } = peersRef;
@@ -96,18 +96,14 @@ const Democratic = ({
 
 	return (
 		<DemocraticDiv ref={peersRef}>
-			<Me
-				advancedMode={advancedMode}
-				spacing={6}
-				style={style}
-			/>
+			<Me style={style} spacing={1} />
 
 			{ spotlightPeers.map((peer) => (
 				<Peer
 					key={peer}
 					advancedMode={advancedMode}
 					id={peer}
-					spacing={6}
+					spacing={1}
 					style={style}
 				/>
 			))}

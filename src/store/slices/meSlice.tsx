@@ -26,9 +26,9 @@ export interface MeState {
 const initialState: MeState = {
 	id: uuid(),
 	browser: deviceInfo(),
-	canSendMic: false,
-	canSendWebcam: false,
-	canShareScreen: false,
+	canSendMic: true,
+	canSendWebcam: true,
+	canShareScreen: true,
 	canShareFiles: false,
 
 	/* audioDevices: undefined,

@@ -1,10 +1,16 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import {
+	configureStore,
+	combineReducers,
+	ThunkDispatch,
+	AnyAction
+} from '@reduxjs/toolkit';
 import { createLogger } from 'redux-logger';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
+import { MediaService } from '../services/mediaService';
 import { SignalingService } from '../services/signalingService';
-import createMediasoupMiddleware from './middleware/mediasoupMiddleware';
+import createMediaMiddleware from './middleware/mediaMiddleware';
 import createSignalingMiddleware from './middleware/signalingMiddleware';
 import createRoomMiddleware from './middleware/roomMiddleware';
 import createFilesharingMiddleware from './middleware/filesharingMiddleware';
@@ -23,8 +29,12 @@ import { EdumeetConfig } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 import peersSlice from './slices/peersSlice';
 import producersSlice from './slices/producersSlice';
+import { createContext } from 'react';
+import createDeviceMiddleware from './middleware/deviceMiddleware';
+import deviceSlice from './slices/deviceSlice';
 
 export interface MiddlewareOptions {
+	mediaService: MediaService;
 	signalingService: SignalingService;
 	config: EdumeetConfig;
 }
@@ -38,7 +48,11 @@ const persistConfig = {
 
 const signalingService = new SignalingService();
 
+export const mediaService = new MediaService();
+export const MediaServiceContext = createContext<MediaService>(mediaService);
+
 const reducer = combineReducers({
+	device: deviceSlice.reducer,
 	consumers: consumersSlice.reducer,
 	drawer: drawerSlice.reducer,
 	lobbyPeers: lobbyPeersSlice.reducer,
@@ -53,6 +67,7 @@ const reducer = combineReducers({
 	webrtc: webrtcSlice.reducer,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pReducer = persistReducer<any, any>(persistConfig, reducer);
 
 export const store = configureStore({
@@ -62,15 +77,41 @@ export const store = configureStore({
 			thunk: {
 				extraArgument: {
 					config: edumeetConfig,
+					mediaService,
 					signalingService,
 				}
 			}
 		}).concat(
-			createSignalingMiddleware({ config: edumeetConfig, signalingService }),
-			createMediasoupMiddleware({ config: edumeetConfig, signalingService }),
-			createFilesharingMiddleware({ config: edumeetConfig, signalingService }),
-			createPermissionsMiddleware({ config: edumeetConfig, signalingService }),
-			createRoomMiddleware({ config: edumeetConfig, signalingService }),
+			createSignalingMiddleware({
+				config: edumeetConfig,
+				mediaService,
+				signalingService
+			}),
+			createMediaMiddleware({
+				config: edumeetConfig,
+				mediaService,
+				signalingService
+			}),
+			createDeviceMiddleware({
+				config: edumeetConfig,
+				mediaService,
+				signalingService
+			}),
+			createFilesharingMiddleware({
+				config: edumeetConfig,
+				mediaService,
+				signalingService
+			}),
+			createPermissionsMiddleware({
+				config: edumeetConfig,
+				mediaService,
+				signalingService
+			}),
+			createRoomMiddleware({
+				config: edumeetConfig,
+				mediaService,
+				signalingService
+			}),
 			createLogger({
 				duration: true,
 				timestamp: false,
@@ -81,5 +122,6 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
-export type AppDispatch = typeof store.dispatch;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 export type RootState = ReturnType<typeof store.getState>;

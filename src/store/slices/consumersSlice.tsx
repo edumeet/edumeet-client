@@ -7,7 +7,6 @@ export interface StateConsumer {
 	localPaused: boolean;
 	remotePaused: boolean;
 	source: string;
-	track: MediaStreamTrack;
 }
 
 export interface ConsumersState {

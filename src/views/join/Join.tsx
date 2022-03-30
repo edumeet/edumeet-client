@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Button, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
 import LoginButton from '../../components/loginbutton/LoginButton';
-import TextInputField from '../../components/textInputField/TextInputField';
+import TextInputField from '../../components/textinputfield/TextInputField';
 import StyledBackground from '../../components/StyledBackground';
 import StyledDialog from '../../components/dialog/StyledDialog';
 import { signalingActions } from '../../store/slices/signalingSlice';

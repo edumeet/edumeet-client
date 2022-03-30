@@ -109,11 +109,14 @@ const Room = (): JSX.Element => {
 
 	return (
 		<StyledBackground>
-			<FullscreenVideo advancedMode={settings.advancedMode} />
+			{ /*
+				<FullscreenVideo advancedMode={settings.advancedMode} />
 
-			<WindowedVideo advancedMode={settings.advancedMode} />
+				<WindowedVideo advancedMode={settings.advancedMode} />
 
-			<AudioPeers />
+				<AudioPeers />
+			*/}
+			
 
 			{ settings.showNotifications &&
 				<Notifications />

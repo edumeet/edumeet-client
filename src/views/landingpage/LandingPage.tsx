@@ -7,7 +7,7 @@ import StyledBackground from '../../components/StyledBackground';
 import StyledDialog from '../../components/dialog/StyledDialog';
 import LoginButton from '../../components/loginbutton/LoginButton';
 import edumeetConfig from '../../utils/edumeetConfig';
-import TextInputField from '../../components/textInputField/TextInputField';
+import TextInputField from '../../components/textinputfield/TextInputField';
 import { JoinMessage, LogoutMessage, roomNameLabel } from '../../components/translated/translatedComponents';
 
 const LandingPage = (): JSX.Element => {

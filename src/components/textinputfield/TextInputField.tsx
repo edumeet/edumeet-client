@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent } from 'react';
+import { ChangeEvent, FocusEvent, ReactNode } from 'react';
 import { InputAdornment, TextField } from '@mui/material';
 import randomString from 'random-string';
 
@@ -8,7 +8,7 @@ interface TextInputFieldProps {
 	// eslint-disable-next-line no-unused-vars
 	setValue: (value: string) => void;
 	disabled?: boolean;
-	adornment?: JSX.Element;
+	adornment?: ReactNode;
 	randomizeOnBlank?: boolean;
 }
 

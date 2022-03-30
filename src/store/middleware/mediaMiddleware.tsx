@@ -9,13 +9,15 @@ import { Logger } from '../../utils/logger';
 import { MiddlewareOptions } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { webrtcActions } from '../slices/webrtcSlice';
+import { producersActions } from '../slices/producersSlice';
 
-const logger = new Logger('MediasoupMiddleware');
+const logger = new Logger('MediaMiddleware');
 
-const createMediasoupMiddleware = ({
+const createMediaMiddleware = ({
+	mediaService,
 	signalingService
 }: MiddlewareOptions): Middleware => {
-	logger.debug('createMediasoupMiddleware()');
+	logger.debug('createMediaMiddleware()');
 
 	const mediasoup: Device = new Device();
 	let sendTransport: Transport;
@@ -34,6 +36,63 @@ const createMediasoupMiddleware = ({
 
 					try {
 						switch (notification.method) {
+							case 'producerPaused': {
+								const { producerId } = notification.data;
+
+								logger.debug('producerPaused [producerId:%s]', producerId);
+
+								const producer = producers.get(producerId);
+
+								if (!producer) {
+									logger.warn('producerPaused, no such producer [producerId:%s]', producerId);
+
+									return;
+								}
+
+								producer.pause();
+								dispatch(producersActions.setProducerPaused({ producerId }));
+
+								break;
+							}
+
+							case 'producerResumed': {
+								const { producerId } = notification.data;
+
+								logger.debug('producerResumed [producerId:%s]', producerId);
+
+								const producer = producers.get(producerId);
+
+								if (!producer) {
+									logger.warn('producerResumed, no such producer [producerId:%s]', producerId);
+
+									return;
+								}
+
+								producer.resume();
+								dispatch(producersActions.setProducerResumed({ producerId }));
+
+								break;
+							}
+
+							case 'producerClosed': {
+								const { producerId } = notification.data;
+
+								logger.debug('producerClosed [producerId:%s]', producerId);
+
+								const producer = producers.get(producerId);
+
+								if (!producer) {
+									logger.warn('producerClosed, no such producer [producerId:%s]', producerId);
+
+									return;
+								}
+
+								producer.close();
+								dispatch(producersActions.closeProducer({ producerId }));
+
+								break;
+							}
+
 							case 'newConsumer': {
 								const {
 									peerId,
@@ -64,7 +123,6 @@ const createMediasoupMiddleware = ({
 									localPaused: true,
 									remotePaused: producerPaused,
 									source: consumer.appData.source,
-									track: consumer.track,
 								};
 
 								consumers.set(consumer.id, consumer);
@@ -232,7 +290,6 @@ const createMediasoupMiddleware = ({
 				}
 			}
 
-			// These consumers were paused/resumed locally, we need to notify server
 			if (consumersActions.setConsumerPaused.match(action) && action.payload.local) {
 				const { consumerId } = action.payload;
 
@@ -249,9 +306,9 @@ const createMediasoupMiddleware = ({
 					.catch((error) => logger.warn('pauseConsumer, unable to pause server-side [consumerId:%s, error:%o]', consumerId, error));
 
 				consumer.pause();
-			} else if (
-				consumersActions.setConsumerResumed.match(action) && action.payload.local
-			) {
+			}
+			
+			if (consumersActions.setConsumerResumed.match(action) && action.payload.local) {
 				const { consumerId } = action.payload;
 
 				logger.debug('resumeConsumer [consumerId:%s]', consumerId);
@@ -269,10 +326,65 @@ const createMediasoupMiddleware = ({
 				consumer.resume();
 			}
 
+			if (producersActions.setProducerPaused.match(action) && action.payload.local) {
+				const { producerId } = action.payload;
+
+				logger.debug('pauseProducer [producerId:%s]', producerId);
+				const producer = producers.get(producerId);
+
+				if (!producer) {
+					logger.warn('pauseProducer, no such producer [producerId:%s]', producerId);
+					
+					return;
+				}
+
+				await signalingService.sendRequest('pauseProducer', { producerId: producer.id })
+					.catch((error) => logger.warn('pauseProducer, unable to pause server-side [producerId:%s, error:%o]', producerId, error));
+
+				producer.pause();
+			}
+			
+			if (producersActions.setProducerResumed.match(action) && action.payload.local) {
+				const { producerId } = action.payload;
+
+				logger.debug('resumeProducer [producerId:%s]', producerId);
+				const producer = producers.get(producerId);
+
+				if (!producer) {
+					logger.warn('resumeProducer, no such producer [producerId:%s]', producerId);
+					
+					return;
+				}
+
+				await signalingService.sendRequest('resumeProducer', { producerId: producer.id })
+					.catch((error) => logger.warn('resumeProducer, unable to resume server-side [producerId:%s, error:%o]', producerId, error));
+
+				producer.resume();
+			}
+
+			if (producersActions.closeProducer.match(action) && action.payload.local) {
+				const { producerId } = action.payload;
+
+				logger.debug('closeProducer [producerId:%s]', producerId);
+
+				const producer = producers.get(producerId);
+
+				if (!producer) {
+					logger.warn('closeProducer, no such producer [producerId:%s]', producerId);
+
+					return;
+				}
+
+				await signalingService.sendRequest('closeProducer', { producerId: producer.id })
+					.catch((error) => logger.warn('closeProducer, unable to close server-side [producerId:%s, error:%o]', producerId, error));
+
+				producer.close();
+			}
+
 			return next(action);
 		};
 	
 	return middleware;
 };
 
-export default createMediasoupMiddleware;
+export default createMediaMiddleware;

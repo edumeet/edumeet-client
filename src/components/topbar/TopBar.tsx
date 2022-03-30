@@ -262,41 +262,47 @@ const TopBar = ({
 							</Tooltip>
 						}
 						<Tooltip title={showParticipantsLabel(intl)}>
-							<IconButton
-								aria-label={showParticipantsLabel(intl)}
-								color='inherit'
-								onClick={() => openUsersTab()}
-							>
-								<Badge
-									color='primary'
-									badgeContent={peersLength + 1}
+							<div>
+								<IconButton
+									aria-label={showParticipantsLabel(intl)}
+									color='inherit'
+									onClick={() => openUsersTab()}
 								>
-									<PeopleIcon />
-								</Badge>
-							</IconButton>
+									<Badge
+										color='primary'
+										badgeContent={peersLength + 1}
+									>
+										<PeopleIcon />
+									</Badge>
+								</IconButton>
+							</div>
 						</Tooltip>
 						<Tooltip title={showSettingsLabel(intl)}>
-							<StyledIconButton
-								aria-label={showSettingsLabel(intl)}
-								color='inherit'
-								onClick={() => dispatch(
-									uiActions.setUi({ settingsOpen: !settingsOpen })
-								)}
-							>
-								<SettingsIcon />
-							</StyledIconButton>
+							<div>
+								<StyledIconButton
+									aria-label={showSettingsLabel(intl)}
+									color='inherit'
+									onClick={() => dispatch(
+										uiActions.setUi({ settingsOpen: !settingsOpen })
+									)}
+								>
+									<SettingsIcon />
+								</StyledIconButton>
+							</div>
 						</Tooltip>
 						<Tooltip title={lockLabel}>
-							<StyledIconButton
-								aria-label={lockLabel}
-								color='inherit'
-								disabled={!canLock}
-								onClick={() =>
-									dispatch(permissionsActions.setLocked({ locked: !locked }))
-								}
-							>
-								{ locked ? <LockIcon />:<LockOpenIcon /> }
-							</StyledIconButton>
+							<div>
+								<StyledIconButton
+									aria-label={lockLabel}
+									color='inherit'
+									disabled={!canLock}
+									onClick={() =>
+										dispatch(permissionsActions.setLocked({ locked: !locked }))
+									}
+								>
+									{ locked ? <LockIcon />:<LockOpenIcon /> }
+								</StyledIconButton>
+							</div>
 						</Tooltip>
 						{ lobbyPeersLength > 0 &&
 							<Tooltip

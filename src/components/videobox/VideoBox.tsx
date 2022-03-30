@@ -1,14 +1,18 @@
+import { ReactNode } from 'react';
 import { styled } from '@mui/system';
 
 interface VideoBoxProps {
 	margin: number;
 	order: number;
 	activeSpeaker: boolean;
-	children?: JSX.Element;
+	sx?: Record<string, number | string>;
+	children?: ReactNode;
 }
 
 const VideoBoxDiv = styled('div')({
-	flex: '0 0 auto',
+	position: 'relative',
+	width: 320,
+	height: 240,
 	boxShadow: 'var(--peer-shadow)',
 	border: 'var(--peer-border)',
 	backgroundColor: 'var(--peer-bg-color)',
@@ -25,7 +29,8 @@ const VideoBox = ({
 	margin,
 	order,
 	activeSpeaker,
-	children
+	sx,
+	children,
 }: VideoBoxProps): JSX.Element =>
 	<VideoBoxDiv
 		sx={{
@@ -33,7 +38,8 @@ const VideoBox = ({
 				borderColor: 'var(--active-speaker-border-color)'
 			}),
 			order,
-			margin
+			margin,
+			...sx
 		}}
 		children={children}
 	/>;

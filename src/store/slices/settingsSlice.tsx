@@ -7,10 +7,16 @@ export interface SettingsState {
 	drawerOverlayed: boolean;
 	permanentTopBar: boolean;
 	aspectRatio: number;
+	selectedAudioDevice?: string;
+	selectedVideoDevice?: string;
+	resolution: string;
+	frameRate: number;
 }
 
 const initialState: SettingsState = {
 	drawerOverlayed: edumeetConfig.drawerOverlayed,
+	resolution: edumeetConfig.resolution,
+	frameRate: edumeetConfig.frameRate,
 	permanentTopBar: true,
 	aspectRatio: 1.778 // 16:9, TODO: make configurable
 };
@@ -31,6 +37,18 @@ const settingsSlice = createSlice({
 		togglePermanentTopBar: ((state) => {
 			state.permanentTopBar = !state.permanentTopBar;
 		}),
+		setSelectedAudioDevice: ((state, action: PayloadAction<{ deviceId: string }>) => {
+			state.selectedAudioDevice = action.payload.deviceId;
+		}),
+		setSelectedVideoDevice: ((state, action: PayloadAction<{ deviceId: string }>) => {
+			state.selectedVideoDevice = action.payload.deviceId;
+		}),
+		setResolution: ((state, action: PayloadAction<{ resolution: string }>) => {
+			state.resolution = action.payload.resolution;
+		}),
+		setFrameRate: ((state, action: PayloadAction<{ frameRate: number }>) => {
+			state.frameRate = action.payload.frameRate;
+		})
 	},
 });
 

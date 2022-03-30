@@ -53,21 +53,6 @@ const producersValuesSelector = createSelector(
 	(producers) => Object.values(producers)
 );
 
-export const micProducersSelector = createSelector(
-	producersValuesSelector,
-	(producers) => producers.filter((producer) => producer.source === 'mic')
-);
-
-export const webcamProducersSelector = createSelector(
-	producersValuesSelector,
-	(producers) => producers.filter((producer) => producer.source === 'webcam')
-);
-
-export const screenProducersSelector = createSelector(
-	producersValuesSelector,
-	(producers) => producers.filter((producer) => producer.source === 'screen')
-);
-
 export const extraVideoProducersSelector = createSelector(
 	producersValuesSelector,
 	(producers) => producers.filter((producer) => producer.source === 'extravideo')
@@ -236,20 +221,20 @@ export const unreadSelector = createSelector(
 export const videoBoxesSelector = createSelector(
 	isHidden,
 	spotlightsLengthSelector,
-	screenProducersSelector,
+	screenProducerSelector,
 	spotlightScreenConsumerSelector,
 	extraVideoProducersSelector,
 	spotlightExtraVideoConsumerSelector,
 	(
 		hidden,
 		spotlightsLength,
-		screenProducers,
+		screenProducer,
 		screenConsumers,
 		extraVideoProducers,
 		extraVideoConsumers
 	) =>
 		spotlightsLength + (hidden ? 0 : 1) +
-			(hidden ? 0 : screenProducers.length) + screenConsumers.length +
+			(hidden ? 0 : screenProducer ? 1 : 0) + screenConsumers.length +
 			(hidden ? 0 : extraVideoProducers.length) + extraVideoConsumers.length
 );
 

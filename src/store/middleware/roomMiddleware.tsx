@@ -7,6 +7,7 @@ import { webrtcActions } from '../slices/webrtcSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { peersActions } from '../slices/peersSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
+import { deviceActions } from '../slices/deviceSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -40,6 +41,9 @@ const createRoomMiddleware = ({
 
 								dispatch(webrtcActions.setTurnServers({ turnServers }));
 								dispatch(roomActions.updateRoom({ inLobby: false, joined: true }));
+								dispatch(deviceActions.setKeyListener({ keyListener: true }));
+								dispatch( // TODO: this needs an enumerateDevices or similar first
+									deviceActions.setMediaDeviceListener({ mediaDeviceListener: true }));
 
 								break;
 							}

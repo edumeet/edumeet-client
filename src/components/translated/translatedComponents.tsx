@@ -187,3 +187,6 @@ export const startScreenSharingLabel = (intl: IntlShape): string => intl.formatM
 	id: 'device.startScreenSharing',
 	defaultMessage: 'Start screen sharing'
 });
+
+export const MeTagMessage = (): JSX.Element =>
+	<FormattedMessage id='room.me' defaultMessage='Me' />;

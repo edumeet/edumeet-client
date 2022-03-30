@@ -5,7 +5,7 @@ export interface StateProducer {
 	kind: string;
 	source: string;
 	paused: boolean;
-	track: MediaStreamTrack;
+	trackId: string;
 }
 
 export interface ProducersState {
@@ -23,20 +23,23 @@ const producersSlice = createSlice({
 		addProducer: ((state, action: PayloadAction<StateProducer>) => {
 			state.producers[action.payload.id] = action.payload;
 		}),
-		removeProducer: ((state, action: PayloadAction<StateProducer>) => {
-			delete state.producers[action.payload.id];
+		closeProducer: ((
+			state,
+			action: PayloadAction<{ producerId: string, local?: boolean }>
+		) => {
+			delete state.producers[action.payload.producerId];
 		}),
 		setProducerPaused: ((
 			state,
-			action: PayloadAction<{ id: string }>
+			action: PayloadAction<{ producerId: string, local?: boolean }>
 		) => {
-			state.producers[action.payload.id].paused = true;
+			state.producers[action.payload.producerId].paused = true;
 		}),
 		setProducerResumed: ((
 			state,
-			action: PayloadAction<{ id: string }>
+			action: PayloadAction<{ producerId: string, local?: boolean }>
 		) => {
-			state.producers[action.payload.id].paused = false;
+			state.producers[action.payload.producerId].paused = false;
 		}),
 	},
 });

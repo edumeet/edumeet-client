@@ -123,9 +123,9 @@ export interface EdumeetConfig {
 	developmentPort: number;
 	productionPort: number;
 	serverHostname?: string;
-	resolution: 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
+	resolution: Resolution;
 	frameRate: number;
-	screenResolution: 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
+	screenResolution: Resolution;
 	screenSharingFrameRate: number;
 	simulcast: boolean;
 	simulcastSharing: boolean;
@@ -159,6 +159,8 @@ export interface EdumeetConfig {
 	supportUrl: string;
 	privacyUrl: string;
 }
+
+export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
 
 export interface SimulcastProfile {
 	scaleResolutionDownBy: number;
@@ -194,7 +196,9 @@ export interface SocketOutboundRequest {
 		ConnectWebRtcTransport |
 		ProduceData |
 		ConsumerData |
-		JoinData;
+		JoinData |
+		PauseProducerData |
+		ResumeProducerData;
 }
 
 export interface JoinData {
@@ -225,3 +229,13 @@ export interface ProduceData {
 	rtpParameters: RtpParameters;
 	appData?: any;
 }
+
+export interface PauseProducerData {
+	producerId: string;
+}
+
+export interface ResumeProducerData {
+	producerId: string;
+}
+
+export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';

@@ -9,6 +9,8 @@ import {
 	CreateWebRtcTransport,
 	JoinData,
 	ProduceData,
+	PauseProducerData,
+	ResumeProducerData,
 	SocketInboundNotification,
 	SocketOutboundRequest
 } from '../utils/types';
@@ -105,6 +107,8 @@ export class SignalingService extends EventEmitter {
 			ProduceData |
 			ConsumerData |
 			JoinData |
+			PauseProducerData |
+			ResumeProducerData |
 			undefined,
 	): Promise<any> {
 		logger.debug('sendRequest() [method:%s, data:%o]', method, data);

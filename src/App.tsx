@@ -4,11 +4,15 @@ import Join from './views/join/Join';
 import Lobby from './views/lobby/Lobby';
 import Room from './views/room/Room';
 
+type AppParams = {
+	id: string;
+};
+
 const App = (): JSX.Element => {
 	const joined = useAppSelector((state) => state.room.joined);
 	const inLobby = useAppSelector((state) => state.room.inLobby);
 
-	const id = useParams().id?.toLowerCase() || 'invalid';
+	const id = (useParams<keyof AppParams>() as AppParams).id.toLowerCase();
 
 	if (joined)
 		return (<Room />);
