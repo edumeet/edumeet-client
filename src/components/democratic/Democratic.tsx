@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { spotlightPeersSelector, videoBoxesSelector } from '../../store/selectors';
@@ -34,6 +34,9 @@ const Democratic = ({
 		useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
 	const updateDimensions = (): void => {
+		// eslint-disable-next-line no-console
+		console.log('updateDimensions');
+
 		const { current } = peersRef;
 
 		if (!current || !boxes)
@@ -78,13 +81,21 @@ const Democratic = ({
 	useEffect(() => {
 		let timeoutId: ReturnType<typeof setTimeout> | null = null;
 		const resizeListener = () => {
+			// eslint-disable-next-line no-console
+			console.log('resize');
+
 			timeoutId && clearTimeout(timeoutId);
-			timeoutId = setTimeout(() => updateDimensions, 250);
+			timeoutId = setTimeout(() => {
+				updateDimensions();
+
+				timeoutId = null;
+			}, 250);
 		};
 
 		window.addEventListener('resize', resizeListener);
+		updateDimensions();
 
-		return window.removeEventListener('resize', resizeListener);
+		return () => window.removeEventListener('resize', resizeListener);
 	}, []);
 
 	useEffect(() => updateDimensions, [ boxes ]);

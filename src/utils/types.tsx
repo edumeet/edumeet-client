@@ -1,3 +1,4 @@
+import { ThemeOptions } from '@mui/material';
 import { MediaKind, RtpCapabilities, RtpParameters } from 'mediasoup-client/lib/RtpParameters';
 import { DtlsParameters } from 'mediasoup-client/lib/Transport';
 
@@ -107,15 +108,18 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		}
 	},
 	autoMuteThreshold: 4,
-	background: 'images/background.jpg',
 	defaultLayout: 'democratic',
 	buttonControlBar: false,
 	drawerOverlayed: true,
 	notificationPosition: 'right',
-	logo: 'images/logo.edumeet.svg',
 	title: 'edumeet',
 	supportUrl: 'https://support.example.com',
 	privacyUrl: 'privacy/privacy.html',
+	theme: {
+		backgroundImage: 'images/background.jpg',
+		appBarColor: '#313131',
+		logo: 'images/logo.edumeet.svg',
+	}
 };
 
 export interface EdumeetConfig {
@@ -149,15 +153,14 @@ export interface EdumeetConfig {
 	audioPreset: string;
 	audioPresets: Record<string, AudioPreset>;
 	autoMuteThreshold: number;
-	background: string;
 	defaultLayout: 'democratic' | 'filmstrip';
 	buttonControlBar: boolean;
 	drawerOverlayed: boolean;
 	notificationPosition: 'right' | 'left';
-	logo: string;
 	title: string;
 	supportUrl: string;
 	privacyUrl: string;
+	theme: ThemeOptions;
 }
 
 export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
@@ -239,3 +242,6 @@ export interface ResumeProducerData {
 }
 
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';
+
+export type ButtonSize = 'small' | 'medium' | 'large';
+export type ButtonColor = 'inherit' | 'error' | 'primary' | 'secondary' | 'default' | 'success' | 'info' | 'warning';

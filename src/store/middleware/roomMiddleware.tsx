@@ -41,23 +41,17 @@ const createRoomMiddleware = ({
 
 								dispatch(webrtcActions.setTurnServers({ turnServers }));
 								dispatch(roomActions.updateRoom({ inLobby: false, joined: true }));
-								dispatch(deviceActions.setKeyListener({ keyListener: true }));
-								dispatch( // TODO: this needs an enumerateDevices or similar first
-									deviceActions.setMediaDeviceListener({ mediaDeviceListener: true }));
-
 								break;
 							}
 
 							case 'enteredLobby': {
 								dispatch(roomActions.updateRoom({ inLobby: true }));
-
 								// TODO: send displayname and picture
 								break;
 							}
 
 							case 'overRoomLimit': {
 								dispatch(roomActions.updateRoom({ overRoomLimit: true }));
-
 								break;
 							}
 
@@ -116,9 +110,9 @@ const createRoomMiddleware = ({
 				dispatch(webrtcActions.setTracker({ tracker }));
 				if (loggedIn !== authenticated)
 					dispatch(
-						permissionsActions.setLoggedIn({ loggedIn: authenticated, local: true })
+						permissionsActions.setLoggedIn({ loggedIn: authenticated })
 					);
-				dispatch(permissionsActions.setLocked({ locked: Boolean(locked), local: true }));
+				dispatch(permissionsActions.setLocked({ locked: Boolean(locked) }));
 			}
 
 			// TODO: reconnect states here

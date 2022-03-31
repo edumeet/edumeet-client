@@ -30,7 +30,6 @@ import edumeetConfig from '../utils/edumeetConfig';
 import peersSlice from './slices/peersSlice';
 import producersSlice from './slices/producersSlice';
 import { createContext } from 'react';
-import createDeviceMiddleware from './middleware/deviceMiddleware';
 import deviceSlice from './slices/deviceSlice';
 
 export interface MiddlewareOptions {
@@ -88,11 +87,6 @@ export const store = configureStore({
 				signalingService
 			}),
 			createMediaMiddleware({
-				config: edumeetConfig,
-				mediaService,
-				signalingService
-			}),
-			createDeviceMiddleware({
 				config: edumeetConfig,
 				mediaService,
 				signalingService

@@ -11,7 +11,7 @@ import Settings from '../../components/settingsdialog/SettingsDialog';
 import TopBar from '../../components/topbar/TopBar';
 import StyledBackground from '../../components/StyledBackground';
 import { Drawer, Hidden, SwipeableDrawer } from '@mui/material';
-import { styled, useTheme } from '@mui/system';
+import { styled, useTheme } from '@mui/material/styles';
 import { drawerActions } from '../../store/slices/drawerSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 

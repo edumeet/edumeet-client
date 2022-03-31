@@ -1,25 +1,34 @@
 import { ReactNode } from 'react';
 import { Fab, Tooltip } from '@mui/material';
+import { ButtonColor, ButtonSize } from '../../utils/types';
 
-interface ControlButtonProps {
+export interface InternalControlButtonProps {
 	toolTip: string;
 	toolTipLocation?: 'left' | 'bottom';
 	disabled?: boolean;
-	color?: 'inherit' | 'error' | 'primary' | 'secondary' | 'default' | 'success' | 'info' | 'warning';
-	size?: 'small' | 'medium' | 'large';
+	on?: boolean;
+	onColor?: ButtonColor;
+	offColor?: ButtonColor;
+	disabledColor?: ButtonColor;
+	size?: ButtonSize;
 	onClick: () => void;
 	children?: ReactNode;
 }
+
+export type ControlButtonProps = Omit<InternalControlButtonProps, 'onClick' | 'children' | 'toolTip' | 'on'>;
 
 const ControlButton = ({
 	toolTip,
 	toolTipLocation = 'left',
 	disabled,
-	color = 'primary',
+	on,
+	onColor = 'default',
+	offColor = 'error',
+	disabledColor = 'default',
 	size = 'large',
 	onClick,
 	children
-}: ControlButtonProps): JSX.Element => {
+}: InternalControlButtonProps): JSX.Element => {
 
 	return (
 		<Tooltip
@@ -30,7 +39,9 @@ const ControlButton = ({
 				<Fab
 					aria-label={toolTip}
 					disabled={disabled}
-					color={color}
+					color={
+						disabled ? disabledColor : on ? onColor : offColor
+					}
 					size={size}
 					onClick={onClick}
 					children={children}

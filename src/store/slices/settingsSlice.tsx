@@ -37,10 +37,10 @@ const settingsSlice = createSlice({
 		togglePermanentTopBar: ((state) => {
 			state.permanentTopBar = !state.permanentTopBar;
 		}),
-		setSelectedAudioDevice: ((state, action: PayloadAction<{ deviceId: string }>) => {
+		setSelectedAudioDevice: ((state, action: PayloadAction<{ deviceId?: string }>) => {
 			state.selectedAudioDevice = action.payload.deviceId;
 		}),
-		setSelectedVideoDevice: ((state, action: PayloadAction<{ deviceId: string }>) => {
+		setSelectedVideoDevice: ((state, action: PayloadAction<{ deviceId?: string }>) => {
 			state.selectedVideoDevice = action.payload.deviceId;
 		}),
 		setResolution: ((state, action: PayloadAction<{ resolution: string }>) => {

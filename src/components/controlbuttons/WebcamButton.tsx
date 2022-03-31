@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { updateWebcam } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { makePermissionSelector, webcamProducerSelector } from '../../store/selectors';
 import { producersActions } from '../../store/slices/producersSlice';
@@ -13,15 +12,10 @@ import {
 } from '../translated/translatedComponents';
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
-import ControlButton from './ControlButton';
+import ControlButton, { ControlButtonProps } from './ControlButton';
+import { deviceActions } from '../../store/slices/deviceSlice';
 
-interface WebcamButtonProps {
-	size?: 'small' | 'medium' | 'large';
-}
-
-const WebcamButton = ({
-	size = 'large',
-}: WebcamButtonProps): JSX.Element => {
+const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
 	const dispatch = useAppDispatch();
 
@@ -52,12 +46,11 @@ const WebcamButton = ({
 	return (
 		<ControlButton
 			toolTip={webcamTip}
-			size={size}
 			onClick={() => {
 				if (webcamState === 'unsupported') return;
 
 				if (webcamState === 'off') {
-					dispatch(updateWebcam({
+					dispatch(deviceActions.updateWebcam({
 						start: true
 					}));
 				} else if (webcamProducer) {
@@ -72,6 +65,8 @@ const WebcamButton = ({
 				}
 			}}
 			disabled={webcamState === 'unsupported' || webcamInProgress}
+			on={webcamState === 'on'}
+			{ ...props }
 		>
 			{ webcamState === 'on' ? <VideoIcon /> : <VideoOffIcon /> }
 		</ControlButton>

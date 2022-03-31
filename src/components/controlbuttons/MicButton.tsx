@@ -14,15 +14,9 @@ import {
 } from '../translated/translatedComponents';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
-import ControlButton from './ControlButton';
+import ControlButton, { ControlButtonProps } from './ControlButton';
 
-interface MicButtonProps {
-	size?: 'small' | 'medium' | 'large';
-}
-
-const MicButton = ({
-	size = 'large',
-}: MicButtonProps): JSX.Element => {
+const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
 	const dispatch = useAppDispatch();
 
@@ -56,7 +50,6 @@ const MicButton = ({
 	return (
 		<ControlButton
 			toolTip={micTip}
-			size={size}
 			onClick={() => {
 				if (micState === 'unsupported') return;
 
@@ -85,6 +78,8 @@ const MicButton = ({
 				}
 			}}
 			disabled={micState === 'unsupported' || audioInProgress}
+			on={micState === 'on'}
+			{ ...props }
 		>
 			{ micState === 'on' ? <MicIcon /> : <MicOffIcon /> }
 		</ControlButton>

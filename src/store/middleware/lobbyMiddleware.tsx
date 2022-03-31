@@ -55,18 +55,12 @@ const createLobbyMiddleware = ({
 								break;
 							}
 
-							case 'lobby:changeDisplayName': {
-								const { peerId, displayName } = notification.data;
-
-								dispatch(lobbyPeersActions.updatePeer({ id: peerId, displayName }));
-
-								break;
-							}
-
+							case 'lobby:changeDisplayName':
 							case 'lobby:changePicture': {
-								const { peerId, picture } = notification.data;
+								const { peerId, picture, displayName } = notification.data;
 
-								dispatch(lobbyPeersActions.updatePeer({ id: peerId, picture }));
+								dispatch(
+									lobbyPeersActions.updatePeer({ id: peerId, displayName, picture }));
 		
 								break;
 							}

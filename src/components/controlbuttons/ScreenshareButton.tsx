@@ -13,15 +13,9 @@ import {
 } from '../translated/translatedComponents';
 import ScreenIcon from '@mui/icons-material/ScreenShare';
 import ScreenOffIcon from '@mui/icons-material/StopScreenShare';
-import ControlButton from './ControlButton';
+import ControlButton, { ControlButtonProps } from './ControlButton';
 
-interface ScreenshareButtonProps {
-	size?: 'small' | 'medium' | 'large';
-}
-
-const ScreenshareButton = ({
-	size = 'large',
-}: ScreenshareButtonProps): JSX.Element => {
+const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
 	const dispatch = useAppDispatch();
 
@@ -52,7 +46,6 @@ const ScreenshareButton = ({
 	return (
 		<ControlButton
 			toolTip={screenTip}
-			size={size}
 			onClick={() => {
 				if (screenState === 'unsupported') return;
 
@@ -72,6 +65,8 @@ const ScreenshareButton = ({
 				}
 			}}
 			disabled={screenState === 'unsupported' || screenShareInProgress}
+			on={screenState === 'on'}
+			{ ...props }
 		>
 			{ screenState === 'on' ? <ScreenIcon /> : <ScreenOffIcon /> }
 		</ControlButton>

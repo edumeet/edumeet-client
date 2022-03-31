@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
 const MediaControlsDiv = styled('div')(({ theme }) => ({
 	position: 'absolute',

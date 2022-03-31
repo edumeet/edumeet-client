@@ -3,7 +3,6 @@
  *
  * The configuration documentation is available also:
  * - in the app/README.md file in the source tree
- * - visiting the /?config=true page in a running instance
  */
 
 // eslint-disable-next-line
@@ -177,9 +176,6 @@ var config = {
 	// full mesh audio strongly decrease room capacity!
 	autoMuteThreshold: 4,
 
-	// The page background image URL
-	background: 'images/background.jpg',
-
 	// The default layout.
 	defaultLayout: 'democratic',
 
@@ -211,9 +207,6 @@ var config = {
 		}
 	},
 
-	// If not null, it shows the logo loaded from the specified URL, otherwise it shows the title.
-	logo: 'images/logo.edumeet.svg',
-
 	// The title to show if the logo is not specified.
 	title: 'edumeet',
 
@@ -222,6 +215,18 @@ var config = {
 
 	// The privacy and data protection external URL or local HTML path.
 	privacyUrl: 'privacy/privacy.html',
-};
 
-// Generated with: `yarn gen-config-docs` from app/src/config.ts
+	// Client theme. Take a look at mui theme documentation.
+	theme: {
+		palette: {
+			primary: {
+				main: '#313131',
+			}
+		},
+		// The page background image URL
+		backgroundImage: 'images/background.jpg',
+		appBarColor: '#313131', // AppBar background color
+		// If not null, it shows the logo loaded from the specified URL, otherwise it shows the title.
+		logo: 'images/logo.edumeet.svg',
+	}
+};

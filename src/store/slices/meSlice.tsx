@@ -10,8 +10,7 @@ export interface MeState {
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
 	canShareFiles: boolean;
-	audioDevices?: undefined;
-	webcamDevices?: undefined;
+	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
 	speaking: boolean;
 	autoMuted: boolean;
@@ -30,10 +29,7 @@ const initialState: MeState = {
 	canSendWebcam: true,
 	canShareScreen: true,
 	canShareFiles: false,
-
-	/* audioDevices: undefined,
-	webcamDevices: undefined, */
-
+	devices: [],
 	raisedHand: false,
 	speaking: false,
 	autoMuted: true,
@@ -67,6 +63,9 @@ const meSlice = createSlice({
 			state.canSendWebcam = action.payload.canSendWebcam;
 			state.canShareScreen = action.payload.canShareScreen;
 			state.canShareFiles = action.payload.canShareFiles;
+		}),
+		setDevices: ((state, action: PayloadAction<{ devices: MediaDeviceInfo[] }>) => {
+			state.devices = action.payload.devices;
 		}),
 		setRaisedHand: ((state, action: PayloadAction<{ raisedHand: boolean }>) => {
 			state.raisedHand = action.payload.raisedHand;

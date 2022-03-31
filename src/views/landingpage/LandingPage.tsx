@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
+import {
+	Button,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Grid,
+	Typography,
+	useTheme
+} from '@mui/material';
 import { useIntl } from 'react-intl';
 import randomString from 'random-string';
 import StyledBackground from '../../components/StyledBackground';
@@ -12,6 +20,7 @@ import { JoinMessage, LogoutMessage, roomNameLabel } from '../../components/tran
 
 const LandingPage = (): JSX.Element => {
 	const intl = useIntl();
+	const theme = useTheme();
 	const navigate = useNavigate();
 	const [ roomId, setRoomId ] = useState(randomString({ length: 8 }).toLowerCase());
 
@@ -31,8 +40,8 @@ const LandingPage = (): JSX.Element => {
 					>
 						<Grid item>
 							<Typography variant='h5'> Edumeet </Typography>
-							{ edumeetConfig.logo ?
-								<img alt='Logo' src={edumeetConfig.logo} /> :
+							{ theme.logo ?
+								<img alt='Logo' src={theme.logo} /> :
 								<Typography variant='h5'> {edumeetConfig.title} </Typography>
 							}
 						</Grid>

@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { MediaServiceContext } from '../../store/store';
 
@@ -14,7 +14,7 @@ const StyledVideo = styled('video')({
 	objectFit: 'cover',
 	userSelect: 'none',
 	// backgroundColor: 'var(--peer-video-bg-color)', TODO: add this back in
-},);
+});
 
 const VideoView = ({
 	mirrored,

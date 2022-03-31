@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 import { useAppSelector } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
 import MicButton from '../controlbuttons/MicButton';
@@ -61,35 +61,35 @@ const Me = ({
 					horizontalPlacement='right'
 					verticalPlacement='center'
 				>
-					<MicButton />
-					<WebcamButton />
-					{ !screenProducer && <ScreenshareButton /> }
+					<MicButton onColor='default' offColor='error' disabledColor='default' />
+					<WebcamButton onColor='default' offColor='error' disabledColor='default' />
+					{ !screenProducer && <ScreenshareButton onColor='default' offColor='error' disabledColor='default' /> }
 				</MediaControls>
 				<VideoView
 					mirrored={true} // TODO
 					trackId={webcamProducer?.trackId}
 				/>
 			</VideoBox>
-			<VideoBox
-				activeSpeaker={activeSpeaker}
-				order={2}
-				margin={spacing}
-				sx={{ ...style }}
-			>
-				<MeTag>
-					<MeTagMessage />
-				</MeTag>
-				<MediaControls
-					orientation='vertical'
-					horizontalPlacement='right'
-					verticalPlacement='center'
+			{ screenProducer && (
+				<VideoBox
+					activeSpeaker={activeSpeaker}
+					order={2}
+					margin={spacing}
+					sx={{ ...style }}
 				>
-					{ screenProducer && <ScreenshareButton /> }
-				</MediaControls>
-				<VideoView
-					trackId={screenProducer?.trackId}
-				/>
-			</VideoBox>
+					<MeTag>
+						<MeTagMessage />
+					</MeTag>
+					<MediaControls
+						orientation='vertical'
+						horizontalPlacement='right'
+						verticalPlacement='center'
+					>
+						<ScreenshareButton onColor='default' offColor='error' disabledColor='default' />
+					</MediaControls>
+					<VideoView trackId={screenProducer?.trackId} />
+				</VideoBox>
+			)}
 			{ extraVideoProducers.map((producer) => (
 				<VideoBox
 					activeSpeaker={activeSpeaker}

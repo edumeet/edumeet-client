@@ -22,30 +22,18 @@ const createPermissionsMiddleware = ({
 					try {
 						switch (notification.method) {
 							case 'signInRequired': {
-								dispatch(permissionsActions.setLoggedIn({
-									loggedIn: false,
-									local: true
-								}));
+								dispatch(permissionsActions.setLoggedIn({ loggedIn: false }));
 								dispatch(permissionsActions.setSignInRequired({ signInRequired: true }));
-
 								break;
 							}
 
 							case 'lockRoom': {
-								dispatch(permissionsActions.setLocked({
-									locked: true,
-									local: true
-								}));
-			
+								dispatch(permissionsActions.setLocked({ locked: true }));
 								break;
 							}
 
 							case 'unlockRoom': {
-								dispatch(permissionsActions.setLocked({
-									locked: false,
-									local: true
-								}));
-	
+								dispatch(permissionsActions.setLocked({ locked: false }));
 								break;
 							}
 						}
@@ -55,7 +43,7 @@ const createPermissionsMiddleware = ({
 				});
 			}
 
-			if (permissionsActions.setLoggedIn.match(action)) {
+			if (permissionsActions.setLoggedIn.match(action) && action.payload.local) {
 				const { loggedIn } = action.payload;
 				const { id: peerId } = getState().me;
 				const { name: roomId } = getState().room;
@@ -70,7 +58,7 @@ const createPermissionsMiddleware = ({
 				}
 			}
 
-			if (permissionsActions.setLocked.match(action) && !action.payload.local) {
+			if (permissionsActions.setLocked.match(action) && action.payload.local) {
 				try {
 					if (action.payload.locked) {
 						await signalingService.sendRequest('lockRoom');

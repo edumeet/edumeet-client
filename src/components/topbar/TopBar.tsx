@@ -1,5 +1,5 @@
-import { AppBar, Badge, IconButton, Toolbar, Tooltip, Typography } from '@mui/material';
-import { styled, useTheme } from '@mui/system';
+import { AppBar, Badge, Button, IconButton, Toolbar, Tooltip, Typography } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
 import { Fragment, MouseEvent, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -208,7 +208,8 @@ const TopBar = ({
 					} : {
 						opacity: 0,
 						transition: 'opacity .5s'
-					})
+					}),
+					backgroundColor: theme.appBarColor
 				}}
 			>
 				<Toolbar>
@@ -224,8 +225,8 @@ const TopBar = ({
 							<MenuIcon />
 						</IconButton>
 					</PulsingBadge>
-					{ edumeetConfig.logo ?
-						<LogoImg alt='Logo' src={edumeetConfig.logo}/> :
+					{ theme.logo ?
+						<LogoImg alt='Logo' src={theme.logo}/> :
 						<Typography variant='h6' noWrap color='inherit'>
 							{edumeetConfig.title}
 						</Typography>
@@ -297,7 +298,8 @@ const TopBar = ({
 									color='inherit'
 									disabled={!canLock}
 									onClick={() =>
-										dispatch(permissionsActions.setLocked({ locked: !locked }))
+										dispatch(
+											permissionsActions.setLocked({ locked: !locked, local: true }))
 									}
 								>
 									{ locked ? <LockIcon />:<LockOpenIcon /> }
@@ -371,13 +373,14 @@ const TopBar = ({
 					</MobileDiv>
 					<DividerDiv />
 
-					<StyledIconButton
+					<Button
 						aria-label={leaveLabel(intl)}
-						color='secondary'
+						color='error'
+						variant='contained'
 						onClick={() => dispatch(uiActions.setUi({ leaveOpen: !leaveOpen }))}
 					>
 						<LeaveMessage />
-					</StyledIconButton>
+					</Button>
 				</Toolbar>
 			</AppBar>
 			<DesktopMenu

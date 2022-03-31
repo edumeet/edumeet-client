@@ -5,7 +5,7 @@ export interface StateProducer {
 	kind: string;
 	source: string;
 	paused: boolean;
-	trackId: string;
+	trackId?: string;
 }
 
 export interface ProducersState {

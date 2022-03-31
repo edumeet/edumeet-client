@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Button, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
+import {
+	Button,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Grid,
+	Typography,
+	useTheme
+} from '@mui/material';
 import LoginButton from '../../components/loginbutton/LoginButton';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import StyledBackground from '../../components/StyledBackground';
@@ -18,6 +26,7 @@ interface JoinOptions {
 
 const Join = ({ roomId }: JoinOptions): JSX.Element => {
 	const intl = useIntl();
+	const theme = useTheme();
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 	const peerId = useAppSelector((state) => state.me.id);
@@ -48,8 +57,8 @@ const Join = ({ roomId }: JoinOptions): JSX.Element => {
 					>
 						<Grid item>
 							<Typography variant='h5'> Edumeet </Typography>
-							{ edumeetConfig.logo ?
-								<img alt='Logo' src={edumeetConfig.logo} /> :
+							{ theme.logo ?
+								<img alt='Logo' src={theme.logo} /> :
 								<Typography variant='h5'> {edumeetConfig.title} </Typography>
 							}
 						</Grid>

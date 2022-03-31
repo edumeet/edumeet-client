@@ -1,30 +1,23 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface DeviceState {
-	keyListener?: boolean;
-	mediaDeviceListener?: boolean;
+interface UpdateWebcamOptions {
+	init?: boolean;
+	start?: boolean;
+	restart?: boolean;
+	newDeviceId?: string;
+	newResolution?: string;
+	newFrameRate?: number;
 }
-
-const initialState: DeviceState = {
-	keyListener: false,
-	mediaDeviceListener: false,
-};
 
 const deviceSlice = createSlice({
 	name: 'device',
-	initialState,
+	initialState: {},
 	reducers: {
-		setKeyListener: ((
-			state,
-			action: PayloadAction<{ keyListener: boolean }>
+		updateWebcam: ((
+			// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+			state, action: PayloadAction<UpdateWebcamOptions>
 		) => {
-			state.keyListener = action.payload.keyListener;
-		}),
-		setMediaDeviceListener: ((
-			state,
-			action: PayloadAction<{ mediaDeviceListener: boolean }>
-		) => {
-			state.mediaDeviceListener = action.payload.mediaDeviceListener;
+			// Dummy action, intercepted in mediaMiddleware
 		}),
 	},
 });

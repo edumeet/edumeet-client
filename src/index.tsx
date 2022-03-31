@@ -17,13 +17,14 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import UnsupportedBrowser from './views/unsupported/UnsupportedBrowser';
 import LandingPage from './views/landingpage/LandingPage';
+import edumeetConfig from './utils/edumeetConfig';
 
 if (process.env.REACT_APP_DEBUG === '*' || process.env.NODE_ENV !== 'production') {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');
 }
 
 const logger = new Logger('index.tsx');
-const theme = createTheme();
+const theme = createTheme(edumeetConfig.theme);
 const device = deviceInfo();
 const unsupportedBrowser = 
 	!detectDevice() ||
