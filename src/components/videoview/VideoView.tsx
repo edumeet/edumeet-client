@@ -4,7 +4,7 @@ import { MediaServiceContext } from '../../store/store';
 
 interface VideoViewProps {
 	mirrored?: boolean;
-	trackId?: string;
+	trackId: string;
 }
 
 const StyledVideo = styled('video')({
@@ -20,14 +20,19 @@ const VideoView = ({
 	mirrored,
 	trackId
 }: VideoViewProps): JSX.Element => {
-	const [ track, setTrack ] = useState<MediaStreamTrack | undefined>();
 	const mediaService = useContext(MediaServiceContext);
 	const videoElement = useRef<HTMLVideoElement>(null);
 
 	useEffect(() => {
-		if (!trackId) return;
+		const track = mediaService.getTrack(trackId);
 
-		setTrack(mediaService.getTrack(trackId));
+		if (!track || !videoElement?.current) return;
+
+		const stream = new MediaStream();
+
+		stream.addTrack(track);
+		videoElement.current.srcObject = stream;
+		videoElement.current.play().catch();
 
 		return () => {
 			if (videoElement.current) {
@@ -36,22 +41,6 @@ const VideoView = ({
 			}
 		};
 	}, []);
-
-	useEffect(() => {
-		if (!trackId) return;
-
-		setTrack(mediaService.getTrack(trackId));
-	}, [ trackId ]);
-
-	useEffect(() => {
-		if (!track || !videoElement.current) return;
-
-		const stream = new MediaStream();
-
-		stream.addTrack(track);
-		videoElement.current.srcObject = stream;
-		videoElement.current.play().catch();
-	}, [ track, videoElement ]);
 
 	return (
 		<StyledVideo

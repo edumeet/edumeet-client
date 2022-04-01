@@ -13,6 +13,7 @@ import { producersActions } from '../slices/producersSlice';
 import { deviceActions } from '../slices/deviceSlice';
 import { meActions } from '../slices/meSlice';
 import { settingsActions } from '../slices/settingsSlice';
+import { peersActions } from '../slices/peersSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -83,6 +84,9 @@ const createMediaMiddleware = ({
 										peerId,
 									},
 								});
+
+								await signalingService.sendRequest('resumeConsumer', { consumerId: consumer.id })
+									.catch((error) => logger.warn('resumeConsumer, unable to resume server-side [consumerId:%s, error:%o]', consumer.id, error));
 			
 								const stateConsumer: StateConsumer = {
 									id: consumer.id,
@@ -91,32 +95,26 @@ const createMediaMiddleware = ({
 									localPaused: true,
 									remotePaused: producerPaused,
 									source: consumer.appData.source,
+									trackId: consumer.track.id,
 								};
 
 								consumers.set(consumer.id, consumer);
+								mediaService.addTrack(consumer.track);
 			
 								consumer.once('transportclose', () => {
 									consumers.delete(consumer.id);
-									dispatch(consumersActions.removeConsumer({ consumerId: consumer.id }));
+									dispatch(consumersActions.removeConsumer({
+										consumerId: consumer.id
+									}));
 								});
 
-								dispatch(consumersActions.addConsumer({ consumer: stateConsumer }));
+								dispatch(consumersActions.addConsumer(stateConsumer));
 								break;
 							}
 
 							case 'consumerClosed': {
 								const { consumerId } = notification.data;
 
-								logger.debug('consumerClosed [consumerId:%s]', consumerId);
-								const consumer = consumers.get(consumerId);
-			
-								if (!consumer) {
-									logger.warn('consumerClosed, no such consumer [consumerId:%s]', consumerId);
-									
-									return;
-								}
-			
-								consumer.close();
 								dispatch(consumersActions.removeConsumer({ consumerId }));
 								break;
 							}
@@ -234,24 +232,32 @@ const createMediaMiddleware = ({
 				}
 			}
 
+			if (consumersActions.removeConsumer.match(action)) {
+				const { consumerId, local } = action.payload;
+
+				logger.debug('removeConsumer [consumerId:%s]', consumerId);
+				const consumer = consumers.get(consumerId);
+
+				if (local && consumer) {
+					await signalingService.sendRequest('closeConsumer', { consumerId: consumer.id })
+						.catch((error) => logger.warn('closeConsumer, unable to pause server-side [consumerId:%s, error:%o]', consumerId, error));
+				}
+
+				consumer?.close();
+			}
+
 			if (consumersActions.setConsumerPaused.match(action)) {
 				const { consumerId, local } = action.payload;
 
 				logger.debug('pauseConsumer [consumerId:%s]', consumerId);
 				const consumer = consumers.get(consumerId);
 
-				if (!consumer) {
-					logger.warn('pauseConsumer, no such consumer [consumerId:%s]', consumerId);
-					
-					return;
-				}
-
-				if (local) {
+				if (local && consumer) {
 					await signalingService.sendRequest('pauseConsumer', { consumerId: consumer.id })
 						.catch((error) => logger.warn('pauseConsumer, unable to pause server-side [consumerId:%s, error:%o]', consumerId, error));
 				}
 
-				consumer.pause();
+				consumer?.pause();
 			}
 			
 			if (consumersActions.setConsumerResumed.match(action)) {
@@ -260,18 +266,12 @@ const createMediaMiddleware = ({
 				logger.debug('resumeConsumer [consumerId:%s]', consumerId);
 				const consumer = consumers.get(consumerId);
 
-				if (!consumer) {
-					logger.warn('resumeConsumer, no such consumer [consumerId:%s]', consumerId);
-					
-					return;
-				}
-
-				if (local) {
+				if (local && consumer) {
 					await signalingService.sendRequest('resumeConsumer', { consumerId: consumer.id })
 						.catch((error) => logger.warn('resumeConsumer, unable to resume server-side [consumerId:%s, error:%o]', consumerId, error));
 				}
 
-				consumer.resume();
+				consumer?.resume();
 			}
 
 			if (producersActions.setProducerPaused.match(action)) {
@@ -280,18 +280,12 @@ const createMediaMiddleware = ({
 				logger.debug('pauseProducer [producerId:%s]', producerId);
 				const producer = producers.get(producerId);
 
-				if (!producer) {
-					logger.warn('pauseProducer, no such producer [producerId:%s]', producerId);
-					
-					return;
-				}
-
-				if (local) {
+				if (local && producer) {
 					await signalingService.sendRequest('pauseProducer', { producerId: producer.id })
 						.catch((error) => logger.warn('pauseProducer, unable to pause server-side [producerId:%s, error:%o]', producerId, error));
 				}
 
-				producer.pause();
+				producer?.pause();
 			}
 			
 			if (producersActions.setProducerResumed.match(action)) {
@@ -300,18 +294,12 @@ const createMediaMiddleware = ({
 				logger.debug('resumeProducer [producerId:%s]', producerId);
 				const producer = producers.get(producerId);
 
-				if (!producer) {
-					logger.warn('resumeProducer, no such producer [producerId:%s]', producerId);
-					
-					return;
-				}
-
-				if (local) {
+				if (local && producer) {
 					await signalingService.sendRequest('resumeProducer', { producerId: producer.id })
 						.catch((error) => logger.warn('resumeProducer, unable to resume server-side [producerId:%s, error:%o]', producerId, error));
 				}
 
-				producer.resume();
+				producer?.resume();
 			}
 
 			if (producersActions.closeProducer.match(action)) {
@@ -321,18 +309,12 @@ const createMediaMiddleware = ({
 
 				const producer = producers.get(producerId);
 
-				if (!producer) {
-					logger.warn('closeProducer, no such producer [producerId:%s]', producerId);
-
-					return;
-				}
-
-				if (local) {
+				if (local && producer) {
 					await signalingService.sendRequest('closeProducer', { producerId: producer.id })
 						.catch((error) => logger.warn('closeProducer, unable to close server-side [producerId:%s, error:%o]', producerId, error));
 				}
 
-				producer.close();
+				producer?.close();
 			}
 
 			if (deviceActions.updateWebcam.match(action)) {
@@ -346,7 +328,7 @@ const createMediaMiddleware = ({
 				} = action.payload;
 
 				logger.debug(
-					'updateWebcam() [init:%s, start:%s, restart:%s, newDeviceId:%s, newResolution:%s, newFrameRate:%s]',
+					'MediaMiddleware.updateWebcam [init:%s, start:%s, restart:%s, newDeviceId:%s, newResolution:%s, newFrameRate:%s]',
 					init,
 					start,
 					restart,
@@ -355,7 +337,10 @@ const createMediaMiddleware = ({
 					newFrameRate
 				);
 
-				let track;
+				dispatch(meActions.setWebcamInProgress({ webcamInProgress: true }));
+
+				let track: MediaStreamTrack | null;
+				let webcamProducer: Producer | undefined;
 
 				try {
 					if (!mediasoup.canProduce('video'))
@@ -389,8 +374,6 @@ const createMediaMiddleware = ({
 							return;
 						else
 							store.dispatch(settingsActions.setVideoMuted(false));
-
-						store.dispatch(meActions.setWebcamInProgress(true));
 					*/
 
 					const {
@@ -400,12 +383,12 @@ const createMediaMiddleware = ({
 						selectedVideoDevice
 					} = getState().settings;
 
-					const deviceId = await mediaService.getDeviceId(selectedVideoDevice, 'videoinput');
+					const deviceId = mediaService.getDeviceId(selectedVideoDevice, 'videoinput');
 
 					if (!deviceId)
 						throw new Error('no webcam devices');
 
-					const webcamProducer =
+					webcamProducer =
 						Array.from(producers.values())
 							.find((producer) => producer.appData.source === 'webcam');
 
@@ -429,13 +412,13 @@ const createMediaMiddleware = ({
 
 						const { deviceId: trackDeviceId, width, height } = track.getSettings();
 
+						// User may have chosen a different device than the one initially selected
+						// so we need to update the selected device in the settings just in case
 						dispatch(
 							settingsActions.setSelectedVideoDevice({
 								deviceId: trackDeviceId
 							})
 						);
-
-						let newWebcamProducer: Producer;
 
 						if (config.simulcast) {
 							const encodings = mediaService.getEncodings(
@@ -446,7 +429,7 @@ const createMediaMiddleware = ({
 							const resolutionScalings =
 								encodings.map((encoding) => encoding.scaleResolutionDownBy);
 
-							newWebcamProducer = await sendTransport.produce({
+							webcamProducer = await sendTransport.produce({
 								track,
 								encodings,
 								codecOptions: {
@@ -460,7 +443,7 @@ const createMediaMiddleware = ({
 								}
 							});
 						} else {
-							newWebcamProducer = await sendTransport.produce({
+							webcamProducer = await sendTransport.produce({
 								track,
 								appData: {
 									source: 'webcam',
@@ -470,33 +453,40 @@ const createMediaMiddleware = ({
 							});
 						}
 
-						producers.set(newWebcamProducer.id, newWebcamProducer);
+						if (!webcamProducer.track) {
+							throw new Error('no webcam track');
+						}
+
+						const { id: producerId } = webcamProducer;
+
+						producers.set(producerId, webcamProducer);
+						mediaService.addTrack(webcamProducer.track);
 
 						dispatch(producersActions.addProducer({
-							id: newWebcamProducer.id,
-							kind: newWebcamProducer.kind,
-							source: newWebcamProducer.appData.source,
-							paused: newWebcamProducer.paused,
-							trackId: newWebcamProducer.track?.id,
+							id: producerId,
+							kind: webcamProducer.kind,
+							source: webcamProducer.appData.source,
+							paused: webcamProducer.paused,
+							trackId: webcamProducer.track?.id,
 						}));
 
-						newWebcamProducer.once('close', () => {
-							producers.delete(newWebcamProducer.id);
+						webcamProducer.observer.once('close', () => {
+							producers.delete(producerId);
 						});
 
-						newWebcamProducer.once('transportclose', () => {
+						webcamProducer.once('transportclose', () => {
 							dispatch(
 								producersActions.closeProducer({
-									producerId: newWebcamProducer.id,
+									producerId,
 									local: true
 								})
 							);
 						});
 
-						newWebcamProducer.once('trackended', () => {
+						webcamProducer.once('trackended', () => {
 							dispatch(
 								producersActions.closeProducer({
-									producerId: newWebcamProducer.id,
+									producerId,
 									local: true
 								})
 							);
@@ -527,9 +517,6 @@ const createMediaMiddleware = ({
 					await mediaService.updateMediaDevices();
 				} catch (error) {
 					logger.error('updateWebcam() [error:"%o"]', error);
-		
-					if (track)
-						track.stop();
 				} finally {
 					dispatch(meActions.setWebcamInProgress({ webcamInProgress: false }));
 				}

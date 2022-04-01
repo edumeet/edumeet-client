@@ -34,9 +34,6 @@ const Democratic = ({
 		useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
 	const updateDimensions = (): void => {
-		// eslint-disable-next-line no-console
-		console.log('updateDimensions');
-
 		const { current } = peersRef;
 
 		if (!current || !boxes)
@@ -80,14 +77,12 @@ const Democratic = ({
 
 	useEffect(() => {
 		let timeoutId: ReturnType<typeof setTimeout> | null = null;
-		const resizeListener = () => {
-			// eslint-disable-next-line no-console
-			console.log('resize');
 
-			timeoutId && clearTimeout(timeoutId);
+		const resizeListener = () => {
+			if (timeoutId) clearTimeout(timeoutId);
 			timeoutId = setTimeout(() => {
 				updateDimensions();
-
+	
 				timeoutId = null;
 			}, 250);
 		};
@@ -96,9 +91,9 @@ const Democratic = ({
 		updateDimensions();
 
 		return () => window.removeEventListener('resize', resizeListener);
-	}, []);
+	}, [ boxes ]);
 
-	useEffect(() => updateDimensions, [ boxes ]);
+	useEffect(() => updateDimensions(), [ boxes ]);
 
 	const style = {
 		width: dimensions.peerWidth,
@@ -112,7 +107,6 @@ const Democratic = ({
 			{ spotlightPeers.map((peer) => (
 				<Peer
 					key={peer}
-					advancedMode={advancedMode}
 					id={peer}
 					spacing={1}
 					style={style}

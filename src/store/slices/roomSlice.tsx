@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { peersActions } from './peersSlice';
 
 export type RoomConnectionState = 'new' | 'connecting' | 'connected' | 'disconnected' | 'closed';
 export type SettingsTab = 'media' | 'appearance' | 'advanced';
@@ -50,6 +51,9 @@ const roomSlice = createSlice({
 			state.selectedPeers =
 				state.selectedPeers.filter((peer) => peer !== action.payload.peerId);
 		}),
+		addSpotlightList: ((state, action: PayloadAction<{ spotlights: string }>) => {
+			state.spotlights = [ ...action.payload.spotlights ];
+		}),
 		spotlightPeer: ((state, action: PayloadAction<{ peerId: string }>) => {
 			state.spotlights.push(action.payload.peerId);
 		}),
@@ -58,6 +62,15 @@ const roomSlice = createSlice({
 				state.spotlights.filter((peer) => peer !== action.payload.peerId);
 		}),
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(peersActions.addPeer, (state, action) => {
+				state.spotlights.push(action.payload.id);
+			})
+			.addCase(peersActions.removePeer, (state, action) => {
+				state.spotlights = state.spotlights.filter((peer) => peer !== action.payload.id);
+			});
+	}
 });
 
 export const roomActions = roomSlice.actions;

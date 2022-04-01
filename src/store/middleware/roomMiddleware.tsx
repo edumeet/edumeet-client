@@ -73,7 +73,7 @@ const createRoomMiddleware = ({
 			if (webrtcActions.setRtpCapabilities.match(action)) {
 				const { rtpCapabilities } = action.payload;
 				const { displayName } = getState().settings;
-				const { picture } = getState().me;
+				const { id: meId, picture } = getState().me;
 				const { loggedIn } = getState().permissions;
 
 				const {
@@ -86,7 +86,7 @@ const createRoomMiddleware = ({
 					allowWhenRoleMissing, // [ permissionId, ... ]
 					// chatHistory, // [ message, ... ]
 					// fileHistory, // [ file, ... ]
-					// lastNHistory, // [ peerId, ... ]
+					lastNHistory, // [ peerId, ... ]
 					locked, // boolean
 					lobbyPeers, // { peerId: LobbyPeer, ... }
 				} = await signalingService.sendRequest('join', {
@@ -106,6 +106,10 @@ const createRoomMiddleware = ({
 				allowWhenRoleMissing && dispatch(
 					permissionsActions.setAllowWhenRoleMissing({ allowWhenRoleMissing })
 				);
+
+				const spotlights = lastNHistory.filter((peerId: string) => peerId !== meId);
+
+				dispatch(roomActions.addSpotlightList({ spotlights }));
 				dispatch(permissionsActions.addRoles({ roles }));
 				dispatch(webrtcActions.setTracker({ tracker }));
 				if (loggedIn !== authenticated)

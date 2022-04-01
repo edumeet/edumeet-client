@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { peersActions } from './peersSlice';
 
 export interface StateConsumer {
 	id: string;
@@ -7,47 +8,63 @@ export interface StateConsumer {
 	localPaused: boolean;
 	remotePaused: boolean;
 	source: string;
+	trackId: string;
 }
 
-export interface ConsumersState {
-	consumers: Record<string, StateConsumer>;
-}
+type ConsumersState = StateConsumer[];
 
-const initialState: ConsumersState = {
-	consumers: {},
-};
+const initialState: ConsumersState = [];
 
 const consumersSlice = createSlice({
 	name: 'consumers',
 	initialState,
 	reducers: {
-		addConsumer: ((state, action: PayloadAction<{ consumer: StateConsumer }>) => {
-			const { consumer } = action.payload;
-
-			state.consumers[consumer.id] = consumer;
+		addConsumer: ((state, action: PayloadAction<StateConsumer>) => {
+			state.push(action.payload);
 		}),
-		removeConsumer: ((state, action: PayloadAction<{ consumerId: string }>) => {
-			delete state.consumers[action.payload.consumerId];
+		removeConsumer: ((
+			state,
+			action: PayloadAction<{ consumerId: string, local?: boolean }>
+		) => {
+			return state.filter((consumer) => consumer.id !== action.payload.consumerId);
 		}),
 		setConsumerPaused: ((
 			state,
 			action: PayloadAction<{ consumerId: string, local?: boolean }>
 		) => {
 			const { consumerId, local } = action.payload;
+			const consumer = state.find((c) => c.id === consumerId);
 
-			if (local) state.consumers[consumerId].localPaused = true;
-			else state.consumers[consumerId].remotePaused = true;
+			if (consumer) {
+				if (local) {
+					consumer.localPaused = true;
+				} else {
+					consumer.remotePaused = true;
+				}
+			}
 		}),
 		setConsumerResumed: ((
 			state,
 			action: PayloadAction<{ consumerId: string, local?: boolean }>
 		) => {
 			const { consumerId, local } = action.payload;
+			const consumer = state.find((c) => c.id === consumerId);
 
-			if (local) state.consumers[consumerId].localPaused = false;
-			else state.consumers[consumerId].remotePaused = false;
+			if (consumer) {
+				if (local) {
+					consumer.localPaused = false;
+				} else {
+					consumer.remotePaused = false;
+				}
+			}
 		}),
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(peersActions.removePeer, (state, action) => {
+				return state.filter((consumer) => consumer.peerId !== action.payload.id);
+			});
+	}
 });
 
 export const consumersActions = consumersSlice.actions;

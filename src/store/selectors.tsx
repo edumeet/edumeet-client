@@ -17,30 +17,22 @@ const roomPermissionsSelect: Selector<Record<Permission, Role[]> | undefined> =
 	(state) => state.permissions.roomPermissions;
 const roomAllowWhenRoleMissing: Selector<Permission[] | undefined> =
 	(state) => state.permissions.allowWhenRoleMissing;
-const getPeerConsumers = (state: RootState, id: string) =>
-	(state.peers[id] ? state.peers[id].consumers : null);
-const producersSelect: Selector<Record<string, StateProducer>> =
+const producersSelect: Selector<StateProducer[]> =
 	(state) => state.producers;
-const consumersSelect: Selector<Record<string, StateConsumer>> =
+const consumersSelect: Selector<StateConsumer[]> =
 	(state) => state.consumers;
 const spotlightsSelector: Selector<string[]> =
 	(state) => state.room.spotlights;
-const peersSelector: Selector<Record<string, Peer>> =
+const peersSelector: Selector<Peer[]> =
 	(state) => state.peers;
 const lobbyPeersSelector: Selector<Record<string, LobbyPeer>> =
 	(state) => state.lobbyPeers;
-const isHidden: Selector<boolean> = (state) => state.ui.hideSelfView;
 const unreadMessages: Selector<number> = (state) => state.drawer.unreadMessages;
 const unreadFiles: Selector<number> = (state) => state.drawer.unreadFiles;
 
-const peersKeySelector = createSelector(
+const peerIdsSelector = createSelector(
 	peersSelector,
-	(peers) => Object.keys(peers)
-);
-
-export const peersValueSelector = createSelector(
-	peersSelector,
-	(peers) => Object.values(peers)
+	(peers) => peers.map((peer) => peer.id),
 );
 
 export const lobbyPeersKeySelector = createSelector(
@@ -48,54 +40,44 @@ export const lobbyPeersKeySelector = createSelector(
 	(lobbyPeers) => Object.keys(lobbyPeers)
 );
 
-const producersValuesSelector = createSelector(
-	producersSelect,
-	(producers) => Object.values(producers)
-);
-
 export const extraVideoProducersSelector = createSelector(
-	producersValuesSelector,
+	producersSelect,
 	(producers) => producers.filter((producer) => producer.source === 'extravideo')
 );
 
 export const micProducerSelector = createSelector(
-	producersValuesSelector,
+	producersSelect,
 	(producers) => producers.find((producer) => producer.source === 'mic')
 );
 
 export const webcamProducerSelector = createSelector(
-	producersValuesSelector,
+	producersSelect,
 	(producers) => producers.find((producer) => producer.source === 'webcam')
 );
 
 export const screenProducerSelector = createSelector(
-	producersValuesSelector,
+	producersSelect,
 	(producers) => producers.find((producer) => producer.source === 'screen')
 );
 
-const consumersValuesSelector = createSelector(
-	consumersSelect,
-	(consumers) => Object.values(consumers)
-);
-
 export const micConsumerSelector = createSelector(
-	consumersValuesSelector,
+	consumersSelect,
 	(consumers) => consumers.filter((consumer) => consumer.source === 'mic')
 );
 
 export const webcamConsumerSelector = createSelector(
-	consumersValuesSelector,
+	consumersSelect,
 	(consumers) => consumers.filter((consumer) => consumer.source === 'webcam')
 );
 
 export const screenConsumerSelector = createSelector(
-	consumersValuesSelector,
+	consumersSelect,
 	(consumers) => consumers.filter((consumer) => consumer.source === 'screen')
 );
 
 export const spotlightScreenConsumerSelector = createSelector(
 	spotlightsSelector,
-	consumersValuesSelector,
+	consumersSelect,
 	(spotlights, consumers) =>
 		consumers.filter(
 			(consumer) => consumer.source === 'screen' && spotlights.includes(consumer.peerId)
@@ -104,7 +86,7 @@ export const spotlightScreenConsumerSelector = createSelector(
 
 export const spotlightExtraVideoConsumerSelector = createSelector(
 	spotlightsSelector,
-	consumersValuesSelector,
+	consumersSelect,
 	(spotlights, consumers) =>
 		consumers.filter(
 			(consumer) => consumer.source === 'extravideo' && spotlights.includes(consumer.peerId)
@@ -113,7 +95,7 @@ export const spotlightExtraVideoConsumerSelector = createSelector(
 
 export const passiveMicConsumerSelector = createSelector(
 	spotlightsSelector,
-	consumersValuesSelector,
+	consumersSelect,
 	(spotlights, consumers) =>
 		consumers.filter(
 			(consumer) => consumer.source === 'mic' && !spotlights.includes(consumer.peerId)
@@ -144,14 +126,14 @@ export const spotlightsLengthSelector = createSelector(
 
 export const spotlightPeersSelector = createSelector(
 	spotlightsSelector,
-	peersKeySelector,
+	peerIdsSelector,
 	(spotlights, peers) =>
 		peers.filter((peerId) => spotlights.includes(peerId))
 );
 
 export const spotlightSortedPeersSelector = createSelector(
 	spotlightsSelector,
-	peersValueSelector,
+	peersSelector,
 	(spotlights, peers) =>
 		peers.filter((peer) => spotlights.includes(peer.id) && !peer.raisedHand)
 			.sort((a, b) => String(a.displayName || '')
@@ -160,7 +142,7 @@ export const spotlightSortedPeersSelector = createSelector(
 );
 
 export const participantListSelector = createSelector(
-	[ spotlightsSelector, peersValueSelector ],
+	[ spotlightsSelector, peersSelector ],
 	(spotlights, peers) => {
 		const raisedHandSortedPeers =
 			peers.filter((peer) => peer.raisedHand)
@@ -188,7 +170,7 @@ export const participantListSelector = createSelector(
 );
 
 export const peersLengthSelector = createSelector(
-	peersValueSelector,
+	peersSelector,
 	(peers) => peers.length
 );
 
@@ -199,14 +181,14 @@ export const lobbyPeersLengthSelector = createSelector(
 
 export const passivePeersSelector = createSelector(
 	spotlightsSelector,
-	peersValueSelector,
+	peersSelector,
 	(spotlights, peers) =>
 		peers.filter((peer) => !spotlights.includes(peer.id))
 			.sort((a, b) => String(a.displayName || '').localeCompare(String(b.displayName || '')))
 );
 
 export const raisedHandsSelector = createSelector(
-	peersValueSelector,
+	peersSelector,
 	(peers) => peers.reduce((a, b) => (a + (b.raisedHand ? 1 : 0)), 0)
 );
 
@@ -219,23 +201,21 @@ export const unreadSelector = createSelector(
 );
 
 export const videoBoxesSelector = createSelector(
-	isHidden,
 	spotlightsLengthSelector,
 	screenProducerSelector,
 	spotlightScreenConsumerSelector,
 	extraVideoProducersSelector,
 	spotlightExtraVideoConsumerSelector,
 	(
-		hidden,
 		spotlightsLength,
 		screenProducer,
 		screenConsumers,
 		extraVideoProducers,
 		extraVideoConsumers
 	) =>
-		spotlightsLength + (hidden ? 0 : 1) +
-			(hidden ? 0 : screenProducer ? 1 : 0) + screenConsumers.length +
-			(hidden ? 0 : extraVideoProducers.length) + extraVideoConsumers.length
+		1 + spotlightsLength +
+			(screenProducer ? 1 : 0) + screenConsumers.length +
+			(extraVideoProducers.length) + extraVideoConsumers.length
 );
 
 export const meProducersSelector = createSelector(
@@ -253,24 +233,18 @@ export const meProducersSelector = createSelector(
 );
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const makePeerConsumerSelector = () => {
+export const makePeerConsumerSelector = (id: string) => {
 	return createSelector(
-		getPeerConsumers,
 		consumersSelect,
-		(consumers: string[], allConsumers: Record<string, StateConsumer>) => {
-			if (!consumers)
-				return null;
-
-			const consumersArray = consumers
-				.map((consumerId) => allConsumers[consumerId]);
+		(consumers: StateConsumer[]) => {
 			const micConsumer =
-				consumersArray.find((consumer) => consumer.source === 'mic');
+				consumers.find((consumer) => consumer.peerId === id && consumer.source === 'mic');
 			const webcamConsumer =
-				consumersArray.find((consumer) => consumer.source === 'webcam');
+				consumers.find((consumer) => consumer.peerId === id && consumer.source === 'webcam');
 			const screenConsumer =
-				consumersArray.find((consumer) => consumer.source === 'screen');
+				consumers.find((consumer) => consumer.peerId === id && consumer.source === 'screen');
 			const extraVideoConsumers =
-				consumersArray.filter((consumer) => consumer.source === 'extravideo');
+				consumers.filter((consumer) => consumer.peerId === id && consumer.source === 'extravideo');
 
 			return { micConsumer, webcamConsumer, screenConsumer, extraVideoConsumers };
 		}
@@ -283,7 +257,7 @@ export const makePermissionSelector =
 			meRolesSelect,
 			roomPermissionsSelect,
 			roomAllowWhenRoleMissing,
-			peersValueSelector,
+			peersSelector,
 			(roles, roomPermissions, allowWhenRoleMissing, peers) => {
 				if (!roomPermissions)
 					return false;

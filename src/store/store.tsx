@@ -14,13 +14,15 @@ import createMediaMiddleware from './middleware/mediaMiddleware';
 import createSignalingMiddleware from './middleware/signalingMiddleware';
 import createRoomMiddleware from './middleware/roomMiddleware';
 import createFilesharingMiddleware from './middleware/filesharingMiddleware';
+import createLobbyMiddleware from './middleware/lobbyMiddleware';
+import createPeerMiddleware from './middleware/peerMiddleware';
+import createPermissionsMiddleware from './middleware/permissionsMiddleware';
 import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
 import consumersSlice from './slices/consumersSlice';
 import signalingSlice from './slices/signalingSlice';
 import webrtcSlice from './slices/webrtcSlice';
 import permissionsSlice from './slices/permissionsSlice';
-import createPermissionsMiddleware from './middleware/permissionsMiddleware';
 import lobbyPeersSlice from './slices/lobbyPeersSlice';
 import settingsSlice from './slices/settingsSlice';
 import drawerSlice from './slices/drawerSlice';
@@ -87,6 +89,16 @@ export const store = configureStore({
 				signalingService
 			}),
 			createMediaMiddleware({
+				config: edumeetConfig,
+				mediaService,
+				signalingService
+			}),
+			createPeerMiddleware({
+				config: edumeetConfig,
+				mediaService,
+				signalingService
+			}),
+			createLobbyMiddleware({
 				config: edumeetConfig,
 				mediaService,
 				signalingService

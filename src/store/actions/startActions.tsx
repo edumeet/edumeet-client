@@ -36,6 +36,8 @@ export const startListeners = () =>
 				newDevices
 			);
 
+			// TODO: notify about removed or new devices
+
 			dispatch(meActions.setDevices({ devices }));
 		});
 
