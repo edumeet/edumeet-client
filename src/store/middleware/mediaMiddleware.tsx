@@ -13,7 +13,6 @@ import { producersActions } from '../slices/producersSlice';
 import { deviceActions } from '../slices/deviceSlice';
 import { meActions } from '../slices/meSlice';
 import { settingsActions } from '../slices/settingsSlice';
-import { peersActions } from '../slices/peersSlice';
 
 const logger = new Logger('MediaMiddleware');
 

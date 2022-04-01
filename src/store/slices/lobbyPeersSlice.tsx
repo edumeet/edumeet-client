@@ -7,36 +7,28 @@ export interface LobbyPeer {
 	promotionInProgress?: boolean;
 }
 
-export type LobbyPeersState = Record<string, LobbyPeer>;
+export type LobbyPeersState = LobbyPeer[];
 
-const initialState: LobbyPeersState = {};
+const initialState: LobbyPeersState = [];
 
 const lobbyPeersSlice = createSlice({
 	name: 'lobbyPeers',
 	initialState,
 	reducers: {
-		addPeers: ((state, action: PayloadAction<Record<string, LobbyPeer>>) => {
-			return {
-				...state,
-				...action.payload
-			};
+		addPeers: ((state, action: PayloadAction<LobbyPeer[]>) => {
+			return [ ...state, ...action.payload ];
 		}),
 		addPeer: ((state, action: PayloadAction<LobbyPeer>) => {
-			state[action.payload.id] = {
-				...action.payload
-			};
+			state.push(action.payload);
 		}),
 		removePeer: ((state, action: PayloadAction<LobbyPeer>) => {
-			delete state[action.payload.id];
+			return state.filter((peer) => peer.id !== action.payload.id);
 		}),
 		updatePeer: ((state, action: PayloadAction<LobbyPeer>) => {
-			const peer = state[action.payload.id];
+			let peer = state.find((p) => p.id === action.payload.id);
 
 			if (peer) {
-				state[action.payload.id] = {
-					...peer,
-					...action.payload
-				};
+				peer = { ...peer, ...action.payload };
 			}
 		}),
 	},

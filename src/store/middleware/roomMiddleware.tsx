@@ -88,7 +88,7 @@ const createRoomMiddleware = ({
 					// fileHistory, // [ file, ... ]
 					lastNHistory, // [ peerId, ... ]
 					locked, // boolean
-					lobbyPeers, // { peerId: LobbyPeer, ... }
+					lobbyPeers, // [ LobbyPeer, ... ]
 				} = await signalingService.sendRequest('join', {
 					displayName,
 					picture,

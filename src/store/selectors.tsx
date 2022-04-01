@@ -25,7 +25,7 @@ const spotlightsSelector: Selector<string[]> =
 	(state) => state.room.spotlights;
 const peersSelector: Selector<Peer[]> =
 	(state) => state.peers;
-const lobbyPeersSelector: Selector<Record<string, LobbyPeer>> =
+const lobbyPeersSelector: Selector<LobbyPeer[]> =
 	(state) => state.lobbyPeers;
 const unreadMessages: Selector<number> = (state) => state.drawer.unreadMessages;
 const unreadFiles: Selector<number> = (state) => state.drawer.unreadFiles;
@@ -33,11 +33,6 @@ const unreadFiles: Selector<number> = (state) => state.drawer.unreadFiles;
 const peerIdsSelector = createSelector(
 	peersSelector,
 	(peers) => peers.map((peer) => peer.id),
-);
-
-export const lobbyPeersKeySelector = createSelector(
-	lobbyPeersSelector,
-	(lobbyPeers) => Object.keys(lobbyPeers)
 );
 
 export const extraVideoProducersSelector = createSelector(
@@ -175,7 +170,7 @@ export const peersLengthSelector = createSelector(
 );
 
 export const lobbyPeersLengthSelector = createSelector(
-	lobbyPeersKeySelector,
+	lobbyPeersSelector,
 	(peers) => peers.length
 );
 

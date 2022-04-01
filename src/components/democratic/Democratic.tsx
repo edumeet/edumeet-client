@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { spotlightPeersSelector, videoBoxesSelector } from '../../store/selectors';
 import Me from '../me/Me';
