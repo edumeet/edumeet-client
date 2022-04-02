@@ -34,7 +34,9 @@ interface ServerClientEvents {
 interface ClientServerEvents {
 	request: (request: SocketOutboundRequest, result: (
 		timeout: Error | null,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		serverError: any | null,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		responseData: any) => void
 	) => void;
 }
@@ -85,6 +87,7 @@ export class SignalingService extends EventEmitter {
 		});
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	_sendRequest(socketMessage: SocketOutboundRequest): Promise<any> {
 		return new Promise((resolve, reject) => {
 			if (!this.socket) {
@@ -110,6 +113,7 @@ export class SignalingService extends EventEmitter {
 			PauseProducerData |
 			ResumeProducerData |
 			undefined,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	): Promise<any> {
 		logger.debug('sendRequest() [method:%s, data:%o]', method, data);
 

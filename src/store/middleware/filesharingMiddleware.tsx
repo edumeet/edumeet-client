@@ -3,29 +3,27 @@ import WebTorrent from 'webtorrent';
 import { Logger } from '../../utils/logger';
 import { roomActions } from '../slices/roomSlice';
 import { webrtcActions } from '../slices/webrtcSlice';
-import { MiddlewareOptions } from '../store';
 
 const logger = new Logger('FilesharingMiddleware');
 
-const createFilesharingMiddleware = ({
-	signalingService
-}: MiddlewareOptions): Middleware => {
+const createFilesharingMiddleware = (): Middleware => {
 	logger.debug('createFilesharingMiddleware()');
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let webTorrent: any;
 
 	const middleware: Middleware = ({ dispatch, getState }) =>
 		(next) => (action) => {
 			if (WebTorrent.WEBRTC_SUPPORT) {
 				if (roomActions.updateRoom.match(action) && action.payload.joined) {
-					dispatch(webrtcActions.setTorrentSupport({ torrentSupport: true }));
+					dispatch(webrtcActions.setTorrentSupport(true));
 
-					const turnServers = getState().room.turnServers;
+					const iceServers = getState().room.iceServers;
 
 					webTorrent = new WebTorrent({
 						tracker: {
 							rtcConfig: {
-								iceServers: turnServers
+								iceServers: iceServers
 							}
 						},
 					});

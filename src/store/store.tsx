@@ -103,11 +103,7 @@ export const store = configureStore({
 				mediaService,
 				signalingService
 			}),
-			createFilesharingMiddleware({
-				config: edumeetConfig,
-				mediaService,
-				signalingService
-			}),
+			createFilesharingMiddleware(),
 			createPermissionsMiddleware({
 				config: edumeetConfig,
 				mediaService,

@@ -11,7 +11,7 @@ const createLobbyMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createLobbyMiddleware()');
 
-	const middleware: Middleware = ({ dispatch, getState }) =>
+	const middleware: Middleware = ({ dispatch }) =>
 		(next) => (action) => {
 			if (signalingActions.connected.match(action)) {
 				signalingService.on('notification', (notification) => {

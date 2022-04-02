@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { updateScreen } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { makePermissionSelector, screenProducerSelector } from '../../store/selectors';
 import { producersActions } from '../../store/slices/producersSlice';
@@ -14,6 +13,7 @@ import {
 import ScreenIcon from '@mui/icons-material/ScreenShare';
 import ScreenOffIcon from '@mui/icons-material/StopScreenShare';
 import ControlButton, { ControlButtonProps } from './ControlButton';
+import { deviceActions } from '../../store/slices/deviceSlice';
 
 const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
@@ -27,7 +27,7 @@ const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 
 	const {
 		canShareScreen,
-		screenShareInProgress
+		screenSharingInProgress
 	} = useAppSelector((state) => state.me);
 
 	let screenState: MediaState, screenTip;
@@ -50,7 +50,7 @@ const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 				if (screenState === 'unsupported') return;
 
 				if (screenState === 'off') {
-					dispatch(updateScreen({
+					dispatch(deviceActions.updateScreenSharing({
 						start: true
 					}));
 				} else if (screenProducer) {
@@ -64,7 +64,7 @@ const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 					// Shouldn't happen
 				}
 			}}
-			disabled={screenState === 'unsupported' || screenShareInProgress}
+			disabled={screenState === 'unsupported' || screenSharingInProgress}
 			on={screenState === 'on'}
 			{ ...props }
 		>

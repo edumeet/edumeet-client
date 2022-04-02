@@ -27,8 +27,8 @@ const drawerSlice = createSlice({
 				state.unreadFiles = 0;
 			}
 		}),
-		setTab: ((state, action: PayloadAction<{ tab: ToolAreaTab }>) => {
-			state.tab = action.payload.tab;
+		setTab: ((state, action: PayloadAction<ToolAreaTab>) => {
+			state.tab = action.payload;
 		}),
 		addMessage: ((state) => {
 			if (state.open && state.tab === 'chat') {

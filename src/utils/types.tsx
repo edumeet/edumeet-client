@@ -189,6 +189,7 @@ export interface AudioPreset {
 
 export interface SocketInboundNotification {
 	method: string; // TODO: define inbound notification method strings
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data?: any; // TODO: define inbound notification data
 }
 
@@ -230,6 +231,7 @@ export interface ProduceData {
 	transportId: string;
 	kind: MediaKind;
 	rtpParameters: RtpParameters;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	appData?: any;
 }
 

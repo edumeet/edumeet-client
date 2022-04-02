@@ -45,7 +45,7 @@ export class MediaService extends EventEmitter {
 		return this.tracks.get(trackId);
 	}
 
-	public addTrack(track: MediaStreamTrack) {
+	public addTrack(track: MediaStreamTrack): void {
 		logger.debug('addTrack() [trackId:%s]', track.id);
 
 		this.tracks.set(track.id, track);
@@ -62,7 +62,7 @@ export class MediaService extends EventEmitter {
 		width: number | undefined,
 		height: number | undefined,
 		screenSharing?: boolean
-	) {
+	): RtpEncodingParameters[] {
 		if (!width || !height) {
 			throw new Error('missing width or height');
 		}
@@ -114,14 +114,17 @@ export class MediaService extends EventEmitter {
 		return encodings;
 	}
 	
-	public getVideoConstrains(resolution: Resolution, aspectRatio: number) {
+	public getVideoConstrains(
+		resolution: Resolution,
+		aspectRatio: number
+	): Record<'width' | 'height', Record<'ideal', number>> {
 		return {
 			width: { ideal: VIDEO_CONSTRAINS[resolution].width },
 			height: { ideal: VIDEO_CONSTRAINS[resolution].width / aspectRatio }
 		};
 	}
 
-	public async updateMediaDevices() {
+	public async updateMediaDevices(): Promise<void> {
 		logger.debug('updateMediaDevices()');
 
 		let removedDevices: MediaDevice[];

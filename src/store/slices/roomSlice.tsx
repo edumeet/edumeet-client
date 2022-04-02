@@ -38,28 +38,26 @@ const roomSlice = createSlice({
 		}),
 		setRoomState: ((
 			state,
-			action: PayloadAction<{
-				state: RoomConnectionState
-			}>
+			action: PayloadAction<RoomConnectionState>
 		) => {
-			state.state = action.payload.state;
+			state.state = action.payload;
 		}),
-		selectPeer: ((state, action: PayloadAction<{ peerId: string }>) => {
-			state.selectedPeers.push(action.payload.peerId);
+		selectPeer: ((state, action: PayloadAction<string>) => {
+			state.selectedPeers.push(action.payload);
 		}),
-		deselectPeer: ((state, action: PayloadAction<{ peerId: string }>) => {
+		deselectPeer: ((state, action: PayloadAction<string>) => {
 			state.selectedPeers =
-				state.selectedPeers.filter((peer) => peer !== action.payload.peerId);
+				state.selectedPeers.filter((peer) => peer !== action.payload);
 		}),
-		addSpotlightList: ((state, action: PayloadAction<{ spotlights: string }>) => {
-			state.spotlights = [ ...action.payload.spotlights ];
+		addSpotlightList: ((state, action: PayloadAction<string[]>) => {
+			state.spotlights = [ ...action.payload ];
 		}),
-		spotlightPeer: ((state, action: PayloadAction<{ peerId: string }>) => {
-			state.spotlights.push(action.payload.peerId);
+		spotlightPeer: ((state, action: PayloadAction<string>) => {
+			state.spotlights.push(action.payload);
 		}),
-		deSpotlightPeer: ((state, action: PayloadAction<{ peerId: string }>) => {
+		deSpotlightPeer: ((state, action: PayloadAction<string>) => {
 			state.spotlights =
-				state.spotlights.filter((peer) => peer !== action.payload.peerId);
+				state.spotlights.filter((peer) => peer !== action.payload);
 		}),
 	},
 	extraReducers: (builder) => {

@@ -1,8 +1,8 @@
 import { AccountCircle } from '@mui/icons-material';
 import { MenuItem } from '@mui/material';
 import { useIntl } from 'react-intl';
+import { login, logout } from '../../store/actions/permissionsActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { permissionsActions } from '../../store/slices/permissionsSlice';
 import MoreActions from '../moreactions/MoreActions';
 import {
 	loginLabel,
@@ -23,7 +23,7 @@ const LoginMenuItem = ({ onClick }: LoginMenuProps): JSX.Element => {
 
 	const itemOnClick = () => {
 		onClick();
-		dispatch(permissionsActions.setLoggedIn({ loggedIn: !loggedIn }));
+		loggedIn ? dispatch(logout()) : dispatch(login());
 	};
 
 	const loginButtonLabel = loggedIn ? logoutLabel(intl) : loginLabel(intl);

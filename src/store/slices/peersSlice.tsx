@@ -35,10 +35,51 @@ const peersSlice = createSlice({
 			return state.filter((peer) => peer.id !== action.payload.id);
 		}),
 		updatePeer: ((state, action: PayloadAction<PeerUpdate>) => {
-			let peer = state.find((p) => p.id === action.payload.id);
+			const peer = state.find((p) => p.id === action.payload.id);
 
 			if (peer) {
-				peer = { ...peer, ...action.payload };
+				const {
+					displayName,
+					picture,
+					videoInProgress,
+					stopVideoInProgress,
+					audioInProgress,
+					stopAudioInProgress,
+					screenInProgress,
+					stopScreenSharingInProgress,
+					kickInProgress,
+					modifyRolesInProgress,
+					raisedHandInProgress,
+					raisedHand,
+					raisedHandTimestamp
+				} = action.payload;
+
+				if (displayName)
+					peer.displayName = displayName;
+				if (picture)
+					peer.picture = picture;
+				if (videoInProgress !== undefined)
+					peer.videoInProgress = videoInProgress;
+				if (stopVideoInProgress !== undefined)
+					peer.stopVideoInProgress = stopVideoInProgress;
+				if (audioInProgress !== undefined)
+					peer.audioInProgress = audioInProgress;
+				if (stopAudioInProgress !== undefined)
+					peer.stopAudioInProgress = stopAudioInProgress;
+				if (screenInProgress !== undefined)
+					peer.screenInProgress = screenInProgress;
+				if (stopScreenSharingInProgress !== undefined)
+					peer.stopScreenSharingInProgress = stopScreenSharingInProgress;
+				if (kickInProgress !== undefined)
+					peer.kickInProgress = kickInProgress;
+				if (modifyRolesInProgress !== undefined)
+					peer.modifyRolesInProgress = modifyRolesInProgress;
+				if (raisedHandInProgress !== undefined)
+					peer.raisedHandInProgress = raisedHandInProgress;
+				if (raisedHand !== undefined)
+					peer.raisedHand = raisedHand;
+				if (raisedHandTimestamp !== undefined)
+					peer.raisedHandTimestamp = raisedHandTimestamp;
 			}
 		}),
 		addRole: ((state, action: PayloadAction<{ id: string, roleId: number }>) => {

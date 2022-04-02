@@ -3,9 +3,6 @@ import fscreen from 'fscreen';
 import Notifications from '../../components/notifications/Notifications';
 import MeetingDrawer from '../../components/meetingdrawer/MeetingDrawer';
 import Democratic from '../../components/democratic/Democratic';
-import AudioPeers from '../../components/audiopeers/AudioPeers';
-import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
-import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import LockDialog from '../../components/lockdialog/LockDialog';
 import Settings from '../../components/settingsdialog/SettingsDialog';
 import TopBar from '../../components/topbar/TopBar';
@@ -116,7 +113,6 @@ const Room = (): JSX.Element => {
 
 				<AudioPeers />
 			*/}
-			
 
 			{ settings.showNotifications &&
 				<Notifications />
@@ -161,7 +157,7 @@ const Room = (): JSX.Element => {
 				</StyledNav>
 			}
 
-			<Democratic advancedMode={settings.advancedMode} />
+			<Democratic />
 
 			{ ui.lockDialogOpen &&
 				<LockDialog />

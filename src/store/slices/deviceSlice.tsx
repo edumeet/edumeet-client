@@ -9,6 +9,18 @@ interface UpdateWebcamOptions {
 	newFrameRate?: number;
 }
 
+interface UpdateMicOptions {
+	start?: boolean;
+	restart?: boolean;
+	newDeviceId?: string;
+}
+
+interface UpdateScreenSharingOptions {
+	start?: boolean;
+	newResolution?: string;
+	newFrameRate?: number;
+}
+
 const deviceSlice = createSlice({
 	name: 'device',
 	initialState: {},
@@ -19,6 +31,18 @@ const deviceSlice = createSlice({
 		) => {
 			// Dummy action, intercepted in mediaMiddleware
 		}),
+		updateMic: ((
+			// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+			state, action: PayloadAction<UpdateMicOptions>
+		) => {
+			// Dummy action, intercepted in mediaMiddleware
+		}),
+		updateScreenSharing: ((
+			// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+			state, action: PayloadAction<UpdateScreenSharingOptions>
+		) => {
+			// Dummy action, intercepted in mediaMiddleware
+		})
 	},
 });
 

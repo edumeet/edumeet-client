@@ -11,6 +11,10 @@
 # production
 /build
 
+/public/config/config.js
+/public/images/logo.*
+!/public/images/logo.edumeet.svg
+
 # misc
 .DS_Store
 .env.local

@@ -144,6 +144,8 @@ const createMediaMiddleware = ({
 
 					await mediasoup.load({ routerRtpCapabilities });
 
+					const { iceServers } = getState().webrtc;
+
 					{
 						const {
 							id,
@@ -161,6 +163,7 @@ const createMediaMiddleware = ({
 							iceParameters,
 							iceCandidates,
 							dtlsParameters,
+							iceServers
 						});
 
 						// eslint-disable-next-line no-shadow
@@ -207,6 +210,7 @@ const createMediaMiddleware = ({
 							iceParameters,
 							iceCandidates,
 							dtlsParameters,
+							iceServers
 						});
 
 						// eslint-disable-next-line no-shadow
@@ -221,11 +225,7 @@ const createMediaMiddleware = ({
 					}
 
 					// This will trigger "join" in roomMiddleware
-					dispatch(
-						webrtcActions.setRtpCapabilities({
-							rtpCapabilities: mediasoup.rtpCapabilities
-						})
-					);
+					dispatch(webrtcActions.setRtpCapabilities(mediasoup.rtpCapabilities));
 				} catch (error) {
 					logger.error('error on starting mediasoup transports [error:%o]', error);
 				}
@@ -336,7 +336,7 @@ const createMediaMiddleware = ({
 					newFrameRate
 				);
 
-				dispatch(meActions.setWebcamInProgress({ webcamInProgress: true }));
+				dispatch(meActions.setVideoInProgress(true));
 
 				let track: MediaStreamTrack | null;
 				let webcamProducer: Producer | undefined;
@@ -348,23 +348,14 @@ const createMediaMiddleware = ({
 					if (newDeviceId && !restart)
 						throw new Error('changing device requires restart');
 	
-					if (newDeviceId) {
-						dispatch(
-							settingsActions.setSelectedVideoDevice({
-								deviceId: newDeviceId
-							})
-						);
-					}
+					if (newDeviceId)
+						dispatch(settingsActions.setSelectedVideoDevice(newDeviceId));
 			
-					if (newResolution) {
-						dispatch(
-							settingsActions.setResolution({ resolution: newResolution }));
-					}
+					if (newResolution)
+						dispatch(settingsActions.setResolution(newResolution));
 			
-					if (newFrameRate) {
-						dispatch(
-							settingsActions.setFrameRate({ frameRate: newFrameRate }));
-					}
+					if (newFrameRate)
+						dispatch(settingsActions.setFrameRate(newFrameRate));
 
 					/*
 						const { videoMuted } = store.getState().settings;
@@ -413,11 +404,7 @@ const createMediaMiddleware = ({
 
 						// User may have chosen a different device than the one initially selected
 						// so we need to update the selected device in the settings just in case
-						dispatch(
-							settingsActions.setSelectedVideoDevice({
-								deviceId: trackDeviceId
-							})
-						);
+						dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
 
 						if (config.simulcast) {
 							const encodings = mediaService.getEncodings(
@@ -466,7 +453,7 @@ const createMediaMiddleware = ({
 							kind: webcamProducer.kind,
 							source: webcamProducer.appData.source,
 							paused: webcamProducer.paused,
-							trackId: webcamProducer.track?.id,
+							trackId: webcamProducer.track.id,
 						}));
 
 						webcamProducer.observer.once('close', () => {
@@ -515,10 +502,200 @@ const createMediaMiddleware = ({
 
 					await mediaService.updateMediaDevices();
 				} catch (error) {
-					logger.error('updateWebcam() [error:"%o"]', error);
+					logger.error('updateWebcam() [error:%o]', error);
 				} finally {
-					dispatch(meActions.setWebcamInProgress({ webcamInProgress: false }));
+					dispatch(meActions.setVideoInProgress(false));
 				}
+			}
+
+			if (deviceActions.updateMic.match(action)) {
+				const {
+					start,
+					restart,
+					newDeviceId
+				} = action.payload;
+
+				logger.debug(
+					'MediaMiddleware.updateMic [start:%s, restart:%s, newDeviceId:"%s"]',
+					start,
+					restart,
+					newDeviceId
+				);
+
+				dispatch(meActions.setAudioInProgress(true));
+
+				let track: MediaStreamTrack | null;
+				let micProducer: Producer | undefined;
+
+				try {
+					if (!mediasoup.canProduce('audio'))
+						throw new Error('cannot produce audio');
+
+					if (newDeviceId && !restart)
+						throw new Error('changing device requires restart');
+
+					if (newDeviceId)
+						dispatch(settingsActions.setSelectedAudioDevice(newDeviceId));
+
+					const { selectedAudioDevice } = getState().settings;
+
+					const deviceId = mediaService.getDeviceId(selectedAudioDevice, 'audioinput');
+		
+					if (!deviceId)
+						throw new Error('no audio devices');
+
+					const {
+						autoGainControl,
+						echoCancellation,
+						noiseSuppression,
+						sampleRate,
+						channelCount,
+						sampleSize,
+						opusStereo,
+						opusDtx,
+						opusFec,
+						opusPtime,
+						opusMaxPlaybackRate
+					} = getState().settings;
+
+					micProducer =
+						Array.from(producers.values())
+							.find((producer) => producer.appData.source === 'mic');
+
+					if ((restart && micProducer) || start) {
+						let muted = false;
+
+						if (micProducer) {
+							muted = micProducer.paused;
+
+							dispatch(producersActions.closeProducer({
+								producerId: micProducer.id,
+								local: true
+							}));
+						}
+
+						const stream = await navigator.mediaDevices.getUserMedia({
+							audio: {
+								deviceId: { ideal: deviceId },
+								sampleRate,
+								channelCount,
+								autoGainControl,
+								echoCancellation,
+								noiseSuppression,
+								sampleSize
+							}
+						});
+		
+						([ track ] = stream.getAudioTracks());
+		
+						const { deviceId: trackDeviceId } = track.getSettings();
+		
+						dispatch(settingsActions.setSelectedAudioDevice(trackDeviceId));
+		
+						micProducer = await sendTransport.produce({
+							track,
+							codecOptions: {
+								opusStereo: opusStereo,
+								opusFec: opusFec,
+								opusDtx: opusDtx,
+								opusMaxPlaybackRate: opusMaxPlaybackRate,
+								opusPtime: opusPtime
+							},
+							appData: { source: 'mic' }
+						});
+
+						if (!micProducer.track) {
+							throw new Error('no mic track');
+						}
+
+						const { id: producerId } = micProducer;
+
+						producers.set(producerId, micProducer);
+						mediaService.addTrack(micProducer.track);
+		
+						dispatch(producersActions.addProducer({
+							id: micProducer.id,
+							kind: micProducer.kind,
+							source: micProducer.appData.source,
+							paused: micProducer.paused,
+							trackId: micProducer.track.id,
+						}));
+
+						micProducer.observer.once('close', () => {
+							producers.delete(producerId);
+						});
+		
+						micProducer.on('transportclose', () => {
+							dispatch(
+								producersActions.closeProducer({
+									producerId,
+									local: true
+								})
+							);
+						});
+		
+						micProducer.on('trackended', () => {
+							dispatch(
+								producersActions.closeProducer({
+									producerId,
+									local: true
+								})
+							);
+						});
+		
+						if (muted) {
+							dispatch(
+								producersActions.setProducerPaused({
+									producerId: micProducer.id,
+									local: true
+								})
+							);
+						} else {
+							dispatch(
+								producersActions.setProducerResumed({
+									producerId: micProducer.id,
+									local: true
+								})
+							);
+						}
+					} else if (micProducer) {
+						({ track } = micProducer);
+
+						await track?.applyConstraints({
+							sampleRate,
+							channelCount,
+							autoGainControl,
+							echoCancellation,
+							noiseSuppression,
+							sampleSize
+						});
+					}
+
+					await mediaService.updateMediaDevices();
+				} catch (error) {
+					logger.error('updateMic() [error:%o]', error);
+				} finally {
+					dispatch(meActions.setAudioInProgress(false));
+				}
+			}
+
+			if (deviceActions.updateScreenSharing.match(action)) {
+				const {
+					start,
+					newResolution,
+					newFrameRate
+				} = action.payload;
+
+				logger.debug(
+					'updateScreenSharing() [start:%s, newResolution:%s, newFrameRate:%s]',
+					start,
+					newResolution,
+					newFrameRate
+				);
+
+				dispatch(meActions.setScreenSharingInProgress(true));
+
+				dispatch(meActions.setScreenSharingInProgress(false));
 			}
 
 			return next(action);

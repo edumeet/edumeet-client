@@ -7,7 +7,6 @@ import { webrtcActions } from '../slices/webrtcSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { peersActions } from '../slices/peersSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
-import { deviceActions } from '../slices/deviceSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -19,7 +18,7 @@ const createRoomMiddleware = ({
 	const middleware: Middleware = ({ dispatch, getState }) =>
 		(next) => async (action) => {
 			if (signalingActions.connect.match(action)) {
-				dispatch(roomActions.setRoomState({ state: 'connecting' }));
+				dispatch(roomActions.setRoomState('connecting'));
 			}
 
 			if (signalingActions.disconnected.match(action)) {
@@ -27,7 +26,7 @@ const createRoomMiddleware = ({
 			}
 
 			if (signalingActions.connected.match(action)) {
-				dispatch(roomActions.setRoomState({ state: 'connected' }));
+				dispatch(roomActions.setRoomState('connected'));
 
 				signalingService.on('notification', (notification) => {
 					logger.debug(
@@ -39,7 +38,7 @@ const createRoomMiddleware = ({
 							case 'roomReady': {
 								const { turnServers } = notification.data;
 
-								dispatch(webrtcActions.setTurnServers({ turnServers }));
+								dispatch(webrtcActions.setIceServers(turnServers));
 								dispatch(roomActions.updateRoom({ inLobby: false, joined: true }));
 								break;
 							}
@@ -71,7 +70,7 @@ const createRoomMiddleware = ({
 
 			// We can't join until we have rtpCapabilities
 			if (webrtcActions.setRtpCapabilities.match(action)) {
-				const { rtpCapabilities } = action.payload;
+				const rtpCapabilities = action.payload;
 				const { displayName } = getState().settings;
 				const { id: meId, picture } = getState().me;
 				const { loggedIn } = getState().permissions;
@@ -101,22 +100,20 @@ const createRoomMiddleware = ({
 				}
 
 				dispatch(lobbyPeersActions.addPeers(lobbyPeers));
-				dispatch(permissionsActions.setRoomPermissions({ roomPermissions }));
-				dispatch(permissionsActions.setUserRoles({ userRoles }));
+				dispatch(permissionsActions.setRoomPermissions(roomPermissions));
+				dispatch(permissionsActions.setUserRoles(userRoles));
 				allowWhenRoleMissing && dispatch(
-					permissionsActions.setAllowWhenRoleMissing({ allowWhenRoleMissing })
+					permissionsActions.setAllowWhenRoleMissing(allowWhenRoleMissing)
 				);
 
 				const spotlights = lastNHistory.filter((peerId: string) => peerId !== meId);
 
-				dispatch(roomActions.addSpotlightList({ spotlights }));
-				dispatch(permissionsActions.addRoles({ roles }));
-				dispatch(webrtcActions.setTracker({ tracker }));
+				dispatch(roomActions.addSpotlightList(spotlights));
+				dispatch(permissionsActions.addRoles(roles));
+				dispatch(webrtcActions.setTracker(tracker));
 				if (loggedIn !== authenticated)
-					dispatch(
-						permissionsActions.setLoggedIn({ loggedIn: authenticated })
-					);
-				dispatch(permissionsActions.setLocked({ locked: Boolean(locked) }));
+					dispatch(permissionsActions.setLoggedIn(authenticated));
+				dispatch(permissionsActions.setLocked(Boolean(locked)));
 			}
 
 			// TODO: reconnect states here

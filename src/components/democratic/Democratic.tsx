@@ -5,10 +5,6 @@ import { spotlightPeersSelector, videoBoxesSelector } from '../../store/selector
 import Me from '../me/Me';
 import Peer from '../peer/Peer';
 
-interface DemocraticProps {
-	advancedMode?: boolean;
-}
-
 const DemocraticDiv = styled('div')({
 	width: '100%',
 	height: '100%',
@@ -23,13 +19,12 @@ const DemocraticDiv = styled('div')({
 
 const FILL_RATE = 0.95;
 
-const Democratic = ({
-	advancedMode
-}: DemocraticProps): JSX.Element => {
+const Democratic = (): JSX.Element => {
 	const peersRef = useRef<HTMLDivElement>(null);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 	const boxes = useAppSelector(videoBoxesSelector);
 	const spotlightPeers = useAppSelector(spotlightPeersSelector);
+	const [ windowSize, setWindowSize ] = useState(0);
 	const [ dimensions, setDimensions ] =
 		useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
@@ -81,19 +76,23 @@ const Democratic = ({
 		const resizeListener = () => {
 			if (timeoutId) clearTimeout(timeoutId);
 			timeoutId = setTimeout(() => {
-				updateDimensions();
+				setWindowSize(window.innerWidth + window.innerHeight);
 	
 				timeoutId = null;
 			}, 250);
 		};
 
 		window.addEventListener('resize', resizeListener);
+
 		updateDimensions();
 
-		return () => window.removeEventListener('resize', resizeListener);
-	}, [ boxes ]);
+		return () => {
+			window.removeEventListener('resize', resizeListener);
+			if (timeoutId) clearTimeout(timeoutId);
+		};
+	}, []);
 
-	useEffect(() => updateDimensions(), [ boxes ]);
+	useEffect(() => updateDimensions(), [ boxes, windowSize ]);
 
 	const style = {
 		width: dimensions.peerWidth,

@@ -1,6 +1,6 @@
 import { AccountCircle } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { permissionsActions } from '../../store/slices/permissionsSlice';
+import { login, logout } from '../../store/actions/permissionsActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const LoginButton = (): JSX.Element => {
@@ -9,7 +9,7 @@ const LoginButton = (): JSX.Element => {
 
 	return (
 		<IconButton
-			onClick={() => dispatch(permissionsActions.setLoggedIn({ loggedIn: !loggedIn }))}
+			onClick={() => (loggedIn ? dispatch(logout()) : dispatch(login()))}
 		>
 			<AccountCircle />
 		</IconButton>

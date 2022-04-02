@@ -16,8 +16,8 @@ export interface MeState {
 	autoMuted: boolean;
 	// Status flags
 	audioInProgress: boolean;
-	webcamInProgress: boolean;
-	screenShareInProgress: boolean;
+	videoInProgress: boolean;
+	screenSharingInProgress: boolean;
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
 }
@@ -34,8 +34,8 @@ const initialState: MeState = {
 	speaking: false,
 	autoMuted: true,
 	audioInProgress: false,
-	webcamInProgress: false,
-	screenShareInProgress: false,
+	videoInProgress: false,
+	screenSharingInProgress: false,
 	displayNameInProgress: false,
 	raisedHandInProgress: false,
 };
@@ -44,11 +44,11 @@ const meSlice = createSlice({
 	name: 'me',
 	initialState,
 	reducers: {
-		setMe: ((state, action: PayloadAction<{ peerId: string }>) => {
-			state.id = action.payload.peerId;
+		setMe: ((state, action: PayloadAction<string>) => {
+			state.id = action.payload;
 		}),
-		setPicture: ((state, action: PayloadAction<{ picture: string }>) => {
-			state.picture = action.payload.picture;
+		setPicture: ((state, action: PayloadAction<string>) => {
+			state.picture = action.payload;
 		}),
 		setMediaCapabilities: ((
 			state,
@@ -64,45 +64,33 @@ const meSlice = createSlice({
 			state.canShareScreen = action.payload.canShareScreen;
 			state.canShareFiles = action.payload.canShareFiles;
 		}),
-		setDevices: ((state, action: PayloadAction<{ devices: MediaDeviceInfo[] }>) => {
-			state.devices = action.payload.devices;
+		setDevices: ((state, action: PayloadAction<MediaDeviceInfo[]>) => {
+			state.devices = action.payload;
 		}),
-		setRaisedHand: ((state, action: PayloadAction<{ raisedHand: boolean }>) => {
-			state.raisedHand = action.payload.raisedHand;
+		setRaisedHand: ((state, action: PayloadAction<boolean>) => {
+			state.raisedHand = action.payload;
 		}),
-		setSpeaking: ((state, action: PayloadAction<{ speaking: boolean }>) => {
-			state.speaking = action.payload.speaking;
+		setSpeaking: ((state, action: PayloadAction<boolean>) => {
+			state.speaking = action.payload;
 		}),
-		setAutoMuted: ((state, action: PayloadAction<{ autoMuted: boolean }>) => {
-			state.autoMuted = action.payload.autoMuted;
+		setAutoMuted: ((state, action: PayloadAction<boolean>) => {
+			state.autoMuted = action.payload;
 		}),
 		// Status flags
-		setAudioInProgress: ((state, action: PayloadAction<{ audioInProgress: boolean }>) => {
-			state.audioInProgress = action.payload.audioInProgress;
+		setAudioInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.audioInProgress = action.payload;
 		}),
-		setWebcamInProgress: ((
-			state,
-			action: PayloadAction<{ webcamInProgress: boolean }>
-		) => {
-			state.webcamInProgress = action.payload.webcamInProgress;
+		setVideoInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.videoInProgress = action.payload;
 		}),
-		setScreenShareInProgress: ((
-			state,
-			action: PayloadAction<{ screenShareInProgress: boolean }>
-		) => {
-			state.screenShareInProgress = action.payload.screenShareInProgress;
+		setScreenSharingInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.screenSharingInProgress = action.payload;
 		}),
-		setRaiseHandInProgress: ((
-			state,
-			action: PayloadAction<{ raisedHandInProgress: boolean }>
-		) => {
-			state.raisedHandInProgress = action.payload.raisedHandInProgress;
+		setRaiseHandInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.raisedHandInProgress = action.payload;
 		}),
-		setDispayNameInProgress: ((
-			state,
-			action: PayloadAction<{ displayNameInProgress: boolean }>
-		) => {
-			state.displayNameInProgress = action.payload.displayNameInProgress;
+		setDispayNameInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.displayNameInProgress = action.payload;
 		}),
 	},
 });

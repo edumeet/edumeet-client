@@ -11,7 +11,7 @@ const createPermissionsMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createPermissionsMiddleware()');
 
-	const middleware: Middleware = ({ dispatch, getState }) =>
+	const middleware: Middleware = ({ dispatch }) =>
 		(next) => async (action) => {
 			if (signalingActions.connected.match(action)) {
 				signalingService.on('notification', (notification) => {
@@ -22,18 +22,18 @@ const createPermissionsMiddleware = ({
 					try {
 						switch (notification.method) {
 							case 'signInRequired': {
-								dispatch(permissionsActions.setLoggedIn({ loggedIn: false }));
-								dispatch(permissionsActions.setSignInRequired({ signInRequired: true }));
+								dispatch(permissionsActions.setLoggedIn(false));
+								dispatch(permissionsActions.setSignInRequired(true));
 								break;
 							}
 
 							case 'lockRoom': {
-								dispatch(permissionsActions.setLocked({ locked: true }));
+								dispatch(permissionsActions.setLocked(true));
 								break;
 							}
 
 							case 'unlockRoom': {
-								dispatch(permissionsActions.setLocked({ locked: false }));
+								dispatch(permissionsActions.setLocked(false));
 								break;
 							}
 						}
@@ -41,35 +41,6 @@ const createPermissionsMiddleware = ({
 						logger.error('error on signalService "notification" event [error:%o]', error);
 					}
 				});
-			}
-
-			if (permissionsActions.setLoggedIn.match(action) && action.payload.local) {
-				const { loggedIn } = action.payload;
-				const { id: peerId } = getState().me;
-				const { name: roomId } = getState().room;
-
-				// Login
-				if (loggedIn) {
-					logger.debug('Login!');
-					window.open(`/auth/login?peerId=${peerId}&roomId=${roomId}`, 'loginWindow');
-				} else { // Logout
-					logger.debug('Logout!');
-					window.open(`/auth/logout?peerId=${peerId}&roomId=${roomId}`, 'logoutWindow');
-				}
-			}
-
-			if (permissionsActions.setLocked.match(action) && action.payload.local) {
-				try {
-					if (action.payload.locked) {
-						await signalingService.sendRequest('lockRoom');
-					} else {
-						await signalingService.sendRequest('unlockRoom');
-					}
-				} catch (error) {
-					logger.error('permissionsActions.setLocked [error:"%o"]', error);
-
-					return;
-				}
 			}
 
 			return next(action);

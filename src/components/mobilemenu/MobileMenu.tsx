@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { makePermissionSelector, peersLengthSelector } from '../../store/selectors';
-import { permissionsActions } from '../../store/slices/permissionsSlice';
+import { lock, unlock } from '../../store/actions/permissionsActions';
 import { permissions } from '../../utils/roles';
 import {
 	aboutLabel,
@@ -46,6 +46,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import { uiActions } from '../../store/slices/uiSlice';
 import { drawerActions } from '../../store/slices/drawerSlice';
 import MoreActions from '../moreactions/MoreActions';
+import { login, logout } from '../../store/actions/permissionsActions';
 
 interface MobileMenuProps {
 	fullscreen: boolean;
@@ -91,7 +92,7 @@ const MobileMenu = ({
 
 	const openUsersTab = () => {
 		dispatch(drawerActions.toggle());
-		dispatch(drawerActions.setTab({ tab: 'users' }));
+		dispatch(drawerActions.setTab('users'));
 	};
 
 	return (
@@ -107,7 +108,7 @@ const MobileMenu = ({
 					aria-label={loginButtonLabel}
 					onClick={() => {
 						onClose();
-						dispatch(permissionsActions.setLoggedIn({ loggedIn: !loggedIn }));
+						loggedIn ? dispatch(logout()) : dispatch(login());
 					}}
 				>
 					<AccountCircle />
@@ -128,7 +129,7 @@ const MobileMenu = ({
 				onClick={() => {
 					onClose();
 
-					dispatch(permissionsActions.setLocked({ locked: !locked }));
+					locked ? dispatch(unlock()) : dispatch(lock());
 				}}
 			>
 				{ locked ? <LockIcon /> : <LockOpenIcon /> }

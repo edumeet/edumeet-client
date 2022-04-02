@@ -34,8 +34,8 @@ import DesktopMenu from '../desktopmenu/DesktopMenu';
 import MobileMenu from '../mobilemenu/MobileMenu';
 import { permissions } from '../../utils/roles';
 import { uiActions } from '../../store/slices/uiSlice';
-import { permissionsActions } from '../../store/slices/permissionsSlice';
 import { AccountCircle } from '@mui/icons-material';
+import { lock, unlock } from '../../store/actions/permissionsActions';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -164,7 +164,7 @@ const TopBar = ({
 
 	const openUsersTab = () => {
 		dispatch(drawerActions.toggle());
-		dispatch(drawerActions.setTab({ tab: 'users' }));
+		dispatch(drawerActions.setTab('users'));
 	};
 
 	const isMobile = platform === 'mobile';
@@ -298,8 +298,7 @@ const TopBar = ({
 									color='inherit'
 									disabled={!canLock}
 									onClick={() =>
-										dispatch(
-											permissionsActions.setLocked({ locked: !locked, local: true }))
+										(locked ? dispatch(unlock()) : dispatch(lock()))
 									}
 								>
 									{ locked ? <LockIcon />:<LockOpenIcon /> }

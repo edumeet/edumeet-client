@@ -3,7 +3,6 @@ import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from '../../utils/logger';
 import { MiddlewareOptions } from '../store';
 import { peersActions } from '../slices/peersSlice';
-import { consumersActions } from '../slices/consumersSlice';
 
 const logger = new Logger('PeerMiddleware');
 
@@ -12,7 +11,7 @@ const createPeerMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createPeerMiddleware()');
 
-	const middleware: Middleware = ({ dispatch, getState }) =>
+	const middleware: Middleware = ({ dispatch }) =>
 		(next) => (action) => {
 			if (signalingActions.connected.match(action)) {
 				signalingService.on('notification', (notification) => {

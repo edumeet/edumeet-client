@@ -27,7 +27,7 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 
 	const {
 		canSendWebcam,
-		webcamInProgress,
+		videoInProgress,
 	} = useAppSelector((state) => state.me);
 
 	let webcamState: MediaState, webcamTip;
@@ -64,7 +64,7 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 					// Shouldn't happen
 				}
 			}}
-			disabled={webcamState === 'unsupported' || webcamInProgress}
+			disabled={webcamState === 'unsupported' || videoInProgress}
 			on={webcamState === 'on'}
 			{ ...props }
 		>

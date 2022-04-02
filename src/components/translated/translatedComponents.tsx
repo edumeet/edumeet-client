@@ -190,3 +190,13 @@ export const startScreenSharingLabel = (intl: IntlShape): string => intl.formatM
 
 export const MeTagMessage = (): JSX.Element =>
 	<FormattedMessage id='room.me' defaultMessage='Me' />;
+
+export const participantsLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'label.participants',
+	defaultMessage: 'Participants'
+});
+
+export const chatLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'label.chat',
+	defaultMessage: 'Chat'
+});

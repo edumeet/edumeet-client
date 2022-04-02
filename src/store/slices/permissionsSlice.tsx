@@ -24,51 +24,36 @@ const permissionsSlice = createSlice({
 	name: 'permissions',
 	initialState,
 	reducers: {
-		addRoles: ((state, action: PayloadAction<{ roles: number[] }>) => {
-			state.roles = action.payload.roles;
+		addRoles: ((state, action: PayloadAction<number[]>) => {
+			state.roles = action.payload;
 		}),
-		addRole: ((state, action: PayloadAction<{ roleId: number }>) => {
-			state.roles.push(action.payload.roleId);
+		addRole: ((state, action: PayloadAction<number>) => {
+			state.roles.push(action.payload);
 		}),
-		removeRole: ((state, action: PayloadAction<{ roleId: number }>) => {
+		removeRole: ((state, action: PayloadAction<number>) => {
 			state.roles =
-				state.roles.filter((role) => role !== action.payload.roleId);
+				state.roles.filter((role) => role !== action.payload);
 		}),
-		setLoginEnabled: ((state, action: PayloadAction<{ loginEnabled: boolean }>) => {
-			state.loginEnabled = action.payload.loginEnabled;
+		setLoginEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.loginEnabled = action.payload;
 		}),
-		setLoggedIn: ((state, action: PayloadAction<{
-			loggedIn: boolean,
-			local?: boolean
-		}>) => {
-			state.loggedIn = action.payload.loggedIn;
+		setLoggedIn: ((state, action: PayloadAction<boolean>) => {
+			state.loggedIn = action.payload;
 		}),
-		setLocked: ((state, action: PayloadAction<{
-			locked: boolean,
-			local?: boolean
-		}>) => {
-			state.locked = action.payload.locked;
+		setLocked: ((state, action: PayloadAction<boolean>) => {
+			state.locked = action.payload;
 		}),
-		setSignInRequired: ((state, action: PayloadAction<{ signInRequired: boolean }>) => {
-			state.signInRequired = action.payload.signInRequired;
+		setSignInRequired: ((state, action: PayloadAction<boolean>) => {
+			state.signInRequired = action.payload;
 		}),
-		setUserRoles: ((
-			state,
-			action: PayloadAction<{ userRoles: Record<number, Role> }>
-		) => {
-			state.userRoles = action.payload.userRoles;
+		setUserRoles: ((state, action: PayloadAction<Record<number, Role>>) => {
+			state.userRoles = action.payload;
 		}),
-		setRoomPermissions: ((
-			state,
-			action: PayloadAction<{ roomPermissions: Record<Permission, Role[]> }>
-		) => {
-			state.roomPermissions = action.payload.roomPermissions;
+		setRoomPermissions: ((state, action: PayloadAction<Record<Permission, Role[]>>) => {
+			state.roomPermissions = action.payload;
 		}),
-		setAllowWhenRoleMissing: ((
-			state,
-			action: PayloadAction<{ allowWhenRoleMissing: Permission[] }>
-		) => {
-			state.allowWhenRoleMissing = action.payload.allowWhenRoleMissing;
+		setAllowWhenRoleMissing: ((state, action: PayloadAction<Permission[]>) => {
+			state.allowWhenRoleMissing = action.payload;
 		}),
 	},
 });

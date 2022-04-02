@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { updateMic } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { makePermissionSelector, micProducerSelector } from '../../store/selectors';
 import { producersActions } from '../../store/slices/producersSlice';
@@ -15,6 +14,7 @@ import {
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
+import { deviceActions } from '../../store/slices/deviceSlice';
 
 const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
@@ -54,7 +54,7 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				if (micState === 'unsupported') return;
 
 				if (micState === 'off') {
-					dispatch(updateMic({
+					dispatch(deviceActions.updateMic({
 						start: true
 					}));
 				} else if (micProducer) {

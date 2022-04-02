@@ -25,10 +25,21 @@ const lobbyPeersSlice = createSlice({
 			return state.filter((peer) => peer.id !== action.payload.id);
 		}),
 		updatePeer: ((state, action: PayloadAction<LobbyPeer>) => {
-			let peer = state.find((p) => p.id === action.payload.id);
+			const peer = state.find((p) => p.id === action.payload.id);
 
 			if (peer) {
-				peer = { ...peer, ...action.payload };
+				const {
+					displayName,
+					picture,
+					promotionInProgress
+				} = action.payload;
+
+				if (displayName)
+					peer.displayName = displayName;
+				if (picture)
+					peer.picture = picture;
+				if (promotionInProgress)
+					peer.promotionInProgress = promotionInProgress;
 			}
 		}),
 	},
