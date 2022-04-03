@@ -11,6 +11,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	frameRate: 30,
 	screenResolution: 'veryhigh',
 	screenSharingFrameRate: 5,
+	aspectRatio: 1.7778, // 16:9
 	simulcast: true,
 	simulcastSharing: false,
 	simulcastProfiles: {
@@ -131,6 +132,7 @@ export interface EdumeetConfig {
 	frameRate: number;
 	screenResolution: Resolution;
 	screenSharingFrameRate: number;
+	aspectRatio: number;
 	simulcast: boolean;
 	simulcastSharing: boolean;
 	simulcastProfiles: Record<string, SimulcastProfile[]>;

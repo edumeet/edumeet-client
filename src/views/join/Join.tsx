@@ -17,8 +17,9 @@ import { signalingActions } from '../../store/slices/signalingSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { JoinMessage, LoginMessage, LogoutMessage, yourNameLabel } from '../../components/translated/translatedComponents';
+import { DisableAllMediaMessage, EnableAllMediaMessage, EnableCameraMessage, EnableMicrophoneMessage, JoinMessage, LoginMessage, LogoutMessage, yourNameLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
+import MediaPreview from '../../components/mediapreview/MediaPreview';
 
 interface JoinOptions {
 	roomId: string;
@@ -30,6 +31,7 @@ const Join = ({ roomId }: JoinOptions): JSX.Element => {
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 	const peerId = useAppSelector((state) => state.me.id);
+	const { previewMicTrackId, previewWebcamTrackId } = useAppSelector((state) => state.me);
 	const dispatch = useAppDispatch();
 	const [ displayName, setDisplayName ] = useState(stateDisplayName || '');
 
@@ -87,6 +89,14 @@ const Join = ({ roomId }: JoinOptions): JSX.Element => {
 					</Grid>
 				</DialogTitle>
 				<DialogContent>
+					<MediaPreview />
+					<Typography variant='h5'>
+						{ (previewMicTrackId && previewWebcamTrackId) ?
+							<EnableAllMediaMessage /> : previewMicTrackId ?
+								<EnableMicrophoneMessage /> : previewWebcamTrackId ?
+									<EnableCameraMessage /> : <DisableAllMediaMessage />
+						}
+					</Typography>
 					<TextInputField
 						label={yourNameLabel(intl)}
 						value={displayName}

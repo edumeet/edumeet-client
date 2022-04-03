@@ -224,6 +224,12 @@ const createMediaMiddleware = ({
 						});
 					}
 
+					dispatch(meActions.setMediaCapabilities({
+						canSendMic: mediasoup.canProduce('audio'),
+						canSendWebcam: mediasoup.canProduce('video'),
+						canShareScreen: mediasoup.canProduce('video')
+					}));
+
 					// This will trigger "join" in roomMiddleware
 					dispatch(webrtcActions.setRtpCapabilities(mediasoup.rtpCapabilities));
 				} catch (error) {
@@ -338,8 +344,8 @@ const createMediaMiddleware = ({
 
 				dispatch(meActions.setVideoInProgress(true));
 
-				let track: MediaStreamTrack | null;
-				let webcamProducer: Producer | undefined;
+				let track: MediaStreamTrack | null | undefined;
+				let webcamProducer: Producer | null | undefined;
 
 				try {
 					if (!mediasoup.canProduce('video'))
@@ -366,6 +372,8 @@ const createMediaMiddleware = ({
 							store.dispatch(settingsActions.setVideoMuted(false));
 					*/
 
+					const { previewWebcamTrackId } = getState().me;
+
 					const {
 						aspectRatio,
 						resolution,
@@ -389,16 +397,25 @@ const createMediaMiddleware = ({
 								local: true
 							}));
 						}
-			
-						const stream = await navigator.mediaDevices.getUserMedia({
-							video: {
-								deviceId: { ideal: deviceId },
-								...mediaService.getVideoConstrains(resolution, aspectRatio),
-								frameRate
-							}
-						});
-			
-						([ track ] = stream.getVideoTracks());
+
+						if (previewWebcamTrackId) {
+							track = mediaService.getTrack(previewWebcamTrackId);
+						} else {
+							const stream = await navigator.mediaDevices.getUserMedia({
+								video: {
+									deviceId: { ideal: deviceId },
+									...mediaService.getVideoConstrains(resolution, aspectRatio),
+									frameRate
+								}
+							});
+				
+							([ track ] = stream.getVideoTracks());
+						}
+
+						if (!track)
+							throw new Error('no webcam track');
+
+						dispatch(meActions.setPreviewWebcamTrackId());
 
 						const { deviceId: trackDeviceId, width, height } = track.getSettings();
 
@@ -524,8 +541,8 @@ const createMediaMiddleware = ({
 
 				dispatch(meActions.setAudioInProgress(true));
 
-				let track: MediaStreamTrack | null;
-				let micProducer: Producer | undefined;
+				let track: MediaStreamTrack | null | undefined;
+				let micProducer: Producer | null | undefined;
 
 				try {
 					if (!mediasoup.canProduce('audio'))
@@ -536,6 +553,8 @@ const createMediaMiddleware = ({
 
 					if (newDeviceId)
 						dispatch(settingsActions.setSelectedAudioDevice(newDeviceId));
+
+					const { previewMicTrackId } = getState().me;
 
 					const { selectedAudioDevice } = getState().settings;
 
@@ -574,19 +593,28 @@ const createMediaMiddleware = ({
 							}));
 						}
 
-						const stream = await navigator.mediaDevices.getUserMedia({
-							audio: {
-								deviceId: { ideal: deviceId },
-								sampleRate,
-								channelCount,
-								autoGainControl,
-								echoCancellation,
-								noiseSuppression,
-								sampleSize
-							}
-						});
-		
-						([ track ] = stream.getAudioTracks());
+						if (previewMicTrackId) {
+							track = mediaService.getTrack(previewMicTrackId);
+						} else {
+							const stream = await navigator.mediaDevices.getUserMedia({
+								audio: {
+									deviceId: { ideal: deviceId },
+									sampleRate,
+									channelCount,
+									autoGainControl,
+									echoCancellation,
+									noiseSuppression,
+									sampleSize
+								}
+							});
+			
+							([ track ] = stream.getAudioTracks());
+						}
+
+						if (!track)
+							throw new Error('no mic track');
+
+						dispatch(meActions.setPreviewMicTrackId());
 		
 						const { deviceId: trackDeviceId } = track.getSettings();
 		

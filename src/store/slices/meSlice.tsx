@@ -6,6 +6,8 @@ export interface MeState {
 	id: string;
 	browser: Omit<DeviceInfo, 'bowser'>;
 	picture?: string;
+	previewWebcamTrackId?: string;
+	previewMicTrackId?: string;
 	canSendMic: boolean;
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
@@ -50,19 +52,22 @@ const meSlice = createSlice({
 		setPicture: ((state, action: PayloadAction<string>) => {
 			state.picture = action.payload;
 		}),
+		setPreviewWebcamTrackId: ((state, action: PayloadAction<string | undefined>) => {
+			state.previewWebcamTrackId = action.payload;
+		}),
+		setPreviewMicTrackId: ((state, action: PayloadAction<string | undefined>) => {
+			state.previewMicTrackId = action.payload;
+		}),
 		setMediaCapabilities: ((
 			state,
 			action: PayloadAction<{
-				canSendMic: boolean,
-				canSendWebcam: boolean,
-				canShareScreen: boolean,
-				canShareFiles: boolean,
+				canSendMic?: boolean,
+				canSendWebcam?: boolean,
+				canShareScreen?: boolean,
+				canShareFiles?: boolean,
 			}>
 		) => {
-			state.canSendMic = action.payload.canSendMic;
-			state.canSendWebcam = action.payload.canSendWebcam;
-			state.canShareScreen = action.payload.canShareScreen;
-			state.canShareFiles = action.payload.canShareFiles;
+			return { ...state, ...action.payload };
 		}),
 		setDevices: ((state, action: PayloadAction<MediaDeviceInfo[]>) => {
 			state.devices = action.payload;

@@ -22,6 +22,8 @@ export interface SettingsState {
 	opusFec: boolean;
 	opusPtime: number;
 	opusMaxPlaybackRate: number;
+	audioMuted?: boolean;
+	videoMuted?: boolean;
 }
 
 const initialState: SettingsState = {
@@ -29,7 +31,7 @@ const initialState: SettingsState = {
 	resolution: edumeetConfig.resolution,
 	frameRate: edumeetConfig.frameRate,
 	permanentTopBar: true,
-	aspectRatio: 1.778, // 16:9, TODO: make configurable
+	aspectRatio: edumeetConfig.aspectRatio,
 	autoGainControl: edumeetConfig.autoGainControl,
 	echoCancellation: edumeetConfig.echoCancellation,
 	noiseSuppression: edumeetConfig.noiseSuppression,
@@ -106,7 +108,13 @@ const settingsSlice = createSlice({
 		}),
 		setOpusMaxPlaybackRate: ((state, action: PayloadAction<number>) => {
 			state.opusMaxPlaybackRate = action.payload;
-		})
+		}),
+		setAudioMuted: ((state, action: PayloadAction<boolean>) => {
+			state.audioMuted = action.payload;
+		}),
+		setVideoMuted: ((state, action: PayloadAction<boolean>) => {
+			state.videoMuted = action.payload;
+		}),
 	},
 });
 

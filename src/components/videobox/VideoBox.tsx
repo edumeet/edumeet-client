@@ -2,9 +2,9 @@ import { ReactNode } from 'react';
 import { styled } from '@mui/material/styles';
 
 interface VideoBoxProps {
-	margin: number;
-	order: number;
-	activeSpeaker: boolean;
+	margin?: number;
+	order?: number;
+	activeSpeaker?: boolean;
 	sx?: Record<string, number | string>;
 	children?: ReactNode;
 }

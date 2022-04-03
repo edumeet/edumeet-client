@@ -7,6 +7,7 @@ import { webrtcActions } from '../slices/webrtcSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { peersActions } from '../slices/peersSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
+import { deviceActions } from '../slices/deviceSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -114,6 +115,13 @@ const createRoomMiddleware = ({
 				if (loggedIn !== authenticated)
 					dispatch(permissionsActions.setLoggedIn(authenticated));
 				dispatch(permissionsActions.setLocked(Boolean(locked)));
+
+				const { audioMuted, videoMuted } = getState().settings;
+
+				if (!audioMuted)
+					dispatch(deviceActions.updateMic({ start: true }));
+				if (!videoMuted)
+					dispatch(deviceActions.updateWebcam({ init: true, start: true }));
 			}
 
 			// TODO: reconnect states here

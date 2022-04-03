@@ -31,6 +31,9 @@ var config = {
 	// The default screen sharing framerate.
 	screenSharingFrameRate: 5,
 
+	// Video aspect ratio.
+	aspectRatio: 1.778,
+
 	// Enable or disable simulcast for webcam video.
 	simulcast: true,
 

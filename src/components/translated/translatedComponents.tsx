@@ -200,3 +200,27 @@ export const chatLabel = (intl: IntlShape): string => intl.formatMessage({
 	id: 'label.chat',
 	defaultMessage: 'Chat'
 });
+
+export const DisableAllMediaMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='devices.disableBothMicrophoneAndCamera'
+		defaultMessage='Disable both Microphone And Camera'
+	/>;
+
+export const EnableCameraMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='devices.enableOnlyCamera'
+		defaultMessage='Enable only Camera'
+	/>;
+
+export const EnableMicrophoneMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='devices.enableOnlyMicrophone'
+		defaultMessage='Enable only Microphone'
+	/>;
+
+export const EnableAllMediaMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='devices.enableBothMicrophoneAndCamera'
+		defaultMessage='Enable both Microphone And Camera'
+	/>;
