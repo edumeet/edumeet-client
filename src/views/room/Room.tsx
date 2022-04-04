@@ -11,6 +11,8 @@ import { Drawer, Hidden, SwipeableDrawer } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { drawerActions } from '../../store/slices/drawerSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
+import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 
 const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
 	paper: {
@@ -106,11 +108,10 @@ const Room = (): JSX.Element => {
 
 	return (
 		<StyledBackground>
+			<FullscreenVideo />
+			<WindowedVideo />
+
 			{ /*
-				<FullscreenVideo advancedMode={settings.advancedMode} />
-
-				<WindowedVideo advancedMode={settings.advancedMode} />
-
 				<AudioPeers />
 			*/}
 

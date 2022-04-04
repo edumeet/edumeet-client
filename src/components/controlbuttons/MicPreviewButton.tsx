@@ -8,7 +8,7 @@ import {
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { getPreviewMic, stopPreviewMic } from '../../store/actions/mediaActions';
+import { updatePreviewMic, stopPreviewMic } from '../../store/actions/mediaActions';
 
 const MicPreviewButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
@@ -34,7 +34,7 @@ const MicPreviewButton = (props: ControlButtonProps): JSX.Element => {
 			toolTip={micTip}
 			onClick={() => {
 				if (micState === 'off') {
-					dispatch(getPreviewMic());
+					dispatch(updatePreviewMic());
 				} else if (previewMicTrackId) {
 					dispatch(stopPreviewMic());
 				} else {

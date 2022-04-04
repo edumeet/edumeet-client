@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { MediaDevice } from '../services/mediaService';
 import { Permission, Role } from '../utils/roles';
 import { StateConsumer } from './slices/consumersSlice';
 import { LobbyPeer } from './slices/lobbyPeersSlice';
@@ -23,16 +24,39 @@ const consumersSelect: Selector<StateConsumer[]> =
 	(state) => state.consumers;
 const spotlightsSelector: Selector<string[]> =
 	(state) => state.room.spotlights;
+const selectedPeersSelector: Selector<string[]> =
+	(state) => state.room.selectedPeers;
 const peersSelector: Selector<Peer[]> =
 	(state) => state.peers;
 const lobbyPeersSelector: Selector<LobbyPeer[]> =
 	(state) => state.lobbyPeers;
 const unreadMessages: Selector<number> = (state) => state.drawer.unreadMessages;
 const unreadFiles: Selector<number> = (state) => state.drawer.unreadFiles;
+const lastNSelector: Selector<number> = (state) => state.settings.lastN;
+const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNonVideo;
+const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
+const fullscreenConsumer: Selector<string | undefined> =
+	(state) => state.room.fullscreenConsumer;
+const windowedConsumer: Selector<string | undefined> =
+	(state) => state.room.windowedConsumer;
 
-const peerIdsSelector = createSelector(
-	peersSelector,
-	(peers) => peers.map((peer) => peer.id),
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const makeDevicesSelector = (kind: MediaDeviceKind) => {
+	return createSelector(
+		devicesSelector,
+		(devices: MediaDevice[]) =>
+			devices.filter((device) => device.kind === kind)
+	);
+};
+
+export const spotlightPeersSelector = createSelector(
+	lastNSelector,
+	selectedPeersSelector,
+	spotlightsSelector,
+	(lastN, selectedPeers, spotlights) =>
+		selectedPeers.concat(
+			spotlights.filter((item) => selectedPeers.indexOf(item) < 0)
+		).slice(0, lastN)
 );
 
 export const extraVideoProducersSelector = createSelector(
@@ -70,8 +94,17 @@ export const screenConsumerSelector = createSelector(
 	(consumers) => consumers.filter((consumer) => consumer.source === 'screen')
 );
 
+export const spotlightWebcamConsumerSelector = createSelector(
+	spotlightPeersSelector,
+	consumersSelect,
+	(spotlights, consumers) =>
+		consumers.filter(
+			(consumer) => consumer.source === 'webcam' && spotlights.includes(consumer.peerId)
+		)
+);
+
 export const spotlightScreenConsumerSelector = createSelector(
-	spotlightsSelector,
+	spotlightPeersSelector,
 	consumersSelect,
 	(spotlights, consumers) =>
 		consumers.filter(
@@ -80,7 +113,7 @@ export const spotlightScreenConsumerSelector = createSelector(
 );
 
 export const spotlightExtraVideoConsumerSelector = createSelector(
-	spotlightsSelector,
+	spotlightPeersSelector,
 	consumersSelect,
 	(spotlights, consumers) =>
 		consumers.filter(
@@ -117,13 +150,6 @@ export const highestRoleLevelSelector = createSelector(
 export const spotlightsLengthSelector = createSelector(
 	spotlightsSelector,
 	(spotlights) => spotlights.length
-);
-
-export const spotlightPeersSelector = createSelector(
-	spotlightsSelector,
-	peerIdsSelector,
-	(spotlights, peers) =>
-		peers.filter((peerId) => spotlights.includes(peerId))
 );
 
 export const spotlightSortedPeersSelector = createSelector(
@@ -195,23 +221,59 @@ export const unreadSelector = createSelector(
 		messages + files + raisedHands
 );
 
+export const fullscreenConsumerSelector = createSelector(
+	fullscreenConsumer,
+	consumersSelect,
+	(consumer, consumers) =>
+		consumers.find((c) => c.id === consumer)
+);
+
+export const windowedConsumerSelector = createSelector(
+	windowedConsumer,
+	consumersSelect,
+	(consumer, consumers) =>
+		consumers.find((c) => c.id === consumer)
+);
+
 export const videoBoxesSelector = createSelector(
-	spotlightsLengthSelector,
 	screenProducerSelector,
-	spotlightScreenConsumerSelector,
 	extraVideoProducersSelector,
+	spotlightPeersSelector,
+	hideNonVideoSelector,
+	spotlightWebcamConsumerSelector,
+	spotlightScreenConsumerSelector,
 	spotlightExtraVideoConsumerSelector,
 	(
-		spotlightsLength,
 		screenProducer,
-		screenConsumers,
 		extraVideoProducers,
+		spotlightPeers,
+		hideNonVideo,
+		webcamConsumers,
+		screenConsumers,
 		extraVideoConsumers
-	) =>
-		1 + spotlightsLength +
-			(screenProducer ? 1 : 0) + screenConsumers.length +
-			(extraVideoProducers.length) + extraVideoConsumers.length
-);
+	) => {
+		let videoBoxes = 1; // Always add a box for Me view
+
+		// Add our own screen share, if it exists
+		if (screenProducer)
+			videoBoxes++;
+
+		// Add any extra video producers we might have
+		videoBoxes += extraVideoProducers.length;
+
+		if (hideNonVideo) {
+			// If we're hiding non-video, we need to add only the boxes with actual video
+			videoBoxes += webcamConsumers.length;
+		} else {
+			// If we're not hiding non-video, we need to add all the boxes
+			videoBoxes += spotlightPeers.length;
+		}
+
+		// Add all the screen sharing and extra video boxes of the peers in spotlight
+		videoBoxes += screenConsumers.length + extraVideoConsumers.length;
+
+		return videoBoxes;
+	});
 
 export const meProducersSelector = createSelector(
 	micProducerSelector,
@@ -245,6 +307,13 @@ export const makePeerConsumerSelector = (id: string) => {
 		}
 	);
 };
+
+export interface PeerConsumers {
+	micConsumer?: StateConsumer;
+	webcamConsumer?: StateConsumer;
+	screenConsumer?: StateConsumer;
+	extraVideoConsumers: StateConsumer[];
+}
 
 export const makePermissionSelector =
 	(permission: Permission): Selector<boolean> => {

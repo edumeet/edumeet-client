@@ -17,14 +17,18 @@ import LoginButton from '../../components/loginbutton/LoginButton';
 import edumeetConfig from '../../utils/edumeetConfig';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { JoinMessage, LogoutMessage, roomNameLabel } from '../../components/translated/translatedComponents';
+import { useAppDispatch } from '../../store/hooks';
+import { roomActions } from '../../store/slices/roomSlice';
 
 const LandingPage = (): JSX.Element => {
 	const intl = useIntl();
 	const theme = useTheme();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const [ roomId, setRoomId ] = useState(randomString({ length: 8 }).toLowerCase());
 
 	const onClicked = () => {
+		dispatch(roomActions.updateRoom({ name: roomId }));
 		navigate(`/${roomId}`);
 	};
 

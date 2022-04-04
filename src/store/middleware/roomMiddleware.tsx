@@ -60,6 +60,10 @@ const createRoomMiddleware = ({
 							}
 
 							case 'activeSpeaker': {
+								const { peerId } = notification.data;
+								const isMe = peerId === getState().me.id;
+
+								dispatch(roomActions.setActiveSpeakerId({ peerId, isMe }));
 								break;
 							}
 						}

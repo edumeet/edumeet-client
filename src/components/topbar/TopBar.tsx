@@ -1,9 +1,25 @@
-import { AppBar, Badge, Button, IconButton, Toolbar, Tooltip, Typography } from '@mui/material';
+import {
+	AppBar,
+	Badge,
+	Button,
+	IconButton,
+	Toolbar,
+	Tooltip,
+	Typography
+} from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import { Fragment, MouseEvent, useMemo, useState } from 'react';
+import { Fragment, MouseEvent, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { lobbyPeersLengthSelector, makePermissionSelector, peersLengthSelector, unreadSelector } from '../../store/selectors';
+import {
+	useAppDispatch,
+	useAppSelector,
+	usePermissionSelector
+} from '../../store/hooks';
+import {
+	lobbyPeersLengthSelector,
+	peersLengthSelector,
+	unreadSelector
+} from '../../store/selectors';
 import { drawerActions } from '../../store/slices/drawerSlice';
 import MenuIcon from '@mui/icons-material/Menu';
 import MoreIcon from '@mui/icons-material/More';
@@ -35,7 +51,7 @@ import MobileMenu from '../mobilemenu/MobileMenu';
 import { permissions } from '../../utils/roles';
 import { uiActions } from '../../store/slices/uiSlice';
 import { AccountCircle } from '@mui/icons-material';
-import { lock, unlock } from '../../store/actions/permissionsActions';
+import { lock, login, logout, unlock } from '../../store/actions/permissionsActions';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -111,13 +127,8 @@ const TopBar = ({
 	const intl = useIntl();
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
-
-	const hasLockPermission =
-		useMemo(() => makePermissionSelector(permissions.CHANGE_ROOM_LOCK), []);
-	const canLock = useAppSelector(hasLockPermission);
-	const hasPromotionPermission =
-		useMemo(() => makePermissionSelector(permissions.PROMOTE_PEER), []);
-	const canPromote = useAppSelector(hasPromotionPermission);
+	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
+	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 
 	const {
 		settingsOpen,
@@ -331,8 +342,7 @@ const TopBar = ({
 								<StyledIconButton
 									aria-label={loginButtonLabel}
 									color='inherit'
-									// eslint-disable-next-line no-console
-									onClick={() => console.log('Login!')}
+									onClick={() => (loggedIn ? dispatch(logout()) : dispatch(login()))}
 								>
 									<AccountCircle />
 								</StyledIconButton>

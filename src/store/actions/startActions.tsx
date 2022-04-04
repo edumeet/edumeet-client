@@ -5,16 +5,6 @@ import { meActions } from '../slices/meSlice';
 
 const logger = new Logger('listenerActions');
 
-export const updateMediaDevices = () => async (
-	_dispatch: AppDispatch,
-	_getState: RootState,
-	{ mediaService }: MiddlewareOptions
-): Promise<void> => {
-	logger.debug('updateMediaDevices()');
-
-	await mediaService.updateMediaDevices();
-};
-
 export const startListeners = () => (
 	dispatch: AppDispatch,
 	_getState: RootState,

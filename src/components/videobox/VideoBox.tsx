@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useTheme } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 interface VideoBoxProps {
@@ -9,21 +10,18 @@ interface VideoBoxProps {
 	children?: ReactNode;
 }
 
-const VideoBoxDiv = styled('div')({
+const VideoBoxDiv = styled('div')(({ theme }) => ({
 	position: 'relative',
-	width: 320,
-	height: 240,
-	boxShadow: 'var(--peer-shadow)',
-	border: 'var(--peer-border)',
-	backgroundColor: 'var(--peer-bg-color)',
-	backgroundImage: 'var(--peer-empty-avatar)',
+	boxShadow: theme.peerShadow,
+	backgroundColor: theme.peerBackroundColor,
+	backgroundImage: `url(${theme.peerAvatar})`,
 	backgroundPosition: 'bottom',
 	backgroundSize: 'auto 85%',
 	backgroundRepeat: 'no-repeat',
 	'&:hover': {
 		boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.05) inset, 0px 0px 8px rgba(82, 168, 236, 0.9)'
 	},
-});
+}));
 
 const VideoBox = ({
 	margin,
@@ -31,17 +29,22 @@ const VideoBox = ({
 	activeSpeaker,
 	sx,
 	children,
-}: VideoBoxProps): JSX.Element =>
-	<VideoBoxDiv
-		sx={{
-			...(activeSpeaker && {
-				borderColor: 'var(--active-speaker-border-color)'
-			}),
-			order,
-			margin,
-			...sx
-		}}
-		children={children}
-	/>;
+}: VideoBoxProps): JSX.Element => {
+	const theme = useTheme();
+
+	return (
+		<VideoBoxDiv
+			sx={{
+				...(activeSpeaker && {
+					border: theme.activeSpeakerBorder
+				}),
+				order,
+				margin,
+				...sx
+			}}
+			children={children}
+		/>
+	);
+};
 
 export default VideoBox;

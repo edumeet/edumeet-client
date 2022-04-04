@@ -19,6 +19,12 @@ var config = {
 	// If the server component runs on a different host than the app you can specify the host name.
 	serverHostname: '',
 
+	// Number of videos to show based on speaker detection.
+	lastN: 11,
+
+	// Don't show the participant tile if the user has no video
+	hideNonVideo: false,
+
 	// The default video camera capture resolution.
 	resolution: 'medium',
 
@@ -26,7 +32,7 @@ var config = {
 	frameRate: 30,
 
 	// The default screen sharing resolution.
-	screenResolution: 'veryhigh',
+	screenSharingResolution: 'veryhigh',
 
 	// The default screen sharing framerate.
 	screenSharingFrameRate: 5,
@@ -231,5 +237,9 @@ var config = {
 		appBarColor: '#313131', // AppBar background color
 		// If not null, it shows the logo loaded from the specified URL, otherwise it shows the title.
 		logo: 'images/logo.edumeet.svg',
+		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
+		peerBackroundColor: 'rgba(49, 49, 49, 0.9)',
+		peerShadow: '1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12)',
+		peerAvatar: 'images/buddy.svg',
 	}
 };

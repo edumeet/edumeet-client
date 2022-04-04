@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { startListeners, updateMediaDevices } from './store/actions/startActions';
+import { startListeners } from './store/actions/startActions';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import Join from './views/join/Join';
 import Lobby from './views/lobby/Lobby';
@@ -19,7 +19,6 @@ const App = (): JSX.Element => {
 
 	useEffect(() => {
 		dispatch(startListeners());
-		dispatch(updateMediaDevices());
 	}, []);
 
 	if (joined)

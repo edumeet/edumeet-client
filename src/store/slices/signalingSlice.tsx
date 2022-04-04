@@ -27,8 +27,8 @@ const signalingSlice = createSlice({
 			state.connected = false;
 			state.connecting = false;
 		}),
-		setUrl: ((state, action: PayloadAction<{ url: string }>) => {
-			state.url = action.payload.url;
+		setUrl: ((state, action: PayloadAction<string>) => {
+			state.url = action.payload;
 		}),
 	},
 });

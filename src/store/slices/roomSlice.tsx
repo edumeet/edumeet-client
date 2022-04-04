@@ -16,6 +16,8 @@ export interface RoomState {
 	closeMeetingInProgress?: boolean;
 	clearChatInProgress?: boolean;
 	clearFileSharingInProgress?: boolean;
+	fullscreenConsumer?: string;
+	windowedConsumer?: string;
 	selectedPeers: string[];
 	spotlights: string[];
 	state: RoomConnectionState;
@@ -42,6 +44,25 @@ const roomSlice = createSlice({
 		) => {
 			state.state = action.payload;
 		}),
+		setActiveSpeakerId: ((
+			state,
+			action: PayloadAction<{ peerId: string, isMe: boolean}>
+		) => {
+			const { peerId, isMe } = action.payload;
+
+			state.activeSpeakerId = peerId;
+
+			if (peerId && !isMe) {
+				state.spotlights = state.spotlights.filter((id) => id !== peerId);
+				state.spotlights.unshift(peerId);
+			}
+		}),
+		setFullscreenConsumer: ((state, action: PayloadAction<string | undefined>) => {
+			state.fullscreenConsumer = action.payload;
+		}),
+		setWindowedConsumer: ((state, action: PayloadAction<string | undefined>) => {
+			state.windowedConsumer = action.payload;
+		}),
 		selectPeer: ((state, action: PayloadAction<string>) => {
 			state.selectedPeers.push(action.payload);
 		}),
@@ -67,6 +88,8 @@ const roomSlice = createSlice({
 			})
 			.addCase(peersActions.removePeer, (state, action) => {
 				state.spotlights = state.spotlights.filter((peer) => peer !== action.payload.id);
+				state.selectedPeers =
+					state.selectedPeers.filter((peer) => peer !== action.payload.id);
 			});
 	}
 });

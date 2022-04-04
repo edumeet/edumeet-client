@@ -1,7 +1,10 @@
-import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { makePermissionSelector, screenProducerSelector } from '../../store/selectors';
+import {
+	useAppDispatch,
+	useAppSelector,
+	usePermissionSelector
+} from '../../store/hooks';
+import { screenProducerSelector } from '../../store/selectors';
 import { producersActions } from '../../store/slices/producersSlice';
 import { permissions } from '../../utils/roles';
 import { MediaState } from '../../utils/types';
@@ -18,11 +21,7 @@ import { deviceActions } from '../../store/slices/deviceSlice';
 const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
 	const dispatch = useAppDispatch();
-
-	const canShareScreenSelector =
-		useMemo(() => makePermissionSelector(permissions.SHARE_SCREEN), []);
-
-	const hasScreenPermission = useAppSelector(canShareScreenSelector);
+	const hasScreenPermission = usePermissionSelector(permissions.SHARE_SCREEN);
 	const screenProducer = useAppSelector(screenProducerSelector);
 
 	const {

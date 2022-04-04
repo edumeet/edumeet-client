@@ -227,7 +227,8 @@ const createMediaMiddleware = ({
 					dispatch(meActions.setMediaCapabilities({
 						canSendMic: mediasoup.canProduce('audio'),
 						canSendWebcam: mediasoup.canProduce('video'),
-						canShareScreen: mediasoup.canProduce('video')
+						canShareScreen: Boolean(navigator.mediaDevices.getDisplayMedia) &&
+							mediasoup.canProduce('video')
 					}));
 
 					// This will trigger "join" in roomMiddleware
@@ -290,6 +291,12 @@ const createMediaMiddleware = ({
 						.catch((error) => logger.warn('pauseProducer, unable to pause server-side [producerId:%s, error:%o]', producerId, error));
 				}
 
+				if (producer?.appData.source === 'mic') {
+					dispatch(settingsActions.setAudioMuted(true));
+				} else if (producer?.appData.source === 'webcam') {
+					dispatch(settingsActions.setVideoMuted(true));
+				}
+
 				producer?.pause();
 			}
 			
@@ -302,6 +309,12 @@ const createMediaMiddleware = ({
 				if (local && producer) {
 					await signalingService.sendRequest('resumeProducer', { producerId: producer.id })
 						.catch((error) => logger.warn('resumeProducer, unable to resume server-side [producerId:%s, error:%o]', producerId, error));
+				}
+
+				if (producer?.appData.source === 'mic') {
+					dispatch(settingsActions.setAudioMuted(false));
+				} else if (producer?.appData.source === 'webcam') {
+					dispatch(settingsActions.setVideoMuted(false));
 				}
 
 				producer?.resume();
@@ -317,6 +330,12 @@ const createMediaMiddleware = ({
 				if (local && producer) {
 					await signalingService.sendRequest('closeProducer', { producerId: producer.id })
 						.catch((error) => logger.warn('closeProducer, unable to close server-side [producerId:%s, error:%o]', producerId, error));
+				}
+
+				if (producer?.appData.source === 'mic') {
+					dispatch(settingsActions.setAudioMuted(true));
+				} else if (producer?.appData.source === 'webcam') {
+					dispatch(settingsActions.setVideoMuted(true));
 				}
 
 				producer?.close();
@@ -348,6 +367,8 @@ const createMediaMiddleware = ({
 				let webcamProducer: Producer | null | undefined;
 
 				try {
+					await mediaService.updateMediaDevices();
+
 					if (!mediasoup.canProduce('video'))
 						throw new Error('cannot produce video');
 
@@ -429,6 +450,7 @@ const createMediaMiddleware = ({
 								width,
 								height
 							);
+
 							const resolutionScalings =
 								encodings.map((encoding) => encoding.scaleResolutionDownBy);
 
@@ -472,6 +494,8 @@ const createMediaMiddleware = ({
 							paused: webcamProducer.paused,
 							trackId: webcamProducer.track.id,
 						}));
+
+						dispatch(settingsActions.setVideoMuted(false));
 
 						webcamProducer.observer.once('close', () => {
 							producers.delete(producerId);
@@ -545,6 +569,8 @@ const createMediaMiddleware = ({
 				let micProducer: Producer | null | undefined;
 
 				try {
+					await mediaService.updateMediaDevices();
+
 					if (!mediasoup.canProduce('audio'))
 						throw new Error('cannot produce audio');
 
@@ -649,6 +675,8 @@ const createMediaMiddleware = ({
 							trackId: micProducer.track.id,
 						}));
 
+						dispatch(settingsActions.setAudioMuted(false));
+
 						micProducer.observer.once('close', () => {
 							producers.delete(producerId);
 						});
@@ -723,7 +751,229 @@ const createMediaMiddleware = ({
 
 				dispatch(meActions.setScreenSharingInProgress(true));
 
-				dispatch(meActions.setScreenSharingInProgress(false));
+				let audioTrack: MediaStreamTrack | null | undefined;
+				let videoTrack: MediaStreamTrack | null | undefined;
+				let screenAudioProducer: Producer | null | undefined;
+				let screenVideoProducer: Producer | null | undefined;
+
+				try {
+					if (!mediasoup.canProduce('video'))
+						throw new Error('cannot produce video');
+
+					if (newResolution)
+						dispatch(settingsActions.setScreenSharingResolution(newResolution));
+		
+					if (newFrameRate)
+						dispatch(settingsActions.setScreenSharingFrameRate(newFrameRate));
+
+					const {
+						screenSharingResolution,
+						autoGainControl,
+						echoCancellation,
+						noiseSuppression,
+						aspectRatio,
+						screenSharingFrameRate,
+						sampleRate,
+						channelCount,
+						sampleSize,
+						opusStereo,
+						opusDtx,
+						opusFec,
+						opusPtime,
+						opusMaxPlaybackRate
+					} = getState().settings;
+
+					screenVideoProducer =
+						Array.from(producers.values())
+							.find((producer) => producer.appData.source === 'screen');
+					screenAudioProducer =
+						Array.from(producers.values())
+							.find((producer) => producer.appData.source === 'screenaudio');
+
+					if (start) {
+						const stream = await navigator.mediaDevices.getDisplayMedia({
+							video: {
+								...mediaService.getVideoConstrains(
+									screenSharingResolution,
+									aspectRatio
+								),
+								frameRate: screenSharingFrameRate,
+							},
+							audio: {
+								sampleRate,
+								channelCount,
+								autoGainControl,
+								echoCancellation,
+								noiseSuppression,
+								sampleSize
+							}
+						});
+
+						([ videoTrack ] = stream.getVideoTracks());
+
+						if (!videoTrack)
+							throw new Error('no screen track');
+
+						const { width, height } = videoTrack.getSettings();
+
+						if (config.simulcastSharing) {
+							const encodings = mediaService.getEncodings(
+								mediasoup.rtpCapabilities,
+								width,
+								height,
+							);
+
+							const resolutionScalings =
+								encodings.map((encoding) => encoding.scaleResolutionDownBy);
+
+							screenVideoProducer = await sendTransport.produce({
+								track: videoTrack,
+								encodings,
+								codecOptions: {
+									videoGoogleStartBitrate: 1000
+								},
+								appData: {
+									source: 'screen',
+									width,
+									height,
+									resolutionScalings
+								}
+							});
+						} else {
+							screenVideoProducer = await sendTransport.produce({
+								track: videoTrack,
+								codecOptions: {
+									videoGoogleStartBitrate: 1000
+								},
+								appData: {
+									source: 'screen',
+									width,
+									height
+								}
+							});
+						}
+
+						if (!screenVideoProducer.track) {
+							throw new Error('no screen track');
+						}
+
+						const { id: videoProducerId } = screenVideoProducer;
+
+						producers.set(videoProducerId, screenVideoProducer);
+						mediaService.addTrack(screenVideoProducer.track);
+
+						dispatch(producersActions.addProducer({
+							id: videoProducerId,
+							kind: screenVideoProducer.kind,
+							source: screenVideoProducer.appData.source,
+							paused: screenVideoProducer.paused,
+							trackId: screenVideoProducer.track.id,
+						}));
+
+						screenVideoProducer.observer.once('close', () => {
+							producers.delete(videoProducerId);
+						});
+
+						screenVideoProducer.once('transportclose', () => {
+							dispatch(
+								producersActions.closeProducer({
+									producerId: videoProducerId,
+									local: true
+								})
+							);
+						});
+
+						screenVideoProducer.once('trackended', () => {
+							dispatch(
+								producersActions.closeProducer({
+									producerId: videoProducerId,
+									local: true
+								})
+							);
+						});
+
+						([ audioTrack ] = stream.getAudioTracks());
+
+						if (audioTrack) {
+							screenAudioProducer = await sendTransport.produce({
+								track: audioTrack,
+								codecOptions: {
+									opusStereo: opusStereo,
+									opusFec: opusFec,
+									opusDtx: opusDtx,
+									opusMaxPlaybackRate: opusMaxPlaybackRate,
+									opusPtime: opusPtime
+								},
+								appData: { source: 'mic' }
+							});
+
+							if (!screenAudioProducer.track) {
+								logger.warn('no screen audio track');
+							} else {
+								const { id: audioProducerId } = screenAudioProducer;
+	
+								producers.set(audioProducerId, screenAudioProducer);
+								mediaService.addTrack(screenAudioProducer.track);
+				
+								dispatch(producersActions.addProducer({
+									id: screenAudioProducer.id,
+									kind: screenAudioProducer.kind,
+									source: screenAudioProducer.appData.source,
+									paused: screenAudioProducer.paused,
+									trackId: screenAudioProducer.track.id,
+								}));
+		
+								screenAudioProducer.observer.once('close', () => {
+									producers.delete(audioProducerId);
+								});
+				
+								screenAudioProducer.on('transportclose', () => {
+									dispatch(
+										producersActions.closeProducer({
+											producerId: audioProducerId,
+											local: true
+										})
+									);
+								});
+				
+								screenAudioProducer.on('trackended', () => {
+									dispatch(
+										producersActions.closeProducer({
+											producerId: audioProducerId,
+											local: true
+										})
+									);
+								});
+							}
+						}
+					} else {
+						if (screenVideoProducer) {
+							({ track: videoTrack } = screenVideoProducer);
+
+							await videoTrack?.applyConstraints({
+								...mediaService.getVideoConstrains(screenSharingResolution, aspectRatio),
+								frameRate: screenSharingFrameRate
+							});
+						}
+
+						if (screenAudioProducer) {
+							({ track: audioTrack } = screenAudioProducer);
+
+							await audioTrack?.applyConstraints({
+								sampleRate,
+								channelCount,
+								autoGainControl,
+								echoCancellation,
+								noiseSuppression,
+								sampleSize
+							});
+						}
+					}
+				} catch (error) {
+					logger.error('updateScreenSharing() [error:%o]', error);
+				} finally {
+					dispatch(meActions.setScreenSharingInProgress(false));
+				}
 			}
 
 			return next(action);

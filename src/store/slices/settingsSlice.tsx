@@ -6,11 +6,15 @@ export interface SettingsState {
 	advancedMode?: boolean;
 	drawerOverlayed: boolean;
 	permanentTopBar: boolean;
+	lastN: number;
+	hideNonVideo: boolean;
 	aspectRatio: number;
 	selectedAudioDevice?: string;
 	selectedVideoDevice?: string;
 	resolution: string;
 	frameRate: number;
+	screenSharingResolution: string;
+	screenSharingFrameRate: number;
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
@@ -30,7 +34,11 @@ const initialState: SettingsState = {
 	drawerOverlayed: edumeetConfig.drawerOverlayed,
 	resolution: edumeetConfig.resolution,
 	frameRate: edumeetConfig.frameRate,
+	screenSharingResolution: edumeetConfig.screenSharingResolution,
+	screenSharingFrameRate: edumeetConfig.screenSharingFrameRate,
 	permanentTopBar: true,
+	lastN: edumeetConfig.lastN,
+	hideNonVideo: edumeetConfig.hideNonVideo,
 	aspectRatio: edumeetConfig.aspectRatio,
 	autoGainControl: edumeetConfig.autoGainControl,
 	echoCancellation: edumeetConfig.echoCancellation,
@@ -61,6 +69,12 @@ const settingsSlice = createSlice({
 		togglePermanentTopBar: ((state) => {
 			state.permanentTopBar = !state.permanentTopBar;
 		}),
+		setLastN: ((state, action: PayloadAction<number>) => {
+			state.lastN = action.payload;
+		}),
+		setHideNonVideo: ((state, action: PayloadAction<boolean>) => {
+			state.hideNonVideo = action.payload;
+		}),
 		setAspectRatio: ((state, action: PayloadAction<number>) => {
 			state.aspectRatio = action.payload;
 		}),
@@ -75,6 +89,12 @@ const settingsSlice = createSlice({
 		}),
 		setFrameRate: ((state, action: PayloadAction<number>) => {
 			state.frameRate = action.payload;
+		}),
+		setScreenSharingResolution: ((state, action: PayloadAction<string>) => {
+			state.screenSharingResolution = action.payload;
+		}),
+		setScreenSharingFrameRate: ((state, action: PayloadAction<number>) => {
+			state.screenSharingFrameRate = action.payload;
 		}),
 		setAutoGainControl: ((state, action: PayloadAction<boolean>) => {
 			state.autoGainControl = action.payload;

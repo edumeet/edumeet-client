@@ -66,7 +66,7 @@ const Me = ({
 					{ !screenProducer && <ScreenshareButton onColor='default' offColor='error' disabledColor='default' /> }
 				</MediaControls>
 				{ webcamProducer && <VideoView
-					mirrored={true} // TODO
+					mirrored
 					trackId={webcamProducer.trackId}
 				/> }
 			</VideoBox>
@@ -87,7 +87,10 @@ const Me = ({
 					>
 						<ScreenshareButton onColor='default' offColor='error' disabledColor='default' />
 					</MediaControls>
-					<VideoView trackId={screenProducer.trackId} />
+					<VideoView
+						trackId={screenProducer.trackId}
+						contain
+					/>
 				</VideoBox>
 			)}
 			{ extraVideoProducers.map((producer) => (

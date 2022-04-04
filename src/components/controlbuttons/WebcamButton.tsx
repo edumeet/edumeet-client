@@ -1,7 +1,10 @@
-import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { makePermissionSelector, webcamProducerSelector } from '../../store/selectors';
+import {
+	useAppDispatch,
+	useAppSelector,
+	usePermissionSelector
+} from '../../store/hooks';
+import { webcamProducerSelector } from '../../store/selectors';
 import { producersActions } from '../../store/slices/producersSlice';
 import { permissions } from '../../utils/roles';
 import { MediaState } from '../../utils/types';
@@ -18,11 +21,7 @@ import { deviceActions } from '../../store/slices/deviceSlice';
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
 	const dispatch = useAppDispatch();
-
-	const canShareVideoSelector =
-		useMemo(() => makePermissionSelector(permissions.SHARE_VIDEO), []);
-
-	const hasVideoPermission = useAppSelector(canShareVideoSelector);
+	const hasVideoPermission = usePermissionSelector(permissions.SHARE_VIDEO);
 	const webcamProducer = useAppSelector(webcamProducerSelector);
 
 	const {

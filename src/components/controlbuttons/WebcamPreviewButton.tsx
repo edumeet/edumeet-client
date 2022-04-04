@@ -8,7 +8,10 @@ import {
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { getPreviewWebcam, stopPreviewWebcam } from '../../store/actions/mediaActions';
+import {
+	updatePreviewWebcam,
+	stopPreviewWebcam
+} from '../../store/actions/mediaActions';
 
 const WebcamPreviewButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
@@ -36,7 +39,7 @@ const WebcamPreviewButton = (props: ControlButtonProps): JSX.Element => {
 				if (webcamState === 'unsupported') return;
 
 				if (webcamState === 'off') {
-					dispatch(getPreviewWebcam());
+					dispatch(updatePreviewWebcam());
 				} else if (previewWebcamTrackId) {
 					dispatch(stopPreviewWebcam());
 				} else {

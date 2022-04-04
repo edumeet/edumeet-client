@@ -7,9 +7,11 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	developmentPort: 8443,
 	productionPort: 443,
 	serverHostname: undefined,
+	lastN: 11,
+	hideNonVideo: false,
 	resolution: 'medium',
 	frameRate: 30,
-	screenResolution: 'veryhigh',
+	screenSharingResolution: 'veryhigh',
 	screenSharingFrameRate: 5,
 	aspectRatio: 1.7778, // 16:9
 	simulcast: true,
@@ -120,6 +122,10 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		backgroundImage: 'images/background.jpg',
 		appBarColor: '#313131',
 		logo: 'images/logo.edumeet.svg',
+		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
+		peerBackroundColor: 'rgba(49, 49, 49, 0.9)',
+		peerShadow: '0px',
+		peerAvatar: 'images/buddy.svg',
 	}
 };
 
@@ -128,9 +134,11 @@ export interface EdumeetConfig {
 	developmentPort: number;
 	productionPort: number;
 	serverHostname?: string;
+	lastN: number;
+	hideNonVideo: boolean;
 	resolution: Resolution;
 	frameRate: number;
-	screenResolution: Resolution;
+	screenSharingResolution: Resolution;
 	screenSharingFrameRate: number;
 	aspectRatio: number;
 	simulcast: boolean;

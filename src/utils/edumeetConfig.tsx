@@ -5,12 +5,20 @@ declare module '@mui/material/styles' {
 		backgroundImage: string;
 		appBarColor: string;
 		logo: string;
+		activeSpeakerBorder: string;
+		peerBackroundColor: string;
+		peerShadow: string;
+		peerAvatar: string;
 	}
 
 	interface ThemeOptions {
 		backgroundImage?: string;
 		appBarColor?: string;
 		logo?: string;
+		activeSpeakerBorder?: string;
+		peerBackroundColor?: string;
+		peerShadow?: string;
+		peerAvatar?: string;
 	}
 }
 

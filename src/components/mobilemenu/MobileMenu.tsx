@@ -1,9 +1,12 @@
 import { AccountCircle } from '@mui/icons-material';
 import { Badge, Menu, MenuItem } from '@mui/material';
-import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { makePermissionSelector, peersLengthSelector } from '../../store/selectors';
+import {
+	useAppDispatch,
+	useAppSelector,
+	usePermissionSelector
+} from '../../store/hooks';
+import { peersLengthSelector } from '../../store/selectors';
 import { lock, unlock } from '../../store/actions/permissionsActions';
 import { permissions } from '../../utils/roles';
 import {
@@ -67,13 +70,8 @@ const MobileMenu = ({
 }: MobileMenuProps): JSX.Element => {
 	const intl = useIntl();
 	const dispatch = useAppDispatch();
-
-	const hasExtraVideoPermission =
-		useMemo(() => makePermissionSelector(permissions.EXTRA_VIDEO), []);
-	const canProduceExtraVideo = useAppSelector(hasExtraVideoPermission);
-	const hasLockPermission =
-		useMemo(() => makePermissionSelector(permissions.CHANGE_ROOM_LOCK), []);
-	const canLock = useAppSelector(hasLockPermission);
+	const canProduceExtraVideo = usePermissionSelector(permissions.EXTRA_VIDEO);
+	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 
 	const {
 		settingsOpen,

@@ -5,6 +5,9 @@ import { spotlightPeersSelector, videoBoxesSelector } from '../../store/selector
 import Me from '../me/Me';
 import Peer from '../peer/Peer';
 
+const PADDING_V = 64;
+const FILL_RATE = 0.95;
+
 const DemocraticDiv = styled('div')({
 	width: '100%',
 	height: '100%',
@@ -14,10 +17,9 @@ const DemocraticDiv = styled('div')({
 	overflow: 'hidden',
 	justifyContent: 'center',
 	alignItems: 'center',
-	alignContent: 'center'
+	alignContent: 'center',
+	paddingTop: PADDING_V
 });
-
-const FILL_RATE = 0.95;
 
 const Democratic = (): JSX.Element => {
 	const peersRef = useRef<HTMLDivElement>(null);
@@ -35,7 +37,7 @@ const Democratic = (): JSX.Element => {
 			return;
 
 		const width = current.clientWidth;
-		const height = current.clientHeight;
+		const height = current.clientHeight - PADDING_V;
 
 		let x = width;
 		let y = height;

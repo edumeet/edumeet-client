@@ -14,9 +14,7 @@ const MediaPreview = (): JSX.Element => {
 	return (
 		<>
 			<VideoBox sx={{
-				width: '100%',
 				paddingBottom: `${100 / aspectRatio}%`,
-				height: '100%',
 				marginTop: theme.spacing(1),
 				marginBottom: theme.spacing(1)
 			}}>
@@ -29,7 +27,7 @@ const MediaPreview = (): JSX.Element => {
 					<WebcamPreviewButton onColor='default' offColor='error' disabledColor='default' />
 				</MediaControls>
 				{ previewWebcamTrackId && <VideoView
-					mirrored={true} // TODO
+					mirrored
 					trackId={previewWebcamTrackId}
 				/> }
 			</VideoBox>

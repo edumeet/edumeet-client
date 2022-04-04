@@ -4,6 +4,8 @@ import { MediaServiceContext } from '../../store/store';
 
 interface VideoViewProps {
 	mirrored?: boolean;
+	contain?: boolean;
+	zIndex?: number;
 	trackId: string;
 }
 
@@ -13,11 +15,13 @@ const StyledVideo = styled('video')({
 	width: '100%',
 	objectFit: 'cover',
 	userSelect: 'none',
-	// backgroundColor: 'var(--peer-video-bg-color)', TODO: add this back in
+	backgroundColor: 'rgba(19, 19, 19, 1)'
 });
 
 const VideoView = ({
 	mirrored,
+	contain,
+	zIndex,
 	trackId
 }: VideoViewProps): JSX.Element => {
 	const mediaService = useContext(MediaServiceContext);
@@ -53,6 +57,10 @@ const VideoView = ({
 				...(mirrored && {
 					transform: 'scaleX(-1)'
 				}),
+				...(contain && {
+					objectFit: 'contain'
+				}),
+				zIndex
 			}}
 		/>
 	);

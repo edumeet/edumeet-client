@@ -5,23 +5,30 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 
 const logger = new Logger('MediaActions');
 
-export const getPreviewMic = () => async (
+interface UpdateDeviceOptions {
+	restart?: boolean;
+	newDeviceId?: string;
+}
+
+export const updatePreviewMic = ({
+	restart = false,
+	newDeviceId
+}: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
 	{ mediaService }: MiddlewareOptions
 ): Promise<void> => {
-	logger.debug('getPreviewMic()');
+	logger.debug('updatePreviewMic()');
 
 	dispatch(meActions.setAudioInProgress(true));
 
-	let track: MediaStreamTrack | null;
+	let track: MediaStreamTrack | undefined | null;
 
 	try {
-		const { selectedAudioDevice } = getState().settings;
-		const deviceId = mediaService.getDeviceId(selectedAudioDevice, 'audioinput');
+		await mediaService.updateMediaDevices();
 
-		if (!deviceId)
-			throw new Error('no audio devices');
+		if (newDeviceId)
+			dispatch(settingsActions.setSelectedAudioDevice(newDeviceId));
 
 		const {
 			autoGainControl,
@@ -29,8 +36,23 @@ export const getPreviewMic = () => async (
 			noiseSuppression,
 			sampleRate,
 			channelCount,
-			sampleSize
+			sampleSize,
+			selectedAudioDevice
 		} = getState().settings;
+		const deviceId = mediaService.getDeviceId(selectedAudioDevice, 'audioinput');
+
+		if (!deviceId)
+			throw new Error('no audio devices');
+
+		if (restart) {
+			const { previewMicTrackId } = getState().me;
+
+			track = mediaService.getTrack(previewMicTrackId);
+
+			track?.stop();
+
+			dispatch(meActions.setPreviewMicTrackId());
+		}
 
 		const stream = await navigator.mediaDevices.getUserMedia({
 			audio: {
@@ -56,7 +78,7 @@ export const getPreviewMic = () => async (
 
 		await mediaService.updateMediaDevices();
 	} catch (error) {
-		logger.error('getPreviewMic() [error:%o]', error);
+		logger.error('updatePreviewMic() [error:%o]', error);
 	} finally {
 		dispatch(meActions.setAudioInProgress(false));
 	}
@@ -82,18 +104,26 @@ export const stopPreviewMic = () => async (
 	dispatch(meActions.setAudioInProgress(false));
 };
 
-export const getPreviewWebcam = () => async (
+export const updatePreviewWebcam = ({
+	restart = false,
+	newDeviceId
+}: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
 	{ mediaService }: MiddlewareOptions
 ): Promise<void> => {
-	logger.debug('getPreviewWebcam()');
+	logger.debug('updatePreviewWebcam()');
 
 	dispatch(meActions.setVideoInProgress(true));
 
-	let track: MediaStreamTrack | null;
+	let track: MediaStreamTrack | undefined | null;
 
 	try {
+		await mediaService.updateMediaDevices();
+
+		if (newDeviceId)
+			dispatch(settingsActions.setSelectedVideoDevice(newDeviceId));
+
 		const {
 			aspectRatio,
 			resolution,
@@ -105,6 +135,16 @@ export const getPreviewWebcam = () => async (
 
 		if (!deviceId)
 			throw new Error('no webcam devices');
+
+		if (restart) {
+			const { previewWebcamTrackId } = getState().me;
+
+			track = mediaService.getTrack(previewWebcamTrackId);
+
+			track?.stop();
+
+			dispatch(meActions.setPreviewWebcamTrackId());
+		}
 
 		const stream = await navigator.mediaDevices.getUserMedia({
 			video: {
@@ -128,7 +168,7 @@ export const getPreviewWebcam = () => async (
 
 		await mediaService.updateMediaDevices();
 	} catch (error) {
-		logger.error('getPreviewWebcam() [error:%o]', error);
+		logger.error('updatePreviewWebcam() [error:%o]', error);
 	} finally {
 		dispatch(meActions.setVideoInProgress(false));
 	}

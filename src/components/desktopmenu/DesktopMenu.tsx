@@ -1,8 +1,10 @@
 import { MenuItem, Paper, Popover } from '@mui/material';
-import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { makePermissionSelector } from '../../store/selectors';
+import {
+	useAppDispatch,
+	useAppSelector,
+	usePermissionSelector
+} from '../../store/hooks';
 import { uiActions } from '../../store/slices/uiSlice';
 import { permissions } from '../../utils/roles';
 import {
@@ -41,10 +43,7 @@ const DesktopMenu = ({
 }: DesktopmenuProps): JSX.Element => {
 	const intl = useIntl();
 	const dispatch = useAppDispatch();
-
-	const hasExtraVideoPermission =
-		useMemo(() => makePermissionSelector(permissions.EXTRA_VIDEO), []);
-	const canProduceExtraVideo = useAppSelector(hasExtraVideoPermission);
+	const canProduceExtraVideo = usePermissionSelector(permissions.EXTRA_VIDEO);
 
 	const {
 		extraVideoOpen,

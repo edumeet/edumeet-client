@@ -119,7 +119,12 @@ export const enterFullscreenLabel = (intl: IntlShape): string => intl.formatMess
 });
 
 export const EnterFullscreenMessage = (): JSX.Element =>
-	<FormattedMessage id='tooltip.enterFullscreen' defaultMessage='Enter fullscreen' />;	
+	<FormattedMessage id='tooltip.enterFullscreen' defaultMessage='Enter fullscreen' />;
+
+export const newWindowLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'label.newWindow',
+	defaultMessage: 'New window'
+});
 
 export const unlockRoomLabel = (intl: IntlShape): string => intl.formatMessage({
 	id: 'tooltip.unLockRoom',
@@ -224,3 +229,33 @@ export const EnableAllMediaMessage = (): JSX.Element =>
 		id='devices.enableBothMicrophoneAndCamera'
 		defaultMessage='Enable both Microphone And Camera'
 	/>;
+
+export const audioDeviceLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'settings.audio',
+	defaultMessage: 'Audio input device'
+});
+
+export const selectAudioDeviceLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'settings.selectAudio',
+	defaultMessage: 'Select audio input device'
+});
+
+export const noAudioDevicesLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'settings.cantSelectAudio',
+	defaultMessage: 'Unable to select audio input device'
+});
+
+export const videoDeviceLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'settings.camera',
+	defaultMessage: 'Camera'
+});
+
+export const selectVideoDeviceLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'settings.selectCamera',
+	defaultMessage: 'Select video device'
+});
+
+export const noVideoDevicesLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'settings.cantSelectCamera',
+	defaultMessage: 'Unable to select video device'
+});
