@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
-import { Fab, Tooltip } from '@mui/material';
+import { Fab, IconButton, styled, Tooltip } from '@mui/material';
 import { ButtonColor, ButtonSize } from '../../utils/types';
 
-export interface InternalControlButtonProps {
-	toolTip: string;
+export interface ControlButtonProps {
+	type?: 'fab' | 'iconbutton';
+	toolTip?: string;
 	toolTipLocation?: 'left' | 'bottom';
 	disabled?: boolean;
 	on?: boolean;
@@ -11,32 +12,37 @@ export interface InternalControlButtonProps {
 	offColor?: ButtonColor;
 	disabledColor?: ButtonColor;
 	size?: ButtonSize;
-	onClick: () => void;
+	onClick?: () => void;
 	children?: ReactNode;
 }
 
-export type ControlButtonProps = Omit<InternalControlButtonProps, 'onClick' | 'children' | 'toolTip' | 'on'>;
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+	margin: theme.spacing(1, 0),
+	padding: theme.spacing(0, 1)
+}));
 
 const ControlButton = ({
+	type = 'fab',
 	toolTip,
-	toolTipLocation = 'left',
+	toolTipLocation = 'bottom',
 	disabled,
 	on,
-	onColor = 'default',
-	offColor = 'error',
-	disabledColor = 'default',
+	onColor = 'inherit',
+	offColor = 'inherit',
+	disabledColor = 'inherit',
 	size = 'large',
 	onClick,
 	children
-}: InternalControlButtonProps): JSX.Element => {
+}: ControlButtonProps): JSX.Element => {
+	const Button = ((type === 'fab') ? Fab : StyledIconButton) as React.ElementType;
 
 	return (
 		<Tooltip
-			title={toolTip}
+			title={toolTip || ''}
 			placement={toolTipLocation}
 		>
 			<div>
-				<Fab
+				<Button
 					aria-label={toolTip}
 					disabled={disabled}
 					color={

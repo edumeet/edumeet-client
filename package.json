@@ -28,6 +28,7 @@
 		"random-string": "^0.2.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
+		"react-flip-toolkit": "^7.0.13",
 		"react-intl": "^5.24.6",
 		"react-intl-redux": "^2.2.0",
 		"react-redux": "^7.2.0",

@@ -1,28 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-	Button,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Grid,
-	Typography,
-	useTheme
-} from '@mui/material';
+import { Button } from '@mui/material';
 import { useIntl } from 'react-intl';
 import randomString from 'random-string';
-import StyledBackground from '../../components/StyledBackground';
-import StyledDialog from '../../components/dialog/StyledDialog';
-import LoginButton from '../../components/loginbutton/LoginButton';
-import edumeetConfig from '../../utils/edumeetConfig';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { JoinMessage, LogoutMessage, roomNameLabel } from '../../components/translated/translatedComponents';
+import { JoinMessage, roomNameLabel } from '../../components/translated/translatedComponents';
 import { useAppDispatch } from '../../store/hooks';
 import { roomActions } from '../../store/slices/roomSlice';
+import PrecallDialog from '../../components/precalldialog/PrecallDialog';
+import StyledBackground from '../../components/StyledBackground';
 
 const LandingPage = (): JSX.Element => {
 	const intl = useIntl();
-	const theme = useTheme();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const [ roomId, setRoomId ] = useState(randomString({ length: 8 }).toLowerCase());
@@ -34,75 +23,26 @@ const LandingPage = (): JSX.Element => {
 
 	return (
 		<StyledBackground>
-			<StyledDialog open>
-				<DialogTitle>
-					<Grid
-						container
-						direction='row'
-						justifyContent='space-between'
-						alignItems='center'
-					>
-						<Grid item>
-							<Typography variant='h5'> Edumeet </Typography>
-							{ theme.logo ?
-								<img alt='Logo' src={theme.logo} /> :
-								<Typography variant='h5'> {edumeetConfig.title} </Typography>
-							}
-						</Grid>
-
-						<Grid item>
-							<Grid
-								container
-								direction='row'
-								justifyContent='flex-end'
-								alignItems='center'
-							>
-								{ edumeetConfig.loginEnabled &&
-									<Grid item>
-										<Grid container direction='column' alignItems='center'>
-											<Grid item>
-												<LoginButton />
-											</Grid>
-											<Grid item>
-												<LogoutMessage />
-											</Grid>
-										</Grid>
-									</Grid>
-								}
-							</Grid>
-						</Grid>
-					</Grid>
-				</DialogTitle>
-				<DialogContent>
+			<PrecallDialog
+				content={
 					<TextInputField
 						label={roomNameLabel(intl)}
 						value={roomId}
 						setValue={setRoomId}
 						randomizeOnBlank
 					/>
-				</DialogContent>
-				<DialogActions>
-					<Grid
-						container
-						direction='row'
-						justifyContent='flex-end'
-						alignItems='flex-end'
-						spacing={1}
+				}
+				actions={
+					<Button
+						onClick={onClicked}
+						variant='contained'
+						color='primary'
+						disabled={!roomId}
 					>
-						<Grid item>
-							<Button
-								onClick={onClicked}
-								variant='contained'
-								color='primary'
-								disabled={!roomId}
-							>
-								<JoinMessage />
-							</Button>
-
-						</Grid>
-					</Grid>
-				</DialogActions>
-			</StyledDialog>
+						<JoinMessage />
+					</Button>
+				}
+			/>
 		</StyledBackground>
 	);
 };

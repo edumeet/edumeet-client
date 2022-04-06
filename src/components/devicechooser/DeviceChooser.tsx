@@ -1,7 +1,7 @@
 import { FormControl, FormHelperText, MenuItem, Select } from '@mui/material';
 import { MediaDevice } from '../../services/mediaService';
 
-interface DeviceChooserOptions {
+interface DeviceChooserProps {
 	value: string;
 	// eslint-disable-next-line no-unused-vars
 	setValue: (value: string) => void;
@@ -20,11 +20,11 @@ const DeviceChooser = ({
 	noDevicesLabel,
 	disabled,
 	devices,
-}: DeviceChooserOptions): JSX.Element => {
+}: DeviceChooserProps): JSX.Element => {
 	return (
 		<FormControl fullWidth>
 			<Select
-				value={value}
+				value={devices.length ? (value || '') : ''}
 				onChange={(event) => {
 					if (event.target.value)
 						setValue(event.target.value);
@@ -40,7 +40,7 @@ const DeviceChooser = ({
 							key={index}
 							value={device.deviceId}
 						>
-							{ device.label === '' ? (index + 1) : device.label }
+							{ device.label ? device.label : (index + 1) }
 						</MenuItem>
 					);
 				})}

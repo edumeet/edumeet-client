@@ -6,7 +6,6 @@ import {
 	useState
 } from 'react';
 import { createPortal } from 'react-dom';
-import { useAppSelector } from '../../store/hooks';
 import edumeetConfig from '../../utils/edumeetConfig';
 
 const copyStyles = (src: Document, dest: Document) => {
@@ -20,18 +19,19 @@ const copyStyles = (src: Document, dest: Document) => {
 	Array.from(src.fonts).forEach((font) => dest.fonts.add(font));
 };
 
-interface VideoWindowOptions {
+interface SeparateWindowProps {
 	onClose?: () => void;
+	aspectRatio?: number;
 	children?: ReactNode;
 }
 
-const VideoWindow = ({
+const SeparateWindow = ({
 	onClose,
+	aspectRatio,
 	children
-}: VideoWindowOptions): ReactPortal | null => {
+}: SeparateWindowProps): ReactPortal | null => {
 	const [ container, setContainer ] = useState<HTMLDivElement>();
 	const newWindow = useRef<Window | null>();
-	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 
 	useEffect(() => {
 		setContainer(document.createElement('div'));
@@ -42,7 +42,7 @@ const VideoWindow = ({
 			newWindow.current = window.open(
 				'',
 				edumeetConfig.title,
-				`width=800,height=${800 / aspectRatio},left=200,top=200`
+				`width=800,height=${800 / (aspectRatio || 1.3333)},left=200,top=200`
 			);
 
 			if (newWindow.current)
@@ -58,4 +58,4 @@ const VideoWindow = ({
 	return container ? createPortal(children, container) : null;
 };
 
-export default VideoWindow;
+export default SeparateWindow;

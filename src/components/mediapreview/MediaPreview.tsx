@@ -23,8 +23,18 @@ const MediaPreview = (): JSX.Element => {
 					horizontalPlacement='right'
 					verticalPlacement='center'
 				>
-					<MicPreviewButton onColor='default' offColor='error' disabledColor='default' />
-					<WebcamPreviewButton onColor='default' offColor='error' disabledColor='default' />
+					<MicPreviewButton
+						onColor='default'
+						offColor='error'
+						disabledColor='default'
+						toolTipLocation='left'
+					/>
+					<WebcamPreviewButton
+						onColor='default'
+						offColor='error'
+						disabledColor='default'
+						toolTipLocation='left'
+					/>
 				</MediaControls>
 				{ previewWebcamTrackId && <VideoView
 					mirrored

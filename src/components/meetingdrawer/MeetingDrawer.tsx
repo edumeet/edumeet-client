@@ -31,6 +31,10 @@ const MeetingDrawerAppBar = styled(AppBar)({
 	flexDirection: 'row'
 });
 
+const TabsHeader = styled(Tabs)({
+	flexGrow: 1
+});
+
 const tabs = [
 	'users',
 	'chat'
@@ -53,54 +57,53 @@ const MeetingDrawer = ({ closeDrawer }: MeetingDrawerProps): JSX.Element => {
 	} = useAppSelector((state) => state.drawer);
 
 	return (
-		<MeetingDrawerDiv>
-			<MeetingDrawerAppBar
-				position='static'
-				color='default'
-			>
-				<Tabs
-					value={tabs.indexOf(currentTab)}
-					onChange={
-						(event, value) => dispatch(drawerActions.setTab(tabs[value] as ToolAreaTab))
-					}
-					indicatorColor='primary'
-					textColor='primary'
-					variant='fullWidth'
-					sx={{
-						flexGrow: 1
-					}}
+		<>
+			<MeetingDrawerDiv>
+				<MeetingDrawerAppBar
+					position='static'
+					color='default'
 				>
-					<Tab
-						label={
-							<Badge color='secondary' badgeContent={raisedHands}>
-								<GroupIcon />&nbsp;
-								{(browser.platform !== 'mobile') && participantsLabel(intl)}
-							</Badge>
+					<TabsHeader
+						value={tabs.indexOf(currentTab)}
+						onChange={
+							(event, value) => dispatch(drawerActions.setTab(tabs[value] as ToolAreaTab))
 						}
-					/>
-					<Tab
-						label={
-							<Badge
-								color='secondary'
-								badgeContent={(unreadMessages + unreadFiles)}
-							>
-								<ChatIcon />&nbsp;
-								{(browser.platform !== 'mobile') && chatLabel(intl)}
-							</Badge>
-						}
-					/>
-				</Tabs>
-				{browser.platform !== 'mobile' && (
-					<>
-						<IconButton onClick={closeDrawer}>
-							{ theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon /> }
-						</IconButton>
-					</>
-				)}
-			</MeetingDrawerAppBar>
-			{/* currentTab === 'chat' && <Chat /> */}
-			{currentTab === 'users' && <ParticipantList />}
-		</MeetingDrawerDiv>
+						indicatorColor='primary'
+						textColor='primary'
+						variant='fullWidth'
+					>
+						<Tab
+							label={
+								<Badge color='secondary' badgeContent={raisedHands}>
+									<GroupIcon />&nbsp;
+									{(browser.platform !== 'mobile') && participantsLabel(intl)}
+								</Badge>
+							}
+						/>
+						<Tab
+							label={
+								<Badge
+									color='secondary'
+									badgeContent={(unreadMessages + unreadFiles)}
+								>
+									<ChatIcon />&nbsp;
+									{(browser.platform !== 'mobile') && chatLabel(intl)}
+								</Badge>
+							}
+						/>
+					</TabsHeader>
+					{browser.platform !== 'mobile' && (
+						<>
+							<IconButton onClick={closeDrawer}>
+								{ theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon /> }
+							</IconButton>
+						</>
+					)}
+				</MeetingDrawerAppBar>
+				{/* currentTab === 'chat' && <Chat /> */}
+				{currentTab === 'users' && <ParticipantList />}
+			</MeetingDrawerDiv>
+		</>
 	);
 };
 

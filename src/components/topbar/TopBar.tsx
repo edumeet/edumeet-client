@@ -1,14 +1,12 @@
 import {
 	AppBar,
-	Badge,
 	Button,
 	IconButton,
 	Toolbar,
-	Tooltip,
 	Typography
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import { Fragment, MouseEvent, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
@@ -17,72 +15,38 @@ import {
 } from '../../store/hooks';
 import {
 	lobbyPeersLengthSelector,
-	peersLengthSelector,
 	unreadSelector
 } from '../../store/selectors';
 import { drawerActions } from '../../store/slices/drawerSlice';
 import MenuIcon from '@mui/icons-material/Menu';
 import MoreIcon from '@mui/icons-material/More';
-import SecurityIcon from '@mui/icons-material/Security';
-import PeopleIcon from '@mui/icons-material/People';
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LockIcon from '@mui/icons-material/Lock';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
 import edumeetConfig from '../../utils/edumeetConfig';
 import {
-	enterFullscreenLabel,
-	leaveFullscreenLabel,
 	leaveLabel,
 	LeaveMessage,
-	lockRoomLabel,
-	loginLabel,
-	logoutLabel,
-	moreActionsLabel,
 	openDrawerLabel,
-	showLobbyLabel,
-	showParticipantsLabel,
-	showSettingsLabel,
-	unlockRoomLabel,
 } from '../translated/translatedComponents';
-import DesktopMenu from '../desktopmenu/DesktopMenu';
-import MobileMenu from '../mobilemenu/MobileMenu';
 import { permissions } from '../../utils/roles';
 import { uiActions } from '../../store/slices/uiSlice';
-import { AccountCircle } from '@mui/icons-material';
-import { lock, login, logout, unlock } from '../../store/actions/permissionsActions';
+import FloatingMenu from '../floatingmenu/FloatingMenu';
+import Login from '../menuitems/Login';
+import Lock from '../menuitems/Lock';
+import Settings from '../menuitems/Settings';
+import Participants from '../menuitems/Participants';
+import Fullscreen from '../menuitems/Fullscreen';
+import PulsingBadge from '../pulsingbadge/PulsingBadge';
+import LobbyButton from '../controlbuttons/LobbyButton';
+import LockButton from '../controlbuttons/LockButton';
+import FullscreenButton from '../controlbuttons/FullscreenButton';
+import ParticipantsButton from '../controlbuttons/ParticipantsButton';
+import LoginButton from '../controlbuttons/LoginButton';
+import SettingsButton from '../controlbuttons/SettingsButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
 	fullscreen: boolean;
 	onFullscreen: () => void;
 }
-
-const PulsingBadge = styled(Badge)(({ theme }) => ({
-	badge: {
-		backgroundColor: theme.palette.secondary.main,
-		'&::after': {
-			position: 'absolute',
-			width: '100%',
-			height: '100%',
-			borderRadius: '50%',
-			animation: '$ripple 1.2s infinite ease-in-out',
-			border: `3px solid ${theme.palette.secondary.main}`,
-			content: '""'
-		}
-	},
-	'@keyframes ripple': {
-		'0%': {
-			transform: 'scale(.8)',
-			opacity: 1
-		},
-		'100%': {
-			transform: 'scale(2.4)',
-			opacity: 0
-		}
-	}
-}));
 
 const LogoImg = styled('img')(({ theme }) => ({
 	display: 'none',
@@ -114,11 +78,6 @@ const MobileDiv = styled('div')(({ theme }) => ({
 	}
 }));
 
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
-	margin: theme.spacing(1, 0),
-	padding: theme.spacing(0, 1)
-}));
-
 const TopBar = ({
 	fullscreenEnabled,
 	fullscreen,
@@ -128,65 +87,24 @@ const TopBar = ({
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
-	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 
-	const {
-		settingsOpen,
-		lockDialogOpen,
-		leaveOpen
-	} = useAppSelector((state) => state.ui);
-
+	const leaveOpen = useAppSelector((state) => state.ui.leaveOpen);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
-	const locked = useAppSelector((state) => state.permissions.locked);
-	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const permanentTopBar = useAppSelector((state) => state.settings.permanentTopBar);
 	const drawerOverlayed = useAppSelector((state) => state.settings.drawerOverlayed);
 	const platform = useAppSelector((state) => state.me.browser.platform);
 	const drawerOpen = useAppSelector((state) => state.drawer.open);
 	const unread = useAppSelector(unreadSelector);
-	const peersLength = useAppSelector(peersLengthSelector);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
 
 	const [ mobileMoreAnchorEl, setMobileMoreAnchorEl ] = useState<HTMLElement | null>();
-	const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>();
-	const [ currentMenu, setCurrentMenu ] = useState<
-		'moreActions' |
-		'localeMenu' |
-		null |
-		undefined
-	>();
-
-	const handleMenuOpen = (
-		event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-		menu: 'moreActions' | 'localeMenu' | null |	undefined
-	) => {
-		setAnchorEl(event.currentTarget);
-		setCurrentMenu(menu);
-	};
-
-	const handleExited = () => {
-		setCurrentMenu(null);
-	};
 
 	const handleMenuClose = () => {
-		setAnchorEl(null);
 		setMobileMoreAnchorEl(null);
 	};
 
-	const openUsersTab = () => {
-		dispatch(drawerActions.toggle());
-		dispatch(drawerActions.setTab('users'));
-	};
-
 	const isMobile = platform === 'mobile';
-	const isMenuOpen = Boolean(anchorEl);
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-	const lockLabel = locked ?
-		unlockRoomLabel(intl) : lockRoomLabel(intl);
-	const fullscreenLabel = fullscreen ?
-		leaveFullscreenLabel(intl) : enterFullscreenLabel(intl);
-	const loginButtonLabel = loggedIn ? logoutLabel(intl) : loginLabel(intl);
 
 	return (
 		<Fragment>
@@ -244,132 +162,21 @@ const TopBar = ({
 					}
 					<GrowingDiv />
 					<DesktopDiv>
-						<Tooltip title={moreActionsLabel(intl)}>
-							<IconButton
-								aria-owns={
-									isMenuOpen &&
-									currentMenu === 'moreActions' ?
-										'material-appbar' : undefined
-								}
-								aria-haspopup
-								onClick={(event) => handleMenuOpen(event, 'moreActions')}
-								color='inherit'
-							>
-								<MoreIcon />
-							</IconButton>
-						</Tooltip>
 						{ fullscreenEnabled &&
-							<Tooltip title={fullscreenLabel}>
-								<StyledIconButton
-									aria-label={fullscreenLabel}
-									color='inherit'
-									onClick={onFullscreen}
-								>
-									{ fullscreen ?
-										<FullscreenExitIcon />
-										:
-										<FullscreenIcon />
-									}
-								</StyledIconButton>
-							</Tooltip>
+							<FullscreenButton
+								type='iconbutton'
+								fullscreen={fullscreen}
+								onClick={onFullscreen}
+							/>
 						}
-						<Tooltip title={showParticipantsLabel(intl)}>
-							<div>
-								<IconButton
-									aria-label={showParticipantsLabel(intl)}
-									color='inherit'
-									onClick={() => openUsersTab()}
-								>
-									<Badge
-										color='primary'
-										badgeContent={peersLength + 1}
-									>
-										<PeopleIcon />
-									</Badge>
-								</IconButton>
-							</div>
-						</Tooltip>
-						<Tooltip title={showSettingsLabel(intl)}>
-							<div>
-								<StyledIconButton
-									aria-label={showSettingsLabel(intl)}
-									color='inherit'
-									onClick={() => dispatch(
-										uiActions.setUi({ settingsOpen: !settingsOpen })
-									)}
-								>
-									<SettingsIcon />
-								</StyledIconButton>
-							</div>
-						</Tooltip>
-						<Tooltip title={lockLabel}>
-							<div>
-								<StyledIconButton
-									aria-label={lockLabel}
-									color='inherit'
-									disabled={!canLock}
-									onClick={() =>
-										(locked ? dispatch(unlock()) : dispatch(lock()))
-									}
-								>
-									{ locked ? <LockIcon />:<LockOpenIcon /> }
-								</StyledIconButton>
-							</div>
-						</Tooltip>
-						{ lobbyPeersLength > 0 &&
-							<Tooltip
-								title={showLobbyLabel(intl)}
-							>
-								<StyledIconButton
-									aria-label={showLobbyLabel(intl)}
-									color='inherit'
-									disabled={!canPromote}
-									onClick={() => 
-										dispatch(uiActions.setUi({ lockDialogOpen: !lockDialogOpen }))
-									}
-								>
-									<PulsingBadge
-										color='secondary'
-										badgeContent={lobbyPeersLength}
-									>
-										<SecurityIcon />
-									</PulsingBadge>
-								</StyledIconButton>
-							</Tooltip>
-						}
-						{ loginEnabled &&
-							<Tooltip title={loginButtonLabel}>
-								<StyledIconButton
-									aria-label={loginButtonLabel}
-									color='inherit'
-									onClick={() => (loggedIn ? dispatch(logout()) : dispatch(login()))}
-								>
-									<AccountCircle />
-								</StyledIconButton>
-							</Tooltip>
-						}
+						<ParticipantsButton type='iconbutton' />
+						<SettingsButton type='iconbutton' />
+						<LockButton type='iconbutton' />
+						{ lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
+						{ loginEnabled && <LoginButton type='iconbutton' /> }
 					</DesktopDiv>
 					<MobileDiv>
-						{ lobbyPeersLength > 0 &&
-						<Tooltip
-							title={showLobbyLabel(intl)}
-						>
-							<StyledIconButton
-								aria-label={showLobbyLabel(intl)}
-								color='inherit'
-								disabled={!canPromote}
-								onClick={() =>
-									dispatch(uiActions.setUi({ lockDialogOpen: !lockDialogOpen }))}
-							>
-								<PulsingBadge
-									color='secondary'
-									badgeContent={lobbyPeersLength}
-								>
-									<SecurityIcon />
-								</PulsingBadge>
-							</StyledIconButton>
-						</Tooltip>
-						}
+						{ lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						<IconButton
 							aria-haspopup
 							onClick={(event) => {
@@ -392,21 +199,17 @@ const TopBar = ({
 					</Button>
 				</Toolbar>
 			</AppBar>
-			<DesktopMenu
-				anchorEl={anchorEl}
-				open={isMenuOpen}
-				currentMenu={currentMenu}
-				onClose={handleMenuClose}
-				onExited={handleExited}
-			/>
-			<MobileMenu
-				fullscreen={fullscreen}
-				fullscreenEnabled={fullscreenEnabled}
-				onFullscreen={onFullscreen}
+			<FloatingMenu
 				anchorEl={mobileMoreAnchorEl}
 				open={isMobileMenuOpen}
 				onClose={handleMenuClose}
-			/>
+			>
+				{ loginEnabled && <Login onClick={handleMenuClose} /> }
+				{ canLock && <Lock onClick={handleMenuClose} /> }
+				<Settings onClick={handleMenuClose} />
+				<Participants onClick={handleMenuClose} />
+				<Fullscreen onClick={handleMenuClose} />
+			</FloatingMenu>
 		</Fragment>
 	);
 };

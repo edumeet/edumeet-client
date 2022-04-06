@@ -14,7 +14,7 @@ import {
 	stopScreenSharingLabel,
 } from '../translated/translatedComponents';
 import ScreenIcon from '@mui/icons-material/ScreenShare';
-import ScreenOffIcon from '@mui/icons-material/StopScreenShare';
+import CancelIcon from '@mui/icons-material/Cancel';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { deviceActions } from '../../store/slices/deviceSlice';
 
@@ -67,7 +67,7 @@ const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 			on={screenState === 'on'}
 			{ ...props }
 		>
-			{ screenState === 'on' ? <ScreenIcon /> : <ScreenOffIcon /> }
+			{ screenState === 'on' ? <CancelIcon /> : <ScreenIcon /> }
 		</ControlButton>
 	);
 };

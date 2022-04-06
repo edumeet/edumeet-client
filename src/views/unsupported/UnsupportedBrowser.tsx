@@ -16,7 +16,7 @@ import WebAssetIcon from '@mui/icons-material/WebAsset';
 import ErrorIcon from '@mui/icons-material/Error';
 import { FormattedMessage } from 'react-intl';
 
-interface UnsupportedBrowserOptions {
+interface UnsupportedBrowserProps {
 	platform: string;
 	webrtcUnavailable?: boolean;
 }
@@ -53,7 +53,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 const UnsupportedBrowser = ({
 	platform,
 	webrtcUnavailable,
-}: UnsupportedBrowserOptions): JSX.Element => {
+}: UnsupportedBrowserProps): JSX.Element => {
 	// const dispatch = useDispatch();
 	if (platform !== 'desktop')
 		dense = true;

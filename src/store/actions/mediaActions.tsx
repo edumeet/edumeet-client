@@ -42,7 +42,7 @@ export const updatePreviewMic = ({
 		const deviceId = mediaService.getDeviceId(selectedAudioDevice, 'audioinput');
 
 		if (!deviceId)
-			throw new Error('no audio devices');
+			logger.warn('updatePreviewMic() no audio devices');
 
 		if (restart) {
 			const { previewMicTrackId } = getState().me;
@@ -95,11 +95,12 @@ export const stopPreviewMic = () => async (
 
 	const { previewMicTrackId } = getState().me;
 	const track = mediaService.getTrack(previewMicTrackId);
-
-	track?.stop();
-
+	
 	dispatch(meActions.setPreviewMicTrackId());
 	dispatch(settingsActions.setAudioMuted(true));
+
+	mediaService.removeTrack(track?.id);
+	track?.stop();
 
 	dispatch(meActions.setAudioInProgress(false));
 };
@@ -134,7 +135,7 @@ export const updatePreviewWebcam = ({
 		const deviceId = mediaService.getDeviceId(selectedVideoDevice, 'videoinput');
 
 		if (!deviceId)
-			throw new Error('no webcam devices');
+			logger.warn('updatePreviewWebcam() no webcam devices');
 
 		if (restart) {
 			const { previewWebcamTrackId } = getState().me;
@@ -186,10 +187,11 @@ export const stopPreviewWebcam = () => async (
 	const { previewWebcamTrackId } = getState().me;
 	const track = mediaService.getTrack(previewWebcamTrackId);
 
-	track?.stop();
-
 	dispatch(meActions.setPreviewWebcamTrackId());
 	dispatch(settingsActions.setVideoMuted(true));
+
+	mediaService.removeTrack(track?.id);
+	track?.stop();
 
 	dispatch(meActions.setVideoInProgress(false));
 };

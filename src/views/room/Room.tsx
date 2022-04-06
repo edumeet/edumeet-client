@@ -6,7 +6,6 @@ import Democratic from '../../components/democratic/Democratic';
 import LockDialog from '../../components/lockdialog/LockDialog';
 import Settings from '../../components/settingsdialog/SettingsDialog';
 import TopBar from '../../components/topbar/TopBar';
-import StyledBackground from '../../components/StyledBackground';
 import { Drawer, Hidden, SwipeableDrawer } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { drawerActions } from '../../store/slices/drawerSlice';
@@ -15,7 +14,7 @@ import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
 import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 
 const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
-	paper: {
+	'& .MuiDrawer-paper': {
 		width: '30vw',
 		[theme.breakpoints.down('lg')]: {
 			width: '30vw'
@@ -33,7 +32,7 @@ const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
 }));
 
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
-	paper: {
+	'& .MuiDrawer-paper': {
 		width: '30vw',
 		[theme.breakpoints.down('lg')]: {
 			width: '30vw'
@@ -107,7 +106,7 @@ const Room = (): JSX.Element => {
 	};
 
 	return (
-		<StyledBackground>
+		<>
 			<FullscreenVideo />
 			<WindowedVideo />
 
@@ -167,7 +166,7 @@ const Room = (): JSX.Element => {
 			{ ui.settingsOpen &&
 				<Settings />
 			}
-		</StyledBackground>
+		</>
 	);
 };
 

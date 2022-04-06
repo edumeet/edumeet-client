@@ -24,9 +24,12 @@ const FullscreenVideo = (): JSX.Element => {
 						horizontalPlacement='right'
 						verticalPlacement='center'
 					>
-						<FullscreenVideoButton consumerId={consumer.id} />
+						<FullscreenVideoButton
+							consumerId={consumer.id}
+							toolTipLocation='left'
+						/>
 					</MediaControls>
-					<VideoView trackId={consumer.trackId} />
+					<VideoView trackId={consumer.trackId} contain />
 				</VideoBox>
 			)}
 		</>

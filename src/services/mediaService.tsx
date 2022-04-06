@@ -57,6 +57,12 @@ export class MediaService extends EventEmitter {
 		});
 	}
 
+	public removeTrack(trackId: string | undefined): void {
+		logger.debug('removeTrack() [trackId:%s]', trackId);
+
+		trackId && this.tracks.delete(trackId);
+	}
+
 	public getEncodings(
 		rtpCapabilities: RtpCapabilities,
 		width: number | undefined,
@@ -133,7 +139,11 @@ export class MediaService extends EventEmitter {
 		try {
 			const devicesList =
 				(await navigator.mediaDevices.enumerateDevices())
+					.filter((d) => d.deviceId)
 					.map((d) => ({ deviceId: d.deviceId, kind: d.kind, label: d.label }));
+
+			if (devicesList.length === 0)
+				return;
 
 			removedDevices =
 				this.devices.filter(

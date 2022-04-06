@@ -99,6 +99,10 @@ const createMediaMiddleware = ({
 
 								consumers.set(consumer.id, consumer);
 								mediaService.addTrack(consumer.track);
+
+								consumer.observer.once('close', () => {
+									mediaService.removeTrack(consumer.track.id);
+								});
 			
 								consumer.once('transportclose', () => {
 									consumers.delete(consumer.id);
@@ -405,7 +409,7 @@ const createMediaMiddleware = ({
 					const deviceId = mediaService.getDeviceId(selectedVideoDevice, 'videoinput');
 
 					if (!deviceId)
-						throw new Error('no webcam devices');
+						logger.warn('no webcam devices');
 
 					webcamProducer =
 						Array.from(producers.values())
@@ -421,7 +425,9 @@ const createMediaMiddleware = ({
 
 						if (previewWebcamTrackId) {
 							track = mediaService.getTrack(previewWebcamTrackId);
-						} else {
+						}
+
+						if (!track) {
 							const stream = await navigator.mediaDevices.getUserMedia({
 								video: {
 									deviceId: { ideal: deviceId },
@@ -499,6 +505,7 @@ const createMediaMiddleware = ({
 
 						webcamProducer.observer.once('close', () => {
 							producers.delete(producerId);
+							mediaService.removeTrack(webcamProducer?.track?.id);
 						});
 
 						webcamProducer.once('transportclose', () => {
@@ -587,7 +594,7 @@ const createMediaMiddleware = ({
 					const deviceId = mediaService.getDeviceId(selectedAudioDevice, 'audioinput');
 		
 					if (!deviceId)
-						throw new Error('no audio devices');
+						logger.warn('no audio devices');
 
 					const {
 						autoGainControl,
@@ -621,7 +628,9 @@ const createMediaMiddleware = ({
 
 						if (previewMicTrackId) {
 							track = mediaService.getTrack(previewMicTrackId);
-						} else {
+						}
+
+						if (!track) {
 							const stream = await navigator.mediaDevices.getUserMedia({
 								audio: {
 									deviceId: { ideal: deviceId },
@@ -679,6 +688,7 @@ const createMediaMiddleware = ({
 
 						micProducer.observer.once('close', () => {
 							producers.delete(producerId);
+							mediaService.removeTrack(micProducer?.track?.id);
 						});
 		
 						micProducer.on('transportclose', () => {
@@ -788,7 +798,7 @@ const createMediaMiddleware = ({
 							.find((producer) => producer.appData.source === 'screen');
 					screenAudioProducer =
 						Array.from(producers.values())
-							.find((producer) => producer.appData.source === 'screenaudio');
+							.find((producer) => producer.appData.source === 'screenaudio'); // TODO: fix
 
 					if (start) {
 						const stream = await navigator.mediaDevices.getDisplayMedia({
@@ -872,6 +882,7 @@ const createMediaMiddleware = ({
 
 						screenVideoProducer.observer.once('close', () => {
 							producers.delete(videoProducerId);
+							mediaService.removeTrack(screenVideoProducer?.track?.id);
 						});
 
 						screenVideoProducer.once('transportclose', () => {
@@ -925,6 +936,7 @@ const createMediaMiddleware = ({
 		
 								screenAudioProducer.observer.once('close', () => {
 									producers.delete(audioProducerId);
+									mediaService.removeTrack(screenAudioProducer?.track?.id);
 								});
 				
 								screenAudioProducer.on('transportclose', () => {

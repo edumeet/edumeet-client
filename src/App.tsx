@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { startListeners } from './store/actions/startActions';
 import { useAppDispatch, useAppSelector } from './store/hooks';
+import StyledBackground from './components/StyledBackground';
 import Join from './views/join/Join';
 import Lobby from './views/lobby/Lobby';
 import Room from './views/room/Room';
@@ -21,12 +22,11 @@ const App = (): JSX.Element => {
 		dispatch(startListeners());
 	}, []);
 
-	if (joined)
-		return (<Room />);
-	else if (inLobby)
-		return (<Lobby />);
-	else
-		return (<Join roomId={id} />);
+	return (
+		<StyledBackground>
+			{ joined ? <Room /> : inLobby ? <Lobby /> : <Join roomId={id} /> }
+		</StyledBackground>
+	);
 };
 
 export default App;

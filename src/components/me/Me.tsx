@@ -5,7 +5,7 @@ import MicButton from '../controlbuttons/MicButton';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import MediaControls from '../mediacontrols/MediaControls';
-import { MeTagMessage } from '../translated/translatedComponents';
+import { MeMessage } from '../translated/translatedComponents';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 
@@ -54,16 +54,33 @@ const Me = ({
 				sx={{ ...style }}
 			>
 				<MeTag>
-					<MeTagMessage />
+					<MeMessage />
 				</MeTag>
 				<MediaControls
 					orientation='vertical'
 					horizontalPlacement='right'
 					verticalPlacement='center'
 				>
-					<MicButton onColor='default' offColor='error' disabledColor='default' />
-					<WebcamButton onColor='default' offColor='error' disabledColor='default' />
-					{ !screenProducer && <ScreenshareButton onColor='default' offColor='error' disabledColor='default' /> }
+					<MicButton
+						onColor='default'
+						offColor='error'
+						disabledColor='default'
+						toolTipLocation='left'
+					/>
+					<WebcamButton
+						onColor='default'
+						offColor='error'
+						disabledColor='default'
+						toolTipLocation='left'
+					/>
+					{ !screenProducer &&
+						<ScreenshareButton
+							onColor='default'
+							offColor='default'
+							disabledColor='default'
+							toolTipLocation='left'
+						/>
+					}
 				</MediaControls>
 				{ webcamProducer && <VideoView
 					mirrored
@@ -78,14 +95,19 @@ const Me = ({
 					sx={{ ...style }}
 				>
 					<MeTag>
-						<MeTagMessage />
+						<MeMessage />
 					</MeTag>
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'
 						verticalPlacement='center'
 					>
-						<ScreenshareButton onColor='default' offColor='error' disabledColor='default' />
+						<ScreenshareButton
+							onColor='default'
+							offColor='error'
+							disabledColor='default'
+							toolTipLocation='left'
+						/>
 					</MediaControls>
 					<VideoView
 						trackId={screenProducer.trackId}
@@ -102,7 +124,7 @@ const Me = ({
 					sx={{ ...style }}
 				>
 					<MeTag>
-						<MeTagMessage />
+						<MeMessage />
 					</MeTag>
 					<VideoView
 						trackId={producer.trackId}

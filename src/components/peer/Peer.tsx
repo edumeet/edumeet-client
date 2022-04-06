@@ -49,8 +49,14 @@ const Peer = ({
 					>
 						{ webcamConsumer && (
 							<>
-								<FullscreenVideoButton consumerId={webcamConsumer.id} />
-								<WindowedVideoButton consumerId={webcamConsumer.id} />
+								<FullscreenVideoButton
+									consumerId={webcamConsumer.id}
+									toolTipLocation='left'
+								/>
+								<WindowedVideoButton
+									consumerId={webcamConsumer.id}
+									toolTipLocation='left'
+								/>
 							</>
 						)}
 					</MediaControls>

@@ -193,8 +193,14 @@ export const startScreenSharingLabel = (intl: IntlShape): string => intl.formatM
 	defaultMessage: 'Start screen sharing'
 });
 
-export const MeTagMessage = (): JSX.Element =>
+export const MeMessage = (): JSX.Element =>
 	<FormattedMessage id='room.me' defaultMessage='Me' />;
+
+export const ParticipantsMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='label.participants'
+		defaultMessage='Participants'
+	/>;
 
 export const participantsLabel = (intl: IntlShape): string => intl.formatMessage({
 	id: 'label.participants',
@@ -228,6 +234,12 @@ export const EnableAllMediaMessage = (): JSX.Element =>
 	<FormattedMessage
 		id='devices.enableBothMicrophoneAndCamera'
 		defaultMessage='Enable both Microphone And Camera'
+	/>;
+
+export const ModeratorActionsMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='room.moderatoractions'
+		defaultMessage='Moderator actions'
 	/>;
 
 export const audioDeviceLabel = (intl: IntlShape): string => intl.formatMessage({

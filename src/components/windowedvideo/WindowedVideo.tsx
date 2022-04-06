@@ -4,17 +4,19 @@ import { roomActions } from '../../store/slices/roomSlice';
 import MediaControls from '../mediacontrols/MediaControls';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
-import VideoWindow from '../videowindow/VideoWindow';
+import SeparateWindow from '../separatewindow/SeparateWindow';
 
 const WindowedVideo = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const consumer = useAppSelector(windowedConsumerSelector);
+	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 
 	return (
 		<>
 			{ consumer && (
-				<VideoWindow
+				<SeparateWindow
 					onClose={() => dispatch(roomActions.setWindowedConsumer())}
+					aspectRatio={aspectRatio}
 				>
 					<VideoBox
 						sx={{
@@ -30,7 +32,7 @@ const WindowedVideo = (): JSX.Element => {
 						/>
 						<VideoView trackId={consumer.trackId} contain />
 					</VideoBox>
-				</VideoWindow>
+				</SeparateWindow>
 			)}
 		</>
 	);
