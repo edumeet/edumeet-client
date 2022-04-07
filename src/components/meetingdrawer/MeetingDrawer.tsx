@@ -35,7 +35,7 @@ const TabsHeader = styled(Tabs)({
 	flexGrow: 1
 });
 
-const tabs = [
+const tabs: ToolAreaTab[] = [
 	'users',
 	'chat'
 ];
@@ -66,10 +66,9 @@ const MeetingDrawer = ({ closeDrawer }: MeetingDrawerProps): JSX.Element => {
 					<TabsHeader
 						value={tabs.indexOf(currentTab)}
 						onChange={
-							(event, value) => dispatch(drawerActions.setTab(tabs[value] as ToolAreaTab))
+							(_event, value) =>
+								dispatch(drawerActions.setTab(tabs[value]))
 						}
-						indicatorColor='primary'
-						textColor='primary'
 						variant='fullWidth'
 					>
 						<Tab

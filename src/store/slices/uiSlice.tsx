@@ -19,6 +19,14 @@ export interface UiState {
 type UiUpdate = Omit<UiState, 'currentSettingsTab'>;
 
 const initialState: UiState = {
+	settingsOpen: false,
+	extraVideoOpen: false,
+	hideSelfView: false,
+	rolesManagerOpen: false,
+	helpOpen: false,
+	aboutOpen: false,
+	leaveOpen: false,
+	lockDialogOpen: false,
 	currentSettingsTab: 'media'
 };
 
@@ -31,9 +39,9 @@ const uiSlice = createSlice({
 		}),
 		setCurrentSettingsTab: ((
 			state,
-			action: PayloadAction<{ currentSettingsTab: SettingsTab }>
+			action: PayloadAction<SettingsTab>
 		) => {
-			state.currentSettingsTab = action.payload.currentSettingsTab;
+			state.currentSettingsTab = action.payload;
 		}),
 	},
 });

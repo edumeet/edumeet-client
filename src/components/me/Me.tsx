@@ -65,20 +65,17 @@ const Me = ({
 						onColor='default'
 						offColor='error'
 						disabledColor='default'
-						toolTipLocation='left'
 					/>
 					<WebcamButton
 						onColor='default'
 						offColor='error'
 						disabledColor='default'
-						toolTipLocation='left'
 					/>
 					{ !screenProducer &&
 						<ScreenshareButton
 							onColor='default'
 							offColor='default'
 							disabledColor='default'
-							toolTipLocation='left'
 						/>
 					}
 				</MediaControls>
@@ -106,7 +103,6 @@ const Me = ({
 							onColor='default'
 							offColor='error'
 							disabledColor='default'
-							toolTipLocation='left'
 						/>
 					</MediaControls>
 					<VideoView

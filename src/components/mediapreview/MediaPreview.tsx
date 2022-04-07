@@ -6,7 +6,13 @@ import MediaControls from '../mediacontrols/MediaControls';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 
-const MediaPreview = (): JSX.Element => {
+interface MediaPreviewProps {
+	withControls?: boolean;
+}
+
+const MediaPreview = ({
+	withControls = true
+}: MediaPreviewProps): JSX.Element => {
 	const theme = useTheme();
 	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
@@ -18,24 +24,24 @@ const MediaPreview = (): JSX.Element => {
 				marginTop: theme.spacing(1),
 				marginBottom: theme.spacing(1)
 			}}>
-				<MediaControls
-					orientation='vertical'
-					horizontalPlacement='right'
-					verticalPlacement='center'
-				>
-					<MicPreviewButton
-						onColor='default'
-						offColor='error'
-						disabledColor='default'
-						toolTipLocation='left'
-					/>
-					<WebcamPreviewButton
-						onColor='default'
-						offColor='error'
-						disabledColor='default'
-						toolTipLocation='left'
-					/>
-				</MediaControls>
+				{ withControls && (
+					<MediaControls
+						orientation='vertical'
+						horizontalPlacement='right'
+						verticalPlacement='center'
+					>
+						<MicPreviewButton
+							onColor='default'
+							offColor='error'
+							disabledColor='default'
+						/>
+						<WebcamPreviewButton
+							onColor='default'
+							offColor='error'
+							disabledColor='default'
+						/>
+					</MediaControls>
+				)}
 				{ previewWebcamTrackId && <VideoView
 					mirrored
 					trackId={previewWebcamTrackId}

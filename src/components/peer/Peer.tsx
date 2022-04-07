@@ -51,11 +51,9 @@ const Peer = ({
 							<>
 								<FullscreenVideoButton
 									consumerId={webcamConsumer.id}
-									toolTipLocation='left'
 								/>
 								<WindowedVideoButton
 									consumerId={webcamConsumer.id}
-									toolTipLocation='left'
 								/>
 							</>
 						)}

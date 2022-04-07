@@ -24,7 +24,7 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 const ControlButton = ({
 	type = 'fab',
 	toolTip,
-	toolTipLocation = 'bottom',
+	toolTipLocation = type === 'fab' ? 'left' : 'bottom',
 	disabled,
 	on,
 	onColor = 'inherit',

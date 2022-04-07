@@ -1,8 +1,6 @@
-import { styled } from '@mui/material/styles';
 import {
 	Avatar,
 	Box,
-	Dialog,
 	DialogContent,
 	DialogTitle,
 	Grid,
@@ -15,6 +13,7 @@ import {
 import WebAssetIcon from '@mui/icons-material/WebAsset';
 import ErrorIcon from '@mui/icons-material/Error';
 import { FormattedMessage } from 'react-intl';
+import StyledDialog from '../../components/dialog/StyledDialog';
 
 interface UnsupportedBrowserProps {
 	platform: string;
@@ -32,29 +31,10 @@ const supportedBrowsers = [
 
 let dense = false;
 
-const StyledDialog = styled(Dialog)(({ theme }) => ({
-	'.MuiDialog-paper': {
-		width: '40vw',
-		[theme.breakpoints.down('lg')]: {
-			width: '40vw'
-		},
-		[theme.breakpoints.down('md')]: {
-			width: '50vw'
-		},
-		[theme.breakpoints.down('sm')]: {
-			width: '70vw'
-		},
-		[theme.breakpoints.down('xs')]: {
-			width: '90vw'
-		}
-	},
-}));
-
 const UnsupportedBrowser = ({
 	platform,
 	webrtcUnavailable,
 }: UnsupportedBrowserProps): JSX.Element => {
-	// const dispatch = useDispatch();
 	if (platform !== 'desktop')
 		dense = true;
 

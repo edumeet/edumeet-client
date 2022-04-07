@@ -7,11 +7,13 @@ const logger = new Logger('MediaActions');
 
 interface UpdateDeviceOptions {
 	restart?: boolean;
+	updateMute?: boolean;
 	newDeviceId?: string;
 }
 
 export const updatePreviewMic = ({
 	restart = false,
+	updateMute = true,
 	newDeviceId
 }: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
@@ -74,7 +76,8 @@ export const updatePreviewMic = ({
 
 		mediaService.addTrack(track);
 		dispatch(meActions.setPreviewMicTrackId(track.id));
-		dispatch(settingsActions.setAudioMuted(false));
+		if (updateMute)
+			dispatch(settingsActions.setAudioMuted(false));
 
 		await mediaService.updateMediaDevices();
 	} catch (error) {
@@ -84,7 +87,9 @@ export const updatePreviewMic = ({
 	}
 };
 
-export const stopPreviewMic = () => async (
+export const stopPreviewMic = ({
+	updateMute = true,
+}: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
 	{ mediaService }: MiddlewareOptions
@@ -97,7 +102,8 @@ export const stopPreviewMic = () => async (
 	const track = mediaService.getTrack(previewMicTrackId);
 	
 	dispatch(meActions.setPreviewMicTrackId());
-	dispatch(settingsActions.setAudioMuted(true));
+	if (updateMute)
+		dispatch(settingsActions.setAudioMuted(true));
 
 	mediaService.removeTrack(track?.id);
 	track?.stop();
@@ -107,6 +113,7 @@ export const stopPreviewMic = () => async (
 
 export const updatePreviewWebcam = ({
 	restart = false,
+	updateMute = true,
 	newDeviceId
 }: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
@@ -165,7 +172,8 @@ export const updatePreviewWebcam = ({
 
 		mediaService.addTrack(track);
 		dispatch(meActions.setPreviewWebcamTrackId(track.id));
-		dispatch(settingsActions.setVideoMuted(false));
+		if (updateMute)
+			dispatch(settingsActions.setVideoMuted(false));
 
 		await mediaService.updateMediaDevices();
 	} catch (error) {
@@ -175,7 +183,9 @@ export const updatePreviewWebcam = ({
 	}
 };
 
-export const stopPreviewWebcam = () => async (
+export const stopPreviewWebcam = ({
+	updateMute = true,
+}: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
 	{ mediaService }: MiddlewareOptions
@@ -188,7 +198,8 @@ export const stopPreviewWebcam = () => async (
 	const track = mediaService.getTrack(previewWebcamTrackId);
 
 	dispatch(meActions.setPreviewWebcamTrackId());
-	dispatch(settingsActions.setVideoMuted(true));
+	if (updateMute)
+		dispatch(settingsActions.setVideoMuted(true));
 
 	mediaService.removeTrack(track?.id);
 	track?.stop();

@@ -6,15 +6,12 @@ export default styled(Dialog)(({ theme }) => ({
 		width: '30vw',
 		padding: theme.spacing(2),
 		[theme.breakpoints.down('lg')]: {
-			width: '40vw'
-		},
-		[theme.breakpoints.down('md')]: {
 			width: '50vw'
 		},
-		[theme.breakpoints.down('sm')]: {
+		[theme.breakpoints.down('md')]: {
 			width: '70vw'
 		},
-		[theme.breakpoints.down('xs')]: {
+		[theme.breakpoints.down('sm')]: {
 			width: '90vw',
 			margin: 0
 		}

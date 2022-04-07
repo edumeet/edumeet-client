@@ -1,4 +1,10 @@
-import { FormControl, FormHelperText, MenuItem, Select } from '@mui/material';
+import {
+	FormControl,
+	FormHelperText,
+	MenuItem,
+	Select,
+	styled
+} from '@mui/material';
 import { MediaDevice } from '../../services/mediaService';
 
 interface DeviceChooserProps {
@@ -11,6 +17,11 @@ interface DeviceChooserProps {
 	disabled: boolean;
 	devices: MediaDevice[];
 }
+
+export const ChooserDiv = styled('div')({
+	display: 'flex',
+	flexDirection: 'row'
+});
 
 const DeviceChooser = ({
 	value,

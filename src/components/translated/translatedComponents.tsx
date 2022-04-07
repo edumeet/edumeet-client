@@ -242,6 +242,39 @@ export const ModeratorActionsMessage = (): JSX.Element =>
 		defaultMessage='Moderator actions'
 	/>;
 
+export const SettingsMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='settings.settings'
+		defaultMessage='Settings'
+	/>;
+
+export const CloseMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='label.close'
+		defaultMessage='Close'
+	/>;
+
+export const ApplyMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='label.apply'
+		defaultMessage='Apply'
+	/>;
+
+export const mediaSettingsLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'label.media',
+	defaultMessage: 'Media'
+});
+
+export const appearanceSettingsLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'label.appearance',
+	defaultMessage: 'Appearance'
+});
+
+export const advancedSettingsLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'label.advanced',
+	defaultMessage: 'Advanced'
+});
+
 export const audioDeviceLabel = (intl: IntlShape): string => intl.formatMessage({
 	id: 'settings.audio',
 	defaultMessage: 'Audio input device'

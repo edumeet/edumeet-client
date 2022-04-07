@@ -17,15 +17,12 @@ const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
 	'& .MuiDrawer-paper': {
 		width: '30vw',
 		[theme.breakpoints.down('lg')]: {
-			width: '30vw'
-		},
-		[theme.breakpoints.down('md')]: {
 			width: '40vw'
 		},
-		[theme.breakpoints.down('sm')]: {
+		[theme.breakpoints.down('md')]: {
 			width: '60vw'
 		},
-		[theme.breakpoints.down('xs')]: {
+		[theme.breakpoints.down('sm')]: {
 			width: '80vw'
 		}
 	}
@@ -35,15 +32,12 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
 	'& .MuiDrawer-paper': {
 		width: '30vw',
 		[theme.breakpoints.down('lg')]: {
-			width: '30vw'
-		},
-		[theme.breakpoints.down('md')]: {
 			width: '40vw'
 		},
-		[theme.breakpoints.down('sm')]: {
+		[theme.breakpoints.down('md')]: {
 			width: '60vw'
 		},
-		[theme.breakpoints.down('xs')]: {
+		[theme.breakpoints.down('sm')]: {
 			width: '80vw'
 		}
 	}
@@ -53,15 +47,12 @@ const StyledNav = styled('nav')(({ theme }) => ({
 	width: '30vw',
 	flexShrink: 0,
 	[theme.breakpoints.down('lg')]: {
-		width: '30vw'
-	},
-	[theme.breakpoints.down('md')]: {
 		width: '40vw'
 	},
-	[theme.breakpoints.down('sm')]: {
+	[theme.breakpoints.down('md')]: {
 		width: '60vw'
 	},
-	[theme.breakpoints.down('xs')]: {
+	[theme.breakpoints.down('sm')]: {
 		width: '80vw'
 	}
 }));
@@ -73,7 +64,6 @@ const Room = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const browser = useAppSelector((state) => state.me.browser);
-	const ui = useAppSelector((state) => state.ui);
 	const settings = useAppSelector((state) => state.settings);
 	const drawer = useAppSelector((state) => state.drawer);
 
@@ -158,14 +148,8 @@ const Room = (): JSX.Element => {
 			}
 
 			<Democratic />
-
-			{ ui.lockDialogOpen &&
-				<LockDialog />
-			}
-
-			{ ui.settingsOpen &&
-				<Settings />
-			}
+			<LockDialog />
+			<Settings />
 		</>
 	);
 };
