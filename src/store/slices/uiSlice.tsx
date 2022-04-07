@@ -5,6 +5,7 @@ export type SettingsTab = 'media' | 'appearance' | 'advanced';
 export interface UiState {
 	fullScreenConsumer?: string;
 	windowConsumer?: string;
+	drawerWindow?: boolean;
 	settingsOpen?: boolean;
 	extraVideoOpen?: boolean;
 	hideSelfView?: boolean;
@@ -19,6 +20,7 @@ export interface UiState {
 type UiUpdate = Omit<UiState, 'currentSettingsTab'>;
 
 const initialState: UiState = {
+	drawerWindow: false,
 	settingsOpen: false,
 	extraVideoOpen: false,
 	hideSelfView: false,

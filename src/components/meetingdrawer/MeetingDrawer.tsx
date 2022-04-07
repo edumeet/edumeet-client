@@ -1,8 +1,10 @@
 import {
 	AppBar,
 	Badge,
+	Hidden,
 	IconButton,
 	styled,
+	SwipeableDrawer,
 	Tab,
 	Tabs,
 	useTheme
@@ -14,9 +16,29 @@ import GroupIcon from '@mui/icons-material/Group';
 import ChatIcon from '@mui/icons-material/Chat';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import NewWindowIcon from '@mui/icons-material/OpenInNew';
 import { chatLabel, participantsLabel } from '../translated/translatedComponents';
 import { useIntl } from 'react-intl';
 import ParticipantList from '../participantlist/ParticipantList';
+import SeparateWindow from '../separatewindow/SeparateWindow';
+import { uiActions } from '../../store/slices/uiSlice';
+
+const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
+	'& .MuiDrawer-paper': {
+		width: '30vw',
+		[theme.breakpoints.down('lg')]: {
+			width: '40vw'
+		},
+		[theme.breakpoints.down('md')]: {
+			width: '60vw'
+		},
+		[theme.breakpoints.down('sm')]: {
+			width: '80vw'
+		}
+	}
+}));
+
+const container = window !== undefined ? window.document.body : undefined;
 
 const MeetingDrawerDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
@@ -40,68 +62,98 @@ const tabs: ToolAreaTab[] = [
 	'chat'
 ];
 
-interface MeetingDrawerProps {
-	closeDrawer: () => void;
-}
-
-const MeetingDrawer = ({ closeDrawer }: MeetingDrawerProps): JSX.Element => {
+const MeetingDrawer = (): JSX.Element => {
 	const intl = useIntl();
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
 	const browser = useAppSelector((state) => state.me.browser);
 	const raisedHands = useAppSelector(raisedHandsSelector);
+	const drawerWindow = useAppSelector((state) => state.ui.drawerWindow);
 	const {
 		tab: currentTab,
 		unreadMessages,
-		unreadFiles
+		unreadFiles,
+		open: drawerOpen
 	} = useAppSelector((state) => state.drawer);
+
+	const toggleDrawer = () => {
+		dispatch(drawerActions.toggle());
+	};
 
 	return (
 		<>
-			<MeetingDrawerDiv>
-				<MeetingDrawerAppBar
-					position='static'
-					color='default'
+			{ drawerWindow ? (
+				<SeparateWindow
+					onClose={() => dispatch(uiActions.setUi({ drawerWindow: !drawerWindow }))}
 				>
-					<TabsHeader
-						value={tabs.indexOf(currentTab)}
-						onChange={
-							(_event, value) =>
-								dispatch(drawerActions.setTab(tabs[value]))
-						}
-						variant='fullWidth'
-					>
-						<Tab
-							label={
-								<Badge color='secondary' badgeContent={raisedHands}>
-									<GroupIcon />&nbsp;
-									{(browser.platform !== 'mobile') && participantsLabel(intl)}
-								</Badge>
-							}
-						/>
-						<Tab
-							label={
-								<Badge
-									color='secondary'
-									badgeContent={(unreadMessages + unreadFiles)}
+					<ParticipantList />
+				</SeparateWindow>
+			) : (
+				<nav>
+					<Hidden implementation='css'>
+						<StyledSwipeableDrawer
+							container={container}
+							variant='temporary'
+							anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+							open={drawerOpen}
+							onClose={toggleDrawer}
+							onOpen={toggleDrawer}
+							ModalProps={{
+								keepMounted: true // Better open performance on mobile.
+							}}
+						>
+							<MeetingDrawerDiv>
+								<MeetingDrawerAppBar
+									position='static'
+									color='default'
 								>
-									<ChatIcon />&nbsp;
-									{(browser.platform !== 'mobile') && chatLabel(intl)}
-								</Badge>
-							}
-						/>
-					</TabsHeader>
-					{browser.platform !== 'mobile' && (
-						<>
-							<IconButton onClick={closeDrawer}>
-								{ theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon /> }
-							</IconButton>
-						</>
-					)}
-				</MeetingDrawerAppBar>
-				{/* currentTab === 'chat' && <Chat /> */}
-				{currentTab === 'users' && <ParticipantList />}
-			</MeetingDrawerDiv>
+									<TabsHeader
+										value={tabs.indexOf(currentTab)}
+										onChange={
+											(_event, value) =>
+												dispatch(drawerActions.setTab(tabs[value]))
+										}
+										variant='fullWidth'
+									>
+										<Tab
+											label={
+												<Badge color='secondary' badgeContent={raisedHands}>
+													<GroupIcon />&nbsp;
+													{(browser.platform !== 'mobile') && participantsLabel(intl)}
+												</Badge>
+											}
+										/>
+										<Tab
+											label={
+												<Badge
+													color='secondary'
+													badgeContent={(unreadMessages + unreadFiles)}
+												>
+													<ChatIcon />&nbsp;
+													{(browser.platform !== 'mobile') && chatLabel(intl)}
+												</Badge>
+											}
+										/>
+									</TabsHeader>
+									<IconButton
+										onClick={() =>
+											dispatch(uiActions.setUi({ drawerWindow: !drawerWindow }))}
+									>
+										<NewWindowIcon />
+									</IconButton>
+									{ browser.platform !== 'mobile' && (
+										<IconButton onClick={toggleDrawer}>
+											{ theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon /> }
+										</IconButton>
+									)}
+								</MeetingDrawerAppBar>
+								{/* currentTab === 'chat' && <Chat /> */}
+								{currentTab === 'users' && <ParticipantList />}
+							</MeetingDrawerDiv>
+						</StyledSwipeableDrawer>
+					</Hidden>
+				</nav>
+			)}
 		</>
 	);
 };
