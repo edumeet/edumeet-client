@@ -32,7 +32,6 @@ import edumeetConfig from '../utils/edumeetConfig';
 import peersSlice from './slices/peersSlice';
 import producersSlice from './slices/producersSlice';
 import { createContext } from 'react';
-import deviceSlice from './slices/deviceSlice';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
@@ -49,11 +48,10 @@ const persistConfig = {
 
 const signalingService = new SignalingService();
 
-export const mediaService = new MediaService();
+export const mediaService = new MediaService({ signalingService });
 export const MediaServiceContext = createContext<MediaService>(mediaService);
 
 const reducer = combineReducers({
-	device: deviceSlice.reducer,
 	consumers: consumersSlice.reducer,
 	drawer: drawerSlice.reducer,
 	lobbyPeers: lobbyPeersSlice.reducer,

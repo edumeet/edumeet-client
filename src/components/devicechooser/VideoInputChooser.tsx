@@ -1,14 +1,13 @@
 import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { stopPreviewWebcam, updatePreviewWebcam } from '../../store/actions/mediaActions';
+import { stopPreviewWebcam, updatePreviewWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
 	useDeviceSelector
 } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
-import { deviceActions } from '../../store/slices/deviceSlice';
 import {
 	ApplyMessage,
 	noVideoDevicesLabel,
@@ -45,7 +44,7 @@ const VideoInputChooser = ({
 					updateMute: !withConfirm
 				}));
 			} else {
-				dispatch(deviceActions.updateWebcam({
+				dispatch(updateWebcam({
 					restart: true,
 					newDeviceId: deviceId
 				}));
@@ -55,7 +54,7 @@ const VideoInputChooser = ({
 
 	const handleConfirm = (): void => {
 		// TODO: Add replace track support
-		dispatch(deviceActions.updateWebcam({
+		dispatch(updateWebcam({
 			restart: true
 		}));
 

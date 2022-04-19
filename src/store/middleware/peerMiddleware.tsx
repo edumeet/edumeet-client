@@ -27,8 +27,8 @@ const createPeerMiddleware = ({
 									displayName,
 									picture,
 									roles,
-									// raisedHand,
-									// raisedHandTimestamp,
+									raisedHand,
+									raisedHandTimestamp,
 								} = notification.data;
 
 								dispatch(peersActions.addPeer({
@@ -36,8 +36,8 @@ const createPeerMiddleware = ({
 									displayName,
 									picture,
 									roles,
-									// raisedHand,
-									// raisedHandTimestamp,
+									raisedHand,
+									raisedHandTimestamp,
 								}));
 
 								break;
@@ -47,6 +47,31 @@ const createPeerMiddleware = ({
 								const { peerId } = notification.data;
 
 								dispatch(peersActions.removePeer({ id: peerId }));
+								break;
+							}
+
+							case 'changeDisplayName':
+							case 'changePicture':
+							case 'raisedHand': {
+								const {
+									peerId,
+									displayName,
+									// oldDisplayName,
+									picture,
+									raisedHand,
+									raisedHandTimestamp
+								} = notification.data;
+
+								dispatch(
+									peersActions.updatePeer({
+										id: peerId,
+										displayName,
+										picture,
+										raisedHand,
+										raisedHandTimestamp
+									})
+								);
+
 								break;
 							}
 						}

@@ -12,7 +12,8 @@ import {
 	PauseProducerData,
 	ResumeProducerData,
 	SocketInboundNotification,
-	SocketOutboundRequest
+	SocketOutboundRequest,
+	DisplayNameData
 } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 
@@ -112,6 +113,7 @@ export class SignalingService extends EventEmitter {
 			JoinData |
 			PauseProducerData |
 			ResumeProducerData |
+			DisplayNameData |
 			undefined,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	): Promise<any> {

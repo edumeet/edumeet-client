@@ -1,14 +1,13 @@
 import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { stopPreviewMic, updatePreviewMic } from '../../store/actions/mediaActions';
+import { stopPreviewMic, updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
 	useDeviceSelector
 } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
-import { deviceActions } from '../../store/slices/deviceSlice';
 import {
 	ApplyMessage,
 	audioDeviceLabel,
@@ -45,7 +44,7 @@ const AudioInputChooser = ({
 					updateMute: !withConfirm
 				}));
 			} else {
-				dispatch(deviceActions.updateMic({
+				dispatch(updateMic({
 					restart: true,
 					newDeviceId: deviceId
 				}));
@@ -55,7 +54,7 @@ const AudioInputChooser = ({
 
 	const handleConfirm = (): void => {
 		// TODO: Add replace track support
-		dispatch(deviceActions.updateMic({
+		dispatch(updateMic({
 			restart: true
 		}));
 

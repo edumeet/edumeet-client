@@ -17,7 +17,7 @@ import {
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { deviceActions } from '../../store/slices/deviceSlice';
+import { updateMic } from '../../store/actions/mediaActions';
 
 const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
@@ -53,7 +53,7 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				if (micState === 'unsupported') return;
 
 				if (micState === 'off') {
-					dispatch(deviceActions.updateMic({
+					dispatch(updateMic({
 						start: true
 					}));
 				} else if (micProducer) {
@@ -61,14 +61,16 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 						dispatch(
 							producersActions.setProducerPaused({
 								producerId: micProducer.id,
-								local: true
+								local: true,
+								source: 'mic'
 							})
 						);
 					} else if (micState === 'muted') {
 						dispatch(
 							producersActions.setProducerResumed({
 								producerId: micProducer.id,
-								local: true
+								local: true,
+								source: 'mic'
 							})
 						);
 					}

@@ -9,6 +9,8 @@ import { RootState } from './store';
 
 // eslint-disable-next-line no-unused-vars
 type Selector<S> = (state: RootState) => S;
+// eslint-disable-next-line no-unused-vars
+type ParameterSelector<S> = (state: RootState, param: string) => S;
 
 const meRolesSelect: Selector<number[]> =
 	(state) => state.permissions.roles;
@@ -28,6 +30,8 @@ const selectedPeersSelector: Selector<string[]> =
 	(state) => state.room.selectedPeers;
 const peersSelector: Selector<Peer[]> =
 	(state) => state.peers;
+const peerSelector: ParameterSelector<Peer | undefined> =
+	(state: RootState, peerId: string) => state.peers.find((p: Peer) => p.id === peerId);
 const lobbyPeersSelector: Selector<LobbyPeer[]> =
 	(state) => state.lobbyPeers;
 const unreadMessages: Selector<number> = (state) => state.drawer.unreadMessages;
@@ -287,6 +291,11 @@ export const meProducersSelector = createSelector(
 			screenProducer,
 			extraVideoProducers
 		})
+);
+
+export const peerDisplayNameSelector = createSelector(
+	peerSelector,
+	(peer) => peer?.displayName
 );
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

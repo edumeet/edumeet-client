@@ -1,12 +1,18 @@
 import { styled } from '@mui/material/styles';
+import { Consumer } from 'mediasoup-client/lib/Consumer';
+import { Producer } from 'mediasoup-client/lib/Producer';
 import { useContext, useEffect, useRef } from 'react';
+import { StateConsumer } from '../../store/slices/consumersSlice';
+import { StateProducer } from '../../store/slices/producersSlice';
 import { MediaServiceContext } from '../../store/store';
 
 interface VideoViewProps {
 	mirrored?: boolean;
 	contain?: boolean;
 	zIndex?: number;
-	trackId: string;
+	trackId?: string;
+	consumer?: StateConsumer;
+	producer?: StateProducer;
 }
 
 const StyledVideo = styled('video')({
@@ -22,13 +28,28 @@ const VideoView = ({
 	mirrored,
 	contain,
 	zIndex,
-	trackId
+	trackId,
+	consumer,
+	producer
 }: VideoViewProps): JSX.Element => {
 	const mediaService = useContext(MediaServiceContext);
 	const videoElement = useRef<HTMLVideoElement>(null);
 
 	useEffect(() => {
-		const track = mediaService.getTrack(trackId);
+		let media: Consumer | Producer | undefined;
+		let track: MediaStreamTrack | null | undefined;
+
+		if (consumer) {
+			media = mediaService.getConsumer(consumer.id);
+		} else if (producer) {
+			media = mediaService.getProducer(producer.id);
+		}
+
+		if (media) {
+			({ track } = media);
+		} else if (trackId) {
+			track = mediaService.getTrack(trackId);
+		}
 
 		if (!track || !videoElement?.current) return;
 
@@ -40,6 +61,7 @@ const VideoView = ({
 
 		return () => {
 			if (videoElement.current) {
+				videoElement.current.srcObject = null;
 				videoElement.current.onplay = null;
 				videoElement.current.onpause = null;
 			}

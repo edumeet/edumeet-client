@@ -28,7 +28,7 @@ const FullscreenVideo = (): JSX.Element => {
 							consumerId={consumer.id}
 						/>
 					</MediaControls>
-					<VideoView trackId={consumer.trackId} contain />
+					<VideoView consumer={consumer} contain />
 				</VideoBox>
 			)}
 		</>

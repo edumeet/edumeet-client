@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { producersActions } from './producersSlice';
 
 export interface SettingsState {
 	displayName?: string;
@@ -136,6 +137,42 @@ const settingsSlice = createSlice({
 			state.videoMuted = action.payload;
 		}),
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(producersActions.closeProducer, (state, action) => {
+				const { local, source } = action.payload;
+
+				if (!local) return;
+
+				if (source === 'mic') {
+					state.audioMuted = true;
+				} else if (source === 'webcam') {
+					state.videoMuted = true;
+				}
+			})
+			.addCase(producersActions.setProducerPaused, (state, action) => {
+				const { local, source } = action.payload;
+
+				if (!local) return;
+
+				if (source === 'mic') {
+					state.audioMuted = true;
+				} else if (source === 'webcam') {
+					state.videoMuted = true;
+				}
+			})
+			.addCase(producersActions.setProducerResumed, (state, action) => {
+				const { local, source } = action.payload;
+
+				if (!local) return;
+
+				if (source === 'mic') {
+					state.audioMuted = false;
+				} else if (source === 'webcam') {
+					state.videoMuted = false;
+				}
+			});
+	}
 });
 
 export const settingsActions = settingsSlice.actions;

@@ -8,7 +8,6 @@ export interface StateConsumer {
 	localPaused: boolean;
 	remotePaused: boolean;
 	source: string;
-	trackId: string;
 }
 
 type ConsumersState = StateConsumer[];

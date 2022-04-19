@@ -4,6 +4,7 @@ import { meProducersSelector } from '../../store/selectors';
 import MicButton from '../controlbuttons/MicButton';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
+import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import { MeMessage } from '../translated/translatedComponents';
 import VideoBox from '../videobox/VideoBox';
@@ -42,6 +43,7 @@ const Me = ({
 		extraVideoProducers
 	} = useAppSelector(meProducersSelector);
 
+	const displayName = useAppSelector((state) => state.settings.displayName);
 	const activeSpeaker =
 		useAppSelector((state) => state.me.id === state.room.activeSpeakerId);
 
@@ -56,6 +58,7 @@ const Me = ({
 				<MeTag>
 					<MeMessage />
 				</MeTag>
+				<DisplayName disabled={false} displayName={displayName} />
 				<MediaControls
 					orientation='vertical'
 					horizontalPlacement='right'
@@ -81,7 +84,7 @@ const Me = ({
 				</MediaControls>
 				{ webcamProducer && <VideoView
 					mirrored
-					trackId={webcamProducer.trackId}
+					producer={webcamProducer}
 				/> }
 			</VideoBox>
 			{ screenProducer && (
@@ -106,7 +109,7 @@ const Me = ({
 						/>
 					</MediaControls>
 					<VideoView
-						trackId={screenProducer.trackId}
+						producer={screenProducer}
 						contain
 					/>
 				</VideoBox>
@@ -116,14 +119,14 @@ const Me = ({
 					activeSpeaker={activeSpeaker}
 					order={3}
 					margin={spacing}
-					key={producer.trackId}
+					key={producer.id}
 					sx={{ ...style }}
 				>
 					<MeTag>
 						<MeMessage />
 					</MeTag>
 					<VideoView
-						trackId={producer.trackId}
+						producer={producer}
 					/>
 				</VideoBox>
 			)) }

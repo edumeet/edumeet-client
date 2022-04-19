@@ -16,7 +16,7 @@ import {
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { deviceActions } from '../../store/slices/deviceSlice';
+import { updateWebcam } from '../../store/actions/mediaActions';
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
@@ -49,14 +49,15 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 				if (webcamState === 'unsupported') return;
 
 				if (webcamState === 'off') {
-					dispatch(deviceActions.updateWebcam({
+					dispatch(updateWebcam({
 						start: true
 					}));
 				} else if (webcamProducer) {
 					dispatch(
 						producersActions.closeProducer({
 							producerId: webcamProducer.id,
-							local: true
+							local: true,
+							source: 'webcam'
 						})
 					);
 				} else {

@@ -3,10 +3,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface StateProducer {
 	id: string;
 	kind: string;
-	source: string;
+	source: ProducerSource;
 	paused: boolean;
-	trackId: string;
 }
+
+type ProducerSource = 'mic' | 'webcam' | 'screen' | 'extravideo';
 
 type ProducersState = StateProducer[];
 
@@ -21,13 +22,21 @@ const producersSlice = createSlice({
 		}),
 		closeProducer: ((
 			state,
-			action: PayloadAction<{ producerId: string, local?: boolean }>
+			action: PayloadAction<{
+				producerId: string,
+				local?: boolean,
+				source?: ProducerSource,
+			}>
 		) => {
 			return state.filter((producer) => producer.id !== action.payload.producerId);
 		}),
 		setProducerPaused: ((
 			state,
-			action: PayloadAction<{ producerId: string, local?: boolean }>
+			action: PayloadAction<{
+				producerId: string,
+				local?: boolean,
+				source?: ProducerSource,
+			}>
 		) => {
 			const { producerId } = action.payload;
 			const producer = state.find((p) => p.id === producerId);
@@ -38,7 +47,11 @@ const producersSlice = createSlice({
 		}),
 		setProducerResumed: ((
 			state,
-			action: PayloadAction<{ producerId: string, local?: boolean }>
+			action: PayloadAction<{
+				producerId: string,
+				local?: boolean,
+				source?: ProducerSource,
+			}>
 		) => {
 			const { producerId } = action.payload;
 			const producer = state.find((p) => p.id === producerId);

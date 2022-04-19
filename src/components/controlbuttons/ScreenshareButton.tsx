@@ -16,7 +16,7 @@ import {
 import ScreenIcon from '@mui/icons-material/ScreenShare';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { deviceActions } from '../../store/slices/deviceSlice';
+import { updateScreenSharing } from '../../store/actions/mediaActions';
 
 const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 	const intl = useIntl();
@@ -49,7 +49,7 @@ const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 				if (screenState === 'unsupported') return;
 
 				if (screenState === 'off') {
-					dispatch(deviceActions.updateScreenSharing({
+					dispatch(updateScreenSharing({
 						start: true
 					}));
 				} else if (screenProducer) {

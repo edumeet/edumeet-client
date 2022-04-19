@@ -2,12 +2,14 @@ import { Middleware } from '@reduxjs/toolkit';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from '../../utils/logger';
-import { MiddlewareOptions } from '../store';
+import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { webrtcActions } from '../slices/webrtcSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { peersActions } from '../slices/peersSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
-import { deviceActions } from '../slices/deviceSlice';
+import { updateMic, updateWebcam } from '../actions/mediaActions';
+import { settingsActions } from '../slices/settingsSlice';
+import { meActions } from '../slices/meSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -16,7 +18,12 @@ const createRoomMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createRoomMiddleware()');
 
-	const middleware: Middleware = ({ dispatch, getState }) =>
+	const middleware: Middleware = ({
+		dispatch, getState
+	}: {
+		dispatch: AppDispatch,
+		getState: RootState
+	}) =>
 		(next) => async (action) => {
 			if (signalingActions.connect.match(action)) {
 				dispatch(roomActions.setRoomState('connecting'));
@@ -123,12 +130,28 @@ const createRoomMiddleware = ({
 				const { audioMuted, videoMuted } = getState().settings;
 
 				if (!audioMuted)
-					dispatch(deviceActions.updateMic({ start: true }));
+					dispatch(updateMic({ start: true }));
 				if (!videoMuted)
-					dispatch(deviceActions.updateWebcam({ init: true, start: true }));
+					dispatch(updateWebcam({ init: true, start: true }));
 			}
 
 			// TODO: reconnect states here
+
+			if (settingsActions.setDisplayName.match(action)) {
+				const displayName = action.payload;
+
+				dispatch(meActions.setDispayNameInProgress(true));
+
+				try {
+					await signalingService.sendRequest('changeDisplayName', { displayName });
+				} catch (error) {
+					logger.warn('changeDisplayName [error:%o]', error);
+
+					// TODO: need to fail the action
+				} finally {
+					dispatch(meActions.setDispayNameInProgress(false));
+				}
+			}
 
 			return next(action);
 		};

@@ -212,7 +212,8 @@ export interface SocketOutboundRequest {
 		ConsumerData |
 		JoinData |
 		PauseProducerData |
-		ResumeProducerData;
+		ResumeProducerData |
+		DisplayNameData;
 }
 
 export interface JoinData {
@@ -251,6 +252,10 @@ export interface PauseProducerData {
 
 export interface ResumeProducerData {
 	producerId: string;
+}
+
+export interface DisplayNameData {
+	displayName: string;
 }
 
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';

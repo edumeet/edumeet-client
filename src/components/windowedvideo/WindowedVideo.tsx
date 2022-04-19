@@ -30,7 +30,7 @@ const WindowedVideo = (): JSX.Element => {
 							horizontalPlacement='right'
 							verticalPlacement='center'
 						/>
-						<VideoView trackId={consumer.trackId} contain />
+						<VideoView consumer={consumer} contain />
 					</VideoBox>
 				</SeparateWindow>
 			)}

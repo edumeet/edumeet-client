@@ -2,8 +2,10 @@ import {
 	useAppSelector,
 	usePeerConsumers
 } from '../../store/hooks';
+import { peerDisplayNameSelector } from '../../store/selectors';
 import FullscreenVideoButton from '../controlbuttons/FullscreenVideoButton';
 import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
+import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
@@ -21,13 +23,12 @@ const Peer = ({
 	style
 }: PeerProps): JSX.Element => {
 	const hideNonVideo = useAppSelector((state) => state.settings.hideNonVideo);
-
 	const {
 		webcamConsumer,
 		screenConsumer,
 		extraVideoConsumers
 	} = usePeerConsumers(id);
-
+	const displayName = useAppSelector((state) => peerDisplayNameSelector(state, id));
 	const activeSpeaker =
 		useAppSelector((state) => id === state.room.activeSpeakerId);
 
@@ -42,6 +43,7 @@ const Peer = ({
 					margin={spacing}
 					sx={{ ...style }}
 				>
+					<DisplayName displayName={displayName} />
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'
@@ -59,7 +61,7 @@ const Peer = ({
 						)}
 					</MediaControls>
 					{ webcamConsumer && <VideoView
-						trackId={webcamConsumer.trackId}
+						consumer={webcamConsumer}
 					/> }
 				</VideoBox>
 			)}
@@ -80,7 +82,7 @@ const Peer = ({
 						<WindowedVideoButton consumerId={screenConsumer.id} />
 					</MediaControls>
 					<VideoView
-						trackId={screenConsumer.trackId}
+						consumer={screenConsumer}
 						contain
 					/>
 				</VideoBox>
@@ -90,7 +92,7 @@ const Peer = ({
 					activeSpeaker={activeSpeaker}
 					order={3}
 					margin={spacing}
-					key={consumer.trackId}
+					key={consumer.id}
 					sx={{ ...style }}
 				>
 					<MediaControls
@@ -102,7 +104,7 @@ const Peer = ({
 						<WindowedVideoButton consumerId={consumer.id} />
 					</MediaControls>
 					<VideoView
-						trackId={consumer.trackId}
+						consumer={consumer}
 					/>
 				</VideoBox>
 			)) }
