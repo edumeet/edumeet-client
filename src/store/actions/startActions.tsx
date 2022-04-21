@@ -1,18 +1,18 @@
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { Logger } from '../../utils/logger';
-import { DevicesUpdated } from '../../services/mediaService';
 import { meActions } from '../slices/meSlice';
+import { DevicesUpdated } from '../../services/deviceService';
 
 const logger = new Logger('listenerActions');
 
 export const startListeners = () => (
 	dispatch: AppDispatch,
 	_getState: RootState,
-	{ mediaService }: MiddlewareOptions
+	{ deviceService }: MiddlewareOptions
 ): void => {
 	logger.debug('startListeners()');
 
-	mediaService.on('devicesUpdated', ({
+	deviceService.on('devicesUpdated', ({
 		devices,
 		removedDevices,
 		newDevices
@@ -32,7 +32,7 @@ export const startListeners = () => (
 	navigator.mediaDevices.addEventListener('devicechange', async () => {
 		logger.debug('devicechange');
 
-		await mediaService.updateMediaDevices();
+		await deviceService.updateMediaDevices();
 	});
 
 	document.addEventListener('keydown', (event): void => {

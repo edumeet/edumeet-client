@@ -5,7 +5,7 @@ import {
 	Select,
 	styled
 } from '@mui/material';
-import { MediaDevice } from '../../services/mediaService';
+import { MediaDevice } from '../../services/deviceService';
 
 interface DeviceChooserProps {
 	value: string;

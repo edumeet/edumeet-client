@@ -1,4 +1,3 @@
-import { styled } from '@mui/material/styles';
 import { useAppSelector } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
 import MicButton from '../controlbuttons/MicButton';
@@ -6,7 +5,6 @@ import ScreenshareButton from '../controlbuttons/ScreenshareButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
-import { MeMessage } from '../translated/translatedComponents';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 
@@ -15,23 +13,6 @@ interface MeProps {
 	spacing: number;
 	style: Record<'width' | 'height', number>
 }
-
-const MeTag = styled('p')({
-	position: 'absolute',
-	float: 'left',
-	top: '50%',
-	left: '50%',
-	transform: 'translate(-50%, -50%)',
-	color: 'rgba(255, 255, 255, 0.5)',
-	zIndex: 30,
-	margin: 0,
-	opacity: 0,
-	fontSize: '4em',
-	transition: 'opacity 0.1s ease-in-out',
-	'&:hover': {
-		opacity: 1
-	}
-});
 
 const Me = ({
 	spacing,
@@ -55,9 +36,6 @@ const Me = ({
 				margin={spacing}
 				sx={{ ...style }}
 			>
-				<MeTag>
-					<MeMessage />
-				</MeTag>
 				<DisplayName disabled={false} displayName={displayName} />
 				<MediaControls
 					orientation='vertical'
@@ -94,9 +72,6 @@ const Me = ({
 					margin={spacing}
 					sx={{ ...style }}
 				>
-					<MeTag>
-						<MeMessage />
-					</MeTag>
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'
@@ -108,10 +83,7 @@ const Me = ({
 							disabledColor='default'
 						/>
 					</MediaControls>
-					<VideoView
-						producer={screenProducer}
-						contain
-					/>
+					<VideoView producer={screenProducer} contain />
 				</VideoBox>
 			)}
 			{ extraVideoProducers.map((producer) => (
@@ -122,12 +94,7 @@ const Me = ({
 					key={producer.id}
 					sx={{ ...style }}
 				>
-					<MeTag>
-						<MeMessage />
-					</MeTag>
-					<VideoView
-						producer={producer}
-					/>
+					<VideoView producer={producer} />
 				</VideoBox>
 			)) }
 		</>

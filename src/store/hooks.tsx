@@ -4,7 +4,7 @@ import {
 	useDispatch,
 	useSelector
 } from 'react-redux';
-import { MediaDevice } from '../services/mediaService';
+import { MediaDevice } from '../services/deviceService';
 import { Permission } from '../utils/roles';
 import {
 	makeDevicesSelector,

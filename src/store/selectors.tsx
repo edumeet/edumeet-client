@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { MediaDevice } from '../services/mediaService';
+import { MediaDevice } from '../services/deviceService';
 import { Permission, Role } from '../utils/roles';
 import { StateConsumer } from './slices/consumersSlice';
 import { LobbyPeer } from './slices/lobbyPeersSlice';

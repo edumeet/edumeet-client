@@ -6,6 +6,7 @@ import { roomActions } from '../slices/roomSlice';
 import { webrtcActions } from '../slices/webrtcSlice';
 import { producersActions } from '../slices/producersSlice';
 import { meActions } from '../slices/meSlice';
+import { PerformanceMonitor } from '../../utils/performanceMonitor';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -13,6 +14,8 @@ const createMediaMiddleware = ({
 	mediaService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
+
+	const performanceMonitor = new PerformanceMonitor();
 
 	const middleware: Middleware = ({ dispatch, getState }) =>
 		(next) => async (action) => {
@@ -77,46 +80,55 @@ const createMediaMiddleware = ({
 
 				const iceServers = getState().webrtc.iceServers;
 
-				await mediaService.createTransports(iceServers);
+				performanceMonitor.on('performance', (performance) => {
+					logger.debug('"performance" event [trend:%s, performance:%s]', performance.trend, performance.performance);
+				});
+
+				const {
+					recvTransport,
+				} = await mediaService.createTransports(iceServers);
+
+				if (recvTransport)
+					performanceMonitor.monitorTransport(recvTransport);
 
 				dispatch(meActions.setMediaCapabilities(
-					mediaService.getMediaCapabilities()
+					mediaService.mediaCapabilities
 				));
 
 				// This will trigger "join" in roomMiddleware
 				dispatch(webrtcActions.setRtpCapabilities(
-					mediaService.getRtpCapabilities()
+					mediaService.rtpCapabilities
 				));
 			}
 
 			if (consumersActions.setConsumerPaused.match(action) && action.payload.local) {
 				const { consumerId } = action.payload;
 
-				await mediaService.pauseConsumer(consumerId);
+				await mediaService.changeConsumer(consumerId, 'pause');
 			}
 			
 			if (consumersActions.setConsumerResumed.match(action) && action.payload.local) {
 				const { consumerId } = action.payload;
 
-				await mediaService.resumeConsumer(consumerId);
+				await mediaService.changeConsumer(consumerId, 'resume');
 			}
 
 			if (producersActions.setProducerPaused.match(action) && action.payload.local) {
 				const { producerId } = action.payload;
 
-				await mediaService.pauseProducer(producerId);
+				await mediaService.changeProducer(producerId, 'pause');
 			}
 			
 			if (producersActions.setProducerResumed.match(action) && action.payload.local) {
 				const { producerId } = action.payload;
 
-				await mediaService.resumeProducer(producerId);
+				await mediaService.changeProducer(producerId, 'resume');
 			}
 
 			if (producersActions.closeProducer.match(action) && action.payload.local) {
 				const { producerId } = action.payload;
 
-				await mediaService.closeProducer(producerId);
+				await mediaService.changeProducer(producerId, 'close');
 			}
 
 			return next(action);

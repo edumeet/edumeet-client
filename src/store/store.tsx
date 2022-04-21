@@ -32,9 +32,11 @@ import edumeetConfig from '../utils/edumeetConfig';
 import peersSlice from './slices/peersSlice';
 import producersSlice from './slices/producersSlice';
 import { createContext } from 'react';
+import { DeviceService } from '../services/deviceService';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
+	deviceService: DeviceService;
 	signalingService: SignalingService;
 	config: EdumeetConfig;
 }
@@ -47,9 +49,17 @@ const persistConfig = {
 };
 
 const signalingService = new SignalingService();
+const deviceService = new DeviceService();
 
 export const mediaService = new MediaService({ signalingService });
 export const MediaServiceContext = createContext<MediaService>(mediaService);
+
+const middlewareOptions = {
+	config: edumeetConfig,
+	mediaService,
+	deviceService,
+	signalingService,
+};
 
 const reducer = combineReducers({
 	consumers: consumersSlice.reducer,
@@ -74,44 +84,16 @@ export const store = configureStore({
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
 			thunk: {
-				extraArgument: {
-					config: edumeetConfig,
-					mediaService,
-					signalingService,
-				}
+				extraArgument: middlewareOptions
 			}
 		}).concat(
-			createSignalingMiddleware({
-				config: edumeetConfig,
-				mediaService,
-				signalingService
-			}),
-			createMediaMiddleware({
-				config: edumeetConfig,
-				mediaService,
-				signalingService
-			}),
-			createPeerMiddleware({
-				config: edumeetConfig,
-				mediaService,
-				signalingService
-			}),
-			createLobbyMiddleware({
-				config: edumeetConfig,
-				mediaService,
-				signalingService
-			}),
+			createSignalingMiddleware(middlewareOptions),
+			createMediaMiddleware(middlewareOptions),
+			createPeerMiddleware(middlewareOptions),
+			createLobbyMiddleware(middlewareOptions),
 			createFilesharingMiddleware(),
-			createPermissionsMiddleware({
-				config: edumeetConfig,
-				mediaService,
-				signalingService
-			}),
-			createRoomMiddleware({
-				config: edumeetConfig,
-				mediaService,
-				signalingService
-			}),
+			createPermissionsMiddleware(middlewareOptions),
+			createRoomMiddleware(middlewareOptions),
 			createLogger({
 				duration: true,
 				timestamp: false,

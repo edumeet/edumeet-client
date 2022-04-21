@@ -3,44 +3,13 @@ import { Device } from 'mediasoup-client';
 import { Consumer } from 'mediasoup-client/lib/Consumer';
 import { Producer, ProducerOptions } from 'mediasoup-client/lib/Producer';
 import { Transport } from 'mediasoup-client/lib/Transport';
-import {
-	RtpCapabilities,
-	RtpEncodingParameters,
-} from 'mediasoup-client/lib/RtpParameters';
-import edumeetConfig from '../utils/edumeetConfig';
+import { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
 import { Logger } from '../utils/logger';
-import { Resolution, SimulcastProfile } from '../utils/types';
 import { SignalingService } from './signalingService';
 
 const logger = new Logger('MediaService');
 
-const VIDEO_CONSTRAINS: Record<Resolution, Record<string, number>> = {
-	'low': { width: 320 },
-	'medium': { width: 640 },
-	'high': { width: 1280 },
-	'veryhigh': { width: 1920 },
-	'ultra': { width: 3840 }
-};
-
-// Used for VP9 webcam video.
-const VIDEO_KSVC_ENCODINGS: RtpEncodingParameters[] =
-	[ { scalabilityMode: 'S3T3_KEY' } ];
-
-// Used for VP9 desktop sharing.
-const VIDEO_SVC_ENCODINGS: RtpEncodingParameters[] =
-	[ { scalabilityMode: 'S3T3', dtx: true } ];
-
-export interface MediaDevice {
-	deviceId: string;
-	kind: MediaDeviceKind;
-	label: string;
-}
-
-export interface DevicesUpdated {
-	devices: MediaDeviceInfo[];
-	removedDevices: MediaDeviceInfo[];
-	newDevices: MediaDeviceInfo[];
-}
+export type MediaChange = 'pause' | 'resume' | 'close';
 
 interface MediaCapabilities {
 	canSendMic: boolean;
@@ -48,9 +17,19 @@ interface MediaCapabilities {
 	canShareScreen: boolean;
 }
 
+const changeEvent = {
+	pause: 'Paused',
+	resume: 'Resumed',
+	close: 'Closed',
+	consumerPaused: 'pause',
+	consumerResumed: 'resume',
+	consumerClosed: 'close',
+	producerPaused: 'pause',
+	producerResumed: 'resume',
+	producerClosed: 'close',
+};
+
 export declare interface MediaService {
-	// eslint-disable-next-line no-unused-vars
-	on(event: 'devicesUpdated', listener: (updatedDevices: DevicesUpdated) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'consumerCreated', listener: (consumer: Consumer, producerPaused: boolean) => void): this;
 	// eslint-disable-next-line no-unused-vars
@@ -69,7 +48,6 @@ export declare interface MediaService {
 
 export class MediaService extends EventEmitter {
 	private signalingService: SignalingService;
-	private devices: MediaDevice[] = [];
 
 	private mediasoup: Device = new Device();
 	private sendTransport: Transport | undefined;
@@ -88,10 +66,6 @@ export class MediaService extends EventEmitter {
 
 	public getConsumer(consumerId: string): Consumer | undefined {
 		return this.consumers.get(consumerId);
-	}
-
-	public getConsumers(): Consumer[] {
-		return [ ...this.consumers.values() ];
 	}
 
 	public getProducer(producerId: string): Producer | undefined {
@@ -124,120 +98,6 @@ export class MediaService extends EventEmitter {
 		trackId && this.tracks.delete(trackId);
 	}
 
-	public getEncodings(
-		width: number | undefined,
-		height: number | undefined,
-		screenSharing?: boolean
-	): RtpEncodingParameters[] {
-		if (!width || !height) {
-			throw new Error('missing width or height');
-		}
-
-		const firstVideoCodec =
-			this.mediasoup.rtpCapabilities.codecs?.find((c) => c.kind === 'video');
-
-		if (!firstVideoCodec) {
-			throw new Error('No video codecs');
-		}
-
-		let encodings: RtpEncodingParameters[];
-		const size = (width > height ? width : height);
-
-		if (firstVideoCodec.mimeType.toLowerCase() === 'video/vp9') {
-			encodings = screenSharing ? VIDEO_SVC_ENCODINGS : VIDEO_KSVC_ENCODINGS;
-		} else {
-			encodings = this.chooseEncodings(edumeetConfig.simulcastProfiles, size);
-		}
-
-		return encodings;
-	}
-
-	private chooseEncodings(
-		simulcastProfiles: Record<string, SimulcastProfile[]>,
-		size: number,
-	): RtpEncodingParameters[] {
-		let encodings: RtpEncodingParameters[] = [];
-
-		const sortedMap = new Map([ ...Object.entries(simulcastProfiles) ]
-			.sort((a, b) => parseInt(b[0]) - parseInt(a[0])));
-
-		for (const [ key, value ] of sortedMap) {
-			if (parseInt(key) < size) {
-				if (encodings === null) {
-					encodings = value;
-				}
-
-				break;
-			}
-
-			encodings = value;
-		}
-
-		// hack as there is a bug in mediasoup
-		if (encodings.length === 1) {
-			encodings.push({ ...encodings[0] });
-		}
-
-		return encodings;
-	}
-	
-	public getVideoConstrains(
-		resolution: Resolution,
-		aspectRatio: number
-	): Record<'width' | 'height', Record<'ideal', number>> {
-		return {
-			width: { ideal: VIDEO_CONSTRAINS[resolution].width },
-			height: { ideal: VIDEO_CONSTRAINS[resolution].width / aspectRatio }
-		};
-	}
-
-	public async updateMediaDevices(): Promise<void> {
-		logger.debug('updateMediaDevices()');
-
-		let removedDevices: MediaDevice[];
-		let newDevices: MediaDevice[];
-
-		try {
-			const devicesList =
-				(await navigator.mediaDevices.enumerateDevices())
-					.filter((d) => d.deviceId)
-					.map((d) => ({ deviceId: d.deviceId, kind: d.kind, label: d.label }));
-
-			if (devicesList.length === 0)
-				return;
-
-			removedDevices =
-				this.devices.filter(
-					(device) => !devicesList.find((d) => d.deviceId === device.deviceId)
-				);
-			
-			newDevices =
-				devicesList.filter(
-					(device) => !this.devices.find((d) => d.deviceId === device.deviceId)
-				);
-
-			this.devices = devicesList;
-
-			this.emit('devicesUpdated', {
-				devices: this.devices,
-				removedDevices,
-				newDevices
-			});
-		} catch (error) {
-			logger.error('updateMediaDevices() [error:%o]', error);
-		}
-	}
-
-	public getDeviceId(deviceId: string, kind: MediaDeviceKind): string | undefined {
-		let device = this.devices.find((d) => d.deviceId === deviceId);
-
-		if (!device) {
-			device = this.devices.find((d) => d.kind === kind);
-		}
-
-		return device?.deviceId;
-	}
-
 	private handleSignaling(): void {
 		this.signalingService.on('notification', async (notification) => {
 			logger.debug(
@@ -246,27 +106,6 @@ export class MediaService extends EventEmitter {
 
 			try {
 				switch (notification.method) {
-					case 'producerPaused': {
-						const { producerId } = notification.data;
-
-						await this.pauseProducer(producerId, false);
-						break;
-					}
-
-					case 'producerResumed': {
-						const { producerId } = notification.data;
-
-						await this.resumeProducer(producerId, false);
-						break;
-					}
-
-					case 'producerClosed': {
-						const { producerId } = notification.data;
-
-						await this.closeProducer(producerId, false);
-						break;
-					}
-
 					case 'newConsumer': {
 						const {
 							peerId,
@@ -304,7 +143,7 @@ export class MediaService extends EventEmitter {
 						});
 
 						consumer.once('transportclose', () => {
-							this.closeConsumer(consumer.id, false);
+							this.changeConsumer(consumer.id, 'close', false);
 						});
 	
 						this.emit('consumerCreated', consumer, producerPaused);
@@ -312,24 +151,29 @@ export class MediaService extends EventEmitter {
 						break;
 					}
 
-					case 'consumerPaused': {
-						const { consumerId } = notification.data;
-						
-						await this.pauseConsumer(consumerId, false);
-						break;
-					}
-					
-					case 'consumerResumed': {
-						const { consumerId } = notification.data;
-						
-						await this.resumeConsumer(consumerId, false);
-						break;
-					}
-
+					case 'consumerPaused':
+					case 'consumerResumed':
 					case 'consumerClosed': {
 						const { consumerId } = notification.data;
 	
-						await this.closeConsumer(consumerId, false);
+						await this.changeConsumer(
+							consumerId,
+							changeEvent[notification.method] as MediaChange,
+							false
+						);
+						break;
+					}
+
+					case 'producerPaused':
+					case 'producerResumed':
+					case 'producerClosed': {
+						const { producerId } = notification.data;
+
+						await this.changeProducer(
+							producerId,
+							changeEvent[notification.method] as MediaChange,
+							false
+						);
 						break;
 					}
 				}
@@ -339,7 +183,7 @@ export class MediaService extends EventEmitter {
 		});
 	}
 
-	public getMediaCapabilities(): MediaCapabilities {
+	get mediaCapabilities(): MediaCapabilities {
 		return {
 			canSendMic: this.mediasoup.canProduce('audio'),
 			canSendWebcam: this.mediasoup.canProduce('video'),
@@ -348,196 +192,124 @@ export class MediaService extends EventEmitter {
 		};
 	}
 
-	public getRtpCapabilities(): RtpCapabilities {
+	get rtpCapabilities(): RtpCapabilities {
 		return this.mediasoup.rtpCapabilities;
 	}
 
-	public async closeConsumer(consumerId: string, local = true): Promise<void> {
-		logger.debug('removeConsumer [consumerId:%s]', consumerId);
+	public async changeConsumer(
+		consumerId: string,
+		change: MediaChange,
+		local = true
+	): Promise<void> {
+		logger.debug(`${change}Consumer [consumerId:%s]`, consumerId);
 		const consumer = this.consumers.get(consumerId);
 
 		if (local && consumer) {
-			await this.signalingService.sendRequest('closeConsumer', { consumerId: consumer.id })
-				.catch((error) => logger.warn('closeConsumer, unable to close server-side [consumerId:%s, error:%o]', consumerId, error));
+			await this.signalingService.sendRequest(`${change}Consumer`, { consumerId: consumer.id })
+				.catch((error) => logger.warn(`${change}Consumer, unable to ${change} server-side [consumerId:%s, error:%o]`, consumerId, error));
 		}
 
 		if (!local) {
-			this.emit('consumerClosed', consumer);
+			this.emit(`consumer${changeEvent[change]}`, consumer);
 		}
 
-		consumer?.close();
+		consumer?.[`${change}`]();
 	}
 
-	public async pauseConsumer(consumerId: string, local = true): Promise<void> {
-		logger.debug('pauseConsumer [consumerId:%s]', consumerId);
-		const consumer = this.consumers.get(consumerId);
-
-		if (local && consumer) {
-			await this.signalingService.sendRequest('pauseConsumer', { consumerId: consumer.id })
-				.catch((error) => logger.warn('pauseConsumer, unable to pause server-side [consumerId:%s, error:%o]', consumerId, error));
-		}
-
-		if (!local) {
-			this.emit('consumerPaused', consumer);
-		}
-
-		consumer?.pause();
-	}
-
-	public async resumeConsumer(consumerId: string, local = true): Promise<void> {
-		logger.debug('resumeConsumer [consumerId:%s]', consumerId);
-		const consumer = this.consumers.get(consumerId);
-
-		if (local && consumer) {
-			await this.signalingService.sendRequest('resumeConsumer', { consumerId: consumer.id })
-				.catch((error) => logger.warn('resumeConsumer, unable to resume server-side [consumerId:%s, error:%o]', consumerId, error));
-		}
-
-		if (!local) {
-			this.emit('consumerResumed', consumer);
-		}
-
-		consumer?.resume();
-	}
-
-	public async closeProducer(producerId: string, local = true): Promise<void> {
-		logger.debug('closeProducer [producerId:%s]', producerId);
+	public async changeProducer(
+		producerId: string,
+		change: MediaChange,
+		local = true
+	): Promise<void> {
+		logger.debug(`${change}Producer [producerId:%s]`, producerId);
 		const producer = this.producers.get(producerId);
 
 		if (local && producer) {
-			await this.signalingService.sendRequest('closeProducer', { producerId: producer.id })
-				.catch((error) => logger.warn('closeProducer, unable to close server-side [producerId:%s, error:%o]', producerId, error));
+			await this.signalingService.sendRequest(`${change}Producer`, { producerId: producer.id })
+				.catch((error) => logger.warn(`${change}Producer, unable to ${change} server-side [producerId:%s, error:%o]`, producerId, error));
 		}
 
 		if (!local) {
-			this.emit('producerClosed', producer);
+			this.emit(`producer${changeEvent[change]}`, producer);
 		}
 
-		producer?.close();
+		producer?.[`${change}`]();
 	}
 
-	public async pauseProducer(producerId: string, local = true): Promise<void> {
-		logger.debug('pauseProducer [producerId:%s]', producerId);
-		const producer = this.producers.get(producerId);
-
-		if (local && producer) {
-			await this.signalingService.sendRequest('pauseProducer', { producerId: producer.id })
-				.catch((error) => logger.warn('pauseProducer, unable to pause server-side [producerId:%s, error:%o]', producerId, error));
-		}
-
-		if (!local) {
-			this.emit('producerPaused', producer);
-		}
-
-		producer?.pause();
-	}
-
-	public async resumeProducer(producerId: string, local = true): Promise<void> {
-		logger.debug('resumeProducer [producerId:%s]', producerId);
-		const producer = this.producers.get(producerId);
-
-		if (local && producer) {
-			await this.signalingService.sendRequest('resumeProducer', { producerId: producer.id })
-				.catch((error) => logger.warn('resumeProducer, unable to resume server-side [producerId:%s, error:%o]', producerId, error));
-		}
-
-		if (!local) {
-			this.emit('producerResumed', producer);
-		}
-
-		producer?.resume();
-	}
-
-	public async createTransports(iceServers?: RTCIceServer[]): Promise<void> {
+	public async createTransports(
+		iceServers?: RTCIceServer[]
+	): Promise<{
+		sendTransport: Transport | undefined;
+		recvTransport: Transport | undefined;
+	}> {
 		try {
 			const routerRtpCapabilities = await this.signalingService.sendRequest('getRouterRtpCapabilities');
 
 			await this.mediasoup.load({ routerRtpCapabilities });
 
-			{
-				const {
-					id,
-					iceParameters,
-					iceCandidates,
-					dtlsParameters,
-				} = await this.signalingService.sendRequest('createWebRtcTransport', {
-					forceTcp: false,
-					producing: true,
-					consuming: false,
-				});
-
-				const sendTransport = this.mediasoup.createSendTransport({
-					id,
-					iceParameters,
-					iceCandidates,
-					dtlsParameters,
-					iceServers
-				});
-
-				// eslint-disable-next-line no-shadow
-				sendTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
-					this.signalingService.sendRequest('connectWebRtcTransport', {
-						transportId: sendTransport.id,
-						dtlsParameters,
-					})
-						.then(callback)
-						.catch(errback);
-				});
-
-				sendTransport.on('produce', async ({ kind, rtpParameters, appData }, callback, errback) => {
-					try {
-						// eslint-disable-next-line no-shadow
-						const { id } = await this.signalingService.sendRequest('produce', {
-							transportId: sendTransport.id,
-							kind,
-							rtpParameters,
-							appData,
-						});
-
-						callback({ id });
-					} catch (error) {
-						errback(error);
-					}
-				});
-
-				this.sendTransport = sendTransport;
-			}
-
-			{
-				const {
-					id,
-					iceParameters,
-					iceCandidates,
-					dtlsParameters,
-				} = await this.signalingService.sendRequest('createWebRtcTransport', {
-					forceTcp: false,
-					producing: false,
-					consuming: true,
-				});
-
-				const recvTransport = this.mediasoup.createRecvTransport({
-					id,
-					iceParameters,
-					iceCandidates,
-					dtlsParameters,
-					iceServers
-				});
-
-				// eslint-disable-next-line no-shadow
-				recvTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
-					this.signalingService.sendRequest('connectWebRtcTransport', {
-						transportId: recvTransport.id,
-						dtlsParameters,
-					})
-						.then(callback)
-						.catch(errback);
-				});
-
-				this.recvTransport = recvTransport;
-			}
+			this.sendTransport = await this.createTransport('createSendTransport', iceServers);
+			this.recvTransport = await this.createTransport('createRecvTransport', iceServers);
 		} catch (error) {
 			logger.error('error on starting mediasoup transports [error:%o]', error);
 		}
+
+		return {
+			sendTransport: this.sendTransport,
+			recvTransport: this.recvTransport,
+		};
+	}
+
+	private async createTransport(
+		creator: 'createSendTransport' | 'createRecvTransport',
+		iceServers?: RTCIceServer[]
+	): Promise<Transport> {
+		const {
+			id,
+			iceParameters,
+			iceCandidates,
+			dtlsParameters,
+		} = await this.signalingService.sendRequest('createWebRtcTransport', {
+			forceTcp: false,
+			producing: creator === 'createSendTransport',
+			consuming: creator === 'createRecvTransport',
+		});
+
+		const transport = this.mediasoup[creator]({
+			id,
+			iceParameters,
+			iceCandidates,
+			dtlsParameters,
+			iceServers
+		});
+
+		// eslint-disable-next-line no-shadow
+		transport.on('connect', ({ dtlsParameters }, callback, errback) => {
+			if (!transport)
+				return;
+
+			this.signalingService.sendRequest('connectWebRtcTransport', {
+				transportId: transport.id,
+				dtlsParameters,
+			})
+				.then(callback)
+				.catch(errback);
+		});
+
+		transport.on('produce', async ({ kind, rtpParameters, appData }, callback, errback) => {
+			if (!transport)
+				return;
+
+			this.signalingService.sendRequest('produce', {
+				transportId: transport.id,
+				kind,
+				rtpParameters,
+				appData,
+			})
+				.then(callback)
+				.catch(errback);
+		});
+
+		return transport;
 	}
 
 	public async produce(producerOptions: ProducerOptions): Promise<Producer> {
@@ -556,11 +328,11 @@ export class MediaService extends EventEmitter {
 		});
 
 		producer.once('transportclose', () => {
-			this.closeProducer(producer.id, false);
+			this.changeProducer(producer.id, 'close', false);
 		});
 
 		producer.once('trackended', () => {
-			this.closeProducer(producer.id, false);
+			this.changeProducer(producer.id, 'close', false);
 		});
 
 		return producer;

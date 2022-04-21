@@ -23,6 +23,7 @@ import { updatePreviewMic, updatePreviewWebcam } from '../../store/actions/media
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import PrecallDialog from '../../components/precalldialog/PrecallDialog';
+import { roomActions } from '../../store/slices/roomSlice';
 
 interface JoinProps {
 	roomId: string;
@@ -54,6 +55,8 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	};
 
 	useEffect(() => {
+		dispatch(roomActions.updateRoom({ name: roomId }));
+
 		if (!audioMuted) {
 			dispatch(updatePreviewMic());
 		}

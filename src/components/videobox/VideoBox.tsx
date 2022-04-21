@@ -17,10 +17,7 @@ const VideoBoxDiv = styled('div')(({ theme }) => ({
 	backgroundImage: `url(${theme.peerAvatar})`,
 	backgroundPosition: 'bottom',
 	backgroundSize: 'auto 85%',
-	backgroundRepeat: 'no-repeat',
-	'&:hover': {
-		boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.05) inset, 0px 0px 8px rgba(82, 168, 236, 0.9)'
-	},
+	backgroundRepeat: 'no-repeat'
 }));
 
 const VideoBox = ({

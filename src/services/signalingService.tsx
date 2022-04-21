@@ -47,21 +47,17 @@ const logger = new Logger('SignalingService');
 export class SignalingService extends EventEmitter {
 	private socket?: Socket<ServerClientEvents, ClientServerEvents>;
 
-	constructor() {
-		super();
-		logger.debug('constructor()');
-	}
-
-	connect({ url }: { url: string}): void {
+	public connect({ url }: { url: string}): void {
 		logger.debug('connect() [url:%s]', url);
 
 		this.socket = io(url, {
 			transports: [ 'websocket' ]
 		});
-		this._handleSocket();
+
+		this.handleSocket();
 	}
 
-	_handleSocket(): void {
+	private handleSocket(): void {
 		this.socket?.on('notification', (notification) => {
 			this.emit('notification', notification);
 		});
@@ -89,7 +85,7 @@ export class SignalingService extends EventEmitter {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	_sendRequest(socketMessage: SocketOutboundRequest): Promise<any> {
+	private sendRequestOnWire(socketMessage: SocketOutboundRequest): Promise<any> {
 		return new Promise((resolve, reject) => {
 			if (!this.socket) {
 				reject('No socket connection');
@@ -103,7 +99,7 @@ export class SignalingService extends EventEmitter {
 		});
 	}
 
-	async sendRequest(
+	public async sendRequest(
 		method: string,
 		data?:
 			CreateWebRtcTransport |
@@ -121,7 +117,7 @@ export class SignalingService extends EventEmitter {
 
 		for (let tries = 0; tries < edumeetConfig.requestRetries; tries++) {
 			try {
-				return await this._sendRequest({ method, data });
+				return await this.sendRequestOnWire({ method, data });
 			} catch (error) {
 				if (
 					error instanceof SocketTimeoutError &&

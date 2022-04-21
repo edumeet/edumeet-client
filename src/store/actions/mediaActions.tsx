@@ -1,4 +1,5 @@
 import { Producer } from 'mediasoup-client/lib/Producer';
+import { getEncodings, getVideoConstrains } from '../../utils/encodingsHandler';
 import { Logger } from '../../utils/logger';
 import { meActions } from '../slices/meSlice';
 import { producersActions } from '../slices/producersSlice';
@@ -24,7 +25,7 @@ export const updatePreviewMic = ({
 }: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
-	{ mediaService }: MiddlewareOptions
+	{ mediaService, deviceService }: MiddlewareOptions
 ): Promise<void> => {
 	logger.debug('updatePreviewMic()');
 
@@ -33,7 +34,7 @@ export const updatePreviewMic = ({
 	let track: MediaStreamTrack | undefined | null;
 
 	try {
-		await mediaService.updateMediaDevices();
+		await deviceService.updateMediaDevices();
 
 		if (newDeviceId)
 			dispatch(settingsActions.setSelectedAudioDevice(newDeviceId));
@@ -47,7 +48,7 @@ export const updatePreviewMic = ({
 			sampleSize,
 			selectedAudioDevice
 		} = getState().settings;
-		const deviceId = mediaService.getDeviceId(selectedAudioDevice, 'audioinput');
+		const deviceId = deviceService.getDeviceId(selectedAudioDevice, 'audioinput');
 
 		if (!deviceId)
 			logger.warn('updatePreviewMic() no audio devices');
@@ -85,7 +86,7 @@ export const updatePreviewMic = ({
 		if (updateMute)
 			dispatch(settingsActions.setAudioMuted(false));
 
-		await mediaService.updateMediaDevices();
+		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updatePreviewMic() [error:%o]', error);
 	} finally {
@@ -124,7 +125,7 @@ export const updatePreviewWebcam = ({
 }: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
-	{ mediaService }: MiddlewareOptions
+	{ mediaService, deviceService }: MiddlewareOptions
 ): Promise<void> => {
 	logger.debug('updatePreviewWebcam()');
 
@@ -133,7 +134,7 @@ export const updatePreviewWebcam = ({
 	let track: MediaStreamTrack | undefined | null;
 
 	try {
-		await mediaService.updateMediaDevices();
+		await deviceService.updateMediaDevices();
 
 		if (newDeviceId)
 			dispatch(settingsActions.setSelectedVideoDevice(newDeviceId));
@@ -145,7 +146,7 @@ export const updatePreviewWebcam = ({
 			selectedVideoDevice
 		} = getState().settings;
 
-		const deviceId = mediaService.getDeviceId(selectedVideoDevice, 'videoinput');
+		const deviceId = deviceService.getDeviceId(selectedVideoDevice, 'videoinput');
 
 		if (!deviceId)
 			logger.warn('updatePreviewWebcam() no webcam devices');
@@ -163,7 +164,7 @@ export const updatePreviewWebcam = ({
 		const stream = await navigator.mediaDevices.getUserMedia({
 			video: {
 				deviceId: { ideal: deviceId },
-				...mediaService.getVideoConstrains(resolution, aspectRatio),
+				...getVideoConstrains(resolution, aspectRatio),
 				frameRate
 			}
 		});
@@ -181,7 +182,7 @@ export const updatePreviewWebcam = ({
 		if (updateMute)
 			dispatch(settingsActions.setVideoMuted(false));
 
-		await mediaService.updateMediaDevices();
+		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updatePreviewWebcam() [error:%o]', error);
 	} finally {
@@ -220,7 +221,7 @@ export const updateMic = ({
 }: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
-	{ mediaService }: MiddlewareOptions
+	{ mediaService, deviceService }: MiddlewareOptions
 ): Promise<void> => {
 	logger.debug(
 		'updateMic() [start:%s, restart:%s, newDeviceId:"%s"]',
@@ -235,7 +236,7 @@ export const updateMic = ({
 	let micProducer: Producer | null | undefined;
 
 	try {
-		await mediaService.updateMediaDevices();
+		await deviceService.updateMediaDevices();
 
 		const canSendMic = getState().me.canSendMic;
 
@@ -250,7 +251,7 @@ export const updateMic = ({
 
 		const previewMicTrackId = getState().me.previewMicTrackId;
 		const selectedAudioDevice = getState().settings.selectedAudioDevice;
-		const deviceId = mediaService.getDeviceId(selectedAudioDevice, 'audioinput');
+		const deviceId = deviceService.getDeviceId(selectedAudioDevice, 'audioinput');
 
 		if (!deviceId)
 			logger.warn('no audio devices');
@@ -363,7 +364,7 @@ export const updateMic = ({
 			});
 		}
 
-		await mediaService.updateMediaDevices();
+		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updateMic() [error:%o]', error);
 	} finally {
@@ -381,7 +382,7 @@ export const updateWebcam = ({
 }: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
-	{ mediaService, config }: MiddlewareOptions
+	{ mediaService, deviceService, config }: MiddlewareOptions
 ): Promise<void> => {
 	logger.debug(
 		'updateWebcam [init:%s, start:%s, restart:%s, newDeviceId:%s, newResolution:%s, newFrameRate:%s]',
@@ -399,7 +400,7 @@ export const updateWebcam = ({
 	let webcamProducer: Producer | null | undefined;
 
 	try {
-		await mediaService.updateMediaDevices();
+		await deviceService.updateMediaDevices();
 
 		const canSendWebcam = getState().me.canSendWebcam;
 
@@ -434,7 +435,7 @@ export const updateWebcam = ({
 			selectedVideoDevice
 		} = getState().settings;
 		
-		const deviceId = mediaService.getDeviceId(selectedVideoDevice, 'videoinput');
+		const deviceId = deviceService.getDeviceId(selectedVideoDevice, 'videoinput');
 		const previewWebcamTrackId = getState().me.previewWebcamTrackId;
 
 		if (!deviceId)
@@ -459,7 +460,7 @@ export const updateWebcam = ({
 				const stream = await navigator.mediaDevices.getUserMedia({
 					video: {
 						deviceId: { ideal: deviceId },
-						...mediaService.getVideoConstrains(resolution, aspectRatio),
+						...getVideoConstrains(resolution, aspectRatio),
 						frameRate
 					}
 				});
@@ -480,7 +481,8 @@ export const updateWebcam = ({
 			dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
 
 			if (config.simulcast) {
-				const encodings = mediaService.getEncodings(
+				const encodings = getEncodings(
+					mediaService.rtpCapabilities,
 					width,
 					height
 				);
@@ -524,7 +526,7 @@ export const updateWebcam = ({
 			({ track } = webcamProducer);
 
 			await track?.applyConstraints({
-				...mediaService.getVideoConstrains(resolution, aspectRatio),
+				...getVideoConstrains(resolution, aspectRatio),
 				frameRate
 			});
 
@@ -537,13 +539,13 @@ export const updateWebcam = ({
 				({ track } = producer);
 
 				await track?.applyConstraints({
-					...mediaService.getVideoConstrains(resolution, aspectRatio),
+					...getVideoConstrains(resolution, aspectRatio),
 					frameRate
 				});
 			}
 		}
 
-		await mediaService.updateMediaDevices();
+		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updateWebcam() [error:%o]', error);
 	} finally {
@@ -613,7 +615,7 @@ export const updateScreenSharing = ({
 		if (start) {
 			const stream = await navigator.mediaDevices.getDisplayMedia({
 				video: {
-					...mediaService.getVideoConstrains(
+					...getVideoConstrains(
 						screenSharingResolution,
 						aspectRatio
 					),
@@ -637,7 +639,8 @@ export const updateScreenSharing = ({
 			const { width, height } = videoTrack.getSettings();
 
 			if (config.simulcastSharing) {
-				const encodings = mediaService.getEncodings(
+				const encodings = getEncodings(
+					mediaService.rtpCapabilities,
 					width,
 					height,
 				);
@@ -706,7 +709,7 @@ export const updateScreenSharing = ({
 				({ track: videoTrack } = screenVideoProducer);
 
 				await videoTrack?.applyConstraints({
-					...mediaService.getVideoConstrains(screenSharingResolution, aspectRatio),
+					...getVideoConstrains(screenSharingResolution, aspectRatio),
 					frameRate: screenSharingFrameRate
 				});
 			}

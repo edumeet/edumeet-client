@@ -81,10 +81,7 @@ const Peer = ({
 						<FullscreenVideoButton consumerId={screenConsumer.id} />
 						<WindowedVideoButton consumerId={screenConsumer.id} />
 					</MediaControls>
-					<VideoView
-						consumer={screenConsumer}
-						contain
-					/>
+					<VideoView consumer={screenConsumer} contain />
 				</VideoBox>
 			)}
 			{ extraVideoConsumers?.map((consumer) => (
@@ -103,9 +100,7 @@ const Peer = ({
 						<FullscreenVideoButton consumerId={consumer.id} />
 						<WindowedVideoButton consumerId={consumer.id} />
 					</MediaControls>
-					<VideoView
-						consumer={consumer}
-					/>
+					<VideoView consumer={consumer} />
 				</VideoBox>
 			)) }
 		</>

@@ -118,7 +118,7 @@ const MeetingDrawer = (): JSX.Element => {
 										<Tab
 											label={
 												<Badge color='secondary' badgeContent={raisedHands}>
-													<GroupIcon />&nbsp;
+													<GroupIcon />
 													{(browser.platform !== 'mobile') && participantsLabel(intl)}
 												</Badge>
 											}
@@ -129,18 +129,20 @@ const MeetingDrawer = (): JSX.Element => {
 													color='secondary'
 													badgeContent={(unreadMessages + unreadFiles)}
 												>
-													<ChatIcon />&nbsp;
+													<ChatIcon />
 													{(browser.platform !== 'mobile') && chatLabel(intl)}
 												</Badge>
 											}
 										/>
 									</TabsHeader>
-									<IconButton
-										onClick={() =>
-											dispatch(uiActions.setUi({ drawerWindow: !drawerWindow }))}
-									>
-										<NewWindowIcon />
-									</IconButton>
+									{ browser.platform !== 'mobile' && (
+										<IconButton
+											onClick={() =>
+												dispatch(uiActions.setUi({ drawerWindow: !drawerWindow }))}
+										>
+											<NewWindowIcon />
+										</IconButton>
+									)}
 									{ browser.platform !== 'mobile' && (
 										<IconButton onClick={toggleDrawer}>
 											{ theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon /> }

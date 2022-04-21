@@ -140,16 +140,18 @@ const createRoomMiddleware = ({
 			if (settingsActions.setDisplayName.match(action)) {
 				const displayName = action.payload;
 
-				dispatch(meActions.setDispayNameInProgress(true));
+				if (getState().signaling.connected) {
+					dispatch(meActions.setDispayNameInProgress(true));
 
-				try {
-					await signalingService.sendRequest('changeDisplayName', { displayName });
-				} catch (error) {
-					logger.warn('changeDisplayName [error:%o]', error);
+					try {
+						await signalingService.sendRequest('changeDisplayName', { displayName });
+					} catch (error) {
+						logger.warn('changeDisplayName [error:%o]', error);
 
-					// TODO: need to fail the action
-				} finally {
-					dispatch(meActions.setDispayNameInProgress(false));
+						// TODO: need to fail the action
+					} finally {
+						dispatch(meActions.setDispayNameInProgress(false));
+					}
 				}
 			}
 
