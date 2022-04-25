@@ -10,6 +10,7 @@ import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { updateMic, updateWebcam } from '../actions/mediaActions';
 import { settingsActions } from '../slices/settingsSlice';
 import { meActions } from '../slices/meSlice';
+import { chatActions } from '../slices/chatSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -95,7 +96,7 @@ const createRoomMiddleware = ({
 					roomPermissions, // { permissionId: [ role, role, ... ], ... }
 					userRoles, // { roleName: { id: number, label: string, ... }, ... }
 					allowWhenRoleMissing, // [ permissionId, ... ]
-					// chatHistory, // [ message, ... ]
+					chatHistory, // [ message, ... ]
 					// fileHistory, // [ file, ... ]
 					lastNHistory, // [ peerId, ... ]
 					locked, // boolean
@@ -111,6 +112,7 @@ const createRoomMiddleware = ({
 					dispatch(peersActions.addPeer(peer));
 				}
 
+				dispatch(chatActions.addMessages(chatHistory));
 				dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 				dispatch(permissionsActions.setRoomPermissions(roomPermissions));
 				dispatch(permissionsActions.setUserRoles(userRoles));

@@ -3,13 +3,13 @@ import fscreen from 'fscreen';
 import Notifications from '../../components/notifications/Notifications';
 import MeetingDrawer from '../../components/meetingdrawer/MeetingDrawer';
 import Democratic from '../../components/democratic/Democratic';
-import LockDialog from '../../components/lockdialog/LockDialog';
 import Settings from '../../components/settingsdialog/SettingsDialog';
 import TopBar from '../../components/topbar/TopBar';
 import { useAppSelector } from '../../store/hooks';
 import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
 import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import AudioPeers from '../../components/audiopeers/AudioPeers';
+import LobbyDialog from '../../components/lobbydialog/LobbyDialog';
 
 const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
@@ -56,7 +56,7 @@ const Room = (): JSX.Element => {
 			/>
 			<MeetingDrawer />
 			<Democratic />
-			<LockDialog />
+			<LobbyDialog />
 			<Settings />
 		</>
 	);

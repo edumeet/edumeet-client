@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type SettingsTab = 'media' | 'appearance' | 'advanced';
+export type SettingsTab = 'media' | 'appearance';
 
 export interface UiState {
 	fullScreenConsumer?: string;
@@ -13,7 +13,7 @@ export interface UiState {
 	helpOpen?: boolean;
 	aboutOpen?: boolean;
 	leaveOpen?: boolean;
-	lockDialogOpen?: boolean;
+	lobbyDialogOpen?: boolean;
 	currentSettingsTab: SettingsTab;
 }
 
@@ -28,7 +28,7 @@ const initialState: UiState = {
 	helpOpen: false,
 	aboutOpen: false,
 	leaveOpen: false,
-	lockDialogOpen: false,
+	lobbyDialogOpen: false,
 	currentSettingsTab: 'media'
 };
 

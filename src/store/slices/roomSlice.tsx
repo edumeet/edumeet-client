@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { peersActions } from './peersSlice';
 
 export type RoomConnectionState = 'new' | 'connecting' | 'connected' | 'disconnected' | 'closed';
-export type SettingsTab = 'media' | 'appearance' | 'advanced';
+export type SettingsTab = 'media' | 'appearance';
 
 export interface RoomState {
 	name?: string;

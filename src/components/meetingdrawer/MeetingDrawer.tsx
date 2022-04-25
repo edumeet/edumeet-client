@@ -22,6 +22,7 @@ import { useIntl } from 'react-intl';
 import ParticipantList from '../participantlist/ParticipantList';
 import SeparateWindow from '../separatewindow/SeparateWindow';
 import { uiActions } from '../../store/slices/uiSlice';
+import Chat from '../chat/Chat';
 
 const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
 	'& .MuiDrawer-paper': {
@@ -47,6 +48,11 @@ const MeetingDrawerDiv = styled('div')(({ theme }) => ({
 	height: '100%',
 	backgroundColor: theme.palette.background.paper
 }));
+
+const MeetingDrawerWindow = styled('div')({
+	display: 'flex',
+	flexDirection: 'row'
+});
 
 const MeetingDrawerAppBar = styled(AppBar)({
 	display: 'flex',
@@ -86,7 +92,10 @@ const MeetingDrawer = (): JSX.Element => {
 				<SeparateWindow
 					onClose={() => dispatch(uiActions.setUi({ drawerWindow: !drawerWindow }))}
 				>
-					<ParticipantList />
+					<MeetingDrawerWindow>
+						<ParticipantList />
+						<Chat />
+					</MeetingDrawerWindow>
 				</SeparateWindow>
 			) : (
 				<nav>
@@ -149,8 +158,8 @@ const MeetingDrawer = (): JSX.Element => {
 										</IconButton>
 									)}
 								</MeetingDrawerAppBar>
-								{/* currentTab === 'chat' && <Chat /> */}
-								{currentTab === 'users' && <ParticipantList />}
+								{ currentTab === 'chat' && <Chat /> }
+								{ currentTab === 'users' && <ParticipantList /> }
 							</MeetingDrawerDiv>
 						</StyledSwipeableDrawer>
 					</Hidden>

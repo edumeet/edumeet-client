@@ -106,7 +106,7 @@ const createMediaMiddleware = ({
 
 				await mediaService.changeConsumer(consumerId, 'pause');
 			}
-			
+
 			if (consumersActions.setConsumerResumed.match(action) && action.payload.local) {
 				const { consumerId } = action.payload;
 
@@ -118,7 +118,7 @@ const createMediaMiddleware = ({
 
 				await mediaService.changeProducer(producerId, 'pause');
 			}
-			
+
 			if (producersActions.setProducerResumed.match(action) && action.payload.local) {
 				const { producerId } = action.payload;
 

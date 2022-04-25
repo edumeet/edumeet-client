@@ -9,7 +9,6 @@ import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 
 interface MeProps {
-	advancedMode?: boolean;
 	spacing: number;
 	style: Record<'width' | 'height', number>
 }
@@ -24,6 +23,7 @@ const Me = ({
 		extraVideoProducers
 	} = useAppSelector(meProducersSelector);
 
+	const mirroredSelfView = useAppSelector((state) => state.settings.mirroredSelfView);
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const activeSpeaker =
 		useAppSelector((state) => state.me.id === state.room.activeSpeakerId);
@@ -61,7 +61,7 @@ const Me = ({
 					}
 				</MediaControls>
 				{ webcamProducer && <VideoView
-					mirrored
+					mirrored={mirroredSelfView}
 					producer={webcamProducer}
 				/> }
 			</VideoBox>

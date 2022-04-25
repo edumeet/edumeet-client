@@ -163,7 +163,7 @@ export interface EdumeetConfig {
 	audioPreset: string;
 	audioPresets: Record<string, AudioPreset>;
 	autoMuteThreshold: number;
-	defaultLayout: 'democratic' | 'filmstrip';
+	defaultLayout: RoomLayout;
 	buttonControlBar: boolean;
 	drawerOverlayed: boolean;
 	notificationPosition: 'right' | 'left';
@@ -172,6 +172,8 @@ export interface EdumeetConfig {
 	privacyUrl: string;
 	theme: ThemeOptions;
 }
+
+export type RoomLayout = 'filmstrip' | 'democratic';
 
 export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
 
@@ -197,6 +199,14 @@ export interface AudioPreset {
 	opusMaxPlaybackRate: number;
 }
 
+export interface ChatMessage {
+	type: 'message' | 'file';
+	time: number;
+	peerId: string;
+	text?: string;
+	attachment?: string;
+}
+
 export interface SocketInboundNotification {
 	method: string; // TODO: define inbound notification method strings
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -213,7 +223,8 @@ export interface SocketOutboundRequest {
 		JoinData |
 		PauseProducerData |
 		ResumeProducerData |
-		DisplayNameData;
+		DisplayNameData |
+		PromotePeerData;
 }
 
 export interface JoinData {
@@ -256,6 +267,10 @@ export interface ResumeProducerData {
 
 export interface DisplayNameData {
 	displayName: string;
+}
+
+export interface PromotePeerData {
+	peerId: string;
 }
 
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';

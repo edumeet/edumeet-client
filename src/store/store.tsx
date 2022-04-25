@@ -10,13 +10,13 @@ import storage from 'redux-persist/lib/storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import { MediaService } from '../services/mediaService';
 import { SignalingService } from '../services/signalingService';
-import createMediaMiddleware from './middleware/mediaMiddleware';
-import createSignalingMiddleware from './middleware/signalingMiddleware';
-import createRoomMiddleware from './middleware/roomMiddleware';
-import createFilesharingMiddleware from './middleware/filesharingMiddleware';
-import createLobbyMiddleware from './middleware/lobbyMiddleware';
-import createPeerMiddleware from './middleware/peerMiddleware';
-import createPermissionsMiddleware from './middleware/permissionsMiddleware';
+import createMediaMiddleware from './middlewares/mediaMiddleware';
+import createSignalingMiddleware from './middlewares/signalingMiddleware';
+import createRoomMiddleware from './middlewares/roomMiddleware';
+import createFilesharingMiddleware from './middlewares/filesharingMiddleware';
+import createLobbyMiddleware from './middlewares/lobbyMiddleware';
+import createPeerMiddleware from './middlewares/peerMiddleware';
+import createPermissionsMiddleware from './middlewares/permissionsMiddleware';
 import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
 import consumersSlice from './slices/consumersSlice';
@@ -26,11 +26,12 @@ import permissionsSlice from './slices/permissionsSlice';
 import lobbyPeersSlice from './slices/lobbyPeersSlice';
 import settingsSlice from './slices/settingsSlice';
 import drawerSlice from './slices/drawerSlice';
+import peersSlice from './slices/peersSlice';
+import producersSlice from './slices/producersSlice';
+import chatSlice from './slices/chatSlice';
 import uiSlice from './slices/uiSlice';
 import { EdumeetConfig } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
-import peersSlice from './slices/peersSlice';
-import producersSlice from './slices/producersSlice';
 import { createContext } from 'react';
 import { DeviceService } from '../services/deviceService';
 
@@ -65,6 +66,7 @@ const reducer = combineReducers({
 	consumers: consumersSlice.reducer,
 	drawer: drawerSlice.reducer,
 	lobbyPeers: lobbyPeersSlice.reducer,
+	chat: chatSlice.reducer,
 	me: meSlice.reducer,
 	peers: peersSlice.reducer,
 	permissions: permissionsSlice.reducer,

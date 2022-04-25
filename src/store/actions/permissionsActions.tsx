@@ -1,6 +1,8 @@
 import { Logger } from '../../utils/logger';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { roomActions } from '../slices/roomSlice';
+import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 
 const logger = new Logger('LoginActions');
 
@@ -59,5 +61,45 @@ export const unlock = () => async (
 		dispatch(permissionsActions.setLocked(false));
 	} catch (error) {
 		logger.error('unlock() [error:"%o"]', error);
+	}
+};
+
+export const promotePeer = (peerId: string) => async (
+	dispatch: AppDispatch,
+	_getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('promotePeer() [peerId:"%s"]', peerId);
+
+	dispatch(lobbyPeersActions.updatePeer({ id: peerId, promotionInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('promotePeer', { peerId });
+	} catch (error) {
+		logger.error('promotePeer() [error:"%o"]', error);
+	} finally {
+		dispatch(lobbyPeersActions.updatePeer({ id: peerId, promotionInProgress: false }));
+	}
+};
+
+export const promotePeers = () => async (
+	dispatch: AppDispatch,
+	_getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('promotePeers()');
+
+	dispatch(
+		roomActions.updateRoom({ lobbyPeersPromotionInProgress: true })
+	);
+
+	try {
+		await signalingService.sendRequest('promoteAllPeers');
+	} catch (error) {
+		logger.error('promotePeers() [error:"%o"]', error);
+	} finally {
+		dispatch(
+			roomActions.updateRoom({ lobbyPeersPromotionInProgress: false })
+		);
 	}
 };

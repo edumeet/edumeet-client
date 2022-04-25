@@ -18,14 +18,14 @@ const LobbyButton = ({
 	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
-	const lockDialogOpen = useAppSelector((state) => state.ui.lockDialogOpen);
+	const lobbyDialogOpen = useAppSelector((state) => state.ui.lobbyDialogOpen);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
 
 	return (
 		<ControlButton
 			toolTip={showLobbyLabel(intl)}
 			onClick={() => {
-				dispatch(uiActions.setUi({ lockDialogOpen: !lockDialogOpen }));
+				dispatch(uiActions.setUi({ lobbyDialogOpen: !lobbyDialogOpen }));
 			}}
 			disabled={!canPromote}
 			{ ...props }

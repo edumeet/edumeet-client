@@ -63,6 +63,22 @@ export const spotlightPeersSelector = createSelector(
 		).slice(0, lastN)
 );
 
+export const peersVideoConsumersSelector = createSelector(
+	spotlightPeersSelector,
+	consumersSelect,
+	(spotlightPeers, consumers) =>
+		consumers.filter((consumer) =>
+			consumer.kind === 'video' && spotlightPeers.includes(consumer.peerId))
+);
+
+export const passivePeersVideoConsumersSelector = createSelector(
+	spotlightPeersSelector,
+	consumersSelect,
+	(spotlightPeers, consumers) =>
+		consumers.filter((consumer) =>
+			consumer.kind === 'video' && !spotlightPeers.includes(consumer.peerId))
+);
+
 export const extraVideoProducersSelector = createSelector(
 	producersSelect,
 	(producers) => producers.filter((producer) => producer.source === 'extravideo')

@@ -10,6 +10,12 @@ export const roomNameLabel = (intl: IntlShape): string => intl.formatMessage({
 	defaultMessage: 'Room name'
 });
 
+export const PromotePeersMessage = (): JSX.Element =>
+	<FormattedMessage id='label.promoteAllPeers' defaultMessage='Promote all' />;
+
+export const LobbyAdministrationMessage = (): JSX.Element =>
+	<FormattedMessage id='room.lobbyAdministration' defaultMessage='Lobby administration' />;
+
 export const ShowSelfViewMessage = (): JSX.Element =>
 	<FormattedMessage id='room.showSelfView' defaultMessage='Show self view video' />;
 
@@ -25,6 +31,17 @@ export const hideSelfViewLabel = (intl: IntlShape): string => intl.formatMessage
 	id: 'room.hideSelfView',
 	defaultMessage: 'Hide self view video'
 });
+
+export const mirroredSelfViewLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'settings.mirrorOwnVideo',
+	defaultMessage: 'Mirrored self view video'
+});
+
+export const hideNoVideoParticipantsLabel =
+	(intl: IntlShape): string => intl.formatMessage({
+		id: 'settings.hideNoVideoParticipants',
+		defaultMessage: 'Hide participants with no video'
+	});
 
 export const AddVideoMessage = (): JSX.Element =>
 	<FormattedMessage id='label.addVideo' defaultMessage='Add video' />;
@@ -268,11 +285,6 @@ export const mediaSettingsLabel = (intl: IntlShape): string => intl.formatMessag
 export const appearanceSettingsLabel = (intl: IntlShape): string => intl.formatMessage({
 	id: 'label.appearance',
 	defaultMessage: 'Appearance'
-});
-
-export const advancedSettingsLabel = (intl: IntlShape): string => intl.formatMessage({
-	id: 'label.advanced',
-	defaultMessage: 'Advanced'
 });
 
 export const audioDeviceLabel = (intl: IntlShape): string => intl.formatMessage({

@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { RoomLayout } from '../../utils/types';
 import { producersActions } from './producersSlice';
 
 export interface SettingsState {
 	displayName?: string;
-	advancedMode?: boolean;
-	drawerOverlayed: boolean;
-	permanentTopBar: boolean;
 	lastN: number;
+	mirroredSelfView: boolean;
 	hideNonVideo: boolean;
+	roomLayout: RoomLayout;
 	aspectRatio: number;
 	selectedAudioDevice?: string;
 	selectedVideoDevice?: string;
@@ -31,13 +31,15 @@ export interface SettingsState {
 	videoMuted?: boolean;
 }
 
+type SettingsUpdate = Partial<SettingsState>;
+
 const initialState: SettingsState = {
-	drawerOverlayed: edumeetConfig.drawerOverlayed,
+	mirroredSelfView: true,
+	roomLayout: edumeetConfig.defaultLayout,
 	resolution: edumeetConfig.resolution,
 	frameRate: edumeetConfig.frameRate,
 	screenSharingResolution: edumeetConfig.screenSharingResolution,
 	screenSharingFrameRate: edumeetConfig.screenSharingFrameRate,
-	permanentTopBar: true,
 	lastN: edumeetConfig.lastN,
 	hideNonVideo: edumeetConfig.hideNonVideo,
 	aspectRatio: edumeetConfig.aspectRatio,
@@ -58,20 +60,20 @@ const settingsSlice = createSlice({
 	name: 'settings',
 	initialState,
 	reducers: {
+		updateSettings: ((state, action: PayloadAction<SettingsUpdate>) => {
+			return { ...state, ...action.payload };
+		}),
 		setDisplayName: ((state, action: PayloadAction<string>) => {
 			state.displayName = action.payload;
 		}),
-		toggleAdvancedMode: ((state) => {
-			state.advancedMode = !state.advancedMode;
-		}),
-		toggleDrawerOverlayed: ((state) => {
-			state.drawerOverlayed = !state.drawerOverlayed;
-		}),
-		togglePermanentTopBar: ((state) => {
-			state.permanentTopBar = !state.permanentTopBar;
-		}),
 		setLastN: ((state, action: PayloadAction<number>) => {
 			state.lastN = action.payload;
+		}),
+		setRoomLayout: ((state, action: PayloadAction<RoomLayout>) => {
+			state.roomLayout = action.payload;
+		}),
+		setMirroredSelfView: ((state, action: PayloadAction<boolean>) => {
+			state.mirroredSelfView = action.payload;
 		}),
 		setHideNonVideo: ((state, action: PayloadAction<boolean>) => {
 			state.hideNonVideo = action.payload;
