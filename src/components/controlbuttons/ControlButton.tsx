@@ -12,7 +12,8 @@ export interface ControlButtonProps {
 	offColor?: ButtonColor;
 	disabledColor?: ButtonColor;
 	size?: ButtonSize;
-	onClick?: () => void;
+	// eslint-disable-next-line
+	onClick?: (event?: any) => void;
 	children?: ReactNode;
 }
 

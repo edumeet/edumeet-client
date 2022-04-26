@@ -51,7 +51,9 @@ const MeetingDrawerDiv = styled('div')(({ theme }) => ({
 
 const MeetingDrawerWindow = styled('div')({
 	display: 'flex',
-	flexDirection: 'row'
+	flexDirection: 'row',
+	width: '100%',
+	height: '100%',
 });
 
 const MeetingDrawerAppBar = styled(AppBar)({
@@ -93,8 +95,8 @@ const MeetingDrawer = (): JSX.Element => {
 					onClose={() => dispatch(uiActions.setUi({ drawerWindow: !drawerWindow }))}
 				>
 					<MeetingDrawerWindow>
-						<ParticipantList />
 						<Chat />
+						<ParticipantList />
 					</MeetingDrawerWindow>
 				</SeparateWindow>
 			) : (

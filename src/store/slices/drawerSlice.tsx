@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { chatActions } from './chatSlice';
 
 export type ToolAreaTab = 'chat' | 'users';
 
@@ -30,13 +31,6 @@ const drawerSlice = createSlice({
 		setTab: ((state, action: PayloadAction<ToolAreaTab>) => {
 			state.tab = action.payload;
 		}),
-		addMessage: ((state) => {
-			if (state.open && state.tab === 'chat') {
-				return;
-			}
-
-			state.unreadMessages += 1;
-		}),
 		addFile: ((state) => {
 			if (state.open && state.tab === 'chat') {
 				return;
@@ -45,6 +39,16 @@ const drawerSlice = createSlice({
 			state.unreadFiles += 1;
 		}),
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(chatActions.addMessage, (state) => {
+				if (state.open && state.tab === 'chat') {
+					return;
+				}
+	
+				state.unreadMessages += 1;
+			});
+	}
 });
 
 export const drawerActions = drawerSlice.actions;

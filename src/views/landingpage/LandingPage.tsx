@@ -25,6 +25,7 @@ const LandingPage = (): JSX.Element => {
 						label={roomNameLabel(intl)}
 						value={roomId}
 						setValue={setRoomId}
+						onEnter={onClicked}
 						randomizeOnBlank
 					/>
 				}

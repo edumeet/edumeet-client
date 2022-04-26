@@ -2,6 +2,7 @@ import { useAppSelector } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
 import MicButton from '../controlbuttons/MicButton';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
+import ShareButton from '../controlbuttons/ShareButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
@@ -52,13 +53,11 @@ const Me = ({
 						offColor='error'
 						disabledColor='default'
 					/>
-					{ !screenProducer &&
-						<ScreenshareButton
-							onColor='default'
-							offColor='default'
-							disabledColor='default'
-						/>
-					}
+					<ShareButton
+						onColor='default'
+						offColor='error'
+						disabledColor='default'
+					/>
 				</MediaControls>
 				{ webcamProducer && <VideoView
 					mirrored={mirroredSelfView}

@@ -13,7 +13,7 @@ import { SignalingService } from '../services/signalingService';
 import createMediaMiddleware from './middlewares/mediaMiddleware';
 import createSignalingMiddleware from './middlewares/signalingMiddleware';
 import createRoomMiddleware from './middlewares/roomMiddleware';
-import createFilesharingMiddleware from './middlewares/filesharingMiddleware';
+import createSharingMiddleware from './middlewares/sharingMiddleware';
 import createLobbyMiddleware from './middlewares/lobbyMiddleware';
 import createPeerMiddleware from './middlewares/peerMiddleware';
 import createPermissionsMiddleware from './middlewares/permissionsMiddleware';
@@ -93,7 +93,7 @@ export const store = configureStore({
 			createMediaMiddleware(middlewareOptions),
 			createPeerMiddleware(middlewareOptions),
 			createLobbyMiddleware(middlewareOptions),
-			createFilesharingMiddleware(),
+			createSharingMiddleware(middlewareOptions),
 			createPermissionsMiddleware(middlewareOptions),
 			createRoomMiddleware(middlewareOptions),
 			createLogger({

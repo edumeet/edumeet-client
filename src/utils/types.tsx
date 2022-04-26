@@ -224,7 +224,8 @@ export interface SocketOutboundRequest {
 		PauseProducerData |
 		ResumeProducerData |
 		DisplayNameData |
-		PromotePeerData;
+		PromotePeerData |
+		ChatMessageData;
 }
 
 export interface JoinData {
@@ -271,6 +272,10 @@ export interface DisplayNameData {
 
 export interface PromotePeerData {
 	peerId: string;
+}
+
+export interface ChatMessageData {
+	chatMessage: ChatMessage;
 }
 
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';

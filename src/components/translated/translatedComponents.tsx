@@ -10,6 +10,22 @@ export const roomNameLabel = (intl: IntlShape): string => intl.formatMessage({
 	defaultMessage: 'Room name'
 });
 
+export const chatInputLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'label.chatInput',
+	defaultMessage: 'Enter chat message...'
+});
+
+export const ChatScrollToBottomMessage = (): JSX.Element =>
+	<FormattedMessage id='label.chatScrollToBottom' defaultMessage='Scroll to bottom' />;
+
+export const shareLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'label.share',
+	defaultMessage: 'Share'
+});
+
+export const ExtraVideoMessage = (): JSX.Element =>
+	<FormattedMessage id='room.extraVideo' defaultMessage='Extra video' />;
+
 export const PromotePeersMessage = (): JSX.Element =>
 	<FormattedMessage id='label.promoteAllPeers' defaultMessage='Promote all' />;
 
@@ -209,6 +225,9 @@ export const startScreenSharingLabel = (intl: IntlShape): string => intl.formatM
 	id: 'device.startScreenSharing',
 	defaultMessage: 'Start screen sharing'
 });
+
+export const ShareScreenMessage = (): JSX.Element =>
+	<FormattedMessage id='device.shareScreen' defaultMessage='Share screen' />;
 
 export const MeMessage = (): JSX.Element =>
 	<FormattedMessage id='room.me' defaultMessage='Me' />;

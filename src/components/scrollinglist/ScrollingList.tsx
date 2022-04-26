@@ -1,13 +1,15 @@
 import { styled } from '@mui/material';
 import { Component, createRef, ReactNode } from 'react';
 
-const ScrollingListDiv = styled('div')({
+const ScrollingListDiv = styled('div')(({ theme }) => ({
+	position: 'relative',
 	display: 'flex',
 	flexDirection: 'column',
 	maxHeight: 'inherit',
 	height: 'inherit',
-	overflowY: 'auto'
-});
+	overflowY: 'auto',
+	padding: theme.spacing(1)
+}));
 
 const SCROLL_OFFSET_TRIGGER = 2;
 

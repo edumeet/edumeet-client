@@ -44,7 +44,7 @@ const Lobby = (): JSX.Element => {
 						label={yourNameLabel(intl)}
 						value={displayName}
 						setValue={handleDisplayNameChange}
-						adornment={<AccountCircle />}
+						startAdornment={<AccountCircle />}
 					/>
 				</>
 			}

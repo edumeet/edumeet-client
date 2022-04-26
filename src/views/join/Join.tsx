@@ -83,7 +83,8 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 						label={yourNameLabel(intl)}
 						value={displayName}
 						setValue={handleDisplayNameChange}
-						adornment={<AccountCircle />}
+						onEnter={handleJoin}
+						startAdornment={<AccountCircle />}
 					/>
 				</>
 			}
