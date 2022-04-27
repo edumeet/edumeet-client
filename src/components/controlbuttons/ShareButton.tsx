@@ -1,41 +1,112 @@
 import { useIntl } from 'react-intl';
-import ControlButton, { ControlButtonProps } from './ControlButton';
-import { useState } from 'react';
-import FloatingMenu from '../floatingmenu/FloatingMenu';
-import { shareLabel } from '../translated/translatedComponents';
+import {
+	screenSharingUnsupportedLabel,
+	shareFileLabel,
+	shareLabel,
+	startScreenSharingLabel,
+	startVideoLabel,
+	videoUnsupportedLabel
+} from '../translated/translatedComponents';
 import AddIcon from '@mui/icons-material/Add';
-import Screenshare from '../menuitems/Screenshare';
-import ExtraVideo from '../menuitems/ExtraVideo';
+import { SpeedDial, SpeedDialAction } from '@mui/material';
+import {
+	useAppDispatch,
+	useAppSelector,
+	usePermissionSelector
+} from '../../store/hooks';
+import { permissions } from '../../utils/roles';
+import { MediaState } from '../../utils/types';
+import ScreenIcon from '@mui/icons-material/ScreenShare';
+import AddVideoIcon from '@mui/icons-material/VideoCall';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import {
+	updateScreenSharing,
+	updateWebcam
+} from '../../store/actions/mediaActions';
+import { uiActions } from '../../store/slices/uiSlice';
 
-const ShareButton = (props: ControlButtonProps): JSX.Element => {
+const ShareButton = (): JSX.Element => {
 	const intl = useIntl();
-	const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>();
-	const handleMenuClose = () => {
-		setAnchorEl(null);
-	};
-	const isMenuOpen = Boolean(anchorEl);
+	const dispatch = useAppDispatch();
+	const hasScreenPermission = usePermissionSelector(permissions.SHARE_SCREEN);
+	const hasExtraVideoPermission = usePermissionSelector(permissions.EXTRA_VIDEO);
+	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
+
+	const {
+		canSendWebcam,
+		videoInProgress,
+		canShareScreen,
+		screenSharingInProgress
+	} = useAppSelector((state) => state.me);
+
+	let videoState: MediaState, videoTip, screenState: MediaState, screenTip;
+
+	if (!canSendWebcam || !hasExtraVideoPermission) {
+		videoState = 'unsupported';
+		videoTip = videoUnsupportedLabel(intl);
+	} else {
+		videoState = 'off';
+		videoTip = startVideoLabel(intl);
+	}
+
+	if (!canShareScreen || !hasScreenPermission) {
+		screenState = 'unsupported';
+		screenTip = screenSharingUnsupportedLabel(intl);
+	} else {
+		screenState = 'off';
+		screenTip = startScreenSharingLabel(intl);
+	}
 
 	return (
-		<>
-			<ControlButton
-				toolTip={shareLabel(intl)}
-				aria-haspopup
-				onClick={(event) => {
-					setAnchorEl(event.currentTarget);
-				}}
-				{ ...props }
-			>
-				<AddIcon />
-			</ControlButton>
-			<FloatingMenu
-				anchorEl={anchorEl}
-				open={isMenuOpen}
-				onClose={handleMenuClose}
-			>
-				<Screenshare onClick={handleMenuClose} />
-				<ExtraVideo onClick={handleMenuClose} />
-			</FloatingMenu>
-		</>
+		<SpeedDial
+			ariaLabel={shareLabel(intl)}
+			icon={<AddIcon />}
+			direction='left'
+		>
+			{ canShareScreen && !screenSharingInProgress && (
+				<SpeedDialAction
+					icon={<ScreenIcon />}
+					tooltipTitle={screenTip}
+					onClick={() => {
+						if (screenState === 'unsupported') return;
+
+						if (screenState === 'off') {
+							dispatch(updateScreenSharing({
+								start: true
+							}));
+						} else {
+							// Shouldn't happen
+						}
+					}}
+				/>
+			)}
+			{ canSendWebcam && !videoInProgress && (
+				<SpeedDialAction
+					icon={<AddVideoIcon />}
+					tooltipTitle={videoTip}
+					onClick={() => {
+						if (videoState === 'unsupported') return;
+
+						if (videoState === 'off') {
+							dispatch(updateWebcam({
+								start: true
+							}));
+						} else {
+							// Shouldn't happen
+						}
+					}}
+				/>
+			)}
+			{ hasFilesharingPermission && (
+				<SpeedDialAction
+					icon={<UploadFileIcon />}
+					tooltipTitle={shareFileLabel(intl)}
+					onClick={() => {
+						dispatch(uiActions.setUi({ filesharingOpen: true }));
+					}}
+				/>
+			)}
+		</SpeedDial>
 	);
 };
 

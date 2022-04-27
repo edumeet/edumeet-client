@@ -15,7 +15,8 @@ import {
 	SocketOutboundRequest,
 	DisplayNameData,
 	PromotePeerData,
-	ChatMessageData
+	ChatMessageData,
+	FilesharingData
 } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 
@@ -114,6 +115,7 @@ export class SignalingService extends EventEmitter {
 			DisplayNameData |
 			PromotePeerData |
 			ChatMessageData |
+			FilesharingData |
 			undefined,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	): Promise<any> {

@@ -7,6 +7,7 @@ export interface UiState {
 	windowConsumer?: string;
 	drawerWindow?: boolean;
 	settingsOpen?: boolean;
+	filesharingOpen?: boolean;
 	extraVideoOpen?: boolean;
 	hideSelfView?: boolean;
 	rolesManagerOpen?: boolean;
@@ -22,6 +23,7 @@ type UiUpdate = Omit<UiState, 'currentSettingsTab'>;
 const initialState: UiState = {
 	drawerWindow: false,
 	settingsOpen: false,
+	filesharingOpen: false,
 	extraVideoOpen: false,
 	hideSelfView: false,
 	rolesManagerOpen: false,

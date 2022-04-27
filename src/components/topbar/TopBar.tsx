@@ -14,6 +14,7 @@ import {
 	usePermissionSelector
 } from '../../store/hooks';
 import {
+	filesLengthSelector,
 	lobbyPeersLengthSelector,
 	unreadSelector
 } from '../../store/selectors';
@@ -41,6 +42,7 @@ import FullscreenButton from '../controlbuttons/FullscreenButton';
 import ParticipantsButton from '../controlbuttons/ParticipantsButton';
 import LoginButton from '../controlbuttons/LoginButton';
 import SettingsButton from '../controlbuttons/SettingsButton';
+import FilesharingButton from '../controlbuttons/FilesharingButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -96,6 +98,7 @@ const TopBar = ({
 	const drawerOpen = useAppSelector((state) => state.drawer.open);
 	const unread = useAppSelector(unreadSelector);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
+	const files = useAppSelector(filesLengthSelector);
 
 	const [ mobileMoreAnchorEl, setMobileMoreAnchorEl ] = useState<HTMLElement | null>();
 
@@ -172,6 +175,7 @@ const TopBar = ({
 						<ParticipantsButton type='iconbutton' />
 						<SettingsButton type='iconbutton' />
 						<LockButton type='iconbutton' />
+						{ files > 0 && <FilesharingButton type='iconbutton' /> }
 						{ lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						{ loginEnabled && <LoginButton type='iconbutton' /> }
 					</DesktopDiv>

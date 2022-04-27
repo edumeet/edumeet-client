@@ -9,6 +9,7 @@ declare module '@mui/material/styles' {
 		peerBackroundColor: string;
 		peerShadow: string;
 		peerAvatar: string;
+		chatColor?: string;
 	}
 
 	interface ThemeOptions {
@@ -19,6 +20,7 @@ declare module '@mui/material/styles' {
 		peerBackroundColor?: string;
 		peerShadow?: string;
 		peerAvatar?: string;
+		chatColor?: string;
 	}
 }
 

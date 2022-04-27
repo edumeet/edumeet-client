@@ -1,5 +1,4 @@
 import { Logger } from '../../utils/logger';
-import { ChatMessage } from '../../utils/types';
 import { chatActions } from '../slices/chatSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 
@@ -12,19 +11,19 @@ export const sendChat = (message: string) => async (
 ): Promise<void> => {
 	logger.debug('sendChat() [message:"%s"]', message);
 
-	const id = getState().me.id;
-
-	const chatMessage = {
-		peerId: id,
-		type: 'message',
-		time: Date.now(),
-		text: message
-	} as ChatMessage;
-
 	try {
-		await signalingService.sendRequest('chatMessage', { chatMessage });
+		await signalingService.sendRequest('chatMessage', { text: message });
 
-		dispatch(chatActions.addMessage(chatMessage));
+		const peerId = getState().me.id;
+		const displayName = getState().settings.displayName;
+		const timestamp = Date.now();
+
+		dispatch(chatActions.addMessage({
+			peerId,
+			displayName,
+			timestamp,
+			text: message
+		}));
 	} catch (error) {
 		logger.error('sendChat() [error:"%o"]', error);
 	}

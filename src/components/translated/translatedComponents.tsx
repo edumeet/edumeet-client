@@ -243,6 +243,17 @@ export const participantsLabel = (intl: IntlShape): string => intl.formatMessage
 	defaultMessage: 'Participants'
 });
 
+export const shareFileLabel = (intl: IntlShape): string => intl.formatMessage({
+	id: 'label.shareFile',
+	defaultMessage: 'Share file'
+});
+
+export const filesharingUnsupportedLabel = (intl: IntlShape): string =>
+	intl.formatMessage({
+		id: 'label.fileSharingUnsupported',
+		defaultMessage: 'File sharing not supported'
+	});
+
 export const chatLabel = (intl: IntlShape): string => intl.formatMessage({
 	id: 'label.chat',
 	defaultMessage: 'Chat'
@@ -282,6 +293,12 @@ export const SettingsMessage = (): JSX.Element =>
 	<FormattedMessage
 		id='settings.settings'
 		defaultMessage='Settings'
+	/>;
+
+export const FilesharingMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='label.shareFile'
+		defaultMessage='Share file'
 	/>;
 
 export const CloseMessage = (): JSX.Element =>

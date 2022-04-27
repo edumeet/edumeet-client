@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import { Logger } from '../utils/logger';
 
-const logger = new Logger('DeviceMonitor');
+const logger = new Logger('DeviceService');
 
 export interface MediaDevice {
 	deviceId: string;

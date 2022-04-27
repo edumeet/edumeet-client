@@ -2,7 +2,7 @@ import { Consumer } from 'mediasoup-client/lib/Consumer';
 import { Producer } from 'mediasoup-client/lib/Producer';
 import { useContext, useEffect, useRef } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
-import { MediaServiceContext } from '../../store/store';
+import { ServiceContext } from '../../store/store';
 
 interface AudioViewProps {
 	consumer?: StateConsumer;
@@ -11,7 +11,7 @@ interface AudioViewProps {
 const AudioView = ({
 	consumer
 }: AudioViewProps): JSX.Element => {
-	const mediaService = useContext(MediaServiceContext);
+	const { mediaService } = useContext(ServiceContext);
 	const audioElement = useRef<HTMLAudioElement>(null);
 
 	useEffect(() => {

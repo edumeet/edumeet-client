@@ -13,10 +13,11 @@ import { SignalingService } from '../services/signalingService';
 import createMediaMiddleware from './middlewares/mediaMiddleware';
 import createSignalingMiddleware from './middlewares/signalingMiddleware';
 import createRoomMiddleware from './middlewares/roomMiddleware';
-import createSharingMiddleware from './middlewares/sharingMiddleware';
+import createFilesharingMiddleware from './middlewares/filesharingMiddleware';
 import createLobbyMiddleware from './middlewares/lobbyMiddleware';
 import createPeerMiddleware from './middlewares/peerMiddleware';
 import createPermissionsMiddleware from './middlewares/permissionsMiddleware';
+import createChatMiddleware from './middlewares/chatMiddleware';
 import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
 import consumersSlice from './slices/consumersSlice';
@@ -29,14 +30,17 @@ import drawerSlice from './slices/drawerSlice';
 import peersSlice from './slices/peersSlice';
 import producersSlice from './slices/producersSlice';
 import chatSlice from './slices/chatSlice';
+import filesharingSlice from './slices/filesharingSlice';
 import uiSlice from './slices/uiSlice';
 import { EdumeetConfig } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 import { createContext } from 'react';
 import { DeviceService } from '../services/deviceService';
+import { FileService } from '../services/fileService';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
+	fileService: FileService;
 	deviceService: DeviceService;
 	signalingService: SignalingService;
 	config: EdumeetConfig;
@@ -53,11 +57,16 @@ const signalingService = new SignalingService();
 const deviceService = new DeviceService();
 
 export const mediaService = new MediaService({ signalingService });
-export const MediaServiceContext = createContext<MediaService>(mediaService);
+export const fileService = new FileService({ signalingService });
+export const ServiceContext = createContext<{
+	mediaService: MediaService,
+	fileService: FileService
+}>({ mediaService, fileService });
 
 const middlewareOptions = {
 	config: edumeetConfig,
 	mediaService,
+	fileService,
 	deviceService,
 	signalingService,
 };
@@ -67,6 +76,7 @@ const reducer = combineReducers({
 	drawer: drawerSlice.reducer,
 	lobbyPeers: lobbyPeersSlice.reducer,
 	chat: chatSlice.reducer,
+	filesharing: filesharingSlice.reducer,
 	me: meSlice.reducer,
 	peers: peersSlice.reducer,
 	permissions: permissionsSlice.reducer,
@@ -93,7 +103,8 @@ export const store = configureStore({
 			createMediaMiddleware(middlewareOptions),
 			createPeerMiddleware(middlewareOptions),
 			createLobbyMiddleware(middlewareOptions),
-			createSharingMiddleware(middlewareOptions),
+			createChatMiddleware(middlewareOptions),
+			createFilesharingMiddleware(middlewareOptions),
 			createPermissionsMiddleware(middlewareOptions),
 			createRoomMiddleware(middlewareOptions),
 			createLogger({

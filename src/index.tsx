@@ -5,7 +5,13 @@ import { IntlProvider } from 'react-intl';
 import './index.css';
 import debug from 'debug';
 import App from './App';
-import { persistor, store, mediaService, MediaServiceContext } from './store/store';
+import {
+	persistor,
+	store,
+	mediaService,
+	fileService,
+	ServiceContext
+} from './store/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import * as serviceWorker from './serviceWorker';
@@ -60,9 +66,9 @@ ReactDOM.render(
 			<PersistGate persistor={persistor}>
 				<ThemeProvider theme={theme}>
 					<IntlProvider locale='en' defaultLocale='en'>
-						<MediaServiceContext.Provider value={mediaService}>
+						<ServiceContext.Provider value={{ mediaService, fileService }}>
 							<RootComponent />
-						</MediaServiceContext.Provider>
+						</ServiceContext.Provider>
 					</IntlProvider>
 				</ThemeProvider>
 			</PersistGate>

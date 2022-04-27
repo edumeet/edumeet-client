@@ -10,6 +10,7 @@ import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
 import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import AudioPeers from '../../components/audiopeers/AudioPeers';
 import LobbyDialog from '../../components/lobbydialog/LobbyDialog';
+import FilesharingDialog from '../../components/filesharingdialog/FilesharingDialog';
 
 const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
@@ -58,6 +59,7 @@ const Room = (): JSX.Element => {
 			<Democratic />
 			<LobbyDialog />
 			<Settings />
+			<FilesharingDialog />
 		</>
 	);
 };

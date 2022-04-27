@@ -4,7 +4,7 @@ import { Producer } from 'mediasoup-client/lib/Producer';
 import { useContext, useEffect, useRef } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 import { StateProducer } from '../../store/slices/producersSlice';
-import { MediaServiceContext } from '../../store/store';
+import { ServiceContext } from '../../store/store';
 
 interface VideoViewProps {
 	mirrored?: boolean;
@@ -32,7 +32,7 @@ const VideoView = ({
 	consumer,
 	producer
 }: VideoViewProps): JSX.Element => {
-	const mediaService = useContext(MediaServiceContext);
+	const { mediaService } = useContext(ServiceContext);
 	const videoElement = useRef<HTMLVideoElement>(null);
 
 	useEffect(() => {

@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { MediaDevice } from '../services/deviceService';
 import { Permission, Role } from '../utils/roles';
+import { FilesharingFile } from '../utils/types';
 import { StateConsumer } from './slices/consumersSlice';
 import { LobbyPeer } from './slices/lobbyPeersSlice';
 import { Peer } from './slices/peersSlice';
@@ -30,6 +31,8 @@ const selectedPeersSelector: Selector<string[]> =
 	(state) => state.room.selectedPeers;
 const peersSelector: Selector<Peer[]> =
 	(state) => state.peers;
+const filesSelector: Selector<FilesharingFile[]> =
+	(state) => state.filesharing;
 const peerSelector: ParameterSelector<Peer | undefined> =
 	(state: RootState, peerId: string) => state.peers.find((p: Peer) => p.id === peerId);
 const lobbyPeersSelector: Selector<LobbyPeer[]> =
@@ -208,6 +211,11 @@ export const participantListSelector = createSelector(
 			...peersSorted
 		];
 	}
+);
+
+export const filesLengthSelector = createSelector(
+	filesSelector,
+	(files) => files.length
 );
 
 export const peersLengthSelector = createSelector(

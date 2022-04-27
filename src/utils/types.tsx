@@ -126,6 +126,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		peerBackroundColor: 'rgba(49, 49, 49, 0.9)',
 		peerShadow: '0px',
 		peerAvatar: 'images/buddy.svg',
+		chatColor: 'rgba(224, 224, 224, 0.52)'
 	}
 };
 
@@ -200,11 +201,17 @@ export interface AudioPreset {
 }
 
 export interface ChatMessage {
-	type: 'message' | 'file';
-	time: number;
 	peerId: string;
+	displayName?: string;
+	timestamp?: number;
 	text?: string;
-	attachment?: string;
+}
+
+export interface FilesharingFile {
+	peerId: string;
+	displayName?: string;
+	timestamp?: number;
+	magnetURI?: string;
 }
 
 export interface SocketInboundNotification {
@@ -225,7 +232,8 @@ export interface SocketOutboundRequest {
 		ResumeProducerData |
 		DisplayNameData |
 		PromotePeerData |
-		ChatMessageData;
+		ChatMessageData |
+		FilesharingData;
 }
 
 export interface JoinData {
@@ -275,7 +283,11 @@ export interface PromotePeerData {
 }
 
 export interface ChatMessageData {
-	chatMessage: ChatMessage;
+	text?: string;
+}
+
+export interface FilesharingData {
+	magnetUri?: string;
 }
 
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';

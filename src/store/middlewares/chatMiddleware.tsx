@@ -1,23 +1,17 @@
 import { Middleware } from '@reduxjs/toolkit';
-import WebTorrent from 'webtorrent';
 import { Logger } from '../../utils/logger';
 import { chatActions } from '../slices/chatSlice';
-import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { webrtcActions } from '../slices/webrtcSlice';
 import { MiddlewareOptions } from '../store';
 
-const logger = new Logger('SharingMiddleware');
+const logger = new Logger('ChatMiddleware');
 
-const createSharingMiddleware = ({
+const createChatMiddleware = ({
 	signalingService
 }: MiddlewareOptions): Middleware => {
-	logger.debug('createSharingMiddleware()');
+	logger.debug('createChatMiddleware()');
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	let webTorrent: any;
-
-	const middleware: Middleware = ({ dispatch, getState }) =>
+	const middleware: Middleware = ({ dispatch }) =>
 		(next) => (action) => {
 			if (signalingActions.connected.match(action)) {
 				signalingService.on('notification', (notification) => {
@@ -40,30 +34,10 @@ const createSharingMiddleware = ({
 				});
 			}
 
-			if (roomActions.updateRoom.match(action) && action.payload.joined) {
-				if (WebTorrent.WEBRTC_SUPPORT) {
-					dispatch(webrtcActions.setTorrentSupport(true));
-
-					const iceServers = getState().room.iceServers;
-
-					webTorrent = new WebTorrent({
-						tracker: {
-							rtcConfig: {
-								iceServers: iceServers
-							}
-						},
-					});
-
-					webTorrent.on('error', (error: Error) => {
-						logger.warn('WebTorrent [error:%o]', error);
-					});
-				}
-			}
-
 			return next(action);
 		};
 	
 	return middleware;
 };
 
-export default createSharingMiddleware;
+export default createChatMiddleware;

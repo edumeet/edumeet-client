@@ -53,11 +53,7 @@ const Me = ({
 						offColor='error'
 						disabledColor='default'
 					/>
-					<ShareButton
-						onColor='default'
-						offColor='error'
-						disabledColor='default'
-					/>
+					<ShareButton />
 				</MediaControls>
 				{ webcamProducer && <VideoView
 					mirrored={mirroredSelfView}
