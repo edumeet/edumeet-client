@@ -13,26 +13,22 @@ interface TextInputFieldProps {
 	startAdornment?: ReactNode;
 	endAdornment?: ReactNode;
 	randomizeOnBlank?: boolean;
+	autoFocus?: boolean;
 }
 
 const TextInputField = ({
-	label,
 	value,
 	setValue,
 	onEnter,
-	disabled,
-	margin = 'normal',
 	startAdornment,
 	endAdornment,
 	randomizeOnBlank,
+	...rest
 }: TextInputFieldProps): JSX.Element => {
 	return (
 		<TextField
-			label={label}
 			value={value}
 			variant='outlined'
-			margin={margin}
-			disabled={disabled}
 			onFocus={(event: FocusEvent<HTMLInputElement>) => event.target.select()}
 			InputProps={{
 				startAdornment: (
@@ -55,6 +51,7 @@ const TextInputField = ({
 					setValue(randomString({ length: 8 }).toLowerCase());
 			}}
 			fullWidth
+			{...rest}
 		/>
 	);
 };

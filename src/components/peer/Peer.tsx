@@ -41,7 +41,8 @@ const Peer = ({
 					activeSpeaker={activeSpeaker}
 					order={1}
 					margin={spacing}
-					sx={{ ...style }}
+					width={style.width}
+					height={style.height}
 				>
 					<DisplayName displayName={displayName} />
 					<MediaControls
@@ -71,7 +72,8 @@ const Peer = ({
 					activeSpeaker={activeSpeaker}
 					order={2}
 					margin={spacing}
-					sx={{ ...style }}
+					width={style.width}
+					height={style.height}
 				>
 					<MediaControls
 						orientation='vertical'
@@ -90,7 +92,8 @@ const Peer = ({
 					order={3}
 					margin={spacing}
 					key={consumer.id}
-					sx={{ ...style }}
+					width={style.width}
+					height={style.height}
 				>
 					<MediaControls
 						orientation='vertical'

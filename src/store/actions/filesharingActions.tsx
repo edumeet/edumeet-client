@@ -1,5 +1,6 @@
 import { Logger } from '../../utils/logger';
 import { filesharingActions } from '../slices/filesharingSlice';
+import { roomActions } from '../slices/roomSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 
 const logger = new Logger('FilesharingActions');
@@ -10,6 +11,8 @@ export const sendFiles = (files: FileList) => async (
 	{ fileService }: MiddlewareOptions
 ): Promise<void> => {
 	logger.debug('sendFiles() [files:"%s"]', files);
+
+	dispatch(roomActions.updateRoom({ startFileSharingInProgress: true }));
 
 	try {
 		const magnetURI = await fileService.sendFiles(files);
@@ -22,9 +25,12 @@ export const sendFiles = (files: FileList) => async (
 			peerId,
 			displayName,
 			timestamp,
-			magnetURI
+			magnetURI,
+			started: false,
 		}));
 	} catch (error) {
 		logger.error('sendFiles() [error:"%o"]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ startFileSharingInProgress: false }));
 	}
 };

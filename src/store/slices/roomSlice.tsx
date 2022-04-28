@@ -16,6 +16,7 @@ export interface RoomState {
 	closeMeetingInProgress?: boolean;
 	clearChatInProgress?: boolean;
 	clearFileSharingInProgress?: boolean;
+	startFileSharingInProgress?: boolean;
 	fullscreenConsumer?: string;
 	windowedConsumer?: string;
 	selectedPeers: string[];

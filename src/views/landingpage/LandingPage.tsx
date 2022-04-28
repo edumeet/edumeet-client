@@ -27,6 +27,7 @@ const LandingPage = (): JSX.Element => {
 						setValue={setRoomId}
 						onEnter={onClicked}
 						randomizeOnBlank
+						autoFocus
 					/>
 				}
 				actions={

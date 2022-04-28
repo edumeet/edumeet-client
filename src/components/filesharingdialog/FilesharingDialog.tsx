@@ -2,6 +2,7 @@ import {
 	Button,
 	DialogActions,
 	DialogTitle,
+	styled,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions } from '../../store/slices/uiSlice';
@@ -9,16 +10,26 @@ import StyledDialog from '../dialog/StyledDialog';
 import {
 	CloseMessage,
 	FilesharingMessage,
+	StartingFileSharingMessage,
 } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
-import { FilesharingFile } from '../../utils/types';
 import { sendFiles } from '../../store/actions/filesharingActions';
+import FilesharingList from './FilesharingList';
+
+const ShareLabel = styled('label')(({ theme }) => ({
+	display: 'flex',
+	gap: theme.spacing(1),
+	alignContent: 'center',
+	marginLeft: theme.spacing(1),
+	marginRight: theme.spacing(1),
+}));
 
 const FilesharingDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const filesharingOpen = useAppSelector((state) => state.ui.filesharingOpen);
-	const files = useAppSelector((state) => state.filesharing);
+	const startFileSharingInProgress =
+		useAppSelector((state) => state.room.startFileSharingInProgress);
 
 	const handleCloseFilesharing = (): void => {
 		dispatch(uiActions.setUi({
@@ -28,6 +39,7 @@ const FilesharingDialog = (): JSX.Element => {
 
 	const handleFileDrop = (event: React.DragEvent<HTMLDivElement>): void => {
 		event.preventDefault();
+
 		const droppedFiles = event.dataTransfer.files;
 
 		if (droppedFiles?.length)
@@ -46,6 +58,7 @@ const FilesharingDialog = (): JSX.Element => {
 			open={filesharingOpen}
 			onClose={handleCloseFilesharing}
 			onDrop={handleFileDrop}
+			onDragOver={(event) => event.preventDefault()}
 		>
 			<DialogTitle>
 				<FilesharingMessage />
@@ -57,19 +70,19 @@ const FilesharingDialog = (): JSX.Element => {
 				type='file'
 				onChange={handleAttachFile}
 			/>
-			<label htmlFor='file-input'>
+			<ShareLabel htmlFor='file-input'>
 				<Button
 					variant='contained'
 					component='span'
+					disabled={startFileSharingInProgress}
 				>
 					<FilesharingMessage />
 				</Button>
-			</label>
-			{files.map((file: FilesharingFile) => (
-				<div key={file.magnetURI}>
-					{file.magnetURI}
-				</div>
-			))}
+				{ startFileSharingInProgress &&
+					<StartingFileSharingMessage />
+				}
+			</ShareLabel>
+			<FilesharingList />
 			<DialogActions>
 				<Button
 					onClick={handleCloseFilesharing}

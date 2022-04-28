@@ -50,6 +50,10 @@ interface TopBarProps {
 	onFullscreen: () => void;
 }
 
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+	backgroundColor: theme.appBarColor
+}));
+
 const LogoImg = styled('img')(({ theme }) => ({
 	display: 'none',
 	marginLeft: 20,
@@ -92,10 +96,6 @@ const TopBar = ({
 
 	const leaveOpen = useAppSelector((state) => state.ui.leaveOpen);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
-	const permanentTopBar = useAppSelector((state) => state.settings.permanentTopBar);
-	const drawerOverlayed = useAppSelector((state) => state.settings.drawerOverlayed);
-	const platform = useAppSelector((state) => state.me.browser.platform);
-	const drawerOpen = useAppSelector((state) => state.drawer.open);
 	const unread = useAppSelector(unreadSelector);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
 	const files = useAppSelector(filesLengthSelector);
@@ -106,44 +106,11 @@ const TopBar = ({
 		setMobileMoreAnchorEl(null);
 	};
 
-	const isMobile = platform === 'mobile';
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
 	return (
 		<Fragment>
-			<AppBar
-				position='fixed'
-				sx={{
-					...(!(isMobile || drawerOverlayed) && drawerOpen && {
-						width: 'calc(100% - 30vw)',
-						marginLeft: '30vw',
-						[theme.breakpoints.down('lg')]: {
-							width: 'calc(100% - 30vw)',
-							marginLeft: '40vw'
-						},
-						[theme.breakpoints.down('md')]: {
-							width: 'calc(100% - 40vw)',
-							marginLeft: '50vw'
-						},
-						[theme.breakpoints.down('sm')]: {
-							width: 'calc(100% - 60vw)',
-							marginLeft: '70vw'
-						},
-						[theme.breakpoints.down('xs')]: {
-							width: 'calc(100% - 80vw)',
-							marginLeft: '90vw'
-						},
-					}),
-					...(permanentTopBar ? {
-						opacity: 1,
-						transition: 'opacity .5s'
-					} : {
-						opacity: 0,
-						transition: 'opacity .5s'
-					}),
-					backgroundColor: theme.appBarColor
-				}}
-			>
+			<StyledAppBar position='fixed'>
 				<Toolbar>
 					<PulsingBadge
 						color='secondary'
@@ -202,7 +169,7 @@ const TopBar = ({
 						<LeaveMessage />
 					</Button>
 				</Toolbar>
-			</AppBar>
+			</StyledAppBar>
 			<FloatingMenu
 				anchorEl={mobileMoreAnchorEl}
 				open={isMobileMenuOpen}

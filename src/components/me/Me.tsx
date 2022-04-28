@@ -35,7 +35,8 @@ const Me = ({
 				activeSpeaker={activeSpeaker}
 				order={1}
 				margin={spacing}
-				sx={{ ...style }}
+				width={style.width}
+				height={style.height}
 			>
 				<DisplayName disabled={false} displayName={displayName} />
 				<MediaControls
@@ -65,7 +66,8 @@ const Me = ({
 					activeSpeaker={activeSpeaker}
 					order={2}
 					margin={spacing}
-					sx={{ ...style }}
+					width={style.width}
+					height={style.height}
 				>
 					<MediaControls
 						orientation='vertical'
@@ -87,7 +89,8 @@ const Me = ({
 					order={3}
 					margin={spacing}
 					key={producer.id}
-					sx={{ ...style }}
+					width={style.width}
+					height={style.height}
 				>
 					<VideoView producer={producer} />
 				</VideoBox>

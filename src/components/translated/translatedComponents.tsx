@@ -248,6 +248,12 @@ export const shareFileLabel = (intl: IntlShape): string => intl.formatMessage({
 	defaultMessage: 'Share file'
 });
 
+export const StartingFileSharingMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='filesharing.startingFileShare'
+		defaultMessage='Attempting to share file'
+	/>;
+
 export const filesharingUnsupportedLabel = (intl: IntlShape): string =>
 	intl.formatMessage({
 		id: 'label.fileSharingUnsupported',

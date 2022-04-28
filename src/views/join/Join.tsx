@@ -85,6 +85,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 						setValue={handleDisplayNameChange}
 						onEnter={handleJoin}
 						startAdornment={<AccountCircle />}
+						autoFocus
 					/>
 				</>
 			}

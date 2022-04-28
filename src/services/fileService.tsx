@@ -16,8 +16,8 @@ export class FileService {
 		this.handleSignaling();
 	}
 
-	public getTorrent(magnetUri: string): WebTorrent.Torrent | undefined {
-		return this.webTorrent?.get(magnetUri) || undefined;
+	public getTorrent(magnetURI: string): WebTorrent.Torrent | undefined {
+		return this.webTorrent?.get(magnetURI) || undefined;
 	}
 
 	private handleSignaling(): void {
@@ -64,8 +64,8 @@ export class FileService {
 				const existingTorrent = this.webTorrent?.get(torrent);
 	
 				if (existingTorrent) {
-					await this.signalingService.sendRequest('sendFile', { magnetUri: existingTorrent.magnetURI })
-						.catch((err) => logger.warn('sendFile, unable to send file [magnetUri:%s, error:%o]', existingTorrent.magnetURI, err));
+					await this.signalingService.sendRequest('sendFile', { magnetURI: existingTorrent.magnetURI })
+						.catch((err) => logger.warn('sendFile, unable to send file [magnetURI:%s, error:%o]', existingTorrent.magnetURI, err));
 
 					return resolve(existingTorrent.magnetURI);
 				}
@@ -74,12 +74,25 @@ export class FileService {
 					files,
 					{ announceList: [ [ this.tracker ] ] },
 					async (newTorrent) => {
-						await this.signalingService.sendRequest('sendFile', { magnetUri: newTorrent.magnetURI })
-							.catch((err) => logger.warn('sendFile, unable to send file [magnetUri:%s, error:%o]', newTorrent.magnetURI, err));
+						await this.signalingService.sendRequest('sendFile', { magnetURI: newTorrent.magnetURI })
+							.catch((err) => logger.warn('sendFile, unable to send file [magnetURI:%s, error:%o]', newTorrent.magnetURI, err));
 
 						return resolve(newTorrent.magnetURI);
 					}
 				);
+			});
+		});
+	}
+
+	public async downloadFile(magnetURI: string): Promise<WebTorrent.Torrent> {
+		const existingTorrent = this.webTorrent?.get(magnetURI);
+
+		if (existingTorrent)
+			return existingTorrent;
+
+		return new Promise((resolve) => {
+			this.webTorrent?.add(magnetURI, (torrent) => {
+				return resolve(torrent);
 			});
 		});
 	}

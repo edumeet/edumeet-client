@@ -191,10 +191,6 @@ var config = {
 	// If true, the media control buttons will be shown in separate control bar, not in the ME container.
 	buttonControlBar: false,
 
-	// If false, will push videos away to make room for side drawer.
-	// If true, will overlay side drawer over videos.
-	drawerOverlayed: true,
-
 	// The position of the notifications.
 	notificationPosition: 'right',
 

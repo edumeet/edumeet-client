@@ -50,7 +50,6 @@ can be found here: [config.example.js](public/config/config.example.js).
 | background | The page background image URL | `"string"` | ``"images/background.jpg"`` |
 | defaultLayout | The default layout. | `[  "democratic",  "filmstrip"]` | ``"democratic"`` |
 | buttonControlBar | If true, the media control buttons will be shown in separate control bar, not in the ME container. | `"boolean"` | ``false`` |
-| drawerOverlayed | If false, will push videos away to make room for side drawer. If true, will overlay side drawer over videos. | `"boolean"` | ``true`` |
 | notificationPosition | The position of the notifications. | `[  "left",  "right"]` | ``"right"`` |
 | logo | If not null, it shows the logo loaded from the specified URL, otherwise it shows the title. | `"url"` | ``"images/logo.edumeet.svg"`` |
 | title | The title to show if the logo is not specified. | `"string"` | ``"edumeet"`` |

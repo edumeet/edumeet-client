@@ -113,7 +113,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	autoMuteThreshold: 4,
 	defaultLayout: 'democratic',
 	buttonControlBar: false,
-	drawerOverlayed: true,
 	notificationPosition: 'right',
 	title: 'edumeet',
 	supportUrl: 'https://support.example.com',
@@ -166,7 +165,6 @@ export interface EdumeetConfig {
 	autoMuteThreshold: number;
 	defaultLayout: RoomLayout;
 	buttonControlBar: boolean;
-	drawerOverlayed: boolean;
 	notificationPosition: 'right' | 'left';
 	title: string;
 	supportUrl: string;
@@ -211,7 +209,8 @@ export interface FilesharingFile {
 	peerId: string;
 	displayName?: string;
 	timestamp?: number;
-	magnetURI?: string;
+	magnetURI: string;
+	started?: boolean;
 }
 
 export interface SocketInboundNotification {
@@ -287,7 +286,7 @@ export interface ChatMessageData {
 }
 
 export interface FilesharingData {
-	magnetUri?: string;
+	magnetURI?: string;
 }
 
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';
