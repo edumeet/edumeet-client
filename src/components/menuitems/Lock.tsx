@@ -1,5 +1,4 @@
 import { MenuItem } from '@mui/material';
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -21,11 +20,10 @@ import { permissions } from '../../utils/roles';
 const Lock = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const locked = useAppSelector((state) => state.permissions.locked);
-	const lockLabel = locked ? unlockRoomLabel(intl) : lockRoomLabel(intl);
+	const lockLabel = locked ? unlockRoomLabel() : lockRoomLabel();
 
 	return (
 		<MenuItem

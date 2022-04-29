@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { MediaState } from '../../utils/types';
 import {
@@ -14,7 +13,6 @@ import {
 } from '../../store/actions/mediaActions';
 
 const WebcamPreviewButton = (props: ControlButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 
 	const {
@@ -26,10 +24,10 @@ const WebcamPreviewButton = (props: ControlButtonProps): JSX.Element => {
 
 	if (previewWebcamTrackId) {
 		webcamState = 'on';
-		webcamTip = stopVideoLabel(intl);
+		webcamTip = stopVideoLabel();
 	} else {
 		webcamState = 'off';
-		webcamTip = startVideoLabel(intl);
+		webcamTip = startVideoLabel();
 	}
 
 	return (

@@ -28,24 +28,13 @@ const ListFile = ({
 	file
 }: ListFilerProps): JSX.Element => {
 	const { fileService } = useContext(ServiceContext);
-
-	const [ torrent, setTorrent ] =
-		useState<WebTorrent.Torrent | undefined>(fileService.getTorrent(file.magnetURI));
-	const [ done, setDone ] = useState(Boolean(torrent?.done));
-	const [ progress, setProgress ] = useState(torrent?.progress || 0);
+	const [ torrent, setTorrent ] = useState<WebTorrent.Torrent | undefined>();
+	const [ done, setDone ] = useState<boolean>(Boolean(torrent?.done));
+	const [ progress, setProgress ] = useState<number>(torrent?.progress || 0);
 
 	useEffect(() => {
-		if (torrent) {
-			torrent.on('download', () => setProgress(torrent.progress || 0));
-			torrent.on('done', () => setDone(true));
-
-			return () => {
-				if (torrent) {
-					torrent.removeAllListeners('download');
-					torrent.removeAllListeners('done');
-				}
-			};
-		}
+		if (file.started)
+			setTorrent(fileService.getTorrent(file.magnetURI));
 	}, []);
 
 	useEffect(() => {

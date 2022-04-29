@@ -1,6 +1,5 @@
 import { AccountCircle } from '@mui/icons-material';
 import { Badge, Menu, MenuItem } from '@mui/material';
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -68,7 +67,6 @@ const MobileMenu = ({
 	open,
 	onClose
 }: MobileMenuProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const canProduceExtraVideo = usePermissionSelector(permissions.EXTRA_VIDEO);
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
@@ -85,8 +83,8 @@ const MobileMenu = ({
 	const locked = useAppSelector((state) => state.permissions.locked);
 	const peersLength = useAppSelector(peersLengthSelector);
 
-	const loginButtonLabel = loggedIn ? logoutLabel(intl) : loginLabel(intl);
-	const lockLabel = locked ? unlockRoomLabel(intl) : lockRoomLabel(intl);
+	const loginButtonLabel = loggedIn ? logoutLabel() : loginLabel();
+	const lockLabel = locked ? unlockRoomLabel() : lockRoomLabel();
 
 	const openUsersTab = () => {
 		dispatch(drawerActions.toggle());
@@ -142,7 +140,7 @@ const MobileMenu = ({
 				}
 			</MenuItem>
 			<MenuItem
-				aria-label={showSettingsLabel(intl)}
+				aria-label={showSettingsLabel()}
 				onClick={() => {
 					onClose();
 					dispatch(uiActions.setUi({ settingsOpen: !settingsOpen }));
@@ -154,7 +152,7 @@ const MobileMenu = ({
 				</MoreActions>
 			</MenuItem>
 			<MenuItem
-				aria-label={showParticipantsLabel(intl)}
+				aria-label={showParticipantsLabel()}
 				onClick={() => {
 					onClose();
 					openUsersTab();
@@ -172,7 +170,7 @@ const MobileMenu = ({
 			</MenuItem>
 			{ fullscreenEnabled &&
 				<MenuItem
-					aria-label={enterFullscreenLabel(intl)}
+					aria-label={enterFullscreenLabel()}
 					onClick={() => {
 						onClose();
 						onFullscreen();
@@ -195,7 +193,7 @@ const MobileMenu = ({
 					dispatch(uiActions.setUi({ extraVideoOpen: !extraVideoOpen }));
 				}}
 			>
-				<VideoCallIcon aria-label={addVideoLabel(intl)} />
+				<VideoCallIcon aria-label={addVideoLabel()} />
 				<MoreActions>
 					<AddVideoMessage />
 				</MoreActions>
@@ -207,9 +205,9 @@ const MobileMenu = ({
 				}}
 			>
 				{ hideSelfView ?
-					<SelfViewOnIcon aria-label={showSelfViewLabel(intl)} />
+					<SelfViewOnIcon aria-label={showSelfViewLabel()} />
 					:
-					<SelfViewOffIcon aria-label={hideSelfViewLabel(intl)} />
+					<SelfViewOffIcon aria-label={hideSelfViewLabel()} />
 				}
 				{ hideSelfView ?
 					<MoreActions>
@@ -227,7 +225,7 @@ const MobileMenu = ({
 					dispatch(uiActions.setUi({ helpOpen: !helpOpen }));
 				}}
 			>
-				<HelpIcon aria-label={helpLabel(intl)} />
+				<HelpIcon aria-label={helpLabel()} />
 				<MoreActions>
 					<HelpMessage />
 				</MoreActions>
@@ -238,7 +236,7 @@ const MobileMenu = ({
 					dispatch(uiActions.setUi({ aboutOpen: !aboutOpen }));
 				}}
 			>
-				<InfoIcon aria-label={aboutLabel(intl)} />
+				<InfoIcon aria-label={aboutLabel()} />
 				<MoreActions>
 					<AboutMessage />
 				</MoreActions>

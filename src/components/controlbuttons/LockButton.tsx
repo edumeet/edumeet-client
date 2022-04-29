@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -17,14 +16,13 @@ import { lock, unlock } from '../../store/actions/permissionsActions';
 const LockButton = ({
 	...props
 }: ControlButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const locked = useAppSelector((state) => state.permissions.locked);
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 
 	return (
 		<ControlButton
-			toolTip={locked ? unlockRoomLabel(intl) : lockRoomLabel(intl)}
+			toolTip={locked ? unlockRoomLabel() : lockRoomLabel()}
 			onClick={() =>
 				(locked ? dispatch(unlock()) : dispatch(lock()))
 			}

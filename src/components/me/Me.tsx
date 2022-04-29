@@ -8,6 +8,7 @@ import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
+import Volume from '../volume/Volume';
 
 interface MeProps {
 	spacing: number;
@@ -19,6 +20,7 @@ const Me = ({
 	style
 }: MeProps): JSX.Element => {
 	const {
+		micProducer,
 		webcamProducer,
 		screenProducer,
 		extraVideoProducers
@@ -56,6 +58,7 @@ const Me = ({
 					/>
 					<ShareButton />
 				</MediaControls>
+				{ micProducer && <Volume producer={micProducer} /> }
 				{ webcamProducer && <VideoView
 					mirrored={mirroredSelfView}
 					producer={webcamProducer}

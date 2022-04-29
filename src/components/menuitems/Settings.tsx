@@ -1,5 +1,4 @@
 import { MenuItem } from '@mui/material';
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -16,13 +15,12 @@ import { uiActions } from '../../store/slices/uiSlice';
 const Settings = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const settingsOpen = useAppSelector((state) => state.ui.settingsOpen);
 
 	return (
 		<MenuItem
-			aria-label={showSettingsLabel(intl)}
+			aria-label={showSettingsLabel()}
 			onClick={() => {
 				onClick();
 				dispatch(uiActions.setUi({ settingsOpen: !settingsOpen }));

@@ -12,30 +12,10 @@ export class FileService {
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		this.signalingService = signalingService;
-
-		this.handleSignaling();
 	}
 
 	public getTorrent(magnetURI: string): WebTorrent.Torrent | undefined {
 		return this.webTorrent?.get(magnetURI) || undefined;
-	}
-
-	private handleSignaling(): void {
-		this.signalingService.on('notification', async (notification) => {
-			logger.debug(
-				'signalingService "notification" event [method:%s, data:%o]',
-				notification.method, notification.data);
-
-			try {
-				switch (notification.method) {
-					case 'sendFile': {
-						break;
-					}
-				}
-			} catch (error) {
-				logger.error('error on signalService "notification" event [error:%o]', error);
-			}
-		});
 	}
 
 	public async init(

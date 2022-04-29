@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -14,13 +13,12 @@ import { login, logout } from '../../store/actions/permissionsActions';
 const LoginButton = ({
 	...props
 }: ControlButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	return (
 		<ControlButton
-			toolTip={loggedIn ? logoutLabel(intl) : loginLabel(intl)}
+			toolTip={loggedIn ? logoutLabel() : loginLabel()}
 			onClick={() => (loggedIn ? dispatch(logout()) : dispatch(login()))}
 			{ ...props }
 		>

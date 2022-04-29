@@ -39,12 +39,16 @@ export const lock = () => async (
 ): Promise<void> => {
 	logger.debug('lock()');
 
+	dispatch(roomActions.updateRoom({ lockInProgress: true }));
+
 	try {
 		await signalingService.sendRequest('lockRoom');
 
 		dispatch(permissionsActions.setLocked(true));
 	} catch (error) {
 		logger.error('lock() [error:"%o"]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ lockInProgress: false }));
 	}
 };
 
@@ -55,12 +59,16 @@ export const unlock = () => async (
 ): Promise<void> => {
 	logger.debug('unlock()');
 
+	dispatch(roomActions.updateRoom({ lockInProgress: true }));
+
 	try {
 		await signalingService.sendRequest('unlockRoom');
 
 		dispatch(permissionsActions.setLocked(false));
 	} catch (error) {
 		logger.error('unlock() [error:"%o"]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ lockInProgress: false }));
 	}
 };
 

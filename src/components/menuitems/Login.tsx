@@ -1,6 +1,5 @@
 import { AccountCircle } from '@mui/icons-material';
 import { MenuItem } from '@mui/material';
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -18,10 +17,9 @@ import { MenuItemProps } from '../floatingmenu/FloatingMenu';
 const Login = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
-	const loginButtonLabel = loggedIn ? logoutLabel(intl) : loginLabel(intl);
+	const loginButtonLabel = loggedIn ? logoutLabel() : loginLabel();
 
 	return (
 		<MenuItem

@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import NewWindowIcon from '@mui/icons-material/OpenInNew';
 import ControlButton, { ControlButtonProps } from './ControlButton';
@@ -13,14 +12,13 @@ const WindowedVideoButton = ({
 	consumerId,
 	...props
 }: WindowedVideoButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const windowedConsumer =
 		useAppSelector((state) => state.room.windowedConsumer);
 
 	return (
 		<ControlButton
-			toolTip={newWindowLabel(intl)}
+			toolTip={newWindowLabel()}
 			onClick={() => {
 				if (consumerId === windowedConsumer) {
 					dispatch(roomActions.setWindowedConsumer());

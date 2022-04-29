@@ -37,15 +37,6 @@ const FilesharingDialog = (): JSX.Element => {
 		}));
 	};
 
-	const handleFileDrop = (event: React.DragEvent<HTMLDivElement>): void => {
-		event.preventDefault();
-
-		const droppedFiles = event.dataTransfer.files;
-
-		if (droppedFiles?.length)
-			dispatch(sendFiles(droppedFiles));
-	};
-
 	const handleAttachFile = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const selectedFiles = event.target.files;
 
@@ -57,8 +48,6 @@ const FilesharingDialog = (): JSX.Element => {
 		<StyledDialog
 			open={filesharingOpen}
 			onClose={handleCloseFilesharing}
-			onDrop={handleFileDrop}
-			onDragOver={(event) => event.preventDefault()}
 		>
 			<DialogTitle>
 				<FilesharingMessage />

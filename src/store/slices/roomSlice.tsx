@@ -10,6 +10,7 @@ export interface RoomState {
 	inLobby?: boolean;
 	overRoomLimit?: boolean;
 	activeSpeakerId?: string;
+	lockInProgress?: boolean;
 	muteAllInProgress?: boolean;
 	lobbyPeersPromotionInProgress?: boolean;
 	stopAllVideoInProgress?: boolean;

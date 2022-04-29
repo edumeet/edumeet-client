@@ -14,7 +14,6 @@ import createMediaMiddleware from './middlewares/mediaMiddleware';
 import createSignalingMiddleware from './middlewares/signalingMiddleware';
 import createRoomMiddleware from './middlewares/roomMiddleware';
 import createFilesharingMiddleware from './middlewares/filesharingMiddleware';
-import createLobbyMiddleware from './middlewares/lobbyMiddleware';
 import createPeerMiddleware from './middlewares/peerMiddleware';
 import createPermissionsMiddleware from './middlewares/permissionsMiddleware';
 import createChatMiddleware from './middlewares/chatMiddleware';
@@ -31,6 +30,7 @@ import peersSlice from './slices/peersSlice';
 import producersSlice from './slices/producersSlice';
 import chatSlice from './slices/chatSlice';
 import filesharingSlice from './slices/filesharingSlice';
+import notificationsSlice from './slices/notificationsSlice';
 import uiSlice from './slices/uiSlice';
 import { EdumeetConfig } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
@@ -74,6 +74,7 @@ const middlewareOptions = {
 const reducer = combineReducers({
 	consumers: consumersSlice.reducer,
 	drawer: drawerSlice.reducer,
+	notifications: notificationsSlice.reducer,
 	lobbyPeers: lobbyPeersSlice.reducer,
 	chat: chatSlice.reducer,
 	filesharing: filesharingSlice.reducer,
@@ -102,7 +103,6 @@ export const store = configureStore({
 			createSignalingMiddleware(middlewareOptions),
 			createMediaMiddleware(middlewareOptions),
 			createPeerMiddleware(middlewareOptions),
-			createLobbyMiddleware(middlewareOptions),
 			createChatMiddleware(middlewareOptions),
 			createFilesharingMiddleware(middlewareOptions),
 			createPermissionsMiddleware(middlewareOptions),

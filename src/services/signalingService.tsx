@@ -54,7 +54,7 @@ export class SignalingService extends EventEmitter {
 		logger.debug('connect() [url:%s]', url);
 
 		this.socket = io(url, {
-			transports: [ 'websocket' ]
+			transports: [ 'websocket', 'polling' ]
 		});
 
 		this.handleSocket();

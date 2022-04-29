@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { MediaState } from '../../utils/types';
 import {
@@ -11,7 +10,6 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { updatePreviewMic, stopPreviewMic } from '../../store/actions/mediaActions';
 
 const MicPreviewButton = (props: ControlButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 
 	const {
@@ -23,10 +21,10 @@ const MicPreviewButton = (props: ControlButtonProps): JSX.Element => {
 
 	if (previewMicTrackId) {
 		micState = 'on';
-		micTip = muteAudioLabel(intl);
+		micTip = muteAudioLabel();
 	} else {
 		micState = 'off';
-		micTip = activateAudioLabel(intl);
+		micTip = activateAudioLabel();
 	}
 
 	return (

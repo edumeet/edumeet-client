@@ -9,6 +9,7 @@ import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
+import Volume from '../volume/Volume';
 
 interface PeerProps {
 	key: string;
@@ -24,6 +25,7 @@ const Peer = ({
 }: PeerProps): JSX.Element => {
 	const hideNonVideo = useAppSelector((state) => state.settings.hideNonVideo);
 	const {
+		micConsumer,
 		webcamConsumer,
 		screenConsumer,
 		extraVideoConsumers
@@ -61,6 +63,7 @@ const Peer = ({
 							</>
 						)}
 					</MediaControls>
+					{ micConsumer && <Volume consumer={micConsumer} /> }
 					{ webcamConsumer && <VideoView
 						consumer={webcamConsumer}
 					/> }

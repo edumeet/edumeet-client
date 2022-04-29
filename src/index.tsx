@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
-import { IntlProvider } from 'react-intl';
+import { RawIntlProvider } from 'react-intl';
 import './index.css';
 import debug from 'debug';
 import App from './App';
@@ -24,6 +24,7 @@ import { SnackbarProvider } from 'notistack';
 import UnsupportedBrowser from './views/unsupported/UnsupportedBrowser';
 import LandingPage from './views/landingpage/LandingPage';
 import edumeetConfig from './utils/edumeetConfig';
+import { intl } from './utils/intlManager';
 
 if (process.env.REACT_APP_DEBUG === '*' || process.env.NODE_ENV !== 'production') {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');
@@ -65,11 +66,11 @@ ReactDOM.render(
 		<Provider store={store}>
 			<PersistGate persistor={persistor}>
 				<ThemeProvider theme={theme}>
-					<IntlProvider locale='en' defaultLocale='en'>
+					<RawIntlProvider value={intl}>
 						<ServiceContext.Provider value={{ mediaService, fileService }}>
 							<RootComponent />
 						</ServiceContext.Provider>
-					</IntlProvider>
+					</RawIntlProvider>
 				</ThemeProvider>
 			</PersistGate>
 		</Provider>

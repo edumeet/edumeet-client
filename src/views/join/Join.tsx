@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
 import {
 	Button,
 	Typography,
@@ -30,7 +29,6 @@ interface JoinProps {
 }
 
 const Join = ({ roomId }: JoinProps): JSX.Element => {
-	const intl = useIntl();
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 	const peerId = useAppSelector((state) => state.me.id);
 	const { previewMicTrackId, previewWebcamTrackId } = useAppSelector((state) => state.me);
@@ -80,7 +78,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 						}
 					</Typography>
 					<TextInputField
-						label={yourNameLabel(intl)}
+						label={yourNameLabel()}
 						value={displayName}
 						setValue={handleDisplayNameChange}
 						onEnter={handleJoin}

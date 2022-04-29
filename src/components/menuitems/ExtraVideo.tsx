@@ -1,5 +1,4 @@
 import { MenuItem } from '@mui/material';
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -20,7 +19,6 @@ import MoreActions from '../moreactions/MoreActions';
 const ExtraVideo = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const hasExtraVideoPermission = usePermissionSelector(permissions.EXTRA_VIDEO);
 
@@ -33,10 +31,10 @@ const ExtraVideo = ({
 
 	if (!canSendWebcam || !hasExtraVideoPermission) {
 		videoState = 'unsupported';
-		videoTip = videoUnsupportedLabel(intl);
+		videoTip = videoUnsupportedLabel();
 	} else {
 		videoState = 'off';
-		videoTip = startVideoLabel(intl);
+		videoTip = startVideoLabel();
 	}
 
 	return (

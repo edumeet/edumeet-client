@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -15,7 +14,6 @@ import { filesLengthSelector } from '../../store/selectors';
 const FilesharingButton = ({
 	...props
 }: ControlButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
 	const filesharingOpen = useAppSelector((state) => state.ui.filesharingOpen);
@@ -23,7 +21,7 @@ const FilesharingButton = ({
 
 	return (
 		<ControlButton
-			toolTip={shareFileLabel(intl)}
+			toolTip={shareFileLabel()}
 			onClick={() => {
 				dispatch(uiActions.setUi({ filesharingOpen: !filesharingOpen }));
 			}}

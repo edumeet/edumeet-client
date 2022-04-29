@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import {
 	usePermissionSelector
 } from '../../store/hooks';
@@ -19,13 +18,12 @@ const FullscreenButton = ({
 	fullscreen,
 	...props
 }: FullscreenButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 
 	return (
 		<ControlButton
 			toolTip={fullscreen ?
-				leaveFullscreenLabel(intl) : enterFullscreenLabel(intl)}
+				leaveFullscreenLabel() : enterFullscreenLabel()}
 			disabled={!canPromote}
 			{ ...props }
 		>

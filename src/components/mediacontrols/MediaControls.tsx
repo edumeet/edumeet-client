@@ -7,7 +7,7 @@ const MediaControlsDiv = styled('div')(({ theme }) => ({
 	height: '100%',
 	display: 'flex',
 	gap: theme.spacing(2),
-	padding: theme.spacing(1),
+	padding: theme.spacing(2),
 	zIndex: 21,
 }));
 

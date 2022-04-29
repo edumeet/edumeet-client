@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector
@@ -15,7 +14,6 @@ import { Badge } from '@mui/material';
 const ParticipantsButton = ({
 	...props
 }: ControlButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const peersLength = useAppSelector(peersLengthSelector);
 
@@ -26,7 +24,7 @@ const ParticipantsButton = ({
 
 	return (
 		<ControlButton
-			toolTip={showParticipantsLabel(intl)}
+			toolTip={showParticipantsLabel()}
 			onClick={() => openUsersTab()}
 			{ ...props }
 		>

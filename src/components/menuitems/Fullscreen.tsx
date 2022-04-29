@@ -1,6 +1,5 @@
 import { MenuItem } from '@mui/material';
 import fscreen from 'fscreen';
-import { useIntl } from 'react-intl';
 import {
 	enterFullscreenLabel,
 	EnterFullscreenMessage
@@ -12,7 +11,6 @@ import { MenuItemProps } from '../floatingmenu/FloatingMenu';
 const Fullscreen = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
-	const intl = useIntl();
 
 	const handleToggleFullscreen = () => {
 		if (fscreen.fullscreenElement) {
@@ -24,7 +22,7 @@ const Fullscreen = ({
 
 	return (
 		<MenuItem
-			aria-label={enterFullscreenLabel(intl)}
+			aria-label={enterFullscreenLabel()}
 			onClick={() => {
 				onClick();
 				handleToggleFullscreen();

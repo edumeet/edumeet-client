@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ChatMessage } from '../../utils/types';
+import { peersActions } from './peersSlice';
 
 type ChatState = ChatMessage[];
 
@@ -18,6 +19,22 @@ const chatSlice = createSlice({
 		clearChat: (() => {
 			return [];
 		}),
+	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(peersActions.updatePeer, (state, action) => {
+				if (action.payload.displayName) {
+					const { id, displayName } = action.payload;
+
+					return state.map((message) => {
+						if (message.peerId === id) {
+							return { ...message, displayName };
+						}
+
+						return message;
+					});
+				}
+			});
 	}
 });
 

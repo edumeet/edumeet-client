@@ -3,6 +3,7 @@ import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from '../../utils/logger';
 import { MiddlewareOptions } from '../store';
 import { peersActions } from '../slices/peersSlice';
+import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
 
 const logger = new Logger('PeerMiddleware');
 
@@ -72,6 +73,50 @@ const createPeerMiddleware = ({
 									})
 								);
 
+								break;
+							}
+
+							case 'parkedPeer': {
+								const { peerId } = notification.data;
+
+								dispatch(lobbyPeersActions.addPeer({ id: peerId }));
+
+								break;
+							}
+
+							case 'parkedPeers': {
+								const { lobbyPeers } = notification.data;
+
+								lobbyPeers?.forEach((peer: LobbyPeer) => {
+									dispatch(lobbyPeersActions.addPeer({ ...peer }));
+								});
+
+								break;
+							}
+
+							case 'lobby:peerClosed': {
+								const { peerId } = notification.data;
+
+								dispatch(lobbyPeersActions.removePeer({ id: peerId }));
+
+								break;
+							}
+
+							case 'lobby:promotedPeer': {
+								const { peerId } = notification.data;
+
+								dispatch(lobbyPeersActions.removePeer({ id: peerId }));
+
+								break;
+							}
+
+							case 'lobby:changeDisplayName':
+							case 'lobby:changePicture': {
+								const { peerId, picture, displayName } = notification.data;
+
+								dispatch(
+									lobbyPeersActions.updatePeer({ id: peerId, displayName, picture }));
+		
 								break;
 							}
 						}

@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -19,7 +18,6 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { updateWebcam } from '../../store/actions/mediaActions';
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const hasVideoPermission = usePermissionSelector(permissions.SHARE_VIDEO);
 	const webcamProducer = useAppSelector(webcamProducerSelector);
@@ -33,13 +31,13 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 
 	if (!canSendWebcam || !hasVideoPermission) {
 		webcamState = 'unsupported';
-		webcamTip = videoUnsupportedLabel(intl);
+		webcamTip = videoUnsupportedLabel();
 	} else if (webcamProducer) {
 		webcamState = 'on';
-		webcamTip = stopVideoLabel(intl);
+		webcamTip = stopVideoLabel();
 	} else {
 		webcamState = 'off';
-		webcamTip = startVideoLabel(intl);
+		webcamTip = startVideoLabel();
 	}
 
 	return (

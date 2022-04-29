@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import {
 	screenSharingUnsupportedLabel,
 	shareFileLabel,
@@ -26,7 +25,6 @@ import {
 import { uiActions } from '../../store/slices/uiSlice';
 
 const ShareButton = (): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const hasScreenPermission = usePermissionSelector(permissions.SHARE_SCREEN);
 	const hasExtraVideoPermission = usePermissionSelector(permissions.EXTRA_VIDEO);
@@ -43,23 +41,23 @@ const ShareButton = (): JSX.Element => {
 
 	if (!canSendWebcam || !hasExtraVideoPermission) {
 		videoState = 'unsupported';
-		videoTip = videoUnsupportedLabel(intl);
+		videoTip = videoUnsupportedLabel();
 	} else {
 		videoState = 'off';
-		videoTip = startVideoLabel(intl);
+		videoTip = startVideoLabel();
 	}
 
 	if (!canShareScreen || !hasScreenPermission) {
 		screenState = 'unsupported';
-		screenTip = screenSharingUnsupportedLabel(intl);
+		screenTip = screenSharingUnsupportedLabel();
 	} else {
 		screenState = 'off';
-		screenTip = startScreenSharingLabel(intl);
+		screenTip = startScreenSharingLabel();
 	}
 
 	return (
 		<SpeedDial
-			ariaLabel={shareLabel(intl)}
+			ariaLabel={shareLabel()}
 			icon={<AddIcon />}
 			direction='left'
 		>
@@ -100,7 +98,7 @@ const ShareButton = (): JSX.Element => {
 			{ hasFilesharingPermission && (
 				<SpeedDialAction
 					icon={<UploadFileIcon />}
-					tooltipTitle={shareFileLabel(intl)}
+					tooltipTitle={shareFileLabel()}
 					onClick={() => {
 						dispatch(uiActions.setUi({ filesharingOpen: true }));
 					}}

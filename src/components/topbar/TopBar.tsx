@@ -7,7 +7,6 @@ import {
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { Fragment, useState } from 'react';
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -89,7 +88,6 @@ const TopBar = ({
 	fullscreen,
 	onFullscreen
 }: TopBarProps): JSX.Element => {
-	const intl = useIntl();
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
@@ -119,7 +117,7 @@ const TopBar = ({
 					>
 						<IconButton
 							color='inherit'
-							aria-label={openDrawerLabel(intl)}
+							aria-label={openDrawerLabel()}
 						>
 							<MenuIcon />
 						</IconButton>
@@ -161,7 +159,7 @@ const TopBar = ({
 					<DividerDiv />
 
 					<Button
-						aria-label={leaveLabel(intl)}
+						aria-label={leaveLabel()}
 						color='error'
 						variant='contained'
 						onClick={() => dispatch(uiActions.setUi({ leaveOpen: !leaveOpen }))}

@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { SnackbarKey, useSnackbar } from 'notistack';
+import { useEffect, useMemo } from 'react';
 import {
 	TypedUseSelectorHook,
 	useDispatch,
@@ -12,6 +13,7 @@ import {
 	makePermissionSelector,
 	PeerConsumers
 } from './selectors';
+import { Notification, notificationsActions } from './slices/notificationsSlice';
 import type { RootState, AppDispatch } from './store';
 
 export const useAppDispatch = (): AppDispatch => useDispatch<AppDispatch>();
@@ -24,9 +26,9 @@ export const usePeerConsumers = (peerId: string): PeerConsumers => {
 	return useAppSelector(getPeerConsumers);
 };
 
-export const usePermissionSelector = (permisssion: Permission): boolean => {
+export const usePermissionSelector = (permission: Permission): boolean => {
 	const permissionSelector =
-		useMemo(() => makePermissionSelector(permisssion), []);
+		useMemo(() => makePermissionSelector(permission), []);
 
 	return useAppSelector(permissionSelector);
 };
@@ -35,4 +37,37 @@ export const useDeviceSelector = (kind: MediaDeviceKind): MediaDevice[] => {
 	const devicesSelector = useMemo(() => makeDevicesSelector(kind), [ kind ]);
 
 	return useAppSelector(devicesSelector);
+};
+
+let displayed: SnackbarKey[] = [];
+
+export const useNotifier = (): void => {
+	const dispatch = useAppDispatch();
+	const notifications = useAppSelector<Notification[]>((store) => store.notifications);
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+	const storeDisplayed = (id: SnackbarKey) => {
+		displayed = [ ...displayed, id ];
+	};
+
+	const removeDisplayed = (id: SnackbarKey) => {
+		displayed = [ ...displayed.filter((key) => id !== key) ];
+	};
+
+	useEffect(() => {
+		notifications.forEach(({ key, message, options = {} }) => {
+			if (displayed.includes(key)) return;
+
+			enqueueSnackbar(message, {
+				key,
+				...options,
+				onExited: (_event, myKey) => {
+					dispatch(notificationsActions.removeNotification(myKey));
+					removeDisplayed(myKey);
+				},
+			});
+
+			storeDisplayed(key);
+		});
+	}, [ notifications, closeSnackbar, enqueueSnackbar, dispatch ]);
 };

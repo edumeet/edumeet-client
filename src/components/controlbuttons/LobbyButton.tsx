@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -15,7 +14,6 @@ import { lobbyPeersLengthSelector } from '../../store/selectors';
 const LobbyButton = ({
 	...props
 }: ControlButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 	const lobbyDialogOpen = useAppSelector((state) => state.ui.lobbyDialogOpen);
@@ -23,7 +21,7 @@ const LobbyButton = ({
 
 	return (
 		<ControlButton
-			toolTip={showLobbyLabel(intl)}
+			toolTip={showLobbyLabel()}
 			onClick={() => {
 				dispatch(uiActions.setUi({ lobbyDialogOpen: !lobbyDialogOpen }));
 			}}

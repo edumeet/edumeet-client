@@ -18,7 +18,6 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import NewWindowIcon from '@mui/icons-material/OpenInNew';
 import { chatLabel, participantsLabel } from '../translated/translatedComponents';
-import { useIntl } from 'react-intl';
 import ParticipantList from '../participantlist/ParticipantList';
 import SeparateWindow from '../separatewindow/SeparateWindow';
 import { uiActions } from '../../store/slices/uiSlice';
@@ -71,7 +70,6 @@ const tabs: ToolAreaTab[] = [
 ];
 
 const MeetingDrawer = (): JSX.Element => {
-	const intl = useIntl();
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
 	const browser = useAppSelector((state) => state.me.browser);
@@ -130,7 +128,7 @@ const MeetingDrawer = (): JSX.Element => {
 											label={
 												<Badge color='secondary' badgeContent={raisedHands}>
 													<GroupIcon />
-													{(browser.platform !== 'mobile') && participantsLabel(intl)}
+													{(browser.platform !== 'mobile') && participantsLabel()}
 												</Badge>
 											}
 										/>
@@ -141,7 +139,7 @@ const MeetingDrawer = (): JSX.Element => {
 													badgeContent={(unreadMessages + unreadFiles)}
 												>
 													<ChatIcon />
-													{(browser.platform !== 'mobile') && chatLabel(intl)}
+													{(browser.platform !== 'mobile') && chatLabel()}
 												</Badge>
 											}
 										/>

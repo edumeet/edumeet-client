@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -19,7 +18,6 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { updateScreenSharing } from '../../store/actions/mediaActions';
 
 const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const hasScreenPermission = usePermissionSelector(permissions.SHARE_SCREEN);
 	const screenProducer = useAppSelector(screenProducerSelector);
@@ -33,13 +31,13 @@ const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 
 	if (!canShareScreen || !hasScreenPermission) {
 		screenState = 'unsupported';
-		screenTip = screenSharingUnsupportedLabel(intl);
+		screenTip = screenSharingUnsupportedLabel();
 	} else if (screenProducer) {
 		screenState = 'on';
-		screenTip = stopScreenSharingLabel(intl);
+		screenTip = stopScreenSharingLabel();
 	} else {
 		screenState = 'off';
-		screenTip = startScreenSharingLabel(intl);
+		screenTip = startScreenSharingLabel();
 	}
 
 	return (

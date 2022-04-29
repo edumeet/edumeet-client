@@ -1,16 +1,27 @@
-import { FormattedMessage, IntlShape } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
+import { intl } from '../../utils/intlManager';
 
-export const yourNameLabel = (intl: IntlShape): string => intl.formatMessage({
+export const joinedRoomLabel = (): string => intl.formatMessage({
+	id: 'room.joined',
+	defaultMessage: 'You have joined the room'
+});
+
+export const peerJoinedRoomLabel = (displayName: string): string => intl.formatMessage({
+	id: 'room.newPeer',
+	defaultMessage: '{displayName} joined the room'
+}, { displayName });
+
+export const yourNameLabel = (): string => intl.formatMessage({
 	id: 'label.yourName',
 	defaultMessage: 'Your name'
 });
 
-export const roomNameLabel = (intl: IntlShape): string => intl.formatMessage({
+export const roomNameLabel = (): string => intl.formatMessage({
 	id: 'label.roomName',
 	defaultMessage: 'Room name'
 });
 
-export const chatInputLabel = (intl: IntlShape): string => intl.formatMessage({
+export const chatInputLabel = (): string => intl.formatMessage({
 	id: 'label.chatInput',
 	defaultMessage: 'Enter chat message...'
 });
@@ -18,8 +29,8 @@ export const chatInputLabel = (intl: IntlShape): string => intl.formatMessage({
 export const ChatScrollToBottomMessage = (): JSX.Element =>
 	<FormattedMessage id='label.chatScrollToBottom' defaultMessage='Scroll to bottom' />;
 
-export const shareLabel = (intl: IntlShape): string => intl.formatMessage({
-	id: 'label.share',
+export const shareLabel = (): string => intl.formatMessage({
+	id: 'label.shareFile',
 	defaultMessage: 'Share'
 });
 
@@ -35,7 +46,7 @@ export const LobbyAdministrationMessage = (): JSX.Element =>
 export const ShowSelfViewMessage = (): JSX.Element =>
 	<FormattedMessage id='room.showSelfView' defaultMessage='Show self view video' />;
 
-export const showSelfViewLabel = (intl: IntlShape): string => intl.formatMessage({
+export const showSelfViewLabel = (): string => intl.formatMessage({
 	id: 'room.showSelfView',
 	defaultMessage: 'Show self view video'
 });
@@ -43,18 +54,18 @@ export const showSelfViewLabel = (intl: IntlShape): string => intl.formatMessage
 export const HideSelfViewMessage = (): JSX.Element =>
 	<FormattedMessage id='room.hideSelfView' defaultMessage='Hide self view video' />;
 
-export const hideSelfViewLabel = (intl: IntlShape): string => intl.formatMessage({
+export const hideSelfViewLabel = (): string => intl.formatMessage({
 	id: 'room.hideSelfView',
 	defaultMessage: 'Hide self view video'
 });
 
-export const mirroredSelfViewLabel = (intl: IntlShape): string => intl.formatMessage({
+export const mirroredSelfViewLabel = (): string => intl.formatMessage({
 	id: 'settings.mirrorOwnVideo',
 	defaultMessage: 'Mirrored self view video'
 });
 
 export const hideNoVideoParticipantsLabel =
-	(intl: IntlShape): string => intl.formatMessage({
+	(): string => intl.formatMessage({
 		id: 'settings.hideNoVideoParticipants',
 		defaultMessage: 'Hide participants with no video'
 	});
@@ -62,12 +73,12 @@ export const hideNoVideoParticipantsLabel =
 export const AddVideoMessage = (): JSX.Element =>
 	<FormattedMessage id='label.addVideo' defaultMessage='Add video' />;
 
-export const addVideoLabel = (intl: IntlShape): string => intl.formatMessage({
+export const addVideoLabel = (): string => intl.formatMessage({
 	id: 'label.addVideo',
 	defaultMessage: 'Add video'
 });
 
-export const showLobbyLabel = (intl: IntlShape): string => intl.formatMessage({
+export const showLobbyLabel = (): string => intl.formatMessage({
 	id: 'tooltip.lobby',
 	defaultMessage: 'Show lobby'
 });
@@ -75,7 +86,7 @@ export const showLobbyLabel = (intl: IntlShape): string => intl.formatMessage({
 export const LeaveMessage = (): JSX.Element =>
 	<FormattedMessage id='label.leave' defaultMessage='Leave' />;
 
-export const leaveLabel = (intl: IntlShape): string => intl.formatMessage({
+export const leaveLabel = (): string => intl.formatMessage({
 	id: 'label.leave',
 	defaultMessage: 'Leave'
 });
@@ -83,7 +94,7 @@ export const leaveLabel = (intl: IntlShape): string => intl.formatMessage({
 export const HelpMessage = (): JSX.Element =>
 	<FormattedMessage id='room.help' defaultMessage='Help' />;
 
-export const helpLabel = (intl: IntlShape): string => intl.formatMessage({
+export const helpLabel = (): string => intl.formatMessage({
 	id: 'room.help',
 	defaultMessage: 'Help'
 });
@@ -91,12 +102,12 @@ export const helpLabel = (intl: IntlShape): string => intl.formatMessage({
 export const AboutMessage = (): JSX.Element =>
 	<FormattedMessage id='room.about' defaultMessage='About' />;
 
-export const aboutLabel = (intl: IntlShape): string => intl.formatMessage({
+export const aboutLabel = (): string => intl.formatMessage({
 	id: 'room.about',
 	defaultMessage: 'About'
 });
 
-export const loginLabel = (intl: IntlShape): string => intl.formatMessage({
+export const loginLabel = (): string => intl.formatMessage({
 	id: 'tooltip.login',
 	defaultMessage: 'Log in'
 });
@@ -104,7 +115,7 @@ export const loginLabel = (intl: IntlShape): string => intl.formatMessage({
 export const LoginMessage = (): JSX.Element =>
 	<FormattedMessage id='tooltip.login' defaultMessage='Log in' />;
 
-export const logoutLabel = (intl: IntlShape): string => intl.formatMessage({
+export const logoutLabel = (): string => intl.formatMessage({
 	id: 'tooltip.logout',
 	defaultMessage: 'Log out'
 });
@@ -115,17 +126,17 @@ export const LogoutMessage = (): JSX.Element =>
 export const JoinMessage = (): JSX.Element =>
 	<FormattedMessage id='label.join' defaultMessage='Join' />;
 
-export const moreActionsLabel = (intl: IntlShape): string => intl.formatMessage({
+export const moreActionsLabel = (): string => intl.formatMessage({
 	id: 'label.moreActions',
 	defaultMessage: 'More actions'
 });
 
-export const openDrawerLabel = (intl: IntlShape): string => intl.formatMessage({
+export const openDrawerLabel = (): string => intl.formatMessage({
 	id: 'label.openDrawer',
 	defaultMessage: 'Open drawer'
 });
 
-export const showParticipantsLabel = (intl: IntlShape): string => intl.formatMessage({
+export const showParticipantsLabel = (): string => intl.formatMessage({
 	id: 'tooltip.participants',
 	defaultMessage: 'Show participants'
 });
@@ -133,7 +144,7 @@ export const showParticipantsLabel = (intl: IntlShape): string => intl.formatMes
 export const ShowParticipantsMessage = (): JSX.Element =>
 	<FormattedMessage id='tooltip.participants' defaultMessage='Show participants' />;
 
-export const showSettingsLabel = (intl: IntlShape): string => intl.formatMessage({
+export const showSettingsLabel = (): string => intl.formatMessage({
 	id: 'tooltip.settings',
 	defaultMessage: 'Show settings'
 });
@@ -141,12 +152,12 @@ export const showSettingsLabel = (intl: IntlShape): string => intl.formatMessage
 export const ShowSettingsMessage = (): JSX.Element =>
 	<FormattedMessage id='tooltip.settings' defaultMessage='Show settings' />;
 
-export const leaveFullscreenLabel = (intl: IntlShape): string => intl.formatMessage({
+export const leaveFullscreenLabel = (): string => intl.formatMessage({
 	id: 'tooltip.leaveFullscreen',
 	defaultMessage: 'Leave fullscreen'
 });
 
-export const enterFullscreenLabel = (intl: IntlShape): string => intl.formatMessage({
+export const enterFullscreenLabel = (): string => intl.formatMessage({
 	id: 'tooltip.enterFullscreen',
 	defaultMessage: 'Enter fullscreen'
 });
@@ -154,12 +165,12 @@ export const enterFullscreenLabel = (intl: IntlShape): string => intl.formatMess
 export const EnterFullscreenMessage = (): JSX.Element =>
 	<FormattedMessage id='tooltip.enterFullscreen' defaultMessage='Enter fullscreen' />;
 
-export const newWindowLabel = (intl: IntlShape): string => intl.formatMessage({
+export const newWindowLabel = (): string => intl.formatMessage({
 	id: 'label.newWindow',
 	defaultMessage: 'New window'
 });
 
-export const unlockRoomLabel = (intl: IntlShape): string => intl.formatMessage({
+export const unlockRoomLabel = (): string => intl.formatMessage({
 	id: 'tooltip.unLockRoom',
 	defaultMessage: 'Unlock room'
 });
@@ -167,7 +178,7 @@ export const unlockRoomLabel = (intl: IntlShape): string => intl.formatMessage({
 export const UnlockMessage = (): JSX.Element =>
 	<FormattedMessage id='tooltip.unLockRoom' defaultMessage='Unlock room' />;
 
-export const lockRoomLabel = (intl: IntlShape): string => intl.formatMessage({
+export const lockRoomLabel = (): string => intl.formatMessage({
 	id: 'tooltip.lockRoom',
 	defaultMessage: 'Lock room'
 });
@@ -175,53 +186,53 @@ export const lockRoomLabel = (intl: IntlShape): string => intl.formatMessage({
 export const LockMessage = (): JSX.Element =>
 	<FormattedMessage id='tooltip.lockRoom' defaultMessage='Lock room' />;
 
-export const audioUnsupportedLabel = (intl: IntlShape): string => intl.formatMessage({
+export const audioUnsupportedLabel = (): string => intl.formatMessage({
 	id: 'device.audioUnsupported',
 	defaultMessage: 'Audio unsupported'
 });
 
-export const activateAudioLabel = (intl: IntlShape): string => intl.formatMessage({
+export const activateAudioLabel = (): string => intl.formatMessage({
 	id: 'device.activateAudio',
 	defaultMessage: 'Activate audio'
 });
 
-export const muteAudioLabel = (intl: IntlShape): string => intl.formatMessage({
+export const muteAudioLabel = (): string => intl.formatMessage({
 	id: 'device.muteAudio',
 	defaultMessage: 'Mute audio'
 });
 
-export const unmuteAudioLabel = (intl: IntlShape): string => intl.formatMessage({
+export const unmuteAudioLabel = (): string => intl.formatMessage({
 	id: 'device.unMuteAudio',
 	defaultMessage: 'Unmute audio'
 });
 
-export const videoUnsupportedLabel = (intl: IntlShape): string => intl.formatMessage({
+export const videoUnsupportedLabel = (): string => intl.formatMessage({
 	id: 'device.videoUnsupported',
 	defaultMessage: 'Video unsupported'
 });
 
-export const stopVideoLabel = (intl: IntlShape): string => intl.formatMessage({
+export const stopVideoLabel = (): string => intl.formatMessage({
 	id: 'device.stopVideo',
 	defaultMessage: 'Stop video'
 });
 
-export const startVideoLabel = (intl: IntlShape): string => intl.formatMessage({
+export const startVideoLabel = (): string => intl.formatMessage({
 	id: 'device.startVideo',
 	defaultMessage: 'Start video'
 });
 
-export const screenSharingUnsupportedLabel = (intl: IntlShape): string =>
+export const screenSharingUnsupportedLabel = (): string =>
 	intl.formatMessage({
 		id: 'device.screenSharingUnsupported',
 		defaultMessage: 'Screen sharing not supported'
 	});
 
-export const stopScreenSharingLabel = (intl: IntlShape): string => intl.formatMessage({
+export const stopScreenSharingLabel = (): string => intl.formatMessage({
 	id: 'device.stopScreenSharing',
 	defaultMessage: 'Stop screen sharing'
 });
 
-export const startScreenSharingLabel = (intl: IntlShape): string => intl.formatMessage({
+export const startScreenSharingLabel = (): string => intl.formatMessage({
 	id: 'device.startScreenSharing',
 	defaultMessage: 'Start screen sharing'
 });
@@ -238,12 +249,12 @@ export const ParticipantsMessage = (): JSX.Element =>
 		defaultMessage='Participants'
 	/>;
 
-export const participantsLabel = (intl: IntlShape): string => intl.formatMessage({
+export const participantsLabel = (): string => intl.formatMessage({
 	id: 'label.participants',
 	defaultMessage: 'Participants'
 });
 
-export const shareFileLabel = (intl: IntlShape): string => intl.formatMessage({
+export const shareFileLabel = (): string => intl.formatMessage({
 	id: 'label.shareFile',
 	defaultMessage: 'Share file'
 });
@@ -254,13 +265,13 @@ export const StartingFileSharingMessage = (): JSX.Element =>
 		defaultMessage='Attempting to share file'
 	/>;
 
-export const filesharingUnsupportedLabel = (intl: IntlShape): string =>
+export const filesharingUnsupportedLabel = (): string =>
 	intl.formatMessage({
 		id: 'label.fileSharingUnsupported',
 		defaultMessage: 'File sharing not supported'
 	});
 
-export const chatLabel = (intl: IntlShape): string => intl.formatMessage({
+export const chatLabel = (): string => intl.formatMessage({
 	id: 'label.chat',
 	defaultMessage: 'Chat'
 });
@@ -319,42 +330,42 @@ export const ApplyMessage = (): JSX.Element =>
 		defaultMessage='Apply'
 	/>;
 
-export const mediaSettingsLabel = (intl: IntlShape): string => intl.formatMessage({
+export const mediaSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.media',
 	defaultMessage: 'Media'
 });
 
-export const appearanceSettingsLabel = (intl: IntlShape): string => intl.formatMessage({
+export const appearanceSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.appearance',
 	defaultMessage: 'Appearance'
 });
 
-export const audioDeviceLabel = (intl: IntlShape): string => intl.formatMessage({
+export const audioDeviceLabel = (): string => intl.formatMessage({
 	id: 'settings.audio',
 	defaultMessage: 'Audio input device'
 });
 
-export const selectAudioDeviceLabel = (intl: IntlShape): string => intl.formatMessage({
+export const selectAudioDeviceLabel = (): string => intl.formatMessage({
 	id: 'settings.selectAudio',
 	defaultMessage: 'Select audio input device'
 });
 
-export const noAudioDevicesLabel = (intl: IntlShape): string => intl.formatMessage({
+export const noAudioDevicesLabel = (): string => intl.formatMessage({
 	id: 'settings.cantSelectAudio',
 	defaultMessage: 'Unable to select audio input device'
 });
 
-export const videoDeviceLabel = (intl: IntlShape): string => intl.formatMessage({
+export const videoDeviceLabel = (): string => intl.formatMessage({
 	id: 'settings.camera',
 	defaultMessage: 'Camera'
 });
 
-export const selectVideoDeviceLabel = (intl: IntlShape): string => intl.formatMessage({
+export const selectVideoDeviceLabel = (): string => intl.formatMessage({
 	id: 'settings.selectCamera',
 	defaultMessage: 'Select video device'
 });
 
-export const noVideoDevicesLabel = (intl: IntlShape): string => intl.formatMessage({
+export const noVideoDevicesLabel = (): string => intl.formatMessage({
 	id: 'settings.cantSelectCamera',
 	defaultMessage: 'Unable to select video device'
 });

@@ -1,7 +1,6 @@
 import { AccountCircle } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { useState } from 'react';
-import { useIntl } from 'react-intl';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
@@ -17,7 +16,6 @@ import {
 import { useAppSelector } from '../../store/hooks';
 
 const Lobby = (): JSX.Element => {
-	const intl = useIntl();
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 	const { previewMicTrackId, previewWebcamTrackId } = useAppSelector((state) => state.me);
 	const [ displayName, setDisplayName ] = useState(stateDisplayName || '');
@@ -41,7 +39,7 @@ const Lobby = (): JSX.Element => {
 						}
 					</Typography>
 					<TextInputField
-						label={yourNameLabel(intl)}
+						label={yourNameLabel()}
 						value={displayName}
 						setValue={handleDisplayNameChange}
 						startAdornment={<AccountCircle />}

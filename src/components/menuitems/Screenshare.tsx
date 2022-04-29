@@ -1,5 +1,4 @@
 import { MenuItem } from '@mui/material';
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -20,7 +19,6 @@ import MoreActions from '../moreactions/MoreActions';
 const Screenshare = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const hasScreenPermission = usePermissionSelector(permissions.SHARE_SCREEN);
 
@@ -33,10 +31,10 @@ const Screenshare = ({
 
 	if (!canShareScreen || !hasScreenPermission) {
 		screenState = 'unsupported';
-		screenTip = screenSharingUnsupportedLabel(intl);
+		screenTip = screenSharingUnsupportedLabel();
 	} else {
 		screenState = 'off';
-		screenTip = startScreenSharingLabel(intl);
+		screenTip = startScreenSharingLabel();
 	}
 
 	return (

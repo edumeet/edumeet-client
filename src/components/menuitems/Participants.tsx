@@ -1,5 +1,4 @@
 import { Badge, MenuItem } from '@mui/material';
-import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	showParticipantsLabel,
@@ -14,7 +13,6 @@ import { peersLengthSelector } from '../../store/selectors';
 const Participants = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const peersLength = useAppSelector(peersLengthSelector);
 
@@ -25,7 +23,7 @@ const Participants = ({
 
 	return (
 		<MenuItem
-			aria-label={showParticipantsLabel(intl)}
+			aria-label={showParticipantsLabel()}
 			onClick={() => {
 				onClick();
 				openUsersTab();

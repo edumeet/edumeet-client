@@ -1,5 +1,4 @@
 import { FormControlLabel, FormGroup, Switch } from '@mui/material';
-import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import {
@@ -8,7 +7,6 @@ import {
 } from '../translated/translatedComponents';
 
 const AppearanceSettings = (): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const {
 		mirroredSelfView,
@@ -35,7 +33,7 @@ const AppearanceSettings = (): JSX.Element => {
 							inputProps={{ 'aria-label': 'controlled' }}
 						/>
 					}
-					label={mirroredSelfViewLabel(intl)}
+					label={mirroredSelfViewLabel()}
 				/>
 				<FormControlLabel
 					control={
@@ -45,7 +43,7 @@ const AppearanceSettings = (): JSX.Element => {
 							inputProps={{ 'aria-label': 'controlled' }}
 						/>
 					}
-					label={hideNoVideoParticipantsLabel(intl)}
+					label={hideNoVideoParticipantsLabel()}
 				/>
 			</FormGroup>
 		</>

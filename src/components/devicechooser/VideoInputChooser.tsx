@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { stopPreviewWebcam, updatePreviewWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
@@ -25,7 +24,6 @@ const VideoInputChooser = ({
 	preview,
 	withConfirm
 }: VideoInputChooserProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const [ confirm, setConfirm ] = useState(false);
 	const { webcamProducer } = useAppSelector(meProducersSelector);
@@ -83,9 +81,9 @@ const VideoInputChooser = ({
 			<DeviceChooser
 				value={videoDevice}
 				setValue={handleDeviceChange}
-				name={videoDeviceLabel(intl)}
-				devicesLabel={selectVideoDeviceLabel(intl)}
-				noDevicesLabel={noVideoDevicesLabel(intl)}
+				name={videoDeviceLabel()}
+				devicesLabel={selectVideoDeviceLabel()}
+				noDevicesLabel={noVideoDevicesLabel()}
 				disabled={videoDevices.length === 0 || videoInProgress}
 				devices={videoDevices}
 			/>

@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -20,7 +19,6 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { updateMic } from '../../store/actions/mediaActions';
 
 const MicButton = (props: ControlButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const hasAudioPermission = usePermissionSelector(permissions.SHARE_AUDIO);
 	const micProducer = useAppSelector(micProducerSelector);
@@ -34,16 +32,16 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 
 	if (!canSendMic || !hasAudioPermission) {
 		micState = 'unsupported';
-		micTip = audioUnsupportedLabel(intl);
+		micTip = audioUnsupportedLabel();
 	} else if (!micProducer) {
 		micState = 'off';
-		micTip = activateAudioLabel(intl);
+		micTip = activateAudioLabel();
 	} else if (!micProducer.paused) {
 		micState = 'on';
-		micTip = muteAudioLabel(intl);
+		micTip = muteAudioLabel();
 	} else {
 		micState = 'muted';
-		micTip = unmuteAudioLabel(intl);
+		micTip = unmuteAudioLabel();
 	}
 
 	return (

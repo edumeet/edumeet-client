@@ -6,6 +6,12 @@ const logger = new Logger('PerformanceMonitor');
 const SAMPLE_WINDOW = 8;
 const SAMPLE_INTERVAL = 500;
 
+declare global {
+	interface Window {
+		transport: Transport;
+	}
+}
+
 interface VideoSample {
 	previousTimestamp: number;
 	previousTotalDecodeTime: number;
@@ -39,6 +45,8 @@ export class PerformanceMonitor extends EventEmitter {
 
 	public monitorTransport(transport: Transport): void {
 		logger.debug('monitorTransport() [id:%s]', transport.id);
+
+		window.transport = transport;
 
 		const performanceMonitor = async (): Promise<void> => {
 			const timeoutExecutionTime = Date.now();

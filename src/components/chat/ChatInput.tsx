@@ -1,7 +1,6 @@
 import { Send } from '@mui/icons-material';
 import { IconButton, styled } from '@mui/material';
 import { useState } from 'react';
-import { useIntl } from 'react-intl';
 import { sendChat } from '../../store/actions/chatActions';
 import { useAppDispatch, usePermissionSelector } from '../../store/hooks';
 import { permissions } from '../../utils/roles';
@@ -14,7 +13,6 @@ const ChatInputDiv = styled('div')(({ theme }) => ({
 }));
 
 const ChatInput = (): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const [ message, setMessage ] = useState<string>('');
 	const canChat = usePermissionSelector(permissions.SEND_CHAT);
@@ -29,7 +27,7 @@ const ChatInput = (): JSX.Element => {
 	return (
 		<ChatInputDiv>
 			<TextInputField
-				label={chatInputLabel(intl)}
+				label={chatInputLabel()}
 				value={message}
 				margin='dense'
 				setValue={setMessage}

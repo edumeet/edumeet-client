@@ -5,7 +5,6 @@ import {
 	Tab,
 	Tabs
 } from '@mui/material';
-import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SettingsTab } from '../../store/slices/roomSlice';
 import { uiActions } from '../../store/slices/uiSlice';
@@ -26,7 +25,6 @@ const tabs: SettingsTab[] = [
 ];
 
 const SettingsDialog = (): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const settingsOpen = useAppSelector((state) => state.ui.settingsOpen);
 	const currentSettingsTab = useAppSelector((state) => state.ui.currentSettingsTab);
@@ -52,8 +50,8 @@ const SettingsDialog = (): JSX.Element => {
 				}
 				variant='fullWidth'
 			>
-				<Tab label={mediaSettingsLabel(intl)} />
-				<Tab label={appearanceSettingsLabel(intl)} />
+				<Tab label={mediaSettingsLabel()} />
+				<Tab label={appearanceSettingsLabel()} />
 			</Tabs>
 			{ currentSettingsTab === 'media' && <MediaSettings /> }
 			{ currentSettingsTab === 'appearance' && <AppearanceSettings /> }

@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { stopPreviewMic, updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
@@ -25,7 +24,6 @@ const AudioInputChooser = ({
 	preview,
 	withConfirm
 }: AudioInputChooserProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const [ confirm, setConfirm ] = useState(false);
 	const { micProducer } = useAppSelector(meProducersSelector);
@@ -83,9 +81,9 @@ const AudioInputChooser = ({
 			<DeviceChooser
 				value={audioDevice}
 				setValue={handleDeviceChange}
-				name={audioDeviceLabel(intl)}
-				devicesLabel={selectAudioDeviceLabel(intl)}
-				noDevicesLabel={noAudioDevicesLabel(intl)}
+				name={audioDeviceLabel()}
+				devicesLabel={selectAudioDeviceLabel()}
+				noDevicesLabel={noAudioDevicesLabel()}
 				disabled={audioDevices.length === 0 || audioInProgress}
 				devices={audioDevices}
 			/>

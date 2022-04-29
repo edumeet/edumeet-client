@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
@@ -14,7 +13,6 @@ const FullscreenVideoButton = ({
 	consumerId,
 	...props
 }: FullscreenVideoButtonProps): JSX.Element => {
-	const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const fullscreenConsumer =
 		useAppSelector((state) => state.room.fullscreenConsumer);
@@ -23,8 +21,8 @@ const FullscreenVideoButton = ({
 		<ControlButton
 			toolTip={
 				consumerId === fullscreenConsumer ?
-					leaveFullscreenLabel(intl) :
-					enterFullscreenLabel(intl)
+					leaveFullscreenLabel() :
+					enterFullscreenLabel()
 			}
 			onClick={() => {
 				if (consumerId === fullscreenConsumer) {

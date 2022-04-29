@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { FilesharingFile } from '../../utils/types';
+import { peersActions } from './peersSlice';
 
 type FilesharingState = FilesharingFile[];
 
@@ -42,6 +43,21 @@ const filesharingSlice = createSlice({
 		clearFiles: (() => {
 			return [];
 		}),
+	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(peersActions.updatePeer, (state, action) => {
+				if (action.payload.displayName) {
+					const { id, displayName } = action.payload;
+
+					return state.map((file) => {
+						if (file.peerId === id)
+							return { ...file, displayName };
+
+						return file;
+					});
+				}
+			});
 	}
 });
 

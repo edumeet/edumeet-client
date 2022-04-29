@@ -6,6 +6,8 @@ import { Transport } from 'mediasoup-client/lib/Transport';
 import { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
 import { Logger } from '../utils/logger';
 import { SignalingService } from './signalingService';
+import hark from 'hark';
+import { VolumeWatcher } from '../utils/volumeWatcher';
 
 const logger = new Logger('MediaService');
 
@@ -133,9 +135,26 @@ export class MediaService extends EventEmitter {
 							},
 						});
 
+						if (kind === 'audio') {
+							const { track } = consumer;
+							const harkStream = new MediaStream();
+
+							harkStream.addTrack(track);
+
+							const consumerHark = hark(harkStream, {
+								play: false,
+								interval: 100,
+								threshold: -60, // TODO: get from state
+								history: 100
+							});
+
+							consumer.appData.hark = consumerHark;
+							consumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
+						}
+
 						await this.signalingService.sendRequest('resumeConsumer', { consumerId: consumer.id })
 							.catch((error) => logger.warn('resumeConsumer, unable to resume server-side [consumerId:%s, error:%o]', consumer.id, error));
-	
+
 						this.consumers.set(consumer.id, consumer);
 
 						consumer.observer.once('close', () => {
@@ -320,6 +339,24 @@ export class MediaService extends EventEmitter {
 		}
 
 		const producer = await this.sendTransport.produce(producerOptions);
+
+		const { kind, track } = producer;
+
+		if (kind === 'audio' && track) {
+			const harkStream = new MediaStream();
+
+			harkStream.addTrack(track);
+
+			const producerHark = hark(harkStream, {
+				play: false,
+				interval: 100,
+				threshold: -60, // TODO: get from state
+				history: 100
+			});
+
+			producer.appData.hark = producerHark;
+			producer.appData.volumeWatcher = new VolumeWatcher({ hark: producerHark });
+		}
 
 		this.producers.set(producer.id, producer);
 
