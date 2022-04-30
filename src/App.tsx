@@ -19,7 +19,7 @@ const App = (): JSX.Element => {
 	const joined = useAppSelector((state) => state.room.joined);
 	const inLobby = useAppSelector((state) => state.room.inLobby);
 
-	const id = (useParams<keyof AppParams>() as AppParams).id.toLowerCase();
+	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
 
 	useEffect(() => {
 		dispatch(startListeners());

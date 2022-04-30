@@ -11,6 +11,7 @@ export interface RoomState {
 	overRoomLimit?: boolean;
 	activeSpeakerId?: string;
 	lockInProgress?: boolean;
+	localeInProgress?: boolean;
 	muteAllInProgress?: boolean;
 	lobbyPeersPromotionInProgress?: boolean;
 	stopAllVideoInProgress?: boolean;

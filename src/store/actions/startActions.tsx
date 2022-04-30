@@ -2,13 +2,19 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { Logger } from '../../utils/logger';
 import { meActions } from '../slices/meSlice';
 import { DevicesUpdated } from '../../services/deviceService';
-import { makePermissionSelector, micProducerSelector, webcamProducerSelector } from '../selectors';
+import {
+	makePermissionSelector,
+	micProducerSelector,
+	webcamProducerSelector
+} from '../selectors';
 import { permissions } from '../../utils/roles';
 import { updateMic, updateWebcam } from './mediaActions';
 import { producersActions } from '../slices/producersSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { drawerActions } from '../slices/drawerSlice';
+import { devicesChangedLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('listenerActions');
 
@@ -34,6 +40,12 @@ export const startListeners = () => (
 		// TODO: notify about removed or new devices
 
 		dispatch(meActions.setDevices(devices));
+
+		if (newDevices.length || removedDevices.length) {
+			dispatch(notificationsActions.enqueueNotification({
+				message: devicesChangedLabel()
+			}));
+		}
 	});
 
 	navigator.mediaDevices.addEventListener('devicechange', async () => {

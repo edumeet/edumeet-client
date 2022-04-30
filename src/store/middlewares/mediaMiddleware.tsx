@@ -7,6 +7,8 @@ import { webrtcActions } from '../slices/webrtcSlice';
 import { producersActions } from '../slices/producersSlice';
 import { meActions } from '../slices/meSlice';
 import { PerformanceMonitor } from '../../utils/performanceMonitor';
+import { videoConsumersSelector } from '../selectors';
+import { peersActions } from '../slices/peersSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -129,6 +131,49 @@ const createMediaMiddleware = ({
 				const { producerId } = action.payload;
 
 				await mediaService.changeProducer(producerId, 'close');
+			}
+
+			if ( // These events will possibly change which Consumer is being displayed
+				(consumersActions.addConsumer.match(action) && action.payload.kind === 'video') ||
+				consumersActions.removeConsumer.match(action) ||
+				peersActions.addPeer.match(action) || // TODO: fix pause when consumer is gone
+				peersActions.removePeer.match(action) ||
+				roomActions.setActiveSpeakerId.match(action) ||
+				roomActions.spotlightPeer.match(action) ||
+				roomActions.deSpotlightPeer.match(action) ||
+				roomActions.selectPeer.match(action) ||
+				roomActions.deselectPeer.match(action)
+			) {
+				const oldConsumersList = videoConsumersSelector(getState());
+
+				next(action);
+
+				const newConsumersList = videoConsumersSelector(getState());
+
+				const pausedConsumersList = oldConsumersList.filter(
+					(consumer) => !newConsumersList.includes(consumer)
+				);
+				const resumedConsumersList = newConsumersList.filter(
+					(consumer) => !oldConsumersList.includes(consumer)
+				);
+
+				for (const consumer of pausedConsumersList) {
+					await mediaService.changeConsumer(consumer.id, 'pause');
+					dispatch(consumersActions.setConsumerPaused({
+						consumerId: consumer.id,
+						local: true
+					}));
+				}
+
+				for (const consumer of resumedConsumersList) {
+					await mediaService.changeConsumer(consumer.id, 'resume');
+					dispatch(consumersActions.setConsumerResumed({
+						consumerId: consumer.id,
+						local: true
+					}));
+				}
+
+				return;
 			}
 
 			return next(action);

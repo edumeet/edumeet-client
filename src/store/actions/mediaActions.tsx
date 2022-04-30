@@ -610,7 +610,7 @@ export const updateScreenSharing = ({
 				.find((producer) => producer.appData.source === 'screen');
 		screenAudioProducer =
 			mediaService.getProducers()
-				.find((producer) => producer.appData.source === 'screenaudio'); // TODO: fix
+				.find((producer) => producer.appData.source === 'screenaudio');
 
 		if (start) {
 			const stream = await navigator.mediaDevices.getDisplayMedia({

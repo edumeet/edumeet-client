@@ -300,6 +300,16 @@ export const EnableAllMediaMessage = (): JSX.Element =>
 		defaultMessage='Enable both Microphone And Camera'
 	/>;
 
+export const devicesChangedLabel = (): string => intl.formatMessage({
+	id: 'devices.devicesChanged',
+	defaultMessage: 'Your devices changed, configure your devices in the settings dialog'
+});
+
+export const selectLanguageLabel = (): string => intl.formatMessage({
+	id: 'settings.language',
+	defaultMessage: 'Select language'
+});
+
 export const ModeratorActionsMessage = (): JSX.Element =>
 	<FormattedMessage
 		id='room.moderatoractions'

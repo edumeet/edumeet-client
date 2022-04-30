@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { detect } from '../../utils/intlManager';
 import { RoomLayout } from '../../utils/types';
 import { producersActions } from './producersSlice';
 
@@ -29,6 +30,7 @@ export interface SettingsState {
 	opusMaxPlaybackRate: number;
 	audioMuted?: boolean;
 	videoMuted?: boolean;
+	locale?: string;
 }
 
 type SettingsUpdate = Partial<SettingsState>;
@@ -54,6 +56,7 @@ const initialState: SettingsState = {
 	opusFec: edumeetConfig.opusFec,
 	opusPtime: edumeetConfig.opusPtime,
 	opusMaxPlaybackRate: edumeetConfig.opusMaxPlaybackRate,
+	locale: detect()
 };
 
 const settingsSlice = createSlice({
@@ -138,6 +141,9 @@ const settingsSlice = createSlice({
 		setVideoMuted: ((state, action: PayloadAction<boolean>) => {
 			state.videoMuted = action.payload;
 		}),
+		setLocale: ((state, action: PayloadAction<string>) => {
+			state.locale = action.payload;
+		})
 	},
 	extraReducers: (builder) => {
 		builder

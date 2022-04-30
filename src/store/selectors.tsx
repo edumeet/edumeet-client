@@ -303,6 +303,21 @@ export const videoBoxesSelector = createSelector(
 		return videoBoxes;
 	});
 
+export const videoConsumersSelector = createSelector(
+	spotlightWebcamConsumerSelector,
+	spotlightScreenConsumerSelector,
+	spotlightExtraVideoConsumerSelector,
+	(
+		webcamConsumers,
+		screenConsumers,
+		extraVideoConsumers
+	) => [
+		...webcamConsumers,
+		...screenConsumers,
+		...extraVideoConsumers
+	]
+);
+
 export const meProducersSelector = createSelector(
 	micProducerSelector,
 	webcamProducerSelector,

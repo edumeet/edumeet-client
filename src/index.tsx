@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import { RawIntlProvider } from 'react-intl';
@@ -25,6 +25,8 @@ import UnsupportedBrowser from './views/unsupported/UnsupportedBrowser';
 import LandingPage from './views/landingpage/LandingPage';
 import edumeetConfig from './utils/edumeetConfig';
 import { intl } from './utils/intlManager';
+import { useAppDispatch } from './store/hooks';
+import { setLocale } from './store/actions/localeActions';
 
 if (process.env.REACT_APP_DEBUG === '*' || process.env.NODE_ENV !== 'production') {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');
@@ -42,6 +44,12 @@ const webrtcUnavailable =
 	!window.RTCPeerConnection;
 
 const RootComponent = () => {
+	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+		dispatch(setLocale());
+	}, []);
+
 	if (unsupportedBrowser || webrtcUnavailable) {
 		logger.error('Your browser is not supported [deviceInfo:%o]', device);
 

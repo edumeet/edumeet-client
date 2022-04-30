@@ -1,7 +1,7 @@
 import { createIntl, createIntlCache } from 'react-intl';
 import enLocale from '../translations/en.json';
 
-interface ILocale {
+export interface ILocale {
 	name: string;
 	file: string;
 	locale: string[];
@@ -9,7 +9,7 @@ interface ILocale {
 	messages?: any;
 }
 
-const list = [
+export const localeList = [
 	{
 		name: 'English',
 		file: 'en',
@@ -137,15 +137,14 @@ export const detect = (): string => {
 	return localeFull;
 };
 
-export const loadLocale = async (locale: string): Promise<void> => {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const loadLocale = async (locale: string): Promise<string> => {
 	let res: ILocale;
 
 	try {
-		res = list.filter((item) => item.locale.includes(locale))[0];
+		res = localeList.filter((item) => item.locale.includes(locale))[0];
 		res.messages = await import(`../translations/${res.file}`);
 	} catch {
-		res = list.filter((item) => item.locale.includes('en'))[0];
+		res = localeList.filter((item) => item.locale.includes('en'))[0];
 		res.messages = await import(`../translations/${res.file}`);
 	}
 
@@ -153,4 +152,6 @@ export const loadLocale = async (locale: string): Promise<void> => {
 		locale: res.locale[0],
 		messages: res.messages
 	}, cache);
+
+	return res.locale[0];
 };

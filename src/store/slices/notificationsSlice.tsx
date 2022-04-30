@@ -3,7 +3,10 @@ import { SnackbarKey } from 'notistack';
 import { roomActions } from './roomSlice';
 import { v4 as uuid } from 'uuid';
 import { peersActions } from './peersSlice';
-import { joinedRoomLabel, peerJoinedRoomLabel } from '../../components/translated/translatedComponents';
+import {
+	joinedRoomLabel,
+	peerJoinedRoomLabel
+} from '../../components/translated/translatedComponents';
 
 export interface Notification {
 	key: SnackbarKey;
@@ -13,6 +16,8 @@ export interface Notification {
 	};
 }
 
+type NotificationUpdate = Omit<Notification, 'key'>;
+
 type NotificationsState = Notification[];
 
 const initialState: NotificationsState = [];
@@ -21,8 +26,8 @@ const notificationsSlice = createSlice({
 	name: 'notifications',
 	initialState,
 	reducers: {
-		enqueueNotification: ((state, action: PayloadAction<Notification>) => {
-			state.push(action.payload);
+		enqueueNotification: ((state, action: PayloadAction<NotificationUpdate>) => {
+			state.push({ ...action.payload, key: uuid() });
 		}),
 		removeNotification: ((state, action: PayloadAction<SnackbarKey>) => {
 			return state.filter((notification) => notification.key !== action.payload);
@@ -46,13 +51,11 @@ const notificationsSlice = createSlice({
 					state.push({
 						key: uuid(),
 						message: peerJoinedRoomLabel(displayName),
-						options: { variant: 'success' }
 					});
 				} else {
 					state.push({
 						key: uuid(),
-						message: 'A new user joined the room', // TODO: translate
-						options: { variant: 'success' }
+						message: peerJoinedRoomLabel('Someone'), // TODO: translate
 					});
 				}
 			});

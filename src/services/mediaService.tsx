@@ -136,6 +136,9 @@ export class MediaService extends EventEmitter {
 						});
 
 						if (kind === 'audio') {
+							await this.signalingService.sendRequest('resumeConsumer', { consumerId: consumer.id })
+								.catch((error) => logger.warn('resumeConsumer, unable to resume server-side [consumerId:%s, error:%o]', consumer.id, error));
+
 							const { track } = consumer;
 							const harkStream = new MediaStream();
 
@@ -150,10 +153,9 @@ export class MediaService extends EventEmitter {
 
 							consumer.appData.hark = consumerHark;
 							consumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
+						} else {
+							consumer.pause();
 						}
-
-						await this.signalingService.sendRequest('resumeConsumer', { consumerId: consumer.id })
-							.catch((error) => logger.warn('resumeConsumer, unable to resume server-side [consumerId:%s, error:%o]', consumer.id, error));
 
 						this.consumers.set(consumer.id, consumer);
 
