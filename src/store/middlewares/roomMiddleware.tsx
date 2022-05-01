@@ -8,8 +8,6 @@ import { permissionsActions } from '../slices/permissionsSlice';
 import { peersActions } from '../slices/peersSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { updateMic, updateWebcam } from '../actions/mediaActions';
-import { settingsActions } from '../slices/settingsSlice';
-import { meActions } from '../slices/meSlice';
 import { chatActions } from '../slices/chatSlice';
 
 const logger = new Logger('RoomMiddleware');
@@ -138,24 +136,6 @@ const createRoomMiddleware = ({
 			}
 
 			// TODO: reconnect states here
-
-			if (settingsActions.setDisplayName.match(action)) {
-				const displayName = action.payload;
-
-				if (getState().signaling.connected) {
-					dispatch(meActions.setDispayNameInProgress(true));
-
-					try {
-						await signalingService.sendRequest('changeDisplayName', { displayName });
-					} catch (error) {
-						logger.warn('changeDisplayName [error:%o]', error);
-
-						// TODO: need to fail the action
-					} finally {
-						dispatch(meActions.setDispayNameInProgress(false));
-					}
-				}
-			}
 
 			return next(action);
 		};

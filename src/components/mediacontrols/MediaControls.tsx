@@ -1,13 +1,27 @@
 import { ReactNode } from 'react';
 import { styled } from '@mui/material/styles';
 
-const MediaControlsDiv = styled('div')(({ theme }) => ({
+interface MediaControlsDivProps {
+	flexdirection: 'row' | 'column';
+	alignitems: string;
+	justifycontent: string;
+}
+
+const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
+	theme,
+	flexdirection,
+	alignitems,
+	justifycontent
+}) => ({
 	position: 'absolute',
 	width: '100%',
 	height: '100%',
 	display: 'flex',
 	gap: theme.spacing(2),
 	padding: theme.spacing(2),
+	flexDirection: flexdirection,
+	alignItems: alignitems,
+	justifyContent: justifycontent,
 	zIndex: 21,
 }));
 
@@ -45,15 +59,9 @@ const MediaControls = ({
 
 	return (
 		<MediaControlsDiv
-			sx={{
-				...(orientation === 'horizontal' ? {
-					flexDirection: 'row'
-				} : {
-					flexDirection: 'column'
-				}),
-				alignItems,
-				justifyContent
-			}}
+			flexdirection={orientation === 'horizontal' ? 'row' : 'column'}
+			alignitems={alignItems}
+			justifycontent={justifyContent}
 			children={children}
 		/>
 	);

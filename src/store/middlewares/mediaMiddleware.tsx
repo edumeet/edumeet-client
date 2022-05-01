@@ -134,9 +134,9 @@ const createMediaMiddleware = ({
 			}
 
 			if ( // These events will possibly change which Consumer is being displayed
-				(consumersActions.addConsumer.match(action) && action.payload.kind === 'video') ||
+				consumersActions.addConsumer.match(action) ||
 				consumersActions.removeConsumer.match(action) ||
-				peersActions.addPeer.match(action) || // TODO: fix pause when consumer is gone
+				peersActions.addPeer.match(action) ||
 				peersActions.removePeer.match(action) ||
 				roomActions.setActiveSpeakerId.match(action) ||
 				roomActions.spotlightPeer.match(action) ||
@@ -144,6 +144,8 @@ const createMediaMiddleware = ({
 				roomActions.selectPeer.match(action) ||
 				roomActions.deselectPeer.match(action)
 			) {
+				// Make a diff of the current state and the new state to find out
+				// which Consumers need to be paused/resumed.
 				const oldConsumersList = videoConsumersSelector(getState());
 
 				next(action);
@@ -157,20 +159,35 @@ const createMediaMiddleware = ({
 					(consumer) => !oldConsumersList.includes(consumer)
 				);
 
+				// Need to do some extra work to determine if the Consumer is
+				// gone or not. If it is gone, we will not be able to pause/resume it.
+				let consumerId: string | null = null;
+				let peerId: string | null = null;
+
+				if (consumersActions.removeConsumer.match(action))
+					({ consumerId } = action.payload);
+
+				if (peersActions.removePeer.match(action))
+					({ id: peerId } = action.payload);
+
 				for (const consumer of pausedConsumersList) {
-					await mediaService.changeConsumer(consumer.id, 'pause');
-					dispatch(consumersActions.setConsumerPaused({
-						consumerId: consumer.id,
-						local: true
-					}));
+					if (consumer.peerId !== peerId && consumer.id !== consumerId) {
+						await mediaService.changeConsumer(consumer.id, 'pause');
+						dispatch(consumersActions.setConsumerPaused({
+							consumerId: consumer.id,
+							local: true
+						}));
+					}
 				}
 
 				for (const consumer of resumedConsumersList) {
-					await mediaService.changeConsumer(consumer.id, 'resume');
-					dispatch(consumersActions.setConsumerResumed({
-						consumerId: consumer.id,
-						local: true
-					}));
+					if (consumer.peerId !== peerId && consumer.id !== consumerId) {
+						await mediaService.changeConsumer(consumer.id, 'resume');
+						dispatch(consumersActions.setConsumerResumed({
+							consumerId: consumer.id,
+							local: true
+						}));
+					}
 				}
 
 				return;

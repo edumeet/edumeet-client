@@ -21,6 +21,10 @@ const createSignalingMiddleware = ({
 					dispatch(signalingActions.disconnected());
 				});
 
+				signalingService.on('reconnect', () => {
+					// Reconnecting TODO
+				});
+
 				signalingService.connect(getState().signaling);
 			}
 

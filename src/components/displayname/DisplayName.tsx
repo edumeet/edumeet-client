@@ -1,7 +1,7 @@
 import { styled, TextField } from '@mui/material';
 import { ChangeEvent, FocusEvent, useEffect, useState } from 'react';
+import { setDisplayName } from '../../store/actions/meActions';
 import { useAppDispatch } from '../../store/hooks';
-import { settingsActions } from '../../store/slices/settingsSlice';
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
 	position: 'absolute',
@@ -47,7 +47,7 @@ const DisplayName = ({
 			}}
 			onBlur={() => {
 				if (value && value !== displayName) {
-					dispatch(settingsActions.setDisplayName(value));
+					dispatch(setDisplayName(value));
 				}
 			}}
 		/>

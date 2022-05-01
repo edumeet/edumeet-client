@@ -17,12 +17,12 @@ import {
 } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
-import { settingsActions } from '../../store/slices/settingsSlice';
 import { updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import PrecallDialog from '../../components/precalldialog/PrecallDialog';
 import { roomActions } from '../../store/slices/roomSlice';
+import { setDisplayName } from '../../store/actions/meActions';
 
 interface JoinProps {
 	roomId: string;
@@ -33,21 +33,21 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const peerId = useAppSelector((state) => state.me.id);
 	const { previewMicTrackId, previewWebcamTrackId } = useAppSelector((state) => state.me);
 	const dispatch = useAppDispatch();
-	const [ displayName, setDisplayName ] = useState(stateDisplayName || '');
+	const [ name, setName ] = useState(stateDisplayName || '');
 	const {
 		audioMuted,
 		videoMuted
 	} = useAppSelector((state) => state.settings);
 
-	const handleDisplayNameChange = (name: string) => {
-		setDisplayName(name.trim() ? name : name.trim());
+	const handleDisplayNameChange = (value: string) => {
+		setName(value.trim() ? value : value.trim());
 	};
 
 	const handleJoin = () => {
 		const encodedRoomId = encodeURIComponent(roomId);
 		const url = getSignalingUrl({ peerId, roomId: encodedRoomId });
 
-		dispatch(settingsActions.setDisplayName(displayName));
+		dispatch(setDisplayName(name));
 		dispatch(signalingActions.setUrl(url));
 		dispatch(signalingActions.connect());
 	};
@@ -79,7 +79,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					</Typography>
 					<TextInputField
 						label={yourNameLabel()}
-						value={displayName}
+						value={name}
 						setValue={handleDisplayNameChange}
 						onEnter={handleJoin}
 						startAdornment={<AccountCircle />}
@@ -92,7 +92,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					onClick={handleJoin}
 					variant='contained'
 					color='primary'
-					disabled={!displayName}
+					disabled={!name}
 					fullWidth
 				>
 					<JoinMessage />
