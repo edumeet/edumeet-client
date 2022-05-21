@@ -1,12 +1,9 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { consumersActions, StateConsumer } from '../slices/consumersSlice';
 import { Logger } from '../../utils/logger';
-import { MiddlewareOptions } from '../store';
+import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomActions } from '../slices/roomSlice';
-import { webrtcActions } from '../slices/webrtcSlice';
 import { producersActions } from '../slices/producersSlice';
-import { meActions } from '../slices/meSlice';
-import { PerformanceMonitor } from '../../utils/performanceMonitor';
 import { videoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
 
@@ -17,16 +14,13 @@ const createMediaMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
-	const performanceMonitor = new PerformanceMonitor();
-
-	const middleware: Middleware = ({ dispatch, getState }) =>
+	const middleware: Middleware = ({
+		dispatch, getState
+	}: {
+		dispatch: AppDispatch,
+		getState: RootState
+	}) =>
 		(next) => async (action) => {
-			// This event is triggered when the server sends "roomReady" to us.
-			// This means that we start our joining process which is:
-			// 1. Listen for any media events from the MediaService
-			// 2. Create our Mediasoup transports
-			// 3. Discover our capabilities
-			// 4. Pass the torch to RoomMiddleware to continue the join process
 			if (roomActions.updateRoom.match(action) && action.payload.joined) {
 				// Server has provided us with a new Consumer. The MediaService
 				// has created it for us and we need to add it to the store.
@@ -44,6 +38,7 @@ const createMediaMiddleware = ({
 					dispatch(consumersActions.addConsumer(stateConsumer));
 				});
 
+				// Server has changed the state of a Consumer/Producer, update the store.
 				mediaService.on('consumerClosed', (consumer) => {
 					dispatch(consumersActions.removeConsumer({
 						consumerId: consumer.id
@@ -79,59 +74,24 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 				});
-
-				const iceServers = getState().webrtc.iceServers;
-
-				performanceMonitor.on('performance', (performance) => {
-					logger.debug('"performance" event [trend:%s, performance:%s]', performance.trend, performance.performance);
-				});
-
-				const {
-					recvTransport,
-				} = await mediaService.createTransports(iceServers);
-
-				if (recvTransport)
-					performanceMonitor.monitorTransport(recvTransport);
-
-				dispatch(meActions.setMediaCapabilities(
-					mediaService.mediaCapabilities
-				));
-
-				// This will trigger "join" in roomMiddleware
-				dispatch(webrtcActions.setRtpCapabilities(
-					mediaService.rtpCapabilities
-				));
 			}
 
-			if (consumersActions.setConsumerPaused.match(action) && action.payload.local) {
-				const { consumerId } = action.payload;
+			// These actions are dispatched from the UI somewhere manually (button clicks, etc)
+			// We need to make the mediaService aware of the actions.
+			if (consumersActions.setConsumerPaused.match(action) && action.payload.local)
+				await mediaService.changeConsumer(action.payload.consumerId, 'pause');
 
-				await mediaService.changeConsumer(consumerId, 'pause');
-			}
+			if (consumersActions.setConsumerResumed.match(action) && action.payload.local)
+				await mediaService.changeConsumer(action.payload.consumerId, 'resume');
 
-			if (consumersActions.setConsumerResumed.match(action) && action.payload.local) {
-				const { consumerId } = action.payload;
+			if (producersActions.setProducerPaused.match(action) && action.payload.local)
+				await mediaService.changeProducer(action.payload.producerId, 'pause');
 
-				await mediaService.changeConsumer(consumerId, 'resume');
-			}
+			if (producersActions.setProducerResumed.match(action) && action.payload.local)
+				await mediaService.changeProducer(action.payload.producerId, 'resume');
 
-			if (producersActions.setProducerPaused.match(action) && action.payload.local) {
-				const { producerId } = action.payload;
-
-				await mediaService.changeProducer(producerId, 'pause');
-			}
-
-			if (producersActions.setProducerResumed.match(action) && action.payload.local) {
-				const { producerId } = action.payload;
-
-				await mediaService.changeProducer(producerId, 'resume');
-			}
-
-			if (producersActions.closeProducer.match(action) && action.payload.local) {
-				const { producerId } = action.payload;
-
-				await mediaService.changeProducer(producerId, 'close');
-			}
+			if (producersActions.closeProducer.match(action) && action.payload.local)
+				await mediaService.changeProducer(action.payload.producerId, 'close');
 
 			if ( // These events will possibly change which Consumer is being displayed
 				consumersActions.addConsumer.match(action) ||
@@ -139,10 +99,13 @@ const createMediaMiddleware = ({
 				peersActions.addPeer.match(action) ||
 				peersActions.removePeer.match(action) ||
 				roomActions.setActiveSpeakerId.match(action) ||
+				roomActions.addSpotlightList.match(action) ||
 				roomActions.spotlightPeer.match(action) ||
 				roomActions.deSpotlightPeer.match(action) ||
 				roomActions.selectPeer.match(action) ||
-				roomActions.deselectPeer.match(action)
+				roomActions.deselectPeer.match(action) ||
+				roomActions.setFullscreenConsumer.match(action) ||
+				roomActions.setWindowedConsumer.match(action)
 			) {
 				// Make a diff of the current state and the new state to find out
 				// which Consumers need to be paused/resumed.
@@ -161,34 +124,29 @@ const createMediaMiddleware = ({
 
 				// Need to do some extra work to determine if the Consumer is
 				// gone or not. If it is gone, we will not be able to pause/resume it.
-				let consumerId: string | null = null;
-				let peerId: string | null = null;
+				let removedConsumerId: string | null = null;
+				let removedPeerId: string | null = null;
 
 				if (consumersActions.removeConsumer.match(action))
-					({ consumerId } = action.payload);
+					({ consumerId: removedConsumerId } = action.payload);
 
 				if (peersActions.removePeer.match(action))
-					({ id: peerId } = action.payload);
+					({ id: removedPeerId } = action.payload);
 
-				for (const consumer of pausedConsumersList) {
-					if (consumer.peerId !== peerId && consumer.id !== consumerId) {
-						await mediaService.changeConsumer(consumer.id, 'pause');
-						dispatch(consumersActions.setConsumerPaused({
-							consumerId: consumer.id,
-							local: true
-						}));
-					}
-				}
-
-				for (const consumer of resumedConsumersList) {
-					if (consumer.peerId !== peerId && consumer.id !== consumerId) {
-						await mediaService.changeConsumer(consumer.id, 'resume');
-						dispatch(consumersActions.setConsumerResumed({
-							consumerId: consumer.id,
-							local: true
-						}));
-					}
-				}
+				await Promise.all([
+					pausedConsumersList.map(async ({ id: consumerId, peerId }) => {
+						if (peerId !== removedPeerId && consumerId !== removedConsumerId) {
+							await mediaService.changeConsumer(consumerId, 'pause');
+							dispatch(consumersActions.setConsumerPaused({ consumerId }));
+						}
+					}),
+					resumedConsumersList.map(async ({ id: consumerId, peerId }) => {
+						if (peerId !== removedPeerId && consumerId !== removedConsumerId) {
+							await mediaService.changeConsumer(consumerId, 'resume');
+							dispatch(consumersActions.setConsumerResumed({ consumerId }));
+						}
+					})
+				]);
 
 				return;
 			}

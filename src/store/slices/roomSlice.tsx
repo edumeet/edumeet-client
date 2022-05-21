@@ -24,11 +24,13 @@ export interface RoomState {
 	selectedPeers: string[];
 	spotlights: string[];
 	state: RoomConnectionState;
+	roomMode: 'P2P' | 'SFU';
 }
 
-type RoomUpdate = Omit<RoomState, 'state' | 'selectedPeers' | 'spotlights'>;
+type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'selectedPeers' | 'spotlights'>;
 
 const initialState: RoomState = {
+	roomMode: 'P2P',
 	state: 'new',
 	selectedPeers: [],
 	spotlights: []
@@ -40,6 +42,9 @@ const roomSlice = createSlice({
 	reducers: {
 		updateRoom: ((state, action: PayloadAction<RoomUpdate>) => {
 			return { ...state, ...action.payload };
+		}),
+		setRoomMode: ((state, action: PayloadAction<'P2P' | 'SFU'>) => {
+			state.roomMode = action.payload;
 		}),
 		setRoomState: ((
 			state,

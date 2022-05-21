@@ -13,3 +13,11 @@ export const getSignalingUrl = ({
 
 	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}`;
 };
+
+export const getTrackerUrl = (): string => {
+	const hostname = edumeetConfig.serverHostname || window.location.hostname;
+	const port = process.env.NODE_ENV !== 'production' ?
+		edumeetConfig.developmentPort : edumeetConfig.productionPort;
+
+	return `wss://${hostname}:${port}/announce`;
+};

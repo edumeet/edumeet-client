@@ -152,33 +152,30 @@ const settingsSlice = createSlice({
 
 				if (!local) return;
 
-				if (source === 'mic') {
+				if (source === 'mic')
 					state.audioMuted = true;
-				} else if (source === 'webcam') {
+				else if (source === 'webcam')
 					state.videoMuted = true;
-				}
 			})
 			.addCase(producersActions.setProducerPaused, (state, action) => {
 				const { local, source } = action.payload;
 
 				if (!local) return;
 
-				if (source === 'mic') {
+				if (source === 'mic')
 					state.audioMuted = true;
-				} else if (source === 'webcam') {
+				else if (source === 'webcam')
 					state.videoMuted = true;
-				}
 			})
 			.addCase(producersActions.setProducerResumed, (state, action) => {
 				const { local, source } = action.payload;
 
 				if (!local) return;
 
-				if (source === 'mic') {
+				if (source === 'mic')
 					state.audioMuted = false;
-				} else if (source === 'webcam') {
+				else if (source === 'webcam')
 					state.videoMuted = false;
-				}
 			});
 	}
 });

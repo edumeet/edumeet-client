@@ -1,7 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from '../../utils/logger';
-import { MiddlewareOptions } from '../store';
+import { AppDispatch, MiddlewareOptions } from '../store';
 import { permissionsActions } from '../slices/permissionsSlice';
 
 const logger = new Logger('PermissionsMiddleware');
@@ -11,7 +11,11 @@ const createPermissionsMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createPermissionsMiddleware()');
 
-	const middleware: Middleware = ({ dispatch }) =>
+	const middleware: Middleware = ({
+		dispatch
+	}: {
+		dispatch: AppDispatch,
+	}) =>
 		(next) => async (action) => {
 			if (signalingActions.connected.match(action)) {
 				signalingService.on('notification', (notification) => {

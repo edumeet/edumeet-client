@@ -1,6 +1,7 @@
 import createTorrent from 'create-torrent';
 import WebTorrent from 'webtorrent';
 import { Logger } from '../utils/logger';
+import { getTrackerUrl } from '../utils/signalingHelpers';
 import { SignalingService } from './signalingService';
 
 const logger = new Logger('FileService');
@@ -8,7 +9,7 @@ const logger = new Logger('FileService');
 export class FileService {
 	private signalingService: SignalingService;
 	private webTorrent?: WebTorrent.Instance;
-	private tracker = 'wss://tracker.bittorrent.am:443/announce';
+	private tracker = getTrackerUrl();
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		this.signalingService = signalingService;
@@ -19,12 +20,9 @@ export class FileService {
 	}
 
 	public async init(
-		tracker: string,
 		iceServers?: RTCIceServer[]
 	): Promise<void> {
 		logger.debug('init()');
-
-		this.tracker = tracker;
 
 		this.webTorrent = new WebTorrent({
 			tracker: {

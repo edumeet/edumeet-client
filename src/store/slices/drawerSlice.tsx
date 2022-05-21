@@ -32,9 +32,8 @@ const drawerSlice = createSlice({
 			state.tab = action.payload;
 		}),
 		addFile: ((state) => {
-			if (state.open && state.tab === 'chat') {
+			if (state.open && state.tab === 'chat')
 				return;
-			}
 
 			state.unreadFiles += 1;
 		}),
@@ -42,9 +41,8 @@ const drawerSlice = createSlice({
 	extraReducers: (builder) => {
 		builder
 			.addCase(chatActions.addMessage, (state) => {
-				if (state.open && state.tab === 'chat') {
+				if (state.open && state.tab === 'chat')
 					return;
-				}
 	
 				state.unreadMessages += 1;
 			});

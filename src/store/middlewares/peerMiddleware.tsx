@@ -1,18 +1,24 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from '../../utils/logger';
-import { MiddlewareOptions } from '../store';
+import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { peersActions } from '../slices/peersSlice';
 import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
 
 const logger = new Logger('PeerMiddleware');
 
 const createPeerMiddleware = ({
-	signalingService
+	signalingService,
+	mediaService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createPeerMiddleware()');
 
-	const middleware: Middleware = ({ dispatch }) =>
+	const middleware: Middleware = ({
+		dispatch, getState
+	}: {
+		dispatch: AppDispatch,
+		getState: RootState
+	}) =>
 		(next) => (action) => {
 			if (signalingActions.connected.match(action)) {
 				signalingService.on('notification', (notification) => {
@@ -124,6 +130,19 @@ const createPeerMiddleware = ({
 						logger.error('error on signalService "notification" event [error:%o]', error);
 					}
 				});
+			}
+
+			if (peersActions.addPeer.match(action)) {
+				const { id } = action.payload;
+				const clientId = getState().me.id;
+
+				mediaService.addPeer(id, clientId);
+			}
+
+			if (peersActions.removePeer.match(action)) {
+				const { id } = action.payload;
+
+				mediaService.removePeer(id);
 			}
 
 			return next(action);

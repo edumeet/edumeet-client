@@ -227,12 +227,13 @@ export interface SocketOutboundRequest {
 		ProduceData |
 		ConsumerData |
 		JoinData |
-		PauseProducerData |
-		ResumeProducerData |
+		ProducerData |
+		DataConsumerData |
 		DisplayNameData |
 		PromotePeerData |
 		ChatMessageData |
-		FilesharingData;
+		FilesharingData |
+		P2PData;
 }
 
 export interface JoinData {
@@ -265,11 +266,7 @@ export interface ProduceData {
 	appData?: any;
 }
 
-export interface PauseProducerData {
-	producerId: string;
-}
-
-export interface ResumeProducerData {
+export interface ProducerData {
 	producerId: string;
 }
 
@@ -287,6 +284,17 @@ export interface ChatMessageData {
 
 export interface FilesharingData {
 	magnetURI?: string;
+}
+
+export interface P2PData {
+	peerId: string;
+	offer?: RTCSessionDescription;
+	answer?: RTCSessionDescription;
+	candidate?: RTCIceCandidate;
+}
+
+export interface DataConsumerData {
+	dataConsumerId: string;
 }
 
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';

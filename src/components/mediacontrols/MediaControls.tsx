@@ -5,15 +5,17 @@ interface MediaControlsDivProps {
 	flexdirection: 'row' | 'column';
 	alignitems: string;
 	justifycontent: string;
+	position: 'absolute' | 'relative';
 }
 
 const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	theme,
 	flexdirection,
 	alignitems,
-	justifycontent
+	justifycontent,
+	position,
 }) => ({
-	position: 'absolute',
+	position,
 	width: '100%',
 	height: '100%',
 	display: 'flex',
@@ -29,6 +31,7 @@ interface MediaControlsProps {
 	orientation?: 'horizontal' | 'vertical';
 	horizontalPlacement?: 'left' | 'center' | 'right';
 	verticalPlacement?: 'top' | 'center' | 'bottom';
+	position?: 'absolute' | 'relative';
 	children?: ReactNode;
 }
 
@@ -36,6 +39,7 @@ const MediaControls = ({
 	orientation = 'vertical',
 	horizontalPlacement = 'center',
 	verticalPlacement = 'center',
+	position = 'absolute',
 	children
 }: MediaControlsProps): JSX.Element => {
 	let justifyContent = 'center';
@@ -60,6 +64,7 @@ const MediaControls = ({
 	return (
 		<MediaControlsDiv
 			flexdirection={orientation === 'horizontal' ? 'row' : 'column'}
+			position={position}
 			alignitems={alignItems}
 			justifycontent={justifyContent}
 			children={children}

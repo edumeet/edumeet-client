@@ -3,7 +3,7 @@ import { Logger } from '../../utils/logger';
 import { filesharingActions } from '../slices/filesharingSlice';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { MiddlewareOptions } from '../store';
+import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 
 const logger = new Logger('FilesharingMiddleware');
 
@@ -13,13 +13,17 @@ const createFilesharingMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createFilesharingMiddleware()');
 
-	const middleware: Middleware = ({ dispatch, getState }) =>
+	const middleware: Middleware = ({
+		dispatch, getState
+	}: {
+		dispatch: AppDispatch,
+		getState: RootState
+	}) =>
 		(next) => (action) => {
 			if (roomActions.updateRoom.match(action) && action.payload.joined) {
 				const iceServers = getState().room.iceServers;
-				const tracker = getState().webrtc.tracker;
 
-				fileService.init(tracker, iceServers);
+				fileService.init(iceServers);
 			}
 
 			if (signalingActions.connected.match(action)) {

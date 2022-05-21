@@ -66,7 +66,7 @@ const ParticipantList = (): JSX.Element => {
 					{ participants.map((peer) => (
 						<Flipped key={peer.id} flipId={peer.id}>
 							<ListItemLi key={peer.id}>
-								<ListPeer peer={peer} />
+								<ListPeer peer={peer} isModerator={isModerator} />
 							</ListItemLi>
 						</Flipped>
 					)) }

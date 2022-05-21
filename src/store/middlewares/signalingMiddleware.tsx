@@ -1,6 +1,6 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
-import { MiddlewareOptions } from '../store';
+import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { Logger } from '../../utils/logger';
 
 const logger = new Logger('SignalingMiddleware');
@@ -10,7 +10,12 @@ const createSignalingMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createSignalingMiddleware()');
 
-	const middleware: Middleware = ({ dispatch, getState }) =>
+	const middleware: Middleware = ({
+		dispatch, getState
+	}: {
+		dispatch: AppDispatch,
+		getState: RootState
+	}) =>
 		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
 				signalingService.on('connect', () => {

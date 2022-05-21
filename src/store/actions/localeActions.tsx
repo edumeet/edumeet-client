@@ -16,9 +16,9 @@ export const setLocale = (locale?: string) => async (
 
 	let newLocale: string;
 
-	if (locale) {
+	if (locale)
 		newLocale = await loadLocale(locale);
-	} else {
+	else {
 		const oldLocale = getState().settings.locale;
 		
 		// Workaround to trigger rerender with new locale

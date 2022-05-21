@@ -41,9 +41,8 @@ const producersSlice = createSlice({
 			const { producerId } = action.payload;
 			const producer = state.find((p) => p.id === producerId);
 
-			if (producer) {
+			if (producer)
 				producer.paused = true;
-			}
 		}),
 		setProducerResumed: ((
 			state,
@@ -56,9 +55,8 @@ const producersSlice = createSlice({
 			const { producerId } = action.payload;
 			const producer = state.find((p) => p.id === producerId);
 
-			if (producer) {
+			if (producer)
 				producer.paused = false;
-			}
 		}),
 	},
 });

@@ -68,17 +68,15 @@ const VideoView = ({
 		let media: Consumer | Producer | undefined;
 		let track: MediaStreamTrack | null | undefined;
 
-		if (consumer) {
+		if (consumer)
 			media = mediaService.getConsumer(consumer.id);
-		} else if (producer) {
+		else if (producer)
 			media = mediaService.getProducer(producer.id);
-		}
 
-		if (media) {
+		if (media)
 			({ track } = media);
-		} else if (trackId) {
+		else if (trackId)
 			track = mediaService.getTrack(trackId);
-		}
 
 		if (!track || !videoElement.current) return;
 

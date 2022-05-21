@@ -9,14 +9,15 @@ import {
 	CreateWebRtcTransport,
 	JoinData,
 	ProduceData,
-	PauseProducerData,
-	ResumeProducerData,
+	ProducerData,
 	SocketInboundNotification,
 	SocketOutboundRequest,
 	DisplayNameData,
 	PromotePeerData,
 	ChatMessageData,
-	FilesharingData
+	FilesharingData,
+	P2PData,
+	DataConsumerData
 } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 
@@ -110,12 +111,13 @@ export class SignalingService extends EventEmitter {
 			ProduceData |
 			ConsumerData |
 			JoinData |
-			PauseProducerData |
-			ResumeProducerData |
+			ProducerData |
+			DataConsumerData |
 			DisplayNameData |
 			PromotePeerData |
 			ChatMessageData |
 			FilesharingData |
+			P2PData |
 			undefined,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	): Promise<any> {

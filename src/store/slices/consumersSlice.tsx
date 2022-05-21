@@ -35,11 +35,10 @@ const consumersSlice = createSlice({
 			const consumer = state.find((c) => c.id === consumerId);
 
 			if (consumer) {
-				if (local) {
+				if (local)
 					consumer.localPaused = true;
-				} else {
+				else
 					consumer.remotePaused = true;
-				}
 			}
 		}),
 		setConsumerResumed: ((
@@ -50,11 +49,10 @@ const consumersSlice = createSlice({
 			const consumer = state.find((c) => c.id === consumerId);
 
 			if (consumer) {
-				if (local) {
+				if (local)
 					consumer.localPaused = false;
-				} else {
+				else
 					consumer.remotePaused = false;
-				}
 			}
 		}),
 	},

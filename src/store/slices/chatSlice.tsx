@@ -27,9 +27,8 @@ const chatSlice = createSlice({
 					const { id, displayName } = action.payload;
 
 					return state.map((message) => {
-						if (message.peerId === id) {
+						if (message.peerId === id)
 							return { ...message, displayName };
-						}
 
 						return message;
 					});

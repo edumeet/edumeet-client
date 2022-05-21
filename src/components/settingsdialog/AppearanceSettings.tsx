@@ -1,21 +1,14 @@
 import {
-	FormControl,
 	FormControlLabel,
 	FormGroup,
-	FormHelperText,
-	MenuItem,
-	Select,
-	SelectChangeEvent,
 	Switch
 } from '@mui/material';
-import { setLocale } from '../../store/actions/localeActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
-import { ILocale, localeList } from '../../utils/intlManager';
+import LanguageSelector from '../languageselector/LanguageSelector';
 import {
 	hideNoVideoParticipantsLabel,
 	mirroredSelfViewLabel,
-	selectLanguageLabel
 } from '../translated/translatedComponents';
 
 const AppearanceSettings = (): JSX.Element => {
@@ -23,9 +16,7 @@ const AppearanceSettings = (): JSX.Element => {
 	const {
 		mirroredSelfView,
 		hideNonVideo,
-		locale
 	} = useAppSelector((state) => state.settings);
-	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);
 
 	const handleChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -36,31 +27,10 @@ const AppearanceSettings = (): JSX.Element => {
 		);
 	};
 
-	const handleLocaleChange = (event: SelectChangeEvent<string>): void => {
-		dispatch(setLocale(event.target.value));
-	};
-
 	return (
 		<>
 			<FormGroup>
-				<FormControl fullWidth>
-					<Select
-						value={locale}
-						onChange={handleLocaleChange}
-						displayEmpty
-						autoWidth
-						disabled={localeInProgress}
-					>
-						{ localeList.map(({ name, locale: listLocale }: ILocale, index) => (
-							<MenuItem key={index} value={listLocale[0]} >
-								{ name }
-							</MenuItem>
-						))}
-					</Select>
-					<FormHelperText>
-						{ selectLanguageLabel() }
-					</FormHelperText>
-				</FormControl>
+				<LanguageSelector />
 				<FormControlLabel
 					control={
 						<Switch

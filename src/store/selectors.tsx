@@ -307,15 +307,34 @@ export const videoConsumersSelector = createSelector(
 	spotlightWebcamConsumerSelector,
 	spotlightScreenConsumerSelector,
 	spotlightExtraVideoConsumerSelector,
+	fullscreenConsumerSelector,
+	windowedConsumerSelector,
 	(
 		webcamConsumers,
 		screenConsumers,
-		extraVideoConsumers
-	) => [
-		...webcamConsumers,
-		...screenConsumers,
-		...extraVideoConsumers
-	]
+		extraVideoConsumers,
+		fullscreenedConsumer,
+		newWindowedConsumer
+	) => {
+		let consumers: StateConsumer[];
+
+		// If we have a fullscreen consumer, all other consumers are
+		// invisible except for a possible windowed consumer.
+		if (fullscreenedConsumer)
+			consumers = [ fullscreenedConsumer ];
+		else {
+			consumers = [
+				...webcamConsumers,
+				...screenConsumers,
+				...extraVideoConsumers
+			];
+		}
+
+		if (newWindowedConsumer)
+			consumers.push(newWindowedConsumer);
+
+		return consumers;
+	}
 );
 
 export const meProducersSelector = createSelector(

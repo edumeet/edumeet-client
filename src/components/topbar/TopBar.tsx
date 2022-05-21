@@ -14,12 +14,13 @@ import {
 } from '../../store/hooks';
 import {
 	filesLengthSelector,
+	fullscreenConsumerSelector,
 	lobbyPeersLengthSelector,
 	unreadSelector
 } from '../../store/selectors';
 import { drawerActions } from '../../store/slices/drawerSlice';
 import MenuIcon from '@mui/icons-material/Menu';
-import MoreIcon from '@mui/icons-material/More';
+import MoreIcon from '@mui/icons-material/MoreVert';
 import edumeetConfig from '../../utils/edumeetConfig';
 import {
 	leaveLabel,
@@ -42,6 +43,8 @@ import ParticipantsButton from '../controlbuttons/ParticipantsButton';
 import LoginButton from '../controlbuttons/LoginButton';
 import SettingsButton from '../controlbuttons/SettingsButton';
 import FilesharingButton from '../controlbuttons/FilesharingButton';
+import MicButton from '../controlbuttons/MicButton';
+import WebcamButton from '../controlbuttons/WebcamButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -62,6 +65,8 @@ const LogoImg = styled('img')(({ theme }) => ({
 }));
 
 const GrowingDiv = styled('div')({
+	display: 'flex',
+	justifyContent: 'center',
 	flexGrow: 1
 });
 
@@ -94,6 +99,7 @@ const TopBar = ({
 
 	const leaveOpen = useAppSelector((state) => state.ui.leaveOpen);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
+	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
 	const unread = useAppSelector(unreadSelector);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
 	const files = useAppSelector(filesLengthSelector);
@@ -128,7 +134,22 @@ const TopBar = ({
 							{edumeetConfig.title}
 						</Typography>
 					}
-					<GrowingDiv />
+					<GrowingDiv>
+						{ Boolean(fullscreenConsumer) &&
+							<>
+								<MicButton
+									type='iconbutton'
+									offColor='error'
+									disabledColor='default'
+								/>
+								<WebcamButton
+									type='iconbutton'
+									offColor='error'
+									disabledColor='default'
+								/>
+							</>
+						}
+					</GrowingDiv>
 					<DesktopDiv>
 						{ fullscreenEnabled &&
 							<FullscreenButton

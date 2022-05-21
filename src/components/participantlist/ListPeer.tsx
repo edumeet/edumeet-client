@@ -1,13 +1,13 @@
 import { IconButton, styled } from '@mui/material';
-import { green } from '@mui/material/colors';
 import { Peer } from '../../store/slices/peersSlice';
 import PanIcon from '@mui/icons-material/PanTool';
+import { useAppDispatch, usePeerConsumers } from '../../store/hooks';
+import { lowerPeerHand } from '../../store/actions/peerActions';
+import Volume from '../volume/Volume';
 
 interface ListPeerProps {
 	peer: Peer;
-	spotlight?: boolean;
-	selected?: boolean;
-	isModerator?: boolean;
+	isModerator: boolean;
 }
 
 const PeerDiv = styled('div')({
@@ -27,22 +27,31 @@ const PeerInfoDiv = styled('div')(({ theme }) => ({
 
 const ListPeer = ({
 	peer,
-	// spotlight,
-	// selected,
 	isModerator
 }: ListPeerProps): JSX.Element => {
+	const dispatch = useAppDispatch();
+
+	const {
+		micConsumer,
+		webcamConsumer,
+		screenConsumer,
+		extraVideoConsumers
+	} = usePeerConsumers(peer.id);
 
 	return (
 		<PeerDiv>
 			<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
 			{ peer.raisedHand &&
 				<IconButton
-					style={{ color: green[500] }}
 					disabled={!isModerator || peer.raisedHandInProgress}
+					onClick={(): void => {
+						dispatch(lowerPeerHand(peer.id));
+					}}
 				>
 					<PanIcon />
 				</IconButton>
 			}
+			{ micConsumer && <Volume consumer={micConsumer} small /> }
 		</PeerDiv>
 	);
 };

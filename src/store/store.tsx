@@ -46,9 +46,12 @@ import edumeetConfig from '../utils/edumeetConfig';
 import { createContext } from 'react';
 import { DeviceService } from '../services/deviceService';
 import { FileService } from '../services/fileService';
+import recordingSlice from './slices/recordingSlice';
+import { PerformanceMonitor } from '../utils/performanceMonitor';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
+	performanceMonitor: PerformanceMonitor;
 	fileService: FileService;
 	deviceService: DeviceService;
 	signalingService: SignalingService;
@@ -64,6 +67,7 @@ const persistConfig = {
 
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
+const performanceMonitor = new PerformanceMonitor();
 
 export const mediaService = new MediaService({ signalingService });
 export const fileService = new FileService({ signalingService });
@@ -75,6 +79,7 @@ export const ServiceContext = createContext<{
 const middlewareOptions = {
 	config: edumeetConfig,
 	mediaService,
+	performanceMonitor,
 	fileService,
 	deviceService,
 	signalingService,
@@ -96,6 +101,7 @@ const reducer = combineReducers({
 	signaling: signalingSlice.reducer,
 	ui: uiSlice.reducer,
 	webrtc: webrtcSlice.reducer,
+	recording: recordingSlice.reducer,
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

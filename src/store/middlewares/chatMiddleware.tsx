@@ -2,7 +2,7 @@ import { Middleware } from '@reduxjs/toolkit';
 import { Logger } from '../../utils/logger';
 import { chatActions } from '../slices/chatSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { MiddlewareOptions } from '../store';
+import { AppDispatch, MiddlewareOptions } from '../store';
 
 const logger = new Logger('ChatMiddleware');
 
@@ -11,7 +11,11 @@ const createChatMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createChatMiddleware()');
 
-	const middleware: Middleware = ({ dispatch }) =>
+	const middleware: Middleware = ({
+		dispatch
+	}: {
+		dispatch: AppDispatch,
+	}) =>
 		(next) => (action) => {
 			if (signalingActions.connected.match(action)) {
 				signalingService.on('notification', (notification) => {

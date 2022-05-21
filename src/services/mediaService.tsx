@@ -8,6 +8,9 @@ import { Logger } from '../utils/logger';
 import { SignalingService } from './signalingService';
 import hark from 'hark';
 import { VolumeWatcher } from '../utils/volumeWatcher';
+import { PeerTransport } from '../utils/peerTransport';
+import { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
+import { DataProducer } from 'mediasoup-client/lib/DataProducer';
 
 const logger = new Logger('MediaService');
 
@@ -35,7 +38,11 @@ export declare interface MediaService {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'consumerCreated', listener: (consumer: Consumer, producerPaused: boolean) => void): this;
 	// eslint-disable-next-line no-unused-vars
+	on(event: 'dataConsumerCreated', listener: (dataConsumer: DataConsumer) => void): this;
+	// eslint-disable-next-line no-unused-vars
 	on(event: 'consumerClosed', listener: (consumer: Consumer) => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'dataConsumerClosed', listener: (dataConsumer: DataConsumer) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'consumerPaused', listener: (consumer: Consumer) => void): this;
 	// eslint-disable-next-line no-unused-vars
@@ -56,7 +63,12 @@ export class MediaService extends EventEmitter {
 	private recvTransport: Transport | undefined;
 	private producers: Map<string, Producer> = new Map();
 	private consumers: Map<string, Consumer> = new Map();
+	private dataConsumers: Map<string, DataConsumer> = new Map();
+	private dataProducers: Map<string, DataProducer> = new Map();
 	private tracks: Map<string, MediaStreamTrack> = new Map();
+	private peerTransports: Map<string, PeerTransport> = new Map();
+	private peers: string[] = [];
+	private p2p = true;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
@@ -100,6 +112,77 @@ export class MediaService extends EventEmitter {
 		trackId && this.tracks.delete(trackId);
 	}
 
+	public enableP2P(clientId: string): void {
+		logger.debug('enableP2P()');
+
+		this.p2p = true;
+
+		this.peers.forEach((id) => {
+			// Remote peer may have sent us an offer already
+			if (this.peerTransports.has(id))
+				return;
+
+			const peerTransport = new PeerTransport({
+				id,
+				polite: String(id).localeCompare(clientId) > 0
+			});
+
+			this.handlePeerTransport(peerTransport);
+		});
+	}
+
+	public disableP2P(): void {
+		logger.debug('disableP2P()');
+
+		this.p2p = false;
+
+		this.peerTransports.forEach((peerTransport) => {
+			peerTransport.close();
+		});
+	}
+
+	public addPeer(id: string, clientId: string): void {
+		logger.debug('addPeer() [id:%s]', id);
+
+		if (this.peers.includes(id))
+			return;
+
+		this.peers.push(id);
+
+		if (this.p2p) {
+			let peerTransport = this.peerTransports.get(id);
+
+			if (!peerTransport) {
+				peerTransport = new PeerTransport({
+					id,
+					polite: String(id).localeCompare(clientId) > 0
+				});
+
+				this.handlePeerTransport(peerTransport);
+
+				this.peerTransports.set(id, peerTransport);
+			}
+		}
+	}
+
+	public removePeer(id: string): void {
+		logger.debug('removePeer() [id:%s]', id);
+
+		if (!this.peers.includes(id))
+			return;
+
+		this.peers = this.peers.filter((peerId) => peerId !== id);
+
+		if (this.p2p) {
+			const peerTransport = this.peerTransports.get(id);
+
+			if (peerTransport) {
+				peerTransport.close();
+				this.peerTransports.delete(id);
+			}
+		}
+	}
+
 	private handleSignaling(): void {
 		this.signalingService.on('notification', async (notification) => {
 			logger.debug(
@@ -108,6 +191,51 @@ export class MediaService extends EventEmitter {
 
 			try {
 				switch (notification.method) {
+					case 'offer': {
+						const { peerId, offer } = notification.data;
+
+						let peerTransport = this.peerTransports.get(peerId);
+
+						if (!peerTransport) {
+							peerTransport = new PeerTransport({
+								id: peerId,
+								polite: String(peerId).localeCompare('clientId') > 0
+							});
+	
+							this.handlePeerTransport(peerTransport);
+						}
+
+						await peerTransport.onRemoteOffer(offer);
+
+						break;
+					}
+
+					case 'answer': {
+						const { peerId, answer } = notification.data;
+
+						const peerTransport = this.peerTransports.get(peerId);
+
+						if (!peerTransport)
+							throw new Error(`Peer transport "${peerId}" not found.`);
+
+						await peerTransport.onRemoteAnswer(answer);
+
+						break;
+					}
+
+					case 'candidate': {
+						const { peerId, candidate } = notification.data;
+
+						const peerTransport = this.peerTransports.get(peerId);
+
+						if (!peerTransport)
+							throw new Error(`Peer transport "${peerId}" not found.`);
+
+						await peerTransport.onRemoteCandidate(candidate);
+
+						break;
+					}
+
 					case 'newConsumer': {
 						const {
 							peerId,
@@ -120,9 +248,8 @@ export class MediaService extends EventEmitter {
 							producerPaused,
 						} = notification.data;
 
-						if (!this.recvTransport) {
+						if (!this.recvTransport)
 							throw new Error('Consumer can not be created without recvTransport');
-						}
 	
 						const consumer = await this.recvTransport.consume({
 							id,
@@ -172,6 +299,47 @@ export class MediaService extends EventEmitter {
 						break;
 					}
 
+					case 'newDataConsumer': {
+						const {
+							peerId,
+							dataProducerId,
+							id,
+							sctpStreamParameters,
+							label,
+							protocol,
+							appData,
+						} = notification.data;
+
+						if (!this.recvTransport)
+							throw new Error('DataConsumer can not be created without recvTransport');
+
+						const dataConsumer = await this.recvTransport.consumeData({
+							id,
+							dataProducerId,
+							sctpStreamParameters,
+							label,
+							protocol,
+							appData: {
+								...appData,
+								peerId,
+							},
+						});
+
+						this.dataConsumers.set(dataConsumer.id, dataConsumer);
+
+						dataConsumer.observer.once('close', () => {
+							this.dataConsumers.delete(dataConsumer.id);
+						});
+
+						dataConsumer.once('transportclose', () => {
+							this.closeDataConsumer(dataConsumer.id);
+						});
+
+						this.emit('dataConsumerCreated', dataConsumer);
+
+						break;
+					}
+
 					case 'consumerPaused':
 					case 'consumerResumed':
 					case 'consumerClosed': {
@@ -217,6 +385,33 @@ export class MediaService extends EventEmitter {
 		return this.mediasoup.rtpCapabilities;
 	}
 
+	private handlePeerTransport(peerTransport: PeerTransport): void {
+		logger.debug('handlePeerTransport() [peerTransport:%o]', peerTransport);
+
+		this.peerTransports.set(peerTransport.id, peerTransport);
+
+		peerTransport.on('offer', async (offer) => {
+			logger.debug('peerTransport "offer" event [peerTransport:%s]', peerTransport.id);
+
+			await this.signalingService.sendRequest('offer', { offer, peerId: peerTransport.id })
+				.catch((error) => logger.warn('offer, unable to send [peerId:%s, error:%o]', peerTransport.id, error));
+		});
+
+		peerTransport.on('answer', async (answer) => {
+			logger.debug('peerTransport "answer" event [peerTransport:%s]', peerTransport.id);
+
+			await this.signalingService.sendRequest('answer', { answer, peerId: peerTransport.id })
+				.catch((error) => logger.warn('answer, unable to send [peerId:%s, error:%o]', peerTransport.id, error));
+		});
+
+		peerTransport.on('candidate', async (candidate) => {
+			logger.debug('peerTransport "iceCandidate" event [peerTransport:%s]', peerTransport.id);
+
+			await this.signalingService.sendRequest('candidate', { candidate, peerId: peerTransport.id })
+				.catch((error) => logger.warn('candidate, unable to send [peerId:%s, error:%o]', peerTransport.id, error));
+		});
+	}
+
 	public async changeConsumer(
 		consumerId: string,
 		change: MediaChange,
@@ -230,11 +425,28 @@ export class MediaService extends EventEmitter {
 				.catch((error) => logger.warn(`${change}Consumer, unable to ${change} server-side [consumerId:%s, error:%o]`, consumerId, error));
 		}
 
-		if (!local) {
+		if (!local)
 			this.emit(`consumer${changeEvent[change]}`, consumer);
-		}
 
 		consumer?.[`${change}`]();
+	}
+
+	public async closeDataConsumer(
+		dataConsumerId: string,
+		local = true
+	): Promise<void> {
+		logger.debug('closeDataConsumer [dataConsumerId:%s]', dataConsumerId);
+		const dataConsumer = this.dataConsumers.get(dataConsumerId);
+
+		if (local && dataConsumer) {
+			await this.signalingService.sendRequest('closeDataConsumer', { dataConsumerId: dataConsumer.id })
+				.catch((error) => logger.warn('closeDataConsumer, unable to close server-side [dataConsumerId:%s, error:%o]', dataConsumerId, error));
+		}
+
+		if (!local)
+			this.emit('dataConsumerClosed', dataConsumer);
+
+		dataConsumer?.close();
 	}
 
 	public async changeProducer(
@@ -250,9 +462,8 @@ export class MediaService extends EventEmitter {
 				.catch((error) => logger.warn(`${change}Producer, unable to ${change} server-side [producerId:%s, error:%o]`, producerId, error));
 		}
 
-		if (!local) {
+		if (!local)
 			this.emit(`producer${changeEvent[change]}`, producer);
-		}
 
 		producer?.[`${change}`]();
 	}
@@ -336,9 +547,8 @@ export class MediaService extends EventEmitter {
 	public async produce(producerOptions: ProducerOptions): Promise<Producer> {
 		logger.debug('produce() [options:%o]', producerOptions);
 
-		if (!this.sendTransport) {
+		if (!this.sendTransport)
 			throw new Error('Producer can not be created without sendTransport');
-		}
 
 		const producer = await this.sendTransport.produce(producerOptions);
 

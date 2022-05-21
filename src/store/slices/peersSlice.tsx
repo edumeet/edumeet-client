@@ -86,9 +86,8 @@ const peersSlice = createSlice({
 			const { roleId } = action.payload;
 			const peer = state.find((p) => p.id === action.payload.id);
 
-			if (peer) {
+			if (peer)
 				peer.roles.push(roleId);
-			}
 		}),
 		removeRole: ((state, action: PayloadAction<{ id: string, roleId: number }>) => {
 			const { roleId } = action.payload;
