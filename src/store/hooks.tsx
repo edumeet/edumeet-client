@@ -10,10 +10,12 @@ import { Permission } from '../utils/roles';
 import {
 	makeDevicesSelector,
 	makePeerConsumerSelector,
+	makePeerSelector,
 	makePermissionSelector,
 	PeerConsumers
 } from './selectors';
 import { Notification, notificationsActions } from './slices/notificationsSlice';
+import { Peer } from './slices/peersSlice';
 import type { RootState, AppDispatch } from './store';
 
 export const useAppDispatch = (): AppDispatch => useDispatch<AppDispatch>();
@@ -24,6 +26,12 @@ export const usePeerConsumers = (peerId: string): PeerConsumers => {
 		useMemo(() => makePeerConsumerSelector(peerId), []);
 
 	return useAppSelector(getPeerConsumers);
+};
+
+export const usePeer = (peerId: string): Peer | undefined => {
+	const getPeer = useMemo(() => makePeerSelector(peerId), []);
+
+	return useAppSelector(getPeer);
 };
 
 export const usePermissionSelector = (permission: Permission): boolean => {

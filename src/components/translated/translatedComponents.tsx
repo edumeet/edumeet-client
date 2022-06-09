@@ -379,3 +379,15 @@ export const noVideoDevicesLabel = (): string => intl.formatMessage({
 	id: 'settings.cantSelectCamera',
 	defaultMessage: 'Unable to select video device'
 });
+
+export const MuteParticipantVideoMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='tooltip.muteParticipantVideo'
+		defaultMessage='Mute video'
+	/>;
+
+export const UnmuteParticipantVideoMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='tooltip.unMuteParticipantVideo'
+		defaultMessage='Unmute video'
+	/>;

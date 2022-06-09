@@ -64,7 +64,7 @@ export const joinRoom = () => async (
 		lastNHistory,
 		locked,
 		lobbyPeers,
-		roomMode,
+		// roomMode,
 	} = await signalingService.sendRequest('join', {
 		displayName,
 		picture,

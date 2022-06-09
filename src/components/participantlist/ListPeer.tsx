@@ -4,6 +4,11 @@ import PanIcon from '@mui/icons-material/PanTool';
 import { useAppDispatch, usePeerConsumers } from '../../store/hooks';
 import { lowerPeerHand } from '../../store/actions/peerActions';
 import Volume from '../volume/Volume';
+import { Fragment, useState } from 'react';
+import MoreIcon from '@mui/icons-material/MoreVert';
+import FloatingMenu from '../floatingmenu/FloatingMenu';
+import MuteWebcam from '../menuitems/MuteWebcam';
+import MuteScreenshare from '../menuitems/MuteScreenshare';
 
 interface ListPeerProps {
 	peer: Peer;
@@ -25,6 +30,17 @@ const PeerInfoDiv = styled('div')(({ theme }) => ({
 	alignItems: 'center'
 }));
 
+const PeerAvatar = styled('img')({
+	borderRadius: '50%',
+	height: '2rem',
+	width: '2rem',
+	objectFit: 'cover',
+	backgroundRepeat: 'no-repeat',
+	backgroundPosition: 'center center',
+	// eslint-disable-next-line quotes
+	backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' viewBox='0 0 20 20' fill='currentColor'%3e%3cpath d='M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z' /%3e%3c/svg%3e")`,
+});
+
 const ListPeer = ({
 	peer,
 	isModerator
@@ -38,21 +54,69 @@ const ListPeer = ({
 		extraVideoConsumers
 	} = usePeerConsumers(peer.id);
 
+	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
+
+	const handleMenuClose = () => {
+		setMoreAnchorEl(null);
+	};
+
+	const isMoreMenuOpen = Boolean(moreAnchorEl);
+
 	return (
-		<PeerDiv>
-			<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
-			{ peer.raisedHand &&
+		<Fragment>
+			<PeerDiv>
+				<PeerAvatar src={peer.picture} />
+				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
+				{ peer.raisedHand &&
+					<IconButton
+						disabled={!isModerator || peer.raisedHandInProgress}
+						onClick={(): void => {
+							dispatch(lowerPeerHand(peer.id));
+						}}
+					>
+						<PanIcon />
+					</IconButton>
+				}
+				{ micConsumer && <Volume consumer={micConsumer} small /> }
 				<IconButton
-					disabled={!isModerator || peer.raisedHandInProgress}
-					onClick={(): void => {
-						dispatch(lowerPeerHand(peer.id));
+					aria-haspopup
+					onClick={(event) => {
+						setMoreAnchorEl(event.currentTarget);
 					}}
+					color='inherit'
 				>
-					<PanIcon />
+					<MoreIcon />
 				</IconButton>
-			}
-			{ micConsumer && <Volume consumer={micConsumer} small /> }
-		</PeerDiv>
+			</PeerDiv>
+			<FloatingMenu
+				anchorEl={moreAnchorEl}
+				open={isMoreMenuOpen}
+				onClose={handleMenuClose}
+			>
+				{ webcamConsumer &&
+					<MuteWebcam
+						onClick={handleMenuClose}
+						peer={peer}
+						webcamConsumer={webcamConsumer}
+					/>
+				}
+				{ screenConsumer &&
+					<MuteScreenshare
+						onClick={handleMenuClose}
+						peer={peer}
+						screenConsumer={screenConsumer}
+					/>
+				}
+				{ extraVideoConsumers.map((consumer) => (
+					<MuteWebcam
+						onClick={handleMenuClose}
+						key={consumer.id}
+						peer={peer}
+						webcamConsumer={consumer}
+					/>
+				)) }
+			</FloatingMenu>
+		</Fragment>
 	);
 };
 

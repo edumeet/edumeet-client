@@ -5,6 +5,7 @@ import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { webrtcActions } from '../slices/webrtcSlice';
 import { joinRoom } from '../actions/roomActions';
+import { batch } from 'react-redux';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -42,9 +43,11 @@ const createRoomMiddleware = ({
 							case 'roomReady': {
 								const { turnServers } = notification.data;
 
-								dispatch(webrtcActions.setIceServers(turnServers));
-								dispatch(roomActions.updateRoom({ inLobby: false, joined: true }));
-								dispatch(joinRoom());
+								batch(() => {
+									dispatch(webrtcActions.setIceServers(turnServers));
+									dispatch(roomActions.updateRoom({ inLobby: false, joined: true }));
+									dispatch(joinRoom());
+								});
 								break;
 							}
 

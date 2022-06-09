@@ -357,6 +357,14 @@ export const peerDisplayNameSelector = createSelector(
 );
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const makePeerSelector = (id: string) => {
+	return createSelector(
+		peersSelector,
+		(peers: Peer[]) => peers.find((peer) => peer.id === id)
+	);
+};
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const makePeerConsumerSelector = (id: string) => {
 	return createSelector(
 		consumersSelect,
