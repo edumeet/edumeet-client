@@ -3,6 +3,7 @@ import { meProducersSelector } from '../../store/selectors';
 import MicButton from '../controlbuttons/MicButton';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
 import ShareButton from '../controlbuttons/ShareButton';
+import StopProducerButton from '../controlbuttons/StopProducerButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
@@ -95,6 +96,18 @@ const Me = ({
 					width={style.width}
 					height={style.height}
 				>
+					<MediaControls
+						orientation='vertical'
+						horizontalPlacement='right'
+						verticalPlacement='center'
+					>
+						<StopProducerButton
+							onColor='default'
+							offColor='error'
+							disabledColor='default'
+							producerId={producer.id}
+						/>
+					</MediaControls>
 					<VideoView producer={producer} />
 				</VideoBox>
 			)) }

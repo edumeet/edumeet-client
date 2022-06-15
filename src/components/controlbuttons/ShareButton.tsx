@@ -19,8 +19,7 @@ import ScreenIcon from '@mui/icons-material/ScreenShare';
 import AddVideoIcon from '@mui/icons-material/VideoCall';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import {
-	updateScreenSharing,
-	updateWebcam
+	updateScreenSharing
 } from '../../store/actions/mediaActions';
 import { uiActions } from '../../store/slices/uiSlice';
 
@@ -86,9 +85,7 @@ const ShareButton = (): JSX.Element => {
 						if (videoState === 'unsupported') return;
 
 						if (videoState === 'off') {
-							dispatch(updateWebcam({
-								start: true
-							}));
+							dispatch(uiActions.setUi({ extraVideoDialogOpen: true }));
 						} else {
 							// Shouldn't happen
 						}

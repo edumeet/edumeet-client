@@ -221,6 +221,9 @@ export const startVideoLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Start video'
 });
 
+export const StartExtraVideoMessage = (): JSX.Element =>
+	<FormattedMessage id='label.addVideo' defaultMessage='Add video' />;
+
 export const screenSharingUnsupportedLabel = (): string =>
 	intl.formatMessage({
 		id: 'device.screenSharingUnsupported',

@@ -11,6 +11,7 @@ import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import AudioPeers from '../../components/audiopeers/AudioPeers';
 import LobbyDialog from '../../components/lobbydialog/LobbyDialog';
 import FilesharingDialog from '../../components/filesharingdialog/FilesharingDialog';
+import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog';
 
 const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
@@ -60,6 +61,7 @@ const Room = (): JSX.Element => {
 			<LobbyDialog />
 			<Settings />
 			<FilesharingDialog />
+			<ExtraVideoDialog />
 		</>
 	);
 };

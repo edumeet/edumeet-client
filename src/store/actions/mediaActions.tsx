@@ -733,3 +733,92 @@ export const updateScreenSharing = ({
 		dispatch(meActions.setScreenSharingInProgress(false));
 	}
 };
+
+export const startExtraVideo = ({
+	newDeviceId
+}: UpdateDeviceOptions = {}) => async (
+	dispatch: AppDispatch,
+	getState: RootState,
+	{ mediaService, deviceService, config }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('startExtraVideo [newDeviceId:%s]', newDeviceId);
+
+	dispatch(meActions.setVideoInProgress(true));
+
+	let track: MediaStreamTrack | null | undefined;
+	let extraVideoProducer: Producer | null | undefined;
+
+	try {
+		if (!newDeviceId)
+			throw new Error('newDeviceId is not defined');
+
+		await deviceService.updateMediaDevices();
+
+		const canSendWebcam = getState().me.canSendWebcam;
+
+		if (!canSendWebcam)
+			throw new Error('cannot produce video');
+
+		const {
+			aspectRatio,
+			resolution,
+			frameRate,
+		} = getState().settings;
+		
+		const deviceId = deviceService.getDeviceId(newDeviceId, 'videoinput');
+
+		if (!deviceId)
+			logger.warn('no extravideo device');
+
+		const stream = await navigator.mediaDevices.getUserMedia({
+			video: {
+				deviceId: { ideal: deviceId },
+				...getVideoConstrains(resolution, aspectRatio),
+				frameRate,
+			}
+		});
+
+		([ track ] = stream.getVideoTracks());
+
+		const { width, height } = track.getSettings();
+
+		if (config.simulcast) {
+			const encodings = getEncodings(mediaService.rtpCapabilities, width, height);
+			const resolutionScalings =
+				encodings.map((encoding) => encoding.scaleResolutionDownBy);
+
+			extraVideoProducer = await mediaService.produce({
+				track,
+				encodings,
+				codecOptions: {
+					videoGoogleStartBitrate: 1000
+				},
+				appData: {
+					source: 'extravideo',
+					width,
+					height,
+					resolutionScalings
+				}
+			});
+
+		} else {
+			extraVideoProducer = await mediaService.produce({
+				track,
+				appData: { source: 'extravideo', width, height }
+			});
+		}
+
+		dispatch(producersActions.addProducer({
+			id: extraVideoProducer.id,
+			kind: extraVideoProducer.kind,
+			source: extraVideoProducer.appData.source,
+			paused: extraVideoProducer.paused,
+		}));
+
+		await deviceService.updateMediaDevices();
+	} catch (error) {
+		logger.error('startExtraVideo() [error:%o]', error);
+	} finally {
+		dispatch(meActions.setVideoInProgress(false));
+	}
+};
