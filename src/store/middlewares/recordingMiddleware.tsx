@@ -1,8 +1,10 @@
+/* eslint-disable max-len */
 import { Middleware } from '@reduxjs/toolkit';
 import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { recordingActions } from '../slices/recordingSlice';
-import { openDB, deleteDB } from 'idb';
+import { openDB, deleteDB, IDBPDatabase } from 'idb';
+import streamsaver from 'streamsaver';
 
 const logger = new Logger('RecordingMiddleware');
 
@@ -23,65 +25,107 @@ const RECORDING_CONSTRAINTS = {
 const RECORDING_SLICE_SIZE = 10000;
 
 const createRecordingMiddleware = ({
-	signalingService
+	// eslint-disable-next-line
+	signalingService,
+	// eslint-disable-next-line
+	mediaService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createRecordingMiddleware()');
 
-	let recorder: MediaRecorder | null;
-	let screenStream: MediaStream | null;
-	let recorderStream: MediaStream | null;
-	let audioContext: AudioContext | null;
-	let audioDestination: MediaStreamAudioDestinationNode | null;
-	let idbDB: IDBDatabase | null;
-	let idbName: string | null;
-	let idbStoreName: string | null;
-	let chunks: Blob[] = [];
+	let recorder: MediaRecorder;
+	let screenStream: MediaStream;
+	let recorderStream: MediaStream;
+	let audioContext: AudioContext;
+	let audioDestination: MediaStreamAudioDestinationNode;
+	let idbDB: IDBPDatabase;
+	let idbName: string;
+	const idbStoreName = 'chunks';
 	const mimeType = MediaRecorder.isTypeSupported('video/webm; codecs=vp9') ? 'video/webm; codecs=vp9' : 'video/webm';
 
 	const clearRecorder = () => {
-		if (recorder) {
-			recorder.stop();
-			recorder = null;
+		logger.debug('clearRecorder()');
+
+		recorder?.stop();
+		screenStream?.getTracks().forEach((track) => track.stop());
+		recorderStream?.getTracks().forEach((track) => track.stop());
+		audioContext?.close();
+		audioDestination?.disconnect();
+	};
+
+	const saveRecordingWithStreamSaver = (
+		keys: IDBValidKey[],
+		writer: WritableStreamDefaultWriter,
+		stop = false,
+		db: IDBPDatabase,
+		dbName: string,
+	) => {
+		logger.debug('saveRecordingWithStreamSaver()');
+
+		let readableStream: ReadableStream;
+		let reader: ReadableStreamDefaultReader;
+		let pump: (() => void) | null = null;
+		const key = keys[0];
+
+		// on the first call we stop the streams (tab/screen sharing) 
+		if (stop) {
+			// Stop all used video/audio tracks
+			recorderStream?.getTracks().forEach((track) => track.stop());
+			screenStream?.getTracks().forEach((track) => track.stop());
 		}
 
-		if (screenStream) {
-			screenStream.getTracks().forEach((track) => track.stop());
-			screenStream = null;
-		}
+		keys.shift();
+		db.get(idbStoreName, key).then((blob) => {
+			if (keys.length === 0) {
+				// if this is the last key we close the writable stream and cleanup the indexedDB
+				readableStream = blob.stream();
+				reader = readableStream.getReader();
+				pump = () => reader.read().then((res) => (
+					res.done
+						? saveRecordingCleanup(db, dbName, writer)
+						: writer.write(res.value).then(pump)));
+				pump();
+			} else {
+				// push data to the writable stream
+				readableStream = blob.stream();
+				reader = readableStream.getReader();
+				pump = () => reader.read().then((res) => (
+					res.done
+						? saveRecordingWithStreamSaver(keys, writer, false, db, dbName)
+						: writer.write(res.value).then(pump)));
+				pump();
+			}
+		});
+	};
 
-		if (recorderStream) {
-			recorderStream.getTracks().forEach((track) => track.stop());
-			recorderStream = null;
-		}
+	const saveRecordingCleanup = (
+		db: IDBPDatabase,
+		dbName: string,
+		writer?: WritableStreamDefaultWriter
+	) => {
+		logger.debug('saveRecordingCleanup()');
 
-		if (audioContext) {
-			audioContext.close();
-			audioContext = null;
-		}
+		writer?.close();
+		db.close();
+		deleteDB(dbName);
 
-		if (audioDestination) {
-			audioDestination.disconnect();
-			audioDestination = null;
-		}
+		indexedDB.databases().then((r) => r.forEach((dbdata) => dbdata.name && deleteDB(dbdata.name)));
 
-		chunks = [];
+		clearRecorder();
 	};
 
 	const middleware: Middleware = ({
+		// eslint-disable-next-line
 		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
 		getState: RootState
 	}) =>
 		(next) => async (action) => {
-			/* if (recordingActions.start.match(action)) {
+			if (recordingActions.start.match(action)) {
 				logger.debug('recordingActions.start');
 
-				if (typeof MediaRecorder === 'undefined') {
-					logger.error('MediaRecorder is not supported');
-
-					return;
-				}
+				if (!MediaRecorder)
+					return logger.error('Recording is not supported');
 
 				try {
 					audioContext = new AudioContext();
@@ -96,44 +140,35 @@ const createRecordingMiddleware = ({
 					const [ screenVideotrack ] = screenStream.getVideoTracks();
 	
 					screenVideotrack.addEventListener('ended', () => {
-						logger.debug('recording.track.ended');
+						logger.debug('screenVideotrack ended event');
 	
 						dispatch(recordingActions.stop());
 						clearRecorder();
 					});
 
 					recorderStream = new MediaStream([ screenVideotrack, mixedAudioTrack ]);
-
 					recorder = new MediaRecorder(recorderStream, { mimeType });
-
-					recorder.addEventListener('dataavailable', (event) => {
-						chunks.push(event.data);
+					idbName = Date.now().toString();
+					idbDB = await openDB(idbName, 1, {
+						upgrade(db) {
+							db.createObjectStore(idbStoreName);
+						}
 					});
-
-					const dt = new Date();
-					// TODO: maybe fix later
-					const rdt = `${dt.getFullYear() }-${ (`0${ dt.getMonth()+1}`).slice(-2) }
-					//-${ (`0${ dt.getDate()}`).slice(-2) }_${dt.getHours() }
-					//_${(`0${ dt.getMinutes()}`).slice(-2) }_${dt.getSeconds()}`;
-					const ext = mimeType.split(';')[0].split('/')[1];
-					const fileName = `${getState().room.name}-recording-${rdt}.${ext}`;
-					let logToIDB = true;
-
-					if (typeof indexedDB === 'undefined' || typeof indexedDB.open === 'undefined') {
-						logger.warn('indexedDB is not supported');
-
-						logToIDB = false;
-					} else {
-						idbName = Date.now().toString();
-						idbDB = await openDB(idbName, 1, {
-							upgrade(db) {
-								db.createObjectStore('chunks');
-							}
-						});
-					}
 
 					recorder.addEventListener('stop', () => {
 						logger.debug('recording.stop');
+
+						if (!WritableStream)
+							streamsaver.WritableStream = WritableStream;
+
+						const fileStream = streamsaver.createWriteStream(`${idbName}.webm`);
+						const writer = fileStream.getWriter();
+
+						idbDB.getAllKeys(idbStoreName).then((keys) => {
+							saveRecordingWithStreamSaver(
+								keys, writer, true, idbDB, idbName
+							);
+						});
 					});
 
 					recorder.addEventListener('error', (event) => {
@@ -143,17 +178,23 @@ const createRecordingMiddleware = ({
 						clearRecorder();
 					});
 
-					recorder.addEventListener('dataavailable', (event) => {
+					recorder.addEventListener('dataavailable', async (event) => {
 						logger.debug('recording.dataavailable');
 
-						if (logToIDB) {
-							await idbDB?.put(idbStoreName, event.data, Date.now());
+						if (event.data.size > 0) {
+							try {
+								await idbDB.put(idbStoreName, event.data, Date.now());
+							} catch (error) {
+								logger.error('recording.dataavailable error', error);
+							}
 						}
 					});
+
+					recorder.start(RECORDING_SLICE_SIZE);
 				} catch (error) {
 					logger.error('recordingActions.start [error:%o]', error);
 				}
-			} */
+			}
 
 			return next(action);
 		};
