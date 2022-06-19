@@ -233,6 +233,7 @@ export interface SocketOutboundRequest {
 		PromotePeerData |
 		ChatMessageData |
 		FilesharingData |
+		ConsumerPreferredLayersData |
 		P2PData;
 }
 
@@ -245,6 +246,11 @@ export interface JoinData {
 
 export interface ConsumerData {
 	consumerId: string;
+}
+
+export interface ConsumerPreferredLayersData extends ConsumerData {
+	spatialLayer: number;
+	temporalLayer: number;
 }
 
 export interface CreateWebRtcTransport {

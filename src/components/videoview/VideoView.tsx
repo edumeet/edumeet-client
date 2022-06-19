@@ -5,6 +5,7 @@ import { useContext, useEffect, useRef } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 import { StateProducer } from '../../store/slices/producersSlice';
 import { ServiceContext } from '../../store/store';
+import { ResolutionWatcher } from '../../utils/resolutionWatcher';
 
 interface VideoViewProps {
 	mirrored?: boolean;
@@ -92,6 +93,45 @@ const VideoView = ({
 				videoElement.current.onplay = null;
 				videoElement.current.onpause = null;
 			}
+		};
+	}, []);
+
+	useEffect(() => {
+		if (!consumer)
+			return;
+
+		const actualConsumer = mediaService.getConsumer(consumer.id);
+		
+		if (!actualConsumer)
+			return;
+
+		const {
+			resolutionWatcher
+		}: {
+			resolutionWatcher?: ResolutionWatcher
+		} = actualConsumer.appData;
+
+		const resolutionReporter = resolutionWatcher?.createResolutionReporter();
+
+		if (!resolutionReporter || !videoElement.current)
+			return;
+
+		const resizeObserver = new ResizeObserver((entries) => {
+			const {
+				contentRect: {
+					width,
+					height
+				}
+			} = entries[0];
+
+			resolutionReporter.updateResolution({ width, height });
+		});
+
+		resizeObserver.observe(videoElement.current);
+
+		return () => {
+			resizeObserver.disconnect();
+			resolutionReporter.close();
 		};
 	}, []);
 

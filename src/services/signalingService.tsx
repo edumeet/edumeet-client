@@ -17,7 +17,8 @@ import {
 	ChatMessageData,
 	FilesharingData,
 	P2PData,
-	DataConsumerData
+	DataConsumerData,
+	ConsumerPreferredLayersData
 } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 
@@ -121,6 +122,7 @@ export class SignalingService extends EventEmitter {
 			PromotePeerData |
 			ChatMessageData |
 			FilesharingData |
+			ConsumerPreferredLayersData |
 			P2PData |
 			undefined,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
