@@ -63,6 +63,10 @@ export class SignalingService extends EventEmitter {
 
 	private handleSocket(): void {
 		this.socket?.on('notification', (notification) => {
+			logger.debug(
+				'signalingService "notification" event [method:%s, data:%o]',
+				notification.method, notification.data);
+
 			this.emit('notification', notification);
 		});
 

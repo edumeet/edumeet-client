@@ -3,11 +3,12 @@ import { Middleware } from '@reduxjs/toolkit';
 import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { recordingActions } from '../slices/recordingSlice';
-import { openDB, deleteDB, IDBPDatabase } from 'idb';
-import streamsaver from 'streamsaver';
+import { consumersActions } from '../slices/consumersSlice';
+import { producersActions } from '../slices/producersSlice';
 
 const logger = new Logger('RecordingMiddleware');
 
+const RECORDING_SLICE_SIZE = 1000;
 const RECORDING_CONSTRAINTS = {
 	videoBitsPerSecond: 8000000,
 	video: {
@@ -21,96 +22,42 @@ const RECORDING_CONSTRAINTS = {
 	]
 };
 
-// 10 sec
-const RECORDING_SLICE_SIZE = 10000;
-
 const createRecordingMiddleware = ({
 	// eslint-disable-next-line
 	signalingService,
-	// eslint-disable-next-line
 	mediaService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createRecordingMiddleware()');
 
+	let writableStream: FileSystemWritableFileStream;
 	let recorder: MediaRecorder;
 	let screenStream: MediaStream;
 	let recorderStream: MediaStream;
 	let audioContext: AudioContext;
 	let audioDestination: MediaStreamAudioDestinationNode;
-	let idbDB: IDBPDatabase;
-	let idbName: string;
-	const idbStoreName = 'chunks';
-	const mimeType = MediaRecorder.isTypeSupported('video/webm; codecs=vp9') ? 'video/webm; codecs=vp9' : 'video/webm';
+	const mimeType = 'video/webm;codecs=vp8,opus';
 
-	const clearRecorder = () => {
-		logger.debug('clearRecorder()');
+	const stopRecorder = async () => {
+		logger.debug('stopRecorder()');
 
-		recorder?.stop();
-		screenStream?.getTracks().forEach((track) => track.stop());
-		recorderStream?.getTracks().forEach((track) => track.stop());
-		audioContext?.close();
-		audioDestination?.disconnect();
-	};
-
-	const saveRecordingWithStreamSaver = (
-		keys: IDBValidKey[],
-		writer: WritableStreamDefaultWriter,
-		stop = false,
-		db: IDBPDatabase,
-		dbName: string,
-	) => {
-		logger.debug('saveRecordingWithStreamSaver()');
-
-		let readableStream: ReadableStream;
-		let reader: ReadableStreamDefaultReader;
-		let pump: (() => void) | null = null;
-		const key = keys[0];
-
-		// on the first call we stop the streams (tab/screen sharing) 
-		if (stop) {
-			// Stop all used video/audio tracks
-			recorderStream?.getTracks().forEach((track) => track.stop());
+		try {
+			recorder?.stop();
 			screenStream?.getTracks().forEach((track) => track.stop());
+			recorderStream?.getTracks().forEach((track) => track.stop());
+			audioContext?.close();
+			audioDestination?.disconnect();
+
+			// Give some time for last recording chunks to come through
+			setTimeout(async () => {
+				try {
+					await writableStream?.close();
+				} catch (error) {
+					logger.error('stopRecorder() [error:%o]', error);
+				}
+			}, RECORDING_SLICE_SIZE);
+		} catch (error) {
+			logger.error('stopRecorder() [error:%o]', error);
 		}
-
-		keys.shift();
-		db.get(idbStoreName, key).then((blob) => {
-			if (keys.length === 0) {
-				// if this is the last key we close the writable stream and cleanup the indexedDB
-				readableStream = blob.stream();
-				reader = readableStream.getReader();
-				pump = () => reader.read().then((res) => (
-					res.done
-						? saveRecordingCleanup(db, dbName, writer)
-						: writer.write(res.value).then(pump)));
-				pump();
-			} else {
-				// push data to the writable stream
-				readableStream = blob.stream();
-				reader = readableStream.getReader();
-				pump = () => reader.read().then((res) => (
-					res.done
-						? saveRecordingWithStreamSaver(keys, writer, false, db, dbName)
-						: writer.write(res.value).then(pump)));
-				pump();
-			}
-		});
-	};
-
-	const saveRecordingCleanup = (
-		db: IDBPDatabase,
-		dbName: string,
-		writer?: WritableStreamDefaultWriter
-	) => {
-		logger.debug('saveRecordingCleanup()');
-
-		writer?.close();
-		db.close();
-		deleteDB(dbName);
-
-		indexedDB.databases().then((r) => r.forEach((dbdata) => dbdata.name && deleteDB(dbdata.name)));
-
-		clearRecorder();
 	};
 
 	const middleware: Middleware = ({
@@ -122,16 +69,43 @@ const createRecordingMiddleware = ({
 	}) =>
 		(next) => async (action) => {
 			if (recordingActions.start.match(action)) {
-				logger.debug('recordingActions.start');
+				logger.debug('recordingActions.start [mimeType:%s]', mimeType);
 
-				if (!MediaRecorder)
+				if (!MediaRecorder || !showSaveFilePicker)
 					return logger.error('Recording is not supported');
+
+				const saveFileHandle = await showSaveFilePicker();
+
+				writableStream = await saveFileHandle.createWritable();
 
 				try {
 					audioContext = new AudioContext();
 					audioDestination = audioContext.createMediaStreamDestination();
+					audioContext.createGain().connect(audioDestination);
 
-					const [ mixedAudioTrack ] = audioDestination.stream.getAudioTracks();
+					const audioProducers = mediaService.getProducers()
+						.filter((producer) => producer.appData.source === 'mic');
+
+					for (const producer of audioProducers) {
+						if (producer.track) {
+							audioContext.createMediaStreamSource(
+								new MediaStream([ producer.track ])
+							).connect(audioDestination);
+						}
+					}
+
+					const audioConsumers = mediaService.getConsumers()
+						.filter((consumer) => consumer.appData.source === 'mic');
+
+					for (const consumer of audioConsumers) {
+						if (consumer.track) {
+							audioContext.createMediaStreamSource(
+								new MediaStream([ consumer.track ])
+							).connect(audioDestination);
+						}
+					}
+
+					const [ mixedAudioTrack ] = audioDestination.stream.getTracks();
 	
 					screenStream = await navigator.mediaDevices.getDisplayMedia(
 						RECORDING_CONSTRAINTS
@@ -141,51 +115,27 @@ const createRecordingMiddleware = ({
 	
 					screenVideotrack.addEventListener('ended', () => {
 						logger.debug('screenVideotrack ended event');
-	
+
 						dispatch(recordingActions.stop());
-						clearRecorder();
 					});
 
-					recorderStream = new MediaStream([ screenVideotrack, mixedAudioTrack ]);
+					recorderStream = new MediaStream([ mixedAudioTrack, screenVideotrack ]);
 					recorder = new MediaRecorder(recorderStream, { mimeType });
-					idbName = Date.now().toString();
-					idbDB = await openDB(idbName, 1, {
-						upgrade(db) {
-							db.createObjectStore(idbStoreName);
-						}
-					});
-
-					recorder.addEventListener('stop', () => {
-						logger.debug('recording.stop');
-
-						if (!WritableStream)
-							streamsaver.WritableStream = WritableStream;
-
-						const fileStream = streamsaver.createWriteStream(`${idbName}.webm`);
-						const writer = fileStream.getWriter();
-
-						idbDB.getAllKeys(idbStoreName).then((keys) => {
-							saveRecordingWithStreamSaver(
-								keys, writer, true, idbDB, idbName
-							);
-						});
-					});
 
 					recorder.addEventListener('error', (event) => {
 						logger.error('recording.error', event);
-						
+
 						dispatch(recordingActions.stop());
-						clearRecorder();
 					});
 
 					recorder.addEventListener('dataavailable', async (event) => {
-						logger.debug('recording.dataavailable');
+						logger.debug('recording.dataavailable [data:%o]', event.data);
 
 						if (event.data.size > 0) {
 							try {
-								await idbDB.put(idbStoreName, event.data, Date.now());
+								await writableStream.write(event.data);
 							} catch (error) {
-								logger.error('recording.dataavailable error', error);
+								logger.error('recording.dataavailable [error:%o]', error);
 							}
 						}
 					});
@@ -193,6 +143,42 @@ const createRecordingMiddleware = ({
 					recorder.start(RECORDING_SLICE_SIZE);
 				} catch (error) {
 					logger.error('recordingActions.start [error:%o]', error);
+				}
+			}
+
+			if (recordingActions.stop.match(action)) {
+				logger.debug('recordingActions.stop');
+
+				await stopRecorder();
+			}
+
+			if (getState().recording.recording) {
+				if (consumersActions.addConsumer.match(action)) {
+					const { id, kind } = action.payload;
+	
+					if (kind === 'audio') {
+						const consumer = mediaService.getConsumer(id);
+	
+						if (consumer?.track) {
+							audioContext.createMediaStreamSource(
+								new MediaStream([ consumer.track ])
+							).connect(audioDestination);
+						}
+					}
+				}
+	
+				if (producersActions.addProducer.match(action)) {
+					const { id, kind } = action.payload;
+	
+					if (kind === 'audio') {
+						const producer = mediaService.getProducer(id);
+	
+						if (producer?.track) {
+							audioContext.createMediaStreamSource(
+								new MediaStream([ producer.track ])
+							).connect(audioDestination);
+						}
+					}
 				}
 			}
 

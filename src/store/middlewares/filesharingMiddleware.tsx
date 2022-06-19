@@ -28,10 +28,6 @@ const createFilesharingMiddleware = ({
 
 			if (signalingActions.connected.match(action)) {
 				signalingService.on('notification', (notification) => {
-					logger.debug(
-						'signalingService "notification" event [method:%s, data:%o]',
-						notification.method, notification.data);
-
 					try {
 						switch (notification.method) {
 							case 'sendFile': {

@@ -8,7 +8,7 @@ import {
 import { MediaDevice } from '../../services/deviceService';
 
 interface DeviceChooserProps {
-	value?: string;
+	value: string;
 	// eslint-disable-next-line no-unused-vars
 	setValue: (value: string) => void;
 	name: string;

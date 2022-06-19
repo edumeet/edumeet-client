@@ -25,6 +25,7 @@ import createRoomMiddleware from './middlewares/roomMiddleware';
 import createFilesharingMiddleware from './middlewares/filesharingMiddleware';
 import createPeerMiddleware from './middlewares/peerMiddleware';
 import createPermissionsMiddleware from './middlewares/permissionsMiddleware';
+import createRecordingMiddleware from './middlewares/recordingMiddleware';
 import createChatMiddleware from './middlewares/chatMiddleware';
 import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
@@ -125,6 +126,7 @@ export const store = configureStore({
 			createFilesharingMiddleware(middlewareOptions),
 			createPermissionsMiddleware(middlewareOptions),
 			createRoomMiddleware(middlewareOptions),
+			createRecordingMiddleware(middlewareOptions),
 			createLogger({
 				duration: true,
 				timestamp: false,

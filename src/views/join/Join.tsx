@@ -22,7 +22,7 @@ import AudioInputChooser from '../../components/devicechooser/AudioInputChooser'
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import PrecallDialog from '../../components/precalldialog/PrecallDialog';
 import { roomActions } from '../../store/slices/roomSlice';
-import { setDisplayName } from '../../store/actions/meActions';
+import { settingsActions } from '../../store/slices/settingsSlice';
 
 interface JoinProps {
 	roomId: string;
@@ -47,7 +47,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		const encodedRoomId = encodeURIComponent(roomId);
 		const url = getSignalingUrl({ peerId, roomId: encodedRoomId });
 
-		dispatch(setDisplayName(name));
+		dispatch(settingsActions.setDisplayName(name));
 		dispatch(signalingActions.setUrl(url));
 		dispatch(signalingActions.connect());
 	};

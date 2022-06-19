@@ -2,7 +2,7 @@ import { Producer } from 'mediasoup-client/lib/Producer';
 import { getEncodings, getVideoConstrains } from '../../utils/encodingsHandler';
 import { Logger } from '../../utils/logger';
 import { meActions } from '../slices/meSlice';
-import { producersActions } from '../slices/producersSlice';
+import { producersActions, ProducerSource } from '../slices/producersSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 
@@ -330,7 +330,7 @@ export const updateMic = ({
 			dispatch(producersActions.addProducer({
 				id: micProducer.id,
 				kind: micProducer.kind,
-				source: micProducer.appData.source,
+				source: micProducer.appData.source as ProducerSource,
 				paused: micProducer.paused
 			}));
 
@@ -517,7 +517,7 @@ export const updateWebcam = ({
 			dispatch(producersActions.addProducer({
 				id: webcamProducer.id,
 				kind: webcamProducer.kind,
-				source: webcamProducer.appData.source,
+				source: webcamProducer.appData.source as ProducerSource,
 				paused: webcamProducer.paused,
 			}));
 
@@ -678,7 +678,7 @@ export const updateScreenSharing = ({
 			dispatch(producersActions.addProducer({
 				id: screenVideoProducer.id,
 				kind: screenVideoProducer.kind,
-				source: screenVideoProducer.appData.source,
+				source: screenVideoProducer.appData.source as ProducerSource,
 				paused: screenVideoProducer.paused,
 			}));
 
@@ -700,7 +700,7 @@ export const updateScreenSharing = ({
 				dispatch(producersActions.addProducer({
 					id: screenAudioProducer.id,
 					kind: screenAudioProducer.kind,
-					source: screenAudioProducer.appData.source,
+					source: screenAudioProducer.appData.source as ProducerSource,
 					paused: screenAudioProducer.paused,
 				}));
 			}
@@ -811,7 +811,7 @@ export const startExtraVideo = ({
 		dispatch(producersActions.addProducer({
 			id: extraVideoProducer.id,
 			kind: extraVideoProducer.kind,
-			source: extraVideoProducer.appData.source,
+			source: extraVideoProducer.appData.source as ProducerSource,
 			paused: extraVideoProducer.paused,
 		}));
 

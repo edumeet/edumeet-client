@@ -31,6 +31,9 @@ const peersSlice = createSlice({
 		addPeer: ((state, action: PayloadAction<Peer>) => {
 			state.push(action.payload);
 		}),
+		addPeers: ((state, action: PayloadAction<Peer[]>) => {
+			state.push(...action.payload);
+		}),
 		removePeer: ((state, action: PayloadAction<PeerUpdate>) => {
 			return state.filter((peer) => peer.id !== action.payload.id);
 		}),

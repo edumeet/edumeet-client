@@ -16,6 +16,7 @@ const SCROLL_OFFSET_TRIGGER = 2;
 interface ScrollingListProps {
 	// eslint-disable-next-line no-unused-vars
 	onScroll?: (isAtBottom: boolean) => void;
+	children?: ReactNode
 }
 
 type ScrollingListComponentProps =

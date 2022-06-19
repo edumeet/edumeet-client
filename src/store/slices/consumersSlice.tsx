@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { peersActions } from './peersSlice';
+import { ProducerSource } from './producersSlice';
 
 export interface StateConsumer {
 	id: string;
@@ -7,7 +8,7 @@ export interface StateConsumer {
 	kind: string;
 	localPaused: boolean;
 	remotePaused: boolean;
-	source: string;
+	source: ProducerSource;
 }
 
 type ConsumersState = StateConsumer[];

@@ -1,3 +1,4 @@
+import { batch } from 'react-redux';
 import { Logger } from '../../utils/logger';
 import { chatActions } from '../slices/chatSlice';
 import { filesharingActions } from '../slices/filesharingSlice';
@@ -10,7 +11,7 @@ import { webrtcActions } from '../slices/webrtcSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
 
-const logger = new Logger('LocaleActions');
+const logger = new Logger('RoomActions');
 
 // This action is triggered when the server sends "roomReady" to us.
 // This means that we start our joining process which is:
@@ -64,7 +65,7 @@ export const joinRoom = () => async (
 		lastNHistory,
 		locked,
 		lobbyPeers,
-		// roomMode,
+		roomMode = 'SFU',
 	} = await signalingService.sendRequest('join', {
 		displayName,
 		picture,
@@ -72,33 +73,33 @@ export const joinRoom = () => async (
 		returning: false, // TODO: fix reconnect
 	});
 
-	for (const peer of peers) {
-		dispatch(peersActions.addPeer(peer));
-	}
-
-	dispatch(roomActions.setRoomMode('P2P'));
-	dispatch(chatActions.addMessages(chatHistory));
-	dispatch(filesharingActions.addFiles(fileHistory));
-	dispatch(lobbyPeersActions.addPeers(lobbyPeers));
-	dispatch(permissionsActions.setRoomPermissions(roomPermissions));
-	dispatch(permissionsActions.setUserRoles(userRoles));
-	allowWhenRoleMissing && dispatch(
-		permissionsActions.setAllowWhenRoleMissing(allowWhenRoleMissing)
-	);
-
 	const spotlights = lastNHistory.filter((peerId: string) => peerId !== meId);
 
-	dispatch(roomActions.addSpotlightList(spotlights));
-	dispatch(permissionsActions.addRoles(roles));
-	dispatch(webrtcActions.setTracker(tracker));
-	if (loggedIn !== authenticated)
-		dispatch(permissionsActions.setLoggedIn(authenticated));
-	dispatch(permissionsActions.setLocked(Boolean(locked)));
+	batch(() => {
+		dispatch(roomActions.setRoomMode(roomMode));
+		dispatch(permissionsActions.setLocked(Boolean(locked)));
+		dispatch(permissionsActions.setRoomPermissions(roomPermissions));
+		dispatch(permissionsActions.setUserRoles(userRoles));
+		dispatch(permissionsActions.addRoles(roles));
+		if (loggedIn !== authenticated)
+			dispatch(permissionsActions.setLoggedIn(Boolean(authenticated)));
 
-	const { audioMuted, videoMuted } = getState().settings;
+		allowWhenRoleMissing && dispatch(
+			permissionsActions.setAllowWhenRoleMissing(allowWhenRoleMissing)
+		);
 
-	if (!audioMuted)
-		dispatch(updateMic({ start: true }));
-	if (!videoMuted)
-		dispatch(updateWebcam({ init: true, start: true }));
+		dispatch(peersActions.addPeers(peers));
+		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
+		dispatch(chatActions.addMessages(chatHistory));
+		dispatch(filesharingActions.addFiles(fileHistory));
+		dispatch(roomActions.addSpotlightList(spotlights));
+		dispatch(webrtcActions.setTracker(tracker));
+
+		const { audioMuted, videoMuted } = getState().settings;
+
+		if (!audioMuted)
+			dispatch(updateMic({ start: true }));
+		if (!videoMuted)
+			dispatch(updateWebcam({ init: true, start: true }));
+	});
 };

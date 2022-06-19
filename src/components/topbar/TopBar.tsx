@@ -45,6 +45,7 @@ import SettingsButton from '../controlbuttons/SettingsButton';
 import FilesharingButton from '../controlbuttons/FilesharingButton';
 import MicButton from '../controlbuttons/MicButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
+import RecordButton from '../controlbuttons/RecordButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -151,6 +152,7 @@ const TopBar = ({
 						}
 					</GrowingDiv>
 					<DesktopDiv>
+						<RecordButton type='iconbutton' />
 						{ fullscreenEnabled &&
 							<FullscreenButton
 								type='iconbutton'
@@ -166,6 +168,7 @@ const TopBar = ({
 						{ loginEnabled && <LoginButton type='iconbutton' /> }
 					</DesktopDiv>
 					<MobileDiv>
+						<RecordButton type='iconbutton' />
 						{ lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						<IconButton
 							aria-haspopup

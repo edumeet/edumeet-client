@@ -22,10 +22,6 @@ const createPeerMiddleware = ({
 		(next) => (action) => {
 			if (signalingActions.connected.match(action)) {
 				signalingService.on('notification', (notification) => {
-					logger.debug(
-						'signalingService "notification" event [method:%s, data:%o]',
-						notification.method, notification.data);
-
 					try {
 						switch (notification.method) {
 							case 'newPeer': {
@@ -130,6 +126,16 @@ const createPeerMiddleware = ({
 						logger.error('error on signalService "notification" event [error:%o]', error);
 					}
 				});
+			}
+
+			if (peersActions.addPeers.match(action)) {
+				const clientId = getState().me.id;
+
+				for (const peer of action.payload) {
+					const { id } = peer;
+
+					mediaService.addPeer(id, clientId);
+				}
 			}
 
 			if (peersActions.addPeer.match(action)) {

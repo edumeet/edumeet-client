@@ -20,7 +20,7 @@ const ExtraVideoInputChooser = ({
 }: VideoInputChooserProps): JSX.Element => {
 	const videoDevices = useDeviceSelector('videoinput');
 	const videoInProgress = useAppSelector((state) => state.me.videoInProgress);
-	const [ videoDevice, setVideoDevice ] = useState<string | undefined>();
+	const [ videoDevice, setVideoDevice ] = useState<string>('');
 
 	const handleDeviceChange = (deviceId: string): void => {
 		setVideoDevice(deviceId);

@@ -243,6 +243,16 @@ export const startScreenSharingLabel = (): string => intl.formatMessage({
 export const ShareScreenMessage = (): JSX.Element =>
 	<FormattedMessage id='device.shareScreen' defaultMessage='Share screen' />;
 
+export const startRecordingLabel = (): string => intl.formatMessage({
+	id: 'tooltip.startLocalRecording',
+	defaultMessage: 'Start local recording'
+});
+
+export const stopRecordingLabel = (): string => intl.formatMessage({
+	id: 'tooltip.stopLocalRecording',
+	defaultMessage: 'Stop local recording'
+});
+
 export const MeMessage = (): JSX.Element =>
 	<FormattedMessage id='room.me' defaultMessage='Me' />;
 

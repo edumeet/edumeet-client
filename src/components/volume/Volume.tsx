@@ -78,7 +78,7 @@ const Volume = ({
 		}
 
 		if (media)
-			({ volumeWatcher } = media.appData);
+			volumeWatcher = media.appData.volumeWatcher as VolumeWatcher;
 
 		const onVolumeChange = ({ scaledVolume }: { scaledVolume: number }): void => {
 			setVolume(scaledVolume);

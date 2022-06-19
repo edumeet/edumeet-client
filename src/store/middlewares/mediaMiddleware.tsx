@@ -3,7 +3,7 @@ import { consumersActions, StateConsumer } from '../slices/consumersSlice';
 import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomActions } from '../slices/roomSlice';
-import { producersActions } from '../slices/producersSlice';
+import { producersActions, ProducerSource } from '../slices/producersSlice';
 import { videoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
 
@@ -28,11 +28,11 @@ const createMediaMiddleware = ({
 				mediaService.on('consumerCreated', (consumer, producerPaused) => {
 					const stateConsumer: StateConsumer = {
 						id: consumer.id,
-						peerId: consumer.appData.peerId,
+						peerId: consumer.appData.peerId as string,
 						kind: consumer.kind,
 						localPaused: false,
 						remotePaused: producerPaused,
-						source: consumer.appData.source,
+						source: consumer.appData.source as ProducerSource,
 					};
 
 					dispatch(consumersActions.addConsumer(stateConsumer));
@@ -96,6 +96,7 @@ const createMediaMiddleware = ({
 			if ( // These events will possibly change which Consumer is being displayed
 				consumersActions.addConsumer.match(action) ||
 				consumersActions.removeConsumer.match(action) ||
+				peersActions.addPeers.match(action) ||
 				peersActions.addPeer.match(action) ||
 				peersActions.removePeer.match(action) ||
 				roomActions.setActiveSpeakerId.match(action) ||

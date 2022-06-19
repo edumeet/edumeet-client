@@ -7,7 +7,7 @@ export interface StateProducer {
 	paused: boolean;
 }
 
-type ProducerSource = 'mic' | 'webcam' | 'screen' | 'extravideo';
+export type ProducerSource = 'mic' | 'webcam' | 'screen' | 'extravideo';
 
 type ProducersState = StateProducer[];
 

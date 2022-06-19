@@ -82,12 +82,16 @@ export class MediaService extends EventEmitter {
 		return this.consumers.get(consumerId);
 	}
 
+	public getConsumers(): Consumer[] {
+		return Array.from(this.consumers.values());
+	}
+
 	public getProducer(producerId: string): Producer | undefined {
 		return this.producers.get(producerId);
 	}
 
 	public getProducers(): Producer[] {
-		return [ ...this.producers.values() ];
+		return Array.from(this.producers.values());
 	}
 
 	public getTrack(trackId: string): MediaStreamTrack | undefined {
@@ -185,10 +189,6 @@ export class MediaService extends EventEmitter {
 
 	private handleSignaling(): void {
 		this.signalingService.on('notification', async (notification) => {
-			logger.debug(
-				'signalingService "notification" event [method:%s, data:%o]',
-				notification.method, notification.data);
-
 			try {
 				switch (notification.method) {
 					case 'offer': {
