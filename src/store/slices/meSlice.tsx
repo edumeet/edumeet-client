@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuid } from 'uuid';
+import { MediaCapabilities } from '../../services/mediaService';
 import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 
 export interface MeState {
@@ -11,6 +12,7 @@ export interface MeState {
 	canSendMic: boolean;
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
+	canRecord: boolean;
 	canShareFiles: boolean;
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
@@ -31,6 +33,7 @@ const initialState: MeState = {
 	canSendWebcam: true,
 	canShareScreen: true,
 	canShareFiles: false,
+	canRecord: false,
 	devices: [],
 	raisedHand: false,
 	speaking: false,
@@ -60,12 +63,7 @@ const meSlice = createSlice({
 		}),
 		setMediaCapabilities: ((
 			state,
-			action: PayloadAction<{
-				canSendMic?: boolean,
-				canSendWebcam?: boolean,
-				canShareScreen?: boolean,
-				canShareFiles?: boolean,
-			}>
+			action: PayloadAction<MediaCapabilities>
 		) => {
 			return { ...state, ...action.payload };
 		}),

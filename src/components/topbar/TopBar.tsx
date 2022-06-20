@@ -98,7 +98,7 @@ const TopBar = ({
 	const dispatch = useAppDispatch();
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
-
+	const canRecord = useAppSelector((state) => state.me.canRecord);
 	const leaveOpen = useAppSelector((state) => state.ui.leaveOpen);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
 	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
@@ -153,7 +153,7 @@ const TopBar = ({
 						}
 					</GrowingDiv>
 					<DesktopDiv>
-						<RecordButton type='iconbutton' />
+						{ canRecord && <RecordButton type='iconbutton' /> }
 						{ fullscreenEnabled &&
 							<FullscreenButton
 								type='iconbutton'
@@ -169,7 +169,7 @@ const TopBar = ({
 						{ loginEnabled && <LoginButton type='iconbutton' /> }
 					</DesktopDiv>
 					<MobileDiv>
-						<RecordButton type='iconbutton' />
+						{ canRecord && <RecordButton type='iconbutton' /> }
 						{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						<IconButton
 							aria-haspopup

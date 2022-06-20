@@ -71,7 +71,7 @@ const createRecordingMiddleware = ({
 			if (recordingActions.start.match(action)) {
 				logger.debug('recordingActions.start [mimeType:%s]', mimeType);
 
-				if (!MediaRecorder || !showSaveFilePicker)
+				if (!MediaRecorder || !window.showSaveFilePicker)
 					return logger.error('Recording is not supported');
 
 				const saveFileHandle = await showSaveFilePicker();

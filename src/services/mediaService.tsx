@@ -17,10 +17,11 @@ const logger = new Logger('MediaService');
 
 export type MediaChange = 'pause' | 'resume' | 'close';
 
-interface MediaCapabilities {
+export interface MediaCapabilities {
 	canSendMic: boolean;
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
+	canRecord: boolean;
 }
 
 const changeEvent = {
@@ -393,7 +394,8 @@ export class MediaService extends EventEmitter {
 			canSendMic: this.mediasoup.canProduce('audio'),
 			canSendWebcam: this.mediasoup.canProduce('video'),
 			canShareScreen: Boolean(navigator.mediaDevices.getDisplayMedia) &&
-				this.mediasoup.canProduce('video')
+				this.mediasoup.canProduce('video'),
+			canRecord: Boolean(MediaRecorder && window.showSaveFilePicker),
 		};
 	}
 
