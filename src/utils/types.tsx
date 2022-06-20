@@ -220,22 +220,62 @@ export interface SocketInboundNotification {
 }
 
 export interface SocketOutboundRequest {
-	method: string; // TODO: define outbound request method strings
-	data?:
-		CreateWebRtcTransport |
-		ConnectWebRtcTransport |
-		ProduceData |
-		ConsumerData |
-		JoinData |
-		ProducerData |
-		DataConsumerData |
-		DisplayNameData |
-		PromotePeerData |
-		ChatMessageData |
-		FilesharingData |
-		ConsumerPreferredLayersData |
-		P2PData;
+	method: SocketOutboundRequestMethod;
+	data?: SocketOutboundRequestData;
 }
+
+export type SocketOutboundRequestMethod =
+	'chatMessage' |
+	'sendFile' |
+	'changeDisplayName' |
+	'lockRoom' |
+	'unlockRoom' |
+	'promotePeer' |
+	'promoteAllPeers' |
+	'join' |
+	'getRouterRtpCapabilities' |
+	'createWebRtcTransport' |
+	'connectWebRtcTransport' |
+	'resumeConsumer' |
+	'pauseConsumer' |
+	'closeConsumer' |
+	'closeDataConsumer' |
+	'produce' |
+	'closeProducer' |
+	'pauseProducer' |
+	'resumeProducer' |
+	'setConsumerPreferredLayers' |
+	'offer' |
+	'answer' |
+	'candidate' |
+	'moderator:lowerHand' |
+	'moderator:clearChat' |
+	'moderator:clearFileSharing' |
+	'moderator:giveRole' |
+	'moderator:removeRole' |
+	'moderator:kickPeer' |
+	'moderator:mute' |
+	'moderator:stopVideo' |
+	'moderator:stopScreenSharing' |
+	'moderator:muteAll' |
+	'moderator:stopAllVideo' |
+	'moderator:stopAllScreenSharing' |
+	'moderator:closeMeeting';
+
+export type SocketOutboundRequestData =
+	CreateWebRtcTransport |
+	ConnectWebRtcTransport |
+	ProduceData |
+	ConsumerData |
+	JoinData |
+	ProducerData |
+	DataConsumerData |
+	DisplayNameData |
+	PromotePeerData |
+	ChatMessageData |
+	FilesharingData |
+	ConsumerPreferredLayersData |
+	P2PData;
 
 export interface JoinData {
 	displayName: string;

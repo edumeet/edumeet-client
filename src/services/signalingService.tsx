@@ -4,21 +4,10 @@ import { io, Socket } from 'socket.io-client';
 import EventEmitter from 'events';
 import { SocketTimeoutError } from '../utils/SocketTimeoutError';
 import {
-	ConnectWebRtcTransport,
-	ConsumerData,
-	CreateWebRtcTransport,
-	JoinData,
-	ProduceData,
-	ProducerData,
 	SocketInboundNotification,
 	SocketOutboundRequest,
-	DisplayNameData,
-	PromotePeerData,
-	ChatMessageData,
-	FilesharingData,
-	P2PData,
-	DataConsumerData,
-	ConsumerPreferredLayersData
+	SocketOutboundRequestData,
+	SocketOutboundRequestMethod
 } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 
@@ -83,13 +72,10 @@ export class SignalingService extends EventEmitter {
 			if (
 				reason === 'io server disconnect' ||
 				reason === 'io client disconnect'
-			) {
-				logger.debug('_handleSocket() | purposefully disconnected');
-
+			)
 				this.emit('disconnect');
-			} else {
+			else
 				this.emit('reconnect');
-			}
 		});
 	}
 
@@ -109,22 +95,8 @@ export class SignalingService extends EventEmitter {
 	}
 
 	public async sendRequest(
-		method: string,
-		data?:
-			CreateWebRtcTransport |
-			ConnectWebRtcTransport |
-			ProduceData |
-			ConsumerData |
-			JoinData |
-			ProducerData |
-			DataConsumerData |
-			DisplayNameData |
-			PromotePeerData |
-			ChatMessageData |
-			FilesharingData |
-			ConsumerPreferredLayersData |
-			P2PData |
-			undefined,
+		method: SocketOutboundRequestMethod,
+		data?: SocketOutboundRequestData,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	): Promise<any> {
 		logger.debug('sendRequest() [method:%s, data:%o]', method, data);
