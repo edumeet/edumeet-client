@@ -43,6 +43,14 @@ export const PromotePeersMessage = (): JSX.Element =>
 export const LobbyAdministrationMessage = (): JSX.Element =>
 	<FormattedMessage id='room.lobbyAdministration' defaultMessage='Lobby administration' />;
 
+export const PeersInLobbyMessage = (): JSX.Element =>
+	<FormattedMessage id='room.peersInLobby' defaultMessage='Participants in lobby' />;
+
+export const promoteFromLobbyLabel = (): string => intl.formatMessage({
+	id: 'tooltip.admitFromLobby',
+	defaultMessage: 'Click to let them in'
+});
+
 export const ShowSelfViewMessage = (): JSX.Element =>
 	<FormattedMessage id='room.showSelfView' defaultMessage='Show self view video' />;
 

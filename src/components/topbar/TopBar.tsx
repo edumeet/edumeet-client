@@ -97,6 +97,7 @@ const TopBar = ({
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
+	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 
 	const leaveOpen = useAppSelector((state) => state.ui.leaveOpen);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
@@ -164,12 +165,12 @@ const TopBar = ({
 						<SettingsButton type='iconbutton' />
 						<LockButton type='iconbutton' />
 						{ files > 0 && <FilesharingButton type='iconbutton' /> }
-						{ lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
+						{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						{ loginEnabled && <LoginButton type='iconbutton' /> }
 					</DesktopDiv>
 					<MobileDiv>
 						<RecordButton type='iconbutton' />
-						{ lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
+						{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						<IconButton
 							aria-haspopup
 							onClick={(event) => {
