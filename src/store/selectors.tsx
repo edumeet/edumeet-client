@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import { MediaDevice } from '../services/deviceService';
 import { Permission, Role } from '../utils/roles';
-import { FilesharingFile } from '../utils/types';
 import { StateConsumer } from './slices/consumersSlice';
+import { FilesharingFile } from './slices/filesharingSlice';
 import { LobbyPeer } from './slices/lobbyPeersSlice';
 import { Peer } from './slices/peersSlice';
 import { StateProducer } from './slices/producersSlice';

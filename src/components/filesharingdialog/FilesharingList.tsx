@@ -4,8 +4,8 @@ import {
 	useAppSelector,
 	usePermissionSelector
 } from '../../store/hooks';
+import { FilesharingFile } from '../../store/slices/filesharingSlice';
 import { permissions } from '../../utils/roles';
-import { FilesharingFile } from '../../utils/types';
 import {
 	ModeratorActionsMessage,
 } from '../translated/translatedComponents';
@@ -40,6 +40,7 @@ const ListItemLi = styled('li')({
 const FilesharingList = (): JSX.Element => {
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const files = useAppSelector((state) => state.filesharing);
+	const meId = useAppSelector((state) => state.me.id);
 
 	return (
 		<FilesharingListDiv>
@@ -58,7 +59,7 @@ const FilesharingList = (): JSX.Element => {
 							{ files.map((file: FilesharingFile) => (
 								<Flipped key={file.magnetURI} flipId={file.magnetURI}>
 									<ListItemLi key={file.magnetURI}>
-										<ListFile file={file} />
+										<ListFile file={file} isMe={file.peerId === meId} />
 									</ListItemLi>
 								</Flipped>
 							)) }

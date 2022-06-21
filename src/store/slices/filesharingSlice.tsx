@@ -1,6 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FilesharingFile } from '../../utils/types';
 import { peersActions } from './peersSlice';
+
+export interface FilesharingFile {
+	peerId: string;
+	displayName?: string;
+	timestamp?: number;
+	magnetURI: string;
+	started?: boolean;
+}
 
 type FilesharingState = FilesharingFile[];
 

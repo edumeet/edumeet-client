@@ -2,6 +2,9 @@ import { ThemeOptions } from '@mui/material';
 import { MediaKind, RtpCapabilities, RtpParameters } from 'mediasoup-client/lib/RtpParameters';
 import { DtlsParameters } from 'mediasoup-client/lib/Transport';
 
+export type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> &
+Partial<Pick<Type, Key>>;
+
 export const defaultEdumeetConfig: EdumeetConfig = {
 	loginEnabled: false,
 	developmentPort: 8443,
@@ -203,14 +206,6 @@ export interface ChatMessage {
 	displayName?: string;
 	timestamp?: number;
 	text?: string;
-}
-
-export interface FilesharingFile {
-	peerId: string;
-	displayName?: string;
-	timestamp?: number;
-	magnetURI: string;
-	started?: boolean;
 }
 
 export interface SocketInboundNotification {

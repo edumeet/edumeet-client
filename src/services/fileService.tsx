@@ -1,7 +1,7 @@
 import createTorrent from 'create-torrent';
 import WebTorrent from 'webtorrent';
 import { Logger } from '../utils/logger';
-import { getTrackerUrl } from '../utils/signalingHelpers';
+// import { getTrackerUrl } from '../utils/signalingHelpers';
 import { SignalingService } from './signalingService';
 
 const logger = new Logger('FileService');
@@ -9,7 +9,7 @@ const logger = new Logger('FileService');
 export class FileService {
 	private signalingService: SignalingService;
 	private webTorrent?: WebTorrent.Instance;
-	private tracker = getTrackerUrl();
+	// private tracker = getTrackerUrl();
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		this.signalingService = signalingService;
@@ -50,7 +50,7 @@ export class FileService {
 	
 				this.webTorrent?.seed(
 					files,
-					{ announceList: [ [ this.tracker ] ] },
+					{ /* announceList: [ [ this.tracker ] ] */ },
 					async (newTorrent) => {
 						await this.signalingService.sendRequest('sendFile', { magnetURI: newTorrent.magnetURI })
 							.catch((err) => logger.warn('sendFile, unable to send file [magnetURI:%s, error:%o]', newTorrent.magnetURI, err));

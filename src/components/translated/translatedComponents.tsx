@@ -286,6 +286,23 @@ export const StartingFileSharingMessage = (): JSX.Element =>
 		defaultMessage='Attempting to share file'
 	/>;
 
+export const DownloadFileMessage = (): JSX.Element =>
+	<FormattedMessage id='filesharing.download' defaultMessage='Download' />;
+
+export const SaveFileMessage = (): JSX.Element =>
+	<FormattedMessage id='filesharing.save' defaultMessage='Save' />;
+
+export const saveFileErrorLabel = (): string => intl.formatMessage({
+	id: 'filesharing.saveFileError',
+	defaultMessage: 'Error saving file'
+});
+
+export const DownloadFileErrorMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='filesharing.downloadError'
+		defaultMessage='Download failed'
+	/>;
+
 export const filesharingUnsupportedLabel = (): string =>
 	intl.formatMessage({
 		id: 'label.fileSharingUnsupported',
