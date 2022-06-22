@@ -35,8 +35,8 @@ const notificationsSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(roomActions.updateRoom, (state, action) => {
-				if (action.payload.joined) {
+			.addCase(roomActions.setState, (state, action) => {
+				if (action.payload === 'joined') {
 					state.push({
 						key: uuid(),
 						message: joinedRoomLabel(),

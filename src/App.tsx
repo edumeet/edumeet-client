@@ -8,6 +8,7 @@ import Lobby from './views/lobby/Lobby';
 import Room from './views/room/Room';
 import { sendFiles } from './store/actions/filesharingActions';
 import { uiActions } from './store/slices/uiSlice';
+import { RoomConnectionState } from './store/slices/roomSlice';
 
 type AppParams = {
 	id: string;
@@ -16,9 +17,7 @@ type AppParams = {
 const App = (): JSX.Element => {
 	useNotifier();
 	const dispatch = useAppDispatch();
-	const joined = useAppSelector((state) => state.room.joined);
-	const inLobby = useAppSelector((state) => state.room.inLobby);
-
+	const roomState = useAppSelector((state) => state.room.state) as RoomConnectionState;
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
 
 	useEffect(() => {
@@ -26,7 +25,7 @@ const App = (): JSX.Element => {
 	}, []);
 
 	const handleFileDrop = (event: React.DragEvent<HTMLDivElement>): void => {
-		if (!joined) return;
+		if (roomState !== 'joined') return;
 
 		event.preventDefault();
 
@@ -43,7 +42,7 @@ const App = (): JSX.Element => {
 			onDrop={handleFileDrop}
 			onDragOver={(event) => event.preventDefault()}
 		>
-			{ joined ? <Room /> : inLobby ? <Lobby /> : <Join roomId={id} /> }
+			{ roomState === 'joined' ? <Room /> : roomState === 'lobby' ? <Lobby /> : <Join roomId={id} /> }
 		</StyledBackground>
 	);
 };

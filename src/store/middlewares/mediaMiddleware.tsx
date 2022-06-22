@@ -21,7 +21,7 @@ const createMediaMiddleware = ({
 		getState: RootState
 	}) =>
 		(next) => async (action) => {
-			if (roomActions.updateRoom.match(action) && action.payload.joined) {
+			if (roomActions.setState.match(action) && action.payload === 'joined') {
 				// Server has provided us with a new Consumer. The MediaService
 				// has created it for us and we need to add it to the store.
 				// MediaService will notify us of any changes to Consumer.

@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export type SignalingConnectionState = 'new' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
 export interface SignalingState {
-	connecting: boolean;
-	connected: boolean;
+	state: SignalingConnectionState;
 	url: string;
 }
 
 const initialState: SignalingState = {
-	connecting: false,
-	connected: false,
+	state: 'new',
 	url: 'wss://localhost',
 };
 
@@ -17,15 +17,16 @@ const signalingSlice = createSlice({
 	initialState,
 	reducers: {
 		connect: ((state) => {
-			state.connecting = true;
+			state.state = 'connecting';
 		}),
 		connected: ((state) => {
-			state.connected = true;
-			state.connecting = false;
+			state.state = 'connected';
 		}),
 		disconnected: ((state) => {
-			state.connected = false;
-			state.connecting = false;
+			state.state = 'disconnected';
+		}),
+		reconnecting: ((state) => {
+			state.state = 'reconnecting';
 		}),
 		setUrl: ((state, action: PayloadAction<string>) => {
 			state.url = action.payload;

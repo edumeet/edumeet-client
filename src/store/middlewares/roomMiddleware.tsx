@@ -22,17 +22,11 @@ const createRoomMiddleware = ({
 		getState: RootState
 	}) =>
 		(next) => (action) => {
-			if (signalingActions.connect.match(action)) {
-				dispatch(roomActions.setRoomState('connecting'));
-			}
-
 			if (signalingActions.disconnected.match(action)) {
 				// TODO: close session
 			}
 
-			if (signalingActions.connected.match(action)) {
-				dispatch(roomActions.setRoomState('connected'));
-
+			if (signalingActions.connect.match(action)) {
 				signalingService.on('notification', (notification) => {
 					try {
 						switch (notification.method) {
@@ -41,24 +35,25 @@ const createRoomMiddleware = ({
 
 								batch(() => {
 									dispatch(webrtcActions.setIceServers(turnServers));
-									dispatch(roomActions.updateRoom({ inLobby: false, joined: true }));
+									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
 								break;
 							}
 
 							case 'enteredLobby': {
-								dispatch(roomActions.updateRoom({ inLobby: true }));
+								dispatch(roomActions.setState('lobby'));
 								// TODO: send displayname and picture
 								break;
 							}
 
 							case 'overRoomLimit': {
-								dispatch(roomActions.updateRoom({ overRoomLimit: true }));
+								dispatch(roomActions.setState('overRoomLimit'));
 								break;
 							}
 
 							case 'roomBack': {
+								dispatch(roomActions.setState('joined'));
 								break;
 							}
 
@@ -78,7 +73,7 @@ const createRoomMiddleware = ({
 
 			// TODO: reconnect states here
 
-			if (roomActions.setRoomMode.match(action)) {
+			if (roomActions.setMode.match(action)) {
 				const roomMode = action.payload;
 
 				if (roomMode === 'P2P')

@@ -15,7 +15,6 @@ export const login = () => (
 	const { id: peerId } = getState().me;
 	const { name: roomId } = getState().room;
 
-	logger.debug('Login!');
 	window.open(`/auth/login?peerId=${peerId}&roomId=${roomId}`, 'loginWindow');
 };
 
@@ -28,7 +27,6 @@ export const logout = () => (
 	const { id: peerId } = getState().me;
 	const { name: roomId } = getState().room;
 
-	logger.debug('Logout!');
 	window.open(`/auth/logout?peerId=${peerId}&roomId=${roomId}`, 'logoutWindow');
 };
 

@@ -20,13 +20,13 @@ const createFilesharingMiddleware = ({
 		getState: RootState
 	}) =>
 		(next) => (action) => {
-			if (roomActions.updateRoom.match(action) && action.payload.joined) {
+			if (roomActions.setState.match(action) && action.payload === 'joined') {
 				const iceServers = getState().room.iceServers;
 
 				fileService.init(iceServers);
 			}
 
-			if (signalingActions.connected.match(action)) {
+			if (signalingActions.connect.match(action)) {
 				signalingService.on('notification', (notification) => {
 					try {
 						switch (notification.method) {

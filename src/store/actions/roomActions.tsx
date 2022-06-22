@@ -76,7 +76,7 @@ export const joinRoom = () => async (
 	const spotlights = lastNHistory.filter((peerId: string) => peerId !== meId);
 
 	batch(() => {
-		dispatch(roomActions.setRoomMode(roomMode));
+		dispatch(roomActions.setMode(roomMode));
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
 		dispatch(permissionsActions.setRoomPermissions(roomPermissions));
 		dispatch(permissionsActions.setUserRoles(userRoles));

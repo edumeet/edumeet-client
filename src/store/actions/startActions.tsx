@@ -15,6 +15,8 @@ import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { drawerActions } from '../slices/drawerSlice';
 import { devicesChangedLabel } from '../../components/translated/translatedComponents';
+import { permissionsActions } from '../slices/permissionsSlice';
+import { settingsActions } from '../slices/settingsSlice';
 
 const logger = new Logger('listenerActions');
 
@@ -183,5 +185,19 @@ export const startListeners = () => (
 				break;
 			}
 		}
+	});
+
+	window.addEventListener('message', ({ data }: MessageEvent) => {
+		if (data.type === 'edumeet-login') {
+			const { data: {
+				displayName,
+				picture,
+			} } = data;
+
+			displayName && dispatch(settingsActions.setDisplayName(displayName));
+			picture && dispatch(meActions.setPicture(picture));
+			dispatch(permissionsActions.setLoggedIn(true));
+		} else if (data.type === 'edumeet-logout')
+			dispatch(permissionsActions.setLoggedIn(false));
 	});
 };

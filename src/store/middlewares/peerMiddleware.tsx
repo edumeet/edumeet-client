@@ -20,7 +20,7 @@ const createPeerMiddleware = ({
 		getState: RootState
 	}) =>
 		(next) => (action) => {
-			if (signalingActions.connected.match(action)) {
+			if (signalingActions.connect.match(action)) {
 				signalingService.on('notification', (notification) => {
 					try {
 						switch (notification.method) {

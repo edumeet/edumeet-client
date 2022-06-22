@@ -1,14 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { peersActions } from './peersSlice';
 
-export type RoomConnectionState = 'new' | 'connecting' | 'connected' | 'disconnected' | 'closed';
+export type RoomConnectionState = 'new' | 'lobby' | 'overRoomLimit' | 'joined' | 'kicked' | 'disconnected';
 export type SettingsTab = 'media' | 'appearance';
+export type RoomMode = 'P2P' | 'SFU';
 
 export interface RoomState {
 	name?: string;
-	joined?: boolean;
-	inLobby?: boolean;
-	overRoomLimit?: boolean;
 	activeSpeakerId?: string;
 	lockInProgress?: boolean;
 	localeInProgress?: boolean;
@@ -24,7 +22,7 @@ export interface RoomState {
 	selectedPeers: string[];
 	spotlights: string[];
 	state: RoomConnectionState;
-	roomMode: 'P2P' | 'SFU';
+	roomMode: RoomMode;
 }
 
 type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'selectedPeers' | 'spotlights'>;
@@ -43,10 +41,10 @@ const roomSlice = createSlice({
 		updateRoom: ((state, action: PayloadAction<RoomUpdate>) => {
 			return { ...state, ...action.payload };
 		}),
-		setRoomMode: ((state, action: PayloadAction<'P2P' | 'SFU'>) => {
+		setMode: ((state, action: PayloadAction<RoomMode>) => {
 			state.roomMode = action.payload;
 		}),
-		setRoomState: ((
+		setState: ((
 			state,
 			action: PayloadAction<RoomConnectionState>
 		) => {
