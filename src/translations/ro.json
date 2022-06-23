@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "Numele afișat e schimbat în {displayName}",
 	"room.chatError": "Încercarea de a trimite mesajul de chat a eșuat",
 	"room.clearChat": null,
+	"room.clearFiles": null,
 	"room.closeMeeting": null,
 	"room.consentUnderstand": "I understand",
 	"room.cookieConsent": "Acest website utilizează cookie-uri pentru a îmbunătăți experiența utilizatorului",

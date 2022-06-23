@@ -112,6 +112,7 @@
 	"room.changedDisplayName": "Navnet ditt er nå {displayName}",
 	"room.chatError": "Klarte ikke sende melding",
 	"room.clearChat": "Tøm chat",
+	"room.clearFiles": null,
 	"room.closeMeeting": "Avslutt møte",
 	"room.consentUnderstand": "Jeg forstår",
 	"room.cookieConsent": "Denne siden bruker cookies for å forbedre brukeropplevelsen",

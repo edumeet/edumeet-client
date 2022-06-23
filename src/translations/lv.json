@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "Jūsu vārds mainīts uz {displayName}",
 	"room.chatError": "Nav iespējams nosūtīt tērziņa ziņu",
 	"room.clearChat": "Nodzēst visus tērziņus",
+	"room.clearFiles": null,
 	"room.closeMeeting": "Beigt sapulci",
 	"room.consentUnderstand": "Es saprotu un piekrītu",
 	"room.cookieConsent": "Lai uzlabotu lietotāja pieredzi, šī vietne izmanto sīkfailus",

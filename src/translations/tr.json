@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "Adınız {displayName} olarak değiştirildi",
 	"room.chatError": "Sohbet mesajı gönderilemiyor",
 	"room.clearChat": "Sohbeti temizle",
+	"room.clearFiles": null,
 	"room.closeMeeting": "Toplantıyı kapat",
 	"room.consentUnderstand": "Anladım",
 	"room.cookieConsent": "Bu web sayfası kullanıcı deneyimini geliştirmek için çerezleri kullanmaktadır",

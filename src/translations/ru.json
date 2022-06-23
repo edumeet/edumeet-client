@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "Ваше имя изменено на {displayName}",
 	"room.chatError": "Невозможно отправить сообщение чата",
 	"room.clearChat": "Очистить чат",
+	"room.clearFiles": null,
 	"room.closeMeeting": "Закрыть видеоконференцию",
 	"room.consentUnderstand": "Я понимаю",
 	"room.cookieConsent": "Этот веб-сайт использует файлы cookie для улучшения взаимодействия с пользователем",

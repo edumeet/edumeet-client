@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "Vaše jméno bylo změněno na {displayName}",
 	"room.chatError": "Zprávu nebylo možné odeslat",
 	"room.clearChat": "Vymazat zprávy",
+	"room.clearFiles": null,
 	"room.closeMeeting": "Ukončit meeting pro všechny",
 	"room.consentUnderstand": "Rozumím",
 	"room.cookieConsent": "Tato stránka používá cookies s cílem zajistit co možná nejlepší uživatelský zážitek",

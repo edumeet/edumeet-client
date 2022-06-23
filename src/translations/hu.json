@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "A neved sikeresen megváltozott: {displayName}",
 	"room.chatError": "Hiba lépett fel a chat üzenetet elküldése során",
 	"room.clearChat": "Chat történelem kiürítése",
+	"room.clearFiles": null,
 	"room.closeMeeting": "Konferencia lebontása",
 	"room.consentUnderstand": "Megértettem",
 	"room.cookieConsent": "Ez a weblap a felhasználói élmény fokozása miatt sütiket használ",

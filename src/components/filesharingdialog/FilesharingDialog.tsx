@@ -4,7 +4,7 @@ import {
 	DialogTitle,
 	styled,
 } from '@mui/material';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector, usePermissionSelector } from '../../store/hooks';
 import { uiActions } from '../../store/slices/uiSlice';
 import StyledDialog from '../dialog/StyledDialog';
 import {
@@ -16,6 +16,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 import { sendFiles } from '../../store/actions/filesharingActions';
 import FilesharingList from './FilesharingList';
+import { permissions } from '../../utils/roles';
+import FilesharingModerator from './FilesharingModerator';
 
 const ShareLabel = styled('label')(({ theme }) => ({
 	display: 'flex',
@@ -28,6 +30,7 @@ const ShareLabel = styled('label')(({ theme }) => ({
 const FilesharingDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const filesharingOpen = useAppSelector((state) => state.ui.filesharingOpen);
+	const isFilesharingModerator = usePermissionSelector(permissions.MODERATE_FILES);
 	const startFileSharingInProgress =
 		useAppSelector((state) => state.room.startFileSharingInProgress);
 
@@ -52,6 +55,7 @@ const FilesharingDialog = (): JSX.Element => {
 			<DialogTitle>
 				<FilesharingMessage />
 			</DialogTitle>
+			{ isFilesharingModerator && <FilesharingModerator /> }
 			<input
 				hidden
 				id='file-input'

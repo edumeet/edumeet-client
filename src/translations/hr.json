@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "Ime promijenjeno u {displayName}",
 	"room.chatError": "Poruku nije moguće poslati",
 	"room.clearChat": "Izbriši razgovor",
+	"room.clearFiles": null,
 	"room.closeMeeting": "Završi sastanak",
 	"room.consentUnderstand": "Razumijem",
 	"room.cookieConsent": "Ova stranica koristi kolačiće radi poboljšanja korisničkog iskustva",

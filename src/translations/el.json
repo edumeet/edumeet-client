@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "Το εμφανιζόμενο όνομα σας άλλαξε σε {displayName}",
 	"room.chatError": "Δεν είναι δυνατή η αποστολή μηνυμάτων συνομιλίας",
 	"room.clearChat": null,
+	"room.clearFiles": null,
 	"room.closeMeeting": null,
 	"room.consentUnderstand": "I understand",
 	"room.cookieConsent": "Αυτός ο ιστότοπος χρησιμοποιεί cookies για να βελτιώσει την εμπειρία χρήσης",

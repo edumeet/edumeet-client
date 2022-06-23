@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "Відображуване ім’я змінено на {displayName}",
 	"room.chatError": "Не вдається надіслати повідомлення в чаті",
 	"room.clearChat": "Очистити чат",
+	"room.clearFiles": null,
 	"room.closeMeeting": "Закрити зустріч",
 	"room.consentUnderstand": "Я розумію",
 	"room.cookieConsent": "Цей веб-сайт використовує файли cookie для поліпшення роботи користувачів",

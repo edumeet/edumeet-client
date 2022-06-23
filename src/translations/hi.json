@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "आपका प्रदर्शित नाम बदलकर {displayName} हो गया है",
 	"room.chatError": "संदेश भेजने में असमर्थ",
 	"room.clearChat": "चैट मिटा दीजिऐ",
+	"room.clearFiles": null,
 	"room.closeMeeting": "मीटिंग बंद",
 	"room.consentUnderstand": "में समझता हूं",
 	"room.cookieConsent": "यह वेबसाइट उपयोगकर्ता अनुभव को बढ़ाने के लिए कुकीज़ का उपयोग करती है",

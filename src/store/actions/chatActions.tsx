@@ -28,3 +28,19 @@ export const sendChat = (message: string) => async (
 		logger.error('sendChat() [error:"%o"]', error);
 	}
 };
+
+export const clearChat = () => async (
+	dispatch: AppDispatch,
+	_getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('clearChat()');
+
+	try {
+		await signalingService.sendRequest('moderator:clearChat');
+
+		dispatch(chatActions.clearChat());
+	} catch (error) {
+		logger.error('clearChat() [error:%o]', error);
+	}
+};

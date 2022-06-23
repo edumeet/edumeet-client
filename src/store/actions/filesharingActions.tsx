@@ -34,3 +34,19 @@ export const sendFiles = (files: FileList) => async (
 		dispatch(roomActions.updateRoom({ startFileSharingInProgress: false }));
 	}
 };
+
+export const clearFiles = () => async (
+	dispatch: AppDispatch,
+	_getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('clearFiles()');
+
+	try {
+		await signalingService.sendRequest('moderator:clearFiles');
+
+		dispatch(filesharingActions.clearFiles());
+	} catch (error) {
+		logger.error('clearFiles() [error:%o]', error);
+	}
+};

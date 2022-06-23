@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "Сіздің атыңыз {displayName} болып өзгертілді",
 	"room.chatError": "Чат хабарламасын жіберу мүмкін емес",
 	"room.clearChat": "Чатты тазарту",
+	"room.clearFiles": null,
 	"room.closeMeeting": "Видеоконференцияны жабу",
 	"room.consentUnderstand": "Мен түсінемін",
 	"room.cookieConsent": "Бұл веб-сайт пайдаланушы тәжірибесін жақсарту үшін cookies қолданады",

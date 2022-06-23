@@ -111,6 +111,7 @@
 	"room.changedDisplayName": null,
 	"room.chatError": "Kan ikke sende chatbesked",
 	"room.clearChat": null,
+	"room.clearFiles": null,
 	"room.closeMeeting": null,
 	"room.consentUnderstand": "I understand",
 	"room.cookieConsent": "Dette websted bruger cookies til at forbedre brugeroplevelsen",

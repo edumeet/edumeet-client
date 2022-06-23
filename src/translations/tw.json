@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "您的顯示名稱已變更為 {displayName}",
 	"room.chatError": "無法發送聊天消息",
 	"room.clearChat": "清除聊天訊息",
+	"room.clearFiles": null,
 	"room.closeMeeting": "關閉會議",
 	"room.consentUnderstand": "了解",
 	"room.cookieConsent": "本網站使用 Cookies 技術來提升您的使用者體驗",

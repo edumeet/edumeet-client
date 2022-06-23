@@ -112,6 +112,7 @@
 	"room.changedDisplayName": "您的显示名称更改为{displayName}",
 	"room.chatError": "无法发送聊天消息",
 	"room.clearChat": null,
+	"room.clearFiles": null,
 	"room.closeMeeting": null,
 	"room.consentUnderstand": null,
 	"room.cookieConsent": "这个网站使用cookies来增强用户体验",

@@ -40,7 +40,7 @@ import FilesharingButton from '../controlbuttons/FilesharingButton';
 import MicButton from '../controlbuttons/MicButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import RecordButton from '../controlbuttons/RecordButton';
-import LeaveButton from '../leavebutton/LeaveButton';
+import LeaveButton from '../textbuttons/LeaveButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;

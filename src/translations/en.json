@@ -112,6 +112,7 @@
 	"room.changedDisplayName": "Your display name changed to {displayName}",
 	"room.chatError": "Unable to send chat message",
 	"room.clearChat": "Clear chat",
+	"room.clearFiles": "Clear files",
 	"room.closeMeeting": "Close meeting for all",
 	"room.consentUnderstand": "I understand",
 	"room.cookieConsent": "This website uses cookies to enhance the user experience",

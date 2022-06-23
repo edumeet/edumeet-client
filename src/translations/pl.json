@@ -111,6 +111,7 @@
 	"room.changedDisplayName": "Nazwa użytkownika zmieniona na {displayName}",
 	"room.chatError": "Nie można wysłać wiadomości",
 	"room.clearChat": "Wyczyść czat",
+	"room.clearFiles": null,
 	"room.closeMeeting": "Zakończ spotkanie dla wszystkich",
 	"room.consentUnderstand": "Rozumiem",
 	"room.cookieConsent": "Ta strona internetowa wykorzystuje pliki cookie w celu zwiększenia wygody użytkowania.",

@@ -380,6 +380,22 @@ export const ModeratorActionsMessage = (): JSX.Element =>
 		defaultMessage='Moderator actions'
 	/>;
 
+export const ClearChatMessage = (): JSX.Element =>
+	<FormattedMessage id='room.clearChat' defaultMessage='Clear chat' />;
+
+export const clearChatLabel = (): string => intl.formatMessage({
+	id: 'room.clearChat',
+	defaultMessage: 'Clear chat'
+});
+
+export const ClearFilesMessage = (): JSX.Element =>
+	<FormattedMessage id='room.clearFiles' defaultMessage='Clear files' />;
+
+export const clearFilesLabel = (): string => intl.formatMessage({
+	id: 'room.clearFiles',
+	defaultMessage: 'Clear files'
+});
+
 export const SettingsMessage = (): JSX.Element =>
 	<FormattedMessage
 		id='settings.settings'

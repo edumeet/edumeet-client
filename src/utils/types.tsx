@@ -246,6 +246,7 @@ export type SocketOutboundRequestMethod =
 	'candidate' |
 	'moderator:lowerHand' |
 	'moderator:clearChat' |
+	'moderator:clearFiles' |
 	'moderator:clearFileSharing' |
 	'moderator:giveRole' |
 	'moderator:removeRole' |
