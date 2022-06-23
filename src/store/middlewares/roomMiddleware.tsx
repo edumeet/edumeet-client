@@ -22,8 +22,8 @@ const createRoomMiddleware = ({
 		getState: RootState
 	}) =>
 		(next) => (action) => {
-			if (signalingActions.disconnected.match(action)) {
-				// TODO: close session
+			if (signalingActions.disconnect.match(action)) {
+				dispatch(roomActions.setState('left'));
 			}
 
 			if (signalingActions.connect.match(action)) {

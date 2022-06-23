@@ -20,6 +20,14 @@ import { settingsActions } from '../slices/settingsSlice';
 
 const logger = new Logger('listenerActions');
 
+// eslint-disable-next-line no-unused-vars
+let keyListener: (event: KeyboardEvent) => void;
+// eslint-disable-next-line no-unused-vars
+let messageListener: (event: MessageEvent) => void;
+let deviceChangeListener: () => Promise<void>;
+// eslint-disable-next-line no-unused-vars
+let devicesUpdatedListener: (event: DevicesUpdated) => void;
+
 export const startListeners = () => (
 	dispatch: AppDispatch,
 	getState: RootState,
@@ -27,7 +35,7 @@ export const startListeners = () => (
 ): void => {
 	logger.debug('startListeners()');
 
-	deviceService.on('devicesUpdated', ({
+	devicesUpdatedListener = ({
 		devices,
 		removedDevices,
 		newDevices
@@ -48,18 +56,22 @@ export const startListeners = () => (
 				message: devicesChangedLabel()
 			}));
 		}
-	});
+	};
 
-	navigator.mediaDevices.addEventListener('devicechange', async () => {
+	deviceService.on('devicesUpdated', devicesUpdatedListener);
+
+	deviceChangeListener = async () => {
 		logger.debug('devicechange');
 
 		await deviceService.updateMediaDevices();
-	});
+	};
+
+	navigator.mediaDevices.addEventListener('devicechange', deviceChangeListener);
 
 	const audioPermissionSelector = makePermissionSelector(permissions.SHARE_AUDIO);
 	const videoPermissionSelector = makePermissionSelector(permissions.SHARE_VIDEO);
 
-	document.addEventListener('keydown', ({ repeat, target, key }): void => {
+	keyListener = ({ repeat, target, key }): void => {
 		if (repeat) return;
 
 		const source = target as HTMLElement;
@@ -185,9 +197,11 @@ export const startListeners = () => (
 				break;
 			}
 		}
-	});
+	};
 
-	window.addEventListener('message', ({ data }: MessageEvent) => {
+	document.addEventListener('keydown', keyListener);
+
+	messageListener = ({ data }: MessageEvent) => {
 		if (data.type === 'edumeet-login') {
 			const { data: {
 				displayName,
@@ -199,5 +213,20 @@ export const startListeners = () => (
 			dispatch(permissionsActions.setLoggedIn(true));
 		} else if (data.type === 'edumeet-logout')
 			dispatch(permissionsActions.setLoggedIn(false));
-	});
+	};
+
+	window.addEventListener('message', messageListener);
+};
+
+export const stopListeners = () => (
+	_dispatch: AppDispatch,
+	_getState: RootState,
+	{ deviceService }: MiddlewareOptions
+): void => {
+	logger.debug('stopListeners()');
+
+	deviceService.removeListener('devicesUpdated', devicesUpdatedListener);
+	navigator.mediaDevices.removeEventListener('devicechange', deviceChangeListener);
+	document.removeEventListener('keydown', keyListener);
+	window.removeEventListener('message', messageListener);
 };

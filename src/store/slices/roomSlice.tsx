@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { peersActions } from './peersSlice';
 
-export type RoomConnectionState = 'new' | 'lobby' | 'overRoomLimit' | 'joined' | 'kicked' | 'disconnected';
+export type RoomConnectionState = 'new' | 'lobby' | 'overRoomLimit' | 'joined' | 'kicked' | 'left';
 export type SettingsTab = 'media' | 'appearance';
 export type RoomMode = 'P2P' | 'SFU';
 
@@ -48,6 +48,11 @@ const roomSlice = createSlice({
 			state,
 			action: PayloadAction<RoomConnectionState>
 		) => {
+			if (action.payload === 'left') {
+				state.selectedPeers = [];
+				state.spotlights = [];
+			}
+
 			state.state = action.payload;
 		}),
 		setActiveSpeakerId: ((

@@ -6,6 +6,7 @@ import { roomActions } from '../slices/roomSlice';
 import { producersActions, ProducerSource } from '../slices/producersSlice';
 import { videoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
+import { signalingActions } from '../slices/signalingSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -21,6 +22,10 @@ const createMediaMiddleware = ({
 		getState: RootState
 	}) =>
 		(next) => async (action) => {
+			if (signalingActions.connect.match(action)) {
+				mediaService.init();
+			}
+
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
 				// Server has provided us with a new Consumer. The MediaService
 				// has created it for us and we need to add it to the store.
@@ -74,6 +79,11 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 				});
+			}
+
+			if (roomActions.setState.match(action) && action.payload === 'left') {
+				mediaService.removeAllListeners();
+				mediaService.close();
 			}
 
 			// These actions are dispatched from the UI somewhere manually (button clicks, etc)

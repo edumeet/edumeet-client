@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { roomActions } from './roomSlice';
 
 export interface Peer {
 	id: string;
@@ -101,6 +102,13 @@ const peersSlice = createSlice({
 					peer.roles.filter((role) => role !== roleId);
 			}
 		}),
+	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(roomActions.setState, (_state, action) => {
+				if (action.payload === 'left')
+					return [];
+			});
 	}
 });
 

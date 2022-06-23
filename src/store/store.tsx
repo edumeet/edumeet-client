@@ -140,3 +140,7 @@ export const persistor = persistStore(store);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
 export type RootState = ReturnType<typeof store.getState>;
+
+export const LeavePromptContext = createContext<() => Promise<void>>(() =>
+	Promise.resolve()
+);

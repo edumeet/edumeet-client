@@ -13,7 +13,6 @@ export interface UiState {
 	rolesManagerOpen?: boolean;
 	helpOpen?: boolean;
 	aboutOpen?: boolean;
-	leaveOpen?: boolean;
 	lobbyDialogOpen?: boolean;
 	extraVideoDialogOpen?: boolean;
 	currentSettingsTab: SettingsTab;
@@ -30,7 +29,6 @@ const initialState: UiState = {
 	rolesManagerOpen: false,
 	helpOpen: false,
 	aboutOpen: false,
-	leaveOpen: false,
 	lobbyDialogOpen: false,
 	extraVideoDialogOpen: false,
 	currentSettingsTab: 'media'

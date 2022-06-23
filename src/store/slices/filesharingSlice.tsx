@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { peersActions } from './peersSlice';
+import { roomActions } from './roomSlice';
 
 export interface FilesharingFile {
 	peerId: string;
@@ -64,6 +65,10 @@ const filesharingSlice = createSlice({
 						return file;
 					});
 				}
+			})
+			.addCase(roomActions.setState, (_state, action) => {
+				if (action.payload === 'left')
+					return [];
 			});
 	}
 });

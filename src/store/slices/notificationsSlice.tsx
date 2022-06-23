@@ -42,7 +42,8 @@ const notificationsSlice = createSlice({
 						message: joinedRoomLabel(),
 						options: { variant: 'success' }
 					});
-				}
+				} else if (action.payload === 'left')
+					return [];
 			})
 			.addCase(peersActions.addPeer, (state, action) => {
 				const { displayName } = action.payload;

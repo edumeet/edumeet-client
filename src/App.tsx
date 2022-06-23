@@ -1,14 +1,19 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { startListeners } from './store/actions/startActions';
-import { useAppDispatch, useAppSelector, useNotifier } from './store/hooks';
+import { startListeners, stopListeners } from './store/actions/startActions';
+import {
+	useAppDispatch,
+	useAppSelector,
+	useNotifier
+} from './store/hooks';
 import StyledBackground from './components/StyledBackground';
 import Join from './views/join/Join';
 import Lobby from './views/lobby/Lobby';
 import Room from './views/room/Room';
 import { sendFiles } from './store/actions/filesharingActions';
 import { uiActions } from './store/slices/uiSlice';
-import { RoomConnectionState } from './store/slices/roomSlice';
+import { roomActions, RoomConnectionState } from './store/slices/roomSlice';
+import { LeavePrompt } from './components/leaveprompt/LeavePrompt';
 
 type AppParams = {
 	id: string;
@@ -22,6 +27,11 @@ const App = (): JSX.Element => {
 
 	useEffect(() => {
 		dispatch(startListeners());
+
+		return () => {
+			dispatch(stopListeners());
+			dispatch(roomActions.setState('new'));
+		};
 	}, []);
 
 	const handleFileDrop = (event: React.DragEvent<HTMLDivElement>): void => {
@@ -38,12 +48,19 @@ const App = (): JSX.Element => {
 	};
 
 	return (
-		<StyledBackground
-			onDrop={handleFileDrop}
-			onDragOver={(event) => event.preventDefault()}
-		>
-			{ roomState === 'joined' ? <Room /> : roomState === 'lobby' ? <Lobby /> : <Join roomId={id} /> }
-		</StyledBackground>
+		<LeavePrompt>
+			<StyledBackground
+				onDrop={handleFileDrop}
+				onDragOver={(event) => event.preventDefault()}
+			>
+				{
+					roomState === 'joined' ?
+						<Room /> : roomState === 'lobby' ?
+							<Lobby /> : roomState === 'new' && <Join roomId={id} />
+				}
+			</StyledBackground>
+		</LeavePrompt>
+		
 	);
 };
 

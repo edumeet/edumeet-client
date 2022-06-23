@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Permission, Role } from '../../utils/roles';
+import { roomActions } from './roomSlice';
 
 export interface PermissionsState {
 	roles: number[]; // Role IDs
@@ -56,6 +57,22 @@ const permissionsSlice = createSlice({
 			state.allowWhenRoleMissing = action.payload;
 		}),
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(roomActions.setState, (state, action) => {
+				if (action.payload === 'left') {
+					state.roles = [];
+					state.loginEnabled = true;
+					state.loggedIn = false;
+					state.locked = false;
+					state.signInRequired = false;
+					state.userRoles = undefined;
+					state.roomPermissions = undefined;
+					state.allowWhenRoleMissing = undefined;
+					state.roomPermissions = undefined;
+				}
+			});
+	}
 });
 
 export const permissionsActions = permissionsSlice.actions;

@@ -76,8 +76,31 @@ export class MediaService extends EventEmitter {
 		super();
 
 		this.signalingService = signalingService;
+	}
 
+	public init(): void {
 		this.handleSignaling();
+	}
+
+	public close(): void {
+		logger.debug('close()');
+
+		// This will close all consumers and producers.
+		this.sendTransport?.close();
+		this.recvTransport?.close();
+
+		for (const peerTransport of this.peerTransports.values()) {
+			peerTransport.close();
+		}
+		
+		this.peerTransports.clear();
+		this.peers = [];
+
+		for (const track of this.tracks.values()) {
+			track.stop();
+		}
+
+		this.tracks.clear();
 	}
 
 	public getConsumer(consumerId: string): Consumer | undefined {
@@ -493,9 +516,11 @@ export class MediaService extends EventEmitter {
 		recvTransport: Transport | undefined;
 	}> {
 		try {
-			const routerRtpCapabilities = await this.signalingService.sendRequest('getRouterRtpCapabilities');
-
-			await this.mediasoup.load({ routerRtpCapabilities });
+			if (!this.mediasoup.loaded) {
+				const routerRtpCapabilities = await this.signalingService.sendRequest('getRouterRtpCapabilities');
+	
+				await this.mediasoup.load({ routerRtpCapabilities });
+			}
 
 			this.sendTransport = await this.createTransport('createSendTransport', iceServers);
 			this.recvTransport = await this.createTransport('createRecvTransport', iceServers);

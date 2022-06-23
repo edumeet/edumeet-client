@@ -13,12 +13,14 @@ import {
 	EnableMicrophoneMessage,
 	yourNameLabel
 } from '../../components/translated/translatedComponents';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, usePrompt } from '../../store/hooks';
 
 const Lobby = (): JSX.Element => {
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 	const { previewMicTrackId, previewWebcamTrackId } = useAppSelector((state) => state.me);
 	const [ displayName, setDisplayName ] = useState(stateDisplayName || '');
+
+	usePrompt(true);
 
 	const handleDisplayNameChange = (name: string) => {
 		setDisplayName(name.trim() ? name : name.trim());

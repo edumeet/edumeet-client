@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { roomActions } from './roomSlice';
 
 export interface LobbyPeer {
 	id: string;
@@ -43,6 +44,13 @@ const lobbyPeersSlice = createSlice({
 			}
 		}),
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(roomActions.setState, (_state, action) => {
+				if (action.payload === 'left')
+					return [];
+			});
+	}
 });
 
 export const lobbyPeersActions = lobbyPeersSlice.actions;

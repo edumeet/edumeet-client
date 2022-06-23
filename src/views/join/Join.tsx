@@ -55,12 +55,11 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	useEffect(() => {
 		dispatch(roomActions.updateRoom({ name: roomId }));
 
-		if (!audioMuted) {
+		if (!audioMuted)
 			dispatch(updatePreviewMic());
-		}
-		if (!videoMuted) {
+
+		if (!videoMuted)
 			dispatch(updatePreviewWebcam());
-		}
 	}, []);
 
 	return (

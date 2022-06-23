@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { roomActions } from './roomSlice';
 
 export interface StateProducer {
 	id: string;
@@ -59,6 +60,13 @@ const producersSlice = createSlice({
 				producer.paused = false;
 		}),
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(roomActions.setState, (_state, action) => {
+				if (action.payload === 'left')
+					return [];
+			});
+	}
 });
 
 export const producersActions = producersSlice.actions;

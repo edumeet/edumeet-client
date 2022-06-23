@@ -1,6 +1,5 @@
 import {
 	AppBar,
-	Button,
 	IconButton,
 	Toolbar,
 	Typography
@@ -22,13 +21,8 @@ import { drawerActions } from '../../store/slices/drawerSlice';
 import MenuIcon from '@mui/icons-material/Menu';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import edumeetConfig from '../../utils/edumeetConfig';
-import {
-	leaveLabel,
-	LeaveMessage,
-	openDrawerLabel,
-} from '../translated/translatedComponents';
+import { openDrawerLabel } from '../translated/translatedComponents';
 import { permissions } from '../../utils/roles';
-import { uiActions } from '../../store/slices/uiSlice';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import Login from '../menuitems/Login';
 import Lock from '../menuitems/Lock';
@@ -46,6 +40,7 @@ import FilesharingButton from '../controlbuttons/FilesharingButton';
 import MicButton from '../controlbuttons/MicButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import RecordButton from '../controlbuttons/RecordButton';
+import LeaveButton from '../leavebutton/LeaveButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -99,7 +94,6 @@ const TopBar = ({
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 	const canRecord = useAppSelector((state) => state.me.canRecord);
-	const leaveOpen = useAppSelector((state) => state.ui.leaveOpen);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
 	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
 	const unread = useAppSelector(unreadSelector);
@@ -182,15 +176,7 @@ const TopBar = ({
 						</IconButton>
 					</MobileDiv>
 					<DividerDiv />
-
-					<Button
-						aria-label={leaveLabel()}
-						color='error'
-						variant='contained'
-						onClick={() => dispatch(uiActions.setUi({ leaveOpen: !leaveOpen }))}
-					>
-						<LeaveMessage />
-					</Button>
+					<LeaveButton />
 				</Toolbar>
 			</StyledAppBar>
 			<FloatingMenu

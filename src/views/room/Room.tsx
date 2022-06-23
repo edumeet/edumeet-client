@@ -5,7 +5,7 @@ import MeetingDrawer from '../../components/meetingdrawer/MeetingDrawer';
 import Democratic from '../../components/democratic/Democratic';
 import Settings from '../../components/settingsdialog/SettingsDialog';
 import TopBar from '../../components/topbar/TopBar';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, usePrompt } from '../../store/hooks';
 import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
 import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import AudioPeers from '../../components/audiopeers/AudioPeers';
@@ -16,6 +16,8 @@ import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog
 const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
 	const settings = useAppSelector((state) => state.settings);
+
+	usePrompt(true);
 
 	useEffect(() => {
 		if (fscreen.fullscreenEnabled) {

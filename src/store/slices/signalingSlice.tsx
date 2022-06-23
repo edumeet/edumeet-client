@@ -22,7 +22,7 @@ const signalingSlice = createSlice({
 		connected: ((state) => {
 			state.state = 'connected';
 		}),
-		disconnected: ((state) => {
+		disconnect: ((state) => {
 			state.state = 'disconnected';
 		}),
 		reconnecting: ((state) => {

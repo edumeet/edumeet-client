@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { peersActions } from './peersSlice';
 import { ProducerSource } from './producersSlice';
+import { roomActions } from './roomSlice';
 
 export interface StateConsumer {
 	id: string;
@@ -61,6 +62,10 @@ const consumersSlice = createSlice({
 		builder
 			.addCase(peersActions.removePeer, (state, action) => {
 				return state.filter((consumer) => consumer.peerId !== action.payload.id);
+			})
+			.addCase(roomActions.setState, (_state, action) => {
+				if (action.payload === 'left')
+					return [];
 			});
 	}
 });

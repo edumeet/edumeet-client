@@ -51,6 +51,14 @@ export class SignalingService extends EventEmitter {
 		this.handleSocket();
 	}
 
+	public disconnect(): void {
+		logger.debug('disconnect()');
+
+		this.socket?.removeAllListeners();
+		this.socket?.close();
+		this.socket = undefined;
+	}
+
 	private handleSocket(): void {
 		this.socket?.on('notification', (notification) => {
 			logger.debug(

@@ -7,6 +7,7 @@ import { meActions } from '../slices/meSlice';
 import { peersActions } from '../slices/peersSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { roomActions } from '../slices/roomSlice';
+import { signalingActions } from '../slices/signalingSlice';
 import { webrtcActions } from '../slices/webrtcSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
@@ -102,4 +103,12 @@ export const joinRoom = () => async (
 		if (!videoMuted)
 			dispatch(updateWebcam({ init: true, start: true }));
 	});
+};
+
+export const leaveRoom = () => async (
+	dispatch: AppDispatch
+): Promise<void> => {
+	logger.debug('leaveRoom()');
+
+	dispatch(signalingActions.disconnect());
 };

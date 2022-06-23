@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ChatMessage } from '../../utils/types';
 import { peersActions } from './peersSlice';
+import { roomActions } from './roomSlice';
 
 type ChatState = ChatMessage[];
 
@@ -33,6 +34,10 @@ const chatSlice = createSlice({
 						return message;
 					});
 				}
+			})
+			.addCase(roomActions.setState, (_state, action) => {
+				if (action.payload === 'left')
+					return [];
 			});
 	}
 });

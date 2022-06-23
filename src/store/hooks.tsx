@@ -1,5 +1,16 @@
 import { SnackbarKey, useSnackbar } from 'notistack';
-import { useEffect, useMemo } from 'react';
+import {
+	useCallback,
+	ContextType,
+	useContext,
+	useEffect,
+	useMemo
+} from 'react';
+import { Blocker, History, Transition } from 'history';
+import {
+	Navigator as BaseNavigator,
+	UNSAFE_NavigationContext as NavigationContext
+} from 'react-router-dom';
 import {
 	TypedUseSelectorHook,
 	useDispatch,
@@ -17,6 +28,7 @@ import {
 import { Notification, notificationsActions } from './slices/notificationsSlice';
 import { Peer } from './slices/peersSlice';
 import type { RootState, AppDispatch } from './store';
+import { LeavePromptContext } from './store';
 
 export const useAppDispatch = (): AppDispatch => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -78,4 +90,56 @@ export const useNotifier = (): void => {
 			storeDisplayed(key);
 		});
 	}, [ notifications, closeSnackbar, enqueueSnackbar, dispatch ]);
+};
+
+interface Navigator extends BaseNavigator {
+	block: History['block'];
+}
+
+type NavigationContextWithBlock = ContextType<typeof NavigationContext> & {
+	navigator: Navigator;
+};
+
+export const useBlocker = (blocker: Blocker, when = true): void => {
+	const { navigator } = useContext(
+		NavigationContext
+	) as NavigationContextWithBlock;
+
+	useEffect(() => {
+		if (!when) {
+			return;
+		}
+
+		const unblock = navigator.block((tx: Transition) => {
+			const autoUnblockingTx = {
+				...tx,
+				retry() {
+					unblock();
+					tx.retry();
+				}
+			};
+
+			blocker(autoUnblockingTx);
+		});
+
+		return unblock;
+	}, [ navigator, blocker, when ]);
+};
+
+export const usePrompt = (when = true): void => {
+	const showPrompt = useContext(LeavePromptContext);
+
+	const blocker = useCallback(
+		async (tx: Transition) => {
+			try {
+				await showPrompt();
+				tx.retry();
+			} catch (e) {
+				// Do nothing
+			}
+		},
+		[ showPrompt ]
+	);
+
+	return useBlocker(blocker, when);
 };

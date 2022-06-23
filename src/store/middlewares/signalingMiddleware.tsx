@@ -23,7 +23,7 @@ const createSignalingMiddleware = ({
 				});
 
 				signalingService.on('disconnect', () => {
-					dispatch(signalingActions.disconnected());
+					dispatch(signalingActions.disconnect());
 				});
 
 				signalingService.on('reconnect', () => {
@@ -31,6 +31,11 @@ const createSignalingMiddleware = ({
 				});
 
 				signalingService.connect(getState().signaling);
+			}
+
+			if (signalingActions.disconnect.match(action)) {
+				signalingService.removeAllListeners();
+				signalingService.disconnect();
 			}
 
 			return next(action);

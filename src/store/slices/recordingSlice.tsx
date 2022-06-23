@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { roomActions } from './roomSlice';
 
 export interface RecordingState {
 	recording: boolean;
@@ -19,6 +20,13 @@ const recordingSlice = createSlice({
 			state.recording = false;
 		}),
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(roomActions.setState, (state, action) => {
+				if (action.payload === 'left')
+					state.recording = false;
+			});
+	}
 });
 
 export const recordingActions = recordingSlice.actions;

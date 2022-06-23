@@ -1,6 +1,18 @@
 import { FormattedMessage } from 'react-intl';
 import { intl } from '../../utils/intlManager';
 
+export const NoMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='label.no'
+		defaultMessage='No'
+	/>;
+
+export const YesMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='label.yes'
+		defaultMessage='Yes'
+	/>;
+
 export const joinedRoomLabel = (): string => intl.formatMessage({
 	id: 'room.joined',
 	defaultMessage: 'You have joined the room'
@@ -50,6 +62,15 @@ export const promoteFromLobbyLabel = (): string => intl.formatMessage({
 	id: 'tooltip.admitFromLobby',
 	defaultMessage: 'Click to let them in'
 });
+
+export const ConfirmLeaveMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='room.leaveConfirmationMessage'
+		defaultMessage='Do you want to leave the room?'
+	/>;
+
+export const LeaveRoomMessage = (): JSX.Element =>
+	<FormattedMessage id='room.leavingTheRoom' defaultMessage='Leaving the room' />;
 
 export const ShowSelfViewMessage = (): JSX.Element =>
 	<FormattedMessage id='room.showSelfView' defaultMessage='Show self view video' />;
