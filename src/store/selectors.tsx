@@ -64,6 +64,8 @@ export const spotlightPeersSelector = createSelector(
 		selectedPeers.concat(
 			spotlights.filter((item) => selectedPeers.indexOf(item) < 0)
 		).slice(0, lastN)
+			.sort((a, b) => String(a)
+				.localeCompare(String(b)))
 );
 
 export const peersVideoConsumersSelector = createSelector(
@@ -173,16 +175,6 @@ export const highestRoleLevelSelector = createSelector(
 export const spotlightsLengthSelector = createSelector(
 	spotlightsSelector,
 	(spotlights) => spotlights.length
-);
-
-export const spotlightSortedPeersSelector = createSelector(
-	spotlightsSelector,
-	peersSelector,
-	(spotlights, peers) =>
-		peers.filter((peer) => spotlights.includes(peer.id) && !peer.raisedHand)
-			.sort((a, b) => String(a.displayName || '')
-				.localeCompare(String(b.displayName || ''))
-			)
 );
 
 export const participantListSelector = createSelector(

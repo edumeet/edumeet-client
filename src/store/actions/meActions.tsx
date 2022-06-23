@@ -20,9 +20,29 @@ export const setDisplayName = (displayName: string) => async (
 		dispatch(settingsActions.setDisplayName(displayName));
 	} catch (error) {
 		logger.error('setDisplayName() [error:"%o"]', error);
-
-		// TODO: Notification about failed to set display name
 	} finally {
 		dispatch(meActions.setDispayNameInProgress(false));
+	}
+};
+
+export const setRaisedHand = (raisedHand: boolean) => async (
+	dispatch: AppDispatch,
+	_getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('setRaisedHand() [raisedHand:%s]', raisedHand);
+
+	dispatch(meActions.setRaiseHandInProgress(true));
+
+	try {
+		await signalingService.sendRequest('raisedHand', { raisedHand });
+
+		dispatch(meActions.setRaisedHand(raisedHand));
+	} catch (error) {
+		logger.error('setRaisedHand() [error:"%o"]', error);
+
+		dispatch(meActions.setRaisedHand(!raisedHand));
+	} finally {
+		dispatch(meActions.setRaiseHandInProgress(false));
 	}
 };

@@ -33,6 +33,11 @@ export const roomNameLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Room name'
 });
 
+export const raiseHandLabel = (): string => intl.formatMessage({
+	id: 'tooltip.raisedHand',
+	defaultMessage: 'Raise hand'
+});
+
 export const chatInputLabel = (): string => intl.formatMessage({
 	id: 'label.chatInput',
 	defaultMessage: 'Enter chat message...'

@@ -227,6 +227,7 @@ export type SocketOutboundRequestMethod =
 	'unlockRoom' |
 	'promotePeer' |
 	'promoteAllPeers' |
+	'raisedHand' |
 	'join' |
 	'getRouterRtpCapabilities' |
 	'createWebRtcTransport' |
@@ -263,6 +264,7 @@ export type SocketOutboundRequestData =
 	ProduceData |
 	ConsumerData |
 	JoinData |
+	RaisedHandData |
 	ProducerData |
 	DataConsumerData |
 	DisplayNameData |
@@ -277,6 +279,10 @@ export interface JoinData {
 	picture: string;
 	rtpCapabilities: RtpCapabilities;
 	returning?: boolean;
+}
+
+export interface RaisedHandData {
+	raisedHand: boolean;
 }
 
 export interface ConsumerData {

@@ -11,6 +11,7 @@ import {
 	ModeratorActionsMessage,
 	ParticipantsMessage
 } from '../translated/translatedComponents';
+import ListMe from './ListMe';
 import ListPeer from './ListPeer';
 
 const ParticipantListDiv = styled('div')(({ theme }) => ({
@@ -57,6 +58,7 @@ const ParticipantList = (): JSX.Element => {
 				<ListHeaderLi>
 					<MeMessage />
 				</ListHeaderLi>
+				<ListMe />
 			</ListUl>
 			<ListUl>
 				<ListHeaderLi>
