@@ -8,6 +8,7 @@ interface TextInputFieldProps {
 	// eslint-disable-next-line no-unused-vars
 	setValue: (value: string) => void;
 	onEnter?: () => void;
+	onBlur?: () => void;
 	disabled?: boolean;
 	margin?: 'dense' | 'none' | 'normal';
 	startAdornment?: ReactNode;
@@ -20,6 +21,7 @@ const TextInputField = ({
 	value,
 	setValue,
 	onEnter,
+	onBlur,
 	startAdornment,
 	endAdornment,
 	randomizeOnBlank,
@@ -47,6 +49,8 @@ const TextInputField = ({
 				}
 			}}
 			onBlur={() => {
+				onBlur?.();
+
 				if (randomizeOnBlank && !value.trim())
 					setValue(randomString({ length: 8 }).toLowerCase());
 			}}

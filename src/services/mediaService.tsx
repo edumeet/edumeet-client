@@ -306,14 +306,13 @@ export class MediaService extends EventEmitter {
 							consumer.appData.hark = consumerHark;
 							consumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
 						} else {
-							
 							const resolutionWatcher = new ResolutionWatcher();
 
 							resolutionWatcher.on('newResolution', async (resolution) => {
 								const { width } = resolution;
 								const spatialLayer = width >= 480 ? width >= 960 ? 2 : 1 : 0;
 								const temporalLayer = spatialLayer;
-								
+
 								await this.signalingService.sendRequest(
 									'setConsumerPreferredLayers',
 									{ consumerId: consumer.id, spatialLayer, temporalLayer }

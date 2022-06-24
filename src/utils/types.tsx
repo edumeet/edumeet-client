@@ -223,6 +223,7 @@ export type SocketOutboundRequestMethod =
 	'chatMessage' |
 	'sendFile' |
 	'changeDisplayName' |
+	'changePicture' |
 	'lockRoom' |
 	'unlockRoom' |
 	'promotePeer' |
@@ -269,6 +270,7 @@ export type SocketOutboundRequestData =
 	ProducerData |
 	DataConsumerData |
 	DisplayNameData |
+	PictureData |
 	PromotePeerData |
 	ChatMessageData |
 	FilesharingData |
@@ -320,6 +322,10 @@ export interface ProducerData {
 
 export interface DisplayNameData {
 	displayName: string;
+}
+
+export interface PictureData {
+	picture: string;
 }
 
 export interface PromotePeerData {

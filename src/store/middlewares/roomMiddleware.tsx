@@ -6,6 +6,7 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { webrtcActions } from '../slices/webrtcSlice';
 import { joinRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
+import { setDisplayName, setPicture } from '../actions/meActions';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -42,8 +43,11 @@ const createRoomMiddleware = ({
 							}
 
 							case 'enteredLobby': {
-								dispatch(roomActions.setState('lobby'));
-								// TODO: send displayname and picture
+								batch(() => {
+									dispatch(roomActions.setState('lobby'));
+									dispatch(setDisplayName(getState().settings.displayName));
+									dispatch(setPicture(getState().me.picture));
+								});
 								break;
 							}
 

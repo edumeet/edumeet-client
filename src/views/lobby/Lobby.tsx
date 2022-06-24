@@ -11,25 +11,38 @@ import {
 	EnableAllMediaMessage,
 	EnableCameraMessage,
 	EnableMicrophoneMessage,
+	RoomLockedMessage,
 	yourNameLabel
 } from '../../components/translated/translatedComponents';
-import { useAppSelector, usePrompt } from '../../store/hooks';
+import { setDisplayName } from '../../store/actions/meActions';
+import {
+	useAppDispatch,
+	useAppSelector,
+	usePrompt
+} from '../../store/hooks';
 
 const Lobby = (): JSX.Element => {
-	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
-	const { previewMicTrackId, previewWebcamTrackId } = useAppSelector((state) => state.me);
-	const [ displayName, setDisplayName ] = useState(stateDisplayName || '');
+	const dispatch = useAppDispatch();
+	const displayName = useAppSelector((state) => state.settings.displayName);
+	const {
+		previewMicTrackId,
+		previewWebcamTrackId
+	} = useAppSelector((state) => state.me);
+	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
 
 	usePrompt(true);
 
-	const handleDisplayNameChange = (name: string) => {
-		setDisplayName(name.trim() ? name : name.trim());
+	const handleDisplayNameChange = () => {
+		dispatch(setDisplayName(
+			localDisplayName.trim() ? localDisplayName : localDisplayName.trim()
+		));
 	};
 
 	return (
 		<PrecallDialog
 			content={
 				<>
+					<RoomLockedMessage />
 					<MediaPreview />
 					<AudioInputChooser preview />
 					<VideoInputChooser preview />
@@ -42,9 +55,10 @@ const Lobby = (): JSX.Element => {
 					</Typography>
 					<TextInputField
 						label={yourNameLabel()}
-						value={displayName}
-						setValue={handleDisplayNameChange}
+						value={localDisplayName}
+						setValue={setLocalDisplayName}
 						startAdornment={<AccountCircle />}
+						onBlur={handleDisplayNameChange}
 					/>
 				</>
 			}

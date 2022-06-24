@@ -68,6 +68,12 @@ export const promoteFromLobbyLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Click to let them in'
 });
 
+export const RoomLockedMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='room.locketWait'
+		defaultMessage='The room is locked - hang on until somebody lets you in ...'
+	/>;
+
 export const ConfirmLeaveMessage = (): JSX.Element =>
 	<FormattedMessage
 		id='room.leaveConfirmationMessage'
@@ -229,6 +235,47 @@ export const activateAudioLabel = (): string => intl.formatMessage({
 	id: 'device.activateAudio',
 	defaultMessage: 'Activate audio'
 });
+
+export const muteAllLabel = (): string => intl.formatMessage({
+	id: 'room.muteAll',
+	defaultMessage: 'Mute all'
+});
+
+export const MuteAllMessage = (): JSX.Element =>
+	<FormattedMessage id='room.muteAll' defaultMessage='Mute all' />;
+
+export const stopAllVideoLabel = (): string => intl.formatMessage({
+	id: 'room.stopAllVideo',
+	defaultMessage: 'Stop all video'
+});
+
+export const StopAllVideoMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='room.stopAllVideo'
+		defaultMessage='Stop all video'
+	/>;
+
+export const stopAllScreensharingLabel = (): string => intl.formatMessage({
+	id: 'room.stopAllScreenSharing',
+	defaultMessage: 'Stop all screensharing'
+});
+
+export const StopAllScreenSharingMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='room.stopAllScreenSharing'
+		defaultMessage='Stop all screensharing'
+	/>;
+
+export const closeMeetingLabel = (): string => intl.formatMessage({
+	id: 'room.closeMeeting',
+	defaultMessage: 'Close meeting for all'
+});
+
+export const CloseMeetingMessage = (): JSX.Element =>
+	<FormattedMessage
+		id='room.closeMeeting'
+		defaultMessage='Close meeting for all'
+	/>;
 
 export const muteAudioLabel = (): string => intl.formatMessage({
 	id: 'device.muteAudio',

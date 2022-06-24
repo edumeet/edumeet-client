@@ -112,3 +112,21 @@ export const leaveRoom = () => async (
 
 	dispatch(signalingActions.disconnect());
 };
+
+export const closeMeeting = () => async (
+	dispatch: AppDispatch,
+	getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('closeMeeting()');
+
+	dispatch(roomActions.updateRoom({ closeMeetingInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('moderator:closeMeeting');
+	} catch (error) {
+		logger.error('closeMeeting() [error:%o]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ closeMeetingInProgress: false }));
+	}
+};

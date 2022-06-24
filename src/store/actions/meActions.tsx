@@ -10,7 +10,7 @@ export const setDisplayName = (displayName: string) => async (
 	_getState: RootState,
 	{ signalingService }: MiddlewareOptions
 ): Promise<void> => {
-	logger.debug('setDisplayName() [displayName:"%s"]', displayName);
+	logger.debug('setDisplayName() [displayName:%s]', displayName);
 
 	dispatch(meActions.setDispayNameInProgress(true));
 
@@ -19,9 +19,25 @@ export const setDisplayName = (displayName: string) => async (
 
 		dispatch(settingsActions.setDisplayName(displayName));
 	} catch (error) {
-		logger.error('setDisplayName() [error:"%o"]', error);
+		logger.error('setDisplayName() [error:%o]', error);
 	} finally {
 		dispatch(meActions.setDispayNameInProgress(false));
+	}
+};
+
+export const setPicture = (picture: string) => async (
+	dispatch: AppDispatch,
+	_getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('setPicture() [picture:%s]', picture);
+
+	try {
+		await signalingService.sendRequest('changePicture', { picture });
+
+		dispatch(meActions.setPicture(picture));
+	} catch (error) {
+		logger.error('setPicture() [error:"%o"]', error);
 	}
 };
 
