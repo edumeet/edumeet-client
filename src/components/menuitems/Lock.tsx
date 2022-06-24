@@ -5,9 +5,7 @@ import {
 	usePermissionSelector,
 } from '../../store/hooks';
 import {
-	LockMessage,
 	lockRoomLabel,
-	UnlockMessage,
 	unlockRoomLabel,
 } from '../translated/translatedComponents';
 import MoreActions from '../moreactions/MoreActions';
@@ -36,15 +34,9 @@ const Lock = ({
 			}}
 		>
 			{ locked ? <LockIcon /> : <LockOpenIcon /> }
-			{ locked ?
-				<MoreActions>
-					<UnlockMessage />
-				</MoreActions>
-				:
-				<MoreActions>
-					<LockMessage />
-				</MoreActions>
-			}
+			<MoreActions>
+				{ lockLabel }
+			</MoreActions>
 		</MenuItem>
 	);
 };

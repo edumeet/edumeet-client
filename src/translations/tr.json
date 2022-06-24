@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Mikrofonunuz açılamıyor",
 	"devices.screenSharingDisconnected": "Ekran paylaşımı bağlı değil",
 	"devices.screenSharingError": "Ekranınıza erişilirken bir hata oluştu",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "İndir",
 	"filesharing.error": "Dosya paylaşım hatası",
 	"filesharing.missingSeeds": "İşlem uzun zaman alıyorsa, bu torrent'i paylaşan kimse olmayabilir. İlgili dosyayı yeniden yüklemesini isteyin.",

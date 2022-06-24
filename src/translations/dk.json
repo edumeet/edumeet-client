@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": null,
 	"devices.screenSharingDisconnected": null,
 	"devices.screenSharingError": "Der opstod en fejl ved adgang til skærmdeling",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": null,
 	"filesharing.error": "Der var en fildelings fejl",
 	"filesharing.missingSeeds": "Hvis denne proces tager lang tid, er der muligvis ikke nogen, der seedede denne torrent. Prøv at bede nogen om at uploade den fil, du ønsker at hente.",

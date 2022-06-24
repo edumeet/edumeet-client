@@ -7,11 +7,11 @@ import MediaPreview from '../../components/mediapreview/MediaPreview';
 import PrecallDialog from '../../components/precalldialog/PrecallDialog';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import {
-	DisableAllMediaMessage,
-	EnableAllMediaMessage,
-	EnableCameraMessage,
-	EnableMicrophoneMessage,
-	RoomLockedMessage,
+	disableAllMediaLabel,
+	enableAllMediaLabel,
+	enableCameraLabel,
+	enableMicrophoneLabel,
+	roomLockedLabel,
 	yourNameLabel
 } from '../../components/translated/translatedComponents';
 import { setDisplayName } from '../../store/actions/meActions';
@@ -42,15 +42,15 @@ const Lobby = (): JSX.Element => {
 		<PrecallDialog
 			content={
 				<>
-					<RoomLockedMessage />
+					{ roomLockedLabel() }
 					<MediaPreview />
 					<AudioInputChooser preview />
 					<VideoInputChooser preview />
 					<Typography variant='h5'>
 						{ (previewMicTrackId && previewWebcamTrackId) ?
-							<EnableAllMediaMessage /> : previewMicTrackId ?
-								<EnableMicrophoneMessage /> : previewWebcamTrackId ?
-									<EnableCameraMessage /> : <DisableAllMediaMessage />
+							enableAllMediaLabel() : previewMicTrackId ?
+								enableMicrophoneLabel() : previewWebcamTrackId ?
+									enableCameraLabel() : disableAllMediaLabel()
 						}
 					</Typography>
 					<TextInputField

@@ -7,10 +7,7 @@ import ScreenOffIcon from '@mui/icons-material/StopScreenShare';
 import { MenuItemProps } from '../floatingmenu/FloatingMenu';
 import MoreActions from '../moreactions/MoreActions';
 import { consumersActions, StateConsumer } from '../../store/slices/consumersSlice';
-import {
-	MuteParticipantVideoMessage,
-	UnmuteParticipantVideoMessage
-} from '../translated/translatedComponents';
+import { muteParticipantVideoLabel, unMuteParticipantVideoLabel } from '../translated/translatedComponents';
 import { Peer } from '../../store/slices/peersSlice';
 
 interface MuteScreenshareProps extends MenuItemProps {
@@ -27,10 +24,12 @@ const MuteScreenshare = ({
 
 	const { screenInProgress } = peer;
 	const screenEnabled = !screenConsumer.localPaused && !screenConsumer.remotePaused;
+	const sceenLabel =
+		screenEnabled ? muteParticipantVideoLabel() : unMuteParticipantVideoLabel();
 
 	return (
 		<MenuItem
-			// aria-label={screenTip}
+			aria-label={sceenLabel}
 			disabled={screenInProgress}
 			onClick={() => {
 				onClick();
@@ -50,12 +49,7 @@ const MuteScreenshare = ({
 		>
 			{ screenEnabled ? <ScreenIcon /> : <ScreenOffIcon /> }
 			<MoreActions>
-				{
-					screenEnabled ?
-						<MuteParticipantVideoMessage />
-						:
-						<UnmuteParticipantVideoMessage />
-				}
+				{ sceenLabel }
 			</MoreActions>
 		</MenuItem>
 	);

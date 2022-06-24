@@ -1,6 +1,6 @@
 import { styled } from '@mui/material';
 import ClearFilesharingButton from '../textbuttons/ClearFilesharingButton';
-import { ModeratorActionsMessage } from '../translated/translatedComponents';
+import { moderatorActionsLabel } from '../translated/translatedComponents';
 
 const ListUl = styled('ul')(({ theme }) => ({
 	listStyleType: 'none',
@@ -26,7 +26,7 @@ const FilesharingModerator = (): JSX.Element => {
 	return (
 		<ListUl>
 			<ListHeaderLi>
-				<ModeratorActionsMessage />
+				{ moderatorActionsLabel()}
 			</ListHeaderLi>
 			<ListItemLi>
 				<ClearFilesharingButton />

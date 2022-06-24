@@ -2,7 +2,6 @@ import { MenuItem } from '@mui/material';
 import fscreen from 'fscreen';
 import {
 	enterFullscreenLabel,
-	EnterFullscreenMessage
 } from '../translated/translatedComponents';
 import MoreActions from '../moreactions/MoreActions';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
@@ -30,7 +29,7 @@ const Fullscreen = ({
 		>
 			<FullscreenIcon />
 			<MoreActions>
-				<EnterFullscreenMessage />
+				{ enterFullscreenLabel() }
 			</MoreActions>
 		</MenuItem>
 	);

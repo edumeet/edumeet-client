@@ -11,9 +11,9 @@ import { uiActions } from '../../store/slices/uiSlice';
 import StyledDialog from '../dialog/StyledDialog';
 import {
 	appearanceSettingsLabel,
-	CloseMessage,
+	closeLabel,
 	mediaSettingsLabel,
-	SettingsMessage
+	settingsLabel,
 } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import MediaSettings from './MediaSettings';
@@ -41,7 +41,7 @@ const SettingsDialog = (): JSX.Element => {
 			onClose={handleCloseSettings}
 		>
 			<DialogTitle>
-				<SettingsMessage />
+				{ settingsLabel() }
 			</DialogTitle>
 			<Tabs
 				value={tabs.indexOf(currentSettingsTab)}
@@ -60,7 +60,7 @@ const SettingsDialog = (): JSX.Element => {
 					onClick={handleCloseSettings}
 					startIcon={<CloseIcon />}
 				>
-					<CloseMessage />
+					{ closeLabel()}
 				</Button>
 			</DialogActions>
 		</StyledDialog>

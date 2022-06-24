@@ -2,7 +2,6 @@ import { Button } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	muteAllLabel,
-	MuteAllMessage
 } from '../translated/translatedComponents';
 import { muteAll } from '../../store/actions/peerActions';
 
@@ -22,7 +21,7 @@ const MuteAllButton = (): JSX.Element => {
 			onClick={handleMuteAll}
 			disabled={muteAllInProgress}
 		>
-			<MuteAllMessage />
+			{ muteAllLabel() }
 		</Button>
 	);
 };

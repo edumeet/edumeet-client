@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "आपके माइक्रोफ़ोन को मौन से निकालने में असमर्थ",
 	"devices.screenSharingDisconnected": "स्क्रीन का आदान-प्रदान काट दिया गया",
 	"devices.screenSharingError": "आपकी स्क्रीन के आदान-प्रदान तक पहुँचने के दौरान एक त्रुटि हुई",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "डाउनलोड",
 	"filesharing.error": "फ़ाइल आदान-प्रदान करने मे त्रुटि",
 	"filesharing.missingSeeds": "यदि इस प्रक्रिया में लंबा समय लगता है, तो हो सकता है कि इस धारा को सहायता देने वाला कोई न हो। किसी को उस फ़ाइल को पुनह से आदान-प्रदान करने के लिए कहें।",

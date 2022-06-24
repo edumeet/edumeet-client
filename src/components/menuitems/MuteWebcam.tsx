@@ -7,10 +7,7 @@ import VideoOffIcon from '@mui/icons-material/VideocamOff';
 import { MenuItemProps } from '../floatingmenu/FloatingMenu';
 import MoreActions from '../moreactions/MoreActions';
 import { consumersActions, StateConsumer } from '../../store/slices/consumersSlice';
-import {
-	MuteParticipantVideoMessage,
-	UnmuteParticipantVideoMessage
-} from '../translated/translatedComponents';
+import { muteParticipantVideoLabel, unMuteParticipantVideoLabel } from '../translated/translatedComponents';
 import { Peer } from '../../store/slices/peersSlice';
 
 interface MuteWebcamProps extends MenuItemProps {
@@ -27,10 +24,12 @@ const MuteWebcam = ({
 
 	const { videoInProgress } = peer;
 	const webcamEnabled = !webcamConsumer.localPaused && !webcamConsumer.remotePaused;
+	const webcamLabel =
+		webcamEnabled ? muteParticipantVideoLabel() : unMuteParticipantVideoLabel();
 
 	return (
 		<MenuItem
-			// aria-label={screenTip}
+			aria-label={webcamLabel}
 			disabled={videoInProgress}
 			onClick={() => {
 				onClick();
@@ -50,12 +49,7 @@ const MuteWebcam = ({
 		>
 			{ webcamEnabled ? <VideoIcon /> : <VideoOffIcon /> }
 			<MoreActions>
-				{
-					webcamEnabled ?
-						<MuteParticipantVideoMessage />
-						:
-						<UnmuteParticipantVideoMessage />
-				}
+				{ webcamLabel }
 			</MoreActions>
 		</MenuItem>
 	);

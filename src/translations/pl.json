@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Nie można wyłączyć wyciszenia mikrofonu.",
 	"devices.screenSharingDisconnected": "Udostępnianie ekranu zakończone",
 	"devices.screenSharingError": "Wystąpił błąd podczas uzyskiwania dostępu do ekranu",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Pobierz",
 	"filesharing.error": "Błąd udostępniania pliku",
 	"filesharing.missingSeeds": "Udostępnianie plików przez Torrent - jeśli ten proces trwa długo sugerujemy poprosić o ponowne załadowanie żądanego pliku",

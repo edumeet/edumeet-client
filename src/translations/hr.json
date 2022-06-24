@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Nije moguće uključiti mikrofon",
 	"devices.screenSharingDisconnected": "Zaustavljeno dijeljenje ekrana",
 	"devices.screenSharingError": "Greška prilikom pristupa ekranu",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Učitaj",
 	"filesharing.error": "Greška prilikom dijeljenja datoteke",
 	"filesharing.missingSeeds": "Ako ovaj proces traje dugo, možda više nitko ne dijeli datoteku. Zamolite nekoga da ponovo podijeli datoteku.",

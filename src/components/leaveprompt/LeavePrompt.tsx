@@ -16,7 +16,12 @@ import { leaveRoom } from '../../store/actions/roomActions';
 import { useAppDispatch } from '../../store/hooks';
 import { LeavePromptContext } from '../../store/store';
 import StyledDialog from '../dialog/StyledDialog';
-import { ConfirmLeaveMessage, LeaveRoomMessage, NoMessage, YesMessage } from '../translated/translatedComponents';
+import {
+	confirmLeaveLabel,
+	leaveRoomLabel,
+	noLabel,
+	yesLabel
+} from '../translated/translatedComponents';
 
 interface LeavePromptProps {
 	children?: ReactNode;
@@ -57,19 +62,28 @@ export const LeavePrompt: FC<LeavePromptProps> = ({ children }) => {
 			{ children }
 			<StyledDialog open={open} onClose={close}>
 				<DialogTitle>
-					<LeaveRoomMessage />
+					{ leaveRoomLabel() }
 				</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						<ConfirmLeaveMessage />
+						{ confirmLeaveLabel() }
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={close} variant='text'>
-						<NoMessage />
+					<Button
+						aria-label={noLabel()}
+						onClick={close}
+						variant='text'
+					>
+						{ noLabel() }
 					</Button>
-					<Button onClick={confirm} autoFocus variant='contained'>
-						<YesMessage />
+					<Button
+						aria-label={yesLabel()}
+						onClick={confirm}
+						autoFocus
+						variant='contained'
+					>
+						{ yesLabel() }
 					</Button>
 				</DialogActions>
 			</StyledDialog>

@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Nav iespējams ieslēgt Jūsu mikrofonu",
 	"devices.screenSharingDisconnected": "Ekrāna kopīgošana nenotiek (atvienota)",
 	"devices.screenSharingError": "Atgadījās kļūme, piekļūstot Jūsu ekrānam",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Lejuplādēt",
 	"filesharing.error": "Atgadījās faila kopīgošanas kļūme",
 	"filesharing.missingSeeds": "Ja šis process aizņem ilgu laiku, iespējams nav neviena, kas sēklo (seed) šo torentu. Mēģiniet palūgt kādu atkārtoti augšuplādēt Jūsu gribēto failu.",

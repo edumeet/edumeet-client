@@ -9,12 +9,7 @@ import {
 import { useAppDispatch, useAppSelector, usePermissionSelector } from '../../store/hooks';
 import { uiActions } from '../../store/slices/uiSlice';
 import StyledDialog from '../dialog/StyledDialog';
-import {
-	CloseMessage,
-	LobbyAdministrationMessage,
-	PeersInLobbyMessage,
-	PromotePeersMessage,
-} from '../translated/translatedComponents';
+import { closeLabel, lobbyAdministrationLabel, peersInLobbyLabel, promotePeersLabel } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import { promotePeers } from '../../store/actions/permissionsActions';
 import { LobbyPeer } from '../../store/slices/lobbyPeersSlice';
@@ -48,14 +43,14 @@ const LobbyDialog = (): JSX.Element => {
 			onClose={handleCloseLobbyDialog}
 		>
 			<DialogTitle>
-				<LobbyAdministrationMessage />
+				{ lobbyAdministrationLabel() }
 			</DialogTitle>
 			<DialogContent>
 				<List
 					dense
 					subheader={
 						<ListSubheader component='div'>
-							<PeersInLobbyMessage />
+							{ peersInLobbyLabel() }
 						</ListSubheader>
 					}
 				>
@@ -71,16 +66,16 @@ const LobbyDialog = (): JSX.Element => {
 			</DialogContent>
 			<DialogActions>
 				<Button
-					disabled={lobbyPeersPromotionInProgress}
+					disabled={lobbyPeersPromotionInProgress || lobbyPeers.length === 0}
 					onClick={handlePromotePeers}
 				>
-					<PromotePeersMessage />
+					{ promotePeersLabel() }
 				</Button>
 				<Button
 					onClick={handleCloseLobbyDialog}
 					startIcon={<CloseIcon />}
 				>
-					<CloseMessage />
+					{ closeLabel() }
 				</Button>
 			</DialogActions>
 		</StyledDialog>

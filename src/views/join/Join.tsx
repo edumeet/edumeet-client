@@ -8,11 +8,11 @@ import { signalingActions } from '../../store/slices/signalingSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
-	DisableAllMediaMessage,
-	EnableAllMediaMessage,
-	EnableCameraMessage,
-	EnableMicrophoneMessage,
-	JoinMessage,
+	disableAllMediaLabel,
+	enableAllMediaLabel,
+	enableCameraLabel,
+	enableMicrophoneLabel,
+	joinLabel,
 	yourNameLabel
 } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
@@ -71,9 +71,9 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					<VideoInputChooser preview />
 					<Typography variant='h5'>
 						{ (previewMicTrackId && previewWebcamTrackId) ?
-							<EnableAllMediaMessage /> : previewMicTrackId ?
-								<EnableMicrophoneMessage /> : previewWebcamTrackId ?
-									<EnableCameraMessage /> : <DisableAllMediaMessage />
+							enableAllMediaLabel() : previewMicTrackId ?
+								enableMicrophoneLabel() : previewWebcamTrackId ?
+									enableCameraLabel() : disableAllMediaLabel()
 						}
 					</Typography>
 					<TextInputField
@@ -94,7 +94,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					disabled={!name}
 					fullWidth
 				>
-					<JoinMessage />
+					{ joinLabel() }
 				</Button>
 			}
 		/>

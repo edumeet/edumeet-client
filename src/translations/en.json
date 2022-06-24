@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Unable to unmute your microphone",
 	"devices.screenSharingDisconnected": "Screen sharing disconnected",
 	"devices.screenSharingError": "An error occurred while accessing your screen",
+	"filesharing.filesharing": "Filesharing",
+	"filesharing.noFiles": "No files",
 	"filesharing.download": "Download",
 	"filesharing.error": "There was a filesharing error",
 	"filesharing.missingSeeds": "If this process takes a long time, there might not be anyone seeding this torrent. Try asking someone to reupload the file that you want.",

@@ -8,7 +8,7 @@ import {
 } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
 import {
-	ApplyMessage,
+	applyLabel,
 	audioDeviceLabel,
 	noAudioDevicesLabel,
 	selectAudioDeviceLabel
@@ -92,7 +92,7 @@ const AudioInputChooser = ({
 					onClick={handleConfirm}
 					disabled={!confirm || audioInProgress}
 				>
-					<ApplyMessage />
+					{ applyLabel() }
 				</Button>
 			)}
 		</ChooserDiv>

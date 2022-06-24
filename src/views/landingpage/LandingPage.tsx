@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { JoinMessage, roomNameLabel } from '../../components/translated/translatedComponents';
+import { joinLabel, roomNameLabel } from '../../components/translated/translatedComponents';
 import PrecallDialog from '../../components/precalldialog/PrecallDialog';
 import StyledBackground from '../../components/StyledBackground';
 
@@ -35,7 +35,7 @@ const LandingPage = (): JSX.Element => {
 						color='primary'
 						disabled={!roomId}
 					>
-						<JoinMessage />
+						{ joinLabel()}
 					</Button>
 				}
 			/>

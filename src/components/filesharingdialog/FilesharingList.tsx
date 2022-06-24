@@ -6,9 +6,7 @@ import {
 } from '../../store/hooks';
 import { FilesharingFile } from '../../store/slices/filesharingSlice';
 import { permissions } from '../../utils/roles';
-import {
-	ModeratorActionsMessage,
-} from '../translated/translatedComponents';
+import { moderatorActionsLabel, noFilesLabel } from '../translated/translatedComponents';
 import ListFile from './ListFile';
 
 const FilesharingListDiv = styled('div')(({ theme }) => ({
@@ -49,7 +47,7 @@ const FilesharingList = (): JSX.Element => {
 					{ isModerator &&
 						<ListUl>
 							<ListHeaderLi>
-								<ModeratorActionsMessage />
+								{ moderatorActionsLabel() }
 							</ListHeaderLi>
 							{ /* <ListModerator /> */ }
 						</ListUl>
@@ -67,7 +65,7 @@ const FilesharingList = (): JSX.Element => {
 					</ListUl>
 				</>
 				:
-				<ListUl>No files</ListUl>
+				<ListUl>{ noFilesLabel() }</ListUl>
 			}
 			
 		</FilesharingListDiv>

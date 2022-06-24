@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Δεν είναι δυνατό το άνοιγμα του μικροφώνου σας",
 	"devices.screenSharingDisconnected": "Ο διαμοιρασμός οθόνης αποσυνδέθηκε",
 	"devices.screenSharingError": "Παρουσιάστηκε σφάλμα κατά την πρόσβαση στην οθόνη σας",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Κατέβασμα",
 	"filesharing.error": "Υπήρξε σφάλμα κατά τον διαμοιρασμό του αρχείου",
 	"filesharing.missingSeeds": "Αν αυτή η διαδικασία διαρκεί πολύ, ίσως να μην υπάρχει κάποιος να διαμοιραστεί το αρχείο. Δοκιμάστε να ζητήσετε από κάποιον να φορτώσει εκ νέου το αρχείο που θέλετε.",

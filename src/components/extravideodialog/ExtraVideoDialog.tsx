@@ -7,9 +7,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions } from '../../store/slices/uiSlice';
 import StyledDialog from '../dialog/StyledDialog';
-import {
-	CloseMessage, ExtraVideoMessage, StartExtraVideoMessage,
-} from '../translated/translatedComponents';
+import { closeLabel, extraVideoLabel, startExtraVideoLabel } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 import { startExtraVideo } from '../../store/actions/mediaActions';
@@ -37,23 +35,25 @@ const ExtraVideoDialog = (): JSX.Element => {
 			onClose={handleCloseExtraVideoDialog}
 		>
 			<DialogTitle>
-				<ExtraVideoMessage />
+				{ extraVideoLabel() }
 			</DialogTitle>
 			<DialogContent>
 				<ExtraVideoInputChooser onDeviceChange={setDeviceId} />
 			</DialogContent>
 			<DialogActions>
 				<Button
+					aria-label={startExtraVideoLabel()}
 					disabled={videoInProgress}
 					onClick={handleStartExtraVideo}
 				>
-					<StartExtraVideoMessage />
+					{ startExtraVideoLabel() }
 				</Button>
 				<Button
+					aria-label={closeLabel()}
 					onClick={handleCloseExtraVideoDialog}
 					startIcon={<CloseIcon />}
 				>
-					<CloseMessage />
+					{ closeLabel() }
 				</Button>
 			</DialogActions>
 		</StyledDialog>

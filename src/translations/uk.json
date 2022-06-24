@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Неможливо ввімкнути мікрофон",
 	"devices.screenSharingDisconnected": "Спільний доступ до екрана відключений",
 	"devices.screenSharingError": "Сталася помилка під час доступу до екрану",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Завантажити",
 	"filesharing.error": "Виникла помилка обміну файлами",
 	"filesharing.missingSeeds": "Якщо цей процес триває тривалий час, може не з’явиться хтось, хто роздає цей торрент. Спробуйте попросити когось перезавантажити потрібний файл.",

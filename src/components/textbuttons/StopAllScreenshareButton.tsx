@@ -2,7 +2,6 @@ import { Button } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	stopAllScreensharingLabel,
-	StopAllScreenSharingMessage,
 } from '../translated/translatedComponents';
 import { stopAllScreenshare } from '../../store/actions/peerActions';
 
@@ -22,7 +21,7 @@ const StopAllScreenshareButton = (): JSX.Element => {
 			onClick={handleStopAll}
 			disabled={muteAllInProgress}
 		>
-			<StopAllScreenSharingMessage />
+			{ stopAllScreensharingLabel() }
 		</Button>
 	);
 };

@@ -10,10 +10,7 @@ import {
 import StyledDialog from '../../components/dialog/StyledDialog';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { useAppSelector } from '../../store/hooks';
-import {
-	LoginMessage,
-	LogoutMessage
-} from '../../components/translated/translatedComponents';
+import { loginLabel, logoutLabel } from '../../components/translated/translatedComponents';
 import LoginButton from '../controlbuttons/LoginButton';
 
 interface PrecallDialogProps {
@@ -62,7 +59,7 @@ const PrecallDialog = ({
 											/>
 										</Grid>
 										<Grid item>
-											{ loggedIn ? <LogoutMessage />:<LoginMessage /> }
+											{ loggedIn ? logoutLabel() : loginLabel() }
 										</Grid>
 									</Grid>
 								</Grid>

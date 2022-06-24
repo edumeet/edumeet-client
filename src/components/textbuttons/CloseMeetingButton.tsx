@@ -3,7 +3,6 @@ import { closeMeeting } from '../../store/actions/roomActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	closeMeetingLabel,
-	CloseMeetingMessage,
 } from '../translated/translatedComponents';
 
 const CloseMeetingButton = (): JSX.Element => {
@@ -23,7 +22,7 @@ const CloseMeetingButton = (): JSX.Element => {
 			onClick={handleCloseMeeting}
 			disabled={closeMeetingInProgress}
 		>
-			<CloseMeetingMessage />
+			{ closeMeetingLabel() }
 		</Button>
 	);
 };

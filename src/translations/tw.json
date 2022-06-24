@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "無法取消麥克風靜音",
 	"devices.screenSharingDisconnected": "螢幕分享已中斷",
 	"devices.screenSharingError": "螢幕分享時發生錯誤",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "下載檔案",
 	"filesharing.error": "分享檔案時發生錯誤",
 	"filesharing.missingSeeds": "如果過了很久還是無法下載，則可能沒有人播種了。請讓上傳者重新上傳您需要的檔案。",

@@ -5,7 +5,6 @@ import {
 } from '../../store/hooks';
 import {
 	showSettingsLabel,
-	ShowSettingsMessage
 } from '../translated/translatedComponents';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MoreActions from '../moreactions/MoreActions';
@@ -28,7 +27,7 @@ const Settings = ({
 		>
 			<SettingsIcon />
 			<MoreActions>
-				<ShowSettingsMessage />
+				{ showSettingsLabel() }
 			</MoreActions>
 		</MenuItem>
 	);

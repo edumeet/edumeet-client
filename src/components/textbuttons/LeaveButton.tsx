@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { leaveLabel, LeaveMessage } from '../translated/translatedComponents';
+import { leaveLabel } from '../translated/translatedComponents';
 
 const LeaveButton = (): JSX.Element => {
 	const navigate = useNavigate();
@@ -12,7 +12,7 @@ const LeaveButton = (): JSX.Element => {
 			variant='contained'
 			onClick={() => navigate('/')}
 		>
-			<LeaveMessage />
+			{ leaveLabel() }
 		</Button>
 	);
 };

@@ -7,9 +7,9 @@ import {
 import { participantListSelector } from '../../store/selectors';
 import { permissions } from '../../utils/roles';
 import {
-	MeMessage,
-	ModeratorActionsMessage,
-	ParticipantsMessage
+	meLabel,
+	moderatorActionsLabel,
+	participantsLabel
 } from '../translated/translatedComponents';
 import ListMe from './ListMe';
 import ListModerator from './ListModerator';
@@ -50,20 +50,20 @@ const ParticipantList = (): JSX.Element => {
 			{ isModerator &&
 				<ListUl>
 					<ListHeaderLi>
-						<ModeratorActionsMessage />
+						{ moderatorActionsLabel() }
 					</ListHeaderLi>
 					<ListModerator />
 				</ListUl>
 			}
 			<ListUl>
 				<ListHeaderLi>
-					<MeMessage />
+					{ meLabel()}
 				</ListHeaderLi>
 				<ListMe />
 			</ListUl>
 			<ListUl>
 				<ListHeaderLi>
-					<ParticipantsMessage />
+					{ participantsLabel() }
 				</ListHeaderLi>
 				<Flipper flipKey={participants}>
 					{ participants.map((peer) => (

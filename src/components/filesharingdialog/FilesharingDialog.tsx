@@ -8,9 +8,8 @@ import { useAppDispatch, useAppSelector, usePermissionSelector } from '../../sto
 import { uiActions } from '../../store/slices/uiSlice';
 import StyledDialog from '../dialog/StyledDialog';
 import {
-	CloseMessage,
-	FilesharingMessage,
-	StartingFileSharingMessage,
+	closeLabel,
+	filesharingLabel, shareFileLabel, startingFileSharingLabel
 } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
@@ -53,7 +52,7 @@ const FilesharingDialog = (): JSX.Element => {
 			onClose={handleCloseFilesharing}
 		>
 			<DialogTitle>
-				<FilesharingMessage />
+				{ filesharingLabel() }
 			</DialogTitle>
 			{ isFilesharingModerator && <FilesharingModerator /> }
 			<input
@@ -69,11 +68,9 @@ const FilesharingDialog = (): JSX.Element => {
 					component='span'
 					disabled={startFileSharingInProgress}
 				>
-					<FilesharingMessage />
+					{ shareFileLabel() }
 				</Button>
-				{ startFileSharingInProgress &&
-					<StartingFileSharingMessage />
-				}
+				{ startFileSharingInProgress && startingFileSharingLabel() }
 			</ShareLabel>
 			<FilesharingList />
 			<DialogActions>
@@ -81,7 +78,7 @@ const FilesharingDialog = (): JSX.Element => {
 					onClick={handleCloseFilesharing}
 					startIcon={<CloseIcon />}
 				>
-					<CloseMessage />
+					{ closeLabel() }
 				</Button>
 			</DialogActions>
 		</StyledDialog>

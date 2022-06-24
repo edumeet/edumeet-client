@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Kann Mikrofon nicht aktivieren",
 	"devices.screenSharingDisconnected": "Bildschirmfreigabe unterbrochen",
 	"devices.screenSharingError": "Fehler bei der Bildschirmfreigabe",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Herunterladen",
 	"filesharing.error": "Fehler beim Teilen der Datei",
 	"filesharing.missingSeeds": "Wenn der Download zu lange dauert, ist wahrscheinlich keiner mehr im Raum, der die Datei teilen kann. Die Datei muss erneut hochgeladen werden.",

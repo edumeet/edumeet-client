@@ -3,7 +3,6 @@ import { useAppDispatch } from '../../store/hooks';
 import { clearFiles } from '../../store/actions/filesharingActions';
 import {
 	clearFilesLabel,
-	ClearFilesMessage
 } from '../translated/translatedComponents';
 
 const ClearFilesharingButton = (): JSX.Element => {
@@ -20,7 +19,7 @@ const ClearFilesharingButton = (): JSX.Element => {
 			variant='contained'
 			onClick={handleClearFiles}
 		>
-			<ClearFilesMessage />
+			{ clearFilesLabel() }
 		</Button>
 	);
 };

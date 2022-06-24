@@ -6,9 +6,7 @@ import {
 } from '../../store/hooks';
 import {
 	loginLabel,
-	LoginMessage,
 	logoutLabel,
-	LogoutMessage,
 } from '../translated/translatedComponents';
 import MoreActions from '../moreactions/MoreActions';
 import { login, logout } from '../../store/actions/permissionsActions';
@@ -30,15 +28,9 @@ const Login = ({
 			}}
 		>
 			<AccountCircle />
-			{ loggedIn ?
-				<MoreActions>
-					<LogoutMessage />
-				</MoreActions>
-				:
-				<MoreActions>
-					<LoginMessage />
-				</MoreActions>
-			}
+			<MoreActions>
+				{ loginButtonLabel }
+			</MoreActions>
 		</MenuItem>
 	);
 };

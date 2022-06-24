@@ -2,7 +2,6 @@ import { Button } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	stopAllVideoLabel,
-	StopAllVideoMessage
 } from '../translated/translatedComponents';
 import { stopAllVideo } from '../../store/actions/peerActions';
 
@@ -22,7 +21,7 @@ const StopAllVideoButton = (): JSX.Element => {
 			onClick={handleStopAll}
 			disabled={muteAllInProgress}
 		>
-			<StopAllVideoMessage />
+			{ stopAllVideoLabel() }
 		</Button>
 	);
 };

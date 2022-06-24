@@ -7,10 +7,10 @@ import { filesharingActions, FilesharingFile } from '../../store/slices/fileshar
 import { notificationsActions } from '../../store/slices/notificationsSlice';
 import { ServiceContext } from '../../store/store';
 import {
-	DownloadFileMessage,
-	MeMessage,
+	downloadFileLabel,
+	meLabel,
 	saveFileErrorLabel,
-	SaveFileMessage
+	saveFileLabel,
 } from '../translated/translatedComponents';
 
 interface ListFilerProps {
@@ -105,13 +105,14 @@ const ListFile = ({
 				torrent?.files.map((subFile, index) => (
 					<FileDiv key={index}>
 						<FileInfoDiv>
-							({ isMe ? <MeMessage /> : file.displayName }) { subFile.name }
+							({ isMe ? meLabel() : file.displayName }) { subFile.name }
 							{ done && !isMe &&
 								<Button
+									aria-label={saveFileLabel()}
 									variant='contained'
 									onClick={() => saveSubFile(subFile)}
 								>
-									<SaveFileMessage />
+									{ saveFileLabel() }
 								</Button>
 							}
 						</FileInfoDiv>
@@ -122,11 +123,12 @@ const ListFile = ({
 					{ file.displayName }
 					{ !file.started &&
 						<Button
+							aria-label={downloadFileLabel()}
 							variant='contained'
 							onClick={startTorrent}
 							disabled={startInProgress}
 						>
-							<DownloadFileMessage />
+							{ downloadFileLabel() }
 						</Button>
 					}
 				</FileInfoDiv>

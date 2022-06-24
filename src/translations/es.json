@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "No ha sido posible activar su micrófono",
 	"devices.screenSharingDisconnected": "Pantalla compartida desconectada",
 	"devices.screenSharingError": "Hubo un error al acceder a su pantalla",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Descargar",
 	"filesharing.error": "Hubo un error al compartir el fichero",
 	"filesharing.missingSeeds": "Si este proceso demora en exceso, puede ocurrir que no haya nadie compartiendo el fichero. Pruebe a pedirle a alguien que vuelva a subir el fichero que busca.",

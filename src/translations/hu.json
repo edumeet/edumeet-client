@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Nem sikerült a mikrofonod némításának kikapcsolása",
 	"devices.screenSharingDisconnected": "Képernyőmegosztás kapcsolat bontva",
 	"devices.screenSharingError": "Hiba történt a képernyőd megosztása során",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Letöltés",
 	"filesharing.error": "Hiba a fájlmegosztás során",
 	"filesharing.missingSeeds": "Ha a folyamat túl sok ideig tart, akkor lehet hogy senki sem seed-eli ez a torrent-et. Próbálj meg megkérni valakit hogy töltse fel újra ezt a fájlt.",

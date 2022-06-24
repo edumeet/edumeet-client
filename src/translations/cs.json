@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Není možné zrušit ztišení vašeho mikrofonu",
 	"devices.screenSharingDisconnected": "Sdílení obrazovky ukončeno",
 	"devices.screenSharingError": "Při přístupu k vaší obrazovce se vyskytla chyba",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Stáhnout",
 	"filesharing.error": "Při sdílení souboru se vyskytla chyba",
 	"filesharing.missingSeeds": "Pokud tento proces trvá dlouho, nikdo zřejmě neseeduje tento torrent. Pokuste se někoho požádat, aby znovu nahrál soubor, který potřebujete.",

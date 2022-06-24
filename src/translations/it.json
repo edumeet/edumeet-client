@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Impossibile riattivare il microfono",
 	"devices.screenSharingDisconnected": "Disconnesso da Condivisione Schermo",
 	"devices.screenSharingError": "Errore con l'accesso al tuo schermo",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Download",
 	"filesharing.error": "Errore generico nella condivisione file",
 	"filesharing.missingSeeds": "Se questo processo impiega troppo tempo, questo torrent potrebbe non avere alcun seed. Prova a chiedere a qualcuno di caricare nuovamente il file che desideri.",

@@ -8,7 +8,7 @@ import {
 } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
 import {
-	ApplyMessage,
+	applyLabel,
 	noVideoDevicesLabel,
 	selectVideoDeviceLabel,
 	videoDeviceLabel
@@ -92,7 +92,7 @@ const VideoInputChooser = ({
 					onClick={handleConfirm}
 					disabled={!confirm || videoInProgress}
 				>
-					<ApplyMessage />
+					{ applyLabel() }
 				</Button>
 			)}
 		</ChooserDiv>

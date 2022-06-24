@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { ChatMessage } from '../../utils/types';
 import ScrollingList from '../scrollinglist/ScrollingList';
-import { ChatScrollToBottomMessage } from '../translated/translatedComponents';
+import { chatScrollToBottomLabel } from '../translated/translatedComponents';
 import Message, { MessageFormat } from './Message';
 
 const ScrollToBottom = styled(Button)(({ theme }) => ({
@@ -57,7 +57,7 @@ const ChatHistory = (): JSX.Element => {
 					variant='contained'
 					onClick={() => chatHistoryRef.current?.scrollToBottom()}
 				>
-					<ChatScrollToBottomMessage />
+					{ chatScrollToBottomLabel() }
 				</ScrollToBottom>
 			}
 		</>

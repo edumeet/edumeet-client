@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "无法取消麦克风静音",
 	"devices.screenSharingDisconnected": "屏幕共享已断开",
 	"devices.screenSharingError": "访问屏幕时发生错误",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "下载共享文件",
 	"filesharing.error": "文件共享发生错误",
 	"filesharing.missingSeeds": "如果此过程需要很长时间，则可能没有人播下该种子。请尝试让某人重新上传您想要的文件。",

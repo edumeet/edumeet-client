@@ -3,7 +3,6 @@ import { useAppDispatch } from '../../store/hooks';
 import { clearChat } from '../../store/actions/chatActions';
 import {
 	clearChatLabel,
-	ClearChatMessage
 } from '../translated/translatedComponents';
 
 const ClearChatButton = (): JSX.Element => {
@@ -20,7 +19,7 @@ const ClearChatButton = (): JSX.Element => {
 			variant='contained'
 			onClick={handleClearChat}
 		>
-			<ClearChatMessage />
+			{ clearChatLabel() }
 		</Button>
 	);
 };

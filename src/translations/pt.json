@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Não foi possível ativar o som do microfone",
 	"devices.screenSharingDisconnected": "Partilha de ecrã desligada",
 	"devices.screenSharingError": "Ocorreu um erro no acesso ao seu ecrã",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Descarregar",
 	"filesharing.error": "Aconteceu um erro na partilha do ficheiro",
 	"filesharing.missingSeeds": "Se este processo demorar muito tempo, pode ser quem ninguém esteja a partilhar este ficheiro. Solicite a alguém para partilhar o ficheiro que pretende.",

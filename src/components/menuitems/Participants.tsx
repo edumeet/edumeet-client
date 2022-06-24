@@ -2,7 +2,6 @@ import { Badge, MenuItem } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	showParticipantsLabel,
-	ShowParticipantsMessage
 } from '../translated/translatedComponents';
 import MoreActions from '../moreactions/MoreActions';
 import PeopleIcon from '@mui/icons-material/People';
@@ -36,7 +35,7 @@ const Participants = ({
 				<PeopleIcon />
 			</Badge>
 			<MoreActions>
-				<ShowParticipantsMessage />
+				{ showParticipantsLabel() }
 			</MoreActions>
 		</MenuItem>
 	);

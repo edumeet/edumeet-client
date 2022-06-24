@@ -1,6 +1,6 @@
 import { styled, Typography, useTheme } from '@mui/material';
 import { FormattedTime } from 'react-intl';
-import { MeMessage } from '../translated/translatedComponents';
+import { meLabel } from '../translated/translatedComponents';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 
@@ -125,7 +125,7 @@ const Message = ({
 				{(format === 'single' || format ==='combinedBegin') &&
 					<Typography variant='subtitle1'>
 						<b>
-							{ isMe ? <MeMessage /> : <b>{name}</b> } - <FormattedTime
+							{ isMe ? meLabel() : <b>{name}</b> } - <FormattedTime
 								value={new Date(time || Date.now())}
 							/>
 						</b>

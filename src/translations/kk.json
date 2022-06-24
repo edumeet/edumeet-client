@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Микрофонды қосу мүмкін емес",
 	"devices.screenSharingDisconnected": "Экранды бөлісу ажыратылды",
 	"devices.screenSharingError": "Экраныңызға қосылу кезінде қате пайда болды",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Жүктеу",
 	"filesharing.error": "Файлдарды бөлісуде қате орын алды",
 	"filesharing.missingSeeds": "Егер бұл процесс ұзақ уақытқа созылатын болса, онда бұл торрентті ешкім бөліспеуі мүмкін. Біреуден қалаған файлыңызды қайта жүктеуді сұраңыз.",

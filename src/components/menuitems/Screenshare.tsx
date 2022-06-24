@@ -6,7 +6,6 @@ import {
 } from '../../store/hooks';
 import {
 	screenSharingUnsupportedLabel,
-	ShareScreenMessage,
 	startScreenSharingLabel,
 } from '../translated/translatedComponents';
 import ScreenIcon from '@mui/icons-material/ScreenShare';
@@ -57,7 +56,7 @@ const Screenshare = ({
 		>
 			<ScreenIcon />
 			<MoreActions>
-				<ShareScreenMessage />
+				{ screenTip }
 			</MoreActions>
 		</MenuItem>
 	);

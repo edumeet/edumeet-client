@@ -31,6 +31,8 @@
 	"devices.microphoneUnMuteError": "Încercarea de a retrage dezactivarea microfonului a eșuat",
 	"devices.screenSharingDisconnected": "Partajarea ecranului este deconectată",
 	"devices.screenSharingError": "A apărut o eroare la accesarea ecranului",
+	"filesharing.filesharing": null,
+	"filesharing.noFiles": null,
 	"filesharing.download": "Descărcare",
 	"filesharing.error": "Eroare la partajarea fișierului",
 	"filesharing.missingSeeds": "Dacă acest proces durează mult timp, s-ar putea să nu fie nimeni care seed-ează acest torrent. Încearcă să ceri cuiva să reîncarce fișierul.",

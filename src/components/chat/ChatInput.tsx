@@ -34,6 +34,7 @@ const ChatInput = (): JSX.Element => {
 				onEnter={handleSendMessage}
 				endAdornment={
 					<IconButton
+						aria-label={chatInputLabel()}
 						size='small'
 						disabled={!canChat || !message}
 						onClick={handleSendMessage}
