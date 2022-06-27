@@ -31,7 +31,11 @@ export const joinRoom = () => async (
 ): Promise<void> => {
 	logger.debug('joinRoom()');
 
-	const iceServers = getState().webrtc.iceServers;
+	const { webrtc } = getState();
+	const iceServers = webrtc.iceServers;
+	const rtcStatsOptions = webrtc.rtcStatsOptions;
+
+	mediaService.rtcStatsInit(rtcStatsOptions);
 
 	performanceMonitor.on('performance', (performance) => {
 		logger.debug('"performance" event [trend:%s, performance:%s]', performance.trend, performance.performance);
@@ -105,6 +109,21 @@ export const joinRoom = () => async (
 		if (!videoMuted)
 			dispatch(updateWebcam({ init: true, start: true }));
 	});
+
+	const rootState = getState();
+
+	const rtcStatsMetaData = { 
+		applicationName: 'edumeet', // mandatoy
+		confName: rootState.room.name, // mandatory
+		confID: window.location.toString(),
+		meetingUniqueId: rootState.room.sessionId,
+		endpointId: rootState.me.id,
+		deviceId: rootState.me.id,
+		displayName: rootState.settings.displayName,
+	};
+
+	mediaService.rtcStatsIdentity(rtcStatsMetaData);
+
 };
 
 export const leaveRoom = () => async (

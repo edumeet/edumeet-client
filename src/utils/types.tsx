@@ -1,4 +1,5 @@
 import { ThemeOptions } from '@mui/material';
+import exp from 'constants';
 import { MediaKind, RtpCapabilities, RtpParameters } from 'mediasoup-client/lib/RtpParameters';
 import { DtlsParameters } from 'mediasoup-client/lib/Transport';
 
@@ -355,3 +356,22 @@ export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';
 
 export type ButtonSize = 'small' | 'medium' | 'large';
 export type ButtonColor = 'inherit' | 'error' | 'primary' | 'secondary' | 'default' | 'success' | 'info' | 'warning';
+
+export interface RTCStatsOptions {
+	url: string;
+	useLegacy: boolean;
+	obfuscate: boolean;
+	wsPingIntervalMs: number;
+	pollIntervalMs: number;
+	sendSDP: boolean;
+}
+
+export interface RTCStatsMetaData {
+	applicationName: string;
+	confName: string;
+	confID: string;
+	meetingUniqueId: string;
+	endpointId: string;
+	deviceId: string;
+	displayName: string;
+}

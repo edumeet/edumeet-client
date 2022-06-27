@@ -32,10 +32,11 @@ const createRoomMiddleware = ({
 					try {
 						switch (notification.method) {
 							case 'roomReady': {
-								const { turnServers } = notification.data;
+								const { turnServers, rtcStatsOptions } = notification.data;
 
 								batch(() => {
 									dispatch(webrtcActions.setIceServers(turnServers));
+									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
