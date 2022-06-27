@@ -32,6 +32,9 @@ export const joinRoom = () => async (
 	logger.debug('joinRoom()');
 
 	const iceServers = getState().webrtc.iceServers;
+	const rtcStatsOptions = getState().webrtc.rtcStatsOptions;
+	
+	mediaService.rtcStatsInit(rtcStatsOptions);
 
 	performanceMonitor.on('performance', (performance) => {
 		logger.debug('"performance" event [trend:%s, performance:%s]', performance.trend, performance.performance);

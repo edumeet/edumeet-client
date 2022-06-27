@@ -8,6 +8,7 @@
 	"dependencies": {
 		"@emotion/react": "^11.8.1",
 		"@emotion/styled": "^11.8.1",
+		"@jitsi/rtcstats": "github:jitsi/rtcstats",
 		"@mui/icons-material": "^5.4.2",
 		"@mui/material": "^5.4.3",
 		"@reduxjs/toolkit": "^1.5.1",
@@ -46,7 +47,8 @@
 		"socket.io-client": "^4.4.1",
 		"typescript": "~4.7.4",
 		"uuid": "^8.3.2",
-		"webtorrent": "^1.8.3"
+		"webtorrent": "^1.8.3",
+		"ws": "^8.8.0"
 	},
 	"scripts": {
 		"start": "HTTPS=true PORT=4443 react-scripts start",
@@ -82,6 +84,7 @@
 		"@types/uuid": "^8.3.4",
 		"@types/webtorrent": "^0.109.3",
 		"@types/wicg-file-system-access": "^2020.9.5",
+		"@types/ws": "^8.5.3",
 		"@typescript-eslint/eslint-plugin": "^5.12.1",
 		"@typescript-eslint/parser": "^5.12.1",
 		"eslint-plugin-jest": "^26.1.1"
