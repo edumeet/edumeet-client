@@ -4,6 +4,7 @@ import {
 	DialogContent,
 	DialogTitle,
 	Grid,
+	styled,
 	Typography,
 	useTheme
 } from '@mui/material';
@@ -17,6 +18,10 @@ interface PrecallDialogProps {
 	content?: ReactNode;
 	actions?: ReactNode;
 }
+
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+	paddingTop: '10px !important'
+}));
 
 const PrecallDialog = ({
 	content,
@@ -68,9 +73,9 @@ const PrecallDialog = ({
 					</Grid>
 				</Grid>
 			</DialogTitle>
-			<DialogContent>
+			<StyledDialogContent>
 				{ content }
-			</DialogContent>
+			</StyledDialogContent>
 			<DialogActions>
 				<Grid
 					container
