@@ -19,6 +19,7 @@ interface PrecallDialogProps {
 	actions?: ReactNode;
 }
 
+// eslint-disable-next-line
 const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
 	paddingTop: '10px !important'
 }));
