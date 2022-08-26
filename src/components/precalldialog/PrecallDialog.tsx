@@ -19,9 +19,10 @@ interface PrecallDialogProps {
 	actions?: ReactNode;
 }
 
-// eslint-disable-next-line
 const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
-	paddingTop: '10px !important'
+	'&.MuiDialogContent-root': {
+		padding: theme.spacing(1, 3, 2.5, 3)
+	}
 }));
 
 const PrecallDialog = ({
