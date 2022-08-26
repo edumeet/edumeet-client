@@ -4,6 +4,7 @@ import {
 	DialogContent,
 	DialogTitle,
 	Grid,
+	styled,
 	Typography,
 	useTheme
 } from '@mui/material';
@@ -17,6 +18,12 @@ interface PrecallDialogProps {
 	content?: ReactNode;
 	actions?: ReactNode;
 }
+
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+	'&.MuiDialogContent-root': {
+		padding: theme.spacing(1, 3, 2.5, 3)
+	}
+}));
 
 const PrecallDialog = ({
 	content,
@@ -68,9 +75,9 @@ const PrecallDialog = ({
 					</Grid>
 				</Grid>
 			</DialogTitle>
-			<DialogContent>
+			<StyledDialogContent>
 				{ content }
-			</DialogContent>
+			</StyledDialogContent>
 			<DialogActions>
 				<Grid
 					container
