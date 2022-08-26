@@ -623,7 +623,7 @@ export class MediaService extends EventEmitter {
 		});
 
 		producer.once('trackended', () => {
-			this.changeProducer(producer.id, 'close', false);
+			this.changeProducer(producer.id, 'close');
 		});
 
 		return producer;
