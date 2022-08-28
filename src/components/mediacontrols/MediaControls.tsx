@@ -6,6 +6,10 @@ interface MediaControlsDivProps {
 	alignitems: string;
 	justifycontent: string;
 	position: 'absolute' | 'relative';
+	// eslint-disable-next-line
+	onMouseOver?: (event?: any) => void;
+	// eslint-disable-next-line
+	onMouseOut?: (event?: any) => void;
 }
 
 const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
@@ -22,6 +26,7 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	gap: theme.spacing(2),
 	padding: theme.spacing(2),
 	flexDirection: flexdirection,
+	opacity: 0.2,
 	alignItems: alignitems,
 	justifyContent: justifycontent,
 	zIndex: 21,
@@ -40,7 +45,7 @@ const MediaControls = ({
 	horizontalPlacement = 'center',
 	verticalPlacement = 'center',
 	position = 'absolute',
-	children
+	children,
 }: MediaControlsProps): JSX.Element => {
 	let justifyContent = 'center';
 	let alignItems = 'center';
@@ -61,8 +66,27 @@ const MediaControls = ({
 			alignItems = 'flex-end' : justifyContent = 'flex-end';
 	}
 
+	const buttonMouseOverHandler = (
+		event: React.MouseEvent<HTMLDivElement>
+	) => {
+		const btn: HTMLDivElement = event.currentTarget;
+
+		btn.style.opacity = '1';
+	};
+
+	const buttonMouseOutHandler = (
+		event: React.MouseEvent<HTMLDivElement>
+	) => {
+		const btn: HTMLDivElement = event.currentTarget;
+
+		btn.style.opacity = '0.2';
+		
+	};
+
 	return (
 		<MediaControlsDiv
+			onMouseOver={ buttonMouseOverHandler }
+			onMouseOut={ buttonMouseOutHandler }
 			flexdirection={orientation === 'horizontal' ? 'row' : 'column'}
 			position={position}
 			alignitems={alignItems}
