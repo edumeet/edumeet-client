@@ -67,6 +67,7 @@ export const joinRoom = () => async (
 		locked,
 		lobbyPeers,
 		roomMode = 'SFU',
+		roomSessionId,
 	} = await signalingService.sendRequest('join', {
 		displayName,
 		picture,
@@ -78,6 +79,7 @@ export const joinRoom = () => async (
 
 	batch(() => {
 		dispatch(roomActions.setMode(roomMode));
+		dispatch(roomActions.setRoomSessionId(roomSessionId));
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
 		dispatch(permissionsActions.setRoomPermissions(roomPermissions));
 		dispatch(permissionsActions.setUserRoles(userRoles));
