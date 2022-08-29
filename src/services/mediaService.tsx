@@ -12,6 +12,9 @@ import { PeerTransport } from '../utils/peerTransport';
 import { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
 import { DataProducer } from 'mediasoup-client/lib/DataProducer';
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
+import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
+import traceInit from '@jitsi/rtcstats/trace-ws';
+import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
 
 const logger = new Logger('MediaService');
 
@@ -71,6 +74,8 @@ export class MediaService extends EventEmitter {
 	private peerTransports: Map<string, PeerTransport> = new Map();
 	private peers: string[] = [];
 	private p2p = true;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	_trace: any;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
@@ -628,4 +633,45 @@ export class MediaService extends EventEmitter {
 
 		return producer;
 	}
+
+	private _rtcStatsCloseCallback() {
+		logger.debug('rtcStatsCloseCallback()');
+	}
+
+	public async rtcStatsInit(rtcStatsOptions: RTCStatsOptions) {
+		if (rtcStatsOptions.url && rtcStatsOptions.url != '') {
+			const endpoint = rtcStatsOptions.url;
+			const traceOptions = {
+				endpoint,
+				meetingFqn: window.location.pathname.replace(/^\//, ''),
+				onCloseCallback: this._rtcStatsCloseCallback.bind(this),
+				useLegacy: rtcStatsOptions.useLegacy,
+				obfuscate: rtcStatsOptions.obfuscate || true, 
+				pingInterval: rtcStatsOptions.wsPingIntervalMs || 30000
+			};
+
+			const rtcstatsOptions = {
+				pollInterval: rtcStatsOptions.pollIntervalMs,
+				useLegacy: rtcStatsOptions.useLegacy
+			};
+
+			try {
+				this._trace = traceInit(traceOptions);
+				rtcstatsInit(this._trace, rtcstatsOptions);
+				this._trace && this._trace.connect();
+			} catch (error) {
+				logger.error('rtstats error during init:', error);
+			}
+		}
+	}
+
+	public async rtcStatsIdentity(rtcStatsMetaData: RTCStatsMetaData) {
+		try {
+			this._trace.identity('identity', null, rtcStatsMetaData);
+		} catch (error) {
+			logger.error('rtstats error during init:', error);
+		}
+
+	}
+
 }

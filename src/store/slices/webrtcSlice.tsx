@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
+import { RTCStatsOptions } from '../../utils/types';
 import { roomActions } from './roomSlice';
 
 export interface WebrtcState {
 	iceServers?: RTCIceServer[];
+	rtcStatsOptions?: RTCStatsOptions;
 	rtpCapabilities?: RtpCapabilities;
 	torrentSupport: boolean;
 	tracker?: string;
@@ -31,6 +33,9 @@ const webrtcSlice = createSlice({
 		}),
 		setTracker: ((state, action: PayloadAction<string>) => {
 			state.tracker = action.payload;
+		}),
+		setRTCStatsOptions: ((state, action: PayloadAction<RTCStatsOptions>) => {
+			state.rtcStatsOptions = action.payload;
 		}),
 	},
 	extraReducers: (builder) => {

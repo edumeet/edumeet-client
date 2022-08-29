@@ -7,6 +7,7 @@ export type RoomMode = 'P2P' | 'SFU';
 
 export interface RoomState {
 	name?: string;
+	sessionId?: string;
 	activeSpeakerId?: string;
 	lockInProgress?: boolean;
 	localeInProgress?: boolean;
@@ -90,6 +91,9 @@ const roomSlice = createSlice({
 		deSpotlightPeer: ((state, action: PayloadAction<string>) => {
 			state.spotlights =
 				state.spotlights.filter((peer) => peer !== action.payload);
+		}),
+		setRoomSessionId: ((state, action: PayloadAction<string>) => {
+			state.sessionId = action.payload;
 		}),
 	},
 	extraReducers: (builder) => {
