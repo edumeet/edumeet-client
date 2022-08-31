@@ -7,6 +7,7 @@ import StopProducerButton from '../controlbuttons/StopProducerButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
+import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
@@ -59,6 +60,7 @@ const Me = ({
 					/>
 					<ShareButton />
 				</MediaControls>
+				{ micProducer && <UnmuteAlert micProducer={micProducer} /> }
 				{ micProducer && <Volume producer={micProducer} /> }
 				{ webcamProducer && <VideoView
 					mirrored={mirroredSelfView}
