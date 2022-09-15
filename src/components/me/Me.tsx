@@ -32,6 +32,7 @@ const Me = ({
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const activeSpeaker =
 		useAppSelector((state) => state.me.id === state.room.activeSpeakerId);
+	const browser = useAppSelector((state) => state.me.browser);
 
 	return (
 		<>
@@ -60,7 +61,7 @@ const Me = ({
 					/>
 					<ShareButton />
 				</MediaControls>
-				{ micProducer && <UnmuteAlert micProducer={micProducer} /> }
+				{ micProducer && browser.platform !== 'mobile' && <UnmuteAlert micProducer={micProducer} /> }
 				{ micProducer && <Volume producer={micProducer} /> }
 				{ webcamProducer && <VideoView
 					mirrored={mirroredSelfView}
