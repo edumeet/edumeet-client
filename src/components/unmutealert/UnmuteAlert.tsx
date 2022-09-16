@@ -1,4 +1,4 @@
-import { Alert, Fade } from '@mui/material';
+import { Alert } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useAppSelector, usePermissionSelector } from '../../store/hooks';
 import { StateProducer } from '../../store/slices/producersSlice';
@@ -17,8 +17,15 @@ const AlertDiv = styled('div')({
 });
 
 const StyledAlert = styled(Alert)(() => ({
+	transition: 'opacity 1s ease',
 	margin: 'auto',
 	textAlign: 'center',
+	opacity: 0,
+	'&.enabled':
+	{
+		transition: 'opacity 0.1s',
+		opacity: 1
+	},
 	'.MuiAlert-icon': {
 		marginTop: 'auto',
 		marginBottom: 'auto'
@@ -43,13 +50,13 @@ const UnmuteAlert = ({
 
 	return (
 		<AlertDiv>
-			{ micState === 'muted' && speaking && (
-				<Fade in={speaking}>
-					<StyledAlert variant='filled' severity='warning'>
-						{ mutedPTT() }
-					</StyledAlert>					
-				</Fade>
-			) }
+			<StyledAlert
+				variant='filled'
+				severity='warning'
+				className={ (micState === 'muted' && speaking) ? 'enabled' : '' }
+			>
+				{ mutedPTT() }
+			</StyledAlert>
 		</AlertDiv>
 	);
 };
