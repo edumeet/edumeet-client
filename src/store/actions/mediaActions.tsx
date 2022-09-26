@@ -324,9 +324,7 @@ export const updateMic = ({
 					opusMaxPlaybackRate: opusMaxPlaybackRate,
 					opusPtime: opusPtime
 				},
-				appData: { source: 'mic' },
-				disableTrackOnPause: false,
-				zeroRtpOnPause: true
+				appData: { source: 'mic' }
 			});
 
 			dispatch(producersActions.addProducer({
