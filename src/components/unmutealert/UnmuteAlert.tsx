@@ -11,8 +11,10 @@ interface UnmuteAlertProps {
 }
 
 const AlertDiv = styled('div')({
+	position: 'absolute',
 	width: '100%',
 	height: '100%',
+	zIndex: 3,
 	display: 'flex'
 });
 
