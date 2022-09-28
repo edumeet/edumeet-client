@@ -4,7 +4,7 @@ import { useAppSelector, usePermissionSelector } from '../../store/hooks';
 import { StateProducer } from '../../store/slices/producersSlice';
 import { permissions } from '../../utils/roles';
 import { MediaState } from '../../utils/types';
-import { mutedPTT } from '../translated/translatedComponents';
+import { mutedPTTLabel } from '../translated/translatedComponents';
 
 interface UnmuteAlertProps {
 	micProducer?: StateProducer;
@@ -57,7 +57,7 @@ const UnmuteAlert = ({
 				severity='warning'
 				className={ (micState === 'muted' && speaking) ? 'enabled' : '' }
 			>
-				{ mutedPTT() }
+				{ mutedPTTLabel() }
 			</StyledAlert>
 		</AlertDiv>
 	);

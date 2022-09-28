@@ -459,7 +459,7 @@ export const unMuteParticipantVideoLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Unmute video'
 });
 
-export const mutedPTT = (): ReactNode => intl.formatMessage({
+export const mutedPTTLabel = (): ReactNode => intl.formatMessage({
 	id: 'me.mutedPTT',
 	defaultMessage: 'You are muted{br}hold down SPACE-BAR to talk'
 }, { br: <br /> });
