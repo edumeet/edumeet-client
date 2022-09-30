@@ -604,7 +604,7 @@ export class MediaService extends EventEmitter {
 		if (kind === 'audio' && track) {
 			const harkStream = new MediaStream();
 
-			harkStream.addTrack(track);
+			harkStream.addTrack(track.clone());
 
 			const producerHark = hark(harkStream, {
 				play: false,

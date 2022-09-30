@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { intl } from '../../utils/intlManager';
 
 export const noLabel = (): string => intl.formatMessage({
@@ -457,3 +458,8 @@ export const unMuteParticipantVideoLabel = (): string => intl.formatMessage({
 	id: 'tooltip.unMuteParticipantVideo',
 	defaultMessage: 'Unmute video'
 });
+
+export const mutedPTTLabel = (): ReactNode => intl.formatMessage({
+	id: 'me.mutedPTT',
+	defaultMessage: 'You are muted{br}hold down SPACE-BAR to talk'
+}, { br: <br /> });

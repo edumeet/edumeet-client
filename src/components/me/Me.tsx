@@ -7,6 +7,7 @@ import StopProducerButton from '../controlbuttons/StopProducerButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
+import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
@@ -31,6 +32,7 @@ const Me = ({
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const activeSpeaker =
 		useAppSelector((state) => state.me.id === state.room.activeSpeakerId);
+	const browser = useAppSelector((state) => state.me.browser);
 
 	return (
 		<>
@@ -59,6 +61,7 @@ const Me = ({
 					/>
 					<ShareButton />
 				</MediaControls>
+				{ micProducer && browser.platform !== 'mobile' && <UnmuteAlert micProducer={micProducer} /> }
 				{ micProducer && <Volume producer={micProducer} /> }
 				{ webcamProducer && <VideoView
 					mirrored={mirroredSelfView}
