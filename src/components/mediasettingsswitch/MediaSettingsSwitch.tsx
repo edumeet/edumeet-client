@@ -1,7 +1,7 @@
 import { FormControlLabel, Switch } from '@mui/material';
 import { updateMic } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import settingsSlice from '../../store/slices/settingsSlice';
+import { settingsActions } from '../../store/slices/settingsSlice';
 import {
 	autoGainControlLabel,
 	echoCancellationLabel,
@@ -60,32 +60,32 @@ const MediaSettingsSwitch = ({
 	const onChangeCallback = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		switch (setting) {
 			case 'echoCancellation': {
-				dispatch(settingsSlice.actions.setEchoCancellation(event.target.checked));
+				dispatch(settingsActions.setEchoCancellation(event.target.checked));
 				break;
 			}
 
 			case 'autoGainControl': {
-				dispatch(settingsSlice.actions.setAutoGainControl(event.target.checked));
+				dispatch(settingsActions.setAutoGainControl(event.target.checked));
 				break;
 			}
 
 			case 'noiseSuppression': {
-				dispatch(settingsSlice.actions.setNoiseSuppression(event.target.checked));
+				dispatch(settingsActions.setNoiseSuppression(event.target.checked));
 				break;
 			}
 
 			case 'voiceActivatedUnmute': {
-				dispatch(settingsSlice.actions.setNoiseSuppression(event.target.checked));
+				// ToDO
 				break;
 			}
 
 			case 'enableOpusDtx': {
-				dispatch(settingsSlice.actions.setNoiseSuppression(event.target.checked));
+				dispatch(settingsActions.setOpusDtx(event.target.checked));
 				break;
 			}
 
 			case 'enableOpusFec': {
-				dispatch(settingsSlice.actions.setNoiseSuppression(event.target.checked));
+				dispatch(settingsActions.setOpusFec(event.target.checked));
 				break;
 			}
 		}
