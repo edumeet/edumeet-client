@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { detect } from '../../utils/intlManager';
-import { RoomLayout } from '../../utils/types';
+import { AudioPreset, RoomLayout } from '../../utils/types';
 import { producersActions } from './producersSlice';
 
 export interface SettingsState {
@@ -17,6 +17,8 @@ export interface SettingsState {
 	frameRate: number;
 	screenSharingResolution: string;
 	screenSharingFrameRate: number;
+	audioPreset: string,
+	audioPresets: Record<string, AudioPreset>,
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
@@ -45,6 +47,8 @@ const initialState: SettingsState = {
 	lastN: edumeetConfig.lastN,
 	hideNonVideo: edumeetConfig.hideNonVideo,
 	aspectRatio: edumeetConfig.aspectRatio,
+	audioPreset: edumeetConfig.audioPreset,
+	audioPresets: edumeetConfig.audioPresets,
 	autoGainControl: edumeetConfig.autoGainControl,
 	echoCancellation: edumeetConfig.echoCancellation,
 	noiseSuppression: edumeetConfig.noiseSuppression,
@@ -101,6 +105,9 @@ const settingsSlice = createSlice({
 		}),
 		setScreenSharingFrameRate: ((state, action: PayloadAction<number>) => {
 			state.screenSharingFrameRate = action.payload;
+		}),
+		setAudioPreset: ((state, action: PayloadAction<string>) => {
+			state.audioPreset = action.payload;
 		}),
 		setAutoGainControl: ((state, action: PayloadAction<boolean>) => {
 			state.autoGainControl = action.payload;
