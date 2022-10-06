@@ -21,7 +21,7 @@ export const EchoCancellationSwitch = (): JSX.Element => {
 				<Switch 
 					color="primary"
 					checked={ echoCancellation }
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setEchoCancellation(event.target.checked));
 						dispatch(updateMic());
 					} }
@@ -42,7 +42,7 @@ export const AutoGainControlSwitch = (): JSX.Element => {
 				<Switch 
 					color="primary"
 					checked={ autoGainControl }
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setAutoGainControl(event.target.checked));
 						dispatch(updateMic());
 					} }
@@ -63,7 +63,7 @@ export const NoiseSuppressionSwitch = (): JSX.Element => {
 				<Switch 
 					color="primary"
 					checked={ noiseSuppression }
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setNoiseSuppression(event.target.checked));
 						dispatch(updateMic());
 					} }
@@ -86,7 +86,7 @@ export const VoiceActivatedUnmuteSwitch = (): JSX.Element => {
 					color="primary"
 					checked={ voiceActivatedUnmute }
 					
-					/* onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+					/* onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						// TODO
 						dispatch(updateMic());
 					} } */
@@ -107,7 +107,7 @@ export const OpusDtxSwitch = (): JSX.Element => {
 				<Switch 
 					color="primary"
 					checked={ opusDtx }
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setOpusDtx(event.target.checked));
 						dispatch(updateMic());
 					} }
@@ -128,7 +128,7 @@ export const OpusFecSwitch = (): JSX.Element => {
 				<Switch 
 					color="primary"
 					checked={ opusFec }
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setOpusFec(event.target.checked));
 						dispatch(updateMic());
 					} }
