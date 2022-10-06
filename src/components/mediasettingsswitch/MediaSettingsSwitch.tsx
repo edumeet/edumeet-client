@@ -11,99 +11,130 @@ import {
 	voiceActivatedUnmuteLabel
 } from '../translated/translatedComponents';
 
-type SettingType = 'echoCancellation' |
-	'autoGainControl' |
-	'noiseSuppression' |
-	'voiceActivatedUnmute' |
-	'enableOpusDtx' |
-	'enableOpusFec';
-
-interface MediaSettingsSwitchProps {
-	setting: SettingType,
-}
-
-const labels = {
-	'echoCancellation': echoCancellationLabel,
-	'autoGainControl': autoGainControlLabel,
-	'noiseSuppression': noiseSuppressionLabel,
-	'voiceActivatedUnmute': voiceActivatedUnmuteLabel,
-	'enableOpusDtx': enableOpusDtxLabel,
-	'enableOpusFec': enableOpusFecLabel
-};
-
-const MediaSettingsSwitch = ({
-	setting
-}: MediaSettingsSwitchProps): JSX.Element => {
+export const EchoCancellationSwitch = (): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const switchChecked = useAppSelector((state) => {
-		switch (setting) {
-			case 'echoCancellation':
-				return state.settings.echoCancellation;
-
-			case 'autoGainControl':
-				return state.settings.autoGainControl;
-
-			case 'noiseSuppression':
-				return state.settings.noiseSuppression;
-
-			case 'voiceActivatedUnmute':
-				return state.settings.voiceActivatedUnmute;
-
-			case 'enableOpusDtx':
-				return state.settings.opusDtx;
-
-			case 'enableOpusFec':
-				return state.settings.opusFec;
-		}
-	});
-
-	const onChangeCallback = (event: React.ChangeEvent<HTMLInputElement>): void => {
-		switch (setting) {
-			case 'echoCancellation': {
-				dispatch(settingsActions.setEchoCancellation(event.target.checked));
-				break;
-			}
-
-			case 'autoGainControl': {
-				dispatch(settingsActions.setAutoGainControl(event.target.checked));
-				break;
-			}
-
-			case 'noiseSuppression': {
-				dispatch(settingsActions.setNoiseSuppression(event.target.checked));
-				break;
-			}
-
-			case 'voiceActivatedUnmute': {
-				// ToDO
-				break;
-			}
-
-			case 'enableOpusDtx': {
-				dispatch(settingsActions.setOpusDtx(event.target.checked));
-				break;
-			}
-
-			case 'enableOpusFec': {
-				dispatch(settingsActions.setOpusFec(event.target.checked));
-				break;
-			}
-		}
-		dispatch(updateMic());
-	};
+	const echoCancellation = useAppSelector((state) => state.settings.echoCancellation);
 
 	return (
 		<FormControlLabel
 			control={
 				<Switch 
 					color="primary"
-					checked={ switchChecked }
-					onChange={ onChangeCallback }
+					checked={ echoCancellation }
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+						dispatch(settingsActions.setEchoCancellation(event.target.checked));
+						dispatch(updateMic());
+					} }
 				/>
 			}
-			label={ labels[setting]() }
+			label={ echoCancellationLabel() }
 		/>
 	);
 };
 
-export default MediaSettingsSwitch;
+export const AutoGainControlSwitch = (): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const autoGainControl = useAppSelector((state) => state.settings.autoGainControl);
+
+	return (
+		<FormControlLabel
+			control={
+				<Switch 
+					color="primary"
+					checked={ autoGainControl }
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+						dispatch(settingsActions.setAutoGainControl(event.target.checked));
+						dispatch(updateMic());
+					} }
+				/>
+			}
+			label={ autoGainControlLabel() }
+		/>
+	);
+};
+
+export const NoiseSuppressionSwitch = (): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const noiseSuppression = useAppSelector((state) => state.settings.noiseSuppression);
+
+	return (
+		<FormControlLabel
+			control={
+				<Switch 
+					color="primary"
+					checked={ noiseSuppression }
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+						dispatch(settingsActions.setNoiseSuppression(event.target.checked));
+						dispatch(updateMic());
+					} }
+				/>
+			}
+			label={ noiseSuppressionLabel() }
+		/>
+	);
+};
+
+export const VoiceActivatedUnmuteSwitch = (): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const voiceActivatedUnmute =
+		useAppSelector((state) => state.settings.voiceActivatedUnmute);
+
+	return (
+		<FormControlLabel
+			control={
+				<Switch 
+					color="primary"
+					checked={ voiceActivatedUnmute }
+					
+					/* onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+						// TODO
+						dispatch(updateMic());
+					} } */
+				/>
+			}
+			label={ voiceActivatedUnmuteLabel() }
+		/>
+	);
+};
+
+export const OpusDtxSwitch = (): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const opusDtx = useAppSelector((state) => state.settings.opusDtx);
+
+	return (
+		<FormControlLabel
+			control={
+				<Switch 
+					color="primary"
+					checked={ opusDtx }
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+						dispatch(settingsActions.setOpusDtx(event.target.checked));
+						dispatch(updateMic());
+					} }
+				/>
+			}
+			label={ enableOpusDtxLabel() }
+		/>
+	);
+};
+
+export const OpusFecSwitch = (): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const opusFec = useAppSelector((state) => state.settings.opusFec);
+
+	return (
+		<FormControlLabel
+			control={
+				<Switch 
+					color="primary"
+					checked={ opusFec }
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
+						dispatch(settingsActions.setOpusFec(event.target.checked));
+						dispatch(updateMic());
+					} }
+				/>
+			}
+			label={ enableOpusFecLabel() }
+		/>
+	);
+};
