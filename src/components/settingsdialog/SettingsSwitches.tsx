@@ -75,7 +75,7 @@ export const NoiseSuppressionSwitch = (): JSX.Element => {
 };
 
 export const VoiceActivatedUnmuteSwitch = (): JSX.Element => {
-	const dispatch = useAppDispatch();
+	// const dispatch = useAppDispatch();
 	const voiceActivatedUnmute =
 		useAppSelector((state) => state.settings.voiceActivatedUnmute);
 
