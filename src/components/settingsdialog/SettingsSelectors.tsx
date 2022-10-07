@@ -1,5 +1,5 @@
 import { FormControl, FormHelperText, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { updateMic, updateScreenSharing, updateWebcam } from '../../store/actions/mediaActions';
+import { updateMic, updatePreviewMic, updatePreviewWebcam, updateScreenSharing, updateWebcam } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { Resolution } from '../../utils/types';
@@ -28,6 +28,9 @@ export const ResolutionSelector = ({
 		dispatch(updateWebcam({
 			restart: true,
 			newResolution: event.target.value
+		}));
+		dispatch(updatePreviewWebcam({
+			restart: true
 		}));
 	};
 
@@ -74,6 +77,9 @@ export const FrameRateSelector = ({
 			dispatch(updateWebcam({
 				restart: true,
 				newFrameRate: parseInt(event.target.value)
+			}));
+			dispatch(updatePreviewWebcam({
+				restart: true
 			}));
 		} else {
 			dispatch(updateScreenSharing({
@@ -139,6 +145,7 @@ export const SampleRateSelector = ({
 				onChange={ (event: SelectChangeEvent<string>): void => {
 					dispatch(settingsActions.setSampleRate(parseInt(event.target.value)));
 					dispatch(updateMic());
+					dispatch(updatePreviewMic());
 				} }
 				displayEmpty
 				autoWidth
@@ -169,6 +176,7 @@ export const ChannelCountSelector = ({
 				onChange={ (event: SelectChangeEvent<string>): void => {
 					dispatch(settingsActions.setChannelCount(parseInt(event.target.value)));
 					dispatch(updateMic());
+					dispatch(updatePreviewMic());
 				} }
 				displayEmpty
 				autoWidth
@@ -199,6 +207,7 @@ export const SampleSizeSelector = ({
 				onChange={ (event: SelectChangeEvent<string>): void => {
 					dispatch(settingsActions.setSampleSize(parseInt(event.target.value)));
 					dispatch(updateMic());
+					dispatch(updatePreviewMic());
 				} }
 				displayEmpty
 				autoWidth
@@ -229,6 +238,7 @@ export const OpusPtimeSelector = ({
 				onChange={ (event: SelectChangeEvent<string>): void => {
 					dispatch(settingsActions.setOpusPtime(parseInt(event.target.value)));
 					dispatch(updateMic());
+					dispatch(updatePreviewMic());
 				} }
 				displayEmpty
 				autoWidth

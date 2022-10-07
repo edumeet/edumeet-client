@@ -1,5 +1,5 @@
 import { FormControlLabel, Switch } from '@mui/material';
-import { updateMic } from '../../store/actions/mediaActions';
+import { updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import {
@@ -24,6 +24,7 @@ export const EchoCancellationSwitch = (): JSX.Element => {
 					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setEchoCancellation(event.target.checked));
 						dispatch(updateMic());
+						dispatch(updatePreviewMic());
 					} }
 				/>
 			}
@@ -45,6 +46,7 @@ export const AutoGainControlSwitch = (): JSX.Element => {
 					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setAutoGainControl(event.target.checked));
 						dispatch(updateMic());
+						dispatch(updatePreviewMic());
 					} }
 				/>
 			}
@@ -66,6 +68,7 @@ export const NoiseSuppressionSwitch = (): JSX.Element => {
 					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setNoiseSuppression(event.target.checked));
 						dispatch(updateMic());
+						dispatch(updatePreviewMic());
 					} }
 				/>
 			}
@@ -89,6 +92,7 @@ export const VoiceActivatedUnmuteSwitch = (): JSX.Element => {
 					/* onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						// TODO
 						dispatch(updateMic());
+						dispatch(updatePreviewMic());
 					} } */
 				/>
 			}
@@ -110,6 +114,7 @@ export const OpusDtxSwitch = (): JSX.Element => {
 					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setOpusDtx(event.target.checked));
 						dispatch(updateMic());
+						dispatch(updatePreviewMic());
 					} }
 				/>
 			}
@@ -131,6 +136,7 @@ export const OpusFecSwitch = (): JSX.Element => {
 					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setOpusFec(event.target.checked));
 						dispatch(updateMic());
+						dispatch(updatePreviewMic());
 					} }
 				/>
 			}

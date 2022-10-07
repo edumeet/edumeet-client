@@ -1,5 +1,5 @@
 import { FormControl, FormHelperText, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { updateMic } from '../../store/actions/mediaActions';
+import { updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { selectAudioPresetLabel } from '../translated/translatedComponents';
@@ -41,6 +41,7 @@ const AudioPresetSelector = (): JSX.Element => {
 		dispatch(settingsActions.setOpusMaxPlaybackRate(opusMaxPlaybackRate));
 
 		dispatch(updateMic());
+		dispatch(updatePreviewMic());
 	};
 
 	return (
