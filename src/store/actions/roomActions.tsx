@@ -31,9 +31,10 @@ export const joinRoom = () => async (
 ): Promise<void> => {
 	logger.debug('joinRoom()');
 
-	const { webrtc } = getState();
-	const iceServers = webrtc.iceServers;
-	const rtcStatsOptions = webrtc.rtcStatsOptions;
+	const {
+		iceServers,
+		rtcStatsOptions,
+	} = getState().webrtc;
 
 	mediaService.rtcStatsInit(rtcStatsOptions);
 
@@ -56,6 +57,7 @@ export const joinRoom = () => async (
 	const { displayName } = getState().settings;
 	const { id: meId, picture } = getState().me;
 	const { loggedIn } = getState().permissions;
+	const { name: confName } = getState().room;
 
 	const {
 		authenticated,
@@ -110,20 +112,17 @@ export const joinRoom = () => async (
 			dispatch(updateWebcam({ init: true, start: true }));
 	});
 
-	const rootState = getState();
-
 	const rtcStatsMetaData = { 
 		applicationName: 'edumeet', // mandatoy
-		confName: rootState.room.name, // mandatory
+		confName, // mandatory
 		confID: window.location.toString(),
-		meetingUniqueId: rootState.room.sessionId,
-		endpointId: rootState.me.id,
-		deviceId: rootState.me.id,
-		displayName: rootState.settings.displayName,
+		meetingUniqueId: roomSessionId,
+		endpointId: meId,
+		deviceId: meId,
+		displayName,
 	};
 
 	mediaService.rtcStatsIdentity(rtcStatsMetaData);
-
 };
 
 export const leaveRoom = () => async (

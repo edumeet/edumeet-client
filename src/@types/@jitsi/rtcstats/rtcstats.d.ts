@@ -1,1 +1,1 @@
-declare module '@jitsi/rtcstats/rtcstats'
+declare module '@jitsi/rtcstats/rtcstats';

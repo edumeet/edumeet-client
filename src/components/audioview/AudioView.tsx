@@ -18,13 +18,11 @@ const AudioView = ({
 		let media: Consumer | Producer | undefined;
 		let track: MediaStreamTrack | null | undefined;
 
-		if (consumer) {
+		if (consumer)
 			media = mediaService.getConsumer(consumer.id);
-		}
 
-		if (media) {
+		if (media)
 			({ track } = media);
-		}
 
 		if (!track || !audioElement?.current) return;
 

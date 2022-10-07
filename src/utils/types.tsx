@@ -1,5 +1,4 @@
 import { ThemeOptions } from '@mui/material';
-import exp from 'constants';
 import { MediaKind, RtpCapabilities, RtpParameters } from 'mediasoup-client/lib/RtpParameters';
 import { DtlsParameters } from 'mediasoup-client/lib/Transport';
 

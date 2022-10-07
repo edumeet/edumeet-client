@@ -75,7 +75,7 @@ export class MediaService extends EventEmitter {
 	private peers: string[] = [];
 	private p2p = true;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	_trace: any;
+	private trace: any;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
@@ -634,44 +634,56 @@ export class MediaService extends EventEmitter {
 		return producer;
 	}
 
-	private _rtcStatsCloseCallback() {
+	private rtcStatsCloseCallback() {
 		logger.debug('rtcStatsCloseCallback()');
 	}
 
-	public async rtcStatsInit(rtcStatsOptions: RTCStatsOptions) {
-		if (rtcStatsOptions.url && rtcStatsOptions.url != '') {
-			const endpoint = rtcStatsOptions.url;
-			const traceOptions = {
-				endpoint,
-				meetingFqn: window.location.pathname.replace(/^\//, ''),
-				onCloseCallback: this._rtcStatsCloseCallback.bind(this),
-				useLegacy: rtcStatsOptions.useLegacy,
-				obfuscate: rtcStatsOptions.obfuscate || true, 
-				pingInterval: rtcStatsOptions.wsPingIntervalMs || 30000
-			};
+	public rtcStatsInit(rtcStatsOptions?: RTCStatsOptions): void {
+		if (!rtcStatsOptions)
+			return;
 
-			const rtcstatsOptions = {
-				pollInterval: rtcStatsOptions.pollIntervalMs,
-				useLegacy: rtcStatsOptions.useLegacy
-			};
+		const {
+			url: endpoint,
+			useLegacy,
+			obfuscate = true,
+			wsPingIntervalMs: pingInterval = 30000,
+			pollIntervalMs: pollInterval,
+		} = rtcStatsOptions;
 
-			try {
-				this._trace = traceInit(traceOptions);
-				rtcstatsInit(this._trace, rtcstatsOptions);
-				this._trace && this._trace.connect();
-			} catch (error) {
-				logger.error('rtstats error during init:', error);
-			}
+		if (!endpoint) {
+			logger.warn('rtcStatsInit() | no endpoint given, not starting rtcstats');
+
+			return;
 		}
-	}
 
-	public async rtcStatsIdentity(rtcStatsMetaData: RTCStatsMetaData) {
+		const traceOptions = {
+			endpoint,
+			meetingFqn: window.location.pathname.replace(/^\//, ''),
+			onCloseCallback: this.rtcStatsCloseCallback.bind(this),
+			useLegacy,
+			obfuscate,
+			pingInterval,
+		};
+
+		const rtcStatsInternalOptions = {
+			pollInterval,
+			useLegacy,
+		};
+
 		try {
-			this._trace.identity('identity', null, rtcStatsMetaData);
+			this.trace = traceInit(traceOptions);
+			rtcstatsInit(this.trace, rtcStatsInternalOptions);
+			this.trace?.connect();
 		} catch (error) {
-			logger.error('rtstats error during init:', error);
+			logger.error('rtcStatsInit() [error:%o]', error);
 		}
-
 	}
 
+	public rtcStatsIdentity(rtcStatsMetaData: RTCStatsMetaData): void {
+		try {
+			this.trace?.identity('identity', null, rtcStatsMetaData);
+		} catch (error) {
+			logger.error('rtcStatsIdentity() [error:%o]', error);
+		}
+	}
 }

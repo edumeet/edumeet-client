@@ -2,9 +2,7 @@ import { styled } from '@mui/material';
 import { Consumer } from 'mediasoup-client/lib/Consumer';
 import { Producer } from 'mediasoup-client/lib/Producer';
 import { useContext, useEffect, useState } from 'react';
-import { useAppDispatch } from '../../store/hooks';
 import { StateConsumer } from '../../store/slices/consumersSlice';
-import { meActions } from '../../store/slices/meSlice';
 import { StateProducer } from '../../store/slices/producersSlice';
 import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
@@ -64,7 +62,6 @@ const Volume = ({
 	consumer,
 	producer
 }: VolumeProps): JSX.Element => {
-	const dispatch = useAppDispatch();
 	const { mediaService } = useContext(ServiceContext);
 	const [ volume, setVolume ] = useState<number>(0);
 
@@ -85,11 +82,6 @@ const Volume = ({
 
 		const onVolumeChange = ({ scaledVolume }: { scaledVolume: number }): void => {
 			setVolume(scaledVolume);
-			if (scaledVolume) {
-				dispatch(meActions.setSpeaking(true));
-			} else {
-				dispatch(meActions.setSpeaking(false));
-			}
 		};
 
 		volumeWatcher?.on('volumeChange', onVolumeChange);
