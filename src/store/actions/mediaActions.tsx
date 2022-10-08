@@ -216,7 +216,7 @@ export const stopPreviewWebcam = ({
 
 export const updateMic = ({
 	start = false,
-	restart = false,
+	restart = true,
 	newDeviceId
 }: UpdateDeviceOptions = {}) => async (
 	dispatch: AppDispatch,
