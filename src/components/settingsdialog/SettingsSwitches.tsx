@@ -19,7 +19,7 @@ export const EchoCancellationSwitch = (): JSX.Element => {
 		<FormControlLabel
 			control={
 				<Switch 
-					color="primary"
+					color='primary'
 					checked={ echoCancellation }
 					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setEchoCancellation(event.target.checked));
@@ -41,7 +41,7 @@ export const AutoGainControlSwitch = (): JSX.Element => {
 		<FormControlLabel
 			control={
 				<Switch 
-					color="primary"
+					color='primary'
 					checked={ autoGainControl }
 					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setAutoGainControl(event.target.checked));
@@ -63,7 +63,7 @@ export const NoiseSuppressionSwitch = (): JSX.Element => {
 		<FormControlLabel
 			control={
 				<Switch 
-					color="primary"
+					color='primary'
 					checked={ noiseSuppression }
 					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setNoiseSuppression(event.target.checked));
@@ -86,7 +86,7 @@ export const VoiceActivatedUnmuteSwitch = (): JSX.Element => {
 		<FormControlLabel
 			control={
 				<Switch 
-					color="primary"
+					color='primary'
 					checked={ voiceActivatedUnmute }
 					
 					/* onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -109,7 +109,7 @@ export const OpusDtxSwitch = (): JSX.Element => {
 		<FormControlLabel
 			control={
 				<Switch 
-					color="primary"
+					color='primary'
 					checked={ opusDtx }
 					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setOpusDtx(event.target.checked));
@@ -131,7 +131,7 @@ export const OpusFecSwitch = (): JSX.Element => {
 		<FormControlLabel
 			control={
 				<Switch 
-					color="primary"
+					color='primary'
 					checked={ opusFec }
 					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(settingsActions.setOpusFec(event.target.checked));

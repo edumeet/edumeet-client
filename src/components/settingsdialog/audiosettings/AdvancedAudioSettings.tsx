@@ -34,8 +34,8 @@ const AdvancedAudioSettings = (): JSX.Element => {
 				<ListItemText primary={ advancedAudioSettingsLabel() } />
 				{open ? <ExpandLess /> : <ExpandMore />}
 			</ListItemButton>
-			<Collapse in={ open } timeout="auto" unmountOnExit>
-				<List component="div">
+			<Collapse in={ open } timeout='auto' unmountOnExit>
+				<List component='div'>
 					<EchoCancellationSwitch />
 					<AutoGainControlSwitch />
 					<NoiseSuppressionSwitch />

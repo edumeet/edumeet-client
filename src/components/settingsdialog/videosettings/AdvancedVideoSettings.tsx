@@ -50,8 +50,8 @@ const AdvancedVideoSettings = (): JSX.Element => {
 				<ListItemText primary={ advancedVideoSettingsLabel() } />
 				{open ? <ExpandLess /> : <ExpandMore />}
 			</ListItemButton>
-			<Collapse in={ open } timeout="auto" unmountOnExit>
-				<List component="div">
+			<Collapse in={ open } timeout='auto' unmountOnExit>
+				<List component='div'>
 					<ResolutionSelector resolutions={ resolutions } />
 					<FrameRateSelector device='webcam' frameRates={ frameRates } />
 					<FrameRateSelector device='screen' frameRates={ frameRates } />
