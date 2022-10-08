@@ -1,5 +1,5 @@
 import { FormControl, FormHelperText, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { updateMic, updatePreviewMic, updatePreviewWebcam, updateScreenSharing, updateWebcam } from '../../store/actions/mediaActions';
+import { updateMic, updatePreviewMic, updateScreenSharing, updateWebcam } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { Resolution } from '../../utils/types';
@@ -28,9 +28,6 @@ export const ResolutionSelector = ({
 		dispatch(updateWebcam({
 			restart: true,
 			newResolution: event.target.value
-		}));
-		dispatch(updatePreviewWebcam({
-			restart: true
 		}));
 	};
 
@@ -77,9 +74,6 @@ export const FrameRateSelector = ({
 			dispatch(updateWebcam({
 				restart: true,
 				newFrameRate: parseInt(event.target.value)
-			}));
-			dispatch(updatePreviewWebcam({
-				restart: true
 			}));
 		} else {
 			dispatch(updateScreenSharing({
