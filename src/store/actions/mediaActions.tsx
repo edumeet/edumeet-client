@@ -18,6 +18,20 @@ interface UpdateDeviceOptions {
 	newFrameRate?: number;
 }
 
+interface AudioSettings {
+	autoGainControl?: boolean;
+	echoCancellation?: boolean;
+	noiseSuppression?: boolean;
+	sampleRate?: number;
+	channelCount?: number;
+	sampleSize?: number;
+	opusStereo?: boolean;
+	opusDtx?: boolean;
+	opusFec?: boolean;
+	opusPtime?: number;
+	opusMaxPlaybackRate?: number;
+}
+
 export const updatePreviewMic = ({
 	restart = false,
 	updateMute = true,
@@ -214,6 +228,19 @@ export const stopPreviewWebcam = ({
 	dispatch(meActions.setVideoInProgress(false));
 };
 
+export const updateAudioSettings = (settings: AudioSettings = {}) => async (
+	dispatch: AppDispatch
+): Promise<void> => {
+	logger.debug('updateAudioSettings()');
+
+	dispatch(settingsActions.updateSettings(settings));
+	dispatch(updateMic());
+	dispatch(updatePreviewMic());
+};
+
+// Only Firefox supports applyConstraints to audio tracks
+// See:
+// https://bugs.chromium.org/p/chromium/issues/detail?id=796964
 export const updateMic = ({
 	start = false,
 	restart = true,

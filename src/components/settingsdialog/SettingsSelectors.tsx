@@ -1,7 +1,6 @@
 import { FormControl, FormHelperText, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { updateMic, updatePreviewMic, updateScreenSharing, updateWebcam } from '../../store/actions/mediaActions';
+import { updateAudioSettings, updateScreenSharing, updateWebcam } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { settingsActions } from '../../store/slices/settingsSlice';
 import { Resolution } from '../../utils/types';
 import {
 	selectAudioChannelCountLabel,
@@ -136,11 +135,9 @@ export const SampleRateSelector = ({
 		<FormControl fullWidth>
 			<Select
 				value={ sampleRate }
-				onChange={ (event: SelectChangeEvent<string>): void => {
-					dispatch(settingsActions.setSampleRate(parseInt(event.target.value)));
-					dispatch(updateMic());
-					dispatch(updatePreviewMic());
-				} }
+				onChange={(event: SelectChangeEvent<string>): void => {
+					dispatch(updateAudioSettings({ sampleRate: parseInt(event.target.value) }));
+				}}
 				displayEmpty
 				autoWidth
 			>
@@ -167,11 +164,9 @@ export const ChannelCountSelector = ({
 		<FormControl fullWidth>
 			<Select
 				value={ channelCount }
-				onChange={ (event: SelectChangeEvent<string>): void => {
-					dispatch(settingsActions.setChannelCount(parseInt(event.target.value)));
-					dispatch(updateMic());
-					dispatch(updatePreviewMic());
-				} }
+				onChange={(event: SelectChangeEvent<string>): void => {
+					dispatch(updateAudioSettings({ channelCount: parseInt(event.target.value) }));
+				}}
 				displayEmpty
 				autoWidth
 			>
@@ -198,11 +193,9 @@ export const SampleSizeSelector = ({
 		<FormControl fullWidth>
 			<Select
 				value={ sampleSize }
-				onChange={ (event: SelectChangeEvent<string>): void => {
-					dispatch(settingsActions.setSampleSize(parseInt(event.target.value)));
-					dispatch(updateMic());
-					dispatch(updatePreviewMic());
-				} }
+				onChange={(event: SelectChangeEvent<string>): void => {
+					dispatch(updateAudioSettings({ sampleSize: parseInt(event.target.value) }));
+				}}
 				displayEmpty
 				autoWidth
 			>
@@ -229,11 +222,9 @@ export const OpusPtimeSelector = ({
 		<FormControl fullWidth>
 			<Select
 				value={ opusPtime }
-				onChange={ (event: SelectChangeEvent<string>): void => {
-					dispatch(settingsActions.setOpusPtime(parseInt(event.target.value)));
-					dispatch(updateMic());
-					dispatch(updatePreviewMic());
-				} }
+				onChange={(event: SelectChangeEvent<string>): void => {
+					dispatch(updateAudioSettings({ opusPtime: parseInt(event.target.value) }));
+				}}
 				displayEmpty
 				autoWidth
 			>

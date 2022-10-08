@@ -1,7 +1,6 @@
 import { FormControlLabel, Switch } from '@mui/material';
-import { updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
+import { updateAudioSettings } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { settingsActions } from '../../store/slices/settingsSlice';
 import {
 	autoGainControlLabel,
 	echoCancellationLabel,
@@ -21,11 +20,9 @@ export const EchoCancellationSwitch = (): JSX.Element => {
 				<Switch 
 					color='primary'
 					checked={ echoCancellation }
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
-						dispatch(settingsActions.setEchoCancellation(event.target.checked));
-						dispatch(updateMic());
-						dispatch(updatePreviewMic());
-					} }
+					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+						dispatch(updateAudioSettings({ echoCancellation: event.target.checked }));
+					}}
 				/>
 			}
 			label={ echoCancellationLabel() }
@@ -43,11 +40,9 @@ export const AutoGainControlSwitch = (): JSX.Element => {
 				<Switch 
 					color='primary'
 					checked={ autoGainControl }
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
-						dispatch(settingsActions.setAutoGainControl(event.target.checked));
-						dispatch(updateMic());
-						dispatch(updatePreviewMic());
-					} }
+					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+						dispatch(updateAudioSettings({ autoGainControl: event.target.checked }));
+					}}
 				/>
 			}
 			label={ autoGainControlLabel() }
@@ -65,11 +60,9 @@ export const NoiseSuppressionSwitch = (): JSX.Element => {
 				<Switch 
 					color='primary'
 					checked={ noiseSuppression }
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
-						dispatch(settingsActions.setNoiseSuppression(event.target.checked));
-						dispatch(updateMic());
-						dispatch(updatePreviewMic());
-					} }
+					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+						dispatch(updateAudioSettings({ noiseSuppression: event.target.checked }));
+					}}
 				/>
 			}
 			label={ noiseSuppressionLabel() }
@@ -111,11 +104,9 @@ export const OpusDtxSwitch = (): JSX.Element => {
 				<Switch 
 					color='primary'
 					checked={ opusDtx }
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
-						dispatch(settingsActions.setOpusDtx(event.target.checked));
-						dispatch(updateMic());
-						dispatch(updatePreviewMic());
-					} }
+					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+						dispatch(updateAudioSettings({ opusDtx: event.target.checked }));
+					}}
 				/>
 			}
 			label={ enableOpusDtxLabel() }
@@ -133,11 +124,9 @@ export const OpusFecSwitch = (): JSX.Element => {
 				<Switch 
 					color='primary'
 					checked={ opusFec }
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
-						dispatch(settingsActions.setOpusFec(event.target.checked));
-						dispatch(updateMic());
-						dispatch(updatePreviewMic());
-					} }
+					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+						dispatch(updateAudioSettings({ opusFec: event.target.checked }));
+					}}
 				/>
 			}
 			label={ enableOpusFecLabel() }

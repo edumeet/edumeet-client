@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { advancedAudioSettingsLabel } from '../../translated/translatedComponents';
@@ -22,7 +22,7 @@ const sampleSizeData: Array<number> = [ 8, 16, 24, 32 ];
 const opusPtimeData: Array<number> = [ 3, 5, 10, 20, 30, 40, 50, 60 ];
 
 const AdvancedAudioSettings = (): JSX.Element => {
-	const [ open, setOpen ] = React.useState(false);
+	const [ open, setOpen ] = useState(false);
 
 	const handleClick = () => {
 		setOpen(!open);
