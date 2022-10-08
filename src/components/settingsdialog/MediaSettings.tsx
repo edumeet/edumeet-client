@@ -5,8 +5,8 @@ import AudioInputChooser from '../devicechooser/AudioInputChooser';
 import VideoInputChooser from '../devicechooser/VideoInputChooser';
 import MediaPreview from '../mediapreview/MediaPreview';
 import { audioSettingsLabel, videoSettingsLabel } from '../translated/translatedComponents';
-import AdvancedAudioSettings from './audiosettings/AdvancedAudioSettings';
-import AdvancedVideoSettings from './videosettings/AdvancedVideoSettings';
+import AdvancedAudioSettings from './advancedsettings/AdvancedAudioSettings';
+import AdvancedVideoSettings from './advancedsettings/AdvancedVideoSettings';
 
 const NestedList = styled(List)(({ theme }) => ({
 	padding: theme.spacing(0, 1.5)
