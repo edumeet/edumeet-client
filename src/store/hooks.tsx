@@ -4,7 +4,8 @@ import {
 	ContextType,
 	useContext,
 	useEffect,
-	useMemo
+	useMemo,
+	useRef
 } from 'react';
 import { Blocker, History, Transition } from 'history';
 import {
@@ -143,3 +144,14 @@ export const usePrompt = (when = true): void => {
 
 	return useBlocker(blocker, when);
 };
+
+type ResultBox<T> = { v: T }
+
+export function useConstant<T>(fn: () => T): T {
+	const ref = useRef<ResultBox<T>>();
+
+	if (!ref.current)
+		ref.current = { v: fn() };
+
+	return ref.current.v;
+}

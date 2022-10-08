@@ -1,23 +1,13 @@
+import { CacheProvider } from '@emotion/react';
+import createCache from '@emotion/cache';
 import {
 	ReactNode,
 	ReactPortal,
 	useEffect,
-	useRef,
-	useState
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useConstant } from '../../store/hooks';
 import edumeetConfig from '../../utils/edumeetConfig';
-
-const copyStyles = (src: Document, dest: Document) => {
-	Array.from(src.styleSheets).forEach((styleSheet) =>
-		styleSheet?.ownerNode && 
-			dest.head.appendChild(
-				styleSheet.ownerNode.cloneNode(true)
-			)
-	);
-
-	Array.from(src.fonts).forEach((font) => dest.fonts.add(font));
-};
 
 interface SeparateWindowProps {
 	onClose?: () => void;
@@ -29,33 +19,29 @@ const SeparateWindow = ({
 	onClose,
 	aspectRatio,
 	children
-}: SeparateWindowProps): ReactPortal | null => {
-	const [ container, setContainer ] = useState<HTMLDivElement>();
-	const newWindow = useRef<Window | null>();
+}: SeparateWindowProps): ReactPortal => {
+	const containerEl = useConstant(() => document.createElement('div'));
+	const cache = useConstant(() =>
+		createCache({ key: 'external', container: containerEl })
+	);
 
 	useEffect(() => {
-		setContainer(document.createElement('div'));
+		const externalWindow = window.open(
+			'',
+			edumeetConfig.title,
+			`width=800,height=${800 / (aspectRatio || 1.3333)},left=200,top=200`
+		);
+
+		externalWindow?.document.body.appendChild(containerEl);
+		externalWindow?.addEventListener('beforeunload', () => onClose?.());
+
+		return () => externalWindow?.close();
 	}, []);
 
-	useEffect(() => {
-		if (container) {
-			newWindow.current = window.open(
-				'',
-				edumeetConfig.title,
-				`width=800,height=${800 / (aspectRatio || 1.3333)},left=200,top=200`
-			);
-
-			if (newWindow.current)
-				copyStyles(window.document, newWindow.current.document);
-
-			newWindow.current?.document.body.appendChild(container);
-			newWindow.current?.addEventListener('beforeunload', () => onClose && onClose());
-
-			return () => newWindow.current?.close();
-		}
-	}, [ container ]);
-
-	return container ? createPortal(children, container) : null;
+	return createPortal(
+		<CacheProvider value={cache}> {children}</CacheProvider>,
+		containerEl
+	);
 };
 
 export default SeparateWindow;
