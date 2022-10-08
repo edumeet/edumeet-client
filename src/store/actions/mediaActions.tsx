@@ -36,7 +36,10 @@ export const updatePreviewMic = ({
 	restart = false,
 	updateMute = true,
 	newDeviceId
-}: UpdateDeviceOptions = {}) => async (
+}: UpdateDeviceOptions = {
+	restart: false,
+	updateMute: true
+}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
 	{ mediaService, deviceService }: MiddlewareOptions
@@ -245,7 +248,10 @@ export const updateMic = ({
 	start = false,
 	restart = true,
 	newDeviceId
-}: UpdateDeviceOptions = {}) => async (
+}: UpdateDeviceOptions = {
+	start: false,
+	restart: true,
+}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
 	{ mediaService, deviceService }: MiddlewareOptions
@@ -406,7 +412,11 @@ export const updateWebcam = ({
 	newDeviceId,
 	newResolution,
 	newFrameRate
-}: UpdateDeviceOptions = {}) => async (
+}: UpdateDeviceOptions = {
+	init: false,
+	start: false,
+	restart: false,
+}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
 	{ mediaService, deviceService, config }: MiddlewareOptions
