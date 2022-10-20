@@ -17,6 +17,8 @@ export interface SettingsState {
 	frameRate: number;
 	screenSharingResolution: string;
 	screenSharingFrameRate: number;
+	supportedRecorderMimeTypes: string[],
+	preferredRecorderMimeType: string,
 	audioPreset: string,
 	audioPresets: Record<string, AudioPreset>,
 	autoGainControl: boolean;
@@ -44,6 +46,8 @@ const initialState: SettingsState = {
 	frameRate: edumeetConfig.frameRate,
 	screenSharingResolution: edumeetConfig.screenSharingResolution,
 	screenSharingFrameRate: edumeetConfig.screenSharingFrameRate,
+	supportedRecorderMimeTypes: [],
+	preferredRecorderMimeType: 'video/webm',
 	lastN: edumeetConfig.lastN,
 	hideNonVideo: edumeetConfig.hideNonVideo,
 	aspectRatio: edumeetConfig.aspectRatio,
@@ -105,6 +109,12 @@ const settingsSlice = createSlice({
 		}),
 		setScreenSharingFrameRate: ((state, action: PayloadAction<number>) => {
 			state.screenSharingFrameRate = action.payload;
+		}),
+		setSupportedRecorderMimeTypes: ((state, action: PayloadAction<string[]>) => {
+			state.supportedRecorderMimeTypes = action.payload;
+		}),
+		setPreferredRecorderMimeType: ((state, action: PayloadAction<string>) => {
+			state.preferredRecorderMimeType = action.payload;
 		}),
 		setAudioPreset: ((state, action: PayloadAction<string>) => {
 			state.audioPreset = action.payload;
