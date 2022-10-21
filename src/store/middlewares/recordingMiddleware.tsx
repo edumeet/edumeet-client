@@ -35,7 +35,7 @@ const createRecordingMiddleware = ({
 	let recorderStream: MediaStream;
 	let audioContext: AudioContext;
 	let audioDestination: MediaStreamAudioDestinationNode;
-	const mimeType = 'video/webm;codecs=vp8,opus';
+	let mimeType: string;
 
 	const stopRecorder = async () => {
 		logger.debug('stopRecorder()');
@@ -68,6 +68,8 @@ const createRecordingMiddleware = ({
 		getState: RootState
 	}) =>
 		(next) => async (action) => {
+			mimeType = getState().settings.preferredRecorderMimeType;
+
 			if (recordingActions.start.match(action)) {
 				logger.debug('recordingActions.start [mimeType:%s]', mimeType);
 
