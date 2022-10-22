@@ -7,6 +7,7 @@ import { webrtcActions } from '../slices/webrtcSlice';
 import { joinRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
+import { permissionsActions } from '../slices/permissionsSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -32,9 +33,24 @@ const createRoomMiddleware = ({
 					try {
 						switch (notification.method) {
 							case 'roomReady': {
-								const { turnServers, rtcStatsOptions } = notification.data;
+								const {
+									sessionId,
+									roles,
+									roomPermissions,
+									userRoles,
+									allowWhenRoleMissing,
+									turnServers,
+									rtcStatsOptions
+								} = notification.data;
 
 								batch(() => {
+									dispatch(roomActions.setSessionId(sessionId));
+									dispatch(permissionsActions.addRoles(roles));
+									dispatch(permissionsActions.setRoomPermissions(roomPermissions));
+									dispatch(permissionsActions.setUserRoles(userRoles));
+									allowWhenRoleMissing && dispatch(
+										permissionsActions.setAllowWhenRoleMissing(allowWhenRoleMissing)
+									);
 									dispatch(webrtcActions.setIceServers(turnServers));
 									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
 									dispatch(roomActions.setState('joined'));

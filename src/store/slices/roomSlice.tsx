@@ -92,7 +92,7 @@ const roomSlice = createSlice({
 			state.spotlights =
 				state.spotlights.filter((peer) => peer !== action.payload);
 		}),
-		setRoomSessionId: ((state, action: PayloadAction<string>) => {
+		setSessionId: ((state, action: PayloadAction<string>) => {
 			state.sessionId = action.payload;
 		}),
 	},
