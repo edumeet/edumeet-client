@@ -6,6 +6,8 @@ interface MediaControlsDivProps {
 	alignitems: string;
 	justifycontent: string;
 	position: 'absolute' | 'relative';
+	withGap?: boolean;
+	withPadding?: boolean;
 }
 
 const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
@@ -14,13 +16,15 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	alignitems,
 	justifycontent,
 	position,
+	withGap,
+	withPadding
 }) => ({
 	position,
 	width: '100%',
 	height: '100%',
 	display: 'flex',
-	gap: theme.spacing(2),
-	padding: theme.spacing(2),
+	gap: withGap ? theme.spacing(2) : 0,
+	padding: withPadding ? theme.spacing(2) : 0,
 	flexDirection: flexdirection,
 	alignItems: alignitems,
 	justifyContent: justifycontent,
@@ -32,6 +36,8 @@ interface MediaControlsProps {
 	horizontalPlacement?: 'left' | 'center' | 'right';
 	verticalPlacement?: 'top' | 'center' | 'bottom';
 	position?: 'absolute' | 'relative';
+	withGap?: boolean;
+	withPadding?: boolean;
 	children?: ReactNode;
 }
 
@@ -40,6 +46,8 @@ const MediaControls = ({
 	horizontalPlacement = 'center',
 	verticalPlacement = 'center',
 	position = 'absolute',
+	withGap = true,
+	withPadding = true,
 	children
 }: MediaControlsProps): JSX.Element => {
 	let justifyContent = 'center';
@@ -67,6 +75,8 @@ const MediaControls = ({
 			position={position}
 			alignitems={alignItems}
 			justifycontent={justifyContent}
+			withGap={withGap}
+			withPadding={withPadding}
 			children={children}
 		/>
 	);
