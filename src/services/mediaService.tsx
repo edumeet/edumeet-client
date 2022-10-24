@@ -541,7 +541,7 @@ export class MediaService extends EventEmitter {
 	}> {
 		try {
 			if (!this.mediasoup.loaded) {
-				const { routerRtpCapabilities } = await this.signalingService.sendRequest('getRouterRtpCapabilities');
+				const routerRtpCapabilities = await this.signalingService.sendRequest('getRouterRtpCapabilities');
 	
 				await this.mediasoup.load({ routerRtpCapabilities });
 			}
