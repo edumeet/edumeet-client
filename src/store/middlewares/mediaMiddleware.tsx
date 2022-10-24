@@ -116,7 +116,8 @@ const createMediaMiddleware = ({
 				roomActions.selectPeer.match(action) ||
 				roomActions.deselectPeer.match(action) ||
 				roomActions.setFullscreenConsumer.match(action) ||
-				roomActions.setWindowedConsumer.match(action)
+				roomActions.addWindowedConsumer.match(action) ||
+				roomActions.removeWindowedConsumer.match(action)
 			) {
 				// Make a diff of the current state and the new state to find out
 				// which Consumers need to be paused/resumed.
