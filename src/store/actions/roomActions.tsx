@@ -4,7 +4,7 @@ import { chatActions } from '../slices/chatSlice';
 import { filesharingActions } from '../slices/filesharingSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { meActions } from '../slices/meSlice';
-import { Peer, peersActions } from '../slices/peersSlice';
+import { peersActions } from '../slices/peersSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
@@ -57,17 +57,23 @@ export const joinRoom = () => async (
 	const { displayName } = getState().settings;
 	const { id: meId, picture } = getState().me;
 	const { loggedIn } = getState().permissions;
-	const { name: confName, sessionId } = getState().room;
+	const { name: confName } = getState().room;
 
 	const {
 		authenticated,
+		roles,
 		peers,
 		tracker,
+		roomPermissions,
+		userRoles,
+		allowWhenRoleMissing,
 		chatHistory,
 		fileHistory,
+		lastNHistory,
 		locked,
 		lobbyPeers,
 		roomMode = 'SFU',
+		roomSessionId,
 	} = await signalingService.sendRequest('join', {
 		displayName,
 		picture,
@@ -75,14 +81,21 @@ export const joinRoom = () => async (
 		returning: false, // TODO: fix reconnect
 	});
 
-	const spotlights = peers.map((p: Peer) => p.id);
+	const spotlights = lastNHistory.filter((peerId: string) => peerId !== meId);
 
 	batch(() => {
 		dispatch(roomActions.setMode(roomMode));
+		dispatch(roomActions.setSessionId(roomSessionId));
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
-
+		dispatch(permissionsActions.setRoomPermissions(roomPermissions));
+		dispatch(permissionsActions.setUserRoles(userRoles));
+		dispatch(permissionsActions.addRoles(roles));
 		if (loggedIn !== authenticated)
 			dispatch(permissionsActions.setLoggedIn(Boolean(authenticated)));
+
+		allowWhenRoleMissing && dispatch(
+			permissionsActions.setAllowWhenRoleMissing(allowWhenRoleMissing)
+		);
 
 		dispatch(peersActions.addPeers(peers));
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
@@ -103,7 +116,7 @@ export const joinRoom = () => async (
 		applicationName: 'edumeet', // mandatoy
 		confName, // mandatory
 		confID: window.location.toString(),
-		meetingUniqueId: sessionId,
+		meetingUniqueId: roomSessionId,
 		endpointId: meId,
 		deviceId: meId,
 		displayName,
