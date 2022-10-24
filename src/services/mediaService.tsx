@@ -10,11 +10,12 @@ import hark from 'hark';
 import { VolumeWatcher } from '../utils/volumeWatcher';
 import { PeerTransport } from '../utils/peerTransport';
 import { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
-import { DataProducer } from 'mediasoup-client/lib/DataProducer';
+import { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProducer';
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
 import traceInit from '@jitsi/rtcstats/trace-ws';
 import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
+import { ProducerConnection } from '../utils/ProducerConnection';
 
 const logger = new Logger('MediaService');
 
@@ -463,6 +464,7 @@ export class MediaService extends EventEmitter {
 		local = true
 	): Promise<void> {
 		logger.debug(`${change}Consumer [consumerId:%s]`, consumerId);
+
 		const consumer = this.consumers.get(consumerId);
 
 		if (local && consumer) {
@@ -481,6 +483,7 @@ export class MediaService extends EventEmitter {
 		local = true
 	): Promise<void> {
 		logger.debug('closeDataConsumer [dataConsumerId:%s]', dataConsumerId);
+
 		const dataConsumer = this.dataConsumers.get(dataConsumerId);
 
 		if (local && dataConsumer) {
@@ -500,6 +503,7 @@ export class MediaService extends EventEmitter {
 		local = true
 	): Promise<void> {
 		logger.debug(`${change}Producer [producerId:%s]`, producerId);
+
 		const producer = this.producers.get(producerId);
 
 		if (local && producer) {
@@ -511,6 +515,22 @@ export class MediaService extends EventEmitter {
 			this.emit(`producer${changeEvent[change]}`, producer);
 
 		producer?.[`${change}`]();
+	}
+
+	public async closeDataProducer(
+		dataProducerId: string,
+		local = true
+	): Promise<void> {
+		logger.debug('closeDataProducer [dataProducerId:%s]', dataProducerId);
+
+		const dataProducer = this.dataProducers.get(dataProducerId);
+
+		if (local && dataProducer) {
+			await this.signalingService.sendRequest('closeDataProducer', { dataProducerId: dataProducer.id })
+				.catch((error) => logger.warn('closeDataProducer, unable to close server-side [dataProducerId:%s, error:%o]', dataProducerId, error));
+		}
+
+		dataProducer?.close();
 	}
 
 	public async createTransports(
@@ -547,10 +567,12 @@ export class MediaService extends EventEmitter {
 			iceParameters,
 			iceCandidates,
 			dtlsParameters,
+			sctpParameters,
 		} = await this.signalingService.sendRequest('createWebRtcTransport', {
 			forceTcp: false,
 			producing: creator === 'createSendTransport',
 			consuming: creator === 'createRecvTransport',
+			sctpCapabilities: this.mediasoup.sctpCapabilities,
 		});
 
 		const transport = this.mediasoup[creator]({
@@ -558,6 +580,7 @@ export class MediaService extends EventEmitter {
 			iceParameters,
 			iceCandidates,
 			dtlsParameters,
+			sctpParameters,
 			iceServers
 		});
 
@@ -582,6 +605,30 @@ export class MediaService extends EventEmitter {
 				transportId: transport.id,
 				kind,
 				rtpParameters,
+				appData,
+			})
+				.then(callback)
+				.catch(errback);
+		});
+
+		transport.on('producedata', async (
+			{
+				sctpStreamParameters,
+				label,
+				protocol,
+				appData
+			},
+			callback,
+			errback
+		) => {
+			if (!transport)
+				return;
+
+			this.signalingService.sendRequest('produceData', {
+				transportId: transport.id,
+				sctpStreamParameters,
+				label,
+				protocol,
 				appData,
 			})
 				.then(callback)
@@ -618,20 +665,32 @@ export class MediaService extends EventEmitter {
 		}
 
 		this.producers.set(producer.id, producer);
-
-		producer.observer.once('close', () => {
-			this.producers.delete(producer.id);
-		});
-
-		producer.once('transportclose', () => {
-			this.changeProducer(producer.id, 'close', false);
-		});
-
-		producer.once('trackended', () => {
-			this.changeProducer(producer.id, 'close');
-		});
+		producer.observer.once('close', () => this.producers.delete(producer.id));
+		producer.once('transportclose', () => this.changeProducer(producer.id, 'close', false));
+		producer.once('trackended', () => this.changeProducer(producer.id, 'close'));
 
 		return producer;
+	}
+
+	public async produceData(
+		dataProducerOptions: DataProducerOptions
+	): Promise<DataProducer> {
+		logger.debug('produceData() [options:%o]', dataProducerOptions);
+
+		if (!this.sendTransport)
+			throw new Error('DataProducer can not be created without sendTransport');
+
+		const dataProducer = await this.sendTransport.produceData(dataProducerOptions);
+
+		this.dataProducers.set(dataProducer.id, dataProducer);
+
+		dataProducer.observer.once('close', () =>
+			this.dataProducers.delete(dataProducer.id));
+
+		dataProducer.once('transportclose', () =>
+			this.closeDataProducer(dataProducer.id, false));
+
+		return dataProducer;
 	}
 
 	private rtcStatsCloseCallback() {

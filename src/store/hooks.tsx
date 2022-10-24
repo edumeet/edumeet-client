@@ -107,9 +107,8 @@ export const useBlocker = (blocker: Blocker, when = true): void => {
 	) as NavigationContextWithBlock;
 
 	useEffect(() => {
-		if (!when) {
+		if (!when)
 			return;
-		}
 
 		const unblock = navigator.block((tx: Transition) => {
 			const autoUnblockingTx = {
