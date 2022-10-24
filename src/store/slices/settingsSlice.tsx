@@ -22,6 +22,7 @@ export interface SettingsState {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
+	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -52,6 +53,7 @@ const initialState: SettingsState = {
 	autoGainControl: edumeetConfig.autoGainControl,
 	echoCancellation: edumeetConfig.echoCancellation,
 	noiseSuppression: edumeetConfig.noiseSuppression,
+	noiseThreshold: edumeetConfig.noiseThreshold,
 	sampleRate: edumeetConfig.sampleRate,
 	channelCount: edumeetConfig.channelCount,
 	sampleSize: edumeetConfig.sampleSize,
@@ -117,6 +119,9 @@ const settingsSlice = createSlice({
 		}),
 		setNoiseSuppression: ((state, action: PayloadAction<boolean>) => {
 			state.noiseSuppression = action.payload;
+		}),
+		setNoiseThreshold: ((state, action: PayloadAction<number>) => {
+			state.noiseThreshold = action.payload;
 		}),
 		setSampleRate: ((state, action: PayloadAction<number>) => {
 			state.sampleRate = action.payload;
