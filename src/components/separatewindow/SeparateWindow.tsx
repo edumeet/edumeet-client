@@ -41,8 +41,11 @@ const SeparateWindow = ({
 		);
 
 		// if window.open fails
-		if (!externalWindow)
-			return onClose?.();
+		if (!externalWindow) {
+			onClose?.();
+
+			return;
+		}
 
 		externalWindow.addEventListener('beforeunload', () => onClose?.());
 
