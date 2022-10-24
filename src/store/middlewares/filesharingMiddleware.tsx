@@ -36,6 +36,12 @@ const createFilesharingMiddleware = ({
 								dispatch(filesharingActions.addFile(file));
 								break;
 							}
+
+							case 'moderator:clearFiles': {
+								dispatch(filesharingActions.clearFiles());
+
+								break;
+							}
 						}
 					} catch (error) {
 						logger.error('error on signalService "notification" event [error:%o]', error);
