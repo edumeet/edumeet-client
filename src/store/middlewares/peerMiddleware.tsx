@@ -4,6 +4,9 @@ import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { peersActions } from '../slices/peersSlice';
 import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
+import { setRaisedHand } from '../actions/meActions';
+import { micProducerSelector, screenProducerSelector, webcamProducerSelector } from '../selectors';
+import { producersActions } from '../slices/producersSlice';
 
 const logger = new Logger('PeerMiddleware');
 
@@ -119,6 +122,60 @@ const createPeerMiddleware = ({
 								dispatch(
 									lobbyPeersActions.updatePeer({ id: peerId, displayName, picture }));
 		
+								break;
+							}
+
+							case 'moderator:lowerHand': {
+								dispatch(setRaisedHand(false));
+
+								break;
+							}
+
+							case 'moderator:mute': {
+								const micProducer = micProducerSelector(getState());
+
+								if (micProducer && !micProducer.paused) {
+									dispatch(
+										producersActions.setProducerPaused({
+											producerId: micProducer.id,
+											local: true,
+											source: 'mic'
+										})
+									);
+								}
+
+								break;
+							}
+
+							case 'moderator:stopVideo': {
+								const webcamProducer = webcamProducerSelector(getState());
+
+								if (webcamProducer) {
+									dispatch(
+										producersActions.closeProducer({
+											producerId: webcamProducer.id,
+											local: true,
+											source: 'webcam'
+										})
+									);
+								}
+
+								break;
+							}
+
+							case 'moderator:stopScreenSharing': {
+								const screenProducer = screenProducerSelector(getState());
+
+								if (screenProducer) {
+									dispatch(
+										producersActions.closeProducer({
+											producerId: screenProducer.id,
+											local: true,
+											source: 'screen'
+										})
+									);
+								}
+
 								break;
 							}
 						}

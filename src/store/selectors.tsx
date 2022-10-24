@@ -44,8 +44,8 @@ const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNo
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
 const fullscreenConsumer: Selector<string | undefined> =
 	(state) => state.room.fullscreenConsumer;
-const windowedConsumer: Selector<string | undefined> =
-	(state) => state.room.windowedConsumer;
+const windowedConsumers: Selector<string[]> =
+	(state) => state.room.windowedConsumers;
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const makeDevicesSelector = (kind: MediaDeviceKind) => {
@@ -248,11 +248,11 @@ export const fullscreenConsumerSelector = createSelector(
 		consumers.find((c) => c.id === consumer)
 );
 
-export const windowedConsumerSelector = createSelector(
-	windowedConsumer,
+export const windowedConsumersSelector = createSelector(
+	windowedConsumers,
 	consumersSelect,
-	(consumer, consumers) =>
-		consumers.find((c) => c.id === consumer)
+	(windowConsumers, consumers) =>
+		consumers.filter((c) => windowConsumers.includes(c.id))
 );
 
 export const videoBoxesSelector = createSelector(
@@ -300,13 +300,13 @@ export const videoConsumersSelector = createSelector(
 	spotlightScreenConsumerSelector,
 	spotlightExtraVideoConsumerSelector,
 	fullscreenConsumerSelector,
-	windowedConsumerSelector,
+	windowedConsumersSelector,
 	(
 		webcamConsumers,
 		screenConsumers,
 		extraVideoConsumers,
 		fullscreenedConsumer,
-		newWindowedConsumer
+		newWindowedConsumers
 	) => {
 		let consumers: StateConsumer[];
 
@@ -322,8 +322,7 @@ export const videoConsumersSelector = createSelector(
 			];
 		}
 
-		if (newWindowedConsumer)
-			consumers.push(newWindowedConsumer);
+		consumers.push(...newWindowedConsumers);
 
 		return consumers;
 	}

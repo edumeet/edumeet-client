@@ -27,6 +27,12 @@ const createChatMiddleware = ({
 								dispatch(chatActions.addMessage(chatMessage));
 								break;
 							}
+
+							case 'moderator:clearChat': {
+								dispatch(chatActions.clearChat());
+
+								break;
+							}
 						}
 					} catch (error) {
 						logger.error('error on signalService "notification" event [error:%o]', error);

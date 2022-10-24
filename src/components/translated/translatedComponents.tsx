@@ -207,6 +207,26 @@ export const activateAudioLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Activate audio'
 });
 
+export const kickLabel = (): string => intl.formatMessage({
+	id: 'tooltip.kickParticipant',
+	defaultMessage: 'Kick out'
+});
+
+export const stopParticipantAudioLabel = (): string => intl.formatMessage({
+	id: 'tooltip.muteParticipantAudioModerator',
+	defaultMessage: 'Stop audio'
+});
+
+export const stopParticipantVideoLabel = (): string => intl.formatMessage({
+	id: 'tooltip.muteParticipantVideoModerator',
+	defaultMessage: 'Stop video'
+});
+
+export const stopParticipantScreenSharingLabel = (): string => intl.formatMessage({
+	id: 'tooltip.muteScreenSharingModerator',
+	defaultMessage: 'Stop screen share'
+});
+
 export const muteAllLabel = (): string => intl.formatMessage({
 	id: 'room.muteAll',
 	defaultMessage: 'Mute all'

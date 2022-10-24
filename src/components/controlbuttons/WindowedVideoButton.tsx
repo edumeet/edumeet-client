@@ -13,21 +13,23 @@ const WindowedVideoButton = ({
 	...props
 }: WindowedVideoButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const windowedConsumer =
-		useAppSelector((state) => state.room.windowedConsumer);
+	const windowedConsumers =
+		useAppSelector((state) => state.room.windowedConsumers);
+
+	const isWindowed = windowedConsumers.includes(consumerId);
 
 	return (
 		<ControlButton
 			toolTip={newWindowLabel()}
 			onClick={() => {
-				if (consumerId === windowedConsumer) {
-					dispatch(roomActions.setWindowedConsumer());
+				if (isWindowed) {
+					dispatch(roomActions.removeWindowedConsumer(consumerId));
 				} else {
-					dispatch(roomActions.setWindowedConsumer(consumerId));
+					dispatch(roomActions.addWindowedConsumer(consumerId));
 				}
 			}}
-			on={consumerId !== windowedConsumer}
-			disabled={consumerId === windowedConsumer}
+			on={!isWindowed}
+			disabled={isWindowed}
 			{ ...props }
 		>
 			<NewWindowIcon />

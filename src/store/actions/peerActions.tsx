@@ -23,6 +23,78 @@ export const lowerPeerHand = (id: string) => async (
 	}
 };
 
+export const kickPeer = (id: string) => async (
+	dispatch: AppDispatch,
+	_getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('kickPeer() [id:"%s"]', id);
+
+	dispatch(peersActions.updatePeer({ id, kickInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('moderator:kickPeer', { peerId: id });
+	} catch (error) {
+		logger.error('kickPeer() [error:"%o"]', error);
+	} finally {
+		dispatch(peersActions.updatePeer({ id, kickInProgress: false }));
+	}
+};
+
+export const stopAudio = (id: string) => async (
+	dispatch: AppDispatch,
+	_getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('stopAudio() [id:"%s"]', id);
+
+	dispatch(peersActions.updatePeer({ id, stopAudioInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('moderator:mute', { peerId: id });
+	} catch (error) {
+		logger.error('stopAudio() [error:"%o"]', error);
+	} finally {
+		dispatch(peersActions.updatePeer({ id, stopAudioInProgress: false }));
+	}
+};
+
+export const stopVideo = (id: string) => async (
+	dispatch: AppDispatch,
+	_getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('stopVideo() [id:"%s"]', id);
+
+	dispatch(peersActions.updatePeer({ id, stopVideoInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('moderator:stopVideo', { peerId: id });
+	} catch (error) {
+		logger.error('stopVideo() [error:"%o"]', error);
+	} finally {
+		dispatch(peersActions.updatePeer({ id, stopVideoInProgress: false }));
+	}
+};
+
+export const stopScreenSharing = (id: string) => async (
+	dispatch: AppDispatch,
+	_getState: RootState,
+	{ signalingService }: MiddlewareOptions
+): Promise<void> => {
+	logger.debug('stopScreenSharing() [id:"%s"]', id);
+
+	dispatch(peersActions.updatePeer({ id, stopScreenSharingInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('moderator:stopScreenSharing', { peerId: id });
+	} catch (error) {
+		logger.error('stopScreenSharing() [error:"%o"]', error);
+	} finally {
+		dispatch(peersActions.updatePeer({ id, stopScreenSharingInProgress: false }));
+	}
+};
+
 export const muteAll = () => async (
 	dispatch: AppDispatch,
 	_getState: RootState,

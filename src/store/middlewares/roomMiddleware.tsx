@@ -4,7 +4,7 @@ import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { webrtcActions } from '../slices/webrtcSlice';
-import { joinRoom } from '../actions/roomActions';
+import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
 
@@ -67,6 +67,12 @@ const createRoomMiddleware = ({
 								const isMe = peerId === getState().me.id;
 
 								dispatch(roomActions.setActiveSpeakerId({ peerId, isMe }));
+								break;
+							}
+
+							case 'moderator:kick': {
+								dispatch(leaveRoom());
+
 								break;
 							}
 						}
