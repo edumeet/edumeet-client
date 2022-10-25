@@ -15,7 +15,6 @@ import { ResolutionWatcher } from '../utils/resolutionWatcher';
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
 import traceInit from '@jitsi/rtcstats/trace-ws';
 import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
-import { ProducerConnection } from '../utils/ProducerConnection';
 
 const logger = new Logger('MediaService');
 

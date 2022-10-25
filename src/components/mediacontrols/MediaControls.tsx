@@ -6,8 +6,8 @@ interface MediaControlsDivProps {
 	alignitems: string;
 	justifycontent: string;
 	position: 'absolute' | 'relative';
-	withGap?: boolean;
-	withPadding?: boolean;
+	withgap: number;
+	withpadding: number;
 }
 
 const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
@@ -16,15 +16,19 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	alignitems,
 	justifycontent,
 	position,
-	withGap,
-	withPadding
+	withgap: withGap,
+	withpadding: withPadding
 }) => ({
 	position,
 	width: '100%',
 	height: '100%',
 	display: 'flex',
-	gap: withGap ? theme.spacing(2) : 0,
-	padding: withPadding ? theme.spacing(2) : 0,
+	...(withGap && {
+		gap: theme.spacing(2)
+	}),
+	...(withPadding && {
+		padding: theme.spacing(2)
+	}),
 	flexDirection: flexdirection,
 	alignItems: alignitems,
 	justifyContent: justifycontent,
@@ -75,8 +79,8 @@ const MediaControls = ({
 			position={position}
 			alignitems={alignItems}
 			justifycontent={justifyContent}
-			withGap={withGap}
-			withPadding={withPadding}
+			withgap={withGap ? 1 : 0}
+			withpadding={withPadding ? 1 : 0}
 			children={children}
 		/>
 	);

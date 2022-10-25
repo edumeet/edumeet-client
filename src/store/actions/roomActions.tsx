@@ -96,7 +96,7 @@ export const joinRoom = () => async (
 		if (!audioMuted)
 			dispatch(updateMic({ start: true }));
 		if (!videoMuted)
-			dispatch(updateWebcam({ init: true, start: true }));
+			dispatch(updateWebcam({ start: true }));
 	});
 
 	const rtcStatsMetaData = { 

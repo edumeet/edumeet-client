@@ -9,13 +9,10 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 const logger = new Logger('MediaActions');
 
 interface UpdateDeviceOptions {
-	init?: boolean;
 	start?: boolean;
 	restart?: boolean;
 	updateMute?: boolean;
 	newDeviceId?: string;
-	newResolution?: string;
-	newFrameRate?: number;
 }
 
 interface AudioSettings {
@@ -30,6 +27,16 @@ interface AudioSettings {
 	opusFec?: boolean;
 	opusPtime?: number;
 	opusMaxPlaybackRate?: number;
+}
+
+interface VideoSettings {
+	resolution?: string;
+	frameRate?: number;
+}
+
+interface ScreenshareSettings {
+	screenSharingResolution?: string;
+	screenSharingFrameRate?: number;
 }
 
 export const updatePreviewMic = ({
@@ -113,11 +120,11 @@ export const updatePreviewMic = ({
 
 export const stopPreviewMic = ({
 	updateMute = true,
-}: UpdateDeviceOptions = {}) => async (
+}: UpdateDeviceOptions = {}) => (
 	dispatch: AppDispatch,
 	getState: RootState,
 	{ mediaService }: MiddlewareOptions
-): Promise<void> => {
+): void => {
 	logger.debug('stopPreviewMic()');
 
 	dispatch(meActions.setAudioInProgress(true));
@@ -209,11 +216,11 @@ export const updatePreviewWebcam = ({
 
 export const stopPreviewWebcam = ({
 	updateMute = true,
-}: UpdateDeviceOptions = {}) => async (
+}: UpdateDeviceOptions = {}) => (
 	dispatch: AppDispatch,
 	getState: RootState,
 	{ mediaService }: MiddlewareOptions
-): Promise<void> => {
+): void => {
 	logger.debug('stopPreviewWebcam()');
 
 	dispatch(meActions.setVideoInProgress(true));
@@ -238,8 +245,8 @@ export const updateAudioSettings = (settings: AudioSettings = {}) => async (
 
 	dispatch(settingsActions.updateSettings(settings));
 	dispatch(stopPreviewMic());
-	dispatch(updateMic());
-	dispatch(updatePreviewMic());
+	await dispatch(updateMic());
+	await dispatch(updatePreviewMic());
 };
 
 // Only Firefox supports applyConstraints to audio tracks
@@ -406,15 +413,22 @@ export const updateMic = ({
 	}
 };
 
+export const updateVideoSettings = (
+	settings: VideoSettings = {}
+) => async (dispatch: AppDispatch): Promise<void> => {
+	logger.debug('updateVideoSettings()');
+
+	dispatch(settingsActions.updateSettings(settings));
+	dispatch(stopPreviewWebcam());
+	await dispatch(updateWebcam({ restart: true }));
+	await dispatch(updatePreviewWebcam());
+};
+
 export const updateWebcam = ({
-	init = false,
 	start = false,
 	restart = false,
 	newDeviceId,
-	newResolution,
-	newFrameRate
 }: UpdateDeviceOptions = {
-	init: false,
 	start: false,
 	restart: false,
 }) => async (
@@ -423,13 +437,10 @@ export const updateWebcam = ({
 	{ mediaService, deviceService, config }: MiddlewareOptions
 ): Promise<void> => {
 	logger.debug(
-		'updateWebcam [init:%s, start:%s, restart:%s, newDeviceId:%s, newResolution:%s, newFrameRate:%s]',
-		init,
+		'updateWebcam [start:%s, restart:%s, newDeviceId:%s]',
 		start,
 		restart,
 		newDeviceId,
-		newResolution,
-		newFrameRate
 	);
 
 	dispatch(meActions.setVideoInProgress(true));
@@ -450,21 +461,6 @@ export const updateWebcam = ({
 
 		if (newDeviceId)
 			dispatch(settingsActions.setSelectedVideoDevice(newDeviceId));
-
-		if (newResolution)
-			dispatch(settingsActions.setResolution(newResolution));
-
-		if (newFrameRate)
-			dispatch(settingsActions.setFrameRate(newFrameRate));
-
-		/*
-			const { videoMuted } = store.getState().settings;
-
-			if (init && videoMuted)
-				return;
-			else
-				store.dispatch(settingsActions.setVideoMuted(false));
-		*/
 
 		const {
 			aspectRatio,
@@ -591,20 +587,30 @@ export const updateWebcam = ({
 	}
 };
 
+export const updateScreenshareSettings = (
+	settings: ScreenshareSettings = {}
+) => async (dispatch: AppDispatch): Promise<void> => {
+	logger.debug('updateVideoSettings()');
+
+	dispatch(settingsActions.updateSettings(settings));
+	await dispatch(updateScreenSharing());
+};
+
 export const updateScreenSharing = ({
 	start = false,
-	newResolution,
-	newFrameRate
-}: UpdateDeviceOptions = {}) => async (
+	restart = false,
+}: UpdateDeviceOptions = {
+	start: false,
+	restart: false
+}) => async (
 	dispatch: AppDispatch,
 	getState: RootState,
 	{ mediaService, config }: MiddlewareOptions
 ): Promise<void> => {
 	logger.debug(
-		'updateScreenSharing() [start:%s, newResolution:%s, newFrameRate:%s]',
+		'updateScreenSharing() [start:%s, restart:%s]',
 		start,
-		newResolution,
-		newFrameRate
+		restart
 	);
 
 	dispatch(meActions.setScreenSharingInProgress(true));
@@ -620,19 +626,13 @@ export const updateScreenSharing = ({
 		if (!canShareScreen)
 			throw new Error('cannot produce screen share');
 
-		if (newResolution)
-			dispatch(settingsActions.setScreenSharingResolution(newResolution));
-
-		if (newFrameRate)
-			dispatch(settingsActions.setScreenSharingFrameRate(newFrameRate));
-
 		const {
 			screenSharingResolution,
+			screenSharingFrameRate,
 			autoGainControl,
 			echoCancellation,
 			noiseSuppression,
 			aspectRatio,
-			screenSharingFrameRate,
 			sampleRate,
 			channelCount,
 			sampleSize,
@@ -650,7 +650,21 @@ export const updateScreenSharing = ({
 			mediaService.getProducers()
 				.find((producer) => producer.appData.source === 'screenaudio');
 
-		if (start) {
+		if ((restart && (screenVideoProducer || screenAudioProducer)) || start) {
+			if (screenVideoProducer) {
+				dispatch(producersActions.closeProducer({
+					producerId: screenVideoProducer.id,
+					local: true
+				}));
+			}
+
+			if (screenAudioProducer) {
+				dispatch(producersActions.closeProducer({
+					producerId: screenAudioProducer.id,
+					local: true
+				}));
+			}
+
 			const stream = await navigator.mediaDevices.getDisplayMedia({
 				video: {
 					...getVideoConstrains(

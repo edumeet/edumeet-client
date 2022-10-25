@@ -1,5 +1,15 @@
-import { FormControl, FormHelperText, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { updateAudioSettings, updateScreenSharing, updateWebcam } from '../../store/actions/mediaActions';
+import {
+	FormControl,
+	FormHelperText,
+	MenuItem,
+	Select,
+	SelectChangeEvent
+} from '@mui/material';
+import {
+	updateAudioSettings,
+	updateScreenshareSettings,
+	updateVideoSettings
+} from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Resolution } from '../../utils/types';
 import {
@@ -24,9 +34,8 @@ export const ResolutionSelector = ({
 	const resolution = useAppSelector((state) => state.settings.resolution);
 
 	const handleResolutionChange = (event: SelectChangeEvent<string>): void => {
-		dispatch(updateWebcam({
-			restart: true,
-			newResolution: event.target.value
+		dispatch(updateVideoSettings({
+			resolution: event.target.value
 		}));
 	};
 
@@ -70,14 +79,12 @@ export const FrameRateSelector = ({
 
 	const handleFrameRateChange = (event: SelectChangeEvent<string>): void => {
 		if (device === 'webcam') {
-			dispatch(updateWebcam({
-				restart: true,
-				newFrameRate: parseInt(event.target.value)
+			dispatch(updateVideoSettings({
+				frameRate: parseInt(event.target.value)
 			}));
 		} else {
-			dispatch(updateScreenSharing({
-				restart: true,
-				newFrameRate: parseInt(event.target.value)
+			dispatch(updateScreenshareSettings({
+				screenSharingFrameRate: parseInt(event.target.value)
 			}));
 		}
 	};
