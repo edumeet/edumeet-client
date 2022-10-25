@@ -237,6 +237,7 @@ export const updateAudioSettings = (settings: AudioSettings = {}) => async (
 	logger.debug('updateAudioSettings()');
 
 	dispatch(settingsActions.updateSettings(settings));
+	dispatch(stopPreviewMic());
 	dispatch(updateMic());
 	dispatch(updatePreviewMic());
 };
