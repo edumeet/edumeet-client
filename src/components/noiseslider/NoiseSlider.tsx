@@ -1,7 +1,7 @@
 import { Slider, styled, Typography } from '@mui/material';
 import { Harker } from 'hark';
 import { Producer } from 'mediasoup-client/lib/Producer';
-import { useContext, useEffect, useState } from 'react';
+import { SyntheticEvent, useContext, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
 import { settingsActions } from '../../store/slices/settingsSlice';
@@ -40,6 +40,7 @@ const NoiseSlider = (): JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const { micProducer } = useAppSelector(meProducersSelector);
 	const [ volumeLevel, setVolume ] = useState<number>(0);
+	const [ sliderValue, setSliderValue ] = useState<number>(noiseThreshold);
 
 	useEffect(() => {
 		let producer: Producer | undefined;
@@ -63,17 +64,26 @@ const NoiseSlider = (): JSX.Element => {
 	}, []);
 
 	const handleSliderChange = (event: Event, value: number | number[]): void => {
-		let producer: Producer | undefined;
-		let hark: Harker | undefined;
+		setSliderValue(value as number);
+	};
 
-		if (micProducer)
-			producer = mediaService.getProducer(micProducer.id);
-
-		if (producer)
-			hark = producer.appData.hark as Harker;
-
-		hark?.setThreshold(value as number);
-		dispatch(settingsActions.setNoiseThreshold(value as number));
+	const handleSliderChangeCommitted = (
+		event: Event | SyntheticEvent,
+		value: number | number[]
+	): void => {
+		if (sliderValue !== noiseThreshold) {
+			let producer: Producer | undefined;
+			let hark: Harker | undefined;
+	
+			if (micProducer)
+				producer = mediaService.getProducer(micProducer.id);
+	
+			if (producer)
+				hark = producer.appData.hark as Harker;
+	
+			hark?.setThreshold(value as number);
+			dispatch(settingsActions.setNoiseThreshold(value as number));
+		}
 	};
 
 	return (
@@ -83,10 +93,11 @@ const NoiseSlider = (): JSX.Element => {
 			</Typography>
 			<StyledSlider
 				min={ -100 }
-				value={ noiseThreshold }
+				value={ sliderValue }
 				max={ 0 }
 				valueLabelDisplay={ 'auto' }
 				onChange={ handleSliderChange }
+				onChangeCommitted={ handleSliderChangeCommitted }
 				marks={[ { value: volumeLevel, label: `${volumeLevel.toFixed(0)} dB` } ]}
 			/>
 		</>
