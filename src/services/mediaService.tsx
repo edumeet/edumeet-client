@@ -499,18 +499,19 @@ export class MediaService extends EventEmitter {
 	public async changeProducer(
 		producerId: string,
 		change: MediaChange,
-		local = true
+		local = true,
+		notifyAll = false
 	): Promise<void> {
 		logger.debug(`${change}Producer [producerId:%s]`, producerId);
 
 		const producer = this.producers.get(producerId);
 
-		if (local && producer) {
+		if ((local || notifyAll) && producer) {
 			await this.signalingService.sendRequest(`${change}Producer`, { producerId: producer.id })
 				.catch((error) => logger.warn(`${change}Producer, unable to ${change} server-side [producerId:%s, error:%o]`, producerId, error));
 		}
 
-		if (!local)
+		if (!local || notifyAll)
 			this.emit(`producer${changeEvent[change]}`, producer);
 
 		producer?.[`${change}`]();
@@ -666,7 +667,7 @@ export class MediaService extends EventEmitter {
 		this.producers.set(producer.id, producer);
 		producer.observer.once('close', () => this.producers.delete(producer.id));
 		producer.once('transportclose', () => this.changeProducer(producer.id, 'close', false));
-		producer.once('trackended', () => this.changeProducer(producer.id, 'close'));
+		producer.once('trackended', () => this.changeProducer(producer.id, 'close', true, true));
 
 		return producer;
 	}
