@@ -11,6 +11,7 @@ import {
 	updateVideoSettings
 } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { settingsActions } from '../../store/slices/settingsSlice';
 import { Resolution } from '../../utils/types';
 import {
 	selectAudioChannelCountLabel,
@@ -111,15 +112,50 @@ export const FrameRateSelector = ({
 	);
 };
 
-// TODO
-export const MimeTypeSelector = (): JSX.Element => {
-	// const dispatch = useAppDispatch();
-	// const mimeType = useAppSelector((state) => state.settings);
+interface MimeTypeSelectorProps {
+	mimeTypeCapability: Array<string>;
+}
+
+export const MimeTypeSelector = ({
+	mimeTypeCapability
+}: MimeTypeSelectorProps): JSX.Element => {
+	const getRecorderSupportedMimeTypes = () => {
+		const mimeTypes: Array<string> = [];
+
+		if (typeof MediaRecorder === 'undefined') {
+			window.MediaRecorder.isTypeSupported = () => {
+				return false;
+			};
+		}
+
+		for (const mimeType of mimeTypeCapability) {
+			if (MediaRecorder.isTypeSupported(mimeType) && !mimeTypes.includes(mimeType)) {
+				mimeTypes.push(mimeType);
+			}
+		}
+
+		return mimeTypes;
+	};
+
+	const dispatch = useAppDispatch();
+	const mimeTypes = getRecorderSupportedMimeTypes();
+	const mimeType = useAppSelector((state) => state.settings.preferredRecorderMimeType);
 
 	return (
 		<FormControl fullWidth>
-			<Select>
-				
+			<Select
+				value={ mimeType }
+				onChange={(event: SelectChangeEvent<string>): void => {
+					dispatch(settingsActions.setPreferredRecorderMimeType(event.target.value));
+				}}
+				displayEmpty
+				autoWidth
+			>
+				{ mimeTypes.map((value, index) => (
+					<MenuItem key={index} value={value} >
+						{ value }
+					</MenuItem>
+				)) }
 			</Select>
 			<FormHelperText>
 				{ selectRecordingsPreferredMimeTypeLabel() }
