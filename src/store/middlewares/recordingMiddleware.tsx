@@ -68,9 +68,9 @@ const createRecordingMiddleware = ({
 		getState: RootState
 	}) =>
 		(next) => async (action) => {
-			mimeType = getState().settings.preferredRecorderMimeType;
-
 			if (recordingActions.start.match(action)) {
+				mimeType = getState().settings.preferredRecorderMimeType;
+
 				logger.debug('recordingActions.start [mimeType:%s]', mimeType);
 
 				if (!MediaRecorder || !window.showSaveFilePicker)
