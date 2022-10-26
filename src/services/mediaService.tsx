@@ -313,10 +313,17 @@ export class MediaService extends EventEmitter {
 						} else {
 							const resolutionWatcher = new ResolutionWatcher();
 
+							let lastSpatialLayer = 0;
+
 							resolutionWatcher.on('newResolution', async (resolution) => {
 								const { width } = resolution;
 								const spatialLayer = width >= 480 ? width >= 960 ? 2 : 1 : 0;
 								const temporalLayer = spatialLayer;
+
+								if (spatialLayer === lastSpatialLayer)
+									return;
+
+								lastSpatialLayer = spatialLayer;
 
 								await this.signalingService.sendRequest(
 									'setConsumerPreferredLayers',
