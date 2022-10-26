@@ -39,6 +39,7 @@ const SettingsDialog = (): JSX.Element => {
 		<StyledDialog
 			open={settingsOpen}
 			onClose={handleCloseSettings}
+			maxWidth='md'
 		>
 			<DialogTitle>
 				{ settingsLabel() }
