@@ -33,7 +33,8 @@ export class SocketIOConnection extends BaseConnection {
 		logger.debug('create() [url:%s]', url);
 	
 		const socket = io(url, {
-			transports: [ 'websocket', 'polling' ]
+			transports: [ 'websocket', 'polling' ],
+			closeOnBeforeunload: false,
 		});
 	
 		return new SocketIOConnection(socket);
