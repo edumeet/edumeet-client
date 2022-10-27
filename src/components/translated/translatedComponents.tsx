@@ -91,6 +91,11 @@ export const leaveRoomLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Leaving the room'
 });
 
+export const controlButtonsBarLabel = (): string => intl.formatMessage({
+	id: 'settings.buttonControlBar',
+	defaultMessage: 'Separate media controls'
+});
+
 export const showSelfViewLabel = (): string => intl.formatMessage({
 	id: 'room.showSelfView',
 	defaultMessage: 'Show self view video'

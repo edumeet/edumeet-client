@@ -12,53 +12,46 @@ import AudioPeers from '../../components/audiopeers/AudioPeers';
 import LobbyDialog from '../../components/lobbydialog/LobbyDialog';
 import FilesharingDialog from '../../components/filesharingdialog/FilesharingDialog';
 import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog';
+import ControlButtonsBar from '../../components/controlbuttonsbar/ControlButtonsBar';
 
 const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
-	const settings = useAppSelector((state) => state.settings);
+	const notifications = useAppSelector((state) => state.settings.showNotifications);
 
 	usePrompt(true);
 
 	useEffect(() => {
-		if (fscreen.fullscreenEnabled) {
+		if (fscreen.fullscreenEnabled)
 			fscreen.addEventListener('fullscreenchange', handleFullscreenChange);
-		}
 
 		return () => {
-			if (fscreen.fullscreenEnabled) {
+			if (fscreen.fullscreenEnabled)
 				fscreen.removeEventListener('fullscreenchange', handleFullscreenChange);
-			}
 		};
 	}, []);
 
 	const handleToggleFullscreen = () => {
-		if (fscreen.fullscreenElement) {
+		if (fscreen.fullscreenElement)
 			fscreen.exitFullscreen();
-		} else {
+		else
 			fscreen.requestFullscreen(document.documentElement);
-		}
 	};
 
-	const handleFullscreenChange = () => {
-		setFullscreen(fscreen.fullscreenElement !== null);
-	};
+	const handleFullscreenChange = () => setFullscreen(fscreen.fullscreenElement !== null);
 
 	return (
 		<>
+			{ notifications && <Notifications /> }
 			<FullscreenVideo />
 			<WindowedVideo />
 			<AudioPeers />
-
-			{ settings.showNotifications &&
-				<Notifications />
-			}
-
 			<TopBar
 				fullscreenEnabled={fscreen.fullscreenEnabled}
 				fullscreen={isFullscreen}
 				onFullscreen={handleToggleFullscreen}
 			/>
 			<MeetingDrawer />
+			<ControlButtonsBar />
 			<Democratic />
 			<LobbyDialog />
 			<Settings />

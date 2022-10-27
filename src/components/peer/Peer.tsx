@@ -4,6 +4,7 @@ import {
 } from '../../store/hooks';
 import { peerDisplayNameSelector } from '../../store/selectors';
 import FullscreenVideoButton from '../controlbuttons/FullscreenVideoButton';
+import PeerActionsButton from '../controlbuttons/PeerActionsButton';
 import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
@@ -62,6 +63,7 @@ const Peer = ({
 								/>
 							</>
 						)}
+						<PeerActionsButton peerId={id} />
 					</MediaControls>
 					{ micConsumer && <Volume consumer={micConsumer} /> }
 					{ webcamConsumer && <VideoView

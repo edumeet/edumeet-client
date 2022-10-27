@@ -23,9 +23,8 @@ const MuteAudio = ({
 	const dispatch = useAppDispatch();
 
 	const { audioInProgress } = peer;
-	const micEnabled = !micConsumer.localPaused && !micConsumer.remotePaused;
-	const micLabel =
-        micEnabled ? muteAudioLabel() : unmuteAudioLabel();
+	const micEnabled = !micConsumer.localPaused;
+	const micLabel = micEnabled ? muteAudioLabel() : unmuteAudioLabel();
 
 	return (
 		<MenuItem
