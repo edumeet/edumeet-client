@@ -41,6 +41,10 @@ import MicButton from '../controlbuttons/MicButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import RecordButton from '../controlbuttons/RecordButton';
 import LeaveButton from '../textbuttons/LeaveButton';
+import ScreenshareButton from '../controlbuttons/ScreenshareButton';
+import ExtraVideoButton from '../controlbuttons/ExtraVideoButton';
+import ExtraVideo from '../menuitems/ExtraVideo';
+import Filesharing from '../menuitems/Filesharing';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -143,10 +147,13 @@ const TopBar = ({
 									offColor='error'
 									disabledColor='default'
 								/>
+								<ScreenshareButton type='iconbutton' />
 							</>
 						}
 					</GrowingDiv>
 					<DesktopDiv>
+						<FilesharingButton type='iconbutton' />
+						<ExtraVideoButton type='iconbutton' />
 						{ canRecord && <RecordButton type='iconbutton' /> }
 						{ fullscreenEnabled &&
 							<FullscreenButton
@@ -189,6 +196,8 @@ const TopBar = ({
 				<Settings onClick={handleMenuClose} />
 				<Participants onClick={handleMenuClose} />
 				<Fullscreen onClick={handleMenuClose} />
+				<ExtraVideo onClick={handleMenuClose} />
+				<Filesharing onClick={handleMenuClose} />
 			</FloatingMenu>
 		</Fragment>
 	);

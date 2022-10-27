@@ -8,22 +8,36 @@ import Peer from '../peer/Peer';
 const PADDING_V = 64;
 const FILL_RATE = 0.95;
 
-const DemocraticDiv = styled('div')({
+interface DemocraticProps {
+	controlbuttons?: number;
+}
+
+const DemocraticDiv = styled('div')<DemocraticProps>(({
+	theme,
+	controlbuttons
+}) => ({
 	width: '100%',
 	height: '100%',
 	display: 'flex',
+	...(controlbuttons && {
+		marginLeft: theme.spacing(8)
+	}),
 	flexDirection: 'row',
 	flexWrap: 'wrap',
 	overflow: 'hidden',
 	justifyContent: 'center',
 	alignItems: 'center',
 	alignContent: 'center',
-	paddingTop: PADDING_V
-});
+	paddingTop: PADDING_V,
+	transition: 'margin-left 0.5s ease-in-out'
+}));
 
 const Democratic = (): JSX.Element => {
 	const peersRef = useRef<HTMLDivElement>(null);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
+	const controlButtonsBar =
+		useAppSelector((state) => state.settings.controlButtonsBar);
+	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
 	const boxes = useAppSelector(videoBoxesSelector);
 	const spotlightPeers = useAppSelector(spotlightPeersSelector);
 	const [ windowSize, setWindowSize ] = useState(0);
@@ -94,7 +108,12 @@ const Democratic = (): JSX.Element => {
 		};
 	}, []);
 
-	useEffect(() => updateDimensions(), [ boxes, windowSize ]);
+	useEffect(() => updateDimensions(), [
+		boxes,
+		windowSize,
+		controlButtonsBar,
+		hideSelfView
+	]);
 
 	const style = {
 		width: dimensions.peerWidth,
@@ -102,9 +121,11 @@ const Democratic = (): JSX.Element => {
 	};
 
 	return (
-		<DemocraticDiv ref={peersRef}>
-			<Me style={style} spacing={1} />
-
+		<DemocraticDiv
+			ref={peersRef}
+			controlbuttons={(controlButtonsBar || hideSelfView) ? 1 : 0}
+		>
+			{ !hideSelfView && <Me style={style} spacing={1} /> }
 			{ spotlightPeers.map((peer) => (
 				<Peer
 					key={peer}

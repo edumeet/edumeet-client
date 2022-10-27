@@ -9,6 +9,8 @@ export interface SettingsState {
 	lastN: number;
 	mirroredSelfView: boolean;
 	hideNonVideo: boolean;
+	hideSelfView: boolean;
+	controlButtonsBar: boolean;
 	roomLayout: RoomLayout;
 	aspectRatio: number;
 	selectedAudioDevice?: string;
@@ -51,6 +53,8 @@ const initialState: SettingsState = {
 	preferredRecorderMimeType: 'video/webm',
 	lastN: edumeetConfig.lastN,
 	hideNonVideo: edumeetConfig.hideNonVideo,
+	hideSelfView: false,
+	controlButtonsBar: false,
 	aspectRatio: edumeetConfig.aspectRatio,
 	audioPreset: edumeetConfig.audioPreset,
 	audioPresets: edumeetConfig.audioPresets,
@@ -90,6 +94,12 @@ const settingsSlice = createSlice({
 		}),
 		setHideNonVideo: ((state, action: PayloadAction<boolean>) => {
 			state.hideNonVideo = action.payload;
+		}),
+		setHideSelfView: ((state, action: PayloadAction<boolean>) => {
+			state.hideSelfView = action.payload;
+		}),
+		setSeparateMediaControls: ((state, action: PayloadAction<boolean>) => {
+			state.controlButtonsBar = action.payload;
 		}),
 		setAspectRatio: ((state, action: PayloadAction<number>) => {
 			state.aspectRatio = action.payload;

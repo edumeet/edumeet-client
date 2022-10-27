@@ -59,6 +59,7 @@ const ShareButton = (): JSX.Element => {
 			ariaLabel={shareLabel()}
 			icon={<AddIcon />}
 			direction='left'
+			FabProps={{ size: 'medium' }}
 		>
 			{ canShareScreen && !screenSharingInProgress && (
 				<SpeedDialAction

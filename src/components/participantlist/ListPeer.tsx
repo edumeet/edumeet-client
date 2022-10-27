@@ -1,4 +1,4 @@
-import { Divider, IconButton, styled, Typography } from '@mui/material';
+import { IconButton, styled } from '@mui/material';
 import { Peer } from '../../store/slices/peersSlice';
 import PanIcon from '@mui/icons-material/PanTool';
 import { useAppDispatch, usePeerConsumers } from '../../store/hooks';
@@ -6,15 +6,7 @@ import { lowerPeerHand } from '../../store/actions/peerActions';
 import Volume from '../volume/Volume';
 import { Fragment, useState } from 'react';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import FloatingMenu from '../floatingmenu/FloatingMenu';
-import MuteWebcam from '../menuitems/MuteWebcam';
-import MuteScreenshare from '../menuitems/MuteScreenshare';
-import Kick from '../menuitems/Kick';
-import StopVideo from '../menuitems/StopVideo';
-import StopScreenshare from '../menuitems/StopScreenshare';
-import MuteAudio from '../menuitems/MuteAudio';
-import StopAudio from '../menuitems/StopAudio';
-import { moderatorActionsLabel } from '../translated/translatedComponents';
+import PeerMenu from '../peermenu/PeerMenu';
 
 interface ListPeerProps {
 	peer: Peer;
@@ -47,12 +39,6 @@ const PeerAvatar = styled('img')({
 	backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' viewBox='0 0 20 20' fill='currentColor'%3e%3cpath d='M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z' /%3e%3c/svg%3e")`,
 });
 
-const ModeratorHeading = styled(Typography)(({ theme }) => ({
-	fontSize: '1rem',
-	fontWeight: 'bold',
-	margin: theme.spacing(1),
-}));
-
 const ListPeer = ({
 	peer,
 	isModerator
@@ -61,9 +47,6 @@ const ListPeer = ({
 
 	const {
 		micConsumer,
-		webcamConsumer,
-		screenConsumer,
-		extraVideoConsumers
 	} = usePeerConsumers(peer.id);
 
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
@@ -71,8 +54,6 @@ const ListPeer = ({
 	const handleMenuClose = () => {
 		setMoreAnchorEl(null);
 	};
-
-	const isMoreMenuOpen = Boolean(moreAnchorEl);
 
 	return (
 		<Fragment>
@@ -100,61 +81,11 @@ const ListPeer = ({
 					<MoreIcon />
 				</IconButton>
 			</PeerDiv>
-			<FloatingMenu
+			<PeerMenu
 				anchorEl={moreAnchorEl}
-				open={isMoreMenuOpen}
-				onClose={handleMenuClose}
-			>
-				{ micConsumer &&
-					<MuteAudio
-						onClick={handleMenuClose}
-						peer={peer}
-						micConsumer={micConsumer}
-					/>
-				}
-				{ webcamConsumer &&
-					<MuteWebcam
-						onClick={handleMenuClose}
-						peer={peer}
-						webcamConsumer={webcamConsumer}
-					/>
-				}
-				{ screenConsumer &&
-					<MuteScreenshare
-						onClick={handleMenuClose}
-						peer={peer}
-						screenConsumer={screenConsumer}
-					/>
-				}
-				{ extraVideoConsumers.map((consumer) => (
-					<MuteWebcam
-						onClick={handleMenuClose}
-						key={consumer.id}
-						peer={peer}
-						webcamConsumer={consumer}
-					/>
-				)) }
-				{ isModerator &&
-					<Divider />
-				}
-				{ isModerator &&
-					<ModeratorHeading>
-						{ moderatorActionsLabel() }
-					</ModeratorHeading>
-				}
-				{ isModerator && micConsumer &&
-					<StopAudio onClick={handleMenuClose} peer={peer} />
-				}
-				{ isModerator && webcamConsumer &&
-					<StopVideo onClick={handleMenuClose} peer={peer} />
-				}
-				{ isModerator && screenConsumer &&
-					<StopScreenshare onClick={handleMenuClose} peer={peer} />
-				}
-				{ isModerator &&
-					<Kick onClick={handleMenuClose} peer={peer} />
-				}
-			</FloatingMenu>
+				peerId={peer.id}
+				onClick={handleMenuClose}
+			/>
 		</Fragment>
 	);
 };
