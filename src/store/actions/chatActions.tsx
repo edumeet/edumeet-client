@@ -1,13 +1,19 @@
 import { Logger } from '../../utils/logger';
 import { chatActions } from '../slices/chatSlice';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppThunk } from '../store';
 
 const logger = new Logger('ChatActions');
 
-export const sendChat = (message: string) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ signalingService }: MiddlewareOptions
+/**
+ * This thunk action sends a chat message.
+ * 
+ * @param message - Message to send.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const sendChat = (message: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('sendChat() [message:"%s"]', message);
 
@@ -29,10 +35,15 @@ export const sendChat = (message: string) => async (
 	}
 };
 
-export const clearChat = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+/**
+ * This thunk action clears the chat for everyone.
+ * 
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const clearChat = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('clearChat()');
 

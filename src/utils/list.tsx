@@ -12,6 +12,13 @@ export type List<T extends { id: string }> = {
 }
 /* eslint-enable no-unused-vars */
 
+/**
+ * A list of items that can be added to, removed from, and iterated over.
+ * 
+ * @param {T} initialItems - The initial items to add to the list.
+ * @returns {List<T>} The list of items.
+ * @template T - The type of items in the list.
+ */
 export const List = <T extends { id: string }>(
 	...initialItems: T[]
 ): List<T> => {

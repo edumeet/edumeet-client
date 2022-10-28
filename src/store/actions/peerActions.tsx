@@ -1,14 +1,20 @@
 import { Logger } from '../../utils/logger';
 import { peersActions } from '../slices/peersSlice';
 import { roomActions } from '../slices/roomSlice';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppThunk } from '../store';
 
 const logger = new Logger('PeerActions');
 
-export const lowerPeerHand = (id: string) => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+/**
+ * A thunk action to lower another peer's hand as a moderator.
+ * 
+ * @param id - The peer id
+ * @returns {Promise<void>} Promise.
+ */
+export const lowerPeerHand = (id: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('lowerPeerHand() [id:"%s"]', id);
 
@@ -23,10 +29,15 @@ export const lowerPeerHand = (id: string) => async (
 	}
 };
 
-export const kickPeer = (id: string) => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+/**
+ * 
+ * @param id - The peer id
+ * @returns {Promise<void>} Promise.
+ */
+export const kickPeer = (id: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('kickPeer() [id:"%s"]', id);
 
@@ -41,10 +52,10 @@ export const kickPeer = (id: string) => async (
 	}
 };
 
-export const stopAudio = (id: string) => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const stopAudio = (id: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('stopAudio() [id:"%s"]', id);
 
@@ -59,10 +70,10 @@ export const stopAudio = (id: string) => async (
 	}
 };
 
-export const stopVideo = (id: string) => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const stopVideo = (id: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('stopVideo() [id:"%s"]', id);
 
@@ -77,10 +88,10 @@ export const stopVideo = (id: string) => async (
 	}
 };
 
-export const stopScreenSharing = (id: string) => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const stopScreenSharing = (id: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('stopScreenSharing() [id:"%s"]', id);
 
@@ -95,10 +106,10 @@ export const stopScreenSharing = (id: string) => async (
 	}
 };
 
-export const muteAll = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const muteAll = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('muteAllPeers()');
 
@@ -113,10 +124,10 @@ export const muteAll = () => async (
 	}
 };
 
-export const stopAllVideo = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const stopAllVideo = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('stopAllPeerVideos()');
 
@@ -131,10 +142,10 @@ export const stopAllVideo = () => async (
 	}
 };
 
-export const stopAllScreenshare = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const stopAllScreenshare = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('stopAllScreenshare()');
 

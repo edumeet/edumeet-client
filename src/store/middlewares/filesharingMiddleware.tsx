@@ -17,11 +17,11 @@ const createFilesharingMiddleware = ({
 		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
-		getState: RootState
+		getState: () => RootState
 	}) =>
 		(next) => (action) => {
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
-				const iceServers = getState().room.iceServers;
+				const iceServers = getState().webrtc.iceServers;
 
 				fileService.init(iceServers);
 			}

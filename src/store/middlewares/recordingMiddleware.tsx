@@ -23,8 +23,6 @@ const RECORDING_CONSTRAINTS = {
 };
 
 const createRecordingMiddleware = ({
-	// eslint-disable-next-line
-	signalingService,
 	mediaService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createRecordingMiddleware()');
@@ -61,11 +59,10 @@ const createRecordingMiddleware = ({
 	};
 
 	const middleware: Middleware = ({
-		// eslint-disable-next-line
 		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
-		getState: RootState
+		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
 			if (recordingActions.start.match(action)) {

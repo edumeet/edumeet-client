@@ -5,7 +5,7 @@ import MeetingDrawer from '../../components/meetingdrawer/MeetingDrawer';
 import Democratic from '../../components/democratic/Democratic';
 import Settings from '../../components/settingsdialog/SettingsDialog';
 import TopBar from '../../components/topbar/TopBar';
-import { useAppSelector, usePrompt } from '../../store/hooks';
+import { usePrompt } from '../../store/hooks';
 import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
 import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import AudioPeers from '../../components/audiopeers/AudioPeers';
@@ -16,7 +16,6 @@ import ControlButtonsBar from '../../components/controlbuttonsbar/ControlButtons
 
 const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
-	const notifications = useAppSelector((state) => state.settings.showNotifications);
 
 	usePrompt(true);
 
@@ -41,7 +40,7 @@ const Room = (): JSX.Element => {
 
 	return (
 		<>
-			{ notifications && <Notifications /> }
+			<Notifications />
 			<FullscreenVideo />
 			<WindowedVideo />
 			<AudioPeers />

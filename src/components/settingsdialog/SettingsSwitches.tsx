@@ -6,8 +6,7 @@ import {
 	echoCancellationLabel,
 	enableOpusDtxLabel,
 	enableOpusFecLabel,
-	noiseSuppressionLabel,
-	voiceActivatedUnmuteLabel
+	noiseSuppressionLabel
 } from '../translated/translatedComponents';
 
 export const EchoCancellationSwitch = (): JSX.Element => {
@@ -70,6 +69,7 @@ export const NoiseSuppressionSwitch = (): JSX.Element => {
 	);
 };
 
+/*
 export const VoiceActivatedUnmuteSwitch = (): JSX.Element => {
 	// const dispatch = useAppDispatch();
 	const voiceActivatedUnmute =
@@ -82,17 +82,17 @@ export const VoiceActivatedUnmuteSwitch = (): JSX.Element => {
 					color='primary'
 					checked={ voiceActivatedUnmute }
 					
-					/* onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
+					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
 						// TODO
 						dispatch(updateMic());
 						dispatch(updatePreviewMic());
-					} } */
+					} }
 				/>
 			}
 			label={ voiceActivatedUnmuteLabel() }
 		/>
 	);
-};
+}; */
 
 export const OpusDtxSwitch = (): JSX.Element => {
 	const dispatch = useAppDispatch();

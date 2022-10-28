@@ -2,13 +2,19 @@ import { loadLocale } from '../../utils/intlManager';
 import { Logger } from '../../utils/logger';
 import { roomActions } from '../slices/roomSlice';
 import { settingsActions } from '../slices/settingsSlice';
-import { AppDispatch, RootState } from '../store';
+import { AppThunk } from '../store';
 
 const logger = new Logger('LocaleActions');
 
-export const setLocale = (locale?: string) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
+/**
+ * This thunk action loads sets a new locale.
+ * 
+ * @param locale - Locale to set.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const setLocale = (locale?: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
 ): Promise<void> => {
 	logger.debug('setLocale() [message:"%s"]', locale);
 
@@ -20,6 +26,9 @@ export const setLocale = (locale?: string) => async (
 		newLocale = await loadLocale(locale);
 	else {
 		const oldLocale = getState().settings.locale;
+
+		if (!oldLocale)
+			return;
 		
 		// Workaround to trigger rerender with new locale
 		dispatch(settingsActions.setLocale(''));

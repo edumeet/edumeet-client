@@ -20,7 +20,7 @@ const createPeerMiddleware = ({
 		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
-		getState: RootState
+		getState: () => RootState
 	}) =>
 		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {

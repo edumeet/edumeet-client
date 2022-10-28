@@ -26,14 +26,31 @@ import {
 	makePermissionSelector,
 	PeerConsumers
 } from './selectors';
-import { Notification, notificationsActions } from './slices/notificationsSlice';
+import { notificationsActions } from './slices/notificationsSlice';
 import { Peer } from './slices/peersSlice';
 import type { RootState, AppDispatch } from './store';
 import { LeavePromptContext } from './store';
 
-export const useAppDispatch = (): AppDispatch => useDispatch<AppDispatch>();
+/**
+ * Hook to access the redux dispatch function.
+ * 
+ * @returns {AppDispatch} The redux dispatch function.
+ */
+export const useAppDispatch: () => AppDispatch = useDispatch;
+
+/**
+ * Hook to access the redux state.
+ * 
+ * @returns {TypedUseSelectorHook<RootState>} The redux state.
+ */
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
+/**
+ * Hook to access the comsumers of a peer.
+ * 
+ * @param peerId - The id of the peer.
+ * @returns {PeerConsumers} The consumers of the peer.
+ */
 export const usePeerConsumers = (peerId: string): PeerConsumers => {
 	const getPeerConsumers =
 		useMemo(() => makePeerConsumerSelector(peerId), []);
@@ -41,12 +58,24 @@ export const usePeerConsumers = (peerId: string): PeerConsumers => {
 	return useAppSelector(getPeerConsumers);
 };
 
+/**
+ * Hook to get the peer with the given id.
+ * 
+ * @param peerId - The id of the peer.
+ * @returns {Peer | undefined} The peer with the given id.
+ */
 export const usePeer = (peerId: string): Peer | undefined => {
 	const getPeer = useMemo(() => makePeerSelector(peerId), []);
 
 	return useAppSelector(getPeer);
 };
 
+/**
+ * Hook to check if the user has the given permission.
+ * 
+ * @param permission - The permission to check.
+ * @returns {boolean} True if the user has the given permission.
+ */
 export const usePermissionSelector = (permission: Permission): boolean => {
 	const permissionSelector =
 		useMemo(() => makePermissionSelector(permission), []);
@@ -54,6 +83,12 @@ export const usePermissionSelector = (permission: Permission): boolean => {
 	return useAppSelector(permissionSelector);
 };
 
+/**
+ * Hook to get the list of media devices filtered by the given kind.
+ * 
+ * @param kind - The kind of the devices to get.
+ * @returns {MediaDevice[]} The list of media devices.
+ */
 export const useDeviceSelector = (kind: MediaDeviceKind): MediaDevice[] => {
 	const devicesSelector = useMemo(() => makeDevicesSelector(kind), [ kind ]);
 
@@ -62,9 +97,14 @@ export const useDeviceSelector = (kind: MediaDeviceKind): MediaDevice[] => {
 
 let displayed: SnackbarKey[] = [];
 
+/**
+ * Hook to add notifications to a component.
+ * 
+ * @returns {void}
+ */
 export const useNotifier = (): void => {
 	const dispatch = useAppDispatch();
-	const notifications = useAppSelector<Notification[]>((store) => store.notifications);
+	const notifications = useAppSelector((store) => store.notifications);
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 	const storeDisplayed = (id: SnackbarKey) => {
@@ -126,6 +166,12 @@ export const useBlocker = (blocker: Blocker, when = true): void => {
 	}, [ navigator, blocker, when ]);
 };
 
+/**
+ * Hook to show a leave prompt when the user tries to leave the page.
+ * 
+ * @param when - Whether to show the leave prompt or not.
+ * @returns {void}
+ */
 export const usePrompt = (when = true): void => {
 	const showPrompt = useContext(LeavePromptContext);
 

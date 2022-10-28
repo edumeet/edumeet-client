@@ -14,49 +14,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	aspectRatio: 1.7778, // 16:9
 	simulcast: true,
 	simulcastSharing: false,
-	simulcastProfiles: {
-		'320': [ {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 150000
-		} ],
-		'640': [ {
-			'scaleResolutionDownBy': 2,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 500000
-		} ],
-		'1280': [ {
-			'scaleResolutionDownBy': 4,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 2,
-			'maxBitRate': 500000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 1200000
-		} ],
-		'1920': [ {
-			'scaleResolutionDownBy': 6,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 3,
-			'maxBitRate': 500000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 3500000
-		} ],
-		'3840': [ {
-			'scaleResolutionDownBy': 12,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 6,
-			'maxBitRate': 500000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 10000000
-		} ]
-	},
 	localRecordingEnabled: false,
 	requestTimeout: 20000,
 	requestRetries: 3,
@@ -141,7 +98,6 @@ export interface EdumeetConfig {
 	aspectRatio: number;
 	simulcast: boolean;
 	simulcastSharing: boolean;
-	simulcastProfiles: Record<string, SimulcastProfile[]>;
 	localRecordingEnabled: boolean;
 	requestTimeout: number;
 	requestRetries: number;

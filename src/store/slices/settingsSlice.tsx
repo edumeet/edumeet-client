@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { detect } from '../../utils/intlManager';
-import { AudioPreset, RoomLayout } from '../../utils/types';
+import { AudioPreset, Resolution, RoomLayout } from '../../utils/types';
 import { producersActions } from './producersSlice';
 
 export interface SettingsState {
@@ -15,9 +15,9 @@ export interface SettingsState {
 	aspectRatio: number;
 	selectedAudioDevice?: string;
 	selectedVideoDevice?: string;
-	resolution: string;
+	resolution: Resolution;
 	frameRate: number;
-	screenSharingResolution: string;
+	screenSharingResolution: Resolution;
 	screenSharingFrameRate: number;
 	supportedRecorderMimeTypes: string[],
 	preferredRecorderMimeType: string,
@@ -110,13 +110,13 @@ const settingsSlice = createSlice({
 		setSelectedVideoDevice: ((state, action: PayloadAction<string | undefined>) => {
 			state.selectedVideoDevice = action.payload;
 		}),
-		setResolution: ((state, action: PayloadAction<string>) => {
+		setResolution: ((state, action: PayloadAction<Resolution>) => {
 			state.resolution = action.payload;
 		}),
 		setFrameRate: ((state, action: PayloadAction<number>) => {
 			state.frameRate = action.payload;
 		}),
-		setScreenSharingResolution: ((state, action: PayloadAction<string>) => {
+		setScreenSharingResolution: ((state, action: PayloadAction<Resolution>) => {
 			state.screenSharingResolution = action.payload;
 		}),
 		setScreenSharingFrameRate: ((state, action: PayloadAction<number>) => {
