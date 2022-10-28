@@ -165,7 +165,6 @@ const TopBar = ({
 						<ParticipantsButton type='iconbutton' />
 						<SettingsButton type='iconbutton' />
 						<LockButton type='iconbutton' />
-						{ files > 0 && <FilesharingButton type='iconbutton' /> }
 						{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						{ loginEnabled && <LoginButton type='iconbutton' /> }
 					</DesktopDiv>

@@ -16,9 +16,8 @@ export function register(config?: Config): void {
 	if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
 		const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
 
-		if (publicUrl.origin !== window.location.origin) {
+		if (publicUrl.origin !== window.location.origin)
 			return;
-		}
 
 		window.addEventListener('load', () => {
 			const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
@@ -41,9 +40,9 @@ function registerValidSW(swUrl: string, config?: Config) {
 			registration.onupdatefound = () => {
 				const installingWorker = registration.installing;
 
-				if (installingWorker == null) {
+				if (installingWorker == null)
 					return;
-				}
+
 				installingWorker.onstatechange = () => {
 					if (installingWorker.state === 'installed') {
 						if (navigator.serviceWorker.controller) {

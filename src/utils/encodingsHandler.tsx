@@ -24,25 +24,22 @@ export const getEncodings = (
 	height: number | undefined,
 	screenSharing?: boolean
 ): RtpEncodingParameters[] => {
-	if (!width || !height) {
+	if (!width || !height)
 		throw new Error('missing width or height');
-	}
 
 	const firstVideoCodec =
 		rtpCapabilities.codecs?.find((c) => c.kind === 'video');
 
-	if (!firstVideoCodec) {
+	if (!firstVideoCodec)
 		throw new Error('No video codecs');
-	}
 
 	let encodings: RtpEncodingParameters[];
 	const size = (width > height ? width : height);
 
-	if (firstVideoCodec.mimeType.toLowerCase() === 'video/vp9') {
+	if (firstVideoCodec.mimeType.toLowerCase() === 'video/vp9')
 		encodings = screenSharing ? VIDEO_SVC_ENCODINGS : VIDEO_KSVC_ENCODINGS;
-	} else {
+	else
 		encodings = chooseEncodings(edumeetConfig.simulcastProfiles, size);
-	}
 
 	return encodings;
 };
@@ -58,9 +55,8 @@ const chooseEncodings = (
 
 	for (const [ key, value ] of sortedMap) {
 		if (parseInt(key) < size) {
-			if (encodings === null) {
+			if (encodings === null)
 				encodings = value;
-			}
 
 			break;
 		}
@@ -69,9 +65,8 @@ const chooseEncodings = (
 	}
 
 	// hack as there is a bug in mediasoup
-	if (encodings.length === 1) {
+	if (encodings.length === 1)
 		encodings.push({ ...encodings[0] });
-	}
 
 	return encodings;
 };
