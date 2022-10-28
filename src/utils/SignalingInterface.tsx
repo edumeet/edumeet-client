@@ -6,6 +6,9 @@ export interface SocketMessage {
 	data?: any; // TODO: define inbound notification data
 }
 
+/**
+ * Interface for any signaling class.
+ */
 export interface SignalingInterface {
 	// Outbound messages
 	notify: (notification: SocketMessage) => Promise<void>;

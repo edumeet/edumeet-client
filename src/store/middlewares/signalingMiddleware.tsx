@@ -6,6 +6,22 @@ import { SocketIOConnection } from '../../utils/SocketIOConnection';
 
 const logger = new Logger('SignalingMiddleware');
 
+/**
+ * This middleware represents the connection between the
+ * SignalingService, the Redux store and the React components.
+ * 
+ * It listens to the SignalingService events and dispatches
+ * the corresponding Redux actions.
+ * 
+ * It also listens to the Redux actions and calls the
+ * SignalingService methods.
+ * 
+ * This way the SignalingService and the Redux store are
+ * kept in sync.
+ * 
+ * @param options - Middleware options.
+ * @returns {Middleware} Redux middleware.
+ */
 const createSignalingMiddleware = ({
 	signalingService
 }: MiddlewareOptions): Middleware => {
@@ -15,7 +31,7 @@ const createSignalingMiddleware = ({
 		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
-		getState: RootState
+		getState: () => RootState
 	}) =>
 		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {

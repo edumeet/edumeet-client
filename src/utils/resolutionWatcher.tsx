@@ -11,6 +11,13 @@ export declare interface ResolutionWatcher {
 	on(event: 'newResolution', listener: (resolution: Resolution) => void): this;
 }
 
+/**
+ * ResolutionWatcher is a class that correlates the reports from all
+ * ResolutionReporter instances and emits the current highest resolution
+ * a video track is being rendered at.
+ * 
+ * @emits newResolution - Emitted when the resolution changes.
+ */
 export class ResolutionWatcher extends EventEmitter {
 	private resolutionReporters: ResolutionReporter[] = [];
 	private currentResolution: Resolution = { width: 320, height: 240 };

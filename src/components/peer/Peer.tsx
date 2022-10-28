@@ -1,8 +1,8 @@
 import {
 	useAppSelector,
+	usePeer,
 	usePeerConsumers
 } from '../../store/hooks';
-import { peerDisplayNameSelector } from '../../store/selectors';
 import FullscreenVideoButton from '../controlbuttons/FullscreenVideoButton';
 import PeerActionsButton from '../controlbuttons/PeerActionsButton';
 import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
@@ -24,17 +24,15 @@ const Peer = ({
 	spacing,
 	style
 }: PeerProps): JSX.Element => {
-	const hideNonVideo = useAppSelector((state) => state.settings.hideNonVideo);
 	const {
 		micConsumer,
 		webcamConsumer,
 		screenConsumer,
 		extraVideoConsumers
 	} = usePeerConsumers(id);
-	const displayName = useAppSelector((state) => peerDisplayNameSelector(state, id));
-	const activeSpeaker =
-		useAppSelector((state) => id === state.room.activeSpeakerId);
-
+	const hideNonVideo = useAppSelector((state) => state.settings.hideNonVideo);
+	const peer = usePeer(id);
+	const activeSpeaker = useAppSelector((state) => id === state.room.activeSpeakerId);
 	const showParticipant = !hideNonVideo || (hideNonVideo && webcamConsumer);
 
 	return (
@@ -47,7 +45,7 @@ const Peer = ({
 					width={style.width}
 					height={style.height}
 				>
-					<DisplayName displayName={displayName} />
+					<DisplayName displayName={peer?.displayName} />
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'

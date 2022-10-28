@@ -9,6 +9,13 @@ export declare interface VolumeWatcher {
 	) => void): this;
 }
 
+/**
+ * VolumeWatcher is a class that wraps a hark instance
+ * tied to a Consumer or Producer and emits events when
+ * the volume changes.
+ * 
+ * @emits volumeChange - Emitted when the volume changes.
+ */
 export class VolumeWatcher extends EventEmitter {
 	private hark: Harker;
 	private lastVolume = -100;

@@ -79,7 +79,7 @@ const VideoInputChooser = ({
 	return (
 		<ChooserDiv>
 			<DeviceChooser
-				value={videoDevice}
+				value={videoDevice ?? ''}
 				setValue={handleDeviceChange}
 				name={videoDeviceLabel()}
 				devicesLabel={selectVideoDeviceLabel()}

@@ -36,7 +36,7 @@ export const ResolutionSelector = ({
 
 	const handleResolutionChange = (event: SelectChangeEvent<string>): void => {
 		dispatch(updateVideoSettings({
-			resolution: event.target.value
+			resolution: event.target.value as Resolution
 		}));
 	};
 
@@ -93,7 +93,7 @@ export const FrameRateSelector = ({
 	return (
 		<FormControl fullWidth>
 			<Select
-				value={ frameRate }
+				value={ String(frameRate) }
 				onChange={ handleFrameRateChange }
 				displayEmpty
 				autoWidth
@@ -177,7 +177,7 @@ export const SampleRateSelector = ({
 	return (
 		<FormControl fullWidth>
 			<Select
-				value={ sampleRate }
+				value={ String(sampleRate) }
 				onChange={(event: SelectChangeEvent<string>): void => {
 					dispatch(updateAudioSettings({ sampleRate: parseInt(event.target.value) }));
 				}}
@@ -206,7 +206,7 @@ export const ChannelCountSelector = ({
 	return (
 		<FormControl fullWidth>
 			<Select
-				value={ channelCount }
+				value={ String(channelCount) }
 				onChange={(event: SelectChangeEvent<string>): void => {
 					dispatch(updateAudioSettings({ channelCount: parseInt(event.target.value) }));
 				}}
@@ -235,7 +235,7 @@ export const SampleSizeSelector = ({
 	return (
 		<FormControl fullWidth>
 			<Select
-				value={ sampleSize }
+				value={ String(sampleSize) }
 				onChange={(event: SelectChangeEvent<string>): void => {
 					dispatch(updateAudioSettings({ sampleSize: parseInt(event.target.value) }));
 				}}
@@ -264,7 +264,7 @@ export const OpusPtimeSelector = ({
 	return (
 		<FormControl fullWidth>
 			<Select
-				value={ opusPtime }
+				value={ String(opusPtime) }
 				onChange={(event: SelectChangeEvent<string>): void => {
 					dispatch(updateAudioSettings({ opusPtime: parseInt(event.target.value) }));
 				}}

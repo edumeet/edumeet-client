@@ -43,6 +43,12 @@ const webrtcUnavailable =
 	!navigator.mediaDevices.getUserMedia ||
 	!window.RTCPeerConnection;
 
+/**
+ * Return either the app or the unsupported browser page
+ * based on feature detection.
+ * 
+ * @returns {JSX.Element} Either the app or the unsupported browser page
+ */
 const RootComponent = () => {
 	const dispatch = useAppDispatch();
 

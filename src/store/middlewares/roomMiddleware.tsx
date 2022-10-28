@@ -21,7 +21,7 @@ const createRoomMiddleware = ({
 		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
-		getState: RootState
+		getState: () => RootState
 	}) =>
 		(next) => (action) => {
 			if (signalingActions.disconnect.match(action)) {
@@ -62,8 +62,8 @@ const createRoomMiddleware = ({
 							case 'enteredLobby': {
 								batch(() => {
 									dispatch(roomActions.setState('lobby'));
-									dispatch(setDisplayName(getState().settings.displayName));
-									dispatch(setPicture(getState().me.picture));
+									dispatch(setDisplayName(getState().settings.displayName ?? 'Guest'));
+									dispatch(setPicture(getState().me.picture ?? ''));
 								});
 								break;
 							}

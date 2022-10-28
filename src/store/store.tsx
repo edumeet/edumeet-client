@@ -1,8 +1,8 @@
 import {
 	configureStore,
 	combineReducers,
-	ThunkDispatch,
-	AnyAction
+	ThunkAction,
+	Action,
 } from '@reduxjs/toolkit';
 import { createLogger } from 'redux-logger';
 import {
@@ -72,6 +72,13 @@ const performanceMonitor = new PerformanceMonitor();
 
 export const mediaService = new MediaService({ signalingService });
 export const fileService = new FileService({ signalingService });
+
+/**
+ * The entire App is wrapped in this context, so that all
+ * components can access the mediaService and the fileService.
+ * 
+ * @see VideoView.tsx for an example.
+ */
 export const ServiceContext = createContext<{
 	mediaService: MediaService,
 	fileService: FileService
@@ -105,8 +112,7 @@ const reducer = combineReducers({
 	recording: recordingSlice.reducer,
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const pReducer = persistReducer<any, any>(persistConfig, reducer);
+const pReducer = persistReducer<RootState>(persistConfig, reducer);
 
 export const store = configureStore({
 	reducer: pReducer,
@@ -137,9 +143,14 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AppDispatch = ThunkDispatch<RootState, any, AnyAction>;
-export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof reducer>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+	ReturnType,
+	RootState,
+	MiddlewareOptions,
+	Action<string>
+>;
 
 export const LeavePromptContext = createContext<() => Promise<void>>(() =>
 	Promise.resolve()

@@ -9,7 +9,7 @@ import { permissionsActions } from '../slices/permissionsSlice';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { webrtcActions } from '../slices/webrtcSlice';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppThunk } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
 
 const logger = new Logger('RoomActions');
@@ -20,14 +20,10 @@ const logger = new Logger('RoomActions');
 // 2. Discover our capabilities
 // 3. Signal the server that we are ready
 // 4. Update the state
-export const joinRoom = () => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{
-		signalingService,
-		mediaService,
-		performanceMonitor
-	}: MiddlewareOptions
+export const joinRoom = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ signalingService, mediaService, performanceMonitor }
 ): Promise<void> => {
 	logger.debug('joinRoom()');
 
@@ -55,9 +51,9 @@ export const joinRoom = () => async (
 
 	const rtpCapabilities = mediaService.rtpCapabilities;
 	const { displayName } = getState().settings;
-	const { id: meId, picture } = getState().me;
+	const { /* id: meId,*/ picture } = getState().me;
 	const { loggedIn } = getState().permissions;
-	const { name: confName, sessionId } = getState().room;
+	// const { name: confName, sessionId } = getState().room;
 
 	const {
 		authenticated,
@@ -99,7 +95,7 @@ export const joinRoom = () => async (
 			dispatch(updateWebcam({ start: true }));
 	});
 
-	const rtcStatsMetaData = { 
+	/* const rtcStatsMetaData = { 
 		applicationName: 'edumeet', // mandatoy
 		confName, // mandatory
 		confID: window.location.toString(),
@@ -109,21 +105,21 @@ export const joinRoom = () => async (
 		displayName,
 	};
 
-	mediaService.rtcStatsIdentity(rtcStatsMetaData);
+	mediaService.rtcStatsIdentity(rtcStatsMetaData); */
 };
 
-export const leaveRoom = () => async (
-	dispatch: AppDispatch
+export const leaveRoom = (): AppThunk<Promise<void>> => async (
+	dispatch
 ): Promise<void> => {
 	logger.debug('leaveRoom()');
 
 	dispatch(signalingActions.disconnect());
 };
 
-export const closeMeeting = () => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const closeMeeting = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('closeMeeting()');
 

@@ -10,6 +10,22 @@ import { signalingActions } from '../slices/signalingSlice';
 
 const logger = new Logger('MediaMiddleware');
 
+/**
+ * This middleware represents the connection between the
+ * MediaService, the Redux store and the React components.
+ * 
+ * It listens to the MediaService events and dispatches
+ * the corresponding Redux actions.
+ * 
+ * It also listens to the Redux actions and calls the
+ * MediaService methods.
+ * 
+ * This way the MediaService and the Redux store are
+ * kept in sync.
+ * 
+ * @param options - Middleware options. 
+ * @returns {Middleware} Redux middleware.
+ */
 const createMediaMiddleware = ({
 	mediaService
 }: MiddlewareOptions): Middleware => {
@@ -19,7 +35,7 @@ const createMediaMiddleware = ({
 		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
-		getState: RootState
+		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
 			if (signalingActions.connect.match(action)) {

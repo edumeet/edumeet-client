@@ -12,7 +12,6 @@ import {
 	usePermissionSelector
 } from '../../store/hooks';
 import {
-	filesLengthSelector,
 	fullscreenConsumerSelector,
 	lobbyPeersLengthSelector,
 	unreadSelector
@@ -102,7 +101,6 @@ const TopBar = ({
 	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
 	const unread = useAppSelector(unreadSelector);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
-	const files = useAppSelector(filesLengthSelector);
 
 	const [ mobileMoreAnchorEl, setMobileMoreAnchorEl ] = useState<HTMLElement | null>();
 

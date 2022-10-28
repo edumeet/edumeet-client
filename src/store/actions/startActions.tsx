@@ -1,4 +1,4 @@
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppThunk } from '../store';
 import { Logger } from '../../utils/logger';
 import { meActions } from '../slices/meSlice';
 import { DevicesUpdated } from '../../services/deviceService';
@@ -30,11 +30,11 @@ let deviceChangeListener: () => Promise<void>;
 // eslint-disable-next-line no-unused-vars
 let devicesUpdatedListener: (event: DevicesUpdated) => void;
 
-export const startListeners = () => (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ deviceService }: MiddlewareOptions
-): void => {
+export const startListeners = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ deviceService }
+): Promise<void> => {
 	logger.debug('startListeners()');
 
 	devicesUpdatedListener = ({
@@ -301,11 +301,11 @@ export const startListeners = () => (
 	window.addEventListener('message', messageListener);
 };
 
-export const stopListeners = () => (
-	_dispatch: AppDispatch,
-	_getState: RootState,
-	{ deviceService }: MiddlewareOptions
-): void => {
+export const stopListeners = (): AppThunk<Promise<void>> => async (
+	_dispatch,
+	_getState,
+	{ deviceService }
+): Promise<void> => {
 	logger.debug('stopListeners()');
 
 	deviceService.removeListener('devicesUpdated', devicesUpdatedListener);

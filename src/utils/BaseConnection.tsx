@@ -27,6 +27,9 @@ export declare interface BaseConnection {
 		listener: InboundRequest): this;
 }
 
+/**
+ * Base class for all connections (SocketIO/DataChannel etc.).
+ */
 export abstract class BaseConnection
 	extends EventEmitter implements SignalingInterface {
 	public abstract notify(notification: SocketMessage): Promise<void>;

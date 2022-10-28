@@ -10,13 +10,9 @@ import { RootState } from './store';
 
 // eslint-disable-next-line no-unused-vars
 type Selector<S> = (state: RootState) => S;
-// eslint-disable-next-line no-unused-vars
-type ParameterSelector<S> = (state: RootState, param: string) => S;
 
 const meRolesSelect: Selector<number[]> =
 	(state) => state.permissions.roles;
-const userRolesSelect: Selector<Record<number, Role> | undefined> =
-	(state) => state.permissions.userRoles;
 const roomPermissionsSelect: Selector<Record<Permission, Role[]> | undefined> =
 	(state) => state.permissions.roomPermissions;
 const roomAllowWhenRoleMissing: Selector<Permission[] | undefined> =
@@ -33,8 +29,6 @@ const peersSelector: Selector<Peer[]> =
 	(state) => state.peers;
 const filesSelector: Selector<FilesharingFile[]> =
 	(state) => state.filesharing;
-const peerSelector: ParameterSelector<Peer | undefined> =
-	(state: RootState, peerId: string) => state.peers.find((p: Peer) => p.id === peerId);
 const lobbyPeersSelector: Selector<LobbyPeer[]> =
 	(state) => state.lobbyPeers;
 const unreadMessages: Selector<number> = (state) => state.drawer.unreadMessages;
@@ -47,6 +41,13 @@ const fullscreenConsumer: Selector<string | undefined> =
 const windowedConsumers: Selector<string[]> =
 	(state) => state.room.windowedConsumers;
 
+/**
+ * Factory function to create a selector that returns the
+ * subset of devices that the client has filtered by kind.
+ * 
+ * @param {string} kind - The kind of devices to return.
+ * @returns {Selector<MediaDevice[]>} Selector that returns the subset of devices.
+ */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const makeDevicesSelector = (kind: MediaDeviceKind) => {
 	return createSelector(
@@ -56,6 +57,12 @@ export const makeDevicesSelector = (kind: MediaDeviceKind) => {
 	);
 };
 
+/**
+ * Returns the list of peerIds that are currently selected or
+ * spotlighted. Cropped to lastN if enabled.
+ * 
+ * @returns {string[]} the list of peerIds.
+ */
 export const spotlightPeersSelector = createSelector(
 	lastNSelector,
 	selectedPeersSelector,
@@ -68,57 +75,63 @@ export const spotlightPeersSelector = createSelector(
 				.localeCompare(String(b)))
 );
 
-export const peersVideoConsumersSelector = createSelector(
-	spotlightPeersSelector,
-	consumersSelect,
-	(spotlightPeers, consumers) =>
-		consumers.filter((consumer) =>
-			consumer.kind === 'video' && spotlightPeers.includes(consumer.peerId))
-);
-
-export const passivePeersVideoConsumersSelector = createSelector(
-	spotlightPeersSelector,
-	consumersSelect,
-	(spotlightPeers, consumers) =>
-		consumers.filter((consumer) =>
-			consumer.kind === 'video' && !spotlightPeers.includes(consumer.peerId))
-);
-
+/**
+ * Returns the list of extra video state producers of the client.
+ * 
+ * @returns {StateProducer[]} the list of video state producers.
+ */
 export const extraVideoProducersSelector = createSelector(
 	producersSelect,
 	(producers) => producers.filter((producer) => producer.source === 'extravideo')
 );
 
+/**
+ * Returns the mic state producer of the client.
+ * 
+ * @returns {StateProducer | undefined} the mic state producer.
+ */
 export const micProducerSelector = createSelector(
 	producersSelect,
 	(producers) => producers.find((producer) => producer.source === 'mic')
 );
 
+/**
+ * Returns the webcam state producer of the client.
+ * 
+ * @returns {StateProducer | undefined} the webcam state producer.
+ */
 export const webcamProducerSelector = createSelector(
 	producersSelect,
 	(producers) => producers.find((producer) => producer.source === 'webcam')
 );
 
+/**
+ * Returns the screen state producer of the client.
+ * 
+ * @returns {StateProducer | undefined} the screen state producer.
+ */
 export const screenProducerSelector = createSelector(
 	producersSelect,
 	(producers) => producers.find((producer) => producer.source === 'screen')
 );
 
+/**
+ * Returns the list of mic state consumers of all peers.
+ * 
+ * @returns {StateConsumer[]} the list of mic state consumers.
+ */
 export const micConsumerSelector = createSelector(
 	consumersSelect,
 	(consumers) => consumers.filter((consumer) => consumer.source === 'mic')
 );
 
-export const webcamConsumerSelector = createSelector(
-	consumersSelect,
-	(consumers) => consumers.filter((consumer) => consumer.source === 'webcam')
-);
-
-export const screenConsumerSelector = createSelector(
-	consumersSelect,
-	(consumers) => consumers.filter((consumer) => consumer.source === 'screen')
-);
-
+/**
+ * Returns the list of webcam state consumers of the peers that are
+ * currently selected or spotlighted.
+ * 
+ * @returns {StateConsumer[]} the list of webcam state consumers.
+ * @see spotlightPeersSelector
+ */
 export const spotlightWebcamConsumerSelector = createSelector(
 	spotlightPeersSelector,
 	consumersSelect,
@@ -128,6 +141,13 @@ export const spotlightWebcamConsumerSelector = createSelector(
 		)
 );
 
+/**
+ * Returns the list of screen state consumers of the peers that are
+ * currently selected or spotlighted.
+ * 
+ * @returns {StateConsumer[]} the list of screen state consumers.
+ * @see spotlightPeersSelector
+ */
 export const spotlightScreenConsumerSelector = createSelector(
 	spotlightPeersSelector,
 	consumersSelect,
@@ -137,6 +157,13 @@ export const spotlightScreenConsumerSelector = createSelector(
 		)
 );
 
+/**
+ * Returns the list of extra video state consumers of the peers that are
+ * currently selected or spotlighted.
+ * 
+ * @returns {StateConsumer[]} the list of extra video state consumers.
+ * @see spotlightPeersSelector
+ */
 export const spotlightExtraVideoConsumerSelector = createSelector(
 	spotlightPeersSelector,
 	consumersSelect,
@@ -146,37 +173,15 @@ export const spotlightExtraVideoConsumerSelector = createSelector(
 		)
 );
 
-export const passiveMicConsumerSelector = createSelector(
-	spotlightsSelector,
-	consumersSelect,
-	(spotlights, consumers) =>
-		consumers.filter(
-			(consumer) => consumer.source === 'mic' && !spotlights.includes(consumer.peerId)
-		)
-);
-
-export const highestRoleLevelSelector = createSelector(
-	meRolesSelect,
-	userRolesSelect,
-	(roles, userRoles) => {
-		let level = 0;
-
-		for (const role of roles) {
-			const tmpLevel = userRoles?.[role]?.level;
-
-			if (tmpLevel && tmpLevel > level)
-				level = tmpLevel;
-		}
-
-		return level;
-	}
-);
-
-export const spotlightsLengthSelector = createSelector(
-	spotlightsSelector,
-	(spotlights) => spotlights.length
-);
-
+/**
+ * Returns the list of all peerIds sorted by:
+ * 1. Raised hand (and time they raised it)
+ * 2. Spotlight and selected
+ * 3. All the rest
+ * 
+ * @returns {string[]} the list of peerIds.
+ * @see spotlightPeersSelector
+ */
 export const participantListSelector = createSelector(
 	[ spotlightsSelector, peersSelector ],
 	(spotlights, peers) => {
@@ -205,34 +210,54 @@ export const participantListSelector = createSelector(
 	}
 );
 
+/**
+ * Returns the number of shared files.
+ * 
+ * @returns {number} the number of shared files.
+ */
 export const filesLengthSelector = createSelector(
 	filesSelector,
 	(files) => files.length
 );
 
+/**
+ * Returns the number of peers excluding the client.
+ * 
+ * @returns {number} the number of peers.
+ */
 export const peersLengthSelector = createSelector(
 	peersSelector,
 	(peers) => peers.length
 );
 
+/**
+ * Returns the number of peers in the lobby.
+ * 
+ * @returns {number} the number of peers in the lobby.
+ */
 export const lobbyPeersLengthSelector = createSelector(
 	lobbyPeersSelector,
 	(peers) => peers.length
 );
 
-export const passivePeersSelector = createSelector(
-	spotlightsSelector,
-	peersSelector,
-	(spotlights, peers) =>
-		peers.filter((peer) => !spotlights.includes(peer.id))
-			.sort((a, b) => String(a.displayName || '').localeCompare(String(b.displayName || '')))
-);
-
+/**
+ * Returns the number of peers that have raised their hand.
+ * 
+ * @returns {number} the number of peers that have raised their hand.
+ */
 export const raisedHandsSelector = createSelector(
 	peersSelector,
 	(peers) => peers.reduce((a, b) => (a + (b.raisedHand ? 1 : 0)), 0)
 );
 
+/**
+ * Returns the number of notifications that is a sum of:
+ * 1. Number of unread chat messages
+ * 2. Number of unviewed files
+ * 3. Number of peers that have raised their hand
+ * 
+ * @returns {number} the number of notifications.
+ */
 export const unreadSelector = createSelector(
 	unreadMessages,
 	unreadFiles,
@@ -241,6 +266,12 @@ export const unreadSelector = createSelector(
 		messages + files + raisedHands
 );
 
+/**
+ * Returns the one state consumer that is currently in fullscreen
+ * in the main window.
+ * 
+ * @returns {StateConsumer | undefined} the state consumer.
+ */
 export const fullscreenConsumerSelector = createSelector(
 	fullscreenConsumer,
 	consumersSelect,
@@ -248,6 +279,12 @@ export const fullscreenConsumerSelector = createSelector(
 		consumers.find((c) => c.id === consumer)
 );
 
+/**
+ * Returns the list of state consumers that are currently in a
+ * separate window.
+ * 
+ * @returns {StateConsumer[]} the list of state consumers.
+ */
 export const windowedConsumersSelector = createSelector(
 	windowedConsumers,
 	consumersSelect,
@@ -255,6 +292,20 @@ export const windowedConsumersSelector = createSelector(
 		consumers.filter((c) => windowConsumers.includes(c.id))
 );
 
+/**
+ * Returns the number of visible video tiles in the Democratic view.
+ * This is the sum of screen, webcam and extra video tiles, both producers
+ * and consumers.
+ * 
+ * @returns {number} the number of visible video tiles.
+ * @see screenProducerSelector
+ * @see extraVideoProducersSelector
+ * @see spotlightPeersSelector
+ * @see spotlightWebcamConsumerSelector
+ * @see spotlightScreenConsumerSelector
+ * @see spotlightExtraVideoConsumerSelector
+ * @see Democratic.tsx
+ */
 export const videoBoxesSelector = createSelector(
 	screenProducerSelector,
 	extraVideoProducersSelector,
@@ -295,6 +346,16 @@ export const videoBoxesSelector = createSelector(
 		return videoBoxes;
 	});
 
+/**
+ * Returns the state consumers of the visible video tiles in the Democratic view.
+ * This is the list of screen, webcam and extra video tiles, consumers only.
+ * 
+ * @returns {StateConsumer[]} the list of state consumers.
+ * @see spotlightWebcamConsumerSelector
+ * @see spotlightScreenConsumerSelector
+ * @see spotlightExtraVideoConsumerSelector
+ * @see Democratic.tsx
+ */
 export const videoConsumersSelector = createSelector(
 	spotlightWebcamConsumerSelector,
 	spotlightScreenConsumerSelector,
@@ -328,6 +389,21 @@ export const videoConsumersSelector = createSelector(
 	}
 );
 
+/**
+ * Returns the set of mic/webcam/screen/extravideo producers that are
+ * currently active in the client.
+ * 
+ * @returns {{
+ * 	micProducer: StateProducer | undefined,
+ * 	webcamProducer: StateProducer | undefined,
+ * 	screenProducer: StateProducer | undefined,
+ * 	extraVideoProducers: StateProducer[]
+ * }} the state producers.
+ * @see micProducerSelector
+ * @see webcamProducerSelector
+ * @see screenProducerSelector
+ * @see extraVideoProducersSelector
+ */
 export const meProducersSelector = createSelector(
 	micProducerSelector,
 	webcamProducerSelector,
@@ -342,21 +418,37 @@ export const meProducersSelector = createSelector(
 		})
 );
 
-export const peerDisplayNameSelector = createSelector(
-	peerSelector,
-	(peer) => peer?.displayName
-);
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const makePeerSelector = (id: string) => {
+/**
+ * Factory function that returns a selector that returns a peer.
+ * 
+ * @param {string} id - The peer ID.
+ * @returns {Selector<Peer | undefined>} Selector for the peer.
+ */
+export const makePeerSelector = (id: string): Selector<Peer | undefined> => {
 	return createSelector(
 		peersSelector,
 		(peers: Peer[]) => peers.find((peer) => peer.id === id)
 	);
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const makePeerConsumerSelector = (id: string) => {
+/**
+ * Factory function that returns a selector that returns the set of
+ * mic/webcam/screen/extravideo consumers for a given peer.
+ * 
+ * @param {string} id - The peer ID.
+ * @returns {Selector<{
+ * 	micConsumer: StateConsumer | undefined,
+ * 	webcamConsumer: StateConsumer | undefined,
+ * 	screenConsumer: StateConsumer | undefined,
+ * 	extraVideoConsumers: StateConsumer[]
+ * }>} Selector for the peer's consumers.
+ */
+export const makePeerConsumerSelector = (id: string): Selector<{
+	micConsumer: StateConsumer | undefined;
+	webcamConsumer: StateConsumer | undefined;
+	screenConsumer: StateConsumer | undefined;
+	extraVideoConsumers: StateConsumer[];
+}> => {
 	return createSelector(
 		consumersSelect,
 		(consumers: StateConsumer[]) => {
@@ -381,6 +473,13 @@ export interface PeerConsumers {
 	extraVideoConsumers: StateConsumer[];
 }
 
+/**
+ * Factory function that returns a selector that returns true if the
+ * client has the permission.
+ * 
+ * @param {Permission} permission - The permission.
+ * @returns {Selector<boolean>} Selector for the permission.
+ */
 export const makePermissionSelector =
 	(permission: Permission): Selector<boolean> => {
 		return createSelector(
