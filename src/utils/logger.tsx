@@ -9,11 +9,11 @@ export class Logger {
 
 	constructor(prefix?: string) {
 		if (prefix) {
-			this._debug = debug(`${APP_NAME}:${prefix}`);
+			this._debug = debug(`${APP_NAME}:DEBUG:${prefix}`);
 			this._warn = debug(`${APP_NAME}:WARN:${prefix}`);
 			this._error = debug(`${APP_NAME}:ERROR:${prefix}`);
 		} else {
-			this._debug = debug(APP_NAME);
+			this._debug = debug(`${APP_NAME}:DEBUG`);
 			this._warn = debug(`${APP_NAME}:WARN`);
 			this._error = debug(`${APP_NAME}:ERROR`);
 		}
