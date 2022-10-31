@@ -26,7 +26,6 @@ const AudioView = ({
 
 		stream.addTrack(track);
 		audioElement.current.srcObject = stream;
-		audioElement.current.play().catch();
 
 		return () => {
 			if (audioElement.current) {
