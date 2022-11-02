@@ -5188,10 +5188,10 @@ end-of-stream@^1.0.0, end-of-stream@^1.1.0, end-of-stream@^1.4.4:
   dependencies:
     once "^1.4.0"
 
-engine.io-client@~6.2.1:
-  version "6.2.2"
-  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-6.2.2.tgz#c6c5243167f5943dcd9c4abee1bfc634aa2cbdd0"
-  integrity sha512-8ZQmx0LQGRTYkHuogVZuGSpDqYZtCM/nv8zQ68VZ+JkOpazJ7ICdsSpaO6iXwvaU30oFg5QJOJWj8zWqhbKjkQ==
+engine.io-client@~6.2.3:
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-6.2.3.tgz#a8cbdab003162529db85e9de31575097f6d29458"
+  integrity sha512-aXPtgF1JS3RuuKcpSrBtimSjYvrbhKW9froICH4s0F3XQWLxsKNxqzG39nnvQZQnva4CMvUK63T7shevxRyYHw==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
     debug "~4.3.1"
@@ -8291,10 +8291,10 @@ media-typer@0.3.0:
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
   integrity sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==
 
-mediasoup-client@^3.6.50:
-  version "3.6.52"
-  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.6.52.tgz#8a3646e7d6e2eac4274462cfa4c87a40d8ac4d6d"
-  integrity sha512-7N8DB9zVzJ7Ac0L8RWQuq0ofHzz3FqYmWsWSTXi9R3DePM895q4A47bZkxFbSe8aCOGSGXsUWT+r7ALihYHn+A==
+mediasoup-client@^3.6.58:
+  version "3.6.58"
+  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.6.58.tgz#8beb377f4767fd7d9b2793551ccdec7aa9c00695"
+  integrity sha512-Kx0o94JxWBSSUd0MjMyEWpN0dHgIBhTcxDInrtji1V9ncq8L6eqiAT1g/DiUVJbmsdd9wLoSp9Jth6ciaNGTdA==
   dependencies:
     "@types/debug" "^4.1.7"
     "@types/events" "^3.0.0"
@@ -8305,7 +8305,7 @@ mediasoup-client@^3.6.50:
     fake-mediastreamtrack "^1.1.6"
     h264-profile-level-id "^1.0.1"
     sdp-transform "^2.14.1"
-    supports-color "^9.2.2"
+    supports-color "^9.2.3"
 
 mediasource@^2.2.2, mediasource@^2.4.0:
   version "2.4.0"
@@ -11436,14 +11436,14 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-socket.io-client@^4.4.1:
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.5.1.tgz#cab8da71976a300d3090414e28c2203a47884d84"
-  integrity sha512-e6nLVgiRYatS+AHXnOnGi4ocOpubvOUCGhyWw8v+/FxW8saHkinG6Dfhi9TU0Kt/8mwJIAASxvw6eujQmjdZVA==
+socket.io-client@^4.5.3:
+  version "4.5.3"
+  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.5.3.tgz#bed69209d001465b2fea650d2e95c1e82768ab5e"
+  integrity sha512-I/hqDYpQ6JKwtJOf5ikM+Qz+YujZPMEl6qBLhxiP0nX+TfXKhW4KZZG8lamrD6Y5ngjmYHreESVasVCgi5Kl3A==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
     debug "~4.3.2"
-    engine.io-client "~6.2.1"
+    engine.io-client "~6.2.3"
     socket.io-parser "~4.2.0"
 
 socket.io-parser@~4.2.0:
@@ -11957,10 +11957,10 @@ supports-color@^8.0.0:
   dependencies:
     has-flag "^4.0.0"
 
-supports-color@^9.2.2:
-  version "9.2.2"
-  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-9.2.2.tgz#502acaf82f2b7ee78eb7c83dcac0f89694e5a7bb"
-  integrity sha512-XC6g/Kgux+rJXmwokjm9ECpD6k/smUoS5LKlUCcsYr4IY3rW0XyAympon2RmxGrlnZURMpg5T18gWDP9CsHXFA==
+supports-color@^9.2.3:
+  version "9.2.3"
+  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-9.2.3.tgz#a6e2c97fc20c80abecd69e50aebe4783ff77d45a"
+  integrity sha512-aszYUX/DVK/ed5rFLb/dDinVJrQjG/vmU433wtqVSD800rYsJNWxh2R3USV90aLSU+UsyQkbNeffVLzc6B6foA==
 
 supports-hyperlinks@^2.0.0:
   version "2.2.0"
