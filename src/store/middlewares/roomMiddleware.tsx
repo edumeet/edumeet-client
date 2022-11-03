@@ -40,7 +40,8 @@ const createRoomMiddleware = ({
 									userRoles,
 									allowWhenRoleMissing,
 									turnServers,
-									rtcStatsOptions
+									rtcStatsOptions,
+									clientMonitorSenderConfig,
 								} = notification.data;
 
 								batch(() => {
@@ -53,8 +54,14 @@ const createRoomMiddleware = ({
 									);
 									dispatch(webrtcActions.setIceServers(turnServers));
 									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
+									// dispatch(webrtcActions.setClientMonitorConfig(clientMonitorConfig));
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
+
+									const roomId = getState().room.name;
+									
+									mediaService.getMonitor()?.setRoomId(roomId);
+									mediaService.getMonitor()?.connect(clientMonitorSenderConfig);
 								});
 								break;
 							}

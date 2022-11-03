@@ -1,3 +1,4 @@
+import { MediaService } from '../services/mediaService';
 import { defaultEdumeetConfig, EdumeetConfig } from './types';
 
 declare module '@mui/material/styles' {
@@ -35,5 +36,6 @@ declare global {
 export default {
 	...defaultEdumeetConfig,
 	...window.config,
-	theme: { ...defaultEdumeetConfig.theme, ...window.config?.theme }
+	theme: { ...defaultEdumeetConfig.theme, ...window.config?.theme },
+	observertc: { ...defaultEdumeetConfig.observertc, ...window.config?.observertc }
 };
