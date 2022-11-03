@@ -1,8 +1,8 @@
 {
-	"configDocumentation.title": null,
-	"configError.bodyText": null,
-	"configError.link": null,
-	"configError.title": null,
+	"configDocumentation.title": "Edumeet konfiguráció",
+	"configError.bodyText": "Hibás Edumeet konfiguráció :",
+	"configError.link": "Az Edumeet konfiguráció dokumentáció megtekintése",
+	"configError.title": "Konfigurációs hiba",
 	"device.activateAudio": "Hang aktiválása",
 	"device.audioUnsupported": "A hang nem támogatott",
 	"device.muteAudio": "Hang némítása",
@@ -31,8 +31,8 @@
 	"devices.microphoneUnMuteError": "Nem sikerült a mikrofonod némításának kikapcsolása",
 	"devices.screenSharingDisconnected": "Képernyőmegosztás kapcsolat bontva",
 	"devices.screenSharingError": "Hiba történt a képernyőd megosztása során",
-	"filesharing.filesharing": null,
-	"filesharing.noFiles": null,
+	"filesharing.filesharing": "Fájlmegosztás",
+	"filesharing.noFiles": "Nincs fájl",
 	"filesharing.download": "Letöltés",
 	"filesharing.error": "Hiba a fájlmegosztás során",
 	"filesharing.missingSeeds": "Ha a folyamat túl sok ideig tart, akkor lehet hogy senki sem seed-eli ez a torrent-et. Próbálj meg megkérni valakit hogy töltse fel újra ezt a fájlt.",
@@ -45,7 +45,7 @@
 	"label.advanced": "Részletek",
 	"label.appearance": "Megjelenés",
 	"label.audioSettings": "Audio beállítások",
-	"label.auth": null,
+	"label.auth": "Authentikáció",
 	"label.bold": "Kiemelt",
 	"label.chat": "Chat",
 	"label.chatInput": "Chat üzenet ...",
@@ -113,7 +113,7 @@
 	"room.changedDisplayName": "A neved sikeresen megváltozott: {displayName}",
 	"room.chatError": "Hiba lépett fel a chat üzenetet elküldése során",
 	"room.clearChat": "Chat történelem kiürítése",
-	"room.clearFiles": null,
+	"room.clearFiles": "Fájlok törlése",
 	"room.closeMeeting": "Konferencia lebontása",
 	"room.consentUnderstand": "Megértettem",
 	"room.cookieConsent": "Ez a weblap a felhasználói élmény fokozása miatt sütiket használ",
@@ -254,5 +254,6 @@
 	"tooltip.unMuteScreenSharing": "Képernyőmegosztás szüneteletetés visszavonása",
 	"unsupportedBrowser.bodyText": "Kérlek frissítsd a böngésződ, válts másik böngészőre vagy ellenőrizd a böngésződ beállításait! Támogatott böngészők:",
 	"unsupportedBrowser.titleUnsupportedBrowser": "A böngésző verziód sajnos nem támogatott! :-(",
-	"unsupportedBrowser.titlewebrtcUnavailable": "A böngésződ egy szükséges funkciója nem elérhető!"
-}
+	"unsupportedBrowser.titlewebrtcUnavailable": "A böngésződ egy szükséges funkciója nem elérhető!",
+	"label.apply": "Alkalmazás"
+  }
