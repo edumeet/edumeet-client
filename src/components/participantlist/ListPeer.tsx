@@ -6,9 +6,7 @@ import { lowerPeerHand } from '../../store/actions/peerActions';
 import Volume from '../volume/Volume';
 import { Fragment, useState } from 'react';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import FloatingMenu from '../floatingmenu/FloatingMenu';
-import MuteWebcam from '../menuitems/MuteWebcam';
-import MuteScreenshare from '../menuitems/MuteScreenshare';
+import PeerMenu from '../peermenu/PeerMenu';
 
 interface ListPeerProps {
 	peer: Peer;
@@ -49,9 +47,6 @@ const ListPeer = ({
 
 	const {
 		micConsumer,
-		webcamConsumer,
-		screenConsumer,
-		extraVideoConsumers
 	} = usePeerConsumers(peer.id);
 
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
@@ -59,8 +54,6 @@ const ListPeer = ({
 	const handleMenuClose = () => {
 		setMoreAnchorEl(null);
 	};
-
-	const isMoreMenuOpen = Boolean(moreAnchorEl);
 
 	return (
 		<Fragment>
@@ -88,34 +81,11 @@ const ListPeer = ({
 					<MoreIcon />
 				</IconButton>
 			</PeerDiv>
-			<FloatingMenu
+			<PeerMenu
 				anchorEl={moreAnchorEl}
-				open={isMoreMenuOpen}
-				onClose={handleMenuClose}
-			>
-				{ webcamConsumer &&
-					<MuteWebcam
-						onClick={handleMenuClose}
-						peer={peer}
-						webcamConsumer={webcamConsumer}
-					/>
-				}
-				{ screenConsumer &&
-					<MuteScreenshare
-						onClick={handleMenuClose}
-						peer={peer}
-						screenConsumer={screenConsumer}
-					/>
-				}
-				{ extraVideoConsumers.map((consumer) => (
-					<MuteWebcam
-						onClick={handleMenuClose}
-						key={consumer.id}
-						peer={peer}
-						webcamConsumer={consumer}
-					/>
-				)) }
-			</FloatingMenu>
+				peerId={peer.id}
+				onClick={handleMenuClose}
+			/>
 		</Fragment>
 	);
 };

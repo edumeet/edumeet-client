@@ -7,6 +7,14 @@ export interface MenuItemProps {
 
 interface FloatingMenuProps {
 	anchorEl: HTMLElement | null | undefined;
+	anchorOrigin?: {
+		vertical: number | 'top' | 'center' | 'bottom';
+		horizontal: number | 'center' | 'left' | 'right';
+	};
+	transformOrigin?: {
+		vertical: number | 'top' | 'center' | 'bottom';
+		horizontal: number | 'center' | 'left' | 'right';
+	};
 	open: boolean;
 	onClose: () => void;
 	children?: ReactNode;
@@ -14,6 +22,8 @@ interface FloatingMenuProps {
 
 const FloatingMenu = ({
 	anchorEl,
+	anchorOrigin = { vertical: 'bottom', horizontal: 'left' },
+	transformOrigin = { vertical: 'top', horizontal: 'left' },
 	open,
 	onClose,
 	children
@@ -21,8 +31,8 @@ const FloatingMenu = ({
 	return (
 		<Menu
 			anchorEl={anchorEl}
-			anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-			transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+			anchorOrigin={anchorOrigin}
+			transformOrigin={transformOrigin}
 			open={open}
 			onClose={onClose}
 		>

@@ -129,6 +129,11 @@ export let intl = createIntl({
 	messages: enLocale
 }, cache);
 
+/**
+ * Detect the browser language.
+ * 
+ * @returns {string} The browser locale
+ */
 export const detect = (): string => {
 	const localeFull =
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -137,6 +142,12 @@ export const detect = (): string => {
 	return localeFull;
 };
 
+/**
+ * Change the locale.
+ * 
+ * @param {string} locale The locale to change to
+ * @returns {Promise<string>} The locale
+ */
 export const loadLocale = async (locale: string): Promise<string> => {
 	let res: ILocale;
 

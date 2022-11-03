@@ -1,31 +1,64 @@
 import { Producer } from 'mediasoup-client/lib/Producer';
 import { getEncodings, getVideoConstrains } from '../../utils/encodingsHandler';
 import { Logger } from '../../utils/logger';
+import { Resolution } from '../../utils/types';
 import { meActions } from '../slices/meSlice';
 import { producersActions, ProducerSource } from '../slices/producersSlice';
 import { settingsActions } from '../slices/settingsSlice';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppThunk } from '../store';
 
 const logger = new Logger('MediaActions');
 
 interface UpdateDeviceOptions {
-	init?: boolean;
 	start?: boolean;
 	restart?: boolean;
 	updateMute?: boolean;
 	newDeviceId?: string;
-	newResolution?: string;
-	newFrameRate?: number;
 }
 
+interface AudioSettings {
+	autoGainControl?: boolean;
+	echoCancellation?: boolean;
+	noiseSuppression?: boolean;
+	sampleRate?: number;
+	channelCount?: number;
+	sampleSize?: number;
+	opusStereo?: boolean;
+	opusDtx?: boolean;
+	opusFec?: boolean;
+	opusPtime?: number;
+	opusMaxPlaybackRate?: number;
+}
+
+interface VideoSettings {
+	resolution?: Resolution;
+	frameRate?: number;
+}
+
+interface ScreenshareSettings {
+	screenSharingResolution?: Resolution;
+	screenSharingFrameRate?: number;
+}
+
+/**
+ * This thunk action updates the preview audio track
+ * with whatever contraints are set in the store. It may
+ * also start or restart the track in the process.
+ * 
+ * @param options - Options.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
 export const updatePreviewMic = ({
 	restart = false,
 	updateMute = true,
 	newDeviceId
-}: UpdateDeviceOptions = {}) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ mediaService, deviceService }: MiddlewareOptions
+}: UpdateDeviceOptions = {
+	restart: false,
+	updateMute: true
+}): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService, deviceService }
 ): Promise<void> => {
 	logger.debug('updatePreviewMic()');
 
@@ -56,11 +89,13 @@ export const updatePreviewMic = ({
 		if (restart) {
 			const { previewMicTrackId } = getState().me;
 
-			track = mediaService.getTrack(previewMicTrackId);
+			if (previewMicTrackId) {
+				track = mediaService.getTrack(previewMicTrackId);
 
-			track?.stop();
+				track?.stop();
 
-			dispatch(meActions.setPreviewMicTrackId());
+				dispatch(meActions.setPreviewMicTrackId());
+			}
 		}
 
 		const stream = await navigator.mediaDevices.getUserMedia({
@@ -94,38 +129,55 @@ export const updatePreviewMic = ({
 	}
 };
 
+/**
+ * This thunk action stops the preview audio track.
+ * 
+ * @param options - Options.
+ * @returns {void}
+ */
 export const stopPreviewMic = ({
 	updateMute = true,
-}: UpdateDeviceOptions = {}) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ mediaService }: MiddlewareOptions
+}: UpdateDeviceOptions = {}): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService }
 ): Promise<void> => {
 	logger.debug('stopPreviewMic()');
 
 	dispatch(meActions.setAudioInProgress(true));
 
 	const { previewMicTrackId } = getState().me;
-	const track = mediaService.getTrack(previewMicTrackId);
-	
-	dispatch(meActions.setPreviewMicTrackId());
-	if (updateMute)
-		dispatch(settingsActions.setAudioMuted(true));
 
-	mediaService.removeTrack(track?.id);
-	track?.stop();
+	if (previewMicTrackId) {
+		const track = mediaService.getTrack(previewMicTrackId);
+		
+		dispatch(meActions.setPreviewMicTrackId());
+		if (updateMute)
+			dispatch(settingsActions.setAudioMuted(true));
+
+		mediaService.removeTrack(track?.id);
+		track?.stop();
+	}
 
 	dispatch(meActions.setAudioInProgress(false));
 };
 
+/**
+ * This thunk action updates the preview video track
+ * with whatever contraints are set in the store. It may
+ * also start or restart the track in the process.
+ * 
+ * @param options - Options.
+ * @returns {Promise<void>} Promise.
+ */
 export const updatePreviewWebcam = ({
 	restart = false,
 	updateMute = true,
 	newDeviceId
-}: UpdateDeviceOptions = {}) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ mediaService, deviceService }: MiddlewareOptions
+}: UpdateDeviceOptions = {}): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService, deviceService }
 ): Promise<void> => {
 	logger.debug('updatePreviewWebcam()');
 
@@ -154,11 +206,13 @@ export const updatePreviewWebcam = ({
 		if (restart) {
 			const { previewWebcamTrackId } = getState().me;
 
-			track = mediaService.getTrack(previewWebcamTrackId);
+			if (previewWebcamTrackId) {
+				track = mediaService.getTrack(previewWebcamTrackId);
 
-			track?.stop();
+				track?.stop();
 
-			dispatch(meActions.setPreviewWebcamTrackId());
+				dispatch(meActions.setPreviewWebcamTrackId());
+			}
 		}
 
 		const stream = await navigator.mediaDevices.getUserMedia({
@@ -190,38 +244,79 @@ export const updatePreviewWebcam = ({
 	}
 };
 
+/**
+ * This thunk action stops the preview video track.
+ * 
+ * @param options - Options.
+ * @returns {void}
+ */
 export const stopPreviewWebcam = ({
 	updateMute = true,
-}: UpdateDeviceOptions = {}) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ mediaService }: MiddlewareOptions
+}: UpdateDeviceOptions = {}): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService }
 ): Promise<void> => {
 	logger.debug('stopPreviewWebcam()');
 
 	dispatch(meActions.setVideoInProgress(true));
 
 	const { previewWebcamTrackId } = getState().me;
-	const track = mediaService.getTrack(previewWebcamTrackId);
 
-	dispatch(meActions.setPreviewWebcamTrackId());
-	if (updateMute)
-		dispatch(settingsActions.setVideoMuted(true));
+	if (previewWebcamTrackId) {
+		const track = mediaService.getTrack(previewWebcamTrackId);
 
-	mediaService.removeTrack(track?.id);
-	track?.stop();
+		dispatch(meActions.setPreviewWebcamTrackId());
+		if (updateMute)
+			dispatch(settingsActions.setVideoMuted(true));
+
+		mediaService.removeTrack(track?.id);
+		track?.stop();
+	}
 
 	dispatch(meActions.setVideoInProgress(false));
 };
 
+/**
+ * This thunk action updates the audio settings in the store,
+ * stops the preview audio track, starts/restarts the main audio
+ * track and starts/restarts the preview audio track.
+ * 
+ * @param settings - Settings.
+ * @returns {Promise<void>} Promise.
+ */
+export const updateAudioSettings = (
+	settings: AudioSettings = {}
+): AppThunk<Promise<void>> => async (
+	dispatch
+): Promise<void> => {
+	logger.debug('updateAudioSettings()');
+
+	dispatch(settingsActions.updateSettings(settings));
+	dispatch(stopPreviewMic());
+	await dispatch(updateMic());
+	await dispatch(updatePreviewMic());
+};
+
+/**
+ * This thunk action starts/restarts the main audio track.
+ * It will use the MediaService to create the Producer from it
+ * which will send it to the server.
+ * 
+ * @param options - Options.
+ * @returns {Promise<void>} Promise.
+ */
 export const updateMic = ({
 	start = false,
-	restart = false,
+	restart = true,
 	newDeviceId
-}: UpdateDeviceOptions = {}) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ mediaService, deviceService }: MiddlewareOptions
+}: UpdateDeviceOptions = {
+	start: false,
+	restart: true,
+}): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService, deviceService }
 ): Promise<void> => {
 	logger.debug(
 		'updateMic() [start:%s, restart:%s, newDeviceId:"%s"]',
@@ -372,26 +467,50 @@ export const updateMic = ({
 	}
 };
 
+/**
+ * This thunk action updates the video settings in the store,
+ * stops the preview video track, starts/restarts the main video
+ * track and starts/restarts the preview video track.
+ * 
+ * @param settings - Settings.
+ * @returns {Promise<void>} Promise.
+ */
+export const updateVideoSettings = (
+	settings: VideoSettings = {}
+): AppThunk<Promise<void>> => async (dispatch): Promise<void> => {
+	logger.debug('updateVideoSettings()');
+
+	dispatch(settingsActions.updateSettings(settings));
+	dispatch(stopPreviewWebcam());
+	await dispatch(updateWebcam({ restart: true }));
+	await dispatch(updatePreviewWebcam());
+};
+
+/**
+ * This thunk action starts/restarts the main video track.
+ * It will use the MediaService to create the Producer from it
+ * which will send it to the server.
+ * 
+ * @param options - Options.
+ * @returns {Promise<void>} Promise.
+ */
 export const updateWebcam = ({
-	init = false,
 	start = false,
 	restart = false,
 	newDeviceId,
-	newResolution,
-	newFrameRate
-}: UpdateDeviceOptions = {}) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ mediaService, deviceService, config }: MiddlewareOptions
+}: UpdateDeviceOptions = {
+	start: false,
+	restart: false,
+}): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService, deviceService, config }
 ): Promise<void> => {
 	logger.debug(
-		'updateWebcam [init:%s, start:%s, restart:%s, newDeviceId:%s, newResolution:%s, newFrameRate:%s]',
-		init,
+		'updateWebcam [start:%s, restart:%s, newDeviceId:%s]',
 		start,
 		restart,
 		newDeviceId,
-		newResolution,
-		newFrameRate
 	);
 
 	dispatch(meActions.setVideoInProgress(true));
@@ -412,21 +531,6 @@ export const updateWebcam = ({
 
 		if (newDeviceId)
 			dispatch(settingsActions.setSelectedVideoDevice(newDeviceId));
-
-		if (newResolution)
-			dispatch(settingsActions.setResolution(newResolution));
-
-		if (newFrameRate)
-			dispatch(settingsActions.setFrameRate(newFrameRate));
-
-		/*
-			const { videoMuted } = store.getState().settings;
-
-			if (init && videoMuted)
-				return;
-			else
-				store.dispatch(settingsActions.setVideoMuted(false));
-		*/
 
 		const {
 			aspectRatio,
@@ -553,20 +657,45 @@ export const updateWebcam = ({
 	}
 };
 
+/**
+ * This thunk action updates the screen sharing settings in the store,
+ * starts/restarts the screen sharing track.
+ * 
+ * @param settings 
+ * @returns {Promise<void>} Promise.
+ */
+export const updateScreenshareSettings = (
+	settings: ScreenshareSettings = {}
+): AppThunk<Promise<void>> => async (dispatch): Promise<void> => {
+	logger.debug('updateVideoSettings()');
+
+	dispatch(settingsActions.updateSettings(settings));
+	await dispatch(updateScreenSharing());
+};
+
+/**
+ * This thunk action starts/restarts the main screen sharing track.
+ * It will use the MediaService to create the Producer from it
+ * which will send it to the server.
+ * 
+ * @param options - Options.
+ * @returns {Promise<void>} Promise.
+ */
 export const updateScreenSharing = ({
 	start = false,
-	newResolution,
-	newFrameRate
-}: UpdateDeviceOptions = {}) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ mediaService, config }: MiddlewareOptions
+	restart = false,
+}: UpdateDeviceOptions = {
+	start: false,
+	restart: false
+}): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService, config }
 ): Promise<void> => {
 	logger.debug(
-		'updateScreenSharing() [start:%s, newResolution:%s, newFrameRate:%s]',
+		'updateScreenSharing() [start:%s, restart:%s]',
 		start,
-		newResolution,
-		newFrameRate
+		restart
 	);
 
 	dispatch(meActions.setScreenSharingInProgress(true));
@@ -582,19 +711,13 @@ export const updateScreenSharing = ({
 		if (!canShareScreen)
 			throw new Error('cannot produce screen share');
 
-		if (newResolution)
-			dispatch(settingsActions.setScreenSharingResolution(newResolution));
-
-		if (newFrameRate)
-			dispatch(settingsActions.setScreenSharingFrameRate(newFrameRate));
-
 		const {
 			screenSharingResolution,
+			screenSharingFrameRate,
 			autoGainControl,
 			echoCancellation,
 			noiseSuppression,
 			aspectRatio,
-			screenSharingFrameRate,
 			sampleRate,
 			channelCount,
 			sampleSize,
@@ -612,7 +735,21 @@ export const updateScreenSharing = ({
 			mediaService.getProducers()
 				.find((producer) => producer.appData.source === 'screenaudio');
 
-		if (start) {
+		if ((restart && (screenVideoProducer || screenAudioProducer)) || start) {
+			if (screenVideoProducer) {
+				dispatch(producersActions.closeProducer({
+					producerId: screenVideoProducer.id,
+					local: true
+				}));
+			}
+
+			if (screenAudioProducer) {
+				dispatch(producersActions.closeProducer({
+					producerId: screenAudioProducer.id,
+					local: true
+				}));
+			}
+
 			const stream = await navigator.mediaDevices.getDisplayMedia({
 				video: {
 					...getVideoConstrains(
@@ -734,12 +871,20 @@ export const updateScreenSharing = ({
 	}
 };
 
+/**
+ * This thunk action starts and extra video track.
+ * It will use the MediaService to create the Producer from it
+ * which will send it to the server.
+ * 
+ * @param options - Options.
+ * @returns {Promise<void>} Promise.
+ */
 export const startExtraVideo = ({
 	newDeviceId
-}: UpdateDeviceOptions = {}) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ mediaService, deviceService, config }: MiddlewareOptions
+}: UpdateDeviceOptions = {}): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService, deviceService, config }
 ): Promise<void> => {
 	logger.debug('startExtraVideo [newDeviceId:%s]', newDeviceId);
 

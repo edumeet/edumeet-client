@@ -10,6 +10,8 @@ interface MediaControlsDivProps {
 	onMouseOver?: (event?: any) => void;
 	// eslint-disable-next-line
 	onMouseOut?: (event?: any) => void;
+	withgap: number;
+	withpadding: number;
 }
 
 const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
@@ -18,13 +20,19 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	alignitems,
 	justifycontent,
 	position,
+	withgap: withGap,
+	withpadding: withPadding
 }) => ({
 	position,
 	width: '100%',
 	height: '100%',
 	display: 'flex',
-	gap: theme.spacing(2),
-	padding: theme.spacing(2),
+	...(withGap && {
+		gap: theme.spacing(2)
+	}),
+	...(withPadding && {
+		padding: theme.spacing(2)
+	}),
 	flexDirection: flexdirection,
 	opacity: 0.2,
 	alignItems: alignitems,
@@ -37,6 +45,8 @@ interface MediaControlsProps {
 	horizontalPlacement?: 'left' | 'center' | 'right';
 	verticalPlacement?: 'top' | 'center' | 'bottom';
 	position?: 'absolute' | 'relative';
+	withGap?: boolean;
+	withPadding?: boolean;
 	children?: ReactNode;
 }
 
@@ -45,7 +55,9 @@ const MediaControls = ({
 	horizontalPlacement = 'center',
 	verticalPlacement = 'center',
 	position = 'absolute',
-	children,
+	withGap = true,
+	withPadding = true,
+	children
 }: MediaControlsProps): JSX.Element => {
 	let justifyContent = 'center';
 	let alignItems = 'center';
@@ -91,6 +103,8 @@ const MediaControls = ({
 			position={position}
 			alignitems={alignItems}
 			justifycontent={justifyContent}
+			withgap={withGap ? 1 : 0}
+			withpadding={withPadding ? 1 : 0}
 			children={children}
 		/>
 	);

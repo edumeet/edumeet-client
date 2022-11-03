@@ -5,27 +5,25 @@ export type SettingsTab = 'media' | 'appearance';
 export interface UiState {
 	fullScreenConsumer?: string;
 	windowConsumer?: string;
-	drawerWindow?: boolean;
-	settingsOpen?: boolean;
-	filesharingOpen?: boolean;
-	extraVideoOpen?: boolean;
-	hideSelfView?: boolean;
-	rolesManagerOpen?: boolean;
-	helpOpen?: boolean;
-	aboutOpen?: boolean;
-	lobbyDialogOpen?: boolean;
-	extraVideoDialogOpen?: boolean;
+	drawerWindow: boolean;
+	settingsOpen: boolean;
+	filesharingOpen: boolean;
+	extraVideoOpen: boolean;
+	rolesManagerOpen: boolean;
+	helpOpen: boolean;
+	aboutOpen: boolean;
+	lobbyDialogOpen: boolean;
+	extraVideoDialogOpen: boolean;
 	currentSettingsTab: SettingsTab;
 }
 
-type UiUpdate = Omit<UiState, 'currentSettingsTab'>;
+type UiUpdate = Partial<Omit<UiState, 'currentSettingsTab'>>;
 
 const initialState: UiState = {
 	drawerWindow: false,
 	settingsOpen: false,
 	filesharingOpen: false,
 	extraVideoOpen: false,
-	hideSelfView: false,
 	rolesManagerOpen: false,
 	helpOpen: false,
 	aboutOpen: false,

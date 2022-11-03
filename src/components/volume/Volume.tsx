@@ -94,7 +94,7 @@ const Volume = ({
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (
 		<VolumeContainer small={small ? 1 : 0}>
-			<VolumeBar volume={volume} small={small ? 1 : 0} />
+			<VolumeBar volume={!producer?.paused ? volume : 0} small={small ? 1 : 0} />
 		</VolumeContainer>
 	);
 };

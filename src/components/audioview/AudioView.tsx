@@ -1,11 +1,9 @@
-import { Consumer } from 'mediasoup-client/lib/Consumer';
-import { Producer } from 'mediasoup-client/lib/Producer';
 import { useContext, useEffect, useRef } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 import { ServiceContext } from '../../store/store';
 
 interface AudioViewProps {
-	consumer?: StateConsumer;
+	consumer: StateConsumer;
 }
 
 const AudioView = ({
@@ -15,24 +13,19 @@ const AudioView = ({
 	const audioElement = useRef<HTMLAudioElement>(null);
 
 	useEffect(() => {
-		let media: Consumer | Producer | undefined;
-		let track: MediaStreamTrack | null | undefined;
-
-		if (consumer) {
-			media = mediaService.getConsumer(consumer.id);
-		}
-
-		if (media) {
-			({ track } = media);
-		}
+		const { track } = mediaService.getConsumer(consumer.id) ?? {};
 
 		if (!track || !audioElement?.current) return;
+
+		const { audioGain } = consumer;
+
+		if (audioGain !== undefined)
+			audioElement.current.volume = audioGain;
 
 		const stream = new MediaStream();
 
 		stream.addTrack(track);
 		audioElement.current.srcObject = stream;
-		audioElement.current.play().catch();
 
 		return () => {
 			if (audioElement.current) {
@@ -42,6 +35,13 @@ const AudioView = ({
 			}
 		};
 	}, []);
+
+	useEffect(() => {
+		const { audioGain } = consumer;
+
+		if (audioGain !== undefined && audioElement.current)
+			audioElement.current.volume = audioGain;
+	}, [ consumer.audioGain ]);
 
 	return (
 		<audio

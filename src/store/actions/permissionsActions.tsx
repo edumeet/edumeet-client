@@ -1,15 +1,15 @@
 import { Logger } from '../../utils/logger';
 import { permissionsActions } from '../slices/permissionsSlice';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 
 const logger = new Logger('LoginActions');
 
-export const login = () => (
-	_dispatch: AppDispatch,
-	getState: RootState
-): void => {
+export const login = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+): Promise<void> => {
 	logger.debug('login()');
 
 	const { id: peerId } = getState().me;
@@ -18,10 +18,10 @@ export const login = () => (
 	window.open(`/auth/login?peerId=${peerId}&roomId=${roomId}`, 'loginWindow');
 };
 
-export const logout = () => (
-	_dispatch: AppDispatch,
-	getState: RootState
-): void => {
+export const logout = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+): Promise<void> => {
 	logger.debug('logout()');
 
 	const { id: peerId } = getState().me;
@@ -30,10 +30,10 @@ export const logout = () => (
 	window.open(`/auth/logout?peerId=${peerId}&roomId=${roomId}`, 'logoutWindow');
 };
 
-export const lock = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const lock = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('lock()');
 
@@ -50,10 +50,10 @@ export const lock = () => async (
 	}
 };
 
-export const unlock = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const unlock = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('unlock()');
 
@@ -70,10 +70,10 @@ export const unlock = () => async (
 	}
 };
 
-export const promotePeer = (peerId: string) => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const promotePeer = (peerId: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('promotePeer() [peerId:"%s"]', peerId);
 
@@ -88,10 +88,10 @@ export const promotePeer = (peerId: string) => async (
 	}
 };
 
-export const promotePeers = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const promotePeers = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('promotePeers()');
 

@@ -1,4 +1,4 @@
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppThunk } from '../store';
 import { Logger } from '../../utils/logger';
 import { meActions } from '../slices/meSlice';
 import { DevicesUpdated } from '../../services/deviceService';
@@ -21,18 +21,20 @@ import { settingsActions } from '../slices/settingsSlice';
 const logger = new Logger('listenerActions');
 
 // eslint-disable-next-line no-unused-vars
-let keyListener: (event: KeyboardEvent) => void;
+let keydownListener: (event: KeyboardEvent) => void;
+// eslint-disable-next-line no-unused-vars
+let keyupListener: (event: KeyboardEvent) => void;
 // eslint-disable-next-line no-unused-vars
 let messageListener: (event: MessageEvent) => void;
 let deviceChangeListener: () => Promise<void>;
 // eslint-disable-next-line no-unused-vars
 let devicesUpdatedListener: (event: DevicesUpdated) => void;
 
-export const startListeners = () => (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ deviceService }: MiddlewareOptions
-): void => {
+export const startListeners = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ deviceService }
+): Promise<void> => {
 	logger.debug('startListeners()');
 
 	devicesUpdatedListener = ({
@@ -71,7 +73,7 @@ export const startListeners = () => (
 	const audioPermissionSelector = makePermissionSelector(permissions.SHARE_AUDIO);
 	const videoPermissionSelector = makePermissionSelector(permissions.SHARE_VIDEO);
 
-	keyListener = ({ repeat, target, key }): void => {
+	keydownListener = ({ repeat, target, key }): void => {
 		if (repeat) return;
 
 		const source = target as HTMLElement;
@@ -82,7 +84,7 @@ export const startListeners = () => (
 		)
 			return;
 
-		logger.debug('[key:%s]', key);
+		logger.debug('[keydown:%s]', key);
 
 		switch (key) {
 			case 'm': {
@@ -196,10 +198,91 @@ export const startListeners = () => (
 
 				break;
 			}
+
+			case ' ': {
+				const audioInProgress = getState().me.audioInProgress;
+
+				if (audioInProgress) return;
+
+				const hasAudioPermission = audioPermissionSelector(getState());
+				const canSendMic = getState().me.canSendMic;
+
+				if (!canSendMic || !hasAudioPermission) return;
+
+				const micProducer = micProducerSelector(getState());
+
+				if (!micProducer) {
+					dispatch(updateMic({
+						start: true
+					}));
+				} else if (micProducer.paused) {
+					dispatch(
+						producersActions.setProducerResumed({
+							producerId: micProducer.id,
+							local: true,
+							source: 'mic'
+						})
+					);
+				}
+
+				break;
+			}
+
+			default: {
+				break;
+			}
 		}
 	};
 
-	document.addEventListener('keydown', keyListener);
+	document.addEventListener('keydown', keydownListener);
+
+	keyupListener = (event): void => {
+		const source = event.target as HTMLElement;
+
+		if (
+			[ 'input', 'textarea', 'div' ]
+				.includes(source?.tagName?.toLowerCase())
+		)
+			return;
+
+		logger.debug('[keyup:%s]', event.key);
+
+		switch (event.key) {
+			case ' ': {
+				const audioInProgress = getState().me.audioInProgress;
+
+				if (audioInProgress) return;
+
+				const hasAudioPermission = audioPermissionSelector(getState());
+				const canSendMic = getState().me.canSendMic;
+
+				if (!canSendMic || !hasAudioPermission) return;
+
+				const micProducer = micProducerSelector(getState());
+
+				if (!micProducer) return;
+
+				if (!micProducer.paused) {
+					dispatch(
+						producersActions.setProducerPaused({
+							producerId: micProducer.id,
+							local: true,
+							source: 'mic'
+						})
+					);
+				}
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
+
+		event.preventDefault();
+	};
+
+	document.addEventListener('keyup', keyupListener);
 
 	messageListener = ({ data }: MessageEvent) => {
 		if (data.type === 'edumeet-login') {
@@ -218,15 +301,16 @@ export const startListeners = () => (
 	window.addEventListener('message', messageListener);
 };
 
-export const stopListeners = () => (
-	_dispatch: AppDispatch,
-	_getState: RootState,
-	{ deviceService }: MiddlewareOptions
-): void => {
+export const stopListeners = (): AppThunk<Promise<void>> => async (
+	_dispatch,
+	_getState,
+	{ deviceService }
+): Promise<void> => {
 	logger.debug('stopListeners()');
 
 	deviceService.removeListener('devicesUpdated', devicesUpdatedListener);
 	navigator.mediaDevices.removeEventListener('devicechange', deviceChangeListener);
-	document.removeEventListener('keydown', keyListener);
+	document.removeEventListener('keydown', keydownListener);
+	document.removeEventListener('keyup', keyupListener);
 	window.removeEventListener('message', messageListener);
 };

@@ -12,7 +12,6 @@ import {
 	usePermissionSelector
 } from '../../store/hooks';
 import {
-	filesLengthSelector,
 	fullscreenConsumerSelector,
 	lobbyPeersLengthSelector,
 	unreadSelector
@@ -41,6 +40,10 @@ import MicButton from '../controlbuttons/MicButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import RecordButton from '../controlbuttons/RecordButton';
 import LeaveButton from '../textbuttons/LeaveButton';
+import ScreenshareButton from '../controlbuttons/ScreenshareButton';
+import ExtraVideoButton from '../controlbuttons/ExtraVideoButton';
+import ExtraVideo from '../menuitems/ExtraVideo';
+import Filesharing from '../menuitems/Filesharing';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -98,7 +101,6 @@ const TopBar = ({
 	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
 	const unread = useAppSelector(unreadSelector);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
-	const files = useAppSelector(filesLengthSelector);
 
 	const [ mobileMoreAnchorEl, setMobileMoreAnchorEl ] = useState<HTMLElement | null>();
 
@@ -143,10 +145,13 @@ const TopBar = ({
 									offColor='error'
 									disabledColor='default'
 								/>
+								<ScreenshareButton type='iconbutton' />
 							</>
 						}
 					</GrowingDiv>
 					<DesktopDiv>
+						<FilesharingButton type='iconbutton' />
+						<ExtraVideoButton type='iconbutton' />
 						{ canRecord && <RecordButton type='iconbutton' /> }
 						{ fullscreenEnabled &&
 							<FullscreenButton
@@ -158,7 +163,6 @@ const TopBar = ({
 						<ParticipantsButton type='iconbutton' />
 						<SettingsButton type='iconbutton' />
 						<LockButton type='iconbutton' />
-						{ files > 0 && <FilesharingButton type='iconbutton' /> }
 						{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						{ loginEnabled && <LoginButton type='iconbutton' /> }
 					</DesktopDiv>
@@ -189,6 +193,8 @@ const TopBar = ({
 				<Settings onClick={handleMenuClose} />
 				<Participants onClick={handleMenuClose} />
 				<Fullscreen onClick={handleMenuClose} />
+				<ExtraVideo onClick={handleMenuClose} />
+				<Filesharing onClick={handleMenuClose} />
 			</FloatingMenu>
 		</Fragment>
 	);

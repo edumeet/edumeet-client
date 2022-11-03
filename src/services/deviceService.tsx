@@ -60,7 +60,10 @@ export class DeviceService extends EventEmitter {
 		}
 	}
 
-	public getDeviceId(deviceId: string, kind: MediaDeviceKind): string | undefined {
+	public getDeviceId(
+		deviceId: string | undefined,
+		kind: MediaDeviceKind
+	): string | undefined {
 		let device = this.devices.find((d) => d.deviceId === deviceId);
 
 		if (!device)

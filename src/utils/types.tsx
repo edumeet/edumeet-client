@@ -1,9 +1,4 @@
 import { ThemeOptions } from '@mui/material';
-import { MediaKind, RtpCapabilities, RtpParameters } from 'mediasoup-client/lib/RtpParameters';
-import { DtlsParameters } from 'mediasoup-client/lib/Transport';
-
-export type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> &
-Partial<Pick<Type, Key>>;
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	loginEnabled: false,
@@ -19,49 +14,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	aspectRatio: 1.7778, // 16:9
 	simulcast: true,
 	simulcastSharing: false,
-	simulcastProfiles: {
-		'320': [ {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 150000
-		} ],
-		'640': [ {
-			'scaleResolutionDownBy': 2,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 500000
-		} ],
-		'1280': [ {
-			'scaleResolutionDownBy': 4,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 2,
-			'maxBitRate': 500000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 1200000
-		} ],
-		'1920': [ {
-			'scaleResolutionDownBy': 6,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 3,
-			'maxBitRate': 500000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 3500000
-		} ],
-		'3840': [ {
-			'scaleResolutionDownBy': 12,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 6,
-			'maxBitRate': 500000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 10000000
-		} ]
-	},
 	localRecordingEnabled: false,
 	requestTimeout: 20000,
 	requestRetries: 3,
@@ -146,7 +98,6 @@ export interface EdumeetConfig {
 	aspectRatio: number;
 	simulcast: boolean;
 	simulcastSharing: boolean;
-	simulcastProfiles: Record<string, SimulcastProfile[]>;
 	localRecordingEnabled: boolean;
 	requestTimeout: number;
 	requestRetries: number;
@@ -208,150 +159,32 @@ export interface ChatMessage {
 	text?: string;
 }
 
-export interface SocketInboundNotification {
+export interface SocketMessage {
 	method: string; // TODO: define inbound notification method strings
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data?: any; // TODO: define inbound notification data
-}
-
-export interface SocketOutboundRequest {
-	method: SocketOutboundRequestMethod;
-	data?: SocketOutboundRequestData;
-}
-
-export type SocketOutboundRequestMethod =
-	'chatMessage' |
-	'sendFile' |
-	'changeDisplayName' |
-	'changePicture' |
-	'lockRoom' |
-	'unlockRoom' |
-	'promotePeer' |
-	'promoteAllPeers' |
-	'raisedHand' |
-	'join' |
-	'getRouterRtpCapabilities' |
-	'createWebRtcTransport' |
-	'connectWebRtcTransport' |
-	'resumeConsumer' |
-	'pauseConsumer' |
-	'closeConsumer' |
-	'closeDataConsumer' |
-	'produce' |
-	'closeProducer' |
-	'pauseProducer' |
-	'resumeProducer' |
-	'setConsumerPreferredLayers' |
-	'offer' |
-	'answer' |
-	'candidate' |
-	'moderator:lowerHand' |
-	'moderator:clearChat' |
-	'moderator:clearFiles' |
-	'moderator:clearFileSharing' |
-	'moderator:giveRole' |
-	'moderator:removeRole' |
-	'moderator:kickPeer' |
-	'moderator:mute' |
-	'moderator:stopVideo' |
-	'moderator:stopScreenSharing' |
-	'moderator:muteAll' |
-	'moderator:stopAllVideo' |
-	'moderator:stopAllScreenSharing' |
-	'moderator:closeMeeting';
-
-export type SocketOutboundRequestData =
-	CreateWebRtcTransport |
-	ConnectWebRtcTransport |
-	ProduceData |
-	ConsumerData |
-	JoinData |
-	RaisedHandData |
-	ProducerData |
-	DataConsumerData |
-	DisplayNameData |
-	PictureData |
-	PromotePeerData |
-	ChatMessageData |
-	FilesharingData |
-	ConsumerPreferredLayersData |
-	P2PData;
-
-export interface JoinData {
-	displayName: string;
-	picture: string;
-	rtpCapabilities: RtpCapabilities;
-	returning?: boolean;
-}
-
-export interface RaisedHandData {
-	raisedHand: boolean;
-}
-
-export interface ConsumerData {
-	consumerId: string;
-}
-
-export interface ConsumerPreferredLayersData extends ConsumerData {
-	spatialLayer: number;
-	temporalLayer: number;
-}
-
-export interface CreateWebRtcTransport {
-	forceTcp: boolean;
-	producing: boolean;
-	consuming: boolean;
-}
-
-export interface ConnectWebRtcTransport {
-	transportId: string;
-	dtlsParameters: DtlsParameters;
-}
-
-export interface ProduceData {
-	transportId: string;
-	kind: MediaKind;
-	rtpParameters: RtpParameters;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	appData?: any;
-}
-
-export interface ProducerData {
-	producerId: string;
-}
-
-export interface DisplayNameData {
-	displayName: string;
-}
-
-export interface PictureData {
-	picture: string;
-}
-
-export interface PromotePeerData {
-	peerId: string;
-}
-
-export interface ChatMessageData {
-	text?: string;
-}
-
-export interface FilesharingData {
-	magnetURI?: string;
-}
-
-export interface P2PData {
-	peerId: string;
-	offer?: RTCSessionDescription;
-	answer?: RTCSessionDescription;
-	candidate?: RTCIceCandidate;
-}
-
-export interface DataConsumerData {
-	dataConsumerId: string;
 }
 
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';
 
 export type ButtonSize = 'small' | 'medium' | 'large';
 export type ButtonColor = 'inherit' | 'error' | 'primary' | 'secondary' | 'default' | 'success' | 'info' | 'warning';
+
+export interface RTCStatsOptions {
+	url: string;
+	useLegacy: boolean;
+	obfuscate: boolean;
+	wsPingIntervalMs: number;
+	pollIntervalMs: number;
+	sendSDP: boolean;
+}
+
+export interface RTCStatsMetaData {
+	applicationName: string;
+	confName: string;
+	confID: string;
+	meetingUniqueId: string;
+	endpointId: string;
+	deviceId: string;
+	displayName: string;
+}

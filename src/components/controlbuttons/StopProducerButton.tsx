@@ -29,6 +29,7 @@ const StopProducerButton = ({
 					})
 				);
 			}}
+			on={true}
 			{ ...props }
 		>
 			<CancelIcon />

@@ -8,7 +8,7 @@ export interface Role {
 
 export type Permission = string;
 
-export const permissions: Record<string, string> = {
+export const permissions: Record<string, Permission> = {
 	// The role(s) have permission to lock/unlock a room
 	CHANGE_ROOM_LOCK: 'CHANGE_ROOM_LOCK',
 	// The role(s) have permission to promote a peer from the lobby
@@ -34,7 +34,9 @@ export const permissions: Record<string, string> = {
 	// The role(s) have permission to moderate room (e.g. kick user)
 	MODERATE_ROOM: 'MODERATE_ROOM',
 	// The role(s) have permission to start room recording localy
-	LOCAL_RECORD_ROOM: 'LOCAL_RECORD_ROOM'
+	LOCAL_RECORD_ROOM: 'LOCAL_RECORD_ROOM',
+	// The role(s) have permission to create rooms
+	CREATE_ROOM: 'CREATE_ROOM',
 };
 
 /* export const Roles: Record<string, Role> = {

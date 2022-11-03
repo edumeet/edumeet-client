@@ -4,9 +4,10 @@ import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { webrtcActions } from '../slices/webrtcSlice';
-import { joinRoom } from '../actions/roomActions';
+import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
+import { permissionsActions } from '../slices/permissionsSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -20,7 +21,7 @@ const createRoomMiddleware = ({
 		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
-		getState: RootState
+		getState: () => RootState
 	}) =>
 		(next) => (action) => {
 			if (signalingActions.disconnect.match(action)) {
@@ -32,10 +33,26 @@ const createRoomMiddleware = ({
 					try {
 						switch (notification.method) {
 							case 'roomReady': {
-								const { turnServers } = notification.data;
+								const {
+									sessionId,
+									roles,
+									roomPermissions,
+									userRoles,
+									allowWhenRoleMissing,
+									turnServers,
+									rtcStatsOptions
+								} = notification.data;
 
 								batch(() => {
+									dispatch(roomActions.setSessionId(sessionId));
+									dispatch(permissionsActions.addRoles(roles));
+									dispatch(permissionsActions.setRoomPermissions(roomPermissions));
+									dispatch(permissionsActions.setUserRoles(userRoles));
+									allowWhenRoleMissing && dispatch(
+										permissionsActions.setAllowWhenRoleMissing(allowWhenRoleMissing)
+									);
 									dispatch(webrtcActions.setIceServers(turnServers));
+									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
@@ -45,8 +62,8 @@ const createRoomMiddleware = ({
 							case 'enteredLobby': {
 								batch(() => {
 									dispatch(roomActions.setState('lobby'));
-									dispatch(setDisplayName(getState().settings.displayName));
-									dispatch(setPicture(getState().me.picture));
+									dispatch(setDisplayName(getState().settings.displayName ?? 'Guest'));
+									dispatch(setPicture(getState().me.picture ?? ''));
 								});
 								break;
 							}
@@ -66,6 +83,12 @@ const createRoomMiddleware = ({
 								const isMe = peerId === getState().me.id;
 
 								dispatch(roomActions.setActiveSpeakerId({ peerId, isMe }));
+								break;
+							}
+
+							case 'moderator:kick': {
+								dispatch(leaveRoom());
+
 								break;
 							}
 						}

@@ -7,6 +7,7 @@ export interface StateConsumer {
 	id: string;
 	peerId: string;
 	kind: string;
+	audioGain?: number;
 	localPaused: boolean;
 	remotePaused: boolean;
 	source: ProducerSource;
@@ -28,6 +29,15 @@ const consumersSlice = createSlice({
 			action: PayloadAction<{ consumerId: string, local?: boolean }>
 		) => {
 			return state.filter((consumer) => consumer.id !== action.payload.consumerId);
+		}),
+		setAudioGain: ((
+			state,
+			action: PayloadAction<{ consumerId: string, audioGain?: number }>
+		) => {
+			const consumer = state.find((c) => c.id === action.payload.consumerId);
+
+			if (consumer)
+				consumer.audioGain = action.payload.audioGain;
 		}),
 		setConsumerPaused: ((
 			state,

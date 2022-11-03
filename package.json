@@ -8,6 +8,7 @@
 	"dependencies": {
 		"@emotion/react": "^11.8.1",
 		"@emotion/styled": "^11.8.1",
+		"@jitsi/rtcstats": "github:jitsi/rtcstats",
 		"@mui/icons-material": "^5.4.2",
 		"@mui/material": "^5.4.3",
 		"@reduxjs/toolkit": "^1.5.1",
@@ -29,7 +30,7 @@
 		"hark": "^1.2.3",
 		"https-browserify": "^1.0.0",
 		"marked": "^4.0.14",
-		"mediasoup-client": "^3.6.50",
+		"mediasoup-client": "^3.6.58",
 		"notistack": "^2.0.4",
 		"random-string": "^0.2.0",
 		"react": "^18.2.0",
@@ -43,10 +44,11 @@
 		"redux-logger": "^3.0.6",
 		"redux-persist": "^6.0.0",
 		"reselect": "4.0.0",
-		"socket.io-client": "^4.4.1",
+		"socket.io-client": "^4.5.3",
 		"typescript": "~4.7.4",
 		"uuid": "^8.3.2",
-		"webtorrent": "^1.8.3"
+		"webtorrent": "^1.8.3",
+		"ws": "^8.8.0"
 	},
 	"scripts": {
 		"start": "HTTPS=true PORT=4443 react-scripts start",
@@ -82,6 +84,7 @@
 		"@types/uuid": "^8.3.4",
 		"@types/webtorrent": "^0.109.3",
 		"@types/wicg-file-system-access": "^2020.9.5",
+		"@types/ws": "^8.5.3",
 		"@typescript-eslint/eslint-plugin": "^5.12.1",
 		"@typescript-eslint/parser": "^5.12.1",
 		"eslint-plugin-jest": "^26.1.1"

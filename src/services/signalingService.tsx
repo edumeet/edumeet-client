@@ -1,126 +1,105 @@
-/* eslint-disable no-unused-vars */
 import { Logger } from '../utils/logger';
-import { io, Socket } from 'socket.io-client';
 import EventEmitter from 'events';
-import { SocketTimeoutError } from '../utils/SocketTimeoutError';
-import {
-	SocketInboundNotification,
-	SocketOutboundRequest,
-	SocketOutboundRequestData,
-	SocketOutboundRequestMethod
-} from '../utils/types';
-import edumeetConfig from '../utils/edumeetConfig';
+import { SocketMessage } from '../utils/types';
+import { skipIfClosed } from '../utils/decorators';
+import { BaseConnection, InboundRequest } from '../utils/BaseConnection';
+import { List } from '../utils/list';
 
+/* eslint-disable no-unused-vars */
 export declare interface SignalingService {
-	// Signaling events
-	on(event: 'connect', listener: () => void): this;
-	on(event: 'disconnect', listener: () => void): this;
-	on(event: 'reconnect', listener: (attempt: number) => void): this;
-	on(event: 'reconnect_failed', listener: () => void): this;
-
-	// General server messages
-	on(event: 'notification', listener: (notification: SocketInboundNotification) => void): this;
+	on(event: 'connected', listener: () => void): this;
+	on(event: 'close', listener: () => void): this;
+	on(event: 'notification', listener: (notification: SocketMessage) => void): this;
+	on(event: 'request', listener: InboundRequest): this;
 }
-
-interface ServerClientEvents {
-	notification: ({ method, data }: SocketInboundNotification) => void;
-}
-
-interface ClientServerEvents {
-	request: (request: SocketOutboundRequest, result: (
-		timeout: Error | null,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		serverError: any | null,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		responseData: any) => void
-	) => void;
-}
+/* eslint-enable no-unused-vars */
 
 const logger = new Logger('SignalingService');
 
 export class SignalingService extends EventEmitter {
-	private socket?: Socket<ServerClientEvents, ClientServerEvents>;
+	public closed = false;
+	public connections = List<BaseConnection>();
+	private connected = false;
 
-	public connect({ url }: { url: string}): void {
-		logger.debug('connect() [url:%s]', url);
+	@skipIfClosed
+	public close(): void {
+		logger.debug('close()');
 
-		this.socket = io(url, {
-			transports: [ 'websocket', 'polling' ]
-		});
+		this.closed = true;
 
-		this.handleSocket();
+		this.connections.items.forEach((c) => c.close());
+		this.connections.clear();
+
+		this.emit('close');
 	}
 
-	public disconnect(): void {
-		logger.debug('disconnect()');
+	@skipIfClosed
+	public addConnection(connection: BaseConnection): void {
+		logger.debug('addConnection()');
 
-		this.socket?.removeAllListeners();
-		this.socket?.close();
-		this.socket = undefined;
-	}
+		this.connections.add(connection);
 
-	private handleSocket(): void {
-		this.socket?.on('notification', (notification) => {
-			logger.debug(
-				'signalingService "notification" event [method:%s, data:%o]',
-				notification.method, notification.data);
+		connection.on('notification', async (notification) => {
+			logger.debug('notification received [method: %s]', notification.method);
 
 			this.emit('notification', notification);
 		});
 
-		this.socket?.on('connect', () => {
-			logger.debug('_handleSocket() | connected');
+		connection.on('request', async (request, respond, reject) => {
+			logger.debug('request received [method: %s]', request.method);
 
-			this.emit('connect');
+			this.emit('request', request, respond, reject);
 		});
 
-		this.socket?.on('disconnect', (reason) => {
-			logger.debug('_handleSocket() | disconnected [reason:%s]', reason);
+		connection.on('connect', () => {
+			logger.debug('connect');
 
-			if (
-				reason === 'io server disconnect' ||
-				reason === 'io client disconnect'
-			)
-				this.emit('disconnect');
-			else
-				this.emit('reconnect');
+			if (!this.connected)
+				this.emit('connect');
+
+			this.connected = true;
 		});
-	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	private sendRequestOnWire(socketMessage: SocketOutboundRequest): Promise<any> {
-		return new Promise((resolve, reject) => {
-			if (!this.socket) {
-				reject('No socket connection');
-			} else {
-				this.socket.timeout(edumeetConfig.requestTimeout).emit('request', socketMessage, (timeout, serverError, response) => {
-					if (timeout) reject(new SocketTimeoutError('Request timed out'));
-					else if (serverError) reject(serverError);
-					else resolve(response);
-				});
-			}
+		connection.once('close', () => {
+			this.connections.remove(connection);
+
+			if (this.connections.length === 0)
+				this.close();
 		});
 	}
 
-	public async sendRequest(
-		method: SocketOutboundRequestMethod,
-		data?: SocketOutboundRequestData,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	): Promise<any> {
-		logger.debug('sendRequest() [method:%s, data:%o]', method, data);
+	@skipIfClosed
+	public async notify(notification: SocketMessage): Promise<void> {
+		logger.debug('notify() [method: %s]', notification.method);
 
-		for (let tries = 0; tries < edumeetConfig.requestRetries; tries++) {
+		for (const connection of this.connections.items) {
+			if (!connection.outgoing) continue;
+
 			try {
-				return await this.sendRequestOnWire({ method, data });
+				return await connection.notify(notification);
 			} catch (error) {
-				if (
-					error instanceof SocketTimeoutError &&
-					tries < edumeetConfig.requestRetries
-				)
-					logger.warn('sendRequest() | timeout, retrying [attempt:%s]', tries);
-				else
-					throw error;
+				logger.error('notify() [error: %o]', error);
 			}
 		}
+
+		logger.warn('notify() no connection available');
+	}
+
+	@skipIfClosed
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	public async sendRequest(method: string, data: unknown = {}): Promise<any> {
+		logger.debug('request() [method: %s]', method);
+
+		for (const connection of this.connections.items) {
+			if (!connection.outgoing) continue;
+
+			try {
+				return await connection.request({ method, data });
+			} catch (error) {
+				logger.error('request() [error: %o]', error);
+			}
+		}
+
+		logger.warn('request() no connection available');
 	}
 }

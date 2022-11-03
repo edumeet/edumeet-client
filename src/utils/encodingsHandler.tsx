@@ -1,5 +1,4 @@
 import { RtpCapabilities, RtpEncodingParameters } from 'mediasoup-client/lib/RtpParameters';
-import edumeetConfig from './edumeetConfig';
 import { Resolution, SimulcastProfile } from './types';
 
 const VIDEO_CONSTRAINS: Record<Resolution, Record<string, number>> = {
@@ -10,6 +9,50 @@ const VIDEO_CONSTRAINS: Record<Resolution, Record<string, number>> = {
 	'ultra': { width: 3840 }
 };
 
+const SIMULCAST_PROFILES = {
+	'320': [ {
+		'scaleResolutionDownBy': 1,
+		'maxBitRate': 150000
+	} ],
+	'640': [ {
+		'scaleResolutionDownBy': 2,
+		'maxBitRate': 150000
+	}, {
+		'scaleResolutionDownBy': 1,
+		'maxBitRate': 500000
+	} ],
+	'1280': [ {
+		'scaleResolutionDownBy': 4,
+		'maxBitRate': 150000
+	}, {
+		'scaleResolutionDownBy': 2,
+		'maxBitRate': 500000
+	}, {
+		'scaleResolutionDownBy': 1,
+		'maxBitRate': 1200000
+	} ],
+	'1920': [ {
+		'scaleResolutionDownBy': 6,
+		'maxBitRate': 150000
+	}, {
+		'scaleResolutionDownBy': 3,
+		'maxBitRate': 500000
+	}, {
+		'scaleResolutionDownBy': 1,
+		'maxBitRate': 3500000
+	} ],
+	'3840': [ {
+		'scaleResolutionDownBy': 12,
+		'maxBitRate': 150000
+	}, {
+		'scaleResolutionDownBy': 6,
+		'maxBitRate': 500000
+	}, {
+		'scaleResolutionDownBy': 1,
+		'maxBitRate': 10000000
+	} ]
+};
+
 // Used for VP9 webcam video.
 const VIDEO_KSVC_ENCODINGS: RtpEncodingParameters[] =
 	[ { scalabilityMode: 'S3T3_KEY' } ];
@@ -18,35 +61,47 @@ const VIDEO_KSVC_ENCODINGS: RtpEncodingParameters[] =
 const VIDEO_SVC_ENCODINGS: RtpEncodingParameters[] =
 	[ { scalabilityMode: 'S3T3', dtx: true } ];
 
+/**
+ * 
+ * @param rtpCapabilities - The RTP capabilities of the mediasoup router.
+ * @param width - The width of the video.
+ * @param height - The height of the video.
+ * @param screenSharing - Whether the video is for screen sharing.
+ * @returns {RtpEncodingParameters[]} The video RTP parameters.
+ */
 export const getEncodings = (
 	rtpCapabilities: RtpCapabilities,
 	width: number | undefined,
 	height: number | undefined,
 	screenSharing?: boolean
 ): RtpEncodingParameters[] => {
-	if (!width || !height) {
+	if (!width || !height)
 		throw new Error('missing width or height');
-	}
 
 	const firstVideoCodec =
 		rtpCapabilities.codecs?.find((c) => c.kind === 'video');
 
-	if (!firstVideoCodec) {
+	if (!firstVideoCodec)
 		throw new Error('No video codecs');
-	}
 
 	let encodings: RtpEncodingParameters[];
 	const size = (width > height ? width : height);
 
-	if (firstVideoCodec.mimeType.toLowerCase() === 'video/vp9') {
+	if (firstVideoCodec.mimeType.toLowerCase() === 'video/vp9')
 		encodings = screenSharing ? VIDEO_SVC_ENCODINGS : VIDEO_KSVC_ENCODINGS;
-	} else {
-		encodings = chooseEncodings(edumeetConfig.simulcastProfiles, size);
-	}
+	else
+		encodings = chooseEncodings(SIMULCAST_PROFILES, size);
 
 	return encodings;
 };
 
+/**
+ * Returns the simulcast profile for the given resolution.
+ * 
+ * @param simulcastProfiles - The simulcast profiles.
+ * @param size - The resolution.
+ * @returns {RtpEncodingParameters[]} The simulcast profile.
+ */
 const chooseEncodings = (
 	simulcastProfiles: Record<string, SimulcastProfile[]>,
 	size: number,
@@ -58,9 +113,8 @@ const chooseEncodings = (
 
 	for (const [ key, value ] of sortedMap) {
 		if (parseInt(key) < size) {
-			if (encodings === null) {
+			if (encodings === null)
 				encodings = value;
-			}
 
 			break;
 		}
@@ -69,13 +123,19 @@ const chooseEncodings = (
 	}
 
 	// hack as there is a bug in mediasoup
-	if (encodings.length === 1) {
+	if (encodings.length === 1)
 		encodings.push({ ...encodings[0] });
-	}
 
 	return encodings;
 };
 
+/**
+ * Returns the video constraints for the given resolution.
+ * 
+ * @param resolution - The resolution.
+ * @param aspectRatio - The aspect ratio.
+ * @returns {MediaTrackConstraints} The video constraints.
+ */
 export const getVideoConstrains = (
 	resolution: Resolution,
 	aspectRatio: number

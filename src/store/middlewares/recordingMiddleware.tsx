@@ -23,8 +23,6 @@ const RECORDING_CONSTRAINTS = {
 };
 
 const createRecordingMiddleware = ({
-	// eslint-disable-next-line
-	signalingService,
 	mediaService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createRecordingMiddleware()');
@@ -35,7 +33,7 @@ const createRecordingMiddleware = ({
 	let recorderStream: MediaStream;
 	let audioContext: AudioContext;
 	let audioDestination: MediaStreamAudioDestinationNode;
-	const mimeType = 'video/webm;codecs=vp8,opus';
+	let mimeType: string;
 
 	const stopRecorder = async () => {
 		logger.debug('stopRecorder()');
@@ -61,14 +59,15 @@ const createRecordingMiddleware = ({
 	};
 
 	const middleware: Middleware = ({
-		// eslint-disable-next-line
 		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
-		getState: RootState
+		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
 			if (recordingActions.start.match(action)) {
+				mimeType = getState().settings.preferredRecorderMimeType;
+
 				logger.debug('recordingActions.start [mimeType:%s]', mimeType);
 
 				if (!MediaRecorder || !window.showSaveFilePicker)

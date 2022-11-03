@@ -34,7 +34,7 @@ const Lobby = (): JSX.Element => {
 
 	const handleDisplayNameChange = () => {
 		dispatch(setDisplayName(
-			localDisplayName.trim() ? localDisplayName : localDisplayName.trim()
+			(localDisplayName?.trim() ? localDisplayName : localDisplayName?.trim()) ?? 'Guest'
 		));
 	};
 
@@ -55,7 +55,7 @@ const Lobby = (): JSX.Element => {
 					</Typography>
 					<TextInputField
 						label={yourNameLabel()}
-						value={localDisplayName}
+						value={localDisplayName ?? 'Guest'}
 						setValue={setLocalDisplayName}
 						startAdornment={<AccountCircle />}
 						onBlur={handleDisplayNameChange}

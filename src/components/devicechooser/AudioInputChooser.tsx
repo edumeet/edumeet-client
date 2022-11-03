@@ -79,7 +79,7 @@ const AudioInputChooser = ({
 	return (
 		<ChooserDiv>
 			<DeviceChooser
-				value={audioDevice}
+				value={audioDevice ?? ''}
 				setValue={handleDeviceChange}
 				name={audioDeviceLabel()}
 				devicesLabel={selectAudioDeviceLabel()}

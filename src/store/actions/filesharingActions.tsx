@@ -1,14 +1,20 @@
 import { Logger } from '../../utils/logger';
 import { filesharingActions } from '../slices/filesharingSlice';
 import { roomActions } from '../slices/roomSlice';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppThunk } from '../store';
 
 const logger = new Logger('FilesharingActions');
 
-export const sendFiles = (files: FileList) => async (
-	dispatch: AppDispatch,
-	getState: RootState,
-	{ fileService }: MiddlewareOptions
+/**
+ * This thunk action sends a list of files.
+ * 
+ * @param files - List of files to send.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ fileService }
 ): Promise<void> => {
 	logger.debug('sendFiles() [files:"%s"]', files);
 
@@ -35,10 +41,15 @@ export const sendFiles = (files: FileList) => async (
 	}
 };
 
-export const clearFiles = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+/**
+ * This thunk action clears the file list for everyone.
+ * 
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const clearFiles = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('clearFiles()');
 

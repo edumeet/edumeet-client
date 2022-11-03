@@ -1,14 +1,20 @@
 import { Logger } from '../../utils/logger';
 import { peersActions } from '../slices/peersSlice';
 import { roomActions } from '../slices/roomSlice';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppThunk } from '../store';
 
 const logger = new Logger('PeerActions');
 
-export const lowerPeerHand = (id: string) => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+/**
+ * A thunk action to lower another peer's hand as a moderator.
+ * 
+ * @param id - The peer id
+ * @returns {Promise<void>} Promise.
+ */
+export const lowerPeerHand = (id: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('lowerPeerHand() [id:"%s"]', id);
 
@@ -23,10 +29,87 @@ export const lowerPeerHand = (id: string) => async (
 	}
 };
 
-export const muteAll = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+/**
+ * 
+ * @param id - The peer id
+ * @returns {Promise<void>} Promise.
+ */
+export const kickPeer = (id: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('kickPeer() [id:"%s"]', id);
+
+	dispatch(peersActions.updatePeer({ id, kickInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('moderator:kickPeer', { peerId: id });
+	} catch (error) {
+		logger.error('kickPeer() [error:"%o"]', error);
+	} finally {
+		dispatch(peersActions.updatePeer({ id, kickInProgress: false }));
+	}
+};
+
+export const stopAudio = (id: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('stopAudio() [id:"%s"]', id);
+
+	dispatch(peersActions.updatePeer({ id, stopAudioInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('moderator:mute', { peerId: id });
+	} catch (error) {
+		logger.error('stopAudio() [error:"%o"]', error);
+	} finally {
+		dispatch(peersActions.updatePeer({ id, stopAudioInProgress: false }));
+	}
+};
+
+export const stopVideo = (id: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('stopVideo() [id:"%s"]', id);
+
+	dispatch(peersActions.updatePeer({ id, stopVideoInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('moderator:stopVideo', { peerId: id });
+	} catch (error) {
+		logger.error('stopVideo() [error:"%o"]', error);
+	} finally {
+		dispatch(peersActions.updatePeer({ id, stopVideoInProgress: false }));
+	}
+};
+
+export const stopScreenSharing = (id: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('stopScreenSharing() [id:"%s"]', id);
+
+	dispatch(peersActions.updatePeer({ id, stopScreenSharingInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('moderator:stopScreenSharing', { peerId: id });
+	} catch (error) {
+		logger.error('stopScreenSharing() [error:"%o"]', error);
+	} finally {
+		dispatch(peersActions.updatePeer({ id, stopScreenSharingInProgress: false }));
+	}
+};
+
+export const muteAll = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('muteAllPeers()');
 
@@ -41,10 +124,10 @@ export const muteAll = () => async (
 	}
 };
 
-export const stopAllVideo = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const stopAllVideo = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('stopAllPeerVideos()');
 
@@ -59,10 +142,10 @@ export const stopAllVideo = () => async (
 	}
 };
 
-export const stopAllScreenshare = () => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+export const stopAllScreenshare = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('stopAllScreenshare()');
 

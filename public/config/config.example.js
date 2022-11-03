@@ -46,51 +46,6 @@ var config = {
 	// Enable or disable simulcast for screen sharing video.
 	simulcastSharing: false,
 
-	// Define different encodings for various resolutions of the video.
-	simulcastProfiles: {
-		'320': [{
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 150000
-		}],
-		'640': [{
-			'scaleResolutionDownBy': 2,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 500000
-		}],
-		'1280': [{
-			'scaleResolutionDownBy': 4,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 2,
-			'maxBitRate': 500000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 1200000
-		}],
-		'1920': [{
-			'scaleResolutionDownBy': 6,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 3,
-			'maxBitRate': 500000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 3500000
-		}],
-		'3840': [{
-			'scaleResolutionDownBy': 12,
-			'maxBitRate': 150000
-		}, {
-			'scaleResolutionDownBy': 6,
-			'maxBitRate': 500000
-		}, {
-			'scaleResolutionDownBy': 1,
-			'maxBitRate': 10000000
-		}]
-	},
-
 	// If set to true Local Recording feature will be enabled.
 	localRecordingEnabled: false,
 

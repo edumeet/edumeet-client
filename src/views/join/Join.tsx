@@ -45,7 +45,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	const handleJoin = () => {
 		const encodedRoomId = encodeURIComponent(roomId);
-		const url = getSignalingUrl({ peerId, roomId: encodedRoomId });
+		const url = getSignalingUrl(peerId, encodedRoomId);
 
 		dispatch(settingsActions.setDisplayName(name));
 		dispatch(signalingActions.setUrl(url));

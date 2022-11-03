@@ -1,61 +1,74 @@
+import { CacheProvider } from '@emotion/react';
+import createCache from '@emotion/cache';
 import {
+	PropsWithChildren,
 	ReactNode,
 	ReactPortal,
 	useEffect,
-	useRef,
-	useState
+	useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useConstant } from '../../store/hooks';
 import edumeetConfig from '../../utils/edumeetConfig';
 
-const copyStyles = (src: Document, dest: Document) => {
-	Array.from(src.styleSheets).forEach((styleSheet) =>
-		styleSheet?.ownerNode && 
-			dest.head.appendChild(
-				styleSheet.ownerNode.cloneNode(true)
-			)
-	);
-
-	Array.from(src.fonts).forEach((font) => dest.fonts.add(font));
-};
-
-interface SeparateWindowProps {
+interface SeparateWindowProps extends PropsWithChildren {
 	onClose?: () => void;
 	aspectRatio?: number;
 	children?: ReactNode;
+	title?: string;
 }
 
 const SeparateWindow = ({
+	title = edumeetConfig.title || 'Edumeet',
+	children,
 	onClose,
-	aspectRatio,
-	children
+	aspectRatio = 16 / 9,
 }: SeparateWindowProps): ReactPortal | null => {
-	const [ container, setContainer ] = useState<HTMLDivElement>();
-	const newWindow = useRef<Window | null>();
+	const titleEl = useConstant(() => document.createElement('title'));
+	const containerEl = useConstant(() => document.createElement('div'));
+
+	const cache = useConstant(() =>
+		createCache({ key: 'external', container: containerEl })
+	);
+
+	const [ isOpened, setOpened ] = useState(false);
 
 	useEffect(() => {
-		setContainer(document.createElement('div'));
+		const externalWindow = window.open(
+			'',
+			'',
+			`width=800,height=${800 / (aspectRatio)},left=200,top=200,scrollbars=on,resizable=on,dependent=on,menubar=off,toolbar=off,location=off`
+		);
+
+		// if window.open fails
+		if (!externalWindow) {
+			onClose?.();
+
+			return;
+		}
+
+		externalWindow.addEventListener('beforeunload', () => onClose?.());
+
+		externalWindow.document.body.style.margin = '0';
+		externalWindow.document.head.appendChild(titleEl);
+		externalWindow.document.body.appendChild(containerEl);
+
+		setOpened(true);
+
+		return () => externalWindow.close();
 	}, []);
 
 	useEffect(() => {
-		if (container) {
-			newWindow.current = window.open(
-				'',
-				edumeetConfig.title,
-				`width=800,height=${800 / (aspectRatio || 1.3333)},left=200,top=200`
-			);
+		titleEl.innerText = title;
+	}, [ title, titleEl ]);
 
-			if (newWindow.current)
-				copyStyles(window.document, newWindow.current.document);
-
-			newWindow.current?.document.body.appendChild(container);
-			newWindow.current?.addEventListener('beforeunload', () => onClose && onClose());
-
-			return () => newWindow.current?.close();
-		}
-	}, [ container ]);
-
-	return container ? createPortal(children, container) : null;
+	return isOpened ?
+		createPortal(
+			<CacheProvider value={cache}>{ children }</CacheProvider>,
+			containerEl
+		)
+		:
+		null;
 };
 
 export default SeparateWindow;

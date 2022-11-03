@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { consumersActions } from './consumersSlice';
 import { peersActions } from './peersSlice';
 
 export type RoomConnectionState = 'new' | 'lobby' | 'overRoomLimit' | 'joined' | 'kicked' | 'left';
@@ -7,6 +8,7 @@ export type RoomMode = 'P2P' | 'SFU';
 
 export interface RoomState {
 	name?: string;
+	sessionId?: string;
 	activeSpeakerId?: string;
 	lockInProgress?: boolean;
 	localeInProgress?: boolean;
@@ -18,18 +20,19 @@ export interface RoomState {
 	clearFileSharingInProgress?: boolean;
 	startFileSharingInProgress?: boolean;
 	fullscreenConsumer?: string;
-	windowedConsumer?: string;
+	windowedConsumers: string[];
 	selectedPeers: string[];
 	spotlights: string[];
 	state: RoomConnectionState;
 	roomMode: RoomMode;
 }
 
-type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'selectedPeers' | 'spotlights'>;
+type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'windowedConsumers' | 'selectedPeers' | 'spotlights'>;
 
 const initialState: RoomState = {
 	roomMode: 'P2P',
 	state: 'new',
+	windowedConsumers: [],
 	selectedPeers: [],
 	spotlights: []
 };
@@ -71,8 +74,12 @@ const roomSlice = createSlice({
 		setFullscreenConsumer: ((state, action: PayloadAction<string | undefined>) => {
 			state.fullscreenConsumer = action.payload;
 		}),
-		setWindowedConsumer: ((state, action: PayloadAction<string | undefined>) => {
-			state.windowedConsumer = action.payload;
+		addWindowedConsumer: ((state, action: PayloadAction<string>) => {
+			state.windowedConsumers.push(action.payload);
+		}),
+		removeWindowedConsumer: ((state, action: PayloadAction<string>) => {
+			state.windowedConsumers =
+				state.windowedConsumers.filter((id) => id !== action.payload);
 		}),
 		selectPeer: ((state, action: PayloadAction<string>) => {
 			state.selectedPeers.push(action.payload);
@@ -91,6 +98,9 @@ const roomSlice = createSlice({
 			state.spotlights =
 				state.spotlights.filter((peer) => peer !== action.payload);
 		}),
+		setSessionId: ((state, action: PayloadAction<string>) => {
+			state.sessionId = action.payload;
+		}),
 	},
 	extraReducers: (builder) => {
 		builder
@@ -101,6 +111,10 @@ const roomSlice = createSlice({
 				state.spotlights = state.spotlights.filter((peer) => peer !== action.payload.id);
 				state.selectedPeers =
 					state.selectedPeers.filter((peer) => peer !== action.payload.id);
+			})
+			.addCase(consumersActions.removeConsumer, (state, action) => {
+				state.windowedConsumers =
+					state.windowedConsumers.filter((id) => id !== action.payload.consumerId);
 			});
 	}
 });

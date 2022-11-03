@@ -10,6 +10,22 @@ import { signalingActions } from '../slices/signalingSlice';
 
 const logger = new Logger('MediaMiddleware');
 
+/**
+ * This middleware represents the connection between the
+ * MediaService, the Redux store and the React components.
+ * 
+ * It listens to the MediaService events and dispatches
+ * the corresponding Redux actions.
+ * 
+ * It also listens to the Redux actions and calls the
+ * MediaService methods.
+ * 
+ * This way the MediaService and the Redux store are
+ * kept in sync.
+ * 
+ * @param options - Middleware options. 
+ * @returns {Middleware} Redux middleware.
+ */
 const createMediaMiddleware = ({
 	mediaService
 }: MiddlewareOptions): Middleware => {
@@ -19,7 +35,7 @@ const createMediaMiddleware = ({
 		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
-		getState: RootState
+		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
 			if (signalingActions.connect.match(action)) {
@@ -116,7 +132,8 @@ const createMediaMiddleware = ({
 				roomActions.selectPeer.match(action) ||
 				roomActions.deselectPeer.match(action) ||
 				roomActions.setFullscreenConsumer.match(action) ||
-				roomActions.setWindowedConsumer.match(action)
+				roomActions.addWindowedConsumer.match(action) ||
+				roomActions.removeWindowedConsumer.match(action)
 			) {
 				// Make a diff of the current state and the new state to find out
 				// which Consumers need to be paused/resumed.

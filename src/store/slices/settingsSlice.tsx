@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { detect } from '../../utils/intlManager';
-import { RoomLayout } from '../../utils/types';
+import { AudioPreset, Resolution, RoomLayout } from '../../utils/types';
 import { producersActions } from './producersSlice';
 
 export interface SettingsState {
@@ -9,17 +9,24 @@ export interface SettingsState {
 	lastN: number;
 	mirroredSelfView: boolean;
 	hideNonVideo: boolean;
+	hideSelfView: boolean;
+	controlButtonsBar: boolean;
 	roomLayout: RoomLayout;
 	aspectRatio: number;
 	selectedAudioDevice?: string;
 	selectedVideoDevice?: string;
-	resolution: string;
+	resolution: Resolution;
 	frameRate: number;
-	screenSharingResolution: string;
+	screenSharingResolution: Resolution;
 	screenSharingFrameRate: number;
+	supportedRecorderMimeTypes: string[],
+	preferredRecorderMimeType: string,
+	audioPreset: string,
+	audioPresets: Record<string, AudioPreset>,
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
+	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -42,12 +49,19 @@ const initialState: SettingsState = {
 	frameRate: edumeetConfig.frameRate,
 	screenSharingResolution: edumeetConfig.screenSharingResolution,
 	screenSharingFrameRate: edumeetConfig.screenSharingFrameRate,
+	supportedRecorderMimeTypes: [],
+	preferredRecorderMimeType: 'video/webm',
 	lastN: edumeetConfig.lastN,
 	hideNonVideo: edumeetConfig.hideNonVideo,
+	hideSelfView: false,
+	controlButtonsBar: false,
 	aspectRatio: edumeetConfig.aspectRatio,
+	audioPreset: edumeetConfig.audioPreset,
+	audioPresets: edumeetConfig.audioPresets,
 	autoGainControl: edumeetConfig.autoGainControl,
 	echoCancellation: edumeetConfig.echoCancellation,
 	noiseSuppression: edumeetConfig.noiseSuppression,
+	noiseThreshold: edumeetConfig.noiseThreshold,
 	sampleRate: edumeetConfig.sampleRate,
 	channelCount: edumeetConfig.channelCount,
 	sampleSize: edumeetConfig.sampleSize,
@@ -81,6 +95,12 @@ const settingsSlice = createSlice({
 		setHideNonVideo: ((state, action: PayloadAction<boolean>) => {
 			state.hideNonVideo = action.payload;
 		}),
+		setHideSelfView: ((state, action: PayloadAction<boolean>) => {
+			state.hideSelfView = action.payload;
+		}),
+		setSeparateMediaControls: ((state, action: PayloadAction<boolean>) => {
+			state.controlButtonsBar = action.payload;
+		}),
 		setAspectRatio: ((state, action: PayloadAction<number>) => {
 			state.aspectRatio = action.payload;
 		}),
@@ -90,17 +110,26 @@ const settingsSlice = createSlice({
 		setSelectedVideoDevice: ((state, action: PayloadAction<string | undefined>) => {
 			state.selectedVideoDevice = action.payload;
 		}),
-		setResolution: ((state, action: PayloadAction<string>) => {
+		setResolution: ((state, action: PayloadAction<Resolution>) => {
 			state.resolution = action.payload;
 		}),
 		setFrameRate: ((state, action: PayloadAction<number>) => {
 			state.frameRate = action.payload;
 		}),
-		setScreenSharingResolution: ((state, action: PayloadAction<string>) => {
+		setScreenSharingResolution: ((state, action: PayloadAction<Resolution>) => {
 			state.screenSharingResolution = action.payload;
 		}),
 		setScreenSharingFrameRate: ((state, action: PayloadAction<number>) => {
 			state.screenSharingFrameRate = action.payload;
+		}),
+		setSupportedRecorderMimeTypes: ((state, action: PayloadAction<string[]>) => {
+			state.supportedRecorderMimeTypes = action.payload;
+		}),
+		setPreferredRecorderMimeType: ((state, action: PayloadAction<string>) => {
+			state.preferredRecorderMimeType = action.payload;
+		}),
+		setAudioPreset: ((state, action: PayloadAction<string>) => {
+			state.audioPreset = action.payload;
 		}),
 		setAutoGainControl: ((state, action: PayloadAction<boolean>) => {
 			state.autoGainControl = action.payload;
@@ -110,6 +139,9 @@ const settingsSlice = createSlice({
 		}),
 		setNoiseSuppression: ((state, action: PayloadAction<boolean>) => {
 			state.noiseSuppression = action.payload;
+		}),
+		setNoiseThreshold: ((state, action: PayloadAction<number>) => {
+			state.noiseThreshold = action.payload;
 		}),
 		setSampleRate: ((state, action: PayloadAction<number>) => {
 			state.sampleRate = action.payload;

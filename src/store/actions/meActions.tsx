@@ -1,14 +1,20 @@
 import { Logger } from '../../utils/logger';
 import { meActions } from '../slices/meSlice';
 import { settingsActions } from '../slices/settingsSlice';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppThunk } from '../store';
 
 const logger = new Logger('MeActions');
 
-export const setDisplayName = (displayName: string) => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+/**
+ * This thunk action sets the display name of the client.
+ * 
+ * @param displayName - Display name.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const setDisplayName = (displayName: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('setDisplayName() [displayName:%s]', displayName);
 
@@ -25,10 +31,16 @@ export const setDisplayName = (displayName: string) => async (
 	}
 };
 
-export const setPicture = (picture: string) => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+/**
+ * This thunk action sets the picture of the client.
+ * 
+ * @param picture - Picture.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const setPicture = (picture: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('setPicture() [picture:%s]', picture);
 
@@ -41,10 +53,16 @@ export const setPicture = (picture: string) => async (
 	}
 };
 
-export const setRaisedHand = (raisedHand: boolean) => async (
-	dispatch: AppDispatch,
-	_getState: RootState,
-	{ signalingService }: MiddlewareOptions
+/**
+ * This thunk action sets the raised hand state of the client.
+ * 
+ * @param raisedHand - Raised hand.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const setRaisedHand = (raisedHand: boolean): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('setRaisedHand() [raisedHand:%s]', raisedHand);
 

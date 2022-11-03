@@ -16,7 +16,6 @@ export interface MeState {
 	canShareFiles: boolean;
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
-	speaking: boolean;
 	autoMuted: boolean;
 	// Status flags
 	audioInProgress: boolean;
@@ -36,7 +35,6 @@ const initialState: MeState = {
 	canRecord: false,
 	devices: [],
 	raisedHand: false,
-	speaking: false,
 	autoMuted: true,
 	audioInProgress: false,
 	videoInProgress: false,
@@ -72,9 +70,6 @@ const meSlice = createSlice({
 		}),
 		setRaisedHand: ((state, action: PayloadAction<boolean>) => {
 			state.raisedHand = action.payload;
-		}),
-		setSpeaking: ((state, action: PayloadAction<boolean>) => {
-			state.speaking = action.payload;
 		}),
 		setAutoMuted: ((state, action: PayloadAction<boolean>) => {
 			state.autoMuted = action.payload;

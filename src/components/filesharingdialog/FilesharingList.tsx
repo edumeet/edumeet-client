@@ -2,11 +2,9 @@ import { styled } from '@mui/material';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 import {
 	useAppSelector,
-	usePermissionSelector
 } from '../../store/hooks';
 import { FilesharingFile } from '../../store/slices/filesharingSlice';
-import { permissions } from '../../utils/roles';
-import { moderatorActionsLabel, noFilesLabel } from '../translated/translatedComponents';
+import { noFilesLabel } from '../translated/translatedComponents';
 import ListFile from './ListFile';
 
 const FilesharingListDiv = styled('div')(({ theme }) => ({
@@ -22,10 +20,6 @@ const ListUl = styled('ul')(({ theme }) => ({
 	backgroundColor: 'rgba(255, 255, 255, 1)'
 }));
 
-const ListHeaderLi = styled('li')({
-	fontWeight: 'bolder'
-});
-
 const ListItemLi = styled('li')({
 	width: '100%',
 	overflow: 'hidden',
@@ -36,7 +30,6 @@ const ListItemLi = styled('li')({
 });
 
 const FilesharingList = (): JSX.Element => {
-	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const files = useAppSelector((state) => state.filesharing);
 	const meId = useAppSelector((state) => state.me.id);
 
@@ -44,14 +37,6 @@ const FilesharingList = (): JSX.Element => {
 		<FilesharingListDiv>
 			{ files.length > 0 ?
 				<>
-					{ isModerator &&
-						<ListUl>
-							<ListHeaderLi>
-								{ moderatorActionsLabel() }
-							</ListHeaderLi>
-							{ /* <ListModerator /> */ }
-						</ListUl>
-					}
 					<ListUl>
 						<Flipper flipKey={files}>
 							{ files.map((file: FilesharingFile) => (

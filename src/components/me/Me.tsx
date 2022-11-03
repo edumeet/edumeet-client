@@ -2,11 +2,11 @@ import { useAppSelector } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
 import MicButton from '../controlbuttons/MicButton';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
-import ShareButton from '../controlbuttons/ShareButton';
 import StopProducerButton from '../controlbuttons/StopProducerButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
+import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
@@ -29,8 +29,12 @@ const Me = ({
 
 	const mirroredSelfView = useAppSelector((state) => state.settings.mirroredSelfView);
 	const displayName = useAppSelector((state) => state.settings.displayName);
+	const controlButtonsBar =
+		useAppSelector((state) => state.settings.controlButtonsBar);
+	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
 	const activeSpeaker =
 		useAppSelector((state) => state.me.id === state.room.activeSpeakerId);
+	const browser = useAppSelector((state) => state.me.browser);
 
 	return (
 		<>
@@ -42,23 +46,26 @@ const Me = ({
 				height={style.height}
 			>
 				<DisplayName disabled={false} displayName={displayName} />
-				<MediaControls
-					orientation='vertical'
-					horizontalPlacement='right'
-					verticalPlacement='center'
-				>
-					<MicButton
-						onColor='default'
-						offColor='error'
-						disabledColor='default'
-					/>
-					<WebcamButton
-						onColor='default'
-						offColor='error'
-						disabledColor='default'
-					/>
-					<ShareButton />
-				</MediaControls>
+				{ !(hideSelfView || controlButtonsBar) && (
+					<MediaControls
+						orientation='vertical'
+						horizontalPlacement='right'
+						verticalPlacement='center'
+					>
+						<MicButton
+							onColor='default'
+							offColor='error'
+							disabledColor='default'
+						/>
+						<WebcamButton
+							onColor='default'
+							offColor='error'
+							disabledColor='default'
+						/>
+						<ScreenshareButton />
+					</MediaControls>
+				)}
+				{ micProducer && browser.platform !== 'mobile' && <UnmuteAlert micProducer={micProducer} /> }
 				{ micProducer && <Volume producer={micProducer} /> }
 				{ webcamProducer && <VideoView
 					mirrored={mirroredSelfView}
@@ -73,17 +80,19 @@ const Me = ({
 					width={style.width}
 					height={style.height}
 				>
-					<MediaControls
-						orientation='vertical'
-						horizontalPlacement='right'
-						verticalPlacement='center'
-					>
-						<ScreenshareButton
-							onColor='default'
-							offColor='error'
-							disabledColor='default'
-						/>
-					</MediaControls>
+					{ !(hideSelfView || controlButtonsBar) && (
+						<MediaControls
+							orientation='vertical'
+							horizontalPlacement='right'
+							verticalPlacement='center'
+						>
+							<ScreenshareButton
+								onColor='default'
+								offColor='error'
+								disabledColor='default'
+							/>
+						</MediaControls>
+					)}
 					<VideoView producer={screenProducer} contain />
 				</VideoBox>
 			)}

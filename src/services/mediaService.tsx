@@ -10,8 +10,11 @@ import hark from 'hark';
 import { VolumeWatcher } from '../utils/volumeWatcher';
 import { PeerTransport } from '../utils/peerTransport';
 import { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
-import { DataProducer } from 'mediasoup-client/lib/DataProducer';
+import { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProducer';
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
+import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
+import traceInit from '@jitsi/rtcstats/trace-ws';
+import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
 
 const logger = new Logger('MediaService');
 
@@ -71,6 +74,8 @@ export class MediaService extends EventEmitter {
 	private peerTransports: Map<string, PeerTransport> = new Map();
 	private peers: string[] = [];
 	private p2p = true;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	private trace: any;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
@@ -308,10 +313,17 @@ export class MediaService extends EventEmitter {
 						} else {
 							const resolutionWatcher = new ResolutionWatcher();
 
+							let lastSpatialLayer = 0;
+
 							resolutionWatcher.on('newResolution', async (resolution) => {
 								const { width } = resolution;
 								const spatialLayer = width >= 480 ? width >= 960 ? 2 : 1 : 0;
 								const temporalLayer = spatialLayer;
+
+								if (spatialLayer === lastSpatialLayer)
+									return;
+
+								lastSpatialLayer = spatialLayer;
 
 								await this.signalingService.sendRequest(
 									'setConsumerPreferredLayers',
@@ -458,6 +470,7 @@ export class MediaService extends EventEmitter {
 		local = true
 	): Promise<void> {
 		logger.debug(`${change}Consumer [consumerId:%s]`, consumerId);
+
 		const consumer = this.consumers.get(consumerId);
 
 		if (local && consumer) {
@@ -476,6 +489,7 @@ export class MediaService extends EventEmitter {
 		local = true
 	): Promise<void> {
 		logger.debug('closeDataConsumer [dataConsumerId:%s]', dataConsumerId);
+
 		const dataConsumer = this.dataConsumers.get(dataConsumerId);
 
 		if (local && dataConsumer) {
@@ -492,20 +506,38 @@ export class MediaService extends EventEmitter {
 	public async changeProducer(
 		producerId: string,
 		change: MediaChange,
-		local = true
+		local = true,
+		notifyAll = false
 	): Promise<void> {
 		logger.debug(`${change}Producer [producerId:%s]`, producerId);
+
 		const producer = this.producers.get(producerId);
 
-		if (local && producer) {
+		if ((local || notifyAll) && producer) {
 			await this.signalingService.sendRequest(`${change}Producer`, { producerId: producer.id })
 				.catch((error) => logger.warn(`${change}Producer, unable to ${change} server-side [producerId:%s, error:%o]`, producerId, error));
 		}
 
-		if (!local)
+		if (!local || notifyAll)
 			this.emit(`producer${changeEvent[change]}`, producer);
 
 		producer?.[`${change}`]();
+	}
+
+	public async closeDataProducer(
+		dataProducerId: string,
+		local = true
+	): Promise<void> {
+		logger.debug('closeDataProducer [dataProducerId:%s]', dataProducerId);
+
+		const dataProducer = this.dataProducers.get(dataProducerId);
+
+		if (local && dataProducer) {
+			await this.signalingService.sendRequest('closeDataProducer', { dataProducerId: dataProducer.id })
+				.catch((error) => logger.warn('closeDataProducer, unable to close server-side [dataProducerId:%s, error:%o]', dataProducerId, error));
+		}
+
+		dataProducer?.close();
 	}
 
 	public async createTransports(
@@ -516,7 +548,7 @@ export class MediaService extends EventEmitter {
 	}> {
 		try {
 			if (!this.mediasoup.loaded) {
-				const routerRtpCapabilities = await this.signalingService.sendRequest('getRouterRtpCapabilities');
+				const { routerRtpCapabilities } = await this.signalingService.sendRequest('getRouterRtpCapabilities');
 	
 				await this.mediasoup.load({ routerRtpCapabilities });
 			}
@@ -542,10 +574,12 @@ export class MediaService extends EventEmitter {
 			iceParameters,
 			iceCandidates,
 			dtlsParameters,
+			sctpParameters,
 		} = await this.signalingService.sendRequest('createWebRtcTransport', {
 			forceTcp: false,
 			producing: creator === 'createSendTransport',
 			consuming: creator === 'createRecvTransport',
+			sctpCapabilities: this.mediasoup.sctpCapabilities,
 		});
 
 		const transport = this.mediasoup[creator]({
@@ -553,6 +587,7 @@ export class MediaService extends EventEmitter {
 			iceParameters,
 			iceCandidates,
 			dtlsParameters,
+			sctpParameters,
 			iceServers
 		});
 
@@ -583,6 +618,30 @@ export class MediaService extends EventEmitter {
 				.catch(errback);
 		});
 
+		transport.on('producedata', async (
+			{
+				sctpStreamParameters,
+				label,
+				protocol,
+				appData
+			},
+			callback,
+			errback
+		) => {
+			if (!transport)
+				return;
+
+			this.signalingService.sendRequest('produceData', {
+				transportId: transport.id,
+				sctpStreamParameters,
+				label,
+				protocol,
+				appData,
+			})
+				.then(callback)
+				.catch(errback);
+		});
+
 		return transport;
 	}
 
@@ -599,7 +658,7 @@ export class MediaService extends EventEmitter {
 		if (kind === 'audio' && track) {
 			const harkStream = new MediaStream();
 
-			harkStream.addTrack(track);
+			harkStream.addTrack(track.clone());
 
 			const producerHark = hark(harkStream, {
 				play: false,
@@ -613,19 +672,84 @@ export class MediaService extends EventEmitter {
 		}
 
 		this.producers.set(producer.id, producer);
-
-		producer.observer.once('close', () => {
-			this.producers.delete(producer.id);
-		});
-
-		producer.once('transportclose', () => {
-			this.changeProducer(producer.id, 'close', false);
-		});
-
-		producer.once('trackended', () => {
-			this.changeProducer(producer.id, 'close');
-		});
+		producer.observer.once('close', () => this.producers.delete(producer.id));
+		producer.once('transportclose', () => this.changeProducer(producer.id, 'close', false));
+		producer.once('trackended', () => this.changeProducer(producer.id, 'close', true, true));
 
 		return producer;
+	}
+
+	public async produceData(
+		dataProducerOptions: DataProducerOptions
+	): Promise<DataProducer> {
+		logger.debug('produceData() [options:%o]', dataProducerOptions);
+
+		if (!this.sendTransport)
+			throw new Error('DataProducer can not be created without sendTransport');
+
+		const dataProducer = await this.sendTransport.produceData(dataProducerOptions);
+
+		this.dataProducers.set(dataProducer.id, dataProducer);
+
+		dataProducer.observer.once('close', () =>
+			this.dataProducers.delete(dataProducer.id));
+
+		dataProducer.once('transportclose', () =>
+			this.closeDataProducer(dataProducer.id, false));
+
+		return dataProducer;
+	}
+
+	private rtcStatsCloseCallback() {
+		logger.debug('rtcStatsCloseCallback()');
+	}
+
+	public rtcStatsInit(rtcStatsOptions?: RTCStatsOptions): void {
+		if (!rtcStatsOptions)
+			return;
+
+		const {
+			url: endpoint,
+			useLegacy,
+			obfuscate = true,
+			wsPingIntervalMs: pingInterval = 30000,
+			pollIntervalMs: pollInterval,
+		} = rtcStatsOptions;
+
+		if (!endpoint) {
+			logger.warn('rtcStatsInit() | no endpoint given, not starting rtcstats');
+
+			return;
+		}
+
+		const traceOptions = {
+			endpoint,
+			meetingFqn: window.location.pathname.replace(/^\//, ''),
+			onCloseCallback: this.rtcStatsCloseCallback.bind(this),
+			useLegacy,
+			obfuscate,
+			pingInterval,
+		};
+
+		const rtcStatsInternalOptions = {
+			pollInterval,
+			useLegacy,
+		};
+
+		try {
+			this.trace = traceInit(traceOptions);
+			rtcstatsInit(this.trace, rtcStatsInternalOptions);
+			this.trace?.connect();
+		} catch (error) {
+			logger.error('rtcStatsInit() [error:%o]', error);
+		}
+	}
+
+	public rtcStatsIdentity(rtcStatsMetaData: RTCStatsMetaData): void {
+		try {
+			this.trace?.identity('identity', null, rtcStatsMetaData);
+		} catch (error) {
+			logger.error('rtcStatsIdentity() [error:%o]', error);
+		}
 	}
 }

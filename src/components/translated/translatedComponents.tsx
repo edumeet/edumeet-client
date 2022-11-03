@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { intl } from '../../utils/intlManager';
 
 export const noLabel = (): string => intl.formatMessage({
@@ -88,6 +89,11 @@ export const confirmLeaveLabel = (): string => intl.formatMessage({
 export const leaveRoomLabel = (): string => intl.formatMessage({
 	id: 'room.leavingTheRoom',
 	defaultMessage: 'Leaving the room'
+});
+
+export const controlButtonsBarLabel = (): string => intl.formatMessage({
+	id: 'settings.buttonControlBar',
+	defaultMessage: 'Separate media controls'
 });
 
 export const showSelfViewLabel = (): string => intl.formatMessage({
@@ -204,6 +210,26 @@ export const audioUnsupportedLabel = (): string => intl.formatMessage({
 export const activateAudioLabel = (): string => intl.formatMessage({
 	id: 'device.activateAudio',
 	defaultMessage: 'Activate audio'
+});
+
+export const kickLabel = (): string => intl.formatMessage({
+	id: 'tooltip.kickParticipant',
+	defaultMessage: 'Kick out'
+});
+
+export const stopParticipantAudioLabel = (): string => intl.formatMessage({
+	id: 'tooltip.muteParticipantAudioModerator',
+	defaultMessage: 'Stop audio'
+});
+
+export const stopParticipantVideoLabel = (): string => intl.formatMessage({
+	id: 'tooltip.muteParticipantVideoModerator',
+	defaultMessage: 'Stop video'
+});
+
+export const stopParticipantScreenSharingLabel = (): string => intl.formatMessage({
+	id: 'tooltip.muteScreenSharingModerator',
+	defaultMessage: 'Stop screen share'
 });
 
 export const muteAllLabel = (): string => intl.formatMessage({
@@ -456,4 +482,134 @@ export const muteParticipantVideoLabel = (): string => intl.formatMessage({
 export const unMuteParticipantVideoLabel = (): string => intl.formatMessage({
 	id: 'tooltip.unMuteParticipantVideo',
 	defaultMessage: 'Unmute video'
+});
+
+export const mutedPTTLabel = (): ReactNode => intl.formatMessage({
+	id: 'me.mutedPTT',
+	defaultMessage: 'You are muted{br}hold down SPACE-BAR to talk'
+}, { br: <br /> });
+
+export const audioSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.audioSettings',
+	defaultMessage: 'Audio settings'
+});
+
+export const selectAudioPresetLabel = (): string => intl.formatMessage({
+	id: 'settings.audioPreset',
+	defaultMessage: 'Select the audio preset'
+});
+
+export const advancedAudioSettingsLabel = (): string => intl.formatMessage({
+	id: 'settings.showAdvancedAudio',
+	defaultMessage: 'Advanced audio settings'
+});
+
+export const echoCancellationLabel = (): string => intl.formatMessage({
+	id: 'settings.echoCancellation',
+	defaultMessage: 'Echo cancellation'
+});
+
+export const autoGainControlLabel = (): string => intl.formatMessage({
+	id: 'settings.autoGainControl',
+	defaultMessage: 'Auto gain control'
+});
+
+export const noiseSuppressionLabel = (): string => intl.formatMessage({
+	id: 'settings.noiseSuppression',
+	defaultMessage: 'Noise suppression'
+});
+
+export const voiceActivatedUnmuteLabel = (): string => intl.formatMessage({
+	id: 'settings.voiceActivatedUnmute',
+	defaultMessage: 'Voice activated unmute'
+});
+
+export const noiseThresholdLabel = (): string => intl.formatMessage({
+	id: 'settings.noiseThreshold',
+	defaultMessage: 'Noise threshold'
+});
+
+export const selectAudioSampleRateLabel = (): string => intl.formatMessage({
+	id: 'settings.sampleRate',
+	defaultMessage: 'Select the audio sample rate'
+});
+
+export const selectAudioChannelCountLabel = (): string => intl.formatMessage({
+	id: 'settings.channelCount',
+	defaultMessage: 'Select the audio channel count'
+});
+
+export const selectAudioSampleSizeLabel = (): string => intl.formatMessage({
+	id: 'settings.sampleSize',
+	defaultMessage: 'Select the audio sample size'
+});
+
+export const enableOpusDtxLabel = (): string => intl.formatMessage({
+	id: 'settings.opusDtx',
+	defaultMessage: 'Enable Opus Discontinuous Transmission (DTX)'
+});
+
+export const enableOpusFecLabel = (): string => intl.formatMessage({
+	id: 'settings.opusFec',
+	defaultMessage: 'Enable Opus Forward Error Correction (FEC)'
+});
+
+export const selectOpusPtimeLabel = (): string => intl.formatMessage({
+	id: 'settings.opusPtime',
+	defaultMessage: 'Select the Opus frame size'
+});
+
+export const videoSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.videoSettings',
+	defaultMessage: 'Video settings'
+});
+
+export const advancedVideoSettingsLabel = (): string => intl.formatMessage({
+	id: 'settings.showAdvancedVideo',
+	defaultMessage: 'Advanced video settings'
+});
+
+export const selectResolutionLabel = (): string => intl.formatMessage({
+	id: 'settings.resolution',
+	defaultMessage: 'Select your video resolution'
+});
+
+export const lowResolutionLabel = (): string => intl.formatMessage({
+	id: 'label.low',
+	defaultMessage: 'Low'
+});
+
+export const mediumResolutionLabel = (): string => intl.formatMessage({
+	id: 'label.medium',
+	defaultMessage: 'Medium'
+});
+
+export const highResolutionLabel = (): string => intl.formatMessage({
+	id: 'label.high',
+	defaultMessage: 'High (HD)'
+});
+
+export const veryHighResolutionLabel = (): string => intl.formatMessage({
+	id: 'label.veryHigh',
+	defaultMessage: 'Very high (FHD)'
+});
+
+export const ultraResolutionLabel = (): string => intl.formatMessage({
+	id: 'label.ultra',
+	defaultMessage: 'Ultra (UHD)'
+});
+
+export const selectWebcamFrameRateLabel = (): string => intl.formatMessage({
+	id: 'settings.webcamFrameRate',
+	defaultMessage: 'Select your webcam frame rate'
+});
+
+export const selectScreenSharingFrameRateLabel = (): string => intl.formatMessage({
+	id: 'settings.screenSharingFrameRate',
+	defaultMessage: 'Select your screen sharing frame rate'
+});
+
+export const selectRecordingsPreferredMimeTypeLabel = (): string => intl.formatMessage({
+	id: 'settings.recordingsPreferredMimeType',
+	defaultMessage: 'Select your preferred video mime type'
 });

@@ -8,7 +8,9 @@ import { settingsActions } from '../../store/slices/settingsSlice';
 import LanguageSelector from '../languageselector/LanguageSelector';
 import {
 	hideNoVideoParticipantsLabel,
+	hideSelfViewLabel,
 	mirroredSelfViewLabel,
+	controlButtonsBarLabel,
 } from '../translated/translatedComponents';
 
 const AppearanceSettings = (): JSX.Element => {
@@ -16,6 +18,8 @@ const AppearanceSettings = (): JSX.Element => {
 	const {
 		mirroredSelfView,
 		hideNonVideo,
+		hideSelfView,
+		controlButtonsBar
 	} = useAppSelector((state) => state.settings);
 
 	const handleChange = (
@@ -40,6 +44,27 @@ const AppearanceSettings = (): JSX.Element => {
 						/>
 					}
 					label={mirroredSelfViewLabel()}
+				/>
+				<FormControlLabel
+					control={
+						<Switch
+							checked={hideSelfView}
+							onChange={(event) => handleChange(event, 'hideSelfView')}
+							inputProps={{ 'aria-label': 'controlled' }}
+						/>
+					}
+					label={hideSelfViewLabel()}
+				/>
+				<FormControlLabel
+					control={
+						<Switch
+							disabled={hideSelfView}
+							checked={controlButtonsBar}
+							onChange={(event) => handleChange(event, 'controlButtonsBar')}
+							inputProps={{ 'aria-label': 'controlled' }}
+						/>
+					}
+					label={controlButtonsBarLabel()}
 				/>
 				<FormControlLabel
 					control={
