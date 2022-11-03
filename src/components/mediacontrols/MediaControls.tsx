@@ -30,9 +30,14 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 		padding: theme.spacing(2)
 	}),
 	flexDirection: flexdirection,
+	opacity: 0.2,
 	alignItems: alignitems,
 	justifyContent: justifycontent,
 	zIndex: 21,
+	transition: 'opacity 0.25s ease',
+	'&:hover': {
+		opacity: 1
+	}
 }));
 
 interface MediaControlsProps {

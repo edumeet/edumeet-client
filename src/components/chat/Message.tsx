@@ -114,7 +114,7 @@ const Message = ({
 		>
 			<StyledMessageAvatar>
 				{ (format === 'single' || format ==='combinedBegin') ?
-					<img alt='A' />
+					<img alt='A' src='/images/buddy.svg' />
 					:
 					<StyledMessageTime>
 						<FormattedTime value={new Date(time || Date.now())} />
