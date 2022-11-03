@@ -33,10 +33,7 @@ const PeerAvatar = styled('img')({
 	height: '2rem',
 	width: '2rem',
 	objectFit: 'cover',
-	backgroundRepeat: 'no-repeat',
-	backgroundPosition: 'center center',
-	// eslint-disable-next-line quotes
-	backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' viewBox='0 0 20 20' fill='currentColor'%3e%3cpath d='M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z' /%3e%3c/svg%3e")`,
+	alignSelf: 'center',
 });
 
 const ListPeer = ({
@@ -58,7 +55,7 @@ const ListPeer = ({
 	return (
 		<Fragment>
 			<PeerDiv>
-				<PeerAvatar src={peer.picture} />
+				<PeerAvatar src={peer.picture ?? '/images/buddy.svg'} />
 				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
 				{ peer.raisedHand &&
 					<IconButton
