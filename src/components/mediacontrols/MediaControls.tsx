@@ -6,10 +6,6 @@ interface MediaControlsDivProps {
 	alignitems: string;
 	justifycontent: string;
 	position: 'absolute' | 'relative';
-	// eslint-disable-next-line
-	onMouseOver?: (event?: any) => void;
-	// eslint-disable-next-line
-	onMouseOut?: (event?: any) => void;
 	withgap: number;
 	withpadding: number;
 }
@@ -38,6 +34,10 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	alignItems: alignitems,
 	justifyContent: justifycontent,
 	zIndex: 21,
+	transition: 'opacity 0.25s ease',
+	'&:hover': {
+		opacity: 1
+	}
 }));
 
 interface MediaControlsProps {
@@ -78,27 +78,8 @@ const MediaControls = ({
 			alignItems = 'flex-end' : justifyContent = 'flex-end';
 	}
 
-	const buttonMouseOverHandler = (
-		event: React.MouseEvent<HTMLDivElement>
-	) => {
-		const btn: HTMLDivElement = event.currentTarget;
-
-		btn.style.opacity = '1';
-	};
-
-	const buttonMouseOutHandler = (
-		event: React.MouseEvent<HTMLDivElement>
-	) => {
-		const btn: HTMLDivElement = event.currentTarget;
-
-		btn.style.opacity = '0.2';
-		
-	};
-
 	return (
 		<MediaControlsDiv
-			onMouseOver={ buttonMouseOverHandler }
-			onMouseOut={ buttonMouseOutHandler }
 			flexdirection={orientation === 'horizontal' ? 'row' : 'column'}
 			position={position}
 			alignitems={alignItems}
