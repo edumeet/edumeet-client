@@ -8,6 +8,7 @@ interface MediaControlsDivProps {
 	position: 'absolute' | 'relative';
 	withgap: number;
 	withpadding: number;
+	autohide: number;
 }
 
 const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
@@ -17,7 +18,8 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	justifycontent,
 	position,
 	withgap: withGap,
-	withpadding: withPadding
+	withpadding: withPadding,
+	autohide: autoHide
 }) => ({
 	position,
 	width: '100%',
@@ -30,14 +32,16 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 		padding: theme.spacing(2)
 	}),
 	flexDirection: flexdirection,
-	opacity: 0.2,
+	...(autoHide && {
+		transition: 'opacity 0.25s ease',
+		'&:hover': {
+			opacity: 1
+		},
+		opacity: 0.2,
+	}),
 	alignItems: alignitems,
 	justifyContent: justifycontent,
 	zIndex: 21,
-	transition: 'opacity 0.25s ease',
-	'&:hover': {
-		opacity: 1
-	}
 }));
 
 interface MediaControlsProps {
@@ -47,6 +51,7 @@ interface MediaControlsProps {
 	position?: 'absolute' | 'relative';
 	withGap?: boolean;
 	withPadding?: boolean;
+	autoHide?: boolean;
 	children?: ReactNode;
 }
 
@@ -57,6 +62,7 @@ const MediaControls = ({
 	position = 'absolute',
 	withGap = true,
 	withPadding = true,
+	autoHide = true,
 	children
 }: MediaControlsProps): JSX.Element => {
 	let justifyContent = 'center';
@@ -86,6 +92,7 @@ const MediaControls = ({
 			justifycontent={justifyContent}
 			withgap={withGap ? 1 : 0}
 			withpadding={withPadding ? 1 : 0}
+			autohide={autoHide ? 1 : 0}
 			children={children}
 		/>
 	);

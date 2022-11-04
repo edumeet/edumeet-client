@@ -29,6 +29,7 @@ const MediaPreview = ({
 						orientation='vertical'
 						horizontalPlacement='right'
 						verticalPlacement='center'
+						autoHide={false}
 					>
 						<MicPreviewButton
 							onColor='default'
