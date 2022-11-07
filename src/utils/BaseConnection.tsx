@@ -32,7 +32,7 @@ export declare interface BaseConnection {
  */
 export abstract class BaseConnection
 	extends EventEmitter implements SignalingInterface {
-	public abstract notify(notification: SocketMessage): Promise<void>;
+	public abstract notify(notification: SocketMessage): void;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public abstract request(request: SocketMessage): Promise<unknown>;
 	public abstract close(): void;

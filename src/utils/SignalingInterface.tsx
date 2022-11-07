@@ -11,7 +11,7 @@ export interface SocketMessage {
  */
 export interface SignalingInterface {
 	// Outbound messages
-	notify: (notification: SocketMessage) => Promise<void>;
+	notify: (notification: SocketMessage) => void;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	request: (request: SocketMessage) => Promise<unknown>;
 	close: () => void;

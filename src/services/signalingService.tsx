@@ -69,14 +69,14 @@ export class SignalingService extends EventEmitter {
 	}
 
 	@skipIfClosed
-	public async notify(notification: SocketMessage): Promise<void> {
+	public notify(notification: SocketMessage): void {
 		logger.debug('notify() [method: %s]', notification.method);
 
 		for (const connection of this.connections.items) {
 			if (!connection.outgoing) continue;
 
 			try {
-				return await connection.notify(notification);
+				return connection.notify(notification);
 			} catch (error) {
 				logger.error('notify() [error: %o]', error);
 			}

@@ -45,7 +45,7 @@ export class ProducerConnection extends BaseConnection {
 	}
 
 	@skipIfClosed
-	public async notify(notification: SocketMessage): Promise<void> {
+	public notify(notification: SocketMessage): void {
 		logger.debug('notification() [notification: %o]', notification);
 
 		const rawNotification = RawSocket.createNotification(
