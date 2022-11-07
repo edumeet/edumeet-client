@@ -1,4 +1,3 @@
-import { MediaService } from '../services/mediaService';
 import { defaultEdumeetConfig, EdumeetConfig } from './types';
 
 declare module '@mui/material/styles' {

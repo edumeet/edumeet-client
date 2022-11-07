@@ -1,4 +1,3 @@
-import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
 import { RTCStatsOptions } from '../../utils/types';
@@ -7,7 +6,6 @@ import { roomActions } from './roomSlice';
 export interface WebrtcState {
 	iceServers?: RTCIceServer[];
 	rtcStatsOptions?: RTCStatsOptions;
-	clientMonitorConfig?: ClientMonitorConfig;
 	rtpCapabilities?: RtpCapabilities;
 	torrentSupport: boolean;
 	tracker?: string;
@@ -38,9 +36,6 @@ const webrtcSlice = createSlice({
 		}),
 		setRTCStatsOptions: ((state, action: PayloadAction<RTCStatsOptions>) => {
 			state.rtcStatsOptions = action.payload;
-		}),
-		setClientMonitorConfig: ((state, action: PayloadAction<ClientMonitorConfig>) => {
-			state.clientMonitorConfig = action.payload;
 		}),
 	},
 	extraReducers: (builder) => {

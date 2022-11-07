@@ -85,6 +85,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	},
 	observertc: {
 		collectingPeriodInMs: 5000,
+		statsExpirationTimeInMs: 60000,
 	}
 };
 
@@ -128,7 +129,7 @@ export interface EdumeetConfig {
 	supportUrl: string;
 	privacyUrl: string;
 	theme: ThemeOptions;
-	observertc?: ClientMonitorConfig;
+	observertc: ClientMonitorConfig;
 }
 
 export type RoomLayout = 'filmstrip' | 'democratic';
