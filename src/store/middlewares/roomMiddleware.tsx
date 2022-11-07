@@ -54,15 +54,14 @@ const createRoomMiddleware = ({
 									);
 									dispatch(webrtcActions.setIceServers(turnServers));
 									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
-									// dispatch(webrtcActions.setClientMonitorConfig(clientMonitorConfig));
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
-
+								});
+								if (clientMonitorSenderConfig) {
 									const roomId = getState().room.name;
-									
 									mediaService.getMonitor()?.setRoomId(roomId);
 									mediaService.getMonitor()?.connect(clientMonitorSenderConfig);
-								});
+								}
 								break;
 							}
 

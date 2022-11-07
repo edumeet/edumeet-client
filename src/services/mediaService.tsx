@@ -85,7 +85,6 @@ export class MediaService extends EventEmitter {
 
 		this.signalingService = signalingService;
 		this.initMonitor();
-		window.mediaService = this;
 	}
 
 	public init(): void {
