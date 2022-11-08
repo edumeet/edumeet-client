@@ -1,5 +1,4 @@
 import { AppThunk } from '../store';
-import { Logger } from '../../utils/logger';
 import { meActions } from '../slices/meSlice';
 import { DevicesUpdated } from '../../services/deviceService';
 import {
@@ -17,6 +16,7 @@ import { drawerActions } from '../slices/drawerSlice';
 import { devicesChangedLabel } from '../../components/translated/translatedComponents';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { settingsActions } from '../slices/settingsSlice';
+import { Logger } from 'edumeet-common';
 
 const logger = new Logger('listenerActions');
 

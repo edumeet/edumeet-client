@@ -1,6 +1,6 @@
 import { AwaitQueue } from 'awaitqueue';
+import { Logger } from 'edumeet-common';
 import EventEmitter from 'events';
-import { Logger } from './logger';
 
 interface PeerTransportOptions {
 	id: string;

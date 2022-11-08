@@ -1,8 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
+import { IOClientConnection, Logger } from 'edumeet-common';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
-import { Logger } from '../../utils/logger';
-import { SocketIOConnection } from '../../utils/SocketIOConnection';
 
 const logger = new Logger('SignalingMiddleware');
 
@@ -48,7 +47,7 @@ const createSignalingMiddleware = ({
 				}); */
 
 				const { url } = getState().signaling;
-				const socketConnection = SocketIOConnection.create({ url });
+				const socketConnection = IOClientConnection.create({ url });
 
 				signalingService.addConnection(socketConnection);
 			}

@@ -4,7 +4,6 @@ import { Consumer } from 'mediasoup-client/lib/Consumer';
 import { Producer, ProducerOptions } from 'mediasoup-client/lib/Producer';
 import { Transport } from 'mediasoup-client/lib/Transport';
 import { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
-import { Logger } from '../utils/logger';
 import { SignalingService } from './signalingService';
 import hark from 'hark';
 import { VolumeWatcher } from '../utils/volumeWatcher';
@@ -15,6 +14,7 @@ import { ResolutionWatcher } from '../utils/resolutionWatcher';
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
 import traceInit from '@jitsi/rtcstats/trace-ws';
 import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
+import { Logger } from 'edumeet-common';
 
 const logger = new Logger('MediaService');
 

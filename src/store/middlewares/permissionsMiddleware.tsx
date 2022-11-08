@@ -1,8 +1,8 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
-import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions } from '../store';
 import { permissionsActions } from '../slices/permissionsSlice';
+import { Logger } from 'edumeet-common';
 
 const logger = new Logger('PermissionsMiddleware');
 

@@ -1,12 +1,12 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { consumersActions, StateConsumer } from '../slices/consumersSlice';
-import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { producersActions, ProducerSource } from '../slices/producersSlice';
 import { videoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
 import { signalingActions } from '../slices/signalingSlice';
+import { Logger } from 'edumeet-common';
 
 const logger = new Logger('MediaMiddleware');
 

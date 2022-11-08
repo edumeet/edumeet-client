@@ -1,6 +1,6 @@
+import { Logger } from 'edumeet-common';
 import { Producer } from 'mediasoup-client/lib/Producer';
 import { getEncodings, getVideoConstrains } from '../../utils/encodingsHandler';
-import { Logger } from '../../utils/logger';
 import { Resolution } from '../../utils/types';
 import { meActions } from '../slices/meSlice';
 import { producersActions, ProducerSource } from '../slices/producersSlice';

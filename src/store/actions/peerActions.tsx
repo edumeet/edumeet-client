@@ -1,4 +1,4 @@
-import { Logger } from '../../utils/logger';
+import { Logger } from 'edumeet-common';
 import { peersActions } from '../slices/peersSlice';
 import { roomActions } from '../slices/roomSlice';
 import { AppThunk } from '../store';

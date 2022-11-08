@@ -1,5 +1,5 @@
+import { Logger } from 'edumeet-common';
 import { loadLocale } from '../../utils/intlManager';
-import { Logger } from '../../utils/logger';
 import { roomActions } from '../slices/roomSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';

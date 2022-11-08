@@ -1,8 +1,8 @@
-import { Logger } from '../../utils/logger';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
+import { Logger } from 'edumeet-common';
 
 const logger = new Logger('LoginActions');
 

@@ -23,6 +23,6 @@
 		"types": [ "@types/wicg-file-system-access" ],
 	},
 	"include": [
-		"src"
+		"src/**/*"
 	]
 }

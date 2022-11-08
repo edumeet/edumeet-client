@@ -1,4 +1,4 @@
-import { Logger } from '../../utils/logger';
+import { Logger } from 'edumeet-common';
 import { chatActions } from '../slices/chatSlice';
 import { AppThunk } from '../store';
 

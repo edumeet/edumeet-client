@@ -1,15 +1,12 @@
-import { Logger } from '../utils/logger';
+import { BaseConnection, InboundNotification, InboundRequest, List, Logger, skipIfClosed } from 'edumeet-common';
 import EventEmitter from 'events';
 import { SocketMessage } from '../utils/types';
-import { skipIfClosed } from '../utils/decorators';
-import { BaseConnection, InboundRequest } from '../utils/BaseConnection';
-import { List } from '../utils/list';
 
 /* eslint-disable no-unused-vars */
 export declare interface SignalingService {
 	on(event: 'connected', listener: () => void): this;
 	on(event: 'close', listener: () => void): this;
-	on(event: 'notification', listener: (notification: SocketMessage) => void): this;
+	on(event: 'notification', listener: InboundNotification): this;
 	on(event: 'request', listener: InboundRequest): this;
 }
 /* eslint-enable no-unused-vars */
@@ -73,8 +70,6 @@ export class SignalingService extends EventEmitter {
 		logger.debug('notify() [method: %s]', notification.method);
 
 		for (const connection of this.connections.items) {
-			if (!connection.outgoing) continue;
-
 			try {
 				return connection.notify(notification);
 			} catch (error) {
@@ -91,8 +86,6 @@ export class SignalingService extends EventEmitter {
 		logger.debug('request() [method: %s]', method);
 
 		for (const connection of this.connections.items) {
-			if (!connection.outgoing) continue;
-
 			try {
 				return await connection.request({ method, data });
 			} catch (error) {

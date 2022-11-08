@@ -1,5 +1,5 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { Logger } from '../../utils/logger';
+import { Logger } from 'edumeet-common';
 import { chatActions } from '../slices/chatSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions } from '../store';

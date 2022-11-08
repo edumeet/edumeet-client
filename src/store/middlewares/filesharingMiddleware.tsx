@@ -1,5 +1,5 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { Logger } from '../../utils/logger';
+import { Logger } from 'edumeet-common';
 import { filesharingActions } from '../slices/filesharingSlice';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';

@@ -18,7 +18,6 @@ import * as serviceWorker from './serviceWorker';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { detectDevice } from 'mediasoup-client';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
-import { Logger } from './utils/logger';
 import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import UnsupportedBrowser from './views/unsupported/UnsupportedBrowser';
@@ -27,6 +26,7 @@ import edumeetConfig from './utils/edumeetConfig';
 import { intl } from './utils/intlManager';
 import { useAppDispatch } from './store/hooks';
 import { setLocale } from './store/actions/localeActions';
+import { Logger } from 'edumeet-common';
 
 if (process.env.REACT_APP_DEBUG === '*' || process.env.NODE_ENV !== 'production') {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');

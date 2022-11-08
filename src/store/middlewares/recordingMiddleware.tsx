@@ -1,10 +1,10 @@
 /* eslint-disable max-len */
 import { Middleware } from '@reduxjs/toolkit';
-import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { recordingActions } from '../slices/recordingSlice';
 import { consumersActions } from '../slices/consumersSlice';
 import { producersActions } from '../slices/producersSlice';
+import { Logger } from 'edumeet-common';
 
 const logger = new Logger('RecordingMiddleware');
 

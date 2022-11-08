@@ -1,5 +1,5 @@
+import { Logger } from 'edumeet-common';
 import EventEmitter from 'events';
-import { Logger } from '../utils/logger';
 
 const logger = new Logger('DeviceService');
 

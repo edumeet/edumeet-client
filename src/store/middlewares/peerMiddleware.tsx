@@ -1,12 +1,12 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
-import { Logger } from '../../utils/logger';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { peersActions } from '../slices/peersSlice';
 import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { setRaisedHand } from '../actions/meActions';
 import { micProducerSelector, screenProducerSelector, webcamProducerSelector } from '../selectors';
 import { producersActions } from '../slices/producersSlice';
+import { Logger } from 'edumeet-common';
 
 const logger = new Logger('PeerMiddleware');
 

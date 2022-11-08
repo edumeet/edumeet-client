@@ -1,5 +1,5 @@
+import { Logger } from 'edumeet-common';
 import { batch } from 'react-redux';
-import { Logger } from '../../utils/logger';
 import { chatActions } from '../slices/chatSlice';
 import { filesharingActions } from '../slices/filesharingSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';

@@ -1,4 +1,4 @@
-import { Logger } from '../../utils/logger';
+import { Logger } from 'edumeet-common';
 import { filesharingActions } from '../slices/filesharingSlice';
 import { roomActions } from '../slices/roomSlice';
 import { AppThunk } from '../store';

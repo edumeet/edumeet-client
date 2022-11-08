@@ -1,7 +1,6 @@
 import createTorrent from 'create-torrent';
+import { Logger } from 'edumeet-common';
 import WebTorrent from 'webtorrent';
-import { Logger } from '../utils/logger';
-// import { getTrackerUrl } from '../utils/signalingHelpers';
 import { SignalingService } from './signalingService';
 
 const logger = new Logger('FileService');
