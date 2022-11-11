@@ -54,6 +54,7 @@
 		"start": "HTTPS=true PORT=4443 react-scripts --openssl-legacy-provider start",
 		"build": "react-scripts --openssl-legacy-provider build",
 		"test": "react-scripts --openssl-legacy-provider test",
+		"lint": "eslint . --ext .ts,.tsx",
 		"eject": "react-scripts eject"
 	},
 	"eslintConfig": {
