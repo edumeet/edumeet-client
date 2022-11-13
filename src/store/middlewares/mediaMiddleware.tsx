@@ -31,6 +31,8 @@ const createMediaMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
+	const transcriptTimeouts = new Map<string, NodeJS.Timer>();
+
 	const middleware: Middleware = ({
 		dispatch, getState
 	}: {
@@ -57,6 +59,33 @@ const createMediaMiddleware = ({
 					};
 
 					dispatch(consumersActions.addConsumer(stateConsumer));
+				});
+
+				mediaService.on('transcriptionStarted', () => {
+					dispatch(roomActions.updateRoom({ transcriptionRunning: true }));
+				});
+
+				mediaService.on('transcriptionStopped', () => {
+					dispatch(roomActions.updateRoom({ transcriptionRunning: false }));
+				});
+
+				mediaService.on('transcript', ({ id, peerId, transcript, done }) => {
+					const timeout = transcriptTimeouts.get(id);
+
+					transcriptTimeouts.delete(id);
+					clearTimeout(timeout);
+
+					dispatch(peersActions.updateTranscript({ id, peerId, transcript, done }));
+
+					const newTimeout = setTimeout(() => {
+						dispatch(peersActions.removeTranscript({ id, peerId }));
+
+						transcriptTimeouts.delete(id);
+					}, done ? 5000 : 15000);
+
+					transcriptTimeouts.set(id, newTimeout);
+
+					dispatch(peersActions.updateTranscript({ id, peerId, transcript, done }));
 				});
 
 				// Server has changed the state of a Consumer/Producer, update the store.

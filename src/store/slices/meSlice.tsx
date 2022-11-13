@@ -13,6 +13,7 @@ export interface MeState {
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
 	canRecord: boolean;
+	canTranscribe: boolean;
 	canShareFiles: boolean;
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
@@ -33,6 +34,7 @@ const initialState: MeState = {
 	canShareScreen: true,
 	canShareFiles: false,
 	canRecord: false,
+	canTranscribe: false,
 	devices: [],
 	raisedHand: false,
 	autoMuted: true,

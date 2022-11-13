@@ -4,6 +4,7 @@ import { getEncodings, getVideoConstrains } from '../../utils/encodingsHandler';
 import { Resolution } from '../../utils/types';
 import { meActions } from '../slices/meSlice';
 import { producersActions, ProducerSource } from '../slices/producersSlice';
+import { roomActions } from '../slices/roomSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
 
@@ -39,6 +40,38 @@ interface ScreenshareSettings {
 	screenSharingResolution?: Resolution;
 	screenSharingFrameRate?: number;
 }
+
+export const startTranscription = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ mediaService }
+): Promise<void> => {
+	dispatch(roomActions.updateRoom({ startTranscriptionInProgress: true }));
+
+	try {
+		await mediaService.startTranscription();
+	} catch (error) {
+		logger.error('startTranscription() | failed: %o', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ startTranscriptionInProgress: false }));
+	}
+};
+
+export const stopTranscription = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ mediaService }
+): Promise<void> => {
+	dispatch(roomActions.updateRoom({ startTranscriptionInProgress: true }));
+
+	try {
+		mediaService.stopTranscription();
+	} catch (error) {
+		logger.error('stopTranscription() | failed: %o', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ startTranscriptionInProgress: false }));
+	}
+};
 
 /**
  * This thunk action updates the preview audio track

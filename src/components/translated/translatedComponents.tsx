@@ -369,6 +369,16 @@ export const filesharingUnsupportedLabel = (): string =>
 		defaultMessage: 'File sharing not supported'
 	});
 
+export const startTranscribingLabel = (): string => intl.formatMessage({
+	id: 'tooltip.startTranscribing',
+	defaultMessage: 'Start transcribing'
+});
+
+export const stopTranscribingLabel = (): string => intl.formatMessage({
+	id: 'tooltip.stopTranscribing',
+	defaultMessage: 'Stop transcribing'
+});
+
 export const chatLabel = (): string => intl.formatMessage({
 	id: 'label.chat',
 	defaultMessage: 'Chat'

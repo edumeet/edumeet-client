@@ -8,6 +8,7 @@ import PeerActionsButton from '../controlbuttons/PeerActionsButton';
 import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
+import PeerTranscription from '../peertranscription/PeerTranscription';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
@@ -63,6 +64,7 @@ const Peer = ({
 						)}
 						<PeerActionsButton peerId={id} />
 					</MediaControls>
+					<PeerTranscription id={id} />
 					{ micConsumer && <Volume consumer={micConsumer} /> }
 					{ webcamConsumer && <VideoView
 						consumer={webcamConsumer}

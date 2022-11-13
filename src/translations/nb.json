@@ -249,6 +249,8 @@
 	"tooltip.settings": "Vis innstillinger",
 	"tooltip.startLocalRecording": "Start lokalt opptak",
 	"tooltip.stopLocalRecording": "Stop lokalt opptak",
+	"tooltip.startTranscribing": "Start undertekster",
+	"tooltip.stopTranscribing": "Stopp undertekster",
 	"tooltip.unLockRoom": "Lås opp møtet",
 	"tooltip.unMuteParticipant": "Unmute lyd",
 	"tooltip.unMuteParticipantVideo": "Unmute video",

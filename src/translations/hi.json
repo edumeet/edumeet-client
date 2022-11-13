@@ -248,6 +248,8 @@
 	"tooltip.settings": "सेटिंग दिखाएँ",
 	"tooltip.startLocalRecording": null,
 	"tooltip.stopLocalRecording": null,
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "कमरे में प्रवेश होने पर लगी रोक हटा दी",
 	"tooltip.unMuteParticipant": " प्रतिभागी के स्क्रीन की साझेधारी स्थगित, प्रबंधक द्वारा ",
 	"tooltip.unMuteParticipantVideo": " प्रतिभागी की विडियो स्थगित, प्रबंधक द्वारा ",
