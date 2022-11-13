@@ -249,6 +249,8 @@
 	"tooltip.settings": "Show settings",
 	"tooltip.startLocalRecording": "Start local recording",
 	"tooltip.stopLocalRecording": "Stop local recording",
+	"tooltip.startTranscribing": "Start transcribing",
+	"tooltip.stopTranscribing": "Stop transcribing",
 	"tooltip.unLockRoom": "Unlock room",
 	"tooltip.unMuteParticipant": "Unmute audio",
 	"tooltip.unMuteParticipantVideo": "Unmute video",

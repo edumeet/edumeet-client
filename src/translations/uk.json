@@ -248,6 +248,8 @@
 	"tooltip.settings": "Показати налаштування",
 	"tooltip.startLocalRecording": null,
 	"tooltip.stopLocalRecording": null,
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "Розблокувати кімнату",
 	"tooltip.unMuteParticipant": null,
 	"tooltip.unMuteParticipantVideo": null,

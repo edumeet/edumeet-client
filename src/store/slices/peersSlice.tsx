@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { PeerTranscript, Transcript } from '../../services/mediaService';
 import { roomActions } from './roomSlice';
 
 export interface Peer {
@@ -17,9 +18,10 @@ export interface Peer {
 	raisedHand?: boolean;
 	raisedHandTimestamp?: Date;
 	roles: number[]; // Role IDs
+	transcripts?: Transcript[];
 }
 
-type PeerUpdate = Omit<Peer, | 'roles'>;
+type PeerUpdate = Omit<Peer, 'roles' | 'transcripts'>;
 
 export type PeersState = Peer[];
 
@@ -101,6 +103,41 @@ const peersSlice = createSlice({
 				peer.roles =
 					peer.roles.filter((role) => role !== roleId);
 			}
+		}),
+		updateTranscript: ((state, action: PayloadAction<PeerTranscript>) => {
+			const { id, transcript, peerId, done } = action.payload;
+			const peer = state.find((p) => p.id === peerId);
+
+			if (peer) {
+				if (!peer.transcripts)
+					peer.transcripts = [];
+
+				const oldTranscript = peer.transcripts.find((t) => t.id === id);
+
+				if (oldTranscript) {
+					oldTranscript.transcript = transcript;
+					oldTranscript.done = done;
+				} else {
+					const newTranscript = { id, transcript, done };
+
+					peer.transcripts.push(newTranscript);
+				}
+			}
+		}),
+		removeTranscript: ((state, action: PayloadAction<Omit<PeerTranscript, 'transcript' | 'done'>>) => {
+			const { id, peerId } = action.payload;
+			const peer = state.find((p) => p.id === peerId);
+
+			if (peer) {
+				peer.transcripts =
+					peer.transcripts?.filter((t) => t.id !== id);
+			}
+		}),
+		clearTranscripts: ((state, action: PayloadAction<string>) => {
+			const peer = state.find((p) => p.id === action.payload);
+
+			if (peer)
+				peer.transcripts = [];
 		}),
 	},
 	extraReducers: (builder) => {

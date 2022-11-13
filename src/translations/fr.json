@@ -248,6 +248,8 @@
 	"tooltip.settings": "Afficher les paramètres",
 	"tooltip.startLocalRecording": null,
 	"tooltip.stopLocalRecording": null,
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "Dé-privatisation de la salle",
 	"tooltip.unMuteParticipant": null,
 	"tooltip.unMuteParticipantVideo": null,

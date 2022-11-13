@@ -248,6 +248,8 @@
 	"tooltip.settings": "Einstellungen",
 	"tooltip.startLocalRecording": "Aufnahme starten",
 	"tooltip.stopLocalRecording": "Aufnahme beenden",
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "Raum entsperren",
 	"tooltip.unMuteParticipant": "Teilnehmer-Audio erneut für mich starten",
 	"tooltip.unMuteParticipantVideo": "Teilnehmer-Video erneut für mich starten",

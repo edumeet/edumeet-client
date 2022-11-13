@@ -248,6 +248,8 @@
 	"tooltip.settings": "Ayarları göster",
 	"tooltip.startLocalRecording": null,
 	"tooltip.stopLocalRecording": null,
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "Oda kilidini aç",
 	"tooltip.unMuteParticipant": "Katılımcının sesini aç",
 	"tooltip.unMuteParticipantVideo": "Katılımcı videosunu devam ettir",

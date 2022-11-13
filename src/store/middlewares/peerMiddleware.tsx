@@ -44,6 +44,7 @@ const createPeerMiddleware = ({
 									roles,
 									raisedHand,
 									raisedHandTimestamp,
+									transcripts: [],
 								}));
 
 								break;

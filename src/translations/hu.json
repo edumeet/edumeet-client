@@ -248,6 +248,8 @@
 	"tooltip.settings": "Beállítások",
 	"tooltip.startLocalRecording": "Helyi felvétel indítása",
 	"tooltip.stopLocalRecording": "Helyi felvétel leállítása",
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "konferenciába való belépés engedélyezése",
 	"tooltip.unMuteParticipant": "Részvevő hangnémítás visszavonása",
 	"tooltip.unMuteParticipantVideo": "Résztvevő videonémítás visszavonása",

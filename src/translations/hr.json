@@ -248,6 +248,8 @@
 	"tooltip.settings": "Postavke",
 	"tooltip.startLocalRecording": "Pokreni lokalno snimanje",
 	"tooltip.stopLocalRecording": "Zaustavi lokalno snimanje",
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "Otključaj sobu",
 	"tooltip.unMuteParticipant": "Omogući zvuk sudionika",
 	"tooltip.unMuteParticipantVideo": "Omogući video sudionika",

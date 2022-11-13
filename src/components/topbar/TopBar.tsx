@@ -44,6 +44,8 @@ import ScreenshareButton from '../controlbuttons/ScreenshareButton';
 import ExtraVideoButton from '../controlbuttons/ExtraVideoButton';
 import ExtraVideo from '../menuitems/ExtraVideo';
 import Filesharing from '../menuitems/Filesharing';
+import TranscriptionButton from '../controlbuttons/TranscriptionButton';
+import Transcription from '../menuitems/Transcription';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -97,6 +99,7 @@ const TopBar = ({
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 	const canRecord = useAppSelector((state) => state.me.canRecord);
+	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
 	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
 	const unread = useAppSelector(unreadSelector);
@@ -150,6 +153,7 @@ const TopBar = ({
 						}
 					</GrowingDiv>
 					<DesktopDiv>
+						{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
 						<FilesharingButton type='iconbutton' />
 						<ExtraVideoButton type='iconbutton' />
 						{ canRecord && <RecordButton type='iconbutton' /> }
@@ -195,6 +199,7 @@ const TopBar = ({
 				<Fullscreen onClick={handleMenuClose} />
 				<ExtraVideo onClick={handleMenuClose} />
 				<Filesharing onClick={handleMenuClose} />
+				{ canTranscribe && <Transcription onClick={handleMenuClose} /> }
 			</FloatingMenu>
 		</Fragment>
 	);

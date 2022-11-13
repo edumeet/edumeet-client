@@ -248,6 +248,8 @@
 	"tooltip.settings": "Mostra impostazioni",
 	"tooltip.startLocalRecording": "Comincia la videoregistrazione",
 	"tooltip.stopLocalRecording": "Sospendi la videoregistrazione",
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "Sblocca stanza",
 	"tooltip.unMuteParticipant": "Riabilita audio utente",
 	"tooltip.unMuteParticipantVideo": "Riabilita video utente",

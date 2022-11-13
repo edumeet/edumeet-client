@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { MediaDevice } from '../services/deviceService';
+import { Transcript } from '../services/mediaService';
 import { Permission, Role } from '../utils/roles';
 import { StateConsumer } from './slices/consumersSlice';
 import { FilesharingFile } from './slices/filesharingSlice';
@@ -428,6 +429,20 @@ export const makePeerSelector = (id: string): Selector<Peer | undefined> => {
 	return createSelector(
 		peersSelector,
 		(peers: Peer[]) => peers.find((peer) => peer.id === id)
+	);
+};
+
+/**
+ * Factory function that returns a selector that returns the array of
+ * transcripts for a given peer.
+ * 
+ * @param {string} id - The peer ID.
+ * @returns {Selector<PeerTranscript[]>} Selector for the transcripts.
+ */
+export const makePeerTranscriptsSelector = (id: string): Selector<Transcript[]> => {
+	return createSelector(
+		peersSelector,
+		(peers: Peer[]) => peers.find((peer) => peer.id === id)?.transcripts || []
 	);
 };
 

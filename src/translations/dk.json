@@ -248,6 +248,8 @@
 	"tooltip.settings": "Vis indstillinger",
 	"tooltip.startLocalRecording": null,
 	"tooltip.stopLocalRecording": null,
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "Lås op plads",
 	"tooltip.unMuteParticipant": null,
 	"tooltip.unMuteParticipantVideo": null,

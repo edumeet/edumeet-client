@@ -73,12 +73,12 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	supportUrl: 'https://support.example.com',
 	privacyUrl: 'privacy/privacy.html',
 	theme: {
-		backgroundImage: 'images/background.jpg',
+		background: 'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
 		appBarColor: '#313131',
 		logo: 'images/logo.edumeet.svg',
 		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
 		peerBackroundColor: 'rgba(49, 49, 49, 0.9)',
-		peerShadow: '0px',
+		peerShadow: 'rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px',
 		peerAvatar: 'images/buddy.svg',
 		chatColor: 'rgba(224, 224, 224, 0.52)'
 	}

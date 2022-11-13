@@ -248,6 +248,8 @@
 	"tooltip.settings": "Εμφάνιση ρυθμίσεων",
 	"tooltip.startLocalRecording": null,
 	"tooltip.stopLocalRecording": null,
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "Ξεκλείδωμα δωματίου",
 	"tooltip.unMuteParticipant": null,
 	"tooltip.unMuteParticipantVideo": null,

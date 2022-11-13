@@ -248,6 +248,8 @@
 	"tooltip.settings": "Pokaż ustawienia",
 	"tooltip.startLocalRecording": "Rozpocznij nagrywanie lokalne",
 	"tooltip.stopLocalRecording": "Zatrzymaj nagrywanie lokalne",
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "Odklucz pokój",
 	"tooltip.unMuteParticipant": "Włącz ponownie audio uczestnika - dla siebie",
 	"tooltip.unMuteParticipantVideo": "Włącz ponownie wideo uczestnika - dla siebie",

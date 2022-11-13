@@ -248,6 +248,8 @@
 	"tooltip.settings": "設定",
 	"tooltip.startLocalRecording": null,
 	"tooltip.stopLocalRecording": null,
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "解鎖會議室",
 	"tooltip.unMuteParticipant": null,
 	"tooltip.unMuteParticipantVideo": null,

@@ -18,6 +18,13 @@ import { Logger } from 'edumeet-common';
 
 const logger = new Logger('MediaService');
 
+declare global {
+	interface Window {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		webkitSpeechRecognition: any;
+	}
+}
+
 export type MediaChange = 'pause' | 'resume' | 'close';
 
 export interface MediaCapabilities {
@@ -25,7 +32,17 @@ export interface MediaCapabilities {
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
 	canRecord: boolean;
+	canTranscribe: boolean;
 }
+
+export interface PeerTranscript {
+	id: string;
+	transcript: string;
+	peerId: string;
+	done: boolean;
+}
+
+export type Transcript = Omit<PeerTranscript, 'peerId'>;
 
 const changeEvent = {
 	pause: 'Paused',
@@ -58,6 +75,12 @@ export declare interface MediaService {
 	on(event: 'producerPaused', listener: (producer: Producer) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'producerResumed', listener: (producer: Producer) => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'transcriptionStarted', listener: () => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'transcriptionStopped', listener: () => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'transcript', listener: (transcription: PeerTranscript) => void): this;
 }
 
 export class MediaService extends EventEmitter {
@@ -76,6 +99,9 @@ export class MediaService extends EventEmitter {
 	private p2p = true;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private trace: any;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	private speechRecognition?: any;
+	private speechRecognitionRunning = false;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
@@ -383,7 +409,28 @@ export class MediaService extends EventEmitter {
 						});
 
 						dataConsumer.once('transportclose', () => {
-							this.closeDataConsumer(dataConsumer.id);
+							this.closeDataConsumer(dataConsumer.id, false);
+						});
+
+						dataConsumer.on('message', (message) => {
+							if (typeof message !== 'string')
+								return;
+
+							const { method, data } = JSON.parse(message);
+
+							switch (method) {
+								case 'transcript': {
+									const { transcript, id: transcriptionId, done } = data;
+
+									this.emit('transcript', { id: transcriptionId, transcript, peerId, done });
+
+									break;
+								}
+
+								default: {
+									logger.warn('unknown dataConsumer method "%s"', method);
+								}
+							}
 						});
 
 						this.emit('dataConsumerCreated', dataConsumer);
@@ -401,6 +448,14 @@ export class MediaService extends EventEmitter {
 							changeEvent[notification.method] as MediaChange,
 							false
 						);
+						break;
+					}
+
+					case 'dataConsumerClosed': {
+						const { dataConsumerId } = notification.data;
+
+						this.closeDataConsumer(dataConsumerId, false);
+
 						break;
 					}
 
@@ -430,6 +485,7 @@ export class MediaService extends EventEmitter {
 			canShareScreen: Boolean(navigator.mediaDevices.getDisplayMedia) &&
 				this.mediasoup.canProduce('video'),
 			canRecord: Boolean(MediaRecorder && window.showSaveFilePicker),
+			canTranscribe: Boolean(window.webkitSpeechRecognition),
 		};
 	}
 
@@ -698,6 +754,97 @@ export class MediaService extends EventEmitter {
 			this.closeDataProducer(dataProducer.id, false));
 
 		return dataProducer;
+	}
+
+	public async startTranscription(): Promise<void> {
+		if (!window.webkitSpeechRecognition)
+			return logger.warn('startTranscription() | SpeechRecognition not supported');
+		if (this.speechRecognitionRunning)
+			return logger.warn('startTranscription() | SpeechRecognition already started');
+
+		const dataProducer = await this.produceData({
+			ordered: false,
+			maxPacketLifeTime: 3000,
+			label: 'transcription',
+		});
+
+		this.speechRecognition = new window.webkitSpeechRecognition();
+
+		this.speechRecognition.continuous = true;
+		this.speechRecognition.interimResults = true;
+
+		let transcriptId = Math.round(Math.random() * 10000000);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		this.speechRecognition.onresult = (event: any) => {
+			logger.debug('speech "onresult" [event:%o]', event);
+
+			let isFinal = false;
+			let speechResult = '';
+
+			for (let i = event.resultIndex; i < event.results.length; i++) {
+				if (event.results[i].isFinal)
+					isFinal = true;
+
+				speechResult += event.results[i][0].transcript;
+			}
+
+			const data = JSON.stringify({
+				method: 'transcript',
+				data: {
+					id: transcriptId,
+					transcript: speechResult,
+					done: isFinal
+				}
+			});
+
+			try {
+				dataProducer.send(data);
+			} catch (error) {
+				logger.error('dataProducer error sending message [error:%o]', error);
+			}
+
+			if (isFinal) { // We want to send the transcript now
+				logger.debug('speech final result [transcript:%s]', speechResult);
+
+				transcriptId = Math.round(Math.random() * 10000000);
+			} else
+				logger.debug('speech interim result [transcript:%s]', speechResult);
+		};
+
+		this.speechRecognition.onend = () => {
+			logger.debug('speech "onend"');
+
+			if (this.speechRecognitionRunning)
+				this.speechRecognition.start();
+			else
+				this.closeDataProducer(dataProducer.id, true);
+		};
+
+		this.speechRecognition.onerror = (event: Event) => {
+			logger.error('speech "onerror" [event:%o]', event);
+
+			if (this.speechRecognitionRunning)
+				this.speechRecognition.start();
+		};
+
+		this.speechRecognitionRunning = true;
+		this.speechRecognition.start();
+
+		this.emit('transcriptionStarted');
+	}
+
+	public stopTranscription(): void {
+		if (!this.speechRecognitionRunning)
+			return logger.warn('stopTranscription() | SpeechRecognition not started');
+
+		this.speechRecognitionRunning = false;
+		this.speechRecognition.stop();
+		delete this.speechRecognition.onend;
+		delete this.speechRecognition.onresult;
+		this.speechRecognition = undefined;
+
+		this.emit('transcriptionStopped');
 	}
 
 	private rtcStatsCloseCallback() {

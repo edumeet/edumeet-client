@@ -2,7 +2,8 @@ import { defaultEdumeetConfig, EdumeetConfig } from './types';
 
 declare module '@mui/material/styles' {
 	interface Theme {
-		backgroundImage: string;
+		backgroundImage?: string;
+		background?: string;
 		appBarColor: string;
 		logo: string;
 		activeSpeakerBorder: string;
@@ -14,6 +15,7 @@ declare module '@mui/material/styles' {
 
 	interface ThemeOptions {
 		backgroundImage?: string;
+		background?: string;
 		appBarColor?: string;
 		logo?: string;
 		activeSpeakerBorder?: string;

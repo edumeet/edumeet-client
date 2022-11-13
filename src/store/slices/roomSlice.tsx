@@ -19,6 +19,8 @@ export interface RoomState {
 	clearChatInProgress?: boolean;
 	clearFileSharingInProgress?: boolean;
 	startFileSharingInProgress?: boolean;
+	startTranscriptionInProgress?: boolean;
+	transcriptionRunning?: boolean;
 	fullscreenConsumer?: string;
 	windowedConsumers: string[];
 	selectedPeers: string[];

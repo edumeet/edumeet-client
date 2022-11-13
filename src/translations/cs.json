@@ -248,6 +248,8 @@
 	"tooltip.settings": "Zobrazit nastavení",
 	"tooltip.startLocalRecording": null,
 	"tooltip.stopLocalRecording": null,
+	"tooltip.startTranscribing": null,
+	"tooltip.stopTranscribing": null,
 	"tooltip.unLockRoom": "Odemknout místnost",
 	"tooltip.unMuteParticipant": "Zapnout audio",
 	"tooltip.unMuteParticipantVideo": "Zapnout video",

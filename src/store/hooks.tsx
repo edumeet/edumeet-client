@@ -23,6 +23,7 @@ import {
 	makeDevicesSelector,
 	makePeerConsumerSelector,
 	makePeerSelector,
+	makePeerTranscriptsSelector,
 	makePermissionSelector,
 	PeerConsumers
 } from './selectors';
@@ -30,6 +31,7 @@ import { notificationsActions } from './slices/notificationsSlice';
 import { Peer } from './slices/peersSlice';
 import type { RootState, AppDispatch } from './store';
 import { LeavePromptContext } from './store';
+import { Transcript } from '../services/mediaService';
 
 /**
  * Hook to access the redux dispatch function.
@@ -56,6 +58,16 @@ export const usePeerConsumers = (peerId: string): PeerConsumers => {
 		useMemo(() => makePeerConsumerSelector(peerId), []);
 
 	return useAppSelector(getPeerConsumers);
+};
+
+/**
+ * Hook to access peer transcription.
+ */
+export const usePeerTranscripts = (peerId: string): Transcript[] => {
+	const getPeerTranscripts =
+		useMemo(() => makePeerTranscriptsSelector(peerId), []);
+
+	return useAppSelector(getPeerTranscripts);
 };
 
 /**
