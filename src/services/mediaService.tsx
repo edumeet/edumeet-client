@@ -867,6 +867,8 @@ export class MediaService extends EventEmitter {
 		this.monitor = createClientMonitor(edumeetConfig.observertc);
 		this.monitor.collectors.collectFromMediasoupDevice(this.mediasoup);
 		logger.debug('Monitor is initialized');
+
+		
 	}
 
 	public rtcStatsInit(rtcStatsOptions?: RTCStatsOptions): void {

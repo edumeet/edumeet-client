@@ -70,7 +70,7 @@ const VideoView = ({
 		if (!track || !videoElement.current) return;
 
 		const stream = new MediaStream();
-
+		
 		stream.addTrack(track);
 		videoElement.current.srcObject = stream;
 		videoElement.current.play().catch();
