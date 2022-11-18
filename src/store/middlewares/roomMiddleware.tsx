@@ -59,6 +59,7 @@ const createRoomMiddleware = ({
 								});
 								if (clientMonitorSenderConfig) {
 									const roomId = getState().room.name;
+
 									mediaService.getMonitor()?.setRoomId(roomId);
 									mediaService.getMonitor()?.connect(clientMonitorSenderConfig);
 								}

@@ -15,11 +15,13 @@ export interface UiState {
 	lobbyDialogOpen: boolean;
 	extraVideoDialogOpen: boolean;
 	currentSettingsTab: SettingsTab;
+	showStats: boolean;
 }
 
 type UiUpdate = Partial<Omit<UiState, 'currentSettingsTab'>>;
 
 const initialState: UiState = {
+	showStats: false,
 	drawerWindow: false,
 	settingsOpen: false,
 	filesharingOpen: false,

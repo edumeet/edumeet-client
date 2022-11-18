@@ -11,7 +11,7 @@
 		"@jitsi/rtcstats": "github:jitsi/rtcstats",
 		"@mui/icons-material": "^5.4.2",
 		"@mui/material": "^5.4.3",
-		"@observertc/client-monitor-js": "1.3.0-SNAPSHOT.ed5e446ef3ca6ad72f212ce096186aea23c71dfe",
+		"@observertc/client-monitor-js": "1.3.0-SNAPSHOT.7ea9b89e5a64bead0af52308e4cc17e007d77218",
 		"@reduxjs/toolkit": "^1.5.1",
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/react": "^13.3.0",
