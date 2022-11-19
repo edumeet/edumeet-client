@@ -866,7 +866,9 @@ export class MediaService extends EventEmitter {
 		}
 		this.monitor = createClientMonitor(edumeetConfig.observertc);
 		this.monitor.collectors.addMediasoupDevice(this.mediasoup);
-
+		this.monitor.events.onStatsCollected(statsEntries => {
+			logger.debug(`initMonitor(): The latest stats entries [statsEntries: %o]`, statsEntries);
+		});
 		logger.debug('Monitor is initialized');
 		
 	}

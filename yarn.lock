@@ -1725,10 +1725,10 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@observertc/client-monitor-js@1.3.0-SNAPSHOT.7ea9b89e5a64bead0af52308e4cc17e007d77218":
-  version "1.3.0-SNAPSHOT.7ea9b89e5a64bead0af52308e4cc17e007d77218"
-  resolved "https://registry.yarnpkg.com/@observertc/client-monitor-js/-/client-monitor-js-1.3.0-SNAPSHOT.7ea9b89e5a64bead0af52308e4cc17e007d77218.tgz#d464683a8351c0f5a1447805b09b92a75494dea2"
-  integrity sha512-hV0eqsTKuyK9hLOVYiO91YFWHsSpS7efdv/wCR7QL3EU+PZEnEi0LCi1vqvwYjWtsiqOfs39y3Ob7dLIl3Ky6w==
+"@observertc/client-monitor-js@1.3.0-SNAPSHOT.050ba8bcc0847d1368a3f3491778a1435fa7fe17":
+  version "1.3.0-SNAPSHOT.050ba8bcc0847d1368a3f3491778a1435fa7fe17"
+  resolved "https://registry.yarnpkg.com/@observertc/client-monitor-js/-/client-monitor-js-1.3.0-SNAPSHOT.050ba8bcc0847d1368a3f3491778a1435fa7fe17.tgz#75daaa4d244a6727bba02fff4356380762c085f4"
+  integrity sha512-S5p/s7mkk8xaOED14uDqpfzxGTCyHhbUzGHtkZG5HXY/uVmpKnM1GvctFQ48uiD0KHXJOrt+F0qWeAs+NIY9Gw==
   dependencies:
     "@observertc/monitor-schemas" "2.2.0-SNAPSHOT.08a432335fee953aa5ebaeb7a81b12b5d41a5d78"
     "@types/events" "^3.0.0"
