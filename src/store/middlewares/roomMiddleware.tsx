@@ -35,6 +35,7 @@ const createRoomMiddleware = ({
 							case 'roomReady': {
 								const {
 									sessionId,
+									creationTimestamp,
 									roles,
 									roomPermissions,
 									userRoles,
@@ -45,6 +46,7 @@ const createRoomMiddleware = ({
 
 								batch(() => {
 									dispatch(roomActions.setSessionId(sessionId));
+									dispatch(roomActions.setCreationTimestamp(creationTimestamp));
 									dispatch(permissionsActions.addRoles(roles));
 									dispatch(permissionsActions.setRoomPermissions(roomPermissions));
 									dispatch(permissionsActions.setUserRoles(userRoles));
