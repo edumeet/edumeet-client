@@ -70,7 +70,7 @@ const DurationDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
 	padding: theme.spacing(0, 2),
 	'.MuiTypography-root': {
-		margin: theme.spacing(0, 1),
+		marginLeft: theme.spacing(1),
 	}
 }));
 
@@ -154,9 +154,6 @@ const TopBar = ({
 
 			const driftAwareTimer = () => {
 				const dt = Date.now() - expected;
-
-				if (dt > interval)
-					return;
 
 				expected += interval;
 				setMeetingDuration(Date.now() - roomCreationTimestamp);
