@@ -5,7 +5,7 @@ import {
 	Typography
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -46,6 +46,7 @@ import ExtraVideo from '../menuitems/ExtraVideo';
 import Filesharing from '../menuitems/Filesharing';
 import TranscriptionButton from '../controlbuttons/TranscriptionButton';
 import Transcription from '../menuitems/Transcription';
+import { AccessTime } from '@mui/icons-material';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -62,6 +63,14 @@ const LogoImg = styled('img')(({ theme }) => ({
 	marginLeft: 20,
 	[theme.breakpoints.up('sm')]: {
 		display: 'block'
+	}
+}));
+
+const DurationDiv = styled('div')(({ theme }) => ({
+	display: 'flex',
+	padding: theme.spacing(0, 2),
+	'.MuiTypography-root': {
+		marginLeft: theme.spacing(1),
 	}
 }));
 
@@ -113,6 +122,51 @@ const TopBar = ({
 
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+	const roomCreationTimestamp = useAppSelector((state) => state.room.creationTimestamp);
+	const [ meetingDuration, setMeetingDuration ] = useState<number>(0);
+
+	const formatDuration = (duration: number) => {
+		const durationInSeconds = Math.round(duration / 1000);
+
+		const hours = Math.floor(durationInSeconds / 3600);
+		const minutes = Math.floor((durationInSeconds - (hours * 3600)) / 60);
+		const seconds = durationInSeconds - (minutes * 60) - (hours * 3600);
+
+		const formattedElements: Array<string> = new Array(3);
+
+		formattedElements[0] = seconds < 10 ? '0'.concat(seconds.toString()) : seconds.toString();
+		formattedElements[1] = (minutes < 10 ? 
+			'0'.concat(minutes.toString()) : minutes.toString()
+		).concat(':');
+		formattedElements[2] = hours.toString().concat(':');
+
+		const formattedString = (
+			(hours ? formattedElements[2] : '') + formattedElements[1] + formattedElements[0]
+		);
+
+		return formattedString;
+	};
+
+	useEffect(() => {
+		if (roomCreationTimestamp) {
+			const interval = 1000;
+			let expected = Date.now() + interval;
+
+			const driftAwareTimer = () => {
+				const dt = Date.now() - expected;
+
+				expected += interval;
+				setMeetingDuration(Date.now() - roomCreationTimestamp);
+
+				setTimeout(driftAwareTimer, Math.max(0, interval - dt));
+			};
+
+			const computeDuration = setTimeout(driftAwareTimer, interval);
+
+			return () => clearInterval(computeDuration);
+		}
+	}, []);
+
 	return (
 		<Fragment>
 			<StyledAppBar position='fixed'>
@@ -135,6 +189,10 @@ const TopBar = ({
 							{edumeetConfig.title}
 						</Typography>
 					}
+					<DurationDiv>
+						<AccessTime />
+						<Typography>{ formatDuration(meetingDuration) }</Typography>
+					</DurationDiv>
 					<GrowingDiv>
 						{ Boolean(fullscreenConsumer) &&
 							<>

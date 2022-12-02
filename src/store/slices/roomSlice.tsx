@@ -9,6 +9,7 @@ export type RoomMode = 'P2P' | 'SFU';
 export interface RoomState {
 	name?: string;
 	sessionId?: string;
+	creationTimestamp?: number;
 	activeSpeakerId?: string;
 	lockInProgress?: boolean;
 	localeInProgress?: boolean;
@@ -102,6 +103,9 @@ const roomSlice = createSlice({
 		}),
 		setSessionId: ((state, action: PayloadAction<string>) => {
 			state.sessionId = action.payload;
+		}),
+		setCreationTimestamp: ((state, action: PayloadAction<number>) => {
+			state.creationTimestamp = action.payload;
 		}),
 	},
 	extraReducers: (builder) => {
