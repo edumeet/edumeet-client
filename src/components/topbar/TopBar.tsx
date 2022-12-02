@@ -165,7 +165,7 @@ const TopBar = ({
 
 			return () => clearInterval(computeDuration);
 		}
-	});
+	}, []);
 
 	return (
 		<Fragment>
