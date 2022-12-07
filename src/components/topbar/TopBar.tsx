@@ -163,7 +163,7 @@ const TopBar = ({
 
 			const computeDuration = setTimeout(driftAwareTimer, interval);
 
-			return () => clearInterval(computeDuration);
+			return () => clearTimeout(computeDuration);
 		}
 	}, []);
 
