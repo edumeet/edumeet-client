@@ -499,6 +499,11 @@ export const mutedPTTLabel = (): ReactNode => intl.formatMessage({
 	defaultMessage: 'You are muted{br}hold down SPACE-BAR to talk'
 }, { br: <br /> });
 
+export const audioOnlyModeLabel = (): string => intl.formatMessage({
+	id: 'label.audioOnlyMode',
+	defaultMessage: 'Use audio-only mode'
+});
+
 export const audioSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.audioSettings',
 	defaultMessage: 'Audio settings'
