@@ -44,6 +44,7 @@
 	"label.addVideo": "Video hinzufügen",
 	"label.advanced": "Fortgeschrittene",
 	"label.appearance": "Ansicht",
+	"label.audioOnlyMode": null,
 	"label.audioSettings": null,
 	"label.auth": null,
 	"label.bold": "bold",
