@@ -69,7 +69,6 @@ const LogoImg = styled('img')(({ theme }) => ({
 
 const DurationDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
-	verticalAlign: 'middle',
 	padding: theme.spacing(0, 2),
 	'.MuiTypography-root': {
 		marginLeft: theme.spacing(1),
