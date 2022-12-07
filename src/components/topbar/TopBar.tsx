@@ -55,7 +55,8 @@ interface TopBarProps {
 }
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-	backgroundColor: theme.appBarColor
+	backgroundColor: theme.appBarColor,
+	height: '64px',
 }));
 
 const LogoImg = styled('img')(({ theme }) => ({
@@ -68,6 +69,7 @@ const LogoImg = styled('img')(({ theme }) => ({
 
 const DurationDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
+	verticalAlign: 'middle',
 	padding: theme.spacing(0, 2),
 	'.MuiTypography-root': {
 		marginLeft: theme.spacing(1),
@@ -170,7 +172,9 @@ const TopBar = ({
 	return (
 		<Fragment>
 			<StyledAppBar position='fixed'>
-				<Toolbar>
+				<Toolbar sx={{
+					margin: 'auto 0'
+				}}>
 					<PulsingBadge
 						color='secondary'
 						badgeContent={unread}
