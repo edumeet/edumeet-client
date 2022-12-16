@@ -32,6 +32,7 @@ const createPeerMiddleware = ({
 									id,
 									displayName,
 									picture,
+									audioOnly,
 									roles,
 									raisedHand,
 									raisedHandTimestamp,
@@ -41,6 +42,7 @@ const createPeerMiddleware = ({
 									id,
 									displayName,
 									picture,
+									audioOnly,
 									roles,
 									raisedHand,
 									raisedHandTimestamp,
@@ -59,12 +61,14 @@ const createPeerMiddleware = ({
 
 							case 'changeDisplayName':
 							case 'changePicture':
+							case 'changeAudioOnly':
 							case 'raisedHand': {
 								const {
 									peerId,
 									displayName,
 									// oldDisplayName,
 									picture,
+									audioOnly,
 									raisedHand,
 									raisedHandTimestamp
 								} = notification.data;
@@ -74,6 +78,7 @@ const createPeerMiddleware = ({
 										id: peerId,
 										displayName,
 										picture,
+										audioOnly,
 										raisedHand,
 										raisedHandTimestamp
 									})
@@ -117,11 +122,17 @@ const createPeerMiddleware = ({
 							}
 
 							case 'lobby:changeDisplayName':
-							case 'lobby:changePicture': {
-								const { peerId, picture, displayName } = notification.data;
+							case 'lobby:changePicture':
+							case 'lobby:changeAudioOnly': {
+								const { peerId, audioOnly, picture, displayName } = notification.data;
 
 								dispatch(
-									lobbyPeersActions.updatePeer({ id: peerId, displayName, picture }));
+									lobbyPeersActions.updatePeer({
+										id: peerId,
+										displayName,
+										picture,
+										audioOnly
+									}));
 		
 								break;
 							}
