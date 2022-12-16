@@ -80,3 +80,31 @@ export const setRaisedHand = (raisedHand: boolean): AppThunk<Promise<void>> => a
 		dispatch(meActions.setRaiseHandInProgress(false));
 	}
 };
+
+/**
+ * This thunk action sets the audio-only mode state of the client.
+ * 
+ * @param audioOnly - Audio-only mode.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const setAudioOnly = (audioOnly: boolean): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('setAudioOnly() [audioOnly:%s]', audioOnly);
+
+	dispatch(meActions.setAudioOnlyInProgress(true));
+
+	try {
+		await signalingService.sendRequest('changeAudioOnly', { audioOnly });
+
+		dispatch(meActions.setAudioOnly(audioOnly));
+	} catch (error) {
+		logger.error('setAudioOnly() [error:"%o"]', error);
+
+		dispatch(meActions.setAudioOnly(!audioOnly));
+	} finally {
+		dispatch(meActions.setAudioOnlyInProgress(false));
+	}
+};
