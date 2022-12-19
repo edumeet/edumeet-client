@@ -1,4 +1,5 @@
 import { ThemeOptions } from '@mui/material';
+import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	loginEnabled: false,
@@ -81,6 +82,10 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		peerShadow: 'rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px',
 		peerAvatar: 'images/buddy.svg',
 		chatColor: 'rgba(224, 224, 224, 0.52)'
+	},
+	observertc: {
+		collectingPeriodInMs: 5000,
+		statsExpirationTimeInMs: 60000,
 	}
 };
 
@@ -124,6 +129,7 @@ export interface EdumeetConfig {
 	supportUrl: string;
 	privacyUrl: string;
 	theme: ThemeOptions;
+	observertc: ClientMonitorConfig;
 }
 
 export type RoomLayout = 'filmstrip' | 'democratic';

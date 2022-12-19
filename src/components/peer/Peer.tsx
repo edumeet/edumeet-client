@@ -8,6 +8,7 @@ import PeerActionsButton from '../controlbuttons/PeerActionsButton';
 import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
+import PeerStatsView from '../peerstatsview/PeerStatsView';
 import PeerTranscription from '../peertranscription/PeerTranscription';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
@@ -35,6 +36,7 @@ const Peer = ({
 	const peer = usePeer(id);
 	const activeSpeaker = useAppSelector((state) => id === state.room.activeSpeakerId);
 	const showParticipant = !hideNonVideo || (hideNonVideo && webcamConsumer);
+	const showStats = useAppSelector((state) => state.ui.showStats);
 
 	return (
 		<>
@@ -69,6 +71,7 @@ const Peer = ({
 					{ webcamConsumer && <VideoView
 						consumer={webcamConsumer}
 					/> }
+					{webcamConsumer && showStats && <PeerStatsView consumerId={webcamConsumer.id}/>}
 				</VideoBox>
 			)}
 			
@@ -89,6 +92,7 @@ const Peer = ({
 						<WindowedVideoButton consumerId={screenConsumer.id} />
 					</MediaControls>
 					<VideoView consumer={screenConsumer} contain />
+					{showStats && <PeerStatsView consumerId={screenConsumer.id}/>}
 				</VideoBox>
 			)}
 			{ extraVideoConsumers?.map((consumer) => (
@@ -109,6 +113,7 @@ const Peer = ({
 						<WindowedVideoButton consumerId={consumer.id} />
 					</MediaControls>
 					<VideoView consumer={consumer} />
+					{showStats && <PeerStatsView consumerId={consumer.id}/>}
 				</VideoBox>
 			)) }
 		</>

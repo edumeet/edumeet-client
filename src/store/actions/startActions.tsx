@@ -199,6 +199,14 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				break;
 			}
 
+			case 'q': {
+				const showStats = getState().ui.showStats;
+
+				dispatch(uiActions.setUi({ showStats: !showStats }));
+				
+				break;
+			}
+
 			case ' ': {
 				const audioInProgress = getState().me.audioInProgress;
 

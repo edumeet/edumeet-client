@@ -1,3 +1,4 @@
+import React from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
 import MicButton from '../controlbuttons/MicButton';
@@ -6,6 +7,7 @@ import StopProducerButton from '../controlbuttons/StopProducerButton';
 import WebcamButton from '../controlbuttons/WebcamButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
+import PeerStatsView from '../peerstatsview/PeerStatsView';
 import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
@@ -35,7 +37,8 @@ const Me = ({
 	const activeSpeaker =
 		useAppSelector((state) => state.me.id === state.room.activeSpeakerId);
 	const browser = useAppSelector((state) => state.me.browser);
-
+	const showStats = useAppSelector((state) => state.ui.showStats);
+	
 	return (
 		<>
 			<VideoBox
@@ -71,6 +74,7 @@ const Me = ({
 					mirrored={mirroredSelfView}
 					producer={webcamProducer}
 				/> }
+				{showStats && <PeerStatsView producerId={webcamProducer?.id}/>}
 			</VideoBox>
 			{ screenProducer && (
 				<VideoBox
@@ -94,6 +98,7 @@ const Me = ({
 						</MediaControls>
 					)}
 					<VideoView producer={screenProducer} contain />
+					{showStats && <PeerStatsView producerId={screenProducer.id}/>}
 				</VideoBox>
 			)}
 			{ extraVideoProducers.map((producer) => (
@@ -117,6 +122,7 @@ const Me = ({
 							producerId={producer.id}
 						/>
 					</MediaControls>
+					{showStats && <PeerStatsView producerId={producer?.id}/>}
 					<VideoView producer={producer} />
 				</VideoBox>
 			)) }

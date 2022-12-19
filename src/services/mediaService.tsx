@@ -15,6 +15,8 @@ import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
 import traceInit from '@jitsi/rtcstats/trace-ws';
 import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
 import { Logger } from 'edumeet-common';
+import { ClientMonitor, createClientMonitor } from '@observertc/client-monitor-js';
+import edumeetConfig from '../utils/edumeetConfig';
 
 const logger = new Logger('MediaService');
 
@@ -97,6 +99,7 @@ export class MediaService extends EventEmitter {
 	private peerTransports: Map<string, PeerTransport> = new Map();
 	private peers: string[] = [];
 	private p2p = true;
+	private monitor?: ClientMonitor;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private trace: any;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,6 +110,7 @@ export class MediaService extends EventEmitter {
 		super();
 
 		this.signalingService = signalingService;
+		this.initMonitor();
 	}
 
 	public init(): void {
@@ -132,6 +136,7 @@ export class MediaService extends EventEmitter {
 		}
 
 		this.tracks.clear();
+		this.monitor?.close();
 	}
 
 	public getConsumer(consumerId: string): Consumer | undefined {
@@ -152,6 +157,10 @@ export class MediaService extends EventEmitter {
 
 	public getTrack(trackId: string): MediaStreamTrack | undefined {
 		return this.tracks.get(trackId);
+	}
+
+	public getMonitor(): ClientMonitor | undefined {
+		return this.monitor;
 	}
 
 	public addTrack(track: MediaStreamTrack): void {
@@ -849,6 +858,20 @@ export class MediaService extends EventEmitter {
 
 	private rtcStatsCloseCallback() {
 		logger.debug('rtcStatsCloseCallback()');
+	}
+
+	public initMonitor(): void {
+		if (!edumeetConfig.observertc) {
+			return;
+		}
+
+		this.monitor = createClientMonitor(edumeetConfig.observertc);
+		this.monitor.collectors.addMediasoupDevice(this.mediasoup);
+		this.monitor.events.onStatsCollected((statsEntries) => {
+			logger.debug('initMonitor(): The latest stats entries [statsEntries: %o]', statsEntries);
+		});
+		logger.debug('Monitor is initialized');
+		
 	}
 
 	public rtcStatsInit(rtcStatsOptions?: RTCStatsOptions): void {
