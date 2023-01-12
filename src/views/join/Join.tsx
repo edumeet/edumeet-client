@@ -58,6 +58,15 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		dispatch(signalingActions.connect());
 	};
 
+	const headless = new URL(window.location.href).searchParams.get('headless');
+
+	if (headless) {
+		const myNewURL = window.location.href.split('?')[0];
+		
+		window.history.pushState({}, '', myNewURL);
+		handleJoin();
+	}
+
 	useEffect(() => {
 		dispatch(roomActions.updateRoom({ name: roomId }));
 
