@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 import { styled } from '@mui/material/styles';
 
 interface MediaControlsDivProps {
@@ -98,4 +98,4 @@ const MediaControls = ({
 	);
 };
 
-export default MediaControls;
+export default memo(MediaControls);

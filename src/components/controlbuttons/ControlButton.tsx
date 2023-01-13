@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 import { Fab, IconButton, styled, Tooltip } from '@mui/material';
 import { ButtonColor, ButtonSize } from '../../utils/types';
 
@@ -58,4 +58,4 @@ const ControlButton = ({
 	);
 };
 
-export default ControlButton;
+export default memo(ControlButton);
