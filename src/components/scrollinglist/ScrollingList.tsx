@@ -1,5 +1,5 @@
 import { styled } from '@mui/material';
-import { Component, createRef, ReactNode } from 'react';
+import { createRef, PureComponent, ReactNode } from 'react';
 
 const ScrollingListDiv = styled('div')(({ theme }) => ({
 	position: 'relative',
@@ -22,7 +22,7 @@ interface ScrollingListProps {
 type ScrollingListComponentProps =
 	Readonly<{ children?: ReactNode }> & Readonly<ScrollingListProps>;
 
-class ScrollingList extends Component<ScrollingListProps> {
+class ScrollingList extends PureComponent<ScrollingListProps> {
 	private readonly wrapperRef: React.RefObject<HTMLDivElement>;
 	private readonly bottomRef: React.RefObject<HTMLDivElement>;
 

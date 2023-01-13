@@ -1,6 +1,7 @@
 import { Badge, styled } from '@mui/material';
+import { memo } from 'react';
 
-export default styled(Badge)(({ theme }) => ({
+export default memo(styled(Badge)(({ theme }) => ({
 	badge: {
 		backgroundColor: theme.palette.secondary.main,
 		'&::after': {
@@ -23,4 +24,4 @@ export default styled(Badge)(({ theme }) => ({
 			opacity: 0
 		}
 	}
-}));
+})));

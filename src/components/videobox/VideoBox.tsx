@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 import { styled, SxProps, Theme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
@@ -77,4 +77,4 @@ const VideoBox = ({
 	);
 };
 
-export default VideoBox;
+export default memo(VideoBox);

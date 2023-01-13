@@ -1,4 +1,5 @@
 import { styled } from '@mui/material';
+import { memo } from 'react';
 import ClearChatButton from '../textbuttons/ClearChatButton';
 import { moderatorActionsLabel } from '../translated/translatedComponents';
 
@@ -35,4 +36,4 @@ const ChatModerator = (): JSX.Element => {
 	);
 };
 
-export default ChatModerator;
+export default memo(ChatModerator);

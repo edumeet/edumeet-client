@@ -5,6 +5,7 @@ import {
 	Select,
 	styled
 } from '@mui/material';
+import { memo } from 'react';
 import { MediaDevice } from '../../services/deviceService';
 
 interface DeviceChooserProps {
@@ -63,4 +64,4 @@ const DeviceChooser = ({
 	);
 };
 
-export default DeviceChooser;
+export default memo(DeviceChooser);

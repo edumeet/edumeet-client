@@ -1,4 +1,5 @@
 import { styled } from '@mui/material';
+import { memo } from 'react';
 import CloseMeetingButton from '../textbuttons/CloseMeetingButton';
 import MuteAllButton from '../textbuttons/MuteAllButton';
 import StopAllScreenshareButton from '../textbuttons/StopAllScreenshareButton';
@@ -24,4 +25,4 @@ const ListModerator = (): JSX.Element => {
 	);
 };
 
-export default ListModerator;
+export default memo(ListModerator);

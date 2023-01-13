@@ -1,4 +1,5 @@
 import { styled } from '@mui/material';
+import { memo } from 'react';
 import ClearFilesharingButton from '../textbuttons/ClearFilesharingButton';
 import { moderatorActionsLabel } from '../translated/translatedComponents';
 
@@ -35,4 +36,4 @@ const FilesharingModerator = (): JSX.Element => {
 	);
 };
 
-export default FilesharingModerator;
+export default memo(FilesharingModerator);

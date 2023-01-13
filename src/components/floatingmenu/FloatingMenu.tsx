@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 import { Menu } from '@mui/material';
 
 export interface MenuItemProps {
@@ -41,4 +41,4 @@ const FloatingMenu = ({
 	);
 };
 
-export default FloatingMenu;
+export default memo(FloatingMenu);
