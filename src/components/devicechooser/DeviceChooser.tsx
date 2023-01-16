@@ -22,8 +22,7 @@ interface DeviceChooserProps {
 export const ChooserDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
 	flexDirection: 'row',
-	marginTop: theme.spacing(2),
-	marginBottom: theme.spacing(2)
+	margin: theme.spacing(2, 0)
 }));
 
 export const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
