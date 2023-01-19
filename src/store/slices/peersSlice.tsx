@@ -17,6 +17,8 @@ export interface Peer {
 	raisedHandInProgress?: boolean;
 	raisedHand?: boolean;
 	raisedHandTimestamp?: Date;
+	escapeMeeting?: boolean;
+	escapeMeetingTimestamp?: Date;
 	roles: number[]; // Role IDs
 	transcripts?: Transcript[];
 }
@@ -57,7 +59,9 @@ const peersSlice = createSlice({
 					modifyRolesInProgress,
 					raisedHandInProgress,
 					raisedHand,
-					raisedHandTimestamp
+					raisedHandTimestamp,
+					escapeMeeting,
+					escapeMeetingTimestamp
 				} = action.payload;
 
 				if (displayName)
@@ -86,6 +90,10 @@ const peersSlice = createSlice({
 					peer.raisedHand = raisedHand;
 				if (raisedHandTimestamp !== undefined)
 					peer.raisedHandTimestamp = raisedHandTimestamp;
+				if (escapeMeeting !== undefined)
+					peer.escapeMeeting = escapeMeeting;
+				if (escapeMeetingTimestamp !== undefined)
+					peer.escapeMeetingTimestamp = escapeMeetingTimestamp;
 			}
 		}),
 		addRole: ((state, action: PayloadAction<{ id: string, roleId: number }>) => {
