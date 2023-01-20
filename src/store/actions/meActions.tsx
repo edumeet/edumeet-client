@@ -87,7 +87,9 @@ export const setRaisedHand = (raisedHand: boolean): AppThunk<Promise<void>> => a
  * @param escapeMeeting - Escape meeting.
  * @returns {AppThunk<Promise<void>>} Promise.
  */
-export const setEscapeMeeting = (escapeMeeting: boolean): AppThunk<Promise<void>> => async (
+export const setEscapeMeeting = (
+	escapeMeeting: boolean
+): AppThunk<Promise<void>> => async (
 	dispatch,
 	_getState,
 	{ signalingService }
