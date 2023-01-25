@@ -59,8 +59,7 @@ const createPeerMiddleware = ({
 
 							case 'changeDisplayName':
 							case 'changePicture':
-							case 'raisedHand':
-							case 'escapeMeeting': {
+							case 'raisedHand': {
 								const {
 									peerId,
 									displayName,
