@@ -95,7 +95,8 @@ const createRoomMiddleware = ({
 								break;
 							}
 
-							case 'moderator:kick': {
+							case 'moderator:kick':
+							case 'escapeMeeting': {
 								dispatch(leaveRoom());
 
 								break;
