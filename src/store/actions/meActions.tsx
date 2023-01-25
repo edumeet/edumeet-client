@@ -80,3 +80,33 @@ export const setRaisedHand = (raisedHand: boolean): AppThunk<Promise<void>> => a
 		dispatch(meActions.setRaiseHandInProgress(false));
 	}
 };
+
+/**
+ * This thunk action sets the escape meeting state of the client.
+ * 
+ * @param escapeMeeting - Escape meeting.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const setEscapeMeeting = (
+	escapeMeeting: boolean
+): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('setEscapeMeeting() [escapeMeeting:%s]', escapeMeeting);
+
+	dispatch(meActions.setEscapeMeetingInProgress(true));
+
+	try {
+		await signalingService.sendRequest('escapeMeeting', { escapeMeeting });
+
+		dispatch(meActions.setEscapeMeeting(escapeMeeting));
+	} catch (error) {
+		logger.error('setEscapeMeeting() [error:"%o"]', error);
+
+		dispatch(meActions.setEscapeMeeting(!escapeMeeting));
+	} finally {
+		dispatch(meActions.setEscapeMeetingInProgress(false));
+	}
+};

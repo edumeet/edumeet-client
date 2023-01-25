@@ -34,7 +34,7 @@ const createPeerMiddleware = ({
 									picture,
 									roles,
 									raisedHand,
-									raisedHandTimestamp,
+									raisedHandTimestamp
 								} = notification.data;
 
 								dispatch(peersActions.addPeer({
@@ -44,7 +44,7 @@ const createPeerMiddleware = ({
 									roles,
 									raisedHand,
 									raisedHandTimestamp,
-									transcripts: [],
+									transcripts: []
 								}));
 
 								break;
