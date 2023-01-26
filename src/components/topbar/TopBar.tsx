@@ -47,6 +47,8 @@ import Filesharing from '../menuitems/Filesharing';
 import TranscriptionButton from '../controlbuttons/TranscriptionButton';
 import Transcription from '../menuitems/Transcription';
 import { AccessTime } from '@mui/icons-material';
+import HelpButton from '../controlbuttons/HelpButton';
+import HelpMenuItem from '../menuitems/HelpMenuItem';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -214,6 +216,7 @@ const TopBar = ({
 						}
 					</GrowingDiv>
 					<DesktopDiv>
+						<HelpButton type='iconbutton' />
 						{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
 						<FilesharingButton type='iconbutton' />
 						<ExtraVideoButton type='iconbutton' />
@@ -261,6 +264,7 @@ const TopBar = ({
 				<ExtraVideo onClick={handleMenuClose} />
 				<Filesharing onClick={handleMenuClose} />
 				{ canTranscribe && <Transcription onClick={handleMenuClose} /> }
+				<HelpMenuItem onClick={handleMenuClose} />
 			</FloatingMenu>
 		</Fragment>
 	);
