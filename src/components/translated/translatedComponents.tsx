@@ -323,7 +323,7 @@ export const participantsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Participants'
 });
 
-export const EscapeMeetingLabel = (): string => intl.formatMessage({
+export const escapeMeetingLabel = (): string => intl.formatMessage({
 	id: 'label.escapeMeeting',
 	defaultMessage: 'Escape meeting'
 });
