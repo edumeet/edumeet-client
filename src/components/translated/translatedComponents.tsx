@@ -142,6 +142,11 @@ export const aboutLabel = (): string => intl.formatMessage({
 	defaultMessage: 'About'
 });
 
+export const shortcutKeysLabel = (): string => intl.formatMessage({
+	id: 'room.shortcutKeys',
+	defaultMessage: 'Shortcut keys'
+});
+
 export const loginLabel = (): string => intl.formatMessage({
 	id: 'tooltip.login',
 	defaultMessage: 'Log in'
