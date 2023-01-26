@@ -4,6 +4,7 @@ import { peersActions } from './peersSlice';
 
 export type RoomConnectionState = 'new' | 'lobby' | 'overRoomLimit' | 'joined' | 'kicked' | 'left';
 export type SettingsTab = 'media' | 'appearance';
+export type HelpTab = 'shortcuts';
 export type RoomMode = 'P2P' | 'SFU';
 
 export interface RoomState {
