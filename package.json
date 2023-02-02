@@ -21,6 +21,7 @@
 		"bowser": "^2.11.0",
 		"debug": "^4.3.4",
 		"dompurify": "^3.0.6",
+		"fabric": "^4.6.0",
 		"file-saver": "^2.0.5",
 		"fscreen": "^1.2.0",
 		"hark": "^1.2.3",
