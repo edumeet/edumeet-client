@@ -767,3 +767,18 @@ export const roomServerConnectionError = (message: string): string => intl.forma
 	id: 'svc.roomServerConnectionError',
 	defaultMessage: `Room-server: ${message}`
 });
+
+export const startDrawingLabel = (): string => intl.formatMessage({
+	id: 'room.startDrawing',
+	defaultMessage: 'Start drawing'
+});
+
+export const stopDrawingLabel = (): string => intl.formatMessage({
+	id: 'room.stoptDrawing',
+	defaultMessage: 'Stop drawing'
+});
+
+export const removeDrawingLabel = (): string => intl.formatMessage({
+	id: 'room.removeDrawings',
+	defaultMessage: 'Remove drawings for all'
+});
