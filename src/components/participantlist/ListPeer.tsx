@@ -44,7 +44,13 @@ const ListPeer = ({
 
 	const {
 		micConsumer,
+		webcamConsumer,
+		screenConsumer,
+		extraVideoConsumers
 	} = usePeerConsumers(peer.id);
+
+	const shoudShow = (isModerator || 
+	micConsumer || webcamConsumer || screenConsumer || extraVideoConsumers.length !== 0);
 
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
 
@@ -68,6 +74,7 @@ const ListPeer = ({
 					</IconButton>
 				}
 				{ micConsumer && <Volume consumer={micConsumer} small /> }
+				{ shoudShow && 
 				<IconButton
 					aria-haspopup
 					onClick={(event) => {
@@ -77,6 +84,7 @@ const ListPeer = ({
 				>
 					<MoreIcon />
 				</IconButton>
+				}
 			</PeerDiv>
 			<PeerMenu
 				anchorEl={moreAnchorEl}
