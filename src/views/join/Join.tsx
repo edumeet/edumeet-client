@@ -32,11 +32,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const peerId = useAppSelector((state) => state.me.id);
 	const { previewMicTrackId, previewWebcamTrackId } = useAppSelector((state) => state.me);
 	const dispatch = useAppDispatch();
-	const dn = new URL(window.location.href).searchParams.get('displayName');
-
-	if (dn) {
-		dispatch(settingsActions.setDisplayName(dn));
-	}
+	
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 
 	const [ name, setName ] = useState(stateDisplayName || '');
@@ -58,16 +54,21 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		dispatch(signalingActions.connect());
 	};
 
-	const headless = new URL(window.location.href).searchParams.get('headless');
-
-	if (headless) {
-		const myNewURL = window.location.href.split('?')[0];
-		
-		window.history.pushState({}, '', myNewURL);
-		handleJoin();
-	}
-
 	useEffect(() => {
+		const dn = new URL(window.location.href).searchParams.get('displayName');
+
+		if (dn) {
+			dispatch(settingsActions.setDisplayName(dn));
+		}
+
+		const headless = new URL(window.location.href).searchParams.get('headless');
+
+		if (headless) {
+			const myNewURL = window.location.href.split('?')[0];
+			
+			window.history.pushState({}, '', myNewURL);
+			handleJoin();
+		}
 		dispatch(roomActions.updateRoom({ name: roomId }));
 
 		if (!audioMuted)
