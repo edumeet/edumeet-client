@@ -37,6 +37,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	if (dn) {
 		dispatch(settingsActions.setDisplayName(dn));
 	}
+
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 
 	const [ name, setName ] = useState(stateDisplayName || '');
