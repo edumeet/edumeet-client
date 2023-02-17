@@ -8,6 +8,16 @@ import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
+import { notificationsActions } from '../slices/notificationsSlice';
+import edumeetConfig from '../../utils/edumeetConfig';
+
+interface SoundAlert {
+	[type: string]: {
+		audio: HTMLAudioElement;
+		delay?: number;
+		last?: number;
+	};
+}
 
 const logger = new Logger('RoomMiddleware');
 
@@ -16,6 +26,21 @@ const createRoomMiddleware = ({
 	mediaService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createRoomMiddleware()');
+
+	const soundAlerts: SoundAlert = {
+		'default': { audio: new Audio('/sounds/notify.mp3') }
+	};
+
+	const loadNotificationSounds = () => {
+		for (const [ k, v ] of Object.entries(edumeetConfig.notificationSounds)) {
+			if (v != null && v.play !== undefined) {
+				soundAlerts[k] = {
+					audio: new Audio(v.play),
+					delay: v.delay ? v.delay : 0
+				};
+			}
+		}
+	};
 
 	const middleware: Middleware = ({
 		dispatch, getState
@@ -59,6 +84,11 @@ const createRoomMiddleware = ({
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
+
+								if (edumeetConfig.notificationSounds) {
+									loadNotificationSounds();
+								}
+
 								if (clientMonitorSenderConfig) {
 									const roomId = getState().room.name;
 
@@ -99,6 +129,61 @@ const createRoomMiddleware = ({
 							case 'escapeMeeting': {
 								dispatch(leaveRoom());
 
+								break;
+							}
+						}
+					} catch (error) {
+						logger.error('error on signalService "notification" event [error:%o]', error);
+					}
+				});
+			}
+
+			if (
+				getState().settings.notificationSounds &&
+				notificationsActions.enqueueNotification.match(action)
+			) {
+				signalingService.on('notification', (notification) => {
+					try {
+						switch (notification.method) {
+							case 'raisedHand':
+							case 'chatMessage':
+							case 'parkedPeer':
+							case 'parkedPeers':
+							case 'sendFile':
+							case 'newPeer': {
+								if (action.payload.playSound) {
+									const type = notification.method;
+
+									const soundAlert = soundAlerts[type] === undefined ?
+										soundAlerts['default'] : soundAlerts[type];
+	
+									const now = Date.now();
+	
+									if (
+										soundAlert.last !== undefined &&
+										soundAlert.delay !== undefined &&
+										(now - soundAlert.last) < soundAlert.delay
+									) {
+										return;
+									}
+	
+									soundAlert.last = now;
+	
+									const alertPromise = soundAlert.audio.play();
+	
+									if (alertPromise !== undefined) {
+										alertPromise
+											.then()
+											.catch((error) => {
+												logger.error('soundAlert.play() [error:"%o"]', error);
+											});
+									}
+								}
+
+								break;
+							}
+
+							case 'default': {
 								break;
 							}
 						}
