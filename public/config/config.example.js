@@ -162,7 +162,7 @@ var config = {
 			'play': '/sounds/notify-hand.mp3'
 		},
 		'default': {
-			'delay': 5000,
+			'debounce': 5000,
 			'play': '/sounds/notify.mp3'
 		}
 	},

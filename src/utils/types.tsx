@@ -78,7 +78,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'play': '/sounds/notify-hand.mp3'
 		},
 		'default': {
-			'delay': 5000,
+			'debounce': 5000,
 			'play': '/sounds/notify.mp3'
 		}
 	},
@@ -175,7 +175,7 @@ export type NotificationType = 'default' | 'chatMessage' | 'raisedHand';
 
 export interface NotificationSound {
 	play: string;
-	delay?: number;
+	debounce?: number;
 }
 
 export interface ChatMessage {
