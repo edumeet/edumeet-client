@@ -11,7 +11,6 @@ import {
 export interface Notification {
 	key: SnackbarKey;
 	message: string;
-	playSound?: boolean;
 	options?: {
 		variant?: 'default' | 'error' | 'success' | 'warning' | 'info';
 	};
