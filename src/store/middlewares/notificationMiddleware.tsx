@@ -4,7 +4,6 @@ import { chatActions } from '../slices/chatSlice';
 import { filesharingActions } from '../slices/filesharingSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { peersActions } from '../slices/peersSlice';
-import { signalingActions } from '../slices/signalingSlice';
 import { MiddlewareOptions, RootState } from '../store';
 
 interface SoundAlert {
@@ -44,24 +43,22 @@ const createNotificationMiddleware = ({
 		});
 	};
 
+	// Load notification alerts sounds and make them available
+	for (const [ k, v ] of Object.entries(config.notificationSounds)) {
+		if (v?.play) {
+			soundAlerts[k] = {
+				audio: new Audio(v.play),
+				debounce: v.debounce ?? 0
+			};
+		}
+	}
+
 	const middleware: Middleware = ({
 		getState
 	}: {
 		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
-			if (signalingActions.connect.match(action) && config.notificationSounds) {
-				// Load notification alerts sounds and make them available
-				for (const [ k, v ] of Object.entries(config.notificationSounds)) {
-					if (v?.play) {
-						soundAlerts[k] = {
-							audio: new Audio(v.play),
-							debounce: v.debounce ?? 0
-						};
-					}
-				}
-			}
-
 			// Reproduce notification alerts
 			if (getState().settings.notificationSounds) {
 				// Raised hand
