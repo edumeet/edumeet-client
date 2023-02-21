@@ -459,6 +459,11 @@ export const appearanceSettingsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Appearance'
 });
 
+export const advancedSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.advanced',
+	defaultMessage: 'Advanced'
+});
+
 export const audioDeviceLabel = (): string => intl.formatMessage({
 	id: 'settings.audio',
 	defaultMessage: 'Audio input device'
@@ -627,4 +632,9 @@ export const selectScreenSharingFrameRateLabel = (): string => intl.formatMessag
 export const selectRecordingsPreferredMimeTypeLabel = (): string => intl.formatMessage({
 	id: 'settings.recordingsPreferredMimeType',
 	defaultMessage: 'Select your preferred video mime type'
+});
+
+export const enableNotificationSoundsLabel = (): string => intl.formatMessage({
+	id: 'settings.notificationSounds',
+	defaultMessage: 'Notification sounds'
 });

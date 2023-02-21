@@ -10,6 +10,7 @@ import { SettingsTab } from '../../store/slices/roomSlice';
 import { uiActions } from '../../store/slices/uiSlice';
 import StyledDialog from '../dialog/StyledDialog';
 import {
+	advancedSettingsLabel,
 	appearanceSettingsLabel,
 	closeLabel,
 	mediaSettingsLabel,
@@ -18,10 +19,12 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import MediaSettings from './MediaSettings';
 import AppearanceSettings from './AppearanceSettings';
+import AdvancedSettings from './advancedsettings/AdvancedSettings';
 
 const tabs: SettingsTab[] = [
 	'media',
-	'appearance'
+	'appearance',
+	'advanced'
 ];
 
 const SettingsDialog = (): JSX.Element => {
@@ -53,9 +56,11 @@ const SettingsDialog = (): JSX.Element => {
 			>
 				<Tab label={mediaSettingsLabel()} />
 				<Tab label={appearanceSettingsLabel()} />
+				<Tab label={advancedSettingsLabel()} />
 			</Tabs>
 			{ currentSettingsTab === 'media' && <MediaSettings /> }
 			{ currentSettingsTab === 'appearance' && <AppearanceSettings /> }
+			{ currentSettingsTab === 'advanced' && <AdvancedSettings /> }
 			<DialogActions>
 				<Button
 					onClick={handleCloseSettings}

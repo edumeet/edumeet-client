@@ -70,6 +70,18 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	defaultLayout: 'democratic',
 	buttonControlBar: false,
 	notificationPosition: 'right',
+	notificationSounds: {
+		'chatMessage': {
+			'play': '/sounds/notify-chat.mp3'
+		},
+		'raisedHand': {
+			'play': '/sounds/notify-hand.mp3'
+		},
+		'default': {
+			'debounce': 5000,
+			'play': '/sounds/notify.mp3'
+		}
+	},
 	title: 'edumeet',
 	supportUrl: 'https://support.example.com',
 	privacyUrl: 'privacy/privacy.html',
@@ -126,6 +138,7 @@ export interface EdumeetConfig {
 	defaultLayout: RoomLayout;
 	buttonControlBar: boolean;
 	notificationPosition: 'right' | 'left';
+	notificationSounds: Record<NotificationType, NotificationSound>;
 	title: string;
 	supportUrl: string;
 	privacyUrl: string;
@@ -157,6 +170,13 @@ export interface AudioPreset {
 	opusFec: boolean;
 	opusPtime: number;
 	opusMaxPlaybackRate: number;
+}
+
+export type NotificationType = 'default' | 'chatMessage' | 'raisedHand';
+
+export interface NotificationSound {
+	play: string;
+	debounce?: number;
 }
 
 export interface ChatMessage {
