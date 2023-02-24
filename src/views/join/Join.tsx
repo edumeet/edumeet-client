@@ -59,8 +59,8 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 		if (dn) {
 			dispatch(settingsActions.setDisplayName(dn));
+			setName(dn);
 		}
-		setName(dn);
 
 		const headless = new URL(window.location.href).searchParams.get('headless');
 
