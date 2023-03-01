@@ -634,7 +634,28 @@ export const selectRecordingsPreferredMimeTypeLabel = (): string => intl.formatM
 	defaultMessage: 'Select your preferred video mime type'
 });
 
+
 export const enableNotificationSoundsLabel = (): string => intl.formatMessage({
 	id: 'settings.notificationSounds',
 	defaultMessage: 'Notification sounds'
+)}
+
+export const menuLabel = (): string => intl.formatMessage({
+	id: 'label.menu',
+	defaultMessage: 'Menu'
+});
+
+export const tablesLabel = (): string => intl.formatMessage({
+	id: 'room.tables',
+	defaultMessage: 'Tables'
+});
+
+export const createTablesSessionLabel = (): string => intl.formatMessage({
+	id: 'room.createTablesSession',
+	defaultMessage: 'Create Session'
+});
+
+export const closeTablesSessionLabel = (): string => intl.formatMessage({
+	id: 'room.closeTablesSession',
+	defaultMessage: 'Close Session'
 });

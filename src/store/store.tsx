@@ -43,6 +43,7 @@ import chatSlice from './slices/chatSlice';
 import filesharingSlice from './slices/filesharingSlice';
 import notificationsSlice from './slices/notificationsSlice';
 import uiSlice from './slices/uiSlice';
+import tablesSlice from './slices/tablesSlice';
 import { EdumeetConfig } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 import { createContext } from 'react';
@@ -111,6 +112,7 @@ const reducer = combineReducers({
 	ui: uiSlice.reducer,
 	webrtc: webrtcSlice.reducer,
 	recording: recordingSlice.reducer,
+	tables: tablesSlice.reducer,
 });
 
 const pReducer = persistReducer<RootState>(persistConfig, reducer);

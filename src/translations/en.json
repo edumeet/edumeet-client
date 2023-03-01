@@ -258,5 +258,9 @@
 	"tooltip.unMuteScreenSharing": "Unmute screen share",
 	"unsupportedBrowser.bodyText": "This meeting service requires a functionality that is not supported by your browser. Please upgrade, or switch to a different browser or check your settings. Supported browsers:",
 	"unsupportedBrowser.titleUnsupportedBrowser": "Detected unsupported browser!",
-	"unsupportedBrowser.titlewebrtcUnavailable": "Required functionality not available in your browser!"
+	"unsupportedęBrowser.titlewebrtcUnavailable": "Required functionality not available in your browser!",
+	"label.menu": "Menu",
+	"room.tables": "Tables",
+	"room.createTablesSession": "Create Session",
+	"room.closeTablesSession": "Close Session"
 }

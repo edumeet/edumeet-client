@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { chatActions } from './chatSlice';
 
-export type ToolAreaTab = 'chat' | 'users';
+export type ToolAreaTab = 'tables' | 'chat' | 'users';
 
 export interface DrawerState {
 	open: boolean;
@@ -11,8 +11,8 @@ export interface DrawerState {
 }
 
 const initialState: DrawerState = {
-	open: false,
-	tab: 'chat',
+	open: true,
+	tab: 'tables',
 	unreadMessages: 0,
 	unreadFiles: 0
 };

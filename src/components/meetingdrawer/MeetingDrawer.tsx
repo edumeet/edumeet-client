@@ -14,14 +14,16 @@ import { raisedHandsSelector } from '../../store/selectors';
 import { drawerActions, ToolAreaTab } from '../../store/slices/drawerSlice';
 import GroupIcon from '@mui/icons-material/Group';
 import ChatIcon from '@mui/icons-material/Chat';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import NewWindowIcon from '@mui/icons-material/OpenInNew';
-import { chatLabel, participantsLabel } from '../translated/translatedComponents';
+import { tablesLabel, chatLabel, participantsLabel } from '../translated/translatedComponents';
 import ParticipantList from '../participantlist/ParticipantList';
 import SeparateWindow from '../separatewindow/SeparateWindow';
 import { uiActions } from '../../store/slices/uiSlice';
 import Chat from '../chat/Chat';
+import Tables from '../tables/Tables';
 
 const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
 	'& .MuiDrawer-paper': {
@@ -65,6 +67,7 @@ const TabsHeader = styled(Tabs)({
 });
 
 const tabs: ToolAreaTab[] = [
+	'tables',
 	'users',
 	'chat'
 ];
@@ -126,6 +129,14 @@ const MeetingDrawer = (): JSX.Element => {
 									>
 										<Tab
 											label={
+												<Badge color='secondary'>
+													<AccountTreeIcon />
+													{(browser.platform !== 'mobile') && tablesLabel()}
+												</Badge>
+											}
+										/>
+										<Tab
+											label={
 												<Badge color='secondary' badgeContent={raisedHands}>
 													<GroupIcon />
 													{(browser.platform !== 'mobile') && participantsLabel()}
@@ -158,6 +169,7 @@ const MeetingDrawer = (): JSX.Element => {
 										</IconButton>
 									)}
 								</MeetingDrawerAppBar>
+								{ currentTab === 'tables' && <Tables /> }
 								{ currentTab === 'chat' && <Chat /> }
 								{ currentTab === 'users' && <ParticipantList /> }
 							</MeetingDrawerDiv>
