@@ -21,8 +21,9 @@ const TablesIndicator = (): JSX.Element => {
 	const drawer = useAppSelector((state) => state.drawer);
 	const dispatch = useAppDispatch();
 
-	const handleToggleDrawer = () => {
+	const toggleTablesTab = () => {
 
+		dispatch(drawerActions.setTab('tables'));
 		dispatch(drawerActions.toggle());
 	};
 
@@ -35,7 +36,7 @@ const TablesIndicator = (): JSX.Element => {
 					// className={classes.actionButton}
 					component='span'
 					startIcon={<AccountTreeIcon/>}
-					onClick={handleToggleDrawer}
+					onClick={toggleTablesTab}
 					// onClick={() => {
 					// 	(!drawer.open || drawer.tab !=='tables') ?
 					// 		openMingleRoomsTab():
