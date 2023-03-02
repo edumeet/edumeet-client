@@ -262,5 +262,6 @@
 	"label.menu": "Menu",
 	"room.tables": "Tables",
 	"room.createTablesSession": "Create Session",
-	"room.closeTablesSession": "Close Session"
+	"room.closeTablesSession": "Close Session",
+	"tables.tableName": "{type} {number}"
 }

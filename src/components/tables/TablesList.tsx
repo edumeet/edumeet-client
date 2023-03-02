@@ -70,7 +70,7 @@ const TableList = (): JSX.Element => {
 										{/* TABLE NAME */}
 										<Typography style={{ fontWeight: 'bold' }}>
 											<FormattedMessage
-												id='mingleRooms.table'
+												id='tables.tableName'
 												defaultMessage='{type} {number}'
 												values={{
 													type: table.type,
