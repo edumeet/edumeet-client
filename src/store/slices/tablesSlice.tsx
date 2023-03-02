@@ -139,7 +139,7 @@ const tablesSlice = createSlice({
 	name: 'tables',
 	initialState,
 	reducers: {
-		createTablesSession: ((state, action: PayloadAction<Table>) => {
+		createTablesSession: ((state) => {
 			state.created = true;
 		}),
 		closeTablesSession: ((state, action: PayloadAction<Table[]>) => {
