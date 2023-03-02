@@ -1,29 +1,16 @@
-import { Button, styled, Fade } from '@mui/material';
-import { useRef, useState } from 'react';
+import { Button, Fade } from '@mui/material';
 import { intl } from '../../utils/intlManager';
 import { useAppSelector } from '../../store/hooks';
-import ScrollingList from '../scrollinglist/ScrollingList';
-import { chatScrollToBottomLabel, joinLabel } from '../translated/translatedComponents';
-
-import { Badge, Grid, Chip, Typography, useTheme, Collapse } from '@mui/material';
-import LeaveTableButton from '../textbuttons/LeaveTableButton';
-
 import { FormattedMessage } from 'react-intl';
-
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { useAppDispatch } from '../../store/hooks';
-import { drawerActions, ToolAreaTab } from '../../store/slices/drawerSlice';
+import { drawerActions } from '../../store/slices/drawerSlice';
 
 const TablesIndicator = (): JSX.Element => {
-	const list = useRef<ScrollingList>(null);
-	const [ atBottom, setAtBottom ] = useState(true);
 	const tables = useAppSelector((state) => state.tables);
-	const created = useAppSelector((state) => state.tables.created);
-	const drawer = useAppSelector((state) => state.drawer);
 	const dispatch = useAppDispatch();
 
 	const toggleTablesTab = () => {
-
 		dispatch(drawerActions.setTab('tables'));
 		dispatch(drawerActions.toggle());
 	};

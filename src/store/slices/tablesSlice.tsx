@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 type Table = {
 	id: string;
@@ -138,13 +138,6 @@ const tablesSlice = createSlice({
 		closeTablesSession: ((state) => {
 			state.created = false;
 
-		}),
-		expandTablesSession: ((state, action: PayloadAction<Table[]>) => {
-			// return [ ...state, ...action.payload ];
-		}),
-		
-		collapseTablesSession: ((state, action: PayloadAction<Table[]>) => {
-			// return [ ...state, ...action.payload ];
 		})
 	}
 });
