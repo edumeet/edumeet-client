@@ -10,6 +10,8 @@ import LeaveTableButton from '../textbuttons/LeaveTableButton';
 import { FormattedMessage } from 'react-intl';
 
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import { useAppDispatch } from '../../store/hooks';
+import { drawerActions, ToolAreaTab } from '../../store/slices/drawerSlice';
 
 const TablesIndicator = (): JSX.Element => {
 	const list = useRef<ScrollingList>(null);
@@ -17,6 +19,12 @@ const TablesIndicator = (): JSX.Element => {
 	const tables = useAppSelector((state) => state.tables);
 	const created = useAppSelector((state) => state.tables.created);
 	const drawer = useAppSelector((state) => state.drawer);
+	const dispatch = useAppDispatch();
+
+	const handleToggleDrawer = () => {
+
+		dispatch(drawerActions.toggle());
+	};
 
 	return (
 		<>
@@ -27,7 +35,7 @@ const TablesIndicator = (): JSX.Element => {
 					// className={classes.actionButton}
 					component='span'
 					startIcon={<AccountTreeIcon/>}
-					// onClick={() => setTablesViewOpen(true)}
+					onClick={handleToggleDrawer}
 					// onClick={() => {
 					// 	(!drawer.open || drawer.tab !=='tables') ?
 					// 		openMingleRoomsTab():
