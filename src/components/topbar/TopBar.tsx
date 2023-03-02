@@ -215,7 +215,6 @@ const TopBar = ({
 						}
 					</GrowingDiv>
 					<DesktopDiv>
-						
 						{ tablesSessionCreated && <TablesIndicatorButton/> }
 						{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
 						<FilesharingButton type='iconbutton' />

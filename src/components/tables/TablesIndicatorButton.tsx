@@ -1,4 +1,4 @@
-import { Button, Fade } from '@mui/material';
+import { Button } from '@mui/material';
 import { intl } from '../../utils/intlManager';
 import { useAppSelector } from '../../store/hooks';
 import { FormattedMessage } from 'react-intl';
@@ -16,31 +16,27 @@ const TablesIndicator = (): JSX.Element => {
 	};
 
 	return (
-		<>
-			<Fade in={tables.list.length > 0}>
-				<Button
-					color='error'
-					variant='contained'
-					// className={classes.actionButton}
-					component='span'
-					startIcon={<AccountTreeIcon/>}
-					onClick={toggleTablesTab}
+		<Button
+			color='error'
+			variant='contained'
+			// className={classes.actionButton}
+			component='span'
+			startIcon={<AccountTreeIcon/>}
+			onClick={toggleTablesTab}
 					
-					aria-label={intl.formatMessage({
-						id: 'room.tablesWithNumber',
-						defaultMessage: 'Tables'
-					})}
-				>
-					<FormattedMessage
-						id='room.tablesWithNumber'
-						defaultMessage='Tables ({count})'
-						values={{
-							count: tables.list.length
-						}}
-					/>
-				</Button>
-			</Fade>
-		</>
+			aria-label={intl.formatMessage({
+				id: 'room.tablesWithNumber',
+				defaultMessage: 'Tables'
+			})}
+		>
+			<FormattedMessage
+				id='room.tablesWithNumber'
+				defaultMessage='Tables ({count})'
+				values={{
+					count: tables.list.length
+				}}
+			/>
+		</Button>
 		
 	);
 };
