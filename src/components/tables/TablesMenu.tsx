@@ -36,7 +36,7 @@ const TablesMenu = (): JSX.Element => {
 				{ menuLabel() }
 			</ListHeaderLi>
 			<ListItemLi>
-				{ created ? 
+				{ ! created ? 
 					<CreateTablesSessionButton /> : 
 					<CloseTablesSessionButton />
 				}
