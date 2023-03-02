@@ -3,26 +3,26 @@ import { useAppDispatch } from '../../store/hooks';
 import { tablesActions } from '../../store/slices/tablesSlice';
 
 import {
-	createTablesSessionLabel,
+	createTablesLabel,
 } from '../translated/translatedComponents';
 
-const CreateTablesSessionButton = (): JSX.Element => {
+const CreateTablesButton = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 
-	const handleCreateTablesSession = (): void => {
-		dispatch(tablesActions.createTablesSession());
+	const handleCreateTables = (): void => {
+		dispatch(tablesActions.createTables());
 	};
 
 	return (
 		<Button
-			aria-label={createTablesSessionLabel()}
+			aria-label={createTablesLabel()}
 			color='error'
 			variant='contained'
-			onClick={handleCreateTablesSession}
+			onClick={handleCreateTables}
 		>
-			{ createTablesSessionLabel() }
+			{ createTablesLabel() }
 		</Button>
 	);
 };
 
-export default CreateTablesSessionButton;
+export default CreateTablesButton;

@@ -262,7 +262,7 @@
 	"label.menu": "Menu",
 	"room.tables": "Tables",
 	"room.tablesWithNumber": "Tables ({count})",
-	"room.createTablesSession": "Create Session",
-	"room.closeTablesSession": "Close Session",
+	"room.createTables": "Create Tables",
+	"room.closeTablesSession": "Close Tables",
 	"tables.tableName": "{type} {number}"
 }

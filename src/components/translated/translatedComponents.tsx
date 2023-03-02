@@ -649,8 +649,8 @@ export const tablesLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Tables'
 });
 
-export const createTablesSessionLabel = (): string => intl.formatMessage({
-	id: 'room.createTablesSession',
+export const createTablesLabel = (): string => intl.formatMessage({
+	id: 'room.createTables',
 	defaultMessage: 'Create Session'
 });
 

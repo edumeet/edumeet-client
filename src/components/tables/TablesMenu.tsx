@@ -1,5 +1,5 @@
 import { styled } from '@mui/material';
-import CreateTablesSessionButton from '../textbuttons/CreateTablesSessionButton';
+import CreateTablesButton from '../textbuttons/CreateTablesButton';
 import CloseTablesSessionButton from '../textbuttons/CloseTablesSessionButton';
 import {
 	menuLabel,
@@ -37,7 +37,7 @@ const TablesMenu = (): JSX.Element => {
 			</ListHeaderLi>
 			<ListItemLi>
 				{ ! created ? 
-					<CreateTablesSessionButton /> : 
+					<CreateTablesButton /> : 
 					<CloseTablesSessionButton />
 				}
 			</ListItemLi>

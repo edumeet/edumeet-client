@@ -132,7 +132,7 @@ const tablesSlice = createSlice({
 	name: 'tables',
 	initialState,
 	reducers: {
-		createTablesSession: ((state) => {
+		createTables: ((state) => {
 			state.created = true;
 		}),
 		closeTablesSession: ((state) => {
