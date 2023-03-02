@@ -24,7 +24,7 @@ type TablesState = {
 };
 
 const initialState: TablesState = {
-	created: true,
+	created: false,
 	// tablesViewOpened: false,
 	expanded: false,
 	current: 'Dgmd4ZuN',
