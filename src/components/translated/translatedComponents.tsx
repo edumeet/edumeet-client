@@ -634,11 +634,10 @@ export const selectRecordingsPreferredMimeTypeLabel = (): string => intl.formatM
 	defaultMessage: 'Select your preferred video mime type'
 });
 
-
 export const enableNotificationSoundsLabel = (): string => intl.formatMessage({
 	id: 'settings.notificationSounds',
 	defaultMessage: 'Notification sounds'
-)}
+});
 
 export const menuLabel = (): string => intl.formatMessage({
 	id: 'label.menu',

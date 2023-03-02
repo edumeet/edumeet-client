@@ -1,4 +1,4 @@
-import { styled, Collapse } from '@mui/material';
+import { styled } from '@mui/material';
 // import { usePermissionSelector } from '../../store/hooks';
 // import { permissions } from '../../utils/roles';
 import { useAppSelector } from '../../store/hooks';
@@ -15,15 +15,12 @@ const TableDiv = styled('div')({
 
 const Tables = (): JSX.Element => {
 	// const isChatModerator = usePermissionSelector(permissions.MODERATE_CHAT);
-	const created = useAppSelector((state) => state.tables.created);
 	
 	return (
 		<TableDiv>
 			{/* { isChatModerator && <TableMenu /> } */}
 			<TableMenu />
-			<Collapse in={created}>
-				<TablesList />
-			</Collapse>
+			<TablesList />
 		</TableDiv>
 	);
 };
