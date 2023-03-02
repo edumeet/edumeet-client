@@ -65,7 +65,7 @@ const TableList = (): JSX.Element => {
 										item 
 										container 
 										justifyContent='space-between'
-										flexBasis='85px'
+										flexBasis='90px'
 									>
 										{/* TABLE NAME */}
 										<Typography style={{ fontWeight: 'bold' }}>
