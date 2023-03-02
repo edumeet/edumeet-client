@@ -1,5 +1,6 @@
 import { Button, styled, Fade } from '@mui/material';
 import { useRef, useState } from 'react';
+import { intl } from '../../utils/intlManager';
 import { useAppSelector } from '../../store/hooks';
 import ScrollingList from '../scrollinglist/ScrollingList';
 import { chatScrollToBottomLabel, joinLabel } from '../translated/translatedComponents';
@@ -37,18 +38,14 @@ const TablesIndicator = (): JSX.Element => {
 					component='span'
 					startIcon={<AccountTreeIcon/>}
 					onClick={toggleTablesTab}
-					// onClick={() => {
-					// 	(!drawer.open || drawer.tab !=='tables') ?
-					// 		openMingleRoomsTab():
-					// 		closeToolArea();
-					// }}
-					// aria-label={intl.formatMessage({
-					// 	id: 'mingleRooms.tables',
-					// 	defaultMessage: 'Tables'
-					// })}
+					
+					aria-label={intl.formatMessage({
+						id: 'room.tablesWithNumber',
+						defaultMessage: 'Tables'
+					})}
 				>
 					<FormattedMessage
-						id='tables.tablesWithNumber'
+						id='room.tablesWithNumber'
 						defaultMessage='Tables ({count})'
 						values={{
 							count: tables.list.length
