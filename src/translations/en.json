@@ -261,6 +261,7 @@
 	"unsupportedęBrowser.titlewebrtcUnavailable": "Required functionality not available in your browser!",
 	"label.menu": "Menu",
 	"room.tables": "Tables",
+	"room.tablesWithNumber": "Tables ({count})",
 	"room.createTablesSession": "Create Session",
 	"room.closeTablesSession": "Close Session",
 	"tables.tableName": "{type} {number}"

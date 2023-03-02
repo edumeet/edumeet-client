@@ -47,7 +47,7 @@ import Filesharing from '../menuitems/Filesharing';
 import TranscriptionButton from '../controlbuttons/TranscriptionButton';
 import Transcription from '../menuitems/Transcription';
 import { AccessTime } from '@mui/icons-material';
-
+import TablesIndicatorButton from '../tables/TablesIndicatorButton';
 interface TopBarProps {
 	fullscreenEnabled: boolean;
 	fullscreen: boolean;
@@ -114,6 +114,7 @@ const TopBar = ({
 	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
 	const unread = useAppSelector(unreadSelector);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
+	const tablesSessionCreated = useAppSelector((state) => state.tables.created);
 
 	const [ mobileMoreAnchorEl, setMobileMoreAnchorEl ] = useState<HTMLElement | null>();
 
@@ -214,6 +215,8 @@ const TopBar = ({
 						}
 					</GrowingDiv>
 					<DesktopDiv>
+						
+						{ tablesSessionCreated && <TablesIndicatorButton/> }
 						{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
 						<FilesharingButton type='iconbutton' />
 						<ExtraVideoButton type='iconbutton' />
