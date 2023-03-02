@@ -2,7 +2,7 @@ import { Button, styled } from '@mui/material';
 import { useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import ScrollingList from '../scrollinglist/ScrollingList';
-import { chatScrollToBottomLabel } from '../translated/translatedComponents';
+import { chatScrollToBottomLabel, joinLabel } from '../translated/translatedComponents';
 
 import { Badge, Grid, Chip, Typography, useTheme, Collapse } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
@@ -98,16 +98,10 @@ const TableList = (): JSX.Element => {
 										size='small'
 										endIcon={<TelegramIcon />}
 										href={table.url}
-										// onClick={() => roomClient.joinToMingleRoom(table.name, table.hash)}
-										// aria-label={intl.formatMessage({
-										// 	id: 'mingleRooms.join',
-										// 	defaultMessage: 'Join'
-										// })}
+										aria-label={joinLabel()}
+										onClick={() => null}
 									>
-										<FormattedMessage
-											id='mingleRooms.join'
-											defaultMessage='Join'
-										/>
+										{joinLabel()}
 									</Button>
 									{/* /JOIN BUTTON */}
 								</Grid>
@@ -124,7 +118,6 @@ const TableList = (): JSX.Element => {
 									{ table.users.map((user) => (
 										<Chip
 											key={user.id}
-											// className={classes.name}
 											style={{
 												margin: theme.spacing(1, 1, 0, 0),
 											}}
