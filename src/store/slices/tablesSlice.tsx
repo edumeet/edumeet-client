@@ -46,7 +46,8 @@ const initialState: TablesState = {
 			url: '/6FLbjJLB',
 			users: [
 			]
-		}, {
+		}, 
+		{
 			id: 'CnQMldMC',
 			type: 'table',
 			url: '/CnQMldMC',
@@ -54,7 +55,8 @@ const initialState: TablesState = {
 				{ id: 'OAJM8q', name: 'Bertie Fisher' },
 				{ id: 'GwocyW', name: 'Walter Stewart' }
 			]
-		}, {
+		}, 
+		{
 			id: 'Dgmd4ZuN',
 			type: 'table',
 			url: '/Dgmd4ZuN',
@@ -65,7 +67,8 @@ const initialState: TablesState = {
 				{ id: 'jwPGQQ', name: 'Alejandro Vargas' },
 				{ id: '7j2DYi', name: 'Calvin Yates' }
 			]
-		}, {
+		}, 
+		{
 			id: '39xuRwtg',
 			type: 'table',
 			url: '/39xuRwtg',
@@ -73,7 +76,8 @@ const initialState: TablesState = {
 				{ id: 'SOt8gB', name: 'Mabelle Harrison' },
 				{ id: '2T3Jzj', name: 'Lee Quinn' }
 			]
-		}, {
+		}, 
+		{
 			id: 'Xuua4kS8',
 			type: 'table',
 			url: '/Xuua4kS8',
@@ -81,7 +85,8 @@ const initialState: TablesState = {
 				{ id: 'yclYGF', name: 'Edgar Owens' },
 				{ id: 'XTPAbp', name: 'Jennie White' }
 			]
-		}, {
+		}, 
+		{
 			id: '1dBPgn8d',
 			type: 'table',
 			url: '/1dBPgn8d',
@@ -89,7 +94,8 @@ const initialState: TablesState = {
 				{ id: 'x9WuzZ', name: 'Chase Rhodes' },
 				{ id: 'cnQdzo', name: 'Travis Morris' }
 			]
-		}, {
+		}, 
+		{
 			id: 'wx6I8MnM',
 			type: 'table',
 			url: '/wx6I8MnM',
@@ -97,7 +103,8 @@ const initialState: TablesState = {
 				{ id: '0BZ1AO', name: 'Harold Alvarado' },
 				{ id: 't2HzQ3', name: 'Henrietta Knight' }
 			]
-		}, {
+		}, 
+		{
 			id: 'kTdvIxaL',
 			type: 'table',
 			url: '/kTdvIxaL',
@@ -105,7 +112,8 @@ const initialState: TablesState = {
 				{ id: 'RKjNLY', name: 'Fred Johnson' },
 				{ id: '0GexJE', name: 'Rosetta Simmons' }
 			]
-		}, {
+		}, 
+		{
 			id: 'FmAEchvz',
 			type: 'table',
 			url: '/FmAEchvz',
@@ -113,7 +121,8 @@ const initialState: TablesState = {
 				{ id: '0OOONx', name: 'Dean Townsend' },
 				{ id: '07mrv8', name: 'Fred Norman' }
 			]
-		}, {
+		}, 
+		{
 			id: 'LExAn7wi',
 			type: 'table',
 			url: '/LExAn7wi',
