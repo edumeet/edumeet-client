@@ -654,7 +654,7 @@ export const createTablesLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Create Session'
 });
 
-export const closeTablesSessionLabel = (): string => intl.formatMessage({
-	id: 'room.closeTablesSession',
+export const closeTablesLabel = (): string => intl.formatMessage({
+	id: 'room.closeTables',
 	defaultMessage: 'Close Session'
 });

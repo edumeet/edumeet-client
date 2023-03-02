@@ -3,26 +3,26 @@ import { useAppDispatch } from '../../store/hooks';
 import { tablesActions } from '../../store/slices/tablesSlice';
 
 import {
-	closeTablesSessionLabel,
+	closeTablesLabel,
 } from '../translated/translatedComponents';
 
-const CloseTablesSessionButton = (): JSX.Element => {
+const CloseTablesButton = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 
-	const handleCloseTablesSession = (): void => {
-		dispatch(tablesActions.closeTablesSession());
+	const handleCloseTables = (): void => {
+		dispatch(tablesActions.closeTables());
 	};
 
 	return (
 		<Button
-			aria-label={closeTablesSessionLabel()}
+			aria-label={closeTablesLabel()}
 			color='error'
 			variant='contained'
-			onClick={handleCloseTablesSession}
+			onClick={handleCloseTables}
 		>
-			{ closeTablesSessionLabel() }
+			{ closeTablesLabel() }
 		</Button>
 	);
 };
 
-export default CloseTablesSessionButton;
+export default CloseTablesButton;

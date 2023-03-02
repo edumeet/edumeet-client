@@ -263,6 +263,6 @@
 	"room.tables": "Tables",
 	"room.tablesWithNumber": "Tables ({count})",
 	"room.createTables": "Create Tables",
-	"room.closeTablesSession": "Close Tables",
+	"room.closeTables": "Close Tables",
 	"tables.tableName": "{type} {number}"
 }

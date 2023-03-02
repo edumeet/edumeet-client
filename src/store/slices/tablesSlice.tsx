@@ -135,7 +135,7 @@ const tablesSlice = createSlice({
 		createTables: ((state) => {
 			state.created = true;
 		}),
-		closeTablesSession: ((state) => {
+		closeTables: ((state) => {
 			state.created = false;
 
 		})
