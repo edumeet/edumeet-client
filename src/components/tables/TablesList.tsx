@@ -5,6 +5,8 @@ import ScrollingList from '../scrollinglist/ScrollingList';
 import { chatScrollToBottomLabel, joinLabel } from '../translated/translatedComponents';
 
 import { Badge, Grid, Chip, Typography, useTheme, Collapse } from '@mui/material';
+import LeaveTableButton from '../textbuttons/LeaveTableButton';
+
 import { FormattedMessage } from 'react-intl';
 
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
@@ -89,22 +91,27 @@ const TableList = (): JSX.Element => {
 										</StyledBadge>
 										{/* /PEERS NUMBER */}
 									</Grid>
-									{tables.current !== table.id &&
-								<Grid item>
-									{/* JOIN BUTTON */}
-									<Button
-										variant='contained'
-										color='error'
-										size='small'
-										endIcon={<TelegramIcon />}
-										href={table.url}
-										aria-label={joinLabel()}
-										onClick={() => null}
-									>
-										{joinLabel()}
-									</Button>
-									{/* /JOIN BUTTON */}
-								</Grid>
+									{tables.current !== table.id ?
+										<Grid item>
+											{/* JOIN BUTTON */}
+											<Button
+												variant='contained'
+												color='error'
+												size='small'
+												endIcon={<TelegramIcon />}
+												href={table.url}
+												aria-label={joinLabel()}
+												onClick={() => null}
+											>
+												{joinLabel()}
+											</Button>
+											{/* /JOIN BUTTON */}
+										</Grid>:
+										<Grid item>
+											{/* LEAVE BUTTON */}
+											<LeaveTableButton/>
+											{/* /LEAVE BUTTON */}
+										</Grid>
 									}
 								</Grid>
 								{/* /HEADER */}
