@@ -27,44 +27,44 @@ const initialState: TablesState = {
 	created: true,
 	// tablesViewOpened: false,
 	expanded: false,
-	current: 'CnQMldMC8u',
+	current: 'Dgmd4ZuN',
 	list: [
 		{
-			id: 'dbP8JnNXGY',
+			id: 'dbP8JnNX',
 			type: 'table',
-			url: '/dbP8JnNXGY',
+			url: '/dbP8JnNX',
 			users: [
 				{ id: 'wvkCVw', name: 'Lina Goodman' },
 				{ id: 'fQCHgv', name: 'Mae Richardson' }
 			]
 		},
 		{
-			id: 'ug5b9Hof72',
+			id: 'ug5b9Hof',
 			type: 'table',
-			url: '/ug5b9Hof72',
+			url: '/ug5b9Hof',
 			users: [
 				{ id: 'dRujJs', name: 'Beatrice Peterson' },
 				{ id: '6SAtgW', name: 'Harvey Brewer' }
 			]
 		},
 		{
-			id: '6FLbjJLBEJ',
+			id: '6FLbjJLB',
 			type: 'table',
-			url: '/6FLbjJLBEJ',
+			url: '/6FLbjJLB',
 			users: [
 			]
 		}, {
-			id: 'CnQMldMC8u',
+			id: 'CnQMldMC',
 			type: 'table',
-			url: '/CnQMldMC8u',
+			url: '/CnQMldMC',
 			users: [
 				{ id: 'OAJM8q', name: 'Bertie Fisher' },
 				{ id: 'GwocyW', name: 'Walter Stewart' }
 			]
 		}, {
-			id: 'Dgmd4ZuNO9',
+			id: 'Dgmd4ZuN',
 			type: 'table',
-			url: '/Dgmd4ZuNO9',
+			url: '/Dgmd4ZuN',
 			users: [
 				{ id: '2BqeHD', name: 'Jeremy Jenkins' },
 				{ id: 'yaeRIr', name: 'Marion Castro' },
@@ -73,63 +73,63 @@ const initialState: TablesState = {
 				{ id: '7j2DYi', name: 'Calvin Yates' }
 			]
 		}, {
-			id: '39xuRwtgMh',
+			id: '39xuRwtg',
 			type: 'table',
-			url: '/39xuRwtgMh',
+			url: '/39xuRwtg',
 			users: [
 				{ id: 'SOt8gB', name: 'Mabelle Harrison' },
 				{ id: '2T3Jzj', name: 'Lee Quinn' }
 			]
 		}, {
-			id: 'Xuua4kS8JF',
+			id: 'Xuua4kS8',
 			type: 'table',
-			url: '/Xuua4kS8JF',
+			url: '/Xuua4kS8',
 			users: [
 				{ id: 'yclYGF', name: 'Edgar Owens' },
 				{ id: 'XTPAbp', name: 'Jennie White' }
 			]
 		}, {
-			id: '1dBPgn8dMZ',
+			id: '1dBPgn8d',
 			type: 'table',
-			url: '/1dBPgn8dMZ',
+			url: '/1dBPgn8d',
 			users: [
 				{ id: 'x9WuzZ', name: 'Chase Rhodes' },
 				{ id: 'cnQdzo', name: 'Travis Morris' }
 			]
 		}, {
-			id: 'wx6I8MnMfM',
+			id: 'wx6I8MnM',
 			type: 'table',
-			url: '/wx6I8MnMfM',
+			url: '/wx6I8MnM',
 			users: [
 				{ id: '0BZ1AO', name: 'Harold Alvarado' },
 				{ id: 't2HzQ3', name: 'Henrietta Knight' }
 			]
 		}, {
-			id: 'kTdvIxaLo5',
+			id: 'kTdvIxaL',
 			type: 'table',
-			url: '/kTdvIxaLo5',
+			url: '/kTdvIxaL',
 			users: [
-				{ id: 'aVNxmd', name: 'Fred Johnson' },
-				{ id: 'I2EJkH', name: 'Rosetta Simmons' }
+				{ id: 'RKjNLY', name: 'Fred Johnson' },
+				{ id: '0GexJE', name: 'Rosetta Simmons' }
 			]
 		}, {
-			id: 'FmAEchvzbn',
+			id: 'FmAEchvz',
 			type: 'table',
-			url: '/FmAEchvzbn',
+			url: '/FmAEchvz',
 			users: [
 				{ id: '0OOONx', name: 'Dean Townsend' },
 				{ id: '07mrv8', name: 'Fred Norman' }
 			]
 		}, {
-			id: 'LExAn7wiTm',
+			id: 'LExAn7wi',
 			type: 'table',
-			url: '/LExAn7wiTm',
+			url: '/LExAn7wi',
 			users: [
 				{ id: 'hGYcjO', name: 'Keith Moran' },
 				{ id: 'RM2vnL', name: 'Dennis Jacobs' },
-				{ id: 'Iva Castillo', name: 'Lois Lopez' },
-				{ id: 'Michael Brady', name: 'Lula Butler' },
-				{ id: 'Daniel Lopez', name: 'Mathilda Sandoval' }
+				{ id: 'nyMbqa', name: 'Lois Lopez' },
+				{ id: '1FoGzn', name: 'Lula Butler' },
+				{ id: 'YFF6D5', name: 'Mathilda Sandoval' }
 			]
 		}
 	]
