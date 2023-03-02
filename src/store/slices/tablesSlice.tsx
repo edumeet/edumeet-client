@@ -142,7 +142,7 @@ const tablesSlice = createSlice({
 		createTablesSession: ((state) => {
 			state.created = true;
 		}),
-		closeTablesSession: ((state, action: PayloadAction<Table[]>) => {
+		closeTablesSession: ((state) => {
 			state.created = false;
 
 		}),

@@ -1,25 +1,26 @@
 import { Button } from '@mui/material';
 import { useAppDispatch } from '../../store/hooks';
-// import { createTablesSession } from '../../store/actions/chatActions';
+import { tablesActions } from '../../store/slices/tablesSlice';
+
 import {
-	createTablesSessionLabel,
+	closeTablesSessionLabel,
 } from '../translated/translatedComponents';
 
 const CloseTablesSessionButton = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 
-	const handleCreateTablesSession = (): void => {
-		// dispatch({ 'type': 'clearChat' });
+	const handleCloseTablesSession = (): void => {
+		dispatch(tablesActions.closeTablesSession());
 	};
 
 	return (
 		<Button
-			aria-label={createTablesSessionLabel()}
+			aria-label={closeTablesSessionLabel()}
 			color='error'
 			variant='contained'
-			onClick={handleCreateTablesSession}
+			onClick={handleCloseTablesSession}
 		>
-			{ createTablesSessionLabel() }
+			{ closeTablesSessionLabel() }
 		</Button>
 	);
 };
