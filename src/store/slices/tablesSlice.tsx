@@ -1,7 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-// import { Table } from '../../utils/types';
-// import { peersActions } from './peersSlice';
-// import { roomActions } from './roomSlice';
 
 type Table = {
 	id: string;
@@ -17,16 +14,12 @@ type User = {
 
 type TablesState = {
 	created: boolean;
-	// tablesViewOpened: boolean;
-	expanded: boolean;
 	current: string;
 	list: Table[];
 };
 
 const initialState: TablesState = {
 	created: false,
-	// tablesViewOpened: false,
-	expanded: false,
 	current: 'Dgmd4ZuN',
 	list: [
 		{
@@ -153,26 +146,7 @@ const tablesSlice = createSlice({
 		collapseTablesSession: ((state, action: PayloadAction<Table[]>) => {
 			// return [ ...state, ...action.payload ];
 		})
-	},
-	// extraReducers: (builder) => {
-	// 	builder
-	// 		.addCase(peersActions.updatePeer, (state, action) => {
-	// 			if (action.payload.displayName) {
-	// 				const { id, displayName } = action.payload;
-
-	// 				return state.map((message) => {
-	// 					if (message.peerId === id)
-	// 						return { ...message, displayName };
-
-	// 					return message;
-	// 				});
-	// 			}
-	// 		})
-	// 		.addCase(roomActions.setState, (_state, action) => {
-	// 			if (action.payload === 'left')
-	// 				return [];
-	// 		});
-	// }
+	}
 });
 
 export const tablesActions = tablesSlice.actions;

@@ -1,7 +1,6 @@
 import { styled } from '@mui/material';
 // import { usePermissionSelector } from '../../store/hooks';
 // import { permissions } from '../../utils/roles';
-import { useAppSelector } from '../../store/hooks';
 import TableMenu from './TablesMenu';
 import TablesList from './TablesList';
 

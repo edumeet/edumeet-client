@@ -1,7 +1,5 @@
 import { Button } from '@mui/material';
 import { useAppDispatch } from '../../store/hooks';
-// import { createTablesSession } from '../../store/actions/tablesActions';
-// import { clearChat } from '../../store/actions/tablesActions';
 import { tablesActions } from '../../store/slices/tablesSlice';
 
 import {
@@ -13,8 +11,6 @@ const CreateTablesSessionButton = (): JSX.Element => {
 
 	const handleCreateTablesSession = (): void => {
 		dispatch(tablesActions.createTablesSession());
-		
-		// dispatch(clearChat());
 	};
 
 	return (
