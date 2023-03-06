@@ -30,11 +30,17 @@ interface JoinProps {
 }
 
 const Join = ({ roomId }: JoinProps): JSX.Element => {
-	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 	const stateAudioOnly = useAppSelector((state) => state.settings.audioOnly);
 	const peerId = useAppSelector((state) => state.me.id);
 	const { previewMicTrackId, previewWebcamTrackId } = useAppSelector((state) => state.me);
 	const dispatch = useAppDispatch();
+	const dn = new URL(window.location.href).searchParams.get('displayName');
+
+	if (dn) {
+		dispatch(settingsActions.setDisplayName(dn));
+	}
+	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
+
 	const [ name, setName ] = useState(stateDisplayName || '');
 	const [ audioOnly, setAudioOnly ] = useState(stateAudioOnly || false);
 	const {
@@ -64,6 +70,15 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		dispatch(signalingActions.setUrl(url));
 		dispatch(signalingActions.connect());
 	};
+
+	const headless = new URL(window.location.href).searchParams.get('headless');
+
+	if (headless) {
+		const myNewURL = window.location.href.split('?')[0];
+		
+		window.history.pushState({}, '', myNewURL);
+		handleJoin();
+	}
 
 	useEffect(() => {
 		dispatch(roomActions.updateRoom({ name: roomId }));

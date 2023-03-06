@@ -2,6 +2,7 @@ import { styled } from '@mui/material';
 import {
 	useAppSelector,
 } from '../../store/hooks';
+import EscapeMeetingButton from '../controlbuttons/EscapeMeetingButton';
 import RaiseHandButton from '../controlbuttons/RaiseHandButton';
 
 const MeDiv = styled('div')({
@@ -35,6 +36,7 @@ const ListMe = (): JSX.Element => {
 		<MeDiv>
 			<MeAvatar src={picture ?? '/images/buddy.svg'} />
 			<MeInfoDiv>{ displayName }</MeInfoDiv>
+			<EscapeMeetingButton type='iconbutton' />
 			<RaiseHandButton type='iconbutton' />
 		</MeDiv>
 	);

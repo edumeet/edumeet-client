@@ -1,5 +1,11 @@
-# Edumeet App Configuration
+# Edumeet client
 
+This is the client service for the Edumeet project.
+
+
+![](img/edumeet-client.drawio.png)
+
+## Configuration
 The app configuration file should be a valid javascript file defining a single
 `config` object containing the properties that you need to modify.
 
@@ -18,9 +24,9 @@ can be found here: [config.example.js](public/config/config.example.js).
 | Name | Description | Format | Default value |
 | :--- | :---------- | :----- | :------------ |
 | loginEnabled | If the login is enabled. | `"boolean"` | ``false`` |
-| developmentPort | The development server listening port. | `"port"` | ``3443`` |
-| productionPort | The production server listening port. | `"port"` | ``8443`` |
-| serverHostname | If the server component runs on a different host than the app you can specify the host name. | `"string"` | ``""`` |
+| developmentPort | The development room server service listening port. | `"port"` | ``3443`` |
+| productionPort | The production room server service listening port. | `"port"` | ``8443`` |
+| serverHostname | If the room server service runs on a different host than the client service you can specify the host name. | `"string"` | ``""`` |
 | resolution | The default video camera capture resolution. | `[  "low",  "medium",  "high",  "veryhigh",  "ultra"]` | ``"medium"`` |
 | frameRate | The default video camera capture framerate. | `"nat"` | ``15`` |
 | screenResolution | The default screen sharing resolution. | `[  "low",  "medium",  "high",  "veryhigh",  "ultra"]` | ``"veryhigh"`` |

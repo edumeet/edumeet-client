@@ -1,10 +1,11 @@
 import {
 	FormControl,
-	FormHelperText,
+	InputLabel,
 	MenuItem,
 	Select,
 	styled
 } from '@mui/material';
+import { memo } from 'react';
 import { MediaDevice } from '../../services/deviceService';
 
 interface DeviceChooserProps {
@@ -18,10 +19,16 @@ interface DeviceChooserProps {
 	devices: MediaDevice[];
 }
 
-export const ChooserDiv = styled('div')({
+export const ChooserDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
-	flexDirection: 'row'
-});
+	flexDirection: 'row',
+	margin: theme.spacing(2, 0)
+}));
+
+export const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
+	padding: theme.spacing(0, 0.5),
+	backgroundColor: '#fff'
+}));
 
 const DeviceChooser = ({
 	value,
@@ -33,7 +40,10 @@ const DeviceChooser = ({
 	devices,
 }: DeviceChooserProps): JSX.Element => {
 	return (
-		<FormControl fullWidth>
+		<FormControl variant="outlined" fullWidth>
+			<StyledInputLabel>
+				{ devices.length ? devicesLabel : noDevicesLabel }
+			</StyledInputLabel>
 			<Select
 				value={devices.length ? (value || '') : ''}
 				onChange={(event) => {
@@ -56,11 +66,8 @@ const DeviceChooser = ({
 					);
 				})}
 			</Select>
-			<FormHelperText>
-				{ devices.length ? devicesLabel : noDevicesLabel }
-			</FormHelperText>
 		</FormControl>
 	);
 };
 
-export default DeviceChooser;
+export default memo(DeviceChooser);

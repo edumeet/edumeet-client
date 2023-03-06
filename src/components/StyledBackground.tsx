@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles';
+import { memo } from 'react';
 
-export default styled('div')(({ theme }) => ({
+export default memo(styled('div')(({ theme }) => ({
 	display: 'flex',
 	width: '100%',
 	height: '100%',
@@ -12,4 +13,4 @@ export default styled('div')(({ theme }) => ({
 	backgroundPosition: 'center',
 	backgroundSize: 'cover',
 	backgroundRepeat: 'no-repeat'
-}));
+})));

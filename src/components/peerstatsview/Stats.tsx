@@ -1,7 +1,7 @@
-import { memo, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { styled } from '@mui/material/styles';
 
-interface MediaControlsDivProps {
+interface StatsDivProps {
 	flexdirection: 'row' | 'column';
 	alignitems: string;
 	justifycontent: string;
@@ -11,7 +11,7 @@ interface MediaControlsDivProps {
 	autohide: number;
 }
 
-const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
+const StatsDiv = styled('div')<StatsDivProps>(({
 	theme,
 	flexdirection,
 	alignitems,
@@ -26,10 +26,10 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	height: '100%',
 	display: 'flex',
 	...(withGap && {
-		gap: theme.spacing(2)
+		gap: theme.spacing(1)
 	}),
 	...(withPadding && {
-		padding: theme.spacing(2)
+		padding: theme.spacing(4)
 	}),
 	flexDirection: flexdirection,
 	...(autoHide && {
@@ -39,12 +39,14 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 		},
 		opacity: 0.2,
 	}),
+	fontSize: '0.8rem',
+	color: 'white',
 	alignItems: alignitems,
 	justifyContent: justifycontent,
-	zIndex: 21,
+	zIndex: 20,
 }));
 
-interface MediaControlsProps {
+interface StatsProps {
 	orientation?: 'horizontal' | 'vertical';
 	horizontalPlacement?: 'left' | 'center' | 'right';
 	verticalPlacement?: 'top' | 'center' | 'bottom';
@@ -55,16 +57,16 @@ interface MediaControlsProps {
 	children?: ReactNode;
 }
 
-const MediaControls = ({
+const Stats = ({
 	orientation = 'vertical',
 	horizontalPlacement = 'center',
 	verticalPlacement = 'center',
 	position = 'absolute',
-	withGap = true,
+	withGap = false,
 	withPadding = true,
-	autoHide = true,
+	autoHide = false,
 	children
-}: MediaControlsProps): JSX.Element => {
+}: StatsProps): JSX.Element => {
 	let justifyContent = 'center';
 	let alignItems = 'center';
 
@@ -85,7 +87,7 @@ const MediaControls = ({
 	}
 
 	return (
-		<MediaControlsDiv
+		<StatsDiv
 			flexdirection={orientation === 'horizontal' ? 'row' : 'column'}
 			position={position}
 			alignitems={alignItems}
@@ -98,4 +100,4 @@ const MediaControls = ({
 	);
 };
 
-export default memo(MediaControls);
+export default Stats;

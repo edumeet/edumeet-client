@@ -7,9 +7,10 @@ declare module '@mui/material/styles' {
 		appBarColor: string;
 		logo: string;
 		activeSpeakerBorder: string;
-		peerBackroundColor: string;
-		peerShadow: string;
-		peerAvatar: string;
+		videoBackroundColor: string;
+		videoShadow: string;
+		videoAvatarImage: string;
+		videoRoundedCorners: boolean;
 		chatColor?: string;
 	}
 
@@ -19,9 +20,10 @@ declare module '@mui/material/styles' {
 		appBarColor?: string;
 		logo?: string;
 		activeSpeakerBorder?: string;
-		peerBackroundColor?: string;
-		peerShadow?: string;
-		peerAvatar?: string;
+		videoBackroundColor?: string;
+		videoShadow?: string;
+		videoAvatarImage?: string;
+		videoRoundedCorners?: boolean;
 		chatColor?: string;
 	}
 }
@@ -35,5 +37,6 @@ declare global {
 export default {
 	...defaultEdumeetConfig,
 	...window.config,
-	theme: { ...defaultEdumeetConfig.theme, ...window.config?.theme }
+	theme: { ...defaultEdumeetConfig.theme, ...window.config?.theme },
+	observertc: { ...defaultEdumeetConfig.observertc, ...window.config?.observertc }
 };

@@ -5,6 +5,7 @@ import {
 	ListItemSecondaryAction,
 	ListItemText,
 } from '@mui/material';
+import { memo } from 'react';
 import { LobbyPeer } from '../../store/slices/lobbyPeersSlice';
 import PromoteButton from '../controlbuttons/PromoteButton';
 
@@ -35,4 +36,4 @@ const ListLobbyPeer = ({
 	);
 };
 
-export default ListLobbyPeer;
+export default memo(ListLobbyPeer);

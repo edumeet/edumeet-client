@@ -36,6 +36,7 @@ export interface SettingsState {
 	opusFec: boolean;
 	opusPtime: number;
 	opusMaxPlaybackRate: number;
+	notificationSounds: boolean;
 	audioMuted?: boolean;
 	videoMuted?: boolean;
 	locale?: string;
@@ -72,6 +73,7 @@ const initialState: SettingsState = {
 	opusFec: edumeetConfig.opusFec,
 	opusPtime: edumeetConfig.opusPtime,
 	opusMaxPlaybackRate: edumeetConfig.opusMaxPlaybackRate,
+	notificationSounds: true,
 	locale: detect()
 };
 
@@ -171,6 +173,9 @@ const settingsSlice = createSlice({
 		}),
 		setOpusMaxPlaybackRate: ((state, action: PayloadAction<number>) => {
 			state.opusMaxPlaybackRate = action.payload;
+		}),
+		setNotificationSounds: ((state, action: PayloadAction<boolean>) => {
+			state.notificationSounds = action.payload;
 		}),
 		setAudioMuted: ((state, action: PayloadAction<boolean>) => {
 			state.audioMuted = action.payload;

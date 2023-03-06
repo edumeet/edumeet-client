@@ -31,6 +31,14 @@ export class SignalingService extends EventEmitter {
 	}
 
 	@skipIfClosed
+	public disconnect(): void {
+		logger.debug('disconnect()');
+
+		this.connections.items.forEach((c) => c.close());
+		this.connections.clear();
+	}
+
+	@skipIfClosed
 	public addConnection(connection: BaseConnection): void {
 		logger.debug('addConnection()');
 
@@ -61,7 +69,7 @@ export class SignalingService extends EventEmitter {
 			this.connections.remove(connection);
 
 			if (this.connections.length === 0)
-				this.close();
+				this.connected = false;
 		});
 	}
 

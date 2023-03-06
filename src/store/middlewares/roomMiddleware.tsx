@@ -41,7 +41,8 @@ const createRoomMiddleware = ({
 									userRoles,
 									allowWhenRoleMissing,
 									turnServers,
-									rtcStatsOptions
+									rtcStatsOptions,
+									clientMonitorSenderConfig,
 								} = notification.data;
 
 								batch(() => {
@@ -58,6 +59,13 @@ const createRoomMiddleware = ({
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
+
+								if (clientMonitorSenderConfig) {
+									const roomId = getState().room.name;
+
+									mediaService.getMonitor()?.setRoomId(roomId);
+									mediaService.getMonitor()?.connect(clientMonitorSenderConfig);
+								}
 								break;
 							}
 
@@ -88,7 +96,8 @@ const createRoomMiddleware = ({
 								break;
 							}
 
-							case 'moderator:kick': {
+							case 'moderator:kick':
+							case 'escapeMeeting': {
 								dispatch(leaveRoom());
 
 								break;

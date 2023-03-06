@@ -14,6 +14,7 @@ import WebAssetIcon from '@mui/icons-material/WebAsset';
 import ErrorIcon from '@mui/icons-material/Error';
 import { FormattedMessage } from 'react-intl';
 import StyledDialog from '../../components/dialog/StyledDialog';
+import { memo } from 'react';
 
 interface UnsupportedBrowserProps {
 	platform: string;
@@ -104,4 +105,4 @@ const UnsupportedBrowser = ({
 	);
 };
 
-export default UnsupportedBrowser;
+export default memo(UnsupportedBrowser);

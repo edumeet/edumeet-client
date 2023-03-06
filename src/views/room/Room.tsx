@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import fscreen from 'fscreen';
-import Notifications from '../../components/notifications/Notifications';
 import MeetingDrawer from '../../components/meetingdrawer/MeetingDrawer';
 import Democratic from '../../components/democratic/Democratic';
 import Settings from '../../components/settingsdialog/SettingsDialog';
@@ -40,7 +39,6 @@ const Room = (): JSX.Element => {
 
 	return (
 		<>
-			<Notifications />
 			<FullscreenVideo />
 			<WindowedVideo />
 			<AudioPeers />
