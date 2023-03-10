@@ -43,12 +43,13 @@ const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
 	...(activeSpeaker && {
 		border: theme.activeSpeakerBorder
 	}),
-	boxShadow: theme.peerShadow,
-	backgroundColor: theme.peerBackroundColor,
-	backgroundImage: `url(${theme.peerAvatar})`,
+	boxShadow: theme.videoShadow,
+	backgroundColor: theme.videoBackroundColor,
+	backgroundImage: `url(${theme.videoAvatarImage})`,
 	backgroundPosition: 'bottom',
 	backgroundSize: 'auto 85%',
 	backgroundRepeat: 'no-repeat',
+	borderRadius: theme.videoRoundedCorners ? theme.spacing(1) : '0',
 }));
 
 const VideoBox = ({

@@ -7,6 +7,7 @@ import Volume from '../volume/Volume';
 import { Fragment, useState } from 'react';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import PeerMenu from '../peermenu/PeerMenu';
+import ScreenShareIcon from '@mui/icons-material/ScreenShareOutlined';
 
 interface ListPeerProps {
 	peer: Peer;
@@ -26,6 +27,10 @@ const PeerInfoDiv = styled('div')(({ theme }) => ({
 	paddingLeft: theme.spacing(1),
 	flexGrow: 1,
 	alignItems: 'center'
+}));
+
+const ScreenShareStatus = styled(ScreenShareIcon)(({ theme }) => ({
+	margin: theme.spacing(1),
 }));
 
 const PeerAvatar = styled('img')({
@@ -74,6 +79,7 @@ const ListPeer = ({
 					</IconButton>
 				}
 				{ micConsumer && <Volume consumer={micConsumer} small /> }
+				{ screenConsumer && <ScreenShareStatus />	}
 				{ shoudShow && 
 				<IconButton
 					aria-haspopup

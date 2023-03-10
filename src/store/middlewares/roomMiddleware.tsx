@@ -59,6 +59,7 @@ const createRoomMiddleware = ({
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
+
 								if (clientMonitorSenderConfig) {
 									const roomId = getState().room.name;
 
