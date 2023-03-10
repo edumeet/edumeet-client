@@ -11,10 +11,10 @@ var config = {
 	loginEnabled: true,
 
 	// The development server listening port.
-	developmentPort: 3443,
+	developmentPort: 8443,
 
 	// The production server listening port.
-	productionPort: 80,
+	productionPort: 443,
 
 	// If the server component runs on a different host than the app you can specify the host name.
 	serverHostname: '',
