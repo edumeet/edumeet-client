@@ -5,21 +5,44 @@ This is the client service for the Edumeet project.
 
 ![](img/edumeet-client.drawio.png)
 
+## Usage
+This service is the frontend of an edumeet installation and consist of static content. It's a React app but we do not use `yarn run serve` to deploy it. We are not doing SSL configuration here. In the Dockerfile we expose the service on port 80 and expect a reverse proxy to sit in front and do SSL termination.
+
+### Docker
+
+Running the service as a docker container. 
+You would in most cases want to replace the `config/` and `images/` directories with your own content, see below for example using docker as container runtime.
+
+```bash
+$ docker build . -t user/edumeet-client
+$ docker run -v $(pwd)/config:/usr/share/nginx/html/config -v $(pwd)/images:/usr/share/nginx/html/images -p 80:80 -d user/edumeet-client
+```
+
+
+### Running the service manually
+
+```bash
+$ yarn install
+$ yarn start
+```
+
+To run the service you need to have Node.js version 18 or higher installed. Alternatively you can get some debug output by running it like this:
+
 ## Configuration
 The app configuration file should be a valid javascript file defining a single
-`config` object containing the properties that you need to modify.
+`config` object containing the properties that you need to modify. Below we have configured the ports of our room-server service in development  and production. They are used when a participant tries to join a room and a websocket connection to the room-server service is established.
 
 Example `public/config/config.js`:
 ```javascript
 var config = {
-	developmentPort: 3443,
+	developmentPort: 8443,
 	productionPort: 443
 };
 ```
 An example configuration file with all properties set to default values
 can be found here: [config.example.js](public/config/config.example.js).
 
-## Configuration properties
+### Configuration properties
 
 | Name | Description | Format | Default value |
 | :--- | :---------- | :----- | :------------ |
