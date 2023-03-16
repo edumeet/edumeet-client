@@ -4,6 +4,7 @@ import { audioOnlyModeLabel } from '../translated/translatedComponents';
 
 interface AudioOnlyProps {
 	checked: boolean;
+	disabled: boolean;
 	// eslint-disable-next-line
 	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -25,6 +26,7 @@ const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
 
 const AudioOnlySwitch = ({
 	checked,
+	disabled,
 	onChange
 }: AudioOnlyProps): JSX.Element => {
 	return (
@@ -35,6 +37,7 @@ const AudioOnlySwitch = ({
 					<Switch
 						color='primary'
 						checked={ checked }
+						disabled={ disabled }
 						onChange={ onChange }
 					/>
 				}

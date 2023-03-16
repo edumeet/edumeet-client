@@ -29,7 +29,8 @@ const Lobby = (): JSX.Element => {
 	const audioOnly = useAppSelector((state) => state.settings.audioOnly);
 	const {
 		previewMicTrackId,
-		previewWebcamTrackId
+		previewWebcamTrackId,
+		videoInProgress
 	} = useAppSelector((state) => state.me);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
 	const [ localAudioOnly, setLocalAudioOnly ] = useState(audioOnly);
@@ -77,6 +78,7 @@ const Lobby = (): JSX.Element => {
 					/>
 					<AudioOnlySwitch
 						checked={localAudioOnly}
+						disabled={videoInProgress}
 						onChange={handleAudioOnlyChage}
 					/>
 				</>

@@ -32,7 +32,11 @@ interface JoinProps {
 const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const stateAudioOnly = useAppSelector((state) => state.settings.audioOnly);
 	const peerId = useAppSelector((state) => state.me.id);
-	const { previewMicTrackId, previewWebcamTrackId } = useAppSelector((state) => state.me);
+	const {
+		previewMicTrackId,
+		previewWebcamTrackId,
+		videoInProgress
+	} = useAppSelector((state) => state.me);
 	const dispatch = useAppDispatch();
 	const dn = new URL(window.location.href).searchParams.get('displayName');
 
@@ -114,6 +118,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					/>
 					<AudioOnlySwitch
 						checked={audioOnly}
+						disabled={videoInProgress}
 						onChange={handleAudioOnlyChange}
 					/>
 				</>
