@@ -1,5 +1,6 @@
 import { HeadsetMic, Videocam } from '@mui/icons-material';
 import { List, ListItem, ListItemIcon, ListItemText, styled } from '@mui/material';
+import { useAppSelector } from '../../store/hooks';
 import AudioPresetSelector from '../audiopresetselector/AudioPresetSelector';
 import AudioInputChooser from '../devicechooser/AudioInputChooser';
 import VideoInputChooser from '../devicechooser/VideoInputChooser';
@@ -13,9 +14,11 @@ const NestedList = styled(List)(({ theme }) => ({
 }));
 
 const MediaSettings = (): JSX.Element => {
+	const audioOnly = useAppSelector((state) => state.settings.audioOnly);
+
 	return (
 		<List>
-			<MediaPreview withControls={false} />
+			{ !audioOnly && <MediaPreview withControls={false} /> }
 			<ListItem>
 				<ListItemIcon sx={{ minWidth: 29 }}>
 					<HeadsetMic />
@@ -27,16 +30,20 @@ const MediaSettings = (): JSX.Element => {
 				<AudioPresetSelector />
 				<AdvancedAudioSettings />
 			</NestedList>
-			<ListItem>
-				<ListItemIcon sx={{ minWidth: 29 }}>
-					<Videocam />
-				</ListItemIcon>
-				<ListItemText primary={ videoSettingsLabel() } />
-			</ListItem>
-			<NestedList>
-				<VideoInputChooser preview withConfirm />
-				<AdvancedVideoSettings />
-			</NestedList>
+			{ !audioOnly && (
+				<>
+					<ListItem>
+						<ListItemIcon sx={{ minWidth: 29 }}>
+							<Videocam />
+						</ListItemIcon>
+						<ListItemText primary={ videoSettingsLabel() } />
+					</ListItem>
+					<NestedList>
+						<VideoInputChooser preview withConfirm />
+						<AdvancedVideoSettings />
+					</NestedList>
+				</>
+			) }
 		</List>
 	);
 };
