@@ -49,13 +49,13 @@ const Peer = ({
 					width={style.width}
 					height={style.height}
 				>
+					<StateIndicators peerId={id} />
 					<DisplayName displayName={peer?.displayName} />
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'
 						verticalPlacement='center'
 					>
-						<StateIndicators peerId={id} />
 						{ webcamConsumer && (
 							<>
 								<FullscreenVideoButton
