@@ -30,7 +30,7 @@ To run the service you need to have Node.js version 18 or higher installed. Alte
 
 ## Configuration
 The app configuration file should be a valid javascript file defining a single
-`config` object containing the properties that you need to modify. Below we have configured the ports of our room-server service in development  and production. They are used when a participant tries to join a room and a websocket connection to the room-server service is established.
+`config` object containing the properties that you need to modify. Below we have configured the ports of our room-server service in development and production. They are used when a participant tries to join a room and a websocket connection to the room-server service is established.
 
 Example `public/config/config.js`:
 ```javascript
