@@ -12,44 +12,44 @@ const VIDEO_CONSTRAINS: Record<Resolution, Record<string, number>> = {
 const SIMULCAST_PROFILES = {
 	'320': [ {
 		'scaleResolutionDownBy': 1,
-		'maxBitRate': 150000
+		'maxBitrate': 150000
 	} ],
 	'640': [ {
 		'scaleResolutionDownBy': 2,
-		'maxBitRate': 150000
+		'maxBitrate': 150000
 	}, {
 		'scaleResolutionDownBy': 1,
-		'maxBitRate': 500000
+		'maxBitrate': 500000
 	} ],
 	'1280': [ {
 		'scaleResolutionDownBy': 4,
-		'maxBitRate': 150000
+		'maxBitrate': 150000
 	}, {
 		'scaleResolutionDownBy': 2,
-		'maxBitRate': 500000
+		'maxBitrate': 500000
 	}, {
 		'scaleResolutionDownBy': 1,
-		'maxBitRate': 1200000
+		'maxBitrate': 1200000
 	} ],
 	'1920': [ {
 		'scaleResolutionDownBy': 6,
-		'maxBitRate': 150000
+		'maxBitrate': 150000
 	}, {
 		'scaleResolutionDownBy': 3,
-		'maxBitRate': 500000
+		'maxBitrate': 500000
 	}, {
 		'scaleResolutionDownBy': 1,
-		'maxBitRate': 3500000
+		'maxBitrate': 3500000
 	} ],
 	'3840': [ {
 		'scaleResolutionDownBy': 12,
-		'maxBitRate': 150000
+		'maxBitrate': 150000
 	}, {
 		'scaleResolutionDownBy': 6,
-		'maxBitRate': 500000
+		'maxBitrate': 500000
 	}, {
 		'scaleResolutionDownBy': 1,
-		'maxBitRate': 10000000
+		'maxBitrate': 10000000
 	} ]
 };
 
