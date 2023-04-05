@@ -6,20 +6,9 @@ This is the client service for the Edumeet project.
 ![](img/edumeet-client.drawio.png)
 
 ## Usage
-This service is the frontend of an edumeet installation and consist of static content. It's a React app but we do not use `yarn run serve` to deploy it. We are not doing SSL configuration here. In the Dockerfile we expose the service on port 80 and expect a reverse proxy to sit in front and do SSL termination.
+This service is the frontend of an edumeet installation and consist of static content. It's a React app but we do not use `yarn run serve` to deploy it. We are not doing SSL configuration here. In the Dockerfile we expose the service on port 80 using Nginx image. We expect a reverse proxy to sit in front and do SSL termination.
 
-### Docker
-
-Running the service as a docker container. 
-You would in most cases want to replace the `config/` and `images/` directories with your own content, see below for example using docker as container runtime.
-
-```bash
-$ docker build . -t user/edumeet-client
-$ docker run -v $(pwd)/config:/usr/share/nginx/html/config -v $(pwd)/images:/usr/share/nginx/html/images -p 80:80 -d user/edumeet-client
-```
-
-
-### Running the service manually
+### Running the service in development
 
 ```bash
 $ yarn install
@@ -27,6 +16,19 @@ $ yarn start
 ```
 
 To run the service you need to have Node.js version 18 or higher installed. Alternatively you can get some debug output by running it like this:
+
+### Running the service in production
+
+We run the service as a docker container. 
+You would in most cases want to replace the `config/` and `images/` directories with your own content. See below for an example using docker as container runtime.
+
+```bash
+$ docker build . -t user/edumeet-client
+$ docker run -v $(pwd)/config:/usr/share/nginx/html/config -v $(pwd)/images:/usr/share/nginx/html/images -p 80:80 -d user/edumeet-client
+```
+
+
+
 
 ## Configuration
 The app configuration file should be a valid javascript file defining a single
@@ -47,8 +49,8 @@ can be found here: [config.example.js](public/config/config.example.js).
 | Name | Description | Format | Default value |
 | :--- | :---------- | :----- | :------------ |
 | loginEnabled | If the login is enabled. | `"boolean"` | ``false`` |
-| developmentPort | The development room server service listening port. | `"port"` | ``3443`` |
-| productionPort | The production room server service listening port. | `"port"` | ``8443`` |
+| developmentPort | The development room server service listening port. | `"port"` | ``8443`` |
+| productionPort | The production room server service listening port. | `"port"` | ``443`` |
 | serverHostname | If the room server service runs on a different host than the client service you can specify the host name. | `"string"` | ``""`` |
 | resolution | The default video camera capture resolution. | `[  "low",  "medium",  "high",  "veryhigh",  "ultra"]` | ``"medium"`` |
 | frameRate | The default video camera capture framerate. | `"nat"` | ``15`` |
