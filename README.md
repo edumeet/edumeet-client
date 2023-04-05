@@ -10,12 +10,14 @@ This service is the frontend of an edumeet installation and consist of static co
 
 ### Running the service in development
 
+This will start the service using https with a self-signed certificate. It's exposed on port `443`.
+
 ```bash
 $ yarn install
 $ yarn start
 ```
 
-To run the service you need to have Node.js version 18 or higher installed. Alternatively you can get some debug output by running it like this:
+To run the service you need to have Node.js version 18 or higher installed.
 
 ### Running the service in production
 
