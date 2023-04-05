@@ -52,7 +52,7 @@
 		"ws": "^8.8.0"
 	},
 	"scripts": {
-		"start": "HTTPS=false PORT=80 react-scripts --openssl-legacy-provider start",
+		"start": "HTTPS=true PORT=443 react-scripts --openssl-legacy-provider start",
 		"build": "react-scripts --openssl-legacy-provider build",
 		"test": "react-scripts --openssl-legacy-provider test",
 		"lint": "eslint . --ext .ts,.tsx",
