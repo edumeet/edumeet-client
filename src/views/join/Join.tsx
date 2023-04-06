@@ -47,6 +47,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	const [ name, setName ] = useState(stateDisplayName || '');
 	const [ audioOnly, setAudioOnly ] = useState(stateAudioOnly || false);
+	const [ joined, setJoined ] = useState(false);
 	const {
 		audioMuted,
 		videoMuted
@@ -68,6 +69,8 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const handleJoin = () => {
 		const encodedRoomId = encodeURIComponent(roomId);
 		const url = getSignalingUrl(peerId, encodedRoomId);
+
+		setJoined(true);
 
 		dispatch(settingsActions.setDisplayName(name));
 		dispatch(settingsActions.setAudioOnly(audioOnly));
@@ -128,7 +131,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					onClick={handleJoin}
 					variant='contained'
 					color='primary'
-					disabled={!name}
+					disabled={!name || joined}
 					fullWidth
 				>
 					{ joinLabel() }
