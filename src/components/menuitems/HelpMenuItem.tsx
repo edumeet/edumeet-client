@@ -1,5 +1,5 @@
 import { MenuItem } from '@mui/material';
-import { Help } from '@mui/icons-material';
+import { Help as HelpIcon } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { helpLabel } from '../translated/translatedComponents';
 import { uiActions } from '../../store/slices/uiSlice';
@@ -20,7 +20,7 @@ const HelpMenuItem = ({
 				dispatch(uiActions.setUi({ helpOpen: !helpOpen }));
 			} }
 		>
-			<Help />
+			<HelpIcon />
 			<MoreActions>
 				{ helpLabel() }
 			</MoreActions>
