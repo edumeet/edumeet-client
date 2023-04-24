@@ -142,6 +142,11 @@ export const aboutLabel = (): string => intl.formatMessage({
 	defaultMessage: 'About'
 });
 
+export const shortcutKeysLabel = (): string => intl.formatMessage({
+	id: 'room.shortcutKeys',
+	defaultMessage: 'Shortcut keys'
+});
+
 export const loginLabel = (): string => intl.formatMessage({
 	id: 'tooltip.login',
 	defaultMessage: 'Log in'
@@ -323,7 +328,7 @@ export const participantsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Participants'
 });
 
-export const EscapeMeetingLabel = (): string => intl.formatMessage({
+export const escapeMeetingLabel = (): string => intl.formatMessage({
 	id: 'label.escapeMeeting',
 	defaultMessage: 'Escape meeting'
 });
@@ -389,6 +394,11 @@ export const chatLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Chat'
 });
 
+export const showChatLabel = (): string => intl.formatMessage({
+	id: 'label.showChat',
+	defaultMessage: 'Open chat'
+});
+
 export const disableAllMediaLabel = (): string => intl.formatMessage({
 	id: 'devices.disableBothMicrophoneAndCamera',
 	defaultMessage: 'Disable both Microphone And Camera'
@@ -437,6 +447,11 @@ export const clearFilesLabel = (): string => intl.formatMessage({
 export const settingsLabel = (): string => intl.formatMessage({
 	id: 'settings.settings',
 	defaultMessage: 'Settings'
+});
+
+export const openSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.openSettings',
+	defaultMessage: 'Open settings'
 });
 
 export const closeLabel = (): string => intl.formatMessage({
@@ -508,6 +523,11 @@ export const mutedPTTLabel = (): ReactNode => intl.formatMessage({
 	id: 'me.mutedPTT',
 	defaultMessage: 'You are muted{br}hold down SPACE-BAR to talk'
 }, { br: <br /> });
+
+export const usePTTLabel = (): string => intl.formatMessage({
+	id: 'label.usePTT',
+	defaultMessage: 'Use Push-to-Talk'
+});
 
 export const audioOnlyModeLabel = (): string => intl.formatMessage({
 	id: 'label.audioOnlyMode',
@@ -637,6 +657,11 @@ export const selectScreenSharingFrameRateLabel = (): string => intl.formatMessag
 export const selectRecordingsPreferredMimeTypeLabel = (): string => intl.formatMessage({
 	id: 'settings.recordingsPreferredMimeType',
 	defaultMessage: 'Select your preferred video mime type'
+});
+
+export const showStatsLabel = (): string => intl.formatMessage({
+	id: 'label.showStats',
+	defaultMessage: 'Show stats'
 });
 
 export const enableNotificationSoundsLabel = (): string => intl.formatMessage({
