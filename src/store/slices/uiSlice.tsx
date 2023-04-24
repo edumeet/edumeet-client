@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type SettingsTab = 'media' | 'appearance';
+export type SettingsTab = 'media' | 'appearance' | 'advanced';
 export type HelpTab = 'shortcuts';
 
 export interface UiState {

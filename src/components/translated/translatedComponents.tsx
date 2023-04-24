@@ -474,6 +474,11 @@ export const appearanceSettingsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Appearance'
 });
 
+export const advancedSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.advanced',
+	defaultMessage: 'Advanced'
+});
+
 export const audioDeviceLabel = (): string => intl.formatMessage({
 	id: 'settings.audio',
 	defaultMessage: 'Audio input device'
@@ -522,6 +527,11 @@ export const mutedPTTLabel = (): ReactNode => intl.formatMessage({
 export const usePTTLabel = (): string => intl.formatMessage({
 	id: 'label.usePTT',
 	defaultMessage: 'Use Push-to-Talk'
+});
+
+export const audioOnlyModeLabel = (): string => intl.formatMessage({
+	id: 'label.audioOnlyMode',
+	defaultMessage: 'Use audio-only mode'
 });
 
 export const audioSettingsLabel = (): string => intl.formatMessage({
@@ -652,4 +662,9 @@ export const selectRecordingsPreferredMimeTypeLabel = (): string => intl.formatM
 export const showStatsLabel = (): string => intl.formatMessage({
 	id: 'label.showStats',
 	defaultMessage: 'Show stats'
+});
+
+export const enableNotificationSoundsLabel = (): string => intl.formatMessage({
+	id: 'settings.notificationSounds',
+	defaultMessage: 'Notification sounds'
 });

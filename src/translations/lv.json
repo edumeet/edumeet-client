@@ -44,6 +44,7 @@
 	"label.addVideo": "Pievienot video",
 	"label.advanced": "Advancēts",
 	"label.appearance": "Izskats",
+	"label.audioOnlyMode": null,
 	"label.audioSettings": null,
 	"label.auth": null,
 	"label.bold": null,

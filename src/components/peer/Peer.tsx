@@ -10,6 +10,7 @@ import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import PeerStatsView from '../peerstatsview/PeerStatsView';
 import PeerTranscription from '../peertranscription/PeerTranscription';
+import StateIndicators from '../stateindicators/StateIndicators';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
@@ -48,6 +49,7 @@ const Peer = ({
 					width={style.width}
 					height={style.height}
 				>
+					<StateIndicators peerId={id} />
 					<DisplayName displayName={peer?.displayName} />
 					<MediaControls
 						orientation='vertical'

@@ -44,6 +44,7 @@
 	"label.addVideo": "Dodaj strumień wideo",
 	"label.advanced": "Zaawansowane",
 	"label.appearance": "Wygląd",
+	"label.audioOnlyMode": null,
 	"label.audioSettings": "Ustawienia audio",
 	"label.auth": "Autoryzacja",
 	"label.bold": "Pogrubiony",

@@ -44,6 +44,7 @@
 	"label.addVideo": "Додати відео",
 	"label.advanced": "Розширений",
 	"label.appearance": "Зовнішній вигляд",
+	"label.audioOnlyMode": null,
 	"label.audioSettings": null,
 	"label.auth": null,
 	"label.bold": null,

@@ -44,6 +44,7 @@
 	"label.addVideo": "Új videó bemenet hozzáadása",
 	"label.advanced": "Részletek",
 	"label.appearance": "Megjelenés",
+	"label.audioOnlyMode": null,
 	"label.audioSettings": "Audio beállítások",
 	"label.auth": "Authentikáció",
 	"label.bold": "Kiemelt",

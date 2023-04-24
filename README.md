@@ -5,27 +5,60 @@ This is the client service for the Edumeet project.
 
 ![](img/edumeet-client.drawio.png)
 
+## Usage
+This service is the frontend of an edumeet installation and consist of static content. It's a React app but we do not use `yarn run serve` to deploy it. We are not doing SSL configuration here. In the Dockerfile we expose the service on port 80 using Nginx image. We expect a reverse proxy to sit in front and do SSL termination.
+
+### Running the service in development
+
+This will start the service using https with a self-signed certificate. It's exposed on port `443`.
+
+```bash
+$ yarn install
+$ yarn start
+```
+
+To debug in browser console you can read the store like so:  
+`document.getElementById('edumeet')._reactRootContainer.current.memoizedState.element.props.children[1].props.store.getState()`  
+
+You can read the mediaservice like so:  
+`const mediaService = document.getElementById('edumeet')._reactRootContainer.current.memoizedState.element.props.children[1].props.children.props.children.props.children.props.children.props.value.mediaService`
+
+To run the service you need to have Node.js version 18 or higher installed.
+
+### Running the service in production
+
+We run the service as a docker container. 
+You would in most cases want to replace the `config/` and `images/` directories with your own content. See below for an example using docker as container runtime.
+
+```bash
+$ docker build . -t user/edumeet-client
+$ docker run -v $(pwd)/config:/usr/share/nginx/html/config -v $(pwd)/images:/usr/share/nginx/html/images -p 80:80 -d user/edumeet-client
+```
+
+
+
+
 ## Configuration
 The app configuration file should be a valid javascript file defining a single
-`config` object containing the properties that you need to modify.
+`config` object containing the properties that you need to modify. Below we have configured the ports of our room-server service in development and production. They are used when a participant tries to join a room and a websocket connection to the room-server service is established.
 
 Example `public/config/config.js`:
 ```javascript
 var config = {
-	developmentPort: 3443,
+	developmentPort: 8443,
 	productionPort: 443
 };
 ```
 An example configuration file with all properties set to default values
 can be found here: [config.example.js](public/config/config.example.js).
 
-## Configuration properties
+### Configuration properties
 
 | Name | Description | Format | Default value |
 | :--- | :---------- | :----- | :------------ |
 | loginEnabled | If the login is enabled. | `"boolean"` | ``false`` |
-| developmentPort | The development room server service listening port. | `"port"` | ``3443`` |
-| productionPort | The production room server service listening port. | `"port"` | ``8443`` |
+| developmentPort | The development room server service listening port. | `"port"` | ``8443`` |
+| productionPort | The production room server service listening port. | `"port"` | ``443`` |
 | serverHostname | If the room server service runs on a different host than the client service you can specify the host name. | `"string"` | ``""`` |
 | resolution | The default video camera capture resolution. | `[  "low",  "medium",  "high",  "veryhigh",  "ultra"]` | ``"medium"`` |
 | frameRate | The default video camera capture framerate. | `"nat"` | ``15`` |

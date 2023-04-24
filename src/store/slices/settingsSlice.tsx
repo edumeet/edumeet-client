@@ -6,6 +6,7 @@ import { producersActions } from './producersSlice';
 
 export interface SettingsState {
 	displayName?: string;
+	audioOnly: boolean;
 	lastN: number;
 	mirroredSelfView: boolean;
 	hideNonVideo: boolean;
@@ -35,6 +36,7 @@ export interface SettingsState {
 	opusFec: boolean;
 	opusPtime: number;
 	opusMaxPlaybackRate: number;
+	notificationSounds: boolean;
 	audioMuted?: boolean;
 	videoMuted?: boolean;
 	locale?: string;
@@ -43,6 +45,7 @@ export interface SettingsState {
 type SettingsUpdate = Partial<SettingsState>;
 
 const initialState: SettingsState = {
+	audioOnly: false,
 	mirroredSelfView: true,
 	roomLayout: edumeetConfig.defaultLayout,
 	resolution: edumeetConfig.resolution,
@@ -70,6 +73,7 @@ const initialState: SettingsState = {
 	opusFec: edumeetConfig.opusFec,
 	opusPtime: edumeetConfig.opusPtime,
 	opusMaxPlaybackRate: edumeetConfig.opusMaxPlaybackRate,
+	notificationSounds: true,
 	locale: detect()
 };
 
@@ -82,6 +86,9 @@ const settingsSlice = createSlice({
 		}),
 		setDisplayName: ((state, action: PayloadAction<string>) => {
 			state.displayName = action.payload;
+		}),
+		setAudioOnly: ((state, action: PayloadAction<boolean>) => {
+			state.audioOnly = action.payload;
 		}),
 		setLastN: ((state, action: PayloadAction<number>) => {
 			state.lastN = action.payload;
@@ -166,6 +173,9 @@ const settingsSlice = createSlice({
 		}),
 		setOpusMaxPlaybackRate: ((state, action: PayloadAction<number>) => {
 			state.opusMaxPlaybackRate = action.payload;
+		}),
+		setNotificationSounds: ((state, action: PayloadAction<boolean>) => {
+			state.notificationSounds = action.payload;
 		}),
 		setAudioMuted: ((state, action: PayloadAction<boolean>) => {
 			state.audioMuted = action.payload;
