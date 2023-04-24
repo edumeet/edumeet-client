@@ -31,11 +31,11 @@ function createOutboundStats(trackStats: OutboundTrackEntry): OutboundStats[] {
 		const stats = outboundRtpEntry.stats;
 		const { bytesSent, timestamp } = outboundRtpEntry.appData?.traces || {};
 		const now = Date.now();
-		const elapsedTimeInMs = now - (timestamp ?? 0);
+		const elapsedTimeInSec = (now - (timestamp ?? 0)) / 1000;
 		const dBytesSent = (stats.bytesSent ?? 0) - (bytesSent ?? 0);
 		const item: OutboundStats = {
 			ssrc: stats.ssrc,
-			sendingKbps: Math.floor(dBytesSent / (elapsedTimeInMs / 125)),
+			sendingKbps: Math.floor(((dBytesSent * 8) / 1000) / elapsedTimeInSec),
 			Fps: stats.framesPerSecond,
 			RTT: (remoteInboundRtpEntry?.stats.roundTripTime ?? 0) * 1000,
 		};
@@ -63,13 +63,13 @@ function createInboundStats(trackStats: InboundTrackEntry): InboundStats[] {
 			bytesReceived, 
 			timestamp } = inboundRtpEntry.appData?.traces || {};
 		const now = Date.now();
-		const elapsedTimeInMs = now - (timestamp ?? 0);
+		const elapsedTimeInSec = (now - (timestamp ?? 0)) / 1000;
 		const dBytesReceived = (stats.bytesReceived ?? 0) - (bytesReceived ?? 0);
 		const dPacketsLost = (stats.packetsLost ?? 0) - (packetsLost ?? 0);
 		const dPacketsReceived = (stats.packetsReceived ?? 0) - packetsReceived;
 		const item: InboundStats = {
 			ssrc: stats.ssrc,
-			receivedKbps: Math.floor(dBytesReceived / (elapsedTimeInMs / 125)),
+			receivedKbps: Math.floor(((dBytesReceived * 8) / 1000) / elapsedTimeInSec),
 			fractionLoss: Math.round(
 				(dPacketsLost / (dPacketsLost + dPacketsReceived)) * 100
 			) / 100

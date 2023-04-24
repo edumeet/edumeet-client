@@ -152,7 +152,7 @@ export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
 
 export interface SimulcastProfile {
 	scaleResolutionDownBy: number;
-	maxBitRate: number;
+	maxBitrate: number;
 }
 
 export interface AudioPreset {

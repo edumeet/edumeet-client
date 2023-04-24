@@ -19,7 +19,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { detectDevice } from 'mediasoup-client';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
 import CssBaseline from '@mui/material/CssBaseline';
-import { SnackbarProvider } from 'notistack';
+import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import UnsupportedBrowser from './views/unsupported/UnsupportedBrowser';
 import LandingPage from './views/landingpage/LandingPage';
 import edumeetConfig from './utils/edumeetConfig';
@@ -27,6 +27,8 @@ import { intl } from './utils/intlManager';
 import { useAppDispatch } from './store/hooks';
 import { setLocale } from './store/actions/localeActions';
 import { Logger } from 'edumeet-common';
+import { IconButton } from '@mui/material';
+import { Close } from '@mui/icons-material';
 
 if (process.env.REACT_APP_DEBUG === '*' || process.env.NODE_ENV !== 'production') {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');
@@ -42,6 +44,22 @@ const webrtcUnavailable =
 	!navigator.mediaDevices ||
 	!navigator.mediaDevices.getUserMedia ||
 	!window.RTCPeerConnection;
+
+interface SnackbarCloseButtonProps {
+	snackbarKey: SnackbarKey;
+}
+
+const SnackbarCloseButton = ({
+	snackbarKey
+}: SnackbarCloseButtonProps): JSX.Element => {
+	const { closeSnackbar } = useSnackbar();
+
+	return (
+		<IconButton onClick={() => closeSnackbar(snackbarKey)}>
+			<Close />
+		</IconButton>
+	);
+};
 
 /**
  * Return either the app or the unsupported browser page
@@ -62,7 +80,9 @@ const RootComponent = () => {
 		return (<UnsupportedBrowser platform={device.platform} webrtcUnavailable />);
 	} else {
 		return (
-			<SnackbarProvider>
+			<SnackbarProvider action={
+				(snackbarKey: SnackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} />
+			}>
 				<BrowserRouter>
 					<Routes>
 						<Route path='/' element={<LandingPage />} />
