@@ -6,7 +6,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 import { MenuItemProps } from '../floatingmenu/FloatingMenu';
 import MoreActions from '../moreactions/MoreActions';
 
-const HelpMenuItem = ({
+const Help = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -28,4 +28,4 @@ const HelpMenuItem = ({
 	);
 };
 
-export default HelpMenuItem;
+export default Help;
