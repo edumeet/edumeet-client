@@ -14,6 +14,7 @@ export interface UiState {
 	aboutOpen: boolean;
 	lobbyDialogOpen: boolean;
 	extraVideoDialogOpen: boolean;
+	privacyDisclaimerOpen: boolean;
 	currentSettingsTab: SettingsTab;
 	showStats: boolean;
 }
@@ -31,6 +32,7 @@ const initialState: UiState = {
 	aboutOpen: false,
 	lobbyDialogOpen: false,
 	extraVideoDialogOpen: false,
+	privacyDisclaimerOpen: false,
 	currentSettingsTab: 'media'
 };
 
