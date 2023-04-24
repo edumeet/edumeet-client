@@ -6,6 +6,7 @@ import { producersActions } from './producersSlice';
 
 export interface SettingsState {
 	displayName?: string;
+	audioOnly: boolean;
 	lastN: number;
 	mirroredSelfView: boolean;
 	hideNonVideo: boolean;
@@ -44,6 +45,7 @@ export interface SettingsState {
 type SettingsUpdate = Partial<SettingsState>;
 
 const initialState: SettingsState = {
+	audioOnly: false,
 	mirroredSelfView: true,
 	roomLayout: edumeetConfig.defaultLayout,
 	resolution: edumeetConfig.resolution,
@@ -84,6 +86,9 @@ const settingsSlice = createSlice({
 		}),
 		setDisplayName: ((state, action: PayloadAction<string>) => {
 			state.displayName = action.payload;
+		}),
+		setAudioOnly: ((state, action: PayloadAction<boolean>) => {
+			state.audioOnly = action.payload;
 		}),
 		setLastN: ((state, action: PayloadAction<number>) => {
 			state.lastN = action.payload;

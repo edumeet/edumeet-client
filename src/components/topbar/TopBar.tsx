@@ -111,6 +111,7 @@ const TopBar = ({
 	const canRecord = useAppSelector((state) => state.me.canRecord);
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
+	const audioOnly = useAppSelector((state) => state.settings.audioOnly);
 	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
 	const unread = useAppSelector(unreadSelector);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
@@ -216,7 +217,7 @@ const TopBar = ({
 					<DesktopDiv>
 						{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
 						<FilesharingButton type='iconbutton' />
-						<ExtraVideoButton type='iconbutton' />
+						{ !audioOnly && <ExtraVideoButton type='iconbutton' />}
 						{ canRecord && <RecordButton type='iconbutton' /> }
 						{ fullscreenEnabled &&
 							<FullscreenButton

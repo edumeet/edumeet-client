@@ -189,8 +189,8 @@ export const participantListSelector = createSelector(
 		const raisedHandSortedPeers =
 			peers.filter((peer) => peer.raisedHand)
 				.sort((a, b) => 
-					(a.raisedHandTimestamp?.getTime() || 0) -
-					(b.raisedHandTimestamp?.getTime() || 0)
+					(a.raisedHandTimestamp || 0) -
+					(b.raisedHandTimestamp || 0)
 				);
 		const spotlightSortedPeers =
 			peers.filter((peer) => spotlights.includes(peer.id) && !peer.raisedHand)

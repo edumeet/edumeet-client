@@ -19,12 +19,14 @@ export interface MeState {
 	raisedHand: boolean;
 	escapeMeeting: boolean;
 	autoMuted: boolean;
+	audioOnly: boolean;
 	// Status flags
 	audioInProgress: boolean;
 	videoInProgress: boolean;
 	screenSharingInProgress: boolean;
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
+	audioOnlyInProgress: boolean;
 	escapeMeetingInProgress: boolean;
 }
 
@@ -41,11 +43,13 @@ const initialState: MeState = {
 	raisedHand: false,
 	escapeMeeting: false,
 	autoMuted: true,
+	audioOnly: false,
 	audioInProgress: false,
 	videoInProgress: false,
 	screenSharingInProgress: false,
 	displayNameInProgress: false,
 	raisedHandInProgress: false,
+	audioOnlyInProgress: false,
 	escapeMeetingInProgress: false,
 };
 
@@ -83,6 +87,9 @@ const meSlice = createSlice({
 		setAutoMuted: ((state, action: PayloadAction<boolean>) => {
 			state.autoMuted = action.payload;
 		}),
+		setAudioOnly: ((state, action: PayloadAction<boolean>) => {
+			state.audioOnly = action.payload;
+		}),
 		// Status flags
 		setAudioInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.audioInProgress = action.payload;
@@ -101,6 +108,9 @@ const meSlice = createSlice({
 		}),
 		setDispayNameInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.displayNameInProgress = action.payload;
+		}),
+		setAudioOnlyInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.audioOnlyInProgress = action.payload;
 		}),
 	},
 });

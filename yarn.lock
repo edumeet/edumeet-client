@@ -1725,26 +1725,25 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@observertc/client-monitor-js@1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@observertc/client-monitor-js/-/client-monitor-js-1.3.0.tgz#94ad96a2df7a03bb7e7719bfcc56474de420d029"
-  integrity sha512-4LK6MvQx/hkbCJyW1MSsI/o8i1HcpMZym9fZZ32RQhVabn2XRuy3qONDv61bVIF5c6DVom9DBeJrI9/xeQlC/w==
+"@observertc/client-monitor-js@1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@observertc/client-monitor-js/-/client-monitor-js-1.3.2.tgz#b21bdcf712ceed9015b81525f02cd57e2827ed81"
+  integrity sha512-om9BTWbML26qWhveytbtYpS4OtBn2tIUQPB+jlGdI5vvfxp/8we3ensf3norDtzn+22LO9DgSoCTeVJnJtbSpA==
   dependencies:
-    "@observertc/monitor-schemas" "2.2.0-SNAPSHOT.08a432335fee953aa5ebaeb7a81b12b5d41a5d78"
+    "@observertc/monitor-schemas" "2.2.0"
     "@types/events" "^3.0.0"
     "@types/protobufjs" "^6.0.0"
     "@types/uuid" "^8.3.4"
     bowser "^2.11.0"
     js-base64 "^3.7.2"
-    js-sha256 "^0.9.0"
     loglevel "^1.8.0"
     protobufjs "^6.11.3"
     uuid "^8.3.2"
 
-"@observertc/monitor-schemas@2.2.0-SNAPSHOT.08a432335fee953aa5ebaeb7a81b12b5d41a5d78":
-  version "2.2.0-SNAPSHOT.08a432335fee953aa5ebaeb7a81b12b5d41a5d78"
-  resolved "https://registry.yarnpkg.com/@observertc/monitor-schemas/-/monitor-schemas-2.2.0-SNAPSHOT.08a432335fee953aa5ebaeb7a81b12b5d41a5d78.tgz#ea3671dd7adfe5925a210661cca9cf0cf44580c7"
-  integrity sha512-XSD/w3O3xTW6YW0lFvRPIQlhZvqmFBcEF3NJDkNM8/w1QrlBm77ZmDVs5kVxm8MbYL/zFeYHn32eUgLsiKIm8g==
+"@observertc/monitor-schemas@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@observertc/monitor-schemas/-/monitor-schemas-2.2.0.tgz#46430d2671faf64e4c71052606fd0c96a11f5fcd"
+  integrity sha512-ZzVFjD4DLrNwgOzGFaC+5DrU6D/8GE4jXMj2gp44lA2UgbKWdD8vaPufCJu2m0dU+S37ftKbNJAycvWUO9hC4w==
 
 "@pmmmwh/react-refresh-webpack-plugin@0.4.3":
   version "0.4.3"
@@ -8032,11 +8031,6 @@ js-md5@0.7.3:
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/js-md5/-/js-md5-0.7.3.tgz#b4f2fbb0b327455f598d6727e38ec272cd09c3f2"
   integrity sha512-ZC41vPSTLKGwIRjqDh8DfXoCrdQIyBgspJVPXHBGu4nZlAEvG3nf+jO9avM9RmLiGakg7vz974ms99nEV0tmTQ==
-
-js-sha256@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/js-sha256/-/js-sha256-0.9.0.tgz#0b89ac166583e91ef9123644bd3c5334ce9d0966"
-  integrity sha512-sga3MHh9sgQN2+pJ9VYZ+1LPwXOxuBJBA5nrR5/ofPfuiJBE2hnjsaN8se8JznOmGLN2p49Pe5U/ttafcs/apA==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
