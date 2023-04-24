@@ -1,7 +1,7 @@
 import { NoMeetingRoom, NoMeetingRoomOutlined } from '@mui/icons-material';
 import { setEscapeMeeting } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { EscapeMeetingLabel } from '../translated/translatedComponents';
+import { escapeMeetingLabel } from '../translated/translatedComponents';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 
 const EscapeMeetingButton = (
@@ -15,7 +15,7 @@ const EscapeMeetingButton = (
 
 	return (
 		<ControlButton
-			toolTip={ EscapeMeetingLabel() }
+			toolTip={ escapeMeetingLabel() }
 			onClick={ () => {
 				dispatch(setEscapeMeeting(!escapeMeeting));
 			} }

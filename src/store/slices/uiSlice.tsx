@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type SettingsTab = 'media' | 'appearance' | 'advanced';
+export type HelpTab = 'shortcuts';
 
 export interface UiState {
 	fullScreenConsumer?: string;
@@ -16,6 +17,7 @@ export interface UiState {
 	extraVideoDialogOpen: boolean;
 	privacyDisclaimerOpen: boolean;
 	currentSettingsTab: SettingsTab;
+	currentHelpTab: HelpTab;
 	showStats: boolean;
 }
 
@@ -33,7 +35,8 @@ const initialState: UiState = {
 	lobbyDialogOpen: false,
 	extraVideoDialogOpen: false,
 	privacyDisclaimerOpen: false,
-	currentSettingsTab: 'media'
+	currentSettingsTab: 'media',
+	currentHelpTab: 'shortcuts'
 };
 
 const uiSlice = createSlice({
@@ -48,6 +51,12 @@ const uiSlice = createSlice({
 			action: PayloadAction<SettingsTab>
 		) => {
 			state.currentSettingsTab = action.payload;
+		}),
+		setCurrentHelpTab: ((
+			state,
+			action: PayloadAction<HelpTab>
+		) => {
+			state.currentHelpTab = action.payload;
 		}),
 	},
 });
