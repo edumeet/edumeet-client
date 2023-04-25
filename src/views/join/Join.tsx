@@ -38,11 +38,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		videoInProgress
 	} = useAppSelector((state) => state.me);
 	const dispatch = useAppDispatch();
-	const dn = new URL(window.location.href).searchParams.get('displayName');
 
-	if (dn) {
-		dispatch(settingsActions.setDisplayName(dn));
-	}
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 
 	const [ name, setName ] = useState(stateDisplayName || '');
@@ -78,14 +74,25 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		dispatch(signalingActions.connect());
 	};
 
-	const headless = new URL(window.location.href).searchParams.get('headless');
+	useEffect(() => {
+		const dn = new URL(window.location.href).searchParams.get('displayName');
 
-	if (headless) {
-		const myNewURL = window.location.href.split('?')[0];
-		
-		window.history.pushState({}, '', myNewURL);
-		handleJoin();
-	}
+		if (dn) {
+			dispatch(settingsActions.setDisplayName(dn));
+			setName(dn);
+		}
+	}, []);
+
+	useEffect(() => {
+		const headless = new URL(window.location.href).searchParams.get('headless');
+
+		if (headless) {
+			const myNewURL = window.location.href.split('?')[0];
+			
+			window.history.pushState({}, '', myNewURL);
+			handleJoin();
+		}
+	}, []);
 
 	useEffect(() => {
 		dispatch(roomActions.updateRoom({ name: roomId }));
@@ -118,6 +125,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 						onEnter={handleJoin}
 						startAdornment={<AccountCircle />}
 						autoFocus
+						data-testid='name-input'
 					/>
 					<AudioOnlySwitch
 						checked={audioOnly}
@@ -133,6 +141,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					color='primary'
 					disabled={!name || joined}
 					fullWidth
+					data-testid='join-button'
 				>
 					{ joinLabel() }
 				</Button>

@@ -35,6 +35,7 @@ const AudioOnlySwitch = ({
 			<StyledFormControlLabel
 				control={
 					<Switch
+						data-testid='audioonly-switch'
 						color='primary'
 						checked={ checked }
 						disabled={ disabled }
