@@ -81,7 +81,9 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 			dispatch(settingsActions.setDisplayName(dn));
 			setName(dn);
 		}
+	}, []);
 
+	useEffect(() => {
 		const headless = new URL(window.location.href).searchParams.get('headless');
 
 		if (headless) {
@@ -90,6 +92,9 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 			window.history.pushState({}, '', myNewURL);
 			handleJoin();
 		}
+	}, []);
+
+	useEffect(() => {
 		dispatch(roomActions.updateRoom({ name: roomId }));
 
 		if (!audioMuted)
