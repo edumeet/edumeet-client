@@ -94,6 +94,6 @@
 		"@types/ws": "^8.5.3",
 		"@typescript-eslint/eslint-plugin": "^5.12.1",
 		"@typescript-eslint/parser": "^5.12.1",
-		"eslint-plugin-jest": "^26.1.1",
+		"eslint-plugin-jest": "^26.1.1"
 	}
 }
