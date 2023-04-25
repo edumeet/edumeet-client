@@ -125,6 +125,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 						onEnter={handleJoin}
 						startAdornment={<AccountCircle />}
 						autoFocus
+						data-testid='name-input'
 					/>
 					<AudioOnlySwitch
 						checked={audioOnly}
@@ -140,6 +141,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					color='primary'
 					disabled={!name || joined}
 					fullWidth
+					data-testid='join-button'
 				>
 					{ joinLabel() }
 				</Button>
