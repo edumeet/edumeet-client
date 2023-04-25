@@ -47,6 +47,8 @@ import Filesharing from '../menuitems/Filesharing';
 import TranscriptionButton from '../controlbuttons/TranscriptionButton';
 import Transcription from '../menuitems/Transcription';
 import { AccessTime } from '@mui/icons-material';
+import Help from '../menuitems/Help';
+import HelpButton from '../controlbuttons/HelpButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -111,6 +113,7 @@ const TopBar = ({
 	const canRecord = useAppSelector((state) => state.me.canRecord);
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
+	const audioOnly = useAppSelector((state) => state.settings.audioOnly);
 	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
 	const unread = useAppSelector(unreadSelector);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
@@ -214,9 +217,10 @@ const TopBar = ({
 						}
 					</GrowingDiv>
 					<DesktopDiv>
+						<HelpButton type='iconbutton' />
 						{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
 						<FilesharingButton type='iconbutton' />
-						<ExtraVideoButton type='iconbutton' />
+						{ !audioOnly && <ExtraVideoButton type='iconbutton' />}
 						{ canRecord && <RecordButton type='iconbutton' /> }
 						{ fullscreenEnabled &&
 							<FullscreenButton
@@ -261,6 +265,7 @@ const TopBar = ({
 				<ExtraVideo onClick={handleMenuClose} />
 				<Filesharing onClick={handleMenuClose} />
 				{ canTranscribe && <Transcription onClick={handleMenuClose} /> }
+				<Help onClick={handleMenuClose} />
 			</FloatingMenu>
 		</Fragment>
 	);

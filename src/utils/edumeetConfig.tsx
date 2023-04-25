@@ -7,9 +7,10 @@ declare module '@mui/material/styles' {
 		appBarColor: string;
 		logo: string;
 		activeSpeakerBorder: string;
-		peerBackroundColor: string;
-		peerShadow: string;
-		peerAvatar: string;
+		videoBackroundColor: string;
+		videoShadow: string;
+		videoAvatarImage: string;
+		videoRoundedCorners: boolean;
 		chatColor?: string;
 	}
 
@@ -19,9 +20,10 @@ declare module '@mui/material/styles' {
 		appBarColor?: string;
 		logo?: string;
 		activeSpeakerBorder?: string;
-		peerBackroundColor?: string;
-		peerShadow?: string;
-		peerAvatar?: string;
+		videoBackroundColor?: string;
+		videoShadow?: string;
+		videoAvatarImage?: string;
+		videoRoundedCorners?: boolean;
 		chatColor?: string;
 	}
 }

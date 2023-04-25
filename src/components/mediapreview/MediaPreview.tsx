@@ -8,10 +8,12 @@ import VideoView from '../videoview/VideoView';
 
 interface MediaPreviewProps {
 	withControls?: boolean;
+	audioOnly?: boolean;
 }
 
 const MediaPreview = ({
-	withControls = true
+	withControls = true,
+	audioOnly = false
 }: MediaPreviewProps): JSX.Element => {
 	const theme = useTheme();
 	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);
@@ -36,11 +38,13 @@ const MediaPreview = ({
 							offColor='error'
 							disabledColor='default'
 						/>
-						<WebcamPreviewButton
-							onColor='default'
-							offColor='error'
-							disabledColor='default'
-						/>
+						{ !audioOnly && (
+							<WebcamPreviewButton
+								onColor='default'
+								offColor='error'
+								disabledColor='default'
+							/>
+						) }
 					</MediaControls>
 				)}
 				{ previewWebcamTrackId && <VideoView

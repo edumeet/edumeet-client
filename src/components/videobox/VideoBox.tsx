@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 import { styled, SxProps, Theme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
@@ -43,12 +43,13 @@ const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
 	...(activeSpeaker && {
 		border: theme.activeSpeakerBorder
 	}),
-	boxShadow: theme.peerShadow,
-	backgroundColor: theme.peerBackroundColor,
-	backgroundImage: `url(${theme.peerAvatar})`,
+	boxShadow: theme.videoShadow,
+	backgroundColor: theme.videoBackroundColor,
+	backgroundImage: `url(${theme.videoAvatarImage})`,
 	backgroundPosition: 'bottom',
 	backgroundSize: 'auto 85%',
 	backgroundRepeat: 'no-repeat',
+	borderRadius: theme.videoRoundedCorners ? theme.spacing(1) : '0',
 }));
 
 const VideoBox = ({
@@ -77,4 +78,4 @@ const VideoBox = ({
 	);
 };
 
-export default VideoBox;
+export default memo(VideoBox);

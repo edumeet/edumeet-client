@@ -34,6 +34,7 @@ const Me = ({
 	const controlButtonsBar =
 		useAppSelector((state) => state.settings.controlButtonsBar);
 	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
+	const audioOnly = useAppSelector((state) => state.settings.audioOnly);
 	const activeSpeaker =
 		useAppSelector((state) => state.me.id === state.room.activeSpeakerId);
 	const browser = useAppSelector((state) => state.me.browser);
@@ -60,12 +61,16 @@ const Me = ({
 							offColor='error'
 							disabledColor='default'
 						/>
-						<WebcamButton
-							onColor='default'
-							offColor='error'
-							disabledColor='default'
-						/>
-						<ScreenshareButton />
+						{ !audioOnly && (
+							<>
+								<WebcamButton
+									onColor='default'
+									offColor='error'
+									disabledColor='default'
+								/>
+								<ScreenshareButton />
+							</>
+						) }
 					</MediaControls>
 				)}
 				{ micProducer && browser.platform !== 'mobile' && <UnmuteAlert micProducer={micProducer} /> }

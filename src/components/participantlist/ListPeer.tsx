@@ -7,6 +7,10 @@ import Volume from '../volume/Volume';
 import { Fragment, useState } from 'react';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import PeerMenu from '../peermenu/PeerMenu';
+import ScreenShareIcon from '@mui/icons-material/ScreenShareOutlined';
+import MicMutedIcon from '@mui/icons-material/MicOffOutlined';
+import MicUnMutedIcon from '@mui/icons-material/MicNoneOutlined';
+import WebcamIcon from '@mui/icons-material/VideocamOutlined';
 
 interface ListPeerProps {
 	peer: Peer;
@@ -26,6 +30,25 @@ const PeerInfoDiv = styled('div')(({ theme }) => ({
 	paddingLeft: theme.spacing(1),
 	flexGrow: 1,
 	alignItems: 'center'
+}));
+
+const ScreenShareStatus = styled(ScreenShareIcon)(({ theme }) => ({
+	margin: theme.spacing(1),
+}));
+
+const MicMuted = styled(MicMutedIcon)(({ theme }) => ({
+	margin: theme.spacing(0),
+	alignSelf: 'center'
+}));
+
+const MicUnMuted = styled(MicUnMutedIcon)(({ theme }) => ({
+	margin: theme.spacing(0),
+	alignSelf: 'center'
+}));
+
+const WebcamEnabled = styled(WebcamIcon)(({ theme }) => ({
+	margin: theme.spacing(0),
+	alignSelf: 'center'
 }));
 
 const PeerAvatar = styled('img')({
@@ -74,6 +97,11 @@ const ListPeer = ({
 					</IconButton>
 				}
 				{ micConsumer && <Volume consumer={micConsumer} small /> }
+				{ (micConsumer && !micConsumer.localPaused && !micConsumer.remotePaused && 
+					<MicUnMuted />) || (micConsumer && <MicMuted />) }
+				{ (webcamConsumer && !webcamConsumer.localPaused && 
+					!webcamConsumer.remotePaused && <WebcamEnabled />) }
+				{ screenConsumer && <ScreenShareStatus /> }
 				{ shoudShow && 
 				<IconButton
 					aria-haspopup

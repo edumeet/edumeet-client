@@ -50,7 +50,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	));
 
 	const rtpCapabilities = mediaService.rtpCapabilities;
-	const { displayName } = getState().settings;
+	const { displayName, audioOnly } = getState().settings;
 	const { /* id: meId,*/ picture } = getState().me;
 	const { loggedIn } = getState().permissions;
 	// const { name: confName, sessionId } = getState().room;
@@ -67,6 +67,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	} = await signalingService.sendRequest('join', {
 		displayName,
 		picture,
+		audioOnly,
 		rtpCapabilities,
 		returning: false, // TODO: fix reconnect
 	});

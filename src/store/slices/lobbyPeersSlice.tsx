@@ -5,6 +5,7 @@ export interface LobbyPeer {
 	id: string;
 	displayName?: string;
 	picture?: string;
+	audioOnly?: boolean;
 	promotionInProgress?: boolean;
 }
 
@@ -32,6 +33,7 @@ const lobbyPeersSlice = createSlice({
 				const {
 					displayName,
 					picture,
+					audioOnly,
 					promotionInProgress
 				} = action.payload;
 
@@ -39,6 +41,8 @@ const lobbyPeersSlice = createSlice({
 					peer.displayName = displayName;
 				if (picture)
 					peer.picture = picture;
+				if (audioOnly)
+					peer.audioOnly = audioOnly;
 				if (promotionInProgress)
 					peer.promotionInProgress = promotionInProgress;
 			}

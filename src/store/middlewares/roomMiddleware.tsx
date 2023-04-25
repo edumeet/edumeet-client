@@ -59,6 +59,7 @@ const createRoomMiddleware = ({
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
+
 								if (clientMonitorSenderConfig) {
 									const roomId = getState().room.name;
 
@@ -95,7 +96,8 @@ const createRoomMiddleware = ({
 								break;
 							}
 
-							case 'moderator:kick': {
+							case 'moderator:kick':
+							case 'escapeMeeting': {
 								dispatch(leaveRoom());
 
 								break;

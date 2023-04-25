@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import fscreen from 'fscreen';
-import Notifications from '../../components/notifications/Notifications';
 import MeetingDrawer from '../../components/meetingdrawer/MeetingDrawer';
 import Democratic from '../../components/democratic/Democratic';
 import Settings from '../../components/settingsdialog/SettingsDialog';
@@ -13,6 +12,7 @@ import LobbyDialog from '../../components/lobbydialog/LobbyDialog';
 import FilesharingDialog from '../../components/filesharingdialog/FilesharingDialog';
 import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog';
 import ControlButtonsBar from '../../components/controlbuttonsbar/ControlButtonsBar';
+import Help from '../../components/helpdialog/HelpDialog';
 
 const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
@@ -40,7 +40,6 @@ const Room = (): JSX.Element => {
 
 	return (
 		<>
-			<Notifications />
 			<FullscreenVideo />
 			<WindowedVideo />
 			<AudioPeers />
@@ -54,6 +53,7 @@ const Room = (): JSX.Element => {
 			<Democratic />
 			<LobbyDialog />
 			<Settings />
+			<Help />
 			<FilesharingDialog />
 			<ExtraVideoDialog />
 		</>

@@ -54,7 +54,7 @@ const createSignalingMiddleware = ({
 
 			if (signalingActions.disconnect.match(action)) {
 				signalingService.removeAllListeners();
-				signalingService.close();
+				signalingService.disconnect();
 			}
 
 			return next(action);

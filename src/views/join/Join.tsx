@@ -17,25 +17,33 @@ import {
 } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
-import { updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
+import { stopPreviewWebcam, updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import PrecallDialog from '../../components/precalldialog/PrecallDialog';
 import { roomActions } from '../../store/slices/roomSlice';
 import { settingsActions } from '../../store/slices/settingsSlice';
+import AudioOnlySwitch from '../../components/audioonlyswitch/AudioOnlySwitch';
 
 interface JoinProps {
 	roomId: string;
 }
 
 const Join = ({ roomId }: JoinProps): JSX.Element => {
+	const stateAudioOnly = useAppSelector((state) => state.settings.audioOnly);
 	const peerId = useAppSelector((state) => state.me.id);
-	const { previewMicTrackId, previewWebcamTrackId } = useAppSelector((state) => state.me);
+	const {
+		previewMicTrackId,
+		previewWebcamTrackId,
+		videoInProgress
+	} = useAppSelector((state) => state.me);
 	const dispatch = useAppDispatch();
 
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 
 	const [ name, setName ] = useState(stateDisplayName || '');
+	const [ audioOnly, setAudioOnly ] = useState(stateAudioOnly || false);
+	const [ joined, setJoined ] = useState(false);
 	const {
 		audioMuted,
 		videoMuted
@@ -45,11 +53,23 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		setName(value.trim() ? value : value.trim());
 	};
 
+	const handleAudioOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setAudioOnly(event.target.checked);
+
+		if (!videoMuted && event.target.checked)
+			dispatch(stopPreviewWebcam());
+		else if (videoMuted && !event.target.checked)
+			dispatch(updatePreviewWebcam());
+	};
+
 	const handleJoin = () => {
 		const encodedRoomId = encodeURIComponent(roomId);
 		const url = getSignalingUrl(peerId, encodedRoomId);
 
+		setJoined(true);
+
 		dispatch(settingsActions.setDisplayName(name));
+		dispatch(settingsActions.setAudioOnly(audioOnly));
 		dispatch(signalingActions.setUrl(url));
 		dispatch(signalingActions.connect());
 	};
@@ -75,7 +95,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		if (!audioMuted)
 			dispatch(updatePreviewMic());
 
-		if (!videoMuted)
+		if (!videoMuted && !audioOnly)
 			dispatch(updatePreviewWebcam());
 	}, []);
 
@@ -83,9 +103,9 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		<PrecallDialog
 			content={
 				<>
-					<MediaPreview />
+					<MediaPreview audioOnly={audioOnly} />
 					<AudioInputChooser preview />
-					<VideoInputChooser preview />
+					{ !audioOnly && <VideoInputChooser preview /> }
 					<Typography variant='h5'>
 						{ (previewMicTrackId && previewWebcamTrackId) ?
 							enableAllMediaLabel() : previewMicTrackId ?
@@ -101,6 +121,11 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 						startAdornment={<AccountCircle />}
 						autoFocus
 					/>
+					<AudioOnlySwitch
+						checked={audioOnly}
+						disabled={videoInProgress}
+						onChange={handleAudioOnlyChange}
+					/>
 				</>
 			}
 			actions={
@@ -108,7 +133,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					onClick={handleJoin}
 					variant='contained'
 					color='primary'
-					disabled={!name}
+					disabled={!name || joined}
 					fullWidth
 				>
 					{ joinLabel() }
