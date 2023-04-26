@@ -60,7 +60,7 @@ export class SignalingService extends EventEmitter {
 			logger.debug('connect');
 
 			if (!this.connected)
-				this.emit('connect');
+				this.emit('connected');
 
 			this.connected = true;
 		});
