@@ -22,6 +22,7 @@
 		"sourceType": "module",
 		"project": "./tsconfig.json"
 	},
+	"ignorePatterns": ["**/config.js"],
 	"rules": {
 		"array-bracket-spacing": [ 2, "always", {
 			"objectsInArrays": true,
