@@ -54,12 +54,17 @@
 	"scripts": {
 		"start": "HTTPS=true PORT=443 react-scripts --openssl-legacy-provider start",
 		"build": "react-scripts --openssl-legacy-provider build",
-		"test": "react-scripts --openssl-legacy-provider test",
+		"test": "react-scripts --trace-warnings --openssl-legacy-provider test --silent",
 		"lint": "eslint . --ext .ts,.tsx",
 		"eject": "react-scripts eject"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
+	},
+	"jest": {
+		"transformIgnorePatterns": [
+			"node_modules/(?!(@jitsi)/)"
+		]
 	},
 	"browserslist": {
 		"production": [

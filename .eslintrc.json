@@ -58,7 +58,7 @@
 			"beforeBlockComment": true,
 			"beforeLineComment": false
 		}],
-		"max-len": [ 2, 90, {
+		"max-len": [ 0, {
 			"tabWidth": 2,
 			"comments": 90,
 			"ignoreUrls": true,
