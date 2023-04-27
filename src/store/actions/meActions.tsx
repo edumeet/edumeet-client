@@ -140,3 +140,33 @@ export const setEscapeMeeting = (
 		dispatch(meActions.setEscapeMeetingInProgress(false));
 	}
 };
+
+/**
+ * This thunk action sets the recordable state of the client.
+ * 
+ * @param recordable - Recordable
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const setRecordable = (
+	recordable: boolean
+): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('setRecordable() [recordabled:%s]', recordable);
+
+	dispatch(meActions.setRecordableInProgress(true));
+
+	try {
+		await signalingService.sendRequest('recording:recordable', { recordable });
+
+		dispatch(meActions.setRecordable(recordable));
+	} catch (error) {
+		logger.error('setRecordable() [error:"%o"]', error);
+
+		dispatch(meActions.setRecordable(!recordable));
+	} finally {
+		dispatch(meActions.setRecordableInProgress(false));
+	}
+};
