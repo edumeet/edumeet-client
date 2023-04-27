@@ -668,3 +668,23 @@ export const enableNotificationSoundsLabel = (): string => intl.formatMessage({
 	id: 'settings.notificationSounds',
 	defaultMessage: 'Notification sounds'
 });
+
+export const privacyAllowLabel = (): string => intl.formatMessage({
+	id: 'privacy.allow',
+	defaultMessage: 'Allow'
+});
+
+export const privacyNotAllowLabel = (): string => intl.formatMessage({
+	id: 'privacy.notAllow',
+	defaultMessage: 'Do not allow'
+});
+
+export const privacyRecordingLabel = (): string => intl.formatMessage({
+	id: 'privacy.recording',
+	defaultMessage: 'A user starts to record this meeting. In order to be recorded, you need to give your consent.'
+});
+
+export const privacyTitleLabel = (): string => intl.formatMessage({
+	id: 'privacy.title',
+	defaultMessage: 'Privacy permissions'
+});
