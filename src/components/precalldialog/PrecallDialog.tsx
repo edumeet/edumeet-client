@@ -30,6 +30,7 @@ const PrecallDialog = ({
 	actions
 }: PrecallDialogProps): JSX.Element => {
 	const theme = useTheme();
+	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	return (
@@ -56,7 +57,7 @@ const PrecallDialog = ({
 							justifyContent='flex-end'
 							alignItems='center'
 						>
-							{ edumeetConfig.loginEnabled &&
+							{ loginEnabled &&
 								<Grid item>
 									<Grid container direction='column' alignItems='center'>
 										<Grid item>

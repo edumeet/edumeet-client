@@ -14,8 +14,6 @@ import { sendFiles } from './store/actions/filesharingActions';
 import { uiActions } from './store/slices/uiSlice';
 import { roomActions, RoomConnectionState } from './store/slices/roomSlice';
 import { LeavePrompt } from './components/leaveprompt/LeavePrompt';
-import { permissionsActions } from './store/slices/permissionsSlice';
-import edumeetConfig from './utils/edumeetConfig';
 
 type AppParams = {
 	id: string;
@@ -29,7 +27,6 @@ const App = (): JSX.Element => {
 
 	useEffect(() => {
 		dispatch(startListeners());
-		dispatch(permissionsActions.setLoginEnabled(edumeetConfig.loginEnabled));
 
 		return () => {
 			dispatch(stopListeners());
