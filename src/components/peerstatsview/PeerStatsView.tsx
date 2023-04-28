@@ -1,5 +1,4 @@
-import { InboundTrackEntry, OutboundTrackEntry } from '@observertc/client-monitor-js/lib/entries/StatsEntryInterfaces';
-import { StatsCollectedListener } from '@observertc/client-monitor-js/lib/EventsRelayer';
+import { InboundTrackEntry, OutboundTrackEntry } from '@observertc/client-monitor-js';
 import { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { ServiceContext } from '../../store/store';
@@ -29,7 +28,7 @@ function createOutboundStats(trackStats: OutboundTrackEntry): OutboundStats[] {
 	for (const outboundRtpEntry of trackStats.outboundRtps()) {
 		const remoteInboundRtpEntry = outboundRtpEntry.getRemoteInboundRtp();
 		const stats = outboundRtpEntry.stats;
-		const { bytesSent, timestamp } = outboundRtpEntry.appData?.traces || {};
+		const { bytesSent, timestamp } = (outboundRtpEntry.appData?.traces || {}) as Record<string, number>;
 		const now = Date.now();
 		const elapsedTimeInSec = (now - (timestamp ?? 0)) / 1000;
 		const dBytesSent = (stats.bytesSent ?? 0) - (bytesSent ?? 0);
@@ -61,7 +60,7 @@ function createInboundStats(trackStats: InboundTrackEntry): InboundStats[] {
 			packetsLost, 
 			packetsReceived, 
 			bytesReceived, 
-			timestamp } = inboundRtpEntry.appData?.traces || {};
+			timestamp } = (inboundRtpEntry.appData?.traces || {}) as Record<string, number>;
 		const now = Date.now();
 		const elapsedTimeInSec = (now - (timestamp ?? 0)) / 1000;
 		const dBytesReceived = (stats.bytesReceived ?? 0) - (bytesReceived ?? 0);
@@ -99,7 +98,6 @@ const PeerStatsView = ({
 	useEffect(() => {
 		// this runs on mount
 		const monitor = mediaService.getMonitor();
-		let listener: StatsCollectedListener | undefined;
 		
 		if (!monitor) {
 			return;
@@ -109,12 +107,13 @@ const PeerStatsView = ({
 		} else if (producerId && consumerId) {
 			return;
 		}
-
+		
+		let listener: () => void | undefined;
 		const storage = monitor.storage;
 		
 		if (producerId) {
 			const producer = mediaService.getProducer(producerId);
-			
+
 			if (producer) {
 				listener = () => {
 					const trackId = producer.track?.id;
@@ -132,6 +131,7 @@ const PeerStatsView = ({
 
 					setOutboundStats(newOutboundStats);
 				};
+				monitor.on('stats-collected', listener);
 			}
 		} else if (consumerId) {
 			const consumer = mediaService.getConsumer(consumerId);
@@ -153,10 +153,8 @@ const PeerStatsView = ({
 					
 					setInboundStats(newInboundStats);
 				};
+				monitor.on('stats-collected', listener);
 			}
-		}
-		if (listener) {
-			monitor.events.onStatsCollected(listener);
 		}
 
 		return () => {
@@ -164,7 +162,7 @@ const PeerStatsView = ({
 				return;
 			}
 			if (listener) {
-				monitor.events.offStatsCollected(listener);
+				monitor.off('stats-collected', listener);
 			}
 		};
 	}, []);
