@@ -5,6 +5,7 @@ import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 
 export interface MeState {
 	id: string;
+	sessionId?: string;
 	browser: Omit<DeviceInfo, 'bowser'>;
 	picture?: string;
 	previewWebcamTrackId?: string;
@@ -59,6 +60,9 @@ const meSlice = createSlice({
 	reducers: {
 		setMe: ((state, action: PayloadAction<string>) => {
 			state.id = action.payload;
+		}),
+		setSessionId: ((state, action: PayloadAction<string>) => {
+			state.sessionId = action.payload;
 		}),
 		setPicture: ((state, action: PayloadAction<string>) => {
 			state.picture = action.payload;

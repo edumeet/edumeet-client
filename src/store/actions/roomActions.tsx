@@ -11,6 +11,7 @@ import { signalingActions } from '../slices/signalingSlice';
 import { webrtcActions } from '../slices/webrtcSlice';
 import { AppThunk } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
+import { breakoutRoomsActions } from '../slices/breakoutRoomsSlice';
 
 const logger = new Logger('RoomActions');
 
@@ -38,12 +39,10 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		logger.debug('"performance" event [trend:%s, performance:%s]', performance.trend, performance.performance);
 	});
 
-	const {
-		recvTransport,
-	} = await mediaService.createTransports(iceServers);
+	await mediaService.createTransports(iceServers);
 
-	if (recvTransport)
-		performanceMonitor.monitorTransport(recvTransport);
+	// if (recvTransport)
+	//	performanceMonitor.monitorTransport(recvTransport);
 
 	dispatch(meActions.setMediaCapabilities(
 		mediaService.mediaCapabilities
@@ -115,6 +114,95 @@ export const leaveRoom = (): AppThunk<Promise<void>> => async (
 	logger.debug('leaveRoom()');
 
 	dispatch(signalingActions.disconnect());
+};
+
+export const createBreakoutRoom = (name: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('createBreakoutRoom()');
+
+	dispatch(roomActions.updateRoom({ updateBreakoutInProgress: true }));
+
+	try {
+		const { sessionId } = await signalingService.sendRequest('createBreakoutRoom', { name });
+
+		dispatch(breakoutRoomsActions.addBreakoutRoom({ sessionId, name }));
+	} catch (error) {
+		logger.error('createBreakoutRoom() [error:%o]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ updateBreakoutInProgress: false }));
+	}
+};
+
+export const closeBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('closeBreakoutRoom()');
+
+	dispatch(roomActions.updateRoom({ updateBreakoutInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('closeBreakoutRoom', { sessionId });
+
+		dispatch(breakoutRoomsActions.removeBreakoutRoom({ sessionId }));
+	} catch (error) {
+		logger.error('closeBreakoutRoom() [error:%o]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ updateBreakoutInProgress: false }));
+	}
+};
+
+export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('joinBreakoutRoom()');
+
+	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
+
+	try {
+		const {
+			chatHistory,
+			fileHistory,
+		} = await signalingService.sendRequest('joinBreakoutRoom', { sessionId });
+
+		batch(() => {
+			dispatch(roomActions.setSessionId(sessionId));
+			dispatch(chatActions.addMessages(chatHistory));
+			dispatch(filesharingActions.addFiles(fileHistory));
+		});
+	} catch (error) {
+		logger.error('joinBreakoutRoom() [error:%o]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: false }));
+	}
+};
+
+export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('leaveBreakoutRoom()');
+
+	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
+
+	try {
+		const {
+			sessionId,
+		} = await signalingService.sendRequest('leaveBreakoutRoom');
+
+		dispatch(meActions.setSessionId(sessionId));
+	} catch (error) {
+		logger.error('leaveBreakoutRoom() [error:%o]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: false }));
+	}
 };
 
 export const closeMeeting = (): AppThunk<Promise<void>> => async (

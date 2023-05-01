@@ -8,6 +8,7 @@ import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
+import { breakoutRoomsActions } from '../slices/breakoutRoomsSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -106,11 +107,15 @@ const createRoomMiddleware = ({
 							case 'newBreakoutRoom': {
 								const { name, sessionId } = notification.data;
 
+								dispatch(breakoutRoomsActions.addBreakoutRoom({ name, sessionId }));
+
 								break;
 							}
 
 							case 'breakoutRoomClosed': {
 								const { sessionId } = notification.data;
+
+								dispatch(breakoutRoomsActions.removeBreakoutRoom({ sessionId }));
 
 								break;
 							}

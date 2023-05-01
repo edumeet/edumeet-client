@@ -433,6 +433,19 @@ export const makePeerSelector = (id: string): Selector<Peer | undefined> => {
 };
 
 /**
+ * Factory function that returns a selector that returns the list of peers that are in a sessionId.
+ * 
+ * @param {string} sessionId - The sessionId.
+ * @returns {Selector<Peer[]>} Selector for the peers.
+ */
+export const makePeersInSessionSelector = (sessionId: string): Selector<Peer[]> => {
+	return createSelector(
+		peersSelector,
+		(peers: Peer[]) => peers.filter((peer) => peer.sessionId === sessionId)
+	);
+};
+
+/**
  * Factory function that returns a selector that returns the array of
  * transcripts for a given peer.
  * 

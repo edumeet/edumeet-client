@@ -12,6 +12,8 @@ export interface RoomState {
 	sessionId?: string;
 	creationTimestamp?: number;
 	activeSpeakerId?: string;
+	updateBreakoutInProgress?: boolean;
+	transitBreakoutRoomInProgress?: boolean;
 	lockInProgress?: boolean;
 	localeInProgress?: boolean;
 	muteAllInProgress?: boolean;

@@ -41,6 +41,7 @@ const createPeerMiddleware = ({
 
 								dispatch(peersActions.addPeer({
 									id,
+									sessionId,
 									displayName,
 									picture,
 									audioOnly,
@@ -48,7 +49,6 @@ const createPeerMiddleware = ({
 									raisedHand,
 									raisedHandTimestamp,
 									transcripts: [],
-									sessionId,
 								}));
 
 								break;
