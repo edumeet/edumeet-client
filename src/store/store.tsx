@@ -50,6 +50,7 @@ import { DeviceService } from '../services/deviceService';
 import { FileService } from '../services/fileService';
 import recordingSlice from './slices/recordingSlice';
 import { PerformanceMonitor } from '../utils/performanceMonitor';
+import breakoutRoomsSlice from './slices/breakoutRoomsSlice';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
@@ -106,6 +107,7 @@ const reducer = combineReducers({
 	permissions: permissionsSlice.reducer,
 	producers: producersSlice.reducer,
 	room: roomSlice.reducer,
+	breakoutRooms: breakoutRoomsSlice.reducer,
 	settings: settingsSlice.reducer,
 	signaling: signalingSlice.reducer,
 	ui: uiSlice.reducer,

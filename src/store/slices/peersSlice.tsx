@@ -4,6 +4,7 @@ import { roomActions } from './roomSlice';
 
 export interface Peer {
 	id: string;
+	sessionId?: string;
 	displayName?: string;
 	picture?: string;
 	audioOnly?: boolean;
@@ -46,6 +47,7 @@ const peersSlice = createSlice({
 
 			if (peer) {
 				const {
+					sessionId,
 					displayName,
 					picture,
 					audioOnly,
@@ -62,6 +64,8 @@ const peersSlice = createSlice({
 					raisedHandTimestamp
 				} = action.payload;
 
+				if (sessionId)
+					peer.sessionId = sessionId;
 				if (displayName)
 					peer.displayName = displayName;
 				if (picture)

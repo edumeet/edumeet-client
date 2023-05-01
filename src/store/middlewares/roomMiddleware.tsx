@@ -102,6 +102,18 @@ const createRoomMiddleware = ({
 
 								break;
 							}
+
+							case 'newBreakoutRoom': {
+								const { name, sessionId } = notification.data;
+
+								break;
+							}
+
+							case 'breakoutRoomClosed': {
+								const { sessionId } = notification.data;
+
+								break;
+							}
 						}
 					} catch (error) {
 						logger.error('error on signalService "notification" event [error:%o]', error);

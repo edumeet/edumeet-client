@@ -30,6 +30,7 @@ const createPeerMiddleware = ({
 							case 'newPeer': {
 								const {
 									id,
+									sessionId,
 									displayName,
 									picture,
 									audioOnly,
@@ -46,7 +47,8 @@ const createPeerMiddleware = ({
 									roles,
 									raisedHand,
 									raisedHandTimestamp,
-									transcripts: []
+									transcripts: [],
+									sessionId,
 								}));
 
 								break;
@@ -59,12 +61,14 @@ const createPeerMiddleware = ({
 								break;
 							}
 
+							case 'changeSessionId':
 							case 'changeDisplayName':
 							case 'changePicture':
 							case 'changeAudioOnly':
 							case 'raisedHand': {
 								const {
 									peerId,
+									sessionId,
 									displayName,
 									// oldDisplayName,
 									picture,
@@ -76,6 +80,7 @@ const createPeerMiddleware = ({
 								dispatch(
 									peersActions.updatePeer({
 										id: peerId,
+										sessionId,
 										displayName,
 										picture,
 										audioOnly,
