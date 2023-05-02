@@ -15,7 +15,7 @@ export interface UiState {
 	aboutOpen: boolean;
 	lobbyDialogOpen: boolean;
 	extraVideoDialogOpen: boolean;
-	privacyOpen: boolean;
+	privacyDialogOpen: boolean;
 	currentSettingsTab: SettingsTab;
 	currentHelpTab: HelpTab;
 	showStats: boolean;
@@ -34,7 +34,7 @@ const initialState: UiState = {
 	aboutOpen: false,
 	lobbyDialogOpen: false,
 	extraVideoDialogOpen: false,
-	privacyOpen: false,
+	privacyDialogOpen: false,
 	currentSettingsTab: 'media',
 	currentHelpTab: 'shortcuts'
 };
