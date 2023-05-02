@@ -20,6 +20,7 @@ export interface MeState {
 	escapeMeeting: boolean;
 	autoMuted: boolean;
 	audioOnly: boolean;
+	privacyDialogDisplayed: boolean;
 	recordable: boolean;
 	// Status flags
 	audioInProgress: boolean;
@@ -46,6 +47,7 @@ const initialState: MeState = {
 	escapeMeeting: false,
 	autoMuted: true,
 	audioOnly: false,
+	privacyDialogDisplayed: false,
 	recordable: false,
 	audioInProgress: false,
 	videoInProgress: false,
@@ -93,6 +95,9 @@ const meSlice = createSlice({
 		}),
 		setAudioOnly: ((state, action: PayloadAction<boolean>) => {
 			state.audioOnly = action.payload;
+		}),
+		setPrivacyDialogDisplayed: ((state, action: PayloadAction<boolean>) => {
+			state.privacyDialogDisplayed = action.payload;
 		}),
 		setRecordable: ((state, action: PayloadAction<boolean>) => {
 			state.recordable = action.payload;
