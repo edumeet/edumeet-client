@@ -1,6 +1,6 @@
 {
 	"name": "edumeet-client",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"private": true,
 	"description": "The Edumeet service client",
 	"author": "Håvar Aambø Fosstveit <havar@fosstveit.net>",
