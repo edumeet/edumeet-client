@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
 import MicButton from '../controlbuttons/MicButton';
