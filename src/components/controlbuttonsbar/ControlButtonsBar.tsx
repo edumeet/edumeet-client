@@ -8,14 +8,17 @@ const ControlButtonsBar = (): JSX.Element => {
 	const controlButtonsBar =
 		useAppSelector((state) => state.settings.controlButtonsBar);
 	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
+	const browser = useAppSelector((state) => state.me.browser);
+	const isMobile = browser.platform === 'mobile';
 
 	return (
 		<>
-			{ (hideSelfView || controlButtonsBar) &&
+			{ (hideSelfView || controlButtonsBar || isMobile) &&
 				<MediaControls
-					orientation='vertical'
-					horizontalPlacement='left'
-					verticalPlacement='center'
+					orientation={ isMobile ? 'horizontal' : 'vertical' }
+					horizontalPlacement={ isMobile ? 'center' : 'left' }
+					verticalPlacement={ isMobile ? 'bottom' :'center' }
+					autoHide={ !isMobile }
 				>
 					<MicButton
 						onColor='default'
