@@ -41,7 +41,7 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	}),
 	alignItems: alignitems,
 	justifyContent: justifycontent,
-	zIndex: 21,
+	zIndex: 42,
 }));
 
 interface MediaControlsProps {
