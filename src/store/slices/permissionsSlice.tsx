@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { PERSIST } from 'redux-persist';
 import { Permission, Role } from '../../utils/roles';
+import edumeetConfig from '../../utils/edumeetConfig';
 import { roomActions } from './roomSlice';
 
 export interface PermissionsState {
@@ -59,10 +61,12 @@ const permissionsSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
+			.addCase(PERSIST, (state) => {
+				state.loginEnabled = edumeetConfig.loginEnabled;
+			})
 			.addCase(roomActions.setState, (state, action) => {
 				if (action.payload === 'left') {
 					state.roles = [];
-					state.loginEnabled = true;
 					state.loggedIn = false;
 					state.locked = false;
 					state.signInRequired = false;
