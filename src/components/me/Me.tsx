@@ -50,7 +50,7 @@ const Me = ({
 				height={style.height}
 			>
 				<DisplayName disabled={false} displayName={displayName} />
-				{ !(hideSelfView || controlButtonsBar) && (
+				{ !(hideSelfView || controlButtonsBar || browser.platform === 'mobile') && (
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'
