@@ -25,12 +25,14 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 }) => ({
 	...((mobile && {
 		position: 'absolute',
-		bottom: '0'
+		bottom: '0',
+		left: '50%',
+		transform: 'translateX(-50%)',
 	}) || (!mobile && {
 		position,
+		width: '100%',
 		height: '100%'
 	})),
-	width: '100%',
 	display: 'flex',
 	...(withGap && {
 		gap: theme.spacing(2)
