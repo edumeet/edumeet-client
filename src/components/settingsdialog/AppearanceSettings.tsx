@@ -21,7 +21,7 @@ const AppearanceSettings = (): JSX.Element => {
 		hideSelfView,
 		controlButtonsBar
 	} = useAppSelector((state) => state.settings);
-	const browser = useAppSelector((state) => state.me.browser);
+	const isMobile = useAppSelector((state) => state.me.browser.platform === 'mobile');
 
 	const handleChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -56,7 +56,7 @@ const AppearanceSettings = (): JSX.Element => {
 					}
 					label={hideSelfViewLabel()}
 				/>
-				{ browser.platform !== 'mobile' && (
+				{ !isMobile && (
 					<FormControlLabel
 						control={
 							<Switch

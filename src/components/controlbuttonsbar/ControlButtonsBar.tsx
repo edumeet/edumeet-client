@@ -8,8 +8,7 @@ const ControlButtonsBar = (): JSX.Element => {
 	const controlButtonsBar =
 		useAppSelector((state) => state.settings.controlButtonsBar);
 	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
-	const browser = useAppSelector((state) => state.me.browser);
-	const isMobile = browser.platform === 'mobile';
+	const isMobile = useAppSelector((state) => state.me.browser.platform === 'mobile');
 
 	return (
 		<>
