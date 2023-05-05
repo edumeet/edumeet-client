@@ -18,6 +18,7 @@ const ControlButtonsBar = (): JSX.Element => {
 					horizontalPlacement={ isMobile ? 'center' : 'left' }
 					verticalPlacement={ isMobile ? 'bottom' :'center' }
 					autoHide={ !isMobile }
+					mobile={ isMobile }
 				>
 					<MicButton
 						onColor='default'

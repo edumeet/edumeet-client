@@ -9,6 +9,7 @@ interface MediaControlsDivProps {
 	withgap: number;
 	withpadding: number;
 	autohide: number;
+	mobile?: number;
 }
 
 const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
@@ -19,11 +20,17 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	position,
 	withgap: withGap,
 	withpadding: withPadding,
-	autohide: autoHide
+	autohide: autoHide,
+	mobile
 }) => ({
-	position,
+	...((mobile && {
+		position: 'absolute',
+		bottom: '0'
+	}) || (!mobile && {
+		position,
+		height: '100%'
+	})),
 	width: '100%',
-	height: '100%',
 	display: 'flex',
 	...(withGap && {
 		gap: theme.spacing(2)
@@ -52,6 +59,7 @@ interface MediaControlsProps {
 	withGap?: boolean;
 	withPadding?: boolean;
 	autoHide?: boolean;
+	mobile?: boolean;
 	children?: ReactNode;
 }
 
@@ -63,6 +71,7 @@ const MediaControls = ({
 	withGap = true,
 	withPadding = true,
 	autoHide = true,
+	mobile = false,
 	children
 }: MediaControlsProps): JSX.Element => {
 	let justifyContent = 'center';
@@ -93,6 +102,7 @@ const MediaControls = ({
 			withgap={withGap ? 1 : 0}
 			withpadding={withPadding ? 1 : 0}
 			autohide={autoHide ? 1 : 0}
+			mobile={mobile ? 1 : 0}
 			children={children}
 		/>
 	);
