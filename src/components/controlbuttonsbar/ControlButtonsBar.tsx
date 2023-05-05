@@ -30,7 +30,7 @@ const ControlButtonsBar = (): JSX.Element => {
 						offColor='error'
 						disabledColor='default'
 					/>
-					<ScreenshareButton />
+					{ !isMobile && <ScreenshareButton /> }
 				</MediaControls>
 			}
 		</>
