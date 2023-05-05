@@ -48,6 +48,7 @@ const Me = ({
 				margin={spacing}
 				width={style.width}
 				height={style.height}
+				zIndex={0}
 			>
 				<DisplayName disabled={false} displayName={displayName} />
 				{ !(hideSelfView || controlButtonsBar || browser.platform === 'mobile') && (
