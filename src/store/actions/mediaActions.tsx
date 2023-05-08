@@ -783,7 +783,7 @@ export const updateScreenSharing = ({
 				}));
 			}
 
-			const stream = await navigator.mediaDevices.getDisplayMedia({
+			const SCREENSHARING_CONSTRAINTS = {
 				video: {
 					...getVideoConstrains(
 						screenSharingResolution,
@@ -800,7 +800,9 @@ export const updateScreenSharing = ({
 					noiseSuppression,
 					sampleSize
 				}
-			});
+			};
+
+			const stream = await navigator.mediaDevices.getDisplayMedia(SCREENSHARING_CONSTRAINTS);
 
 			([ videoTrack ] = stream.getVideoTracks());
 
