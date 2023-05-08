@@ -4,7 +4,7 @@ import { roomActions } from './roomSlice';
 
 export interface FilesharingFile {
 	peerId: string;
-	sessionId: string;
+	sessionId?: string;
 	displayName?: string;
 	timestamp?: number;
 	magnetURI: string;

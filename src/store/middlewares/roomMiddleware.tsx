@@ -9,6 +9,7 @@ import { setDisplayName, setPicture } from '../actions/meActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
 import { breakoutRoomsActions } from '../slices/breakoutRoomsSlice';
+import { meActions } from '../slices/meSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -105,17 +106,25 @@ const createRoomMiddleware = ({
 							}
 
 							case 'newBreakoutRoom': {
-								const { name, sessionId } = notification.data;
+								const { name, roomSessionId } = notification.data;
 
-								dispatch(breakoutRoomsActions.addBreakoutRoom({ name, sessionId }));
+								dispatch(breakoutRoomsActions.addBreakoutRoom({ name, sessionId: roomSessionId }));
 
 								break;
 							}
 
 							case 'breakoutRoomClosed': {
+								const { roomSessionId } = notification.data;
+
+								dispatch(breakoutRoomsActions.removeBreakoutRoom({ sessionId: roomSessionId }));
+
+								break;
+							}
+
+							case 'sessionIdChanged': {
 								const { sessionId } = notification.data;
 
-								dispatch(breakoutRoomsActions.removeBreakoutRoom({ sessionId }));
+								dispatch(meActions.setSessionId(sessionId));
 
 								break;
 							}

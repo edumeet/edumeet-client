@@ -21,6 +21,7 @@ export const sendChat = (message: string): AppThunk<Promise<void>> => async (
 		await signalingService.sendRequest('chatMessage', { text: message });
 
 		const peerId = getState().me.id;
+		const sessionId = getState().me.sessionId;
 		const displayName = getState().settings.displayName;
 		const timestamp = Date.now();
 
@@ -28,7 +29,8 @@ export const sendChat = (message: string): AppThunk<Promise<void>> => async (
 			peerId,
 			displayName,
 			timestamp,
-			text: message
+			text: message,
+			sessionId,
 		}));
 	} catch (error) {
 		logger.error('sendChat() [error:"%o"]', error);

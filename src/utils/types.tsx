@@ -181,7 +181,7 @@ export interface NotificationSound {
 
 export interface ChatMessage {
 	peerId: string;
-	sessionId: string;
+	sessionId?: string;
 	displayName?: string;
 	timestamp?: number;
 	text?: string;

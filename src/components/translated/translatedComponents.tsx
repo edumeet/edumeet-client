@@ -46,6 +46,36 @@ export const chatScrollToBottomLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Scroll to bottom'
 });
 
+export const createBreakoutRoomLabel = (): string => intl.formatMessage({
+	id: 'label.createBreakoutRoom',
+	defaultMessage: 'Create'
+});
+
+export const newBreakoutRoomNameLabel = (): string => intl.formatMessage({
+	id: 'label.newBreakoutRoomName',
+	defaultMessage: 'Breakout room name'
+});
+
+export const joinBreakoutRoomLabel = (): string => intl.formatMessage({
+	id: 'label.joinBreakoutRoom',
+	defaultMessage: 'Join'
+});
+
+export const leaveBreakoutRoomLabel = (): string => intl.formatMessage({
+	id: 'label.leaveBreakoutRoom',
+	defaultMessage: 'Leave'
+});
+
+export const closeBreakoutRoomLabel = (): string => intl.formatMessage({
+	id: 'label.closeBreakoutRoom',
+	defaultMessage: 'Close'
+});
+
+export const removeBreakoutRoomLabel = (): string => intl.formatMessage({
+	id: 'label.removeBreakoutRoom',
+	defaultMessage: 'Remove'
+});
+
 export const shareLabel = (): string => intl.formatMessage({
 	id: 'label.shareFile',
 	defaultMessage: 'Share'

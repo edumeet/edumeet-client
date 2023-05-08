@@ -22,6 +22,7 @@ import ParticipantList from '../participantlist/ParticipantList';
 import SeparateWindow from '../separatewindow/SeparateWindow';
 import { uiActions } from '../../store/slices/uiSlice';
 import Chat from '../chat/Chat';
+import BreakoutRooms from '../breakoutrooms/BreakoutRooms';
 
 const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
 	'& .MuiDrawer-paper': {
@@ -66,7 +67,8 @@ const TabsHeader = styled(Tabs)({
 
 const tabs: ToolAreaTab[] = [
 	'users',
-	'chat'
+	'chat',
+	'breakoutRooms',
 ];
 
 const MeetingDrawer = (): JSX.Element => {
@@ -143,6 +145,7 @@ const MeetingDrawer = (): JSX.Element => {
 												</Badge>
 											}
 										/>
+										<Tab label={ <GroupIcon /> } />
 									</TabsHeader>
 									{ browser.platform !== 'mobile' && (
 										<IconButton
@@ -160,6 +163,7 @@ const MeetingDrawer = (): JSX.Element => {
 								</MeetingDrawerAppBar>
 								{ currentTab === 'chat' && <Chat /> }
 								{ currentTab === 'users' && <ParticipantList /> }
+								{ currentTab === 'breakoutRooms' && <BreakoutRooms />}
 							</MeetingDrawerDiv>
 						</StyledSwipeableDrawer>
 					</Hidden>

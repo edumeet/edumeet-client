@@ -24,6 +24,7 @@ export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 		const magnetURI = await fileService.sendFiles(files);
 
 		const peerId = getState().me.id;
+		const sessionId = getState().me.sessionId;
 		const displayName = getState().settings.displayName;
 		const timestamp = Date.now();
 
@@ -33,6 +34,7 @@ export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 			timestamp,
 			magnetURI,
 			started: false,
+			sessionId,
 		}));
 	} catch (error) {
 		logger.error('sendFiles() [error:"%o"]', error);

@@ -60,6 +60,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		tracker,
 		chatHistory,
 		fileHistory,
+		breakoutRooms,
 		locked,
 		lobbyPeers,
 		roomMode = 'SFU',
@@ -84,6 +85,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 		dispatch(chatActions.addMessages(chatHistory));
 		dispatch(filesharingActions.addFiles(fileHistory));
+		dispatch(breakoutRoomsActions.addBreakoutRooms(breakoutRooms));
 		dispatch(roomActions.addSpotlightList(spotlights));
 		dispatch(webrtcActions.setTracker(tracker));
 
@@ -146,11 +148,29 @@ export const closeBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> =>
 	dispatch(roomActions.updateRoom({ updateBreakoutInProgress: true }));
 
 	try {
-		await signalingService.sendRequest('closeBreakoutRoom', { sessionId });
+		await signalingService.sendRequest('closeBreakoutRoom', { roomSessionId: sessionId });
+	} catch (error) {
+		logger.error('closeBreakoutRoom() [error:%o]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ updateBreakoutInProgress: false }));
+	}
+};
+
+export const removeBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('removeBreakoutRoom()');
+
+	dispatch(roomActions.updateRoom({ updateBreakoutInProgress: true }));
+
+	try {
+		await signalingService.sendRequest('removeBreakoutRoom', { roomSessionId: sessionId });
 
 		dispatch(breakoutRoomsActions.removeBreakoutRoom({ sessionId }));
 	} catch (error) {
-		logger.error('closeBreakoutRoom() [error:%o]', error);
+		logger.error('removeBreakoutRoom() [error:%o]', error);
 	} finally {
 		dispatch(roomActions.updateRoom({ updateBreakoutInProgress: false }));
 	}
@@ -169,7 +189,7 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 		const {
 			chatHistory,
 			fileHistory,
-		} = await signalingService.sendRequest('joinBreakoutRoom', { sessionId });
+		} = await signalingService.sendRequest('joinBreakoutRoom', { roomSessionId: sessionId });
 
 		batch(() => {
 			dispatch(roomActions.setSessionId(sessionId));
