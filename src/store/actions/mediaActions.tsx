@@ -789,6 +789,7 @@ export const updateScreenSharing = ({
 						screenSharingResolution,
 						aspectRatio
 					),
+					selfBrowserSurface: 'include',
 					frameRate: screenSharingFrameRate,
 				},
 				audio: {
