@@ -7,6 +7,7 @@ import { videoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from 'edumeet-common';
+import { settingsActions } from '../slices/settingsSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -111,12 +112,18 @@ const createMediaMiddleware = ({
 					dispatch(producersActions.closeProducer({
 						producerId: producer.id
 					}));
+
+					producer.kind === 'video' && dispatch(settingsActions.setVideoMuted(true));
+					producer.kind === 'audio' && dispatch(settingsActions.setAudioMuted(true));
 				});
 
 				mediaService.on('producerPaused', (producer) => {
 					dispatch(producersActions.setProducerPaused({
 						producerId: producer.id
 					}));
+					
+					producer.kind === 'video' && dispatch(settingsActions.setVideoMuted(true));
+					producer.kind === 'audio' && dispatch(settingsActions.setAudioMuted(true));
 				});
 
 				mediaService.on('producerResumed', (producer) => {
