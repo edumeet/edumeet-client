@@ -28,6 +28,7 @@ const selectedPeersSelector: Selector<string[]> =
 	(state) => state.room.selectedPeers;
 const peersSelector: Selector<Peer[]> =
 	(state) => state.peers;
+const sessionIdSelector: Selector<string | undefined> = (state) => state.me.sessionId;
 const filesSelector: Selector<FilesharingFile[]> =
 	(state) => state.filesharing;
 const lobbyPeersSelector: Selector<LobbyPeer[]> =
@@ -63,7 +64,7 @@ export const makeDevicesSelector = (kind: MediaDeviceKind) => {
  * spotlighted. Cropped to lastN if enabled.
  * 
  * @returns {string[]} the list of peerIds.
- */
+*/ 
 export const spotlightPeersSelector = createSelector(
 	lastNSelector,
 	selectedPeersSelector,
@@ -74,6 +75,24 @@ export const spotlightPeersSelector = createSelector(
 		).slice(0, lastN)
 			.sort((a, b) => String(a)
 				.localeCompare(String(b)))
+);
+
+/**
+ * Returns the list of peerIds that are in current breakout session
+ * TODO : 	make spotlight work in breakout rooms and reactivate her 
+ * 			lastNSelector and selectedPeersSelector and spotlightsSelector
+ * 
+ * @returns {string[]} the list of peerIds.
+ */
+export const breakoutPeersSelector = createSelector(
+	// lastNSelector,
+	// selectedPeersSelector,
+	// spotlightsSelector,
+	peersSelector,
+	sessionIdSelector,
+	(peers, sessionId) =>
+		peers.filter((peer) => peer.sessionId === sessionId)
+			.map((peer) => peer.id)
 );
 
 /**
