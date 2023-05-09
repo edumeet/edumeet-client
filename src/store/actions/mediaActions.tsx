@@ -366,6 +366,7 @@ export const updateMic = ({
 	try {
 		await deviceService.updateMediaDevices();
 
+		const peerId = getState().me.id;
 		const canSendMic = getState().me.canSendMic;
 
 		if (!canSendMic)
@@ -457,6 +458,7 @@ export const updateMic = ({
 
 			dispatch(producersActions.addProducer({
 				id: micProducer.id,
+				peerId: peerId,
 				kind: micProducer.kind,
 				source: micProducer.appData.source as ProducerSource,
 				paused: micProducer.paused
@@ -554,6 +556,7 @@ export const updateWebcam = ({
 	try {
 		await deviceService.updateMediaDevices();
 
+		const peerId = getState().me.id;
 		const canSendWebcam = getState().me.canSendWebcam;
 
 		if (!canSendWebcam)
@@ -653,6 +656,7 @@ export const updateWebcam = ({
 
 			dispatch(producersActions.addProducer({
 				id: webcamProducer.id,
+				peerId: peerId,
 				kind: webcamProducer.kind,
 				source: webcamProducer.appData.source as ProducerSource,
 				paused: webcamProducer.paused,
@@ -739,6 +743,7 @@ export const updateScreenSharing = ({
 	let screenVideoProducer: Producer | null | undefined;
 
 	try {
+		const peerId = getState().me.id;
 		const canShareScreen = getState().me.canShareScreen;
 
 		if (!canShareScreen)
@@ -850,6 +855,7 @@ export const updateScreenSharing = ({
 
 			dispatch(producersActions.addProducer({
 				id: screenVideoProducer.id,
+				peerId: peerId,
 				kind: screenVideoProducer.kind,
 				source: screenVideoProducer.appData.source as ProducerSource,
 				paused: screenVideoProducer.paused,
@@ -872,6 +878,7 @@ export const updateScreenSharing = ({
 
 				dispatch(producersActions.addProducer({
 					id: screenAudioProducer.id,
+					peerId: peerId,
 					kind: screenAudioProducer.kind,
 					source: screenAudioProducer.appData.source as ProducerSource,
 					paused: screenAudioProducer.paused,
@@ -935,6 +942,7 @@ export const startExtraVideo = ({
 
 		await deviceService.updateMediaDevices();
 
+		const peerId = getState().me.id;
 		const canSendWebcam = getState().me.canSendWebcam;
 
 		if (!canSendWebcam)
@@ -991,6 +999,7 @@ export const startExtraVideo = ({
 
 		dispatch(producersActions.addProducer({
 			id: extraVideoProducer.id,
+			peerId: peerId,
 			kind: extraVideoProducer.kind,
 			source: extraVideoProducer.appData.source as ProducerSource,
 			paused: extraVideoProducer.paused,

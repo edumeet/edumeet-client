@@ -3,6 +3,7 @@ import { roomActions } from './roomSlice';
 
 export interface StateProducer {
 	id: string;
+	peerId: string;
 	kind: string;
 	source: ProducerSource;
 	paused: boolean;
