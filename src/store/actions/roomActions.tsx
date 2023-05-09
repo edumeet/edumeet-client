@@ -178,12 +178,14 @@ export const removeBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> =
 
 export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => async (
 	dispatch,
-	_getState,
+	getState,
 	{ signalingService }
 ): Promise<void> => {
 	logger.debug('joinBreakoutRoom()');
 
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
+	const audioEnabled = !getState().settings.audioMuted;
+	const videoEnabled = !getState().settings.videoMuted;
 
 	try {
 		const {
@@ -200,6 +202,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 		logger.error('joinBreakoutRoom() [error:%o]', error);
 	} finally {
 		dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: false }));
+		dispatch(updateMic({ start: audioEnabled }));
+		dispatch(updateWebcam({ start: videoEnabled }));
 	}
 };
 
