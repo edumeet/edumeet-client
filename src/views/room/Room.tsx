@@ -13,6 +13,7 @@ import FilesharingDialog from '../../components/filesharingdialog/FilesharingDia
 import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog';
 import ControlButtonsBar from '../../components/controlbuttonsbar/ControlButtonsBar';
 import Help from '../../components/helpdialog/HelpDialog';
+import PrivacyDialog from '../../components/privacydialog/PrivacyDialog';
 
 const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
@@ -56,6 +57,7 @@ const Room = (): JSX.Element => {
 			<Help />
 			<FilesharingDialog />
 			<ExtraVideoDialog />
+			<PrivacyDialog />
 		</>
 	);
 };
