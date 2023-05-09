@@ -21,10 +21,11 @@ export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 	dispatch(roomActions.updateRoom({ startFileSharingInProgress: true }));
 
 	try {
-		const magnetURI = await fileService.sendFiles(files);
+		const sessionId = getState().me.sessionId;
+		
+		const magnetURI = await fileService.sendFiles(files, sessionId);
 
 		const peerId = getState().me.id;
-		const sessionId = getState().me.sessionId;
 		const displayName = getState().settings.displayName;
 		const timestamp = Date.now();
 

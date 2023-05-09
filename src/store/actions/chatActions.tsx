@@ -18,10 +18,11 @@ export const sendChat = (message: string): AppThunk<Promise<void>> => async (
 	logger.debug('sendChat() [message:"%s"]', message);
 
 	try {
-		await signalingService.sendRequest('chatMessage', { text: message });
+		const sessionId = getState().me.sessionId;
+
+		await signalingService.sendRequest('chatMessage', { text: message, sessionId });
 
 		const peerId = getState().me.id;
-		const sessionId = getState().me.sessionId;
 		const displayName = getState().settings.displayName;
 		const timestamp = Date.now();
 
