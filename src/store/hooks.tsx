@@ -22,10 +22,12 @@ import { Permission } from '../utils/roles';
 import {
 	makeDevicesSelector,
 	makePeerConsumerSelector,
+	makePeerProducerSelector,
 	makePeerSelector,
 	makePeerTranscriptsSelector,
 	makePermissionSelector,
-	PeerConsumers
+	PeerConsumers,
+	PeerProducers
 } from './selectors';
 import { notificationsActions } from './slices/notificationsSlice';
 import { Peer } from './slices/peersSlice';
@@ -58,6 +60,19 @@ export const usePeerConsumers = (peerId: string): PeerConsumers => {
 		useMemo(() => makePeerConsumerSelector(peerId), []);
 
 	return useAppSelector(getPeerConsumers);
+};
+
+/**
+ * Hook to access the producers of a peer.
+ * 
+ * @param peerId - The id of the peer.
+ * @returns {PeerConsumers} The producers of the peer.
+ */
+export const usePeerProducers = (peerId: string): PeerProducers => {
+	const getPeerProducers =
+		useMemo(() => makePeerProducerSelector(peerId), []);
+
+	return useAppSelector(getPeerProducers);
 };
 
 /**
