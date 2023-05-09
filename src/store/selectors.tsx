@@ -489,6 +489,48 @@ export interface PeerConsumers {
 }
 
 /**
+ * Factory function that returns a selector that returns the set of
+ * mic/webcam/screen/extravideo producers for a given peer.
+ * 
+ * @param {string} id - The peer ID.
+ * @returns {Selector<{
+ * 	micProducer: StateProducer | undefined,
+ * 	webcamProducer: StateProducer | undefined,
+ * 	screenProducer: StateProducer | undefined,
+ * 	extraVideoProducers: StateProducer[]
+ * }>} Selector for the peer's producers.
+ */
+export const makePeerProducerSelector = (id: string): Selector<{
+	micProducer: StateProducer | undefined;
+	webcamProducer: StateProducer | undefined;
+	screenProducer: StateProducer | undefined;
+	extraVideoProducers: StateProducer[];
+}> => {
+	return createSelector(
+		producersSelect,
+		(producers: StateProducer[]) => {
+			const micProducer =
+				producers.find((producer) => producer.peerId === id && producer.source === 'mic');
+			const webcamProducer =
+				producers.find((producer) => producer.peerId === id && producer.source === 'webcam');
+			const screenProducer =
+				producers.find((producer) => producer.peerId === id && producer.source === 'screen');
+			const extraVideoProducers =
+				producers.filter((producer) => producer.peerId === id && producer.source === 'extravideo');
+
+			return { micProducer, webcamProducer, screenProducer, extraVideoProducers };
+		}
+	);
+};
+
+export interface PeerProducers {
+	micProducer?: StateProducer;
+	webcamProducer?: StateProducer;
+	screenProducer?: StateProducer;
+	extraVideoProducers: StateProducer[];
+}
+
+/**
  * Factory function that returns a selector that returns true if the
  * client has the permission.
  * 
