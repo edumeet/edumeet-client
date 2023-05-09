@@ -194,7 +194,7 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 		} = await signalingService.sendRequest('joinBreakoutRoom', { roomSessionId: sessionId });
 
 		batch(() => {
-			dispatch(roomActions.setSessionId(sessionId));
+			dispatch(meActions.setSessionId(sessionId));
 			dispatch(chatActions.addMessages(chatHistory));
 			dispatch(filesharingActions.addFiles(fileHistory));
 		});

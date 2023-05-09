@@ -49,6 +49,7 @@ const createRoomMiddleware = ({
 
 								batch(() => {
 									dispatch(roomActions.setSessionId(sessionId));
+									dispatch(meActions.setSessionId(sessionId));
 									dispatch(roomActions.setCreationTimestamp(creationTimestamp));
 									dispatch(permissionsActions.addRoles(roles));
 									dispatch(permissionsActions.setRoomPermissions(roomPermissions));
