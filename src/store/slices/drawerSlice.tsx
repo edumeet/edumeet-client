@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { chatActions } from './chatSlice';
 
-export type ToolAreaTab = 'chat' | 'users' | 'breakoutRooms';
+export type ToolAreaTab = 'chat' | 'users';
 
 export interface DrawerState {
 	open: boolean;

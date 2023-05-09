@@ -14,6 +14,8 @@ import {
 import ListMe from './ListMe';
 import ListModerator from './ListModerator';
 import ListPeer from './ListPeer';
+import BreakoutModerator from '../breakoutrooms/BreakoutModerator';
+import ListBreakoutRoom from '../breakoutrooms/ListBreakoutRoom';
 
 const ParticipantListDiv = styled('div')(({ theme }) => ({
 	width: '100%',
@@ -44,6 +46,9 @@ const ListItemLi = styled('li')({
 const ParticipantList = (): JSX.Element => {
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const participants = useAppSelector(participantListSelector);
+	const createRooms = usePermissionSelector(permissions.CREATE_ROOM);
+	const changeRoom = usePermissionSelector(permissions.CHANGE_ROOM);
+	const rooms = useAppSelector((state) => state.breakoutRooms);
 
 	return (
 		<ParticipantListDiv>
@@ -75,6 +80,29 @@ const ParticipantList = (): JSX.Element => {
 					)) }
 				</Flipper>
 			</ListUl>
+			{createRooms &&
+				<ListUl>
+					<ListHeaderLi>
+						{moderatorActionsLabel()}
+					</ListHeaderLi>
+					<BreakoutModerator />
+				</ListUl>
+			}
+			<ListUl>
+				<ListHeaderLi>
+					{participantsLabel()}
+				</ListHeaderLi>
+				<Flipper flipKey={rooms}>
+					{rooms.map((room) => (
+						<Flipped key={room.sessionId} flipId={room.sessionId}>
+							<ListItemLi key={room.sessionId}>
+								<ListBreakoutRoom room={room} changeRoom={changeRoom} createRoom={createRooms} />
+							</ListItemLi>
+						</Flipped>
+					))}
+				</Flipper>
+			</ListUl>
+
 		</ParticipantListDiv>
 	);
 };
