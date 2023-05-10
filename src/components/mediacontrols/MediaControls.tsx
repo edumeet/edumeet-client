@@ -42,6 +42,10 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 	alignItems: alignitems,
 	justifyContent: justifycontent,
 	zIndex: 42,
+	pointerEvents: 'none',
+	'& > *': {
+		pointerEvents: 'auto'
+	}
 }));
 
 interface MediaControlsProps {
