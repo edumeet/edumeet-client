@@ -783,13 +783,12 @@ export const updateScreenSharing = ({
 				}));
 			}
 
-			const stream = await navigator.mediaDevices.getDisplayMedia({
+			const SCREENSHARE_CONSTRAINTS = {
 				video: {
 					...getVideoConstrains(
 						screenSharingResolution,
 						aspectRatio
 					),
-					selfBrowserSurface: 'include',
 					frameRate: screenSharingFrameRate,
 				},
 				audio: {
@@ -799,8 +798,11 @@ export const updateScreenSharing = ({
 					echoCancellation,
 					noiseSuppression,
 					sampleSize
-				}
-			});
+				},
+				selfBrowserSurface: 'include'
+			};
+
+			const stream = await navigator.mediaDevices.getDisplayMedia(SCREENSHARE_CONSTRAINTS);
 
 			([ videoTrack ] = stream.getVideoTracks());
 
