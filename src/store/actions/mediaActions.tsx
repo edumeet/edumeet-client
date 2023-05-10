@@ -453,7 +453,7 @@ export const updateMic = ({
 					opusMaxPlaybackRate: opusMaxPlaybackRate,
 					opusPtime: opusPtime
 				},
-				appData: { source: 'mic' }
+				appData: { peerId, source: 'mic' }
 			});
 
 			dispatch(producersActions.addProducer({
@@ -637,6 +637,7 @@ export const updateWebcam = ({
 						videoGoogleStartBitrate: 1000
 					},
 					appData: {
+						peerId,
 						source: 'webcam',
 						width,
 						height,
@@ -647,6 +648,7 @@ export const updateWebcam = ({
 				webcamProducer = await mediaService.produce({
 					track,
 					appData: {
+						peerId,
 						source: 'webcam',
 						width,
 						height
@@ -833,6 +835,7 @@ export const updateScreenSharing = ({
 						videoGoogleStartBitrate: 1000
 					},
 					appData: {
+						peerId,
 						source: 'screen',
 						width,
 						height,
@@ -846,6 +849,7 @@ export const updateScreenSharing = ({
 						videoGoogleStartBitrate: 1000
 					},
 					appData: {
+						peerId,
 						source: 'screen',
 						width,
 						height
@@ -873,7 +877,7 @@ export const updateScreenSharing = ({
 						opusMaxPlaybackRate: opusMaxPlaybackRate,
 						opusPtime: opusPtime
 					},
-					appData: { source: 'mic' }
+					appData: { peerId, source: 'mic' }
 				});
 
 				dispatch(producersActions.addProducer({
@@ -983,6 +987,7 @@ export const startExtraVideo = ({
 					videoGoogleStartBitrate: 1000
 				},
 				appData: {
+					peerId,
 					source: 'extravideo',
 					width,
 					height,
@@ -993,7 +998,7 @@ export const startExtraVideo = ({
 		} else {
 			extraVideoProducer = await mediaService.produce({
 				track,
-				appData: { source: 'extravideo', width, height }
+				appData: { peerId, source: 'extravideo', width, height }
 			});
 		}
 
