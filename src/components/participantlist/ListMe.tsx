@@ -1,21 +1,19 @@
-import { styled } from '@mui/material';
+import { Box, Paper, styled } from '@mui/material';
 import {
 	useAppSelector,
 } from '../../store/hooks';
 import EscapeMeetingButton from '../controlbuttons/EscapeMeetingButton';
 import RaiseHandButton from '../controlbuttons/RaiseHandButton';
 
-const MeDiv = styled('div')({
-	width: '100%',
-	overflow: 'hidden',
-	cursor: 'auto',
-	display: 'flex'
-});
-
-const MeInfoDiv = styled('div')(({ theme }) => ({
-	fontSize: '1rem',
+const MeDiv = styled(Paper)(({ theme }) => ({
 	display: 'flex',
-	paddingLeft: theme.spacing(1),
+	padding: theme.spacing(0.5),
+	marginTop: theme.spacing(0.5),
+}));
+
+const MeInfoDiv = styled(Box)(({ theme }) => ({
+	display: 'flex',
+	marginLeft: theme.spacing(1),
 	flexGrow: 1,
 	alignItems: 'center'
 }));

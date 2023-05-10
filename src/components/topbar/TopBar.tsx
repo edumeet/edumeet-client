@@ -14,6 +14,7 @@ import {
 import {
 	fullscreenConsumerSelector,
 	lobbyPeersLengthSelector,
+	roomSessionCreationTimestampSelector,
 	unreadSelector
 } from '../../store/selectors';
 import { drawerActions } from '../../store/slices/drawerSlice';
@@ -126,7 +127,7 @@ const TopBar = ({
 
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-	const roomCreationTimestamp = useAppSelector((state) => state.room.creationTimestamp);
+	const roomCreationTimestamp = useAppSelector(roomSessionCreationTimestampSelector);
 	const [ meetingDuration, setMeetingDuration ] = useState<number>(0);
 
 	const formatDuration = (duration: number) => {

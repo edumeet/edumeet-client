@@ -8,6 +8,7 @@ import { peersActions } from '../slices/peersSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from 'edumeet-common';
 import { settingsActions } from '../slices/settingsSlice';
+import { roomSessionsActions } from '../slices/roomSessionsSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -161,15 +162,14 @@ const createMediaMiddleware = ({
 				peersActions.addPeers.match(action) ||
 				peersActions.addPeer.match(action) ||
 				peersActions.removePeer.match(action) ||
-				roomActions.setActiveSpeakerId.match(action) ||
-				roomActions.addSpotlightList.match(action) ||
-				roomActions.spotlightPeer.match(action) ||
-				roomActions.deSpotlightPeer.match(action) ||
-				roomActions.selectPeer.match(action) ||
-				roomActions.deselectPeer.match(action) ||
-				roomActions.setFullscreenConsumer.match(action) ||
-				roomActions.addWindowedConsumer.match(action) ||
-				roomActions.removeWindowedConsumer.match(action)
+				roomSessionsActions.setActiveSpeakerId.match(action) ||
+				roomSessionsActions.spotlightPeer.match(action) ||
+				roomSessionsActions.deSpotlightPeer.match(action) ||
+				roomSessionsActions.selectPeer.match(action) ||
+				roomSessionsActions.deselectPeer.match(action) ||
+				roomSessionsActions.setFullscreenConsumer.match(action) ||
+				roomSessionsActions.addWindowedConsumer.match(action) ||
+				roomSessionsActions.removeWindowedConsumer.match(action)
 			) {
 				// Make a diff of the current state and the new state to find out
 				// which Consumers need to be paused/resumed.

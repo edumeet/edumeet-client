@@ -5,6 +5,7 @@ import { ChatMessage } from '../../utils/types';
 import ScrollingList from '../scrollinglist/ScrollingList';
 import { chatScrollToBottomLabel } from '../translated/translatedComponents';
 import Message, { MessageFormat } from './Message';
+import { chatMessagesSelector } from '../../store/selectors';
 
 const ScrollToBottom = styled(Button)(({ theme }) => ({
 	marginLeft: theme.spacing(4),
@@ -14,7 +15,7 @@ const ScrollToBottom = styled(Button)(({ theme }) => ({
 
 const ChatHistory = (): JSX.Element => {
 	const chatHistoryRef = useRef<ScrollingList>(null);
-	const chatMessages = useAppSelector((state) => state.chat);
+	const chatMessages = useAppSelector(chatMessagesSelector);
 	const [ atBottom, setAtBottom ] = useState(true);
 	const meId = useAppSelector((state) => state.me.id);
 

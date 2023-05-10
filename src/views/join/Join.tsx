@@ -95,7 +95,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	}, []);
 
 	useEffect(() => {
-		dispatch(roomActions.updateRoom({ name: roomId }));
+		dispatch(roomActions.updateRoom({ id: roomId }));
 
 		if (!audioMuted)
 			dispatch(updatePreviewMic());

@@ -1,10 +1,10 @@
-import { IconButton, styled } from '@mui/material';
+import { Box, IconButton, Paper, styled } from '@mui/material';
 import { Peer } from '../../store/slices/peersSlice';
 import PanIcon from '@mui/icons-material/PanTool';
 import { useAppDispatch, usePeerConsumers } from '../../store/hooks';
 import { lowerPeerHand } from '../../store/actions/peerActions';
 import Volume from '../volume/Volume';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import PeerMenu from '../peermenu/PeerMenu';
 import ScreenShareIcon from '@mui/icons-material/ScreenShareOutlined';
@@ -17,37 +17,36 @@ interface ListPeerProps {
 	isModerator: boolean;
 }
 
-const PeerDiv = styled('div')({
-	width: '100%',
-	overflow: 'hidden',
-	cursor: 'auto',
-	display: 'flex'
-});
-
-const PeerInfoDiv = styled('div')(({ theme }) => ({
-	fontSize: '1rem',
+const PeerDiv = styled(Paper)(({ theme }) => ({
 	display: 'flex',
-	paddingLeft: theme.spacing(1),
+	padding: theme.spacing(0.5),
+	marginTop: theme.spacing(0.5),
+}));
+
+const PeerInfoDiv = styled(Box)(({ theme }) => ({
+	display: 'flex',
+	marginLeft: theme.spacing(1),
 	flexGrow: 1,
 	alignItems: 'center'
 }));
 
 const ScreenShareStatus = styled(ScreenShareIcon)(({ theme }) => ({
-	margin: theme.spacing(1),
+	marginRight: theme.spacing(0.5),
+	alignSelf: 'center'
 }));
 
 const MicMuted = styled(MicMutedIcon)(({ theme }) => ({
-	margin: theme.spacing(0),
+	marginRight: theme.spacing(0.5),
 	alignSelf: 'center'
 }));
 
 const MicUnMuted = styled(MicUnMutedIcon)(({ theme }) => ({
-	margin: theme.spacing(0),
+	marginRight: theme.spacing(0.5),
 	alignSelf: 'center'
 }));
 
 const WebcamEnabled = styled(WebcamIcon)(({ theme }) => ({
-	margin: theme.spacing(0),
+	marginRight: theme.spacing(0.5),
 	alignSelf: 'center'
 }));
 
@@ -72,8 +71,7 @@ const ListPeer = ({
 		extraVideoConsumers
 	} = usePeerConsumers(peer.id);
 
-	const shoudShow = (isModerator || 
-	micConsumer || webcamConsumer || screenConsumer || extraVideoConsumers.length !== 0);
+	const shouldShow = (isModerator || micConsumer || webcamConsumer || screenConsumer || extraVideoConsumers.length !== 0);
 
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
 
@@ -82,7 +80,7 @@ const ListPeer = ({
 	};
 
 	return (
-		<Fragment>
+		<>
 			<PeerDiv>
 				<PeerAvatar src={peer.picture ?? '/images/buddy.svg'} />
 				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
@@ -102,16 +100,16 @@ const ListPeer = ({
 				{ (webcamConsumer && !webcamConsumer.localPaused && 
 					!webcamConsumer.remotePaused && <WebcamEnabled />) }
 				{ screenConsumer && <ScreenShareStatus /> }
-				{ shoudShow && 
-				<IconButton
-					aria-haspopup
-					onClick={(event) => {
-						setMoreAnchorEl(event.currentTarget);
-					}}
-					color='inherit'
-				>
-					<MoreIcon />
-				</IconButton>
+				{ shouldShow && 
+					<IconButton
+						aria-haspopup
+						onClick={(event) => {
+							setMoreAnchorEl(event.currentTarget);
+						}}
+						color='inherit'
+					>
+						<MoreIcon />
+					</IconButton>
 				}
 			</PeerDiv>
 			<PeerMenu
@@ -119,7 +117,7 @@ const ListPeer = ({
 				peerId={peer.id}
 				onClick={handleMenuClose}
 			/>
-		</Fragment>
+		</>
 	);
 };
 

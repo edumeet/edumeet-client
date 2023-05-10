@@ -1,7 +1,7 @@
 import { Logger } from 'edumeet-common';
-import { filesharingActions } from '../slices/filesharingSlice';
 import { roomActions } from '../slices/roomSlice';
 import { AppThunk } from '../store';
+import { roomSessionsActions } from '../slices/roomSessionsSlice';
 
 const logger = new Logger('FilesharingActions');
 
@@ -29,7 +29,7 @@ export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 		const displayName = getState().settings.displayName;
 		const timestamp = Date.now();
 
-		dispatch(filesharingActions.addFile({
+		dispatch(roomSessionsActions.addFile({
 			peerId,
 			displayName,
 			timestamp,
@@ -59,7 +59,7 @@ export const clearFiles = (): AppThunk<Promise<void>> => async (
 	try {
 		await signalingService.sendRequest('moderator:clearFiles');
 
-		dispatch(filesharingActions.clearFiles());
+		dispatch(roomSessionsActions.clearFiles());
 	} catch (error) {
 		logger.error('clearFiles() [error:%o]', error);
 	}

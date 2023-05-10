@@ -1,17 +1,15 @@
 import { Logger } from 'edumeet-common';
 import { batch } from 'react-redux';
-import { chatActions } from '../slices/chatSlice';
-import { filesharingActions } from '../slices/filesharingSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { meActions } from '../slices/meSlice';
-import { Peer, peersActions } from '../slices/peersSlice';
+import { peersActions } from '../slices/peersSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { webrtcActions } from '../slices/webrtcSlice';
 import { AppThunk } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
-import { breakoutRoomsActions } from '../slices/breakoutRoomsSlice';
+import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 
 const logger = new Logger('RoomActions');
 
@@ -41,18 +39,14 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 
 	await mediaService.createTransports(iceServers);
 
-	// if (recvTransport)
-	//	performanceMonitor.monitorTransport(recvTransport);
-
 	dispatch(meActions.setMediaCapabilities(
 		mediaService.mediaCapabilities
 	));
 
 	const rtpCapabilities = mediaService.rtpCapabilities;
 	const { displayName, audioOnly } = getState().settings;
-	const { /* id: meId,*/ picture } = getState().me;
+	const { sessionId, picture } = getState().me;
 	const { loggedIn } = getState().permissions;
-	// const { name: confName, sessionId } = getState().room;
 
 	const {
 		authenticated,
@@ -72,8 +66,6 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		returning: false, // TODO: fix reconnect
 	});
 
-	const spotlights = peers.map((p: Peer) => p.id);
-
 	batch(() => {
 		dispatch(roomActions.setMode(roomMode));
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
@@ -81,12 +73,11 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		if (loggedIn !== authenticated)
 			dispatch(permissionsActions.setLoggedIn(Boolean(authenticated)));
 
+		dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
 		dispatch(peersActions.addPeers(peers));
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
-		dispatch(chatActions.addMessages(chatHistory));
-		dispatch(filesharingActions.addFiles(fileHistory));
-		dispatch(breakoutRoomsActions.addBreakoutRooms(breakoutRooms));
-		dispatch(roomActions.addSpotlightList(spotlights));
+		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(webrtcActions.setTracker(tracker));
 
 		const { audioMuted, videoMuted } = getState().settings;
@@ -128,9 +119,9 @@ export const createBreakoutRoom = (name: string): AppThunk<Promise<void>> => asy
 	dispatch(roomActions.updateRoom({ updateBreakoutInProgress: true }));
 
 	try {
-		const { sessionId } = await signalingService.sendRequest('createBreakoutRoom', { name });
+		const { sessionId, creationTimestamp } = await signalingService.sendRequest('createBreakoutRoom', { name });
 
-		dispatch(breakoutRoomsActions.addBreakoutRoom({ sessionId, name }));
+		dispatch(roomSessionsActions.addRoomSession({ sessionId, name, creationTimestamp, ...initialRoomSession }));
 	} catch (error) {
 		logger.error('createBreakoutRoom() [error:%o]', error);
 	} finally {
@@ -138,19 +129,19 @@ export const createBreakoutRoom = (name: string): AppThunk<Promise<void>> => asy
 	}
 };
 
-export const closeBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => async (
+export const ejectBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => async (
 	dispatch,
 	_getState,
 	{ signalingService }
 ): Promise<void> => {
-	logger.debug('closeBreakoutRoom()');
+	logger.debug('ejectBreakoutRoom()');
 
 	dispatch(roomActions.updateRoom({ updateBreakoutInProgress: true }));
 
 	try {
-		await signalingService.sendRequest('closeBreakoutRoom', { roomSessionId: sessionId });
+		await signalingService.sendRequest('ejectBreakoutRoom', { roomSessionId: sessionId });
 	} catch (error) {
-		logger.error('closeBreakoutRoom() [error:%o]', error);
+		logger.error('ejectBreakoutRoom() [error:%o]', error);
 	} finally {
 		dispatch(roomActions.updateRoom({ updateBreakoutInProgress: false }));
 	}
@@ -168,7 +159,7 @@ export const removeBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> =
 	try {
 		await signalingService.sendRequest('removeBreakoutRoom', { roomSessionId: sessionId });
 
-		dispatch(breakoutRoomsActions.removeBreakoutRoom({ sessionId }));
+		dispatch(roomSessionsActions.removeRoomSession(sessionId));
 	} catch (error) {
 		logger.error('removeBreakoutRoom() [error:%o]', error);
 	} finally {
@@ -195,8 +186,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 
 		batch(() => {
 			dispatch(meActions.setSessionId(sessionId));
-			dispatch(chatActions.addMessages(chatHistory));
-			dispatch(filesharingActions.addFiles(fileHistory));
+			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		});
 	} catch (error) {
 		logger.error('joinBreakoutRoom() [error:%o]', error);

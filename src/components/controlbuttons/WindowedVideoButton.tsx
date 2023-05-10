@@ -1,8 +1,9 @@
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import NewWindowIcon from '@mui/icons-material/OpenInNew';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { roomActions } from '../../store/slices/roomSlice';
 import { newWindowLabel } from '../translated/translatedComponents';
+import { windowedConsumersSelector } from '../../store/selectors';
+import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
 
 interface WindowedVideoButtonProps extends ControlButtonProps {
 	consumerId: string;
@@ -13,19 +14,19 @@ const WindowedVideoButton = ({
 	...props
 }: WindowedVideoButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const windowedConsumers =
-		useAppSelector((state) => state.room.windowedConsumers);
+	const windowedConsumers = useAppSelector(windowedConsumersSelector);
+	const sessionId = useAppSelector((state) => state.me.sessionId);
 
-	const isWindowed = windowedConsumers.includes(consumerId);
+	const isWindowed = Boolean(windowedConsumers.find((c) => c.id === consumerId));
 
 	return (
 		<ControlButton
 			toolTip={newWindowLabel()}
 			onClick={() => {
 				if (isWindowed) {
-					dispatch(roomActions.removeWindowedConsumer(consumerId));
+					dispatch(roomSessionsActions.removeWindowedConsumer({ sessionId, consumerId }));
 				} else {
-					dispatch(roomActions.addWindowedConsumer(consumerId));
+					dispatch(roomSessionsActions.addWindowedConsumer({ sessionId, consumerId }));
 				}
 			}}
 			on={!isWindowed}

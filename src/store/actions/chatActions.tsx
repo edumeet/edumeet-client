@@ -1,6 +1,6 @@
 import { Logger } from 'edumeet-common';
-import { chatActions } from '../slices/chatSlice';
 import { AppThunk } from '../store';
+import { roomSessionsActions } from '../slices/roomSessionsSlice';
 
 const logger = new Logger('ChatActions');
 
@@ -26,7 +26,7 @@ export const sendChat = (message: string): AppThunk<Promise<void>> => async (
 		const displayName = getState().settings.displayName;
 		const timestamp = Date.now();
 
-		dispatch(chatActions.addMessage({
+		dispatch(roomSessionsActions.addMessage({
 			peerId,
 			displayName,
 			timestamp,
@@ -53,7 +53,7 @@ export const clearChat = (): AppThunk<Promise<void>> => async (
 	try {
 		await signalingService.sendRequest('moderator:clearChat');
 
-		dispatch(chatActions.clearChat());
+		dispatch(roomSessionsActions.clearChat());
 	} catch (error) {
 		logger.error('clearChat() [error:%o]', error);
 	}

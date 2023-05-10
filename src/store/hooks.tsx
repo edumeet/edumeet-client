@@ -23,6 +23,7 @@ import {
 	makeDevicesSelector,
 	makePeerConsumerSelector,
 	makePeerSelector,
+	makePeersInSessionSelector,
 	makePeerTranscriptsSelector,
 	makePermissionSelector,
 	PeerConsumers
@@ -80,6 +81,17 @@ export const usePeer = (peerId: string): Peer | undefined => {
 	const getPeer = useMemo(() => makePeerSelector(peerId), []);
 
 	return useAppSelector(getPeer);
+};
+
+/** Hook to get peers in a session.
+ * 
+ * @param sessionId - The id of the session.
+ * @returns {Peer[]} The peers in the session.
+ */
+export const usePeersInSession = (sessionId: string): Peer[] => {
+	const getPeersInSession = useMemo(() => makePeersInSessionSelector(sessionId), []);
+
+	return useAppSelector(getPeersInSession);
 };
 
 /**

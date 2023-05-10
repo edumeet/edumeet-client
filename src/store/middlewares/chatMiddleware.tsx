@@ -1,8 +1,8 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { Logger } from 'edumeet-common';
-import { chatActions } from '../slices/chatSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions } from '../store';
+import { roomSessionsActions } from '../slices/roomSessionsSlice';
 
 const logger = new Logger('ChatMiddleware');
 
@@ -24,12 +24,12 @@ const createChatMiddleware = ({
 							case 'chatMessage': {
 								const { chatMessage } = notification.data;
 
-								dispatch(chatActions.addMessage(chatMessage));
+								dispatch(roomSessionsActions.addMessage(chatMessage));
 								break;
 							}
 
 							case 'moderator:clearChat': {
-								dispatch(chatActions.clearChat());
+								dispatch(roomSessionsActions.clearChat());
 
 								break;
 							}

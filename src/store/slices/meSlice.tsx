@@ -5,7 +5,7 @@ import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 
 export interface MeState {
 	id: string;
-	sessionId?: string;
+	sessionId: string;
 	browser: Omit<DeviceInfo, 'bowser'>;
 	picture?: string;
 	previewWebcamTrackId?: string;
@@ -33,6 +33,7 @@ export interface MeState {
 
 const initialState: MeState = {
 	id: uuid(),
+	sessionId: 'temp',
 	browser: deviceInfo(),
 	canSendMic: true,
 	canSendWebcam: true,

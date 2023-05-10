@@ -181,10 +181,19 @@ export interface NotificationSound {
 
 export interface ChatMessage {
 	peerId: string;
-	sessionId?: string;
+	sessionId: string;
 	displayName?: string;
 	timestamp?: number;
 	text?: string;
+}
+
+export interface FilesharingFile {
+	peerId: string;
+	sessionId: string;
+	displayName?: string;
+	timestamp?: number;
+	magnetURI: string;
+	started?: boolean;
 }
 
 export interface SocketMessage {

@@ -46,6 +46,11 @@ export const chatScrollToBottomLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Scroll to bottom'
 });
 
+export const breakoutRoomsLabel = (): string => intl.formatMessage({
+	id: 'label.breakoutRooms',
+	defaultMessage: 'Breakout rooms'
+});
+
 export const createBreakoutRoomLabel = (): string => intl.formatMessage({
 	id: 'label.createBreakoutRoom',
 	defaultMessage: 'Create'

@@ -8,8 +8,8 @@ import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
-import { breakoutRoomsActions } from '../slices/breakoutRoomsSlice';
 import { meActions } from '../slices/meSlice';
+import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -48,9 +48,13 @@ const createRoomMiddleware = ({
 								} = notification.data;
 
 								batch(() => {
-									dispatch(roomActions.setSessionId(sessionId));
+									dispatch(roomSessionsActions.addRoomSession({
+										sessionId,
+										creationTimestamp,
+										parent: true,
+										...initialRoomSession,
+									}));
 									dispatch(meActions.setSessionId(sessionId));
-									dispatch(roomActions.setCreationTimestamp(creationTimestamp));
 									dispatch(permissionsActions.addRoles(roles));
 									dispatch(permissionsActions.setRoomPermissions(roomPermissions));
 									dispatch(permissionsActions.setUserRoles(userRoles));
@@ -64,11 +68,10 @@ const createRoomMiddleware = ({
 								});
 
 								if (clientMonitorSenderConfig) {
-									const roomId = getState().room.name;
-
-									mediaService.getMonitor()?.setRoomId(roomId);
+									mediaService.getMonitor()?.setRoomId(sessionId);
 									mediaService.getMonitor()?.connect(clientMonitorSenderConfig);
 								}
+
 								break;
 							}
 
@@ -91,13 +94,13 @@ const createRoomMiddleware = ({
 								break;
 							}
 
-							case 'activeSpeaker': {
+							/* case 'activeSpeaker': {
 								const { peerId } = notification.data;
 								const isMe = peerId === getState().me.id;
 
 								dispatch(roomActions.setActiveSpeakerId({ peerId, isMe }));
 								break;
-							}
+							} */
 
 							case 'moderator:kick':
 							case 'escapeMeeting': {
@@ -107,9 +110,9 @@ const createRoomMiddleware = ({
 							}
 
 							case 'newBreakoutRoom': {
-								const { name, roomSessionId } = notification.data;
+								const { name, roomSessionId, creationTimestamp } = notification.data;
 
-								dispatch(breakoutRoomsActions.addBreakoutRoom({ name, sessionId: roomSessionId }));
+								dispatch(roomSessionsActions.addRoomSession({ name, sessionId: roomSessionId, creationTimestamp, ...initialRoomSession }));
 
 								break;
 							}
@@ -117,7 +120,7 @@ const createRoomMiddleware = ({
 							case 'breakoutRoomClosed': {
 								const { roomSessionId } = notification.data;
 
-								dispatch(breakoutRoomsActions.removeBreakoutRoom({ sessionId: roomSessionId }));
+								dispatch(roomSessionsActions.removeRoomSession(roomSessionId));
 
 								break;
 							}
