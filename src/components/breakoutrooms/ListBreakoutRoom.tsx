@@ -18,6 +18,18 @@ interface BreakoutRoomProps {
 	isModerator: boolean;
 }
 
+interface AccordionProps {
+	insession: number;
+}
+
+const StyledAccordion = styled(Accordion)<AccordionProps>(({
+	insession
+}) => ({
+	...(insession && {
+		backgroundColor: 'lightgray',
+	})
+}));
+
 const BreakoutRoomChip = styled(Chip)(({ theme }) => ({
 	marginRight: theme.spacing(1),
 }));
@@ -64,10 +76,11 @@ const ListBreakoutRoom = ({
 	const participants = usePeersInSession(room.sessionId);
 
 	return (
-		<Accordion
+		<StyledAccordion
 			TransitionProps={{ unmountOnExit: true }}
 			expanded={inSession || expanded}
 			onChange={(_, exp) => setExpanded(exp)}
+			insession={inSession ? 1 : 0}
 		>
 			<AccordionSummary
 				expandIcon={<ExpandMoreIcon />}
@@ -105,7 +118,7 @@ const ListBreakoutRoom = ({
 					</ExpandedBreakoutRoomButtonDiv>
 				}
 			</BreakoutRoomAccordionDetails>
-		</Accordion>
+		</StyledAccordion>
 	);
 };
 
