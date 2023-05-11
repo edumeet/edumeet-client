@@ -9,6 +9,7 @@ import JoinBreakoutRoomButton from '../textbuttons/JoinBreakoutRoomButton';
 import EjectBreakoutRoomButton from '../textbuttons/EjectBreakoutRoomButton';
 import RemoveBreakoutRoomButton from '../textbuttons/RemoveBreakoutRoomButton';
 import ListMe from '../participantlist/ListMe';
+import { useState } from 'react';
 
 interface BreakoutRoomProps {
 	room: RoomSession;
@@ -57,12 +58,17 @@ const ListBreakoutRoom = ({
 	createRoom,
 	isModerator,
 }: BreakoutRoomProps): JSX.Element => {
+	const [ expanded, setExpanded ] = useState(false);
 	const sessionId = useAppSelector((state) => state.me.sessionId);
 	const inSession = room.sessionId === sessionId;
 	const participants = usePeersInSession(room.sessionId);
 
 	return (
-		<Accordion>
+		<Accordion
+			TransitionProps={{ unmountOnExit: true }}
+			expanded={inSession || expanded}
+			onChange={(_, exp) => setExpanded(exp)}
+		>
 			<AccordionSummary
 				expandIcon={<ExpandMoreIcon />}
 				aria-controls={room.name}
