@@ -34,8 +34,8 @@ const ListMe = (): JSX.Element => {
 		<MeDiv>
 			<MeAvatar src={picture ?? '/images/buddy.svg'} />
 			<MeInfoDiv>{ displayName }</MeInfoDiv>
-			<EscapeMeetingButton type='iconbutton' />
-			<RaiseHandButton type='iconbutton' />
+			<EscapeMeetingButton type='iconbutton' size='small' />
+			<RaiseHandButton type='iconbutton' size='small' />
 		</MeDiv>
 	);
 };

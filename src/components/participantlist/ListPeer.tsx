@@ -8,7 +8,6 @@ import { useState } from 'react';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import PeerMenu from '../peermenu/PeerMenu';
 import ScreenShareIcon from '@mui/icons-material/ScreenShareOutlined';
-import MicMutedIcon from '@mui/icons-material/MicOffOutlined';
 import MicUnMutedIcon from '@mui/icons-material/MicNoneOutlined';
 import WebcamIcon from '@mui/icons-material/VideocamOutlined';
 
@@ -21,33 +20,14 @@ const PeerDiv = styled(Paper)(({ theme }) => ({
 	display: 'flex',
 	padding: theme.spacing(0.5),
 	marginTop: theme.spacing(0.5),
+	alignItems: 'center'
 }));
 
 const PeerInfoDiv = styled(Box)(({ theme }) => ({
 	display: 'flex',
 	marginLeft: theme.spacing(1),
 	flexGrow: 1,
-	alignItems: 'center'
-}));
-
-const ScreenShareStatus = styled(ScreenShareIcon)(({ theme }) => ({
-	marginRight: theme.spacing(0.5),
-	alignSelf: 'center'
-}));
-
-const MicMuted = styled(MicMutedIcon)(({ theme }) => ({
-	marginRight: theme.spacing(0.5),
-	alignSelf: 'center'
-}));
-
-const MicUnMuted = styled(MicUnMutedIcon)(({ theme }) => ({
-	marginRight: theme.spacing(0.5),
-	alignSelf: 'center'
-}));
-
-const WebcamEnabled = styled(WebcamIcon)(({ theme }) => ({
-	marginRight: theme.spacing(0.5),
-	alignSelf: 'center'
+	alignItems: 'center',
 }));
 
 const PeerAvatar = styled('img')({
@@ -83,23 +63,22 @@ const ListPeer = ({
 		<>
 			<PeerDiv>
 				<PeerAvatar src={peer.picture ?? '/images/buddy.svg'} />
-				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
 				{ peer.raisedHand &&
 					<IconButton
 						disabled={!isModerator || peer.raisedHandInProgress}
 						onClick={(): void => {
 							dispatch(lowerPeerHand(peer.id));
 						}}
+						size='small'
 					>
 						<PanIcon />
 					</IconButton>
 				}
-				{ micConsumer && <Volume consumer={micConsumer} small /> }
-				{ (micConsumer && !micConsumer.localPaused && !micConsumer.remotePaused && 
-					<MicUnMuted />) || (micConsumer && <MicMuted />) }
-				{ (webcamConsumer && !webcamConsumer.localPaused && 
-					!webcamConsumer.remotePaused && <WebcamEnabled />) }
-				{ screenConsumer && <ScreenShareStatus /> }
+				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
+				{ screenConsumer && <ScreenShareIcon /> }
+				{ webcamConsumer && <WebcamIcon /> }
+				{ micConsumer && !micConsumer.localPaused && !micConsumer.remotePaused && <MicUnMutedIcon /> }
+				<Volume consumer={micConsumer} small />
 				{ shouldShow && 
 					<IconButton
 						aria-haspopup
@@ -107,6 +86,7 @@ const ListPeer = ({
 							setMoreAnchorEl(event.currentTarget);
 						}}
 						color='inherit'
+						size='small'
 					>
 						<MoreIcon />
 					</IconButton>

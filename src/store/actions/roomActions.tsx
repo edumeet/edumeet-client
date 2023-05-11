@@ -188,13 +188,13 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 			dispatch(meActions.setSessionId(sessionId));
 			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+			dispatch(updateMic({ start: audioEnabled }));
+			dispatch(updateWebcam({ start: videoEnabled }));
 		});
 	} catch (error) {
 		logger.error('joinBreakoutRoom() [error:%o]', error);
 	} finally {
 		dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: false }));
-		dispatch(updateMic({ start: audioEnabled }));
-		dispatch(updateWebcam({ start: videoEnabled }));
 	}
 };
 

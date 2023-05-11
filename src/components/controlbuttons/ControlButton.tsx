@@ -17,11 +17,6 @@ export interface ControlButtonProps {
 	children?: ReactNode;
 }
 
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
-	margin: theme.spacing(1, 0),
-	padding: theme.spacing(0, 1)
-}));
-
 const ControlButton = ({
 	type = 'fab',
 	toolTip,
@@ -35,7 +30,7 @@ const ControlButton = ({
 	onClick,
 	children
 }: ControlButtonProps): JSX.Element => {
-	const Button = ((type === 'fab') ? Fab : StyledIconButton) as React.ElementType;
+	const Button = ((type === 'fab') ? Fab : IconButton) as React.ElementType;
 
 	return (
 		<Tooltip

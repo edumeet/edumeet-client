@@ -38,7 +38,6 @@ const ParticipantList = (): JSX.Element => {
 	return (
 		<ParticipantListDiv>
 			{ isModerator && <ListModerator /> }
-			{ inParent && <ListMe /> }
 			{ (rooms.length > 0 || createRooms) &&
 				<>
 					<ListHeader>
@@ -54,11 +53,12 @@ const ParticipantList = (): JSX.Element => {
 					</Flipper>
 				</>
 			}
-			{ participants.length > 0 &&
+			{ (inParent || participants.length > 0) &&
 				<>
 					<ListHeader>
 						{ participantsLabel() }
 					</ListHeader>
+					{ inParent && <ListMe /> }
 					<Flipper flipKey={participants}>
 						{ participants.map((peer) => (
 							<Flipped key={peer.id} flipId={peer.id}>
