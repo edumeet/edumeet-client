@@ -1,5 +1,5 @@
 import { memo, ReactNode } from 'react';
-import { Fab, IconButton, styled, Tooltip } from '@mui/material';
+import { Fab, IconButton, Tooltip } from '@mui/material';
 import { ButtonColor, ButtonSize } from '../../utils/types';
 
 export interface ControlButtonProps {

@@ -1,4 +1,4 @@
-import { Box, IconButton, Paper, styled } from '@mui/material';
+import { Box, Chip, IconButton, Paper, styled } from '@mui/material';
 import { Peer } from '../../store/slices/peersSlice';
 import PanIcon from '@mui/icons-material/PanTool';
 import { useAppDispatch, usePeerConsumers } from '../../store/hooks';
@@ -15,6 +15,11 @@ interface ListPeerProps {
 	peer: Peer;
 	isModerator: boolean;
 }
+
+const StyledChip = styled(Chip)(({ theme }) => ({
+	alignItems: 'start',
+	marginRight: theme.spacing(0.5),
+}));
 
 const PeerDiv = styled(Paper)(({ theme }) => ({
 	display: 'flex',
@@ -59,6 +64,20 @@ const ListPeer = ({
 		setMoreAnchorEl(null);
 	};
 
+	const hasAudio = micConsumer && !micConsumer.localPaused && !micConsumer.remotePaused;
+	const hasVideo = webcamConsumer && !webcamConsumer.localPaused && !webcamConsumer.remotePaused;
+	const hasScreen = screenConsumer && !screenConsumer.localPaused && !screenConsumer.remotePaused;
+
+	/* const hasMedia = hasAudio || hasVideo || hasScreen;
+
+	const MediaIcons = (): JSX.Element => (
+		<>
+			{ hasScreen && <ScreenShareIcon /> }
+			{ hasVideo && <WebcamIcon /> }
+			{ hasAudio && <MicUnMutedIcon /> }
+		</>
+	); */
+
 	return (
 		<>
 			<PeerDiv>
@@ -75,9 +94,10 @@ const ListPeer = ({
 					</IconButton>
 				}
 				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
-				{ screenConsumer && <ScreenShareIcon /> }
-				{ webcamConsumer && <WebcamIcon /> }
-				{ micConsumer && !micConsumer.localPaused && !micConsumer.remotePaused && <MicUnMutedIcon /> }
+				{ /* hasMedia && <StyledChip disabled label={<MediaIcons />} variant='outlined' size='small' /> */ }
+				{ hasScreen && <StyledChip disabled label={<ScreenShareIcon />} variant='outlined' size='small' /> }
+				{ hasVideo && <StyledChip disabled label={<WebcamIcon />} variant='outlined' size='small' /> }
+				{ hasAudio && <StyledChip disabled label={<MicUnMutedIcon />} variant='outlined' size='small' /> }
 				<Volume consumer={micConsumer} small />
 				{ shouldShow && 
 					<IconButton
