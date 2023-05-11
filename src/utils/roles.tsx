@@ -37,6 +37,8 @@ export const permissions: Record<string, Permission> = {
 	LOCAL_RECORD_ROOM: 'LOCAL_RECORD_ROOM',
 	// The role(s) have permission to create rooms
 	CREATE_ROOM: 'CREATE_ROOM',
+	// The role(s) have permission to join/leave rooms
+	CHANGE_ROOM: 'CHANGE_ROOM',
 };
 
 /* export const Roles: Record<string, Role> = {

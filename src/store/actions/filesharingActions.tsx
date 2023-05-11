@@ -1,7 +1,7 @@
 import { Logger } from 'edumeet-common';
-import { filesharingActions } from '../slices/filesharingSlice';
 import { roomActions } from '../slices/roomSlice';
 import { AppThunk } from '../store';
+import { roomSessionsActions } from '../slices/roomSessionsSlice';
 
 const logger = new Logger('FilesharingActions');
 
@@ -21,18 +21,21 @@ export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 	dispatch(roomActions.updateRoom({ startFileSharingInProgress: true }));
 
 	try {
-		const magnetURI = await fileService.sendFiles(files);
+		const sessionId = getState().me.sessionId;
+		
+		const magnetURI = await fileService.sendFiles(files, sessionId);
 
 		const peerId = getState().me.id;
 		const displayName = getState().settings.displayName;
 		const timestamp = Date.now();
 
-		dispatch(filesharingActions.addFile({
+		dispatch(roomSessionsActions.addFile({
 			peerId,
 			displayName,
 			timestamp,
 			magnetURI,
 			started: false,
+			sessionId,
 		}));
 	} catch (error) {
 		logger.error('sendFiles() [error:"%o"]', error);
@@ -56,7 +59,7 @@ export const clearFiles = (): AppThunk<Promise<void>> => async (
 	try {
 		await signalingService.sendRequest('moderator:clearFiles');
 
-		dispatch(filesharingActions.clearFiles());
+		dispatch(roomSessionsActions.clearFiles());
 	} catch (error) {
 		logger.error('clearFiles() [error:%o]', error);
 	}

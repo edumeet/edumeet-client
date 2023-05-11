@@ -3,44 +3,39 @@ import { MediaDevice } from '../services/deviceService';
 import { Transcript } from '../services/mediaService';
 import { Permission, Role } from '../utils/roles';
 import { StateConsumer } from './slices/consumersSlice';
-import { FilesharingFile } from './slices/filesharingSlice';
 import { LobbyPeer } from './slices/lobbyPeersSlice';
 import { Peer } from './slices/peersSlice';
 import { StateProducer } from './slices/producersSlice';
 import { RootState } from './store';
+import { RoomSession } from './slices/roomSessionsSlice';
 
 // eslint-disable-next-line no-unused-vars
 type Selector<S> = (state: RootState) => S;
 
-const meRolesSelect: Selector<number[]> =
-	(state) => state.permissions.roles;
-const roomPermissionsSelect: Selector<Record<Permission, Role[]> | undefined> =
-	(state) => state.permissions.roomPermissions;
-const roomAllowWhenRoleMissing: Selector<Permission[] | undefined> =
-	(state) => state.permissions.allowWhenRoleMissing;
-const producersSelect: Selector<StateProducer[]> =
-	(state) => state.producers;
-const consumersSelect: Selector<StateConsumer[]> =
-	(state) => state.consumers;
-const spotlightsSelector: Selector<string[]> =
-	(state) => state.room.spotlights;
-const selectedPeersSelector: Selector<string[]> =
-	(state) => state.room.selectedPeers;
-const peersSelector: Selector<Peer[]> =
-	(state) => state.peers;
-const filesSelector: Selector<FilesharingFile[]> =
-	(state) => state.filesharing;
-const lobbyPeersSelector: Selector<LobbyPeer[]> =
-	(state) => state.lobbyPeers;
+const meRolesSelect: Selector<number[]> = (state) => state.permissions.roles;
+const roomPermissionsSelect: Selector<Record<Permission, Role[]> | undefined> = (state) => state.permissions.roomPermissions;
+const roomAllowWhenRoleMissing: Selector<Permission[] | undefined> = (state) => state.permissions.allowWhenRoleMissing;
+const producersSelect: Selector<StateProducer[]> = (state) => state.producers;
+const consumersSelect: Selector<StateConsumer[]> = (state) => state.consumers;
+const roomSessionsSelect: Selector<Record<string, RoomSession>> = (state) => state.roomSessions;
+const peersSelector: Selector<Record<string, Peer>> = (state) => state.peers;
+const sessionIdSelector: Selector<string> = (state) => state.me.sessionId;
+const lobbyPeersSelector: Selector<LobbyPeer[]> = (state) => state.lobbyPeers;
 const unreadMessages: Selector<number> = (state) => state.drawer.unreadMessages;
 const unreadFiles: Selector<number> = (state) => state.drawer.unreadFiles;
 const lastNSelector: Selector<number> = (state) => state.settings.lastN;
 const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNonVideo;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
-const fullscreenConsumer: Selector<string | undefined> =
-	(state) => state.room.fullscreenConsumer;
-const windowedConsumers: Selector<string[]> =
-	(state) => state.room.windowedConsumers;
+
+/**
+ * Returns the peers as an array.
+ * 
+ * @returns {Peer[]} the peers.
+ */
+export const peersArraySelector = createSelector(
+	peersSelector,
+	(peers) => Object.values(peers)
+);
 
 /**
  * Factory function to create a selector that returns the
@@ -59,21 +54,84 @@ export const makeDevicesSelector = (kind: MediaDeviceKind) => {
 };
 
 /**
+ * Returns the parent sessionId.
+ * 
+ * @returns {string | undefined} the parent sessionId.
+ */
+export const parentRoomSessionIdSelector = createSelector(
+	roomSessionsSelect,
+	(roomSessions) => Object.values(roomSessions).find((roomSession) => roomSession.parent)?.sessionId
+);
+
+/**
+ * Returns the list of peers that has the same sessionId as me.
+ * 
+ * @returns {Peer[]} the list of peers.
+ */
+export const sessionIdPeersSelector = createSelector(
+	sessionIdSelector,
+	peersArraySelector,
+	(sessionId, peers) => peers.filter((peer) => peer.sessionId === sessionId)
+);
+
+/**
+ * Returns the list of peers that are in the parent room.
+ * 
+ * @returns {Peer[]} the list of peers.
+ */
+export const parentRoomPeersSelector = createSelector(
+	parentRoomSessionIdSelector,
+	peersArraySelector,
+	(parentRoomSessionId, peers) => peers.filter((peer) => peer.sessionId === parentRoomSessionId)
+);
+
+/**
+ * Returns the current roomSession that I am in.
+ * 
+ * @returns {RoomSession} the roomSession.
+ */
+export const currentRoomSessionSelector = createSelector(
+	sessionIdSelector,
+	roomSessionsSelect,
+	(sessionId, roomSessions) => roomSessions[sessionId]
+);
+
+/**
+ * Returns the spotlights for the roomSession that I am in.
+ * 
+ * @returns {string[]} the list of peerIds.
+ */
+export const sessionIdSpotlightsSelector = createSelector(
+	currentRoomSessionSelector,
+	(roomSession) => roomSession.spotlights
+);
+
+/**
  * Returns the list of peerIds that are currently selected or
  * spotlighted. Cropped to lastN if enabled.
  * 
  * @returns {string[]} the list of peerIds.
- */
+*/ 
 export const spotlightPeersSelector = createSelector(
 	lastNSelector,
-	selectedPeersSelector,
-	spotlightsSelector,
-	(lastN, selectedPeers, spotlights) =>
-		selectedPeers.concat(
-			spotlights.filter((item) => selectedPeers.indexOf(item) < 0)
-		).slice(0, lastN)
-			.sort((a, b) => String(a)
-				.localeCompare(String(b)))
+	currentRoomSessionSelector,
+	(lastN, roomSession) => {
+		const { spotlights, selectedPeers } = roomSession;
+
+		return selectedPeers.concat(spotlights.filter((item) => selectedPeers.indexOf(item) < 0))
+			.slice(0, lastN)
+			.sort((a, b) => String(a).localeCompare(String(b)));
+	}
+);
+
+/**
+ * Returns the list of rooms that are not parent rooms.
+ * 
+ * @returns {RoomSession[]} the list of rooms.
+ */
+export const breakoutRoomsSelector = createSelector(
+	roomSessionsSelect,
+	(roomSessions) => Object.values(roomSessions).filter((roomSession) => !roomSession.parent)
 );
 
 /**
@@ -183,9 +241,9 @@ export const spotlightExtraVideoConsumerSelector = createSelector(
  * @returns {string[]} the list of peerIds.
  * @see spotlightPeersSelector
  */
-export const participantListSelector = createSelector(
-	[ spotlightsSelector, peersSelector ],
-	(spotlights, peers) => {
+export const parentParticipantListSelector = createSelector(
+	[ parentRoomPeersSelector, sessionIdSpotlightsSelector ],
+	(peers, spotlights) => {
 		const raisedHandSortedPeers =
 			peers.filter((peer) => peer.raisedHand)
 				.sort((a, b) => 
@@ -211,14 +269,54 @@ export const participantListSelector = createSelector(
 	}
 );
 
+/** Returns true if I am in parent session.
+ * 
+ * @returns {boolean} true if I am in parent session.
+ */
+export const inParentRoomSelector = createSelector(
+	sessionIdSelector,
+	roomSessionsSelect,
+	(sessionId, roomSessions) => Object.values(roomSessions).find((rs) => rs.sessionId === sessionId)?.parent
+);
+
 /**
  * Returns the number of shared files.
  * 
  * @returns {number} the number of shared files.
  */
 export const filesLengthSelector = createSelector(
-	filesSelector,
-	(files) => files.length
+	currentRoomSessionSelector,
+	(roomSession) => roomSession.fileHistory.length
+);
+
+/**
+ * Returns the list of shared files.
+ * 
+ * @returns {File[]} the list of shared files.
+ */
+export const filesSelector = createSelector(
+	currentRoomSessionSelector,
+	(roomSession) => roomSession.fileHistory
+);
+
+/**
+ * Returns the chat messages of the current roomSession I am in.
+ * 
+ * @returns {ChatMessage[]} the chat messages.
+ */
+export const chatMessagesSelector = createSelector(
+	currentRoomSessionSelector,
+	(roomSession) => roomSession.chatHistory
+);
+
+/**
+ * Returns the creationTimestamp of the roomSession I am in.
+ * 
+ * @returns {number} the creationTimestamp.
+ */
+export const roomSessionCreationTimestampSelector = createSelector(
+	currentRoomSessionSelector,
+	(roomSession) => roomSession.creationTimestamp
 );
 
 /**
@@ -227,7 +325,7 @@ export const filesLengthSelector = createSelector(
  * @returns {number} the number of peers.
  */
 export const peersLengthSelector = createSelector(
-	peersSelector,
+	peersArraySelector,
 	(peers) => peers.length
 );
 
@@ -247,7 +345,7 @@ export const lobbyPeersLengthSelector = createSelector(
  * @returns {number} the number of peers that have raised their hand.
  */
 export const raisedHandsSelector = createSelector(
-	peersSelector,
+	peersArraySelector,
 	(peers) => peers.reduce((a, b) => (a + (b.raisedHand ? 1 : 0)), 0)
 );
 
@@ -274,10 +372,9 @@ export const unreadSelector = createSelector(
  * @returns {StateConsumer | undefined} the state consumer.
  */
 export const fullscreenConsumerSelector = createSelector(
-	fullscreenConsumer,
+	currentRoomSessionSelector,
 	consumersSelect,
-	(consumer, consumers) =>
-		consumers.find((c) => c.id === consumer)
+	(roomSession, consumers) => consumers.find((c) => c.id === roomSession.fullscreenConsumer)
 );
 
 /**
@@ -287,10 +384,9 @@ export const fullscreenConsumerSelector = createSelector(
  * @returns {StateConsumer[]} the list of state consumers.
  */
 export const windowedConsumersSelector = createSelector(
-	windowedConsumers,
+	currentRoomSessionSelector,
 	consumersSelect,
-	(windowConsumers, consumers) =>
-		consumers.filter((c) => windowConsumers.includes(c.id))
+	(roomSession, consumers) => consumers.filter((c) => roomSession.windowedConsumers.includes(c.id))
 );
 
 /**
@@ -428,7 +524,20 @@ export const meProducersSelector = createSelector(
 export const makePeerSelector = (id: string): Selector<Peer | undefined> => {
 	return createSelector(
 		peersSelector,
-		(peers: Peer[]) => peers.find((peer) => peer.id === id)
+		(peers) => peers[id]
+	);
+};
+
+/**
+ * Factory function that returns a selector that returns the list of peers that are in a sessionId.
+ * 
+ * @param {string} sessionId - The sessionId.
+ * @returns {Selector<Peer[]>} Selector for the peers.
+ */
+export const makePeersInSessionSelector = (sessionId: string): Selector<Peer[]> => {
+	return createSelector(
+		peersArraySelector,
+		(peers) => peers.filter((peer) => peer.sessionId === sessionId)
 	);
 };
 
@@ -442,7 +551,7 @@ export const makePeerSelector = (id: string): Selector<Peer | undefined> => {
 export const makePeerTranscriptsSelector = (id: string): Selector<Transcript[]> => {
 	return createSelector(
 		peersSelector,
-		(peers: Peer[]) => peers.find((peer) => peer.id === id)?.transcripts || []
+		(peers) => peers[id]?.transcripts ?? []
 	);
 };
 
@@ -501,7 +610,7 @@ export const makePermissionSelector =
 			meRolesSelect,
 			roomPermissionsSelect,
 			roomAllowWhenRoleMissing,
-			peersSelector,
+			peersArraySelector,
 			(roles, roomPermissions, allowWhenRoleMissing, peers) => {
 				if (!roomPermissions)
 					return false;

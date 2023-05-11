@@ -39,8 +39,6 @@ import settingsSlice from './slices/settingsSlice';
 import drawerSlice from './slices/drawerSlice';
 import peersSlice from './slices/peersSlice';
 import producersSlice from './slices/producersSlice';
-import chatSlice from './slices/chatSlice';
-import filesharingSlice from './slices/filesharingSlice';
 import notificationsSlice from './slices/notificationsSlice';
 import uiSlice from './slices/uiSlice';
 import { EdumeetConfig } from '../utils/types';
@@ -50,6 +48,7 @@ import { DeviceService } from '../services/deviceService';
 import { FileService } from '../services/fileService';
 import recordingSlice from './slices/recordingSlice';
 import { PerformanceMonitor } from '../utils/performanceMonitor';
+import roomSessionsSlice from './slices/roomSessionsSlice';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
@@ -99,13 +98,12 @@ const reducer = combineReducers({
 	drawer: drawerSlice.reducer,
 	notifications: notificationsSlice.reducer,
 	lobbyPeers: lobbyPeersSlice.reducer,
-	chat: chatSlice.reducer,
-	filesharing: filesharingSlice.reducer,
 	me: meSlice.reducer,
 	peers: peersSlice.reducer,
 	permissions: permissionsSlice.reducer,
 	producers: producersSlice.reducer,
 	room: roomSlice.reducer,
+	roomSessions: roomSessionsSlice.reducer,
 	settings: settingsSlice.reducer,
 	signaling: signalingSlice.reducer,
 	ui: uiSlice.reducer,

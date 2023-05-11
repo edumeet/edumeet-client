@@ -30,6 +30,7 @@ const createPeerMiddleware = ({
 							case 'newPeer': {
 								const {
 									id,
+									sessionId,
 									displayName,
 									picture,
 									audioOnly,
@@ -40,13 +41,14 @@ const createPeerMiddleware = ({
 
 								dispatch(peersActions.addPeer({
 									id,
+									sessionId,
 									displayName,
 									picture,
 									audioOnly,
 									roles,
 									raisedHand,
 									raisedHandTimestamp,
-									transcripts: []
+									transcripts: [],
 								}));
 
 								break;
@@ -56,6 +58,15 @@ const createPeerMiddleware = ({
 								const { peerId } = notification.data;
 
 								dispatch(peersActions.removePeer({ id: peerId }));
+
+								break;
+							}
+
+							case 'changeSessionId': {
+								const { peerId, sessionId, oldSessionId } = notification.data;
+
+								dispatch(peersActions.setPeerSessionId({ id: peerId, sessionId, oldSessionId }));
+
 								break;
 							}
 
@@ -66,7 +77,6 @@ const createPeerMiddleware = ({
 								const {
 									peerId,
 									displayName,
-									// oldDisplayName,
 									picture,
 									audioOnly,
 									raisedHand,

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { chatActions } from './chatSlice';
+import { roomSessionsActions } from './roomSessionsSlice';
 
 export type ToolAreaTab = 'chat' | 'users';
 
@@ -40,7 +40,7 @@ const drawerSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(chatActions.addMessage, (state) => {
+			.addCase(roomSessionsActions.addMessage, (state) => {
 				if (state.open && state.tab === 'chat')
 					return;
 	
