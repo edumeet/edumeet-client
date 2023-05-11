@@ -30,24 +30,24 @@ const ListHeader = styled(Typography)(({ theme }) => ({
 const ParticipantList = (): JSX.Element => {
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const participants = useAppSelector(parentParticipantListSelector);
-	const createRooms = usePermissionSelector(permissions.CREATE_ROOM);
-	const changeRoom = usePermissionSelector(permissions.CHANGE_ROOM);
+	const canCreateRooms = usePermissionSelector(permissions.CREATE_ROOM);
+	const canChangeRoom = usePermissionSelector(permissions.CHANGE_ROOM);
 	const rooms = useAppSelector(breakoutRoomsSelector);
 	const inParent = useAppSelector(inParentRoomSelector);
 
 	return (
 		<ParticipantListDiv>
 			{ isModerator && <ListModerator /> }
-			{ (rooms.length > 0 || createRooms) &&
+			{ (rooms.length > 0 || canCreateRooms) &&
 				<>
 					<ListHeader>
 						{ breakoutRoomsLabel() }
 					</ListHeader>
-					{ createRooms && <BreakoutModerator /> }
+					{ canCreateRooms && <BreakoutModerator /> }
 					<Flipper flipKey={rooms}>
 						{rooms.map((room) => (
 							<Flipped key={room.sessionId} flipId={room.sessionId}>
-								<ListBreakoutRoom key={room.sessionId} room={room} changeRoom={changeRoom} createRoom={createRooms} isModerator={isModerator} />
+								<ListBreakoutRoom key={room.sessionId} room={room} canChangeRoom={canChangeRoom} canCreateRoom={canCreateRooms} isModerator={isModerator} />
 							</Flipped>
 						))}
 					</Flipper>

@@ -13,8 +13,8 @@ import { useState } from 'react';
 
 interface BreakoutRoomProps {
 	room: RoomSession;
-	changeRoom: boolean;
-	createRoom: boolean;
+	canChangeRoom: boolean;
+	canCreateRoom: boolean;
 	isModerator: boolean;
 }
 
@@ -66,8 +66,8 @@ const ExpandedBreakoutRoomButtonDiv = styled(Box)(({ theme }) => ({
 
 const ListBreakoutRoom = ({
 	room,
-	// changeRoom,
-	createRoom,
+	canChangeRoom,
+	canCreateRoom,
 	isModerator,
 }: BreakoutRoomProps): JSX.Element => {
 	const [ expanded, setExpanded ] = useState(false);
@@ -90,7 +90,7 @@ const ListBreakoutRoom = ({
 					<BreakoutRoomChip label={participants.length + (inSession ? 1 : 0)} size='small' />
 					{ room.name }
 				</BreakoutRoomNameDiv>
-				{ inSession ? (
+				{ canChangeRoom && (inSession ? (
 					<BreakoutRoomButtonDiv>
 						<LeaveBreakoutRoomButton />
 					</BreakoutRoomButtonDiv>
@@ -98,7 +98,7 @@ const ListBreakoutRoom = ({
 					<BreakoutRoomButtonDiv>
 						<JoinBreakoutRoomButton sessionId={room.sessionId} />
 					</BreakoutRoomButtonDiv>
-				)}
+				))}
 			</AccordionSummary>
 			<BreakoutRoomAccordionDetails>
 				{ inSession && <ListMe /> }
@@ -111,7 +111,7 @@ const ListBreakoutRoom = ({
 						)) }
 					</Flipper>
 				}
-				{ createRoom &&
+				{ canCreateRoom &&
 					<ExpandedBreakoutRoomButtonDiv>
 						<EjectBreakoutRoomButton sessionId={room.sessionId} />
 						<RemoveBreakoutRoomButton sessionId={room.sessionId} />
