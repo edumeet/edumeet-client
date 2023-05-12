@@ -11,6 +11,7 @@ const LeaveButton = (): JSX.Element => {
 			color='error'
 			variant='contained'
 			onClick={() => navigate('/')}
+			size='small'
 		>
 			{ leaveLabel() }
 		</Button>

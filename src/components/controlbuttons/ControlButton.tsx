@@ -26,7 +26,7 @@ const ControlButton = ({
 	onColor = 'inherit',
 	offColor = 'inherit',
 	disabledColor = 'inherit',
-	size = 'medium',
+	size = 'small',
 	onClick,
 	children
 }: ControlButtonProps): JSX.Element => {
