@@ -48,6 +48,7 @@ const Peer = ({
 					margin={spacing}
 					width={style.width}
 					height={style.height}
+					zIndex={0}
 				>
 					<StateIndicators peerId={id} />
 					<DisplayName displayName={peer?.displayName} />
