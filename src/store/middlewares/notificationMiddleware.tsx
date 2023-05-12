@@ -1,10 +1,9 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { Logger } from 'edumeet-common';
-import { chatActions } from '../slices/chatSlice';
-import { filesharingActions } from '../slices/filesharingSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { peersActions } from '../slices/peersSlice';
 import { MiddlewareOptions, RootState } from '../store';
+import { roomSessionsActions } from '../slices/roomSessionsSlice';
 
 interface SoundAlert {
 	[type: string]: {
@@ -70,7 +69,7 @@ const createNotificationMiddleware = ({
 
 				// Chat message
 				if (
-					chatActions.addMessage.match(action) &&
+					roomSessionsActions.addMessage.match(action) &&
 					action.payload.peerId !== getState().me.id
 				) {
 					await playNotificationSounds('chatMessage');
@@ -82,7 +81,7 @@ const createNotificationMiddleware = ({
 				}
 
 				// Send file
-				if (filesharingActions.addFile.match(action)) {
+				if (roomSessionsActions.addFile.match(action)) {
 					await playNotificationSounds('sendFile');
 				}
 

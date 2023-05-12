@@ -1,5 +1,5 @@
 import { memo, ReactNode } from 'react';
-import { Fab, IconButton, styled, Tooltip } from '@mui/material';
+import { Fab, IconButton, Tooltip } from '@mui/material';
 import { ButtonColor, ButtonSize } from '../../utils/types';
 
 export interface ControlButtonProps {
@@ -17,11 +17,6 @@ export interface ControlButtonProps {
 	children?: ReactNode;
 }
 
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
-	margin: theme.spacing(1, 0),
-	padding: theme.spacing(0, 1)
-}));
-
 const ControlButton = ({
 	type = 'fab',
 	toolTip,
@@ -31,11 +26,11 @@ const ControlButton = ({
 	onColor = 'inherit',
 	offColor = 'inherit',
 	disabledColor = 'inherit',
-	size = 'medium',
+	size = 'small',
 	onClick,
 	children
 }: ControlButtonProps): JSX.Element => {
-	const Button = ((type === 'fab') ? Fab : StyledIconButton) as React.ElementType;
+	const Button = ((type === 'fab') ? Fab : IconButton) as React.ElementType;
 
 	return (
 		<Tooltip

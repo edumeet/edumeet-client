@@ -3,9 +3,10 @@ import { Flipped, Flipper } from 'react-flip-toolkit';
 import {
 	useAppSelector,
 } from '../../store/hooks';
-import { FilesharingFile } from '../../store/slices/filesharingSlice';
 import { noFilesLabel } from '../translated/translatedComponents';
 import ListFile from './ListFile';
+import { filesSelector } from '../../store/selectors';
+import { FilesharingFile } from '../../utils/types';
 
 const FilesharingListDiv = styled('div')(({ theme }) => ({
 	width: '100%',
@@ -30,7 +31,7 @@ const ListItemLi = styled('li')({
 });
 
 const FilesharingList = (): JSX.Element => {
-	const files = useAppSelector((state) => state.filesharing);
+	const files = useAppSelector(filesSelector);
 	const meId = useAppSelector((state) => state.me.id);
 
 	return (

@@ -4,6 +4,7 @@ import { roomActions } from './roomSlice';
 
 export interface Peer {
 	id: string;
+	sessionId: string;
 	displayName?: string;
 	picture?: string;
 	audioOnly?: boolean;
@@ -23,27 +24,33 @@ export interface Peer {
 	transcripts?: Transcript[];
 }
 
-type PeerUpdate = Omit<Peer, 'roles' | 'transcripts'>;
+type PeerUpdate = Omit<Peer, 'sessionId' | 'roles' | 'transcripts'>;
 
-export type PeersState = Peer[];
-
-const initialState: PeersState = [];
+const initialState: Record<string, Peer> = {};
 
 const peersSlice = createSlice({
 	name: 'peers',
 	initialState,
 	reducers: {
 		addPeer: ((state, action: PayloadAction<Peer>) => {
-			state.push(action.payload);
+			state[action.payload.id] = action.payload;
 		}),
 		addPeers: ((state, action: PayloadAction<Peer[]>) => {
-			state.push(...action.payload);
+			for (const peer of action.payload) {
+				state[peer.id] = peer;
+			}
 		}),
-		removePeer: ((state, action: PayloadAction<PeerUpdate>) => {
-			return state.filter((peer) => peer.id !== action.payload.id);
+		removePeer: ((state, action: PayloadAction<{ id: string }>) => {
+			delete state[action.payload.id];
+		}),
+		setPeerSessionId: ((state, action: PayloadAction<{ id: string, sessionId: string, oldSessionId: string }>) => {
+			const peer = state[action.payload.id];
+
+			if (peer)
+				peer.sessionId = action.payload.sessionId;
 		}),
 		updatePeer: ((state, action: PayloadAction<PeerUpdate>) => {
-			const peer = state.find((p) => p.id === action.payload.id);
+			const peer = state[action.payload.id];
 
 			if (peer) {
 				const {
@@ -98,14 +105,14 @@ const peersSlice = createSlice({
 		}),
 		addRole: ((state, action: PayloadAction<{ id: string, roleId: number }>) => {
 			const { roleId } = action.payload;
-			const peer = state.find((p) => p.id === action.payload.id);
+			const peer = state[action.payload.id];
 
 			if (peer)
 				peer.roles.push(roleId);
 		}),
 		removeRole: ((state, action: PayloadAction<{ id: string, roleId: number }>) => {
 			const { roleId } = action.payload;
-			const peer = state.find((p) => p.id === action.payload.id);
+			const peer = state[action.payload.id];
 
 			if (peer) {
 				peer.roles =
@@ -114,7 +121,7 @@ const peersSlice = createSlice({
 		}),
 		updateTranscript: ((state, action: PayloadAction<PeerTranscript>) => {
 			const { id, transcript, peerId, done } = action.payload;
-			const peer = state.find((p) => p.id === peerId);
+			const peer = state[peerId];
 
 			if (peer) {
 				if (!peer.transcripts)
@@ -134,7 +141,7 @@ const peersSlice = createSlice({
 		}),
 		removeTranscript: ((state, action: PayloadAction<Omit<PeerTranscript, 'transcript' | 'done'>>) => {
 			const { id, peerId } = action.payload;
-			const peer = state.find((p) => p.id === peerId);
+			const peer = state[peerId];
 
 			if (peer) {
 				peer.transcripts =
@@ -142,7 +149,7 @@ const peersSlice = createSlice({
 			}
 		}),
 		clearTranscripts: ((state, action: PayloadAction<string>) => {
-			const peer = state.find((p) => p.id === action.payload);
+			const peer = state[action.payload];
 
 			if (peer)
 				peer.transcripts = [];
@@ -152,7 +159,7 @@ const peersSlice = createSlice({
 		builder
 			.addCase(roomActions.setState, (_state, action) => {
 				if (action.payload === 'left')
-					return [];
+					return initialState;
 			});
 	}
 });

@@ -1,9 +1,9 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { Logger } from 'edumeet-common';
-import { filesharingActions } from '../slices/filesharingSlice';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { roomSessionsActions } from '../slices/roomSessionsSlice';
 
 const logger = new Logger('FilesharingMiddleware');
 
@@ -33,12 +33,12 @@ const createFilesharingMiddleware = ({
 							case 'sendFile': {
 								const { file } = notification.data;
 
-								dispatch(filesharingActions.addFile(file));
+								dispatch(roomSessionsActions.addFile(file));
 								break;
 							}
 
 							case 'moderator:clearFiles': {
-								dispatch(filesharingActions.clearFiles());
+								dispatch(roomSessionsActions.clearFiles());
 
 								break;
 							}

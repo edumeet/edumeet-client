@@ -21,6 +21,7 @@ const AppearanceSettings = (): JSX.Element => {
 		hideSelfView,
 		controlButtonsBar
 	} = useAppSelector((state) => state.settings);
+	const isMobile = useAppSelector((state) => state.me.browser.platform === 'mobile');
 
 	const handleChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -55,17 +56,19 @@ const AppearanceSettings = (): JSX.Element => {
 					}
 					label={hideSelfViewLabel()}
 				/>
-				<FormControlLabel
-					control={
-						<Switch
-							disabled={hideSelfView}
-							checked={controlButtonsBar}
-							onChange={(event) => handleChange(event, 'controlButtonsBar')}
-							inputProps={{ 'aria-label': 'controlled' }}
-						/>
-					}
-					label={controlButtonsBarLabel()}
-				/>
+				{ !isMobile && (
+					<FormControlLabel
+						control={
+							<Switch
+								disabled={hideSelfView}
+								checked={controlButtonsBar}
+								onChange={(event) => handleChange(event, 'controlButtonsBar')}
+								inputProps={{ 'aria-label': 'controlled' }}
+							/>
+						}
+						label={controlButtonsBarLabel()}
+					/>
+				) }
 				<FormControlLabel
 					control={
 						<Switch

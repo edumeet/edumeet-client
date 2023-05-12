@@ -3,7 +3,6 @@ import { saveAs } from 'file-saver';
 import { useContext, useEffect, useState } from 'react';
 import WebTorrent, { TorrentFile } from 'webtorrent';
 import { useAppDispatch } from '../../store/hooks';
-import { filesharingActions, FilesharingFile } from '../../store/slices/filesharingSlice';
 import { notificationsActions } from '../../store/slices/notificationsSlice';
 import { ServiceContext } from '../../store/store';
 import {
@@ -12,6 +11,8 @@ import {
 	saveFileErrorLabel,
 	saveFileLabel,
 } from '../translated/translatedComponents';
+import { FilesharingFile } from '../../utils/types';
+import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
 
 interface ListFilerProps {
 	file: FilesharingFile;
@@ -82,7 +83,7 @@ const ListFile = ({
 		const newTorrent = await fileService.downloadFile(file.magnetURI);
 
 		setTorrent(newTorrent);
-		dispatch(filesharingActions.updateFile({ ...file, started: true }));
+		dispatch(roomSessionsActions.updateFile({ ...file, started: true }));
 		setStartInProgress(false);
 	};
 

@@ -89,7 +89,7 @@ const Volume = ({
 		return () => {
 			volumeWatcher?.off('volumeChange', onVolumeChange);
 		};
-	}, []);
+	}, [ consumer, producer ]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (

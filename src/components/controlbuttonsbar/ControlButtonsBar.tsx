@@ -8,14 +8,16 @@ const ControlButtonsBar = (): JSX.Element => {
 	const controlButtonsBar =
 		useAppSelector((state) => state.settings.controlButtonsBar);
 	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
+	const isMobile = useAppSelector((state) => state.me.browser.platform === 'mobile');
 
 	return (
 		<>
-			{ (hideSelfView || controlButtonsBar) &&
+			{ (hideSelfView || controlButtonsBar || isMobile) &&
 				<MediaControls
-					orientation='vertical'
-					horizontalPlacement='left'
-					verticalPlacement='center'
+					orientation={ isMobile ? 'horizontal' : 'vertical' }
+					horizontalPlacement={ isMobile ? 'center' : 'left' }
+					verticalPlacement={ isMobile ? 'bottom' :'center' }
+					autoHide={ !isMobile }
 				>
 					<MicButton
 						onColor='default'
@@ -27,7 +29,7 @@ const ControlButtonsBar = (): JSX.Element => {
 						offColor='error'
 						disabledColor='default'
 					/>
-					<ScreenshareButton />
+					{ !isMobile && <ScreenshareButton /> }
 				</MediaControls>
 			}
 		</>

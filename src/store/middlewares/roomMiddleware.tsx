@@ -8,6 +8,8 @@ import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
+import { meActions } from '../slices/meSlice';
+import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -46,8 +48,13 @@ const createRoomMiddleware = ({
 								} = notification.data;
 
 								batch(() => {
-									dispatch(roomActions.setSessionId(sessionId));
-									dispatch(roomActions.setCreationTimestamp(creationTimestamp));
+									dispatch(roomSessionsActions.addRoomSession({
+										sessionId,
+										creationTimestamp,
+										parent: true,
+										...initialRoomSession,
+									}));
+									dispatch(meActions.setSessionId(sessionId));
 									dispatch(permissionsActions.addRoles(roles));
 									dispatch(permissionsActions.setRoomPermissions(roomPermissions));
 									dispatch(permissionsActions.setUserRoles(userRoles));
@@ -61,11 +68,10 @@ const createRoomMiddleware = ({
 								});
 
 								if (clientMonitorSenderConfig) {
-									const roomId = getState().room.name;
-
-									mediaService.getMonitor()?.setRoomId(roomId);
+									mediaService.getMonitor()?.setRoomId(sessionId);
 									mediaService.getMonitor()?.connect(clientMonitorSenderConfig);
 								}
+
 								break;
 							}
 
@@ -88,17 +94,41 @@ const createRoomMiddleware = ({
 								break;
 							}
 
-							case 'activeSpeaker': {
+							/* case 'activeSpeaker': {
 								const { peerId } = notification.data;
 								const isMe = peerId === getState().me.id;
 
 								dispatch(roomActions.setActiveSpeakerId({ peerId, isMe }));
 								break;
-							}
+							} */
 
 							case 'moderator:kick':
 							case 'escapeMeeting': {
 								dispatch(leaveRoom());
+
+								break;
+							}
+
+							case 'newBreakoutRoom': {
+								const { name, roomSessionId, creationTimestamp } = notification.data;
+
+								dispatch(roomSessionsActions.addRoomSession({ name, sessionId: roomSessionId, creationTimestamp, ...initialRoomSession }));
+
+								break;
+							}
+
+							case 'breakoutRoomClosed': {
+								const { roomSessionId } = notification.data;
+
+								dispatch(roomSessionsActions.removeRoomSession(roomSessionId));
+
+								break;
+							}
+
+							case 'sessionIdChanged': {
+								const { sessionId } = notification.data;
+
+								dispatch(meActions.setSessionId(sessionId));
 
 								break;
 							}

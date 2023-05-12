@@ -35,7 +35,7 @@ const Peer = ({
 	} = usePeerConsumers(id);
 	const hideNonVideo = useAppSelector((state) => state.settings.hideNonVideo);
 	const peer = usePeer(id);
-	const activeSpeaker = useAppSelector((state) => id === state.room.activeSpeakerId);
+	// const activeSpeaker = useAppSelector((state) => id === state.room.activeSpeakerId);
 	const showParticipant = !hideNonVideo || (hideNonVideo && webcamConsumer);
 	const showStats = useAppSelector((state) => state.ui.showStats);
 	const recording = useAppSelector((state) => state.recording.recording);
@@ -45,11 +45,12 @@ const Peer = ({
 		<>
 			{ showParticipant && (
 				<VideoBox
-					activeSpeaker={activeSpeaker}
+					// activeSpeaker={activeSpeaker}
 					order={1}
 					margin={spacing}
 					width={style.width}
 					height={style.height}
+					zIndex={0}
 				>
 					{ showInRecording && (
 						<>
@@ -85,7 +86,7 @@ const Peer = ({
 			
 			{ screenConsumer && (
 				<VideoBox
-					activeSpeaker={activeSpeaker}
+					// activeSpeaker={activeSpeaker}
 					order={2}
 					margin={spacing}
 					width={style.width}
@@ -109,7 +110,7 @@ const Peer = ({
 			)}
 			{ extraVideoConsumers?.map((consumer) => (
 				<VideoBox
-					activeSpeaker={activeSpeaker}
+					// activeSpeaker={activeSpeaker}
 					order={3}
 					margin={spacing}
 					key={consumer.id}

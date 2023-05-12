@@ -13,7 +13,7 @@ export const login = (): AppThunk<Promise<void>> => async (
 	logger.debug('login()');
 
 	const { id: peerId } = getState().me;
-	const { name: roomId } = getState().room;
+	const { id: roomId } = getState().room;
 
 	window.open(`/auth/login?peerId=${peerId}&roomId=${roomId}`, 'loginWindow');
 };
@@ -25,7 +25,7 @@ export const logout = (): AppThunk<Promise<void>> => async (
 	logger.debug('logout()');
 
 	const { id: peerId } = getState().me;
-	const { name: roomId } = getState().room;
+	const { id: roomId } = getState().room;
 
 	window.open(`/auth/logout?peerId=${peerId}&roomId=${roomId}`, 'logoutWindow');
 };
