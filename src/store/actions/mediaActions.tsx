@@ -367,7 +367,10 @@ export const updateMic = ({
 		await deviceService.updateMediaDevices();
 
 		const peerId = getState().me.id;
-		const canSendMic = getState().me.canSendMic;
+		const {
+			canSendMic,
+			recordable,
+		} = getState().me;
 
 		if (!canSendMic)
 			throw new Error('cannot produce audio');
@@ -453,7 +456,7 @@ export const updateMic = ({
 					opusMaxPlaybackRate: opusMaxPlaybackRate,
 					opusPtime: opusPtime
 				},
-				appData: { peerId, source: 'mic' }
+				appData: { peerId, source: 'mic', recordable }
 			});
 
 			dispatch(producersActions.addProducer({
@@ -746,7 +749,10 @@ export const updateScreenSharing = ({
 
 	try {
 		const peerId = getState().me.id;
-		const canShareScreen = getState().me.canShareScreen;
+		const {
+			canShareScreen,
+			recordable
+		} = getState().me;
 
 		if (!canShareScreen)
 			throw new Error('cannot produce screen share');
@@ -877,7 +883,7 @@ export const updateScreenSharing = ({
 						opusMaxPlaybackRate: opusMaxPlaybackRate,
 						opusPtime: opusPtime
 					},
-					appData: { peerId, source: 'mic' }
+					appData: { peerId, source: 'mic', recordable }
 				});
 
 				dispatch(producersActions.addProducer({

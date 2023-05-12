@@ -7,6 +7,7 @@ import { producersActions } from '../slices/producersSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { uiActions } from '../slices/uiSlice';
 import { Logger } from 'edumeet-common';
+import { peersActions } from '../slices/peersSlice';
 
 const logger = new Logger('RecordingMiddleware');
 
@@ -137,7 +138,7 @@ const createRecordingMiddleware = ({
 						.filter((consumer) => consumer.appData.source === 'mic');
 
 					for (const consumer of audioConsumers) {
-						if (consumer.track) {
+						if (consumer.track && consumer.appData.recordable) {
 							audioContext.createMediaStreamSource(
 								new MediaStream([ consumer.track ])
 							).connect(audioDestination);
@@ -194,13 +195,28 @@ const createRecordingMiddleware = ({
 			}
 
 			if (getState().recording.recording) {
+				if (peersActions.updatePeer.match(action)) {
+					const { id, recordable } = action.payload;
+
+					const audioConsumers = mediaService.getConsumers()
+						.filter((consumer) => consumer.appData.source === 'mic' && consumer.appData.peerId === id);
+
+					for (const consumer of audioConsumers) {
+						if (consumer.track && recordable) {
+							audioContext.createMediaStreamSource(
+								new MediaStream([ consumer.track ])
+							).connect(audioDestination);
+						}
+					}
+				}
+
 				if (consumersActions.addConsumer.match(action)) {
 					const { id, kind } = action.payload;
 	
 					if (kind === 'audio') {
 						const consumer = mediaService.getConsumer(id);
 	
-						if (consumer?.track) {
+						if (consumer?.track && consumer?.appData.recordable) {
 							audioContext.createMediaStreamSource(
 								new MediaStream([ consumer.track ])
 							).connect(audioDestination);
