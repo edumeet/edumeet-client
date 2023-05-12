@@ -77,17 +77,22 @@ export class AnomalyDetector {
 
 		if (this._measurements.length < this._windowSize) {
 			this.updateSums(value);
+
 			return false;
 		}
+
 		const mean = this.calculateMean();
 		const stdDev = this.calculateStdDev(mean);
 		const deviation = Math.abs(value - mean);
 		
 		if (this._minDeviationThreshold && this._minDeviationThreshold >= deviation) {
 			this.updateSums(value);
+
 			return false;
 		}
+
 		const result = deviation > this._stdMultiplierThreshold * stdDev;
+
 		if (result) {
 			if (this._windowSize / 2 < ++this._badTicks) {
 				this.updateSums(value);
