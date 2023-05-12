@@ -8,6 +8,7 @@ export interface Peer {
 	displayName?: string;
 	picture?: string;
 	audioOnly?: boolean;
+	recordable?: boolean;
 	videoInProgress?: boolean;
 	stopVideoInProgress?: boolean;
 	audioInProgress?: boolean;
@@ -56,6 +57,7 @@ const peersSlice = createSlice({
 					displayName,
 					picture,
 					audioOnly,
+					recordable,
 					videoInProgress,
 					stopVideoInProgress,
 					audioInProgress,
@@ -75,6 +77,8 @@ const peersSlice = createSlice({
 					peer.picture = picture;
 				if (audioOnly)
 					peer.audioOnly = audioOnly;
+				if (recordable)
+					peer.recordable = recordable;
 				if (videoInProgress !== undefined)
 					peer.videoInProgress = videoInProgress;
 				if (stopVideoInProgress !== undefined)

@@ -24,7 +24,7 @@ const createPeerMiddleware = ({
 	}) =>
 		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
-				signalingService.on('notification', (notification) => {
+				signalingService.on('notification', async (notification) => {
 					try {
 						switch (notification.method) {
 							case 'newPeer': {
@@ -34,6 +34,7 @@ const createPeerMiddleware = ({
 									displayName,
 									picture,
 									audioOnly,
+									recordable,
 									roles,
 									raisedHand,
 									raisedHandTimestamp
@@ -45,11 +46,18 @@ const createPeerMiddleware = ({
 									displayName,
 									picture,
 									audioOnly,
+									recordable,
 									roles,
 									raisedHand,
 									raisedHandTimestamp,
 									transcripts: [],
 								}));
+
+								if (getState().recording.recording) {
+									await signalingService.sendRequest('recording:join', {
+										peerId: id
+									});
+								}
 
 								break;
 							}
@@ -73,12 +81,14 @@ const createPeerMiddleware = ({
 							case 'changeDisplayName':
 							case 'changePicture':
 							case 'changeAudioOnly':
+							case 'recording:recordable':
 							case 'raisedHand': {
 								const {
 									peerId,
 									displayName,
 									picture,
 									audioOnly,
+									recordable,
 									raisedHand,
 									raisedHandTimestamp
 								} = notification.data;
@@ -89,6 +99,7 @@ const createPeerMiddleware = ({
 										displayName,
 										picture,
 										audioOnly,
+										recordable,
 										raisedHand,
 										raisedHandTimestamp
 									})

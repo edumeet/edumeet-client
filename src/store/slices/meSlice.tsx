@@ -21,6 +21,8 @@ export interface MeState {
 	escapeMeeting: boolean;
 	autoMuted: boolean;
 	audioOnly: boolean;
+	privacyDialogDisplayed: boolean;
+	recordable: boolean;
 	// Status flags
 	audioInProgress: boolean;
 	videoInProgress: boolean;
@@ -29,6 +31,7 @@ export interface MeState {
 	raisedHandInProgress: boolean;
 	audioOnlyInProgress: boolean;
 	escapeMeetingInProgress: boolean;
+	recordableInProgress: boolean;
 }
 
 const initialState: MeState = {
@@ -46,6 +49,8 @@ const initialState: MeState = {
 	escapeMeeting: false,
 	autoMuted: true,
 	audioOnly: false,
+	privacyDialogDisplayed: false,
+	recordable: false,
 	audioInProgress: false,
 	videoInProgress: false,
 	screenSharingInProgress: false,
@@ -53,6 +58,7 @@ const initialState: MeState = {
 	raisedHandInProgress: false,
 	audioOnlyInProgress: false,
 	escapeMeetingInProgress: false,
+	recordableInProgress: false,
 };
 
 const meSlice = createSlice({
@@ -95,6 +101,12 @@ const meSlice = createSlice({
 		setAudioOnly: ((state, action: PayloadAction<boolean>) => {
 			state.audioOnly = action.payload;
 		}),
+		setPrivacyDialogDisplayed: ((state, action: PayloadAction<boolean>) => {
+			state.privacyDialogDisplayed = action.payload;
+		}),
+		setRecordable: ((state, action: PayloadAction<boolean>) => {
+			state.recordable = action.payload;
+		}),
 		// Status flags
 		setAudioInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.audioInProgress = action.payload;
@@ -116,6 +128,9 @@ const meSlice = createSlice({
 		}),
 		setAudioOnlyInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.audioOnlyInProgress = action.payload;
+		}),
+		setRecordableInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.recordableInProgress = action.payload;
 		}),
 	},
 });

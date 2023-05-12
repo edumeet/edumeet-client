@@ -4,7 +4,10 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { recordingActions } from '../slices/recordingSlice';
 import { consumersActions } from '../slices/consumersSlice';
 import { producersActions } from '../slices/producersSlice';
+import { signalingActions } from '../slices/signalingSlice';
+import { uiActions } from '../slices/uiSlice';
 import { Logger } from 'edumeet-common';
+import { peersActions } from '../slices/peersSlice';
 
 const logger = new Logger('RecordingMiddleware');
 
@@ -24,6 +27,7 @@ const RECORDING_CONSTRAINTS = {
 };
 
 const createRecordingMiddleware = ({
+	signalingService,
 	mediaService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createRecordingMiddleware()');
@@ -50,6 +54,8 @@ const createRecordingMiddleware = ({
 			setTimeout(async () => {
 				try {
 					await writableStream?.close();
+
+					await signalingService.sendRequest('recording:stop');
 				} catch (error) {
 					logger.error('stopRecorder() [error:%o]', error);
 				}
@@ -66,6 +72,40 @@ const createRecordingMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
+			if (signalingActions.connect.match(action)) {
+				signalingService.on('notification', (notification) => {
+					try {
+						switch (notification.method) {
+							case 'recording:permissions': {
+								if (!getState().ui.privacyDialogOpen) {
+									dispatch(uiActions.setUi({
+										privacyDialogOpen: true
+									}));
+								}
+
+								break;
+							}
+
+							case 'recording:stop': {
+								if (getState().ui.privacyDialogOpen) {
+									dispatch(uiActions.setUi({
+										privacyDialogOpen: false
+									}));
+								}
+
+								break;
+							}
+
+							default: {
+								break;
+							}
+						}
+					} catch (error) {
+						logger.error('error on signalService "notification" event [error:%o]', error);
+					}
+				});
+			}
+
 			if (recordingActions.start.match(action)) {
 				mimeType = getState().settings.preferredRecorderMimeType;
 
@@ -98,7 +138,7 @@ const createRecordingMiddleware = ({
 						.filter((consumer) => consumer.appData.source === 'mic');
 
 					for (const consumer of audioConsumers) {
-						if (consumer.track) {
+						if (consumer.track && consumer.appData.recordable) {
 							audioContext.createMediaStreamSource(
 								new MediaStream([ consumer.track ])
 							).connect(audioDestination);
@@ -140,6 +180,8 @@ const createRecordingMiddleware = ({
 						}
 					});
 
+					await signalingService.sendRequest('recording:start');
+
 					recorder.start(RECORDING_SLICE_SIZE);
 				} catch (error) {
 					logger.error('recordingActions.start [error:%o]', error);
@@ -153,13 +195,28 @@ const createRecordingMiddleware = ({
 			}
 
 			if (getState().recording.recording) {
+				if (peersActions.updatePeer.match(action)) {
+					const { id, recordable } = action.payload;
+
+					const audioConsumers = mediaService.getConsumers()
+						.filter((consumer) => consumer.appData.source === 'mic' && consumer.appData.peerId === id);
+
+					for (const consumer of audioConsumers) {
+						if (consumer.track && recordable) {
+							audioContext.createMediaStreamSource(
+								new MediaStream([ consumer.track ])
+							).connect(audioDestination);
+						}
+					}
+				}
+
 				if (consumersActions.addConsumer.match(action)) {
 					const { id, kind } = action.payload;
 	
 					if (kind === 'audio') {
 						const consumer = mediaService.getConsumer(id);
 	
-						if (consumer?.track) {
+						if (consumer?.track && consumer?.appData.recordable) {
 							audioContext.createMediaStreamSource(
 								new MediaStream([ consumer.track ])
 							).connect(audioDestination);

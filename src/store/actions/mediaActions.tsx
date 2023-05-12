@@ -366,7 +366,11 @@ export const updateMic = ({
 	try {
 		await deviceService.updateMediaDevices();
 
-		const canSendMic = getState().me.canSendMic;
+		const peerId = getState().me.id;
+		const {
+			canSendMic,
+			recordable,
+		} = getState().me;
 
 		if (!canSendMic)
 			throw new Error('cannot produce audio');
@@ -452,11 +456,12 @@ export const updateMic = ({
 					opusMaxPlaybackRate: opusMaxPlaybackRate,
 					opusPtime: opusPtime
 				},
-				appData: { source: 'mic' }
+				appData: { peerId, source: 'mic', recordable }
 			});
 
 			dispatch(producersActions.addProducer({
 				id: micProducer.id,
+				peerId: peerId,
 				kind: micProducer.kind,
 				source: micProducer.appData.source as ProducerSource,
 				paused: micProducer.paused
@@ -554,6 +559,7 @@ export const updateWebcam = ({
 	try {
 		await deviceService.updateMediaDevices();
 
+		const peerId = getState().me.id;
 		const canSendWebcam = getState().me.canSendWebcam;
 
 		if (!canSendWebcam)
@@ -634,6 +640,7 @@ export const updateWebcam = ({
 						videoGoogleStartBitrate: 1000
 					},
 					appData: {
+						peerId,
 						source: 'webcam',
 						width,
 						height,
@@ -644,6 +651,7 @@ export const updateWebcam = ({
 				webcamProducer = await mediaService.produce({
 					track,
 					appData: {
+						peerId,
 						source: 'webcam',
 						width,
 						height
@@ -653,6 +661,7 @@ export const updateWebcam = ({
 
 			dispatch(producersActions.addProducer({
 				id: webcamProducer.id,
+				peerId: peerId,
 				kind: webcamProducer.kind,
 				source: webcamProducer.appData.source as ProducerSource,
 				paused: webcamProducer.paused,
@@ -739,7 +748,11 @@ export const updateScreenSharing = ({
 	let screenVideoProducer: Producer | null | undefined;
 
 	try {
-		const canShareScreen = getState().me.canShareScreen;
+		const peerId = getState().me.id;
+		const {
+			canShareScreen,
+			recordable
+		} = getState().me;
 
 		if (!canShareScreen)
 			throw new Error('cannot produce screen share');
@@ -783,7 +796,7 @@ export const updateScreenSharing = ({
 				}));
 			}
 
-			const SCREENSHARE_CONSTRAINTS = {
+			const SCREENSHARING_CONSTRAINTS = {
 				video: {
 					...getVideoConstrains(
 						screenSharingResolution,
@@ -802,7 +815,7 @@ export const updateScreenSharing = ({
 				selfBrowserSurface: 'include'
 			};
 
-			const stream = await navigator.mediaDevices.getDisplayMedia(SCREENSHARE_CONSTRAINTS);
+			const stream = await navigator.mediaDevices.getDisplayMedia(SCREENSHARING_CONSTRAINTS);
 
 			([ videoTrack ] = stream.getVideoTracks());
 
@@ -828,6 +841,7 @@ export const updateScreenSharing = ({
 						videoGoogleStartBitrate: 1000
 					},
 					appData: {
+						peerId,
 						source: 'screen',
 						width,
 						height,
@@ -841,6 +855,7 @@ export const updateScreenSharing = ({
 						videoGoogleStartBitrate: 1000
 					},
 					appData: {
+						peerId,
 						source: 'screen',
 						width,
 						height
@@ -850,6 +865,7 @@ export const updateScreenSharing = ({
 
 			dispatch(producersActions.addProducer({
 				id: screenVideoProducer.id,
+				peerId: peerId,
 				kind: screenVideoProducer.kind,
 				source: screenVideoProducer.appData.source as ProducerSource,
 				paused: screenVideoProducer.paused,
@@ -867,11 +883,12 @@ export const updateScreenSharing = ({
 						opusMaxPlaybackRate: opusMaxPlaybackRate,
 						opusPtime: opusPtime
 					},
-					appData: { source: 'mic' }
+					appData: { peerId, source: 'mic', recordable }
 				});
 
 				dispatch(producersActions.addProducer({
 					id: screenAudioProducer.id,
+					peerId: peerId,
 					kind: screenAudioProducer.kind,
 					source: screenAudioProducer.appData.source as ProducerSource,
 					paused: screenAudioProducer.paused,
@@ -935,6 +952,7 @@ export const startExtraVideo = ({
 
 		await deviceService.updateMediaDevices();
 
+		const peerId = getState().me.id;
 		const canSendWebcam = getState().me.canSendWebcam;
 
 		if (!canSendWebcam)
@@ -975,6 +993,7 @@ export const startExtraVideo = ({
 					videoGoogleStartBitrate: 1000
 				},
 				appData: {
+					peerId,
 					source: 'extravideo',
 					width,
 					height,
@@ -985,12 +1004,13 @@ export const startExtraVideo = ({
 		} else {
 			extraVideoProducer = await mediaService.produce({
 				track,
-				appData: { source: 'extravideo', width, height }
+				appData: { peerId, source: 'extravideo', width, height }
 			});
 		}
 
 		dispatch(producersActions.addProducer({
 			id: extraVideoProducer.id,
+			peerId: peerId,
 			kind: extraVideoProducer.kind,
 			source: extraVideoProducer.appData.source as ProducerSource,
 			paused: extraVideoProducer.paused,
