@@ -186,6 +186,7 @@ const TopBar = ({
 						<IconButton
 							color='inherit'
 							aria-label={openDrawerLabel()}
+							size='small'
 						>
 							<MenuIcon />
 						</IconButton>
@@ -245,6 +246,7 @@ const TopBar = ({
 								setMobileMoreAnchorEl(event.currentTarget);
 							}}
 							color='inherit'
+							size='small'
 						>
 							<MoreIcon />
 						</IconButton>
