@@ -35,7 +35,8 @@ export class AnomalyDetector {
 	private _measurements: number[];
 	private _sum: number;
 	private _sumSquares: number;
-  
+	private _badTicks = 0;
+
 	constructor(windowSize: number, stdMultiplierThreshold: number, minDeviationThreshold?: number) {
 		this._windowSize = windowSize;
 		this._stdMultiplierThreshold = stdMultiplierThreshold;
@@ -44,7 +45,7 @@ export class AnomalyDetector {
 		this._sum = 0;
 		this._sumSquares = 0;
 	}
-  
+
 	private updateSums(value: number): void {
 		this._sum += value;
 		this._sumSquares += value * value;
@@ -60,33 +61,41 @@ export class AnomalyDetector {
 			this._sumSquares -= removedValue * removedValue;
 		}
 	}
-  
+
 	private calculateMean(): number {
 		return this._sum / this._measurements.length;
 	}
-  
+
 	private calculateStdDev(mean: number): number {
 		const variance = (this._sumSquares / this._measurements.length) - (mean * mean);
 
 		return Math.sqrt(variance);
 	}
-  
+
 	public isAnomaly(value: number): boolean {
 		this._measurements.push(value);
-		this.updateSums(value);
 
 		if (this._measurements.length < this._windowSize) {
+			this.updateSums(value);
 			return false;
 		}
-
 		const mean = this.calculateMean();
 		const stdDev = this.calculateStdDev(mean);
 		const deviation = Math.abs(value - mean);
-
+		
 		if (this._minDeviationThreshold && this._minDeviationThreshold >= deviation) {
+			this.updateSums(value);
 			return false;
 		}
+		const result = deviation > this._stdMultiplierThreshold * stdDev;
+		if (result) {
+			if (this._windowSize / 2 < ++this._badTicks) {
+				this.updateSums(value);
+			}
+		} else {
+			this._badTicks = 0;
+		}
 
-		return deviation > this._stdMultiplierThreshold * stdDev;
+		return result;
 	}
 }

@@ -22,7 +22,7 @@ const QualityIndicator = ({
 		}
 
 		const storage = monitor.storage;
-		const windowSize = 30;
+		const windowSize = 20;
 		const stdMultiplierThreshold = 3;
 		const minDeviationThreshold = 0.05;
 		const detector = new AnomalyDetector(windowSize, stdMultiplierThreshold, minDeviationThreshold);
@@ -38,7 +38,9 @@ const QualityIndicator = ({
 
 			setIsDistorted(detectedAnomaly);
 		};
-
+		
+		monitor.on('stats-collected', listener);
+		
 		return () => {
 			if (!monitor) {
 				return;

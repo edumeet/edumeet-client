@@ -166,7 +166,6 @@ const PeerStatsView = ({
 			}
 		};
 	}, []);
-	let index = 0;
 
 	return (
 		<Stats
@@ -174,22 +173,22 @@ const PeerStatsView = ({
 			horizontalPlacement='left'
 			verticalPlacement='bottom'
 		>
-			{inboundStats.map((stats) => {
+			{inboundStats.map((stats, index) => {
 				return (
-					<div key={++index}>
-						<b key={++index}>SSRC: {stats.ssrc}</b><br />
-						<span key={++index}>receiving: {stats.receivedKbps ?? -1} kbps</span><br />
-						<span key={++index}>FractionLoss: {stats.fractionLoss ?? -1}</span><br />
+					<div key={index}>
+						<b key={index}>SSRC: {stats.ssrc}</b><br />
+						<span key={index}>receiving: {stats.receivedKbps ?? -1} kbps</span><br />
+						<span key={index}>FractionLoss: {stats.fractionLoss ?? -1}</span><br />
 					</div>
 				);
 			})}
-			{outboundStats.map((stats) => {
+			{outboundStats.map((stats, index) => {
 				return (
-					<div key={++index}>
-						<b key={++index}>SSRC: {stats.ssrc}</b><br />
-						<span key={++index}>sending: {stats.sendingKbps ?? -1} kbps</span><br />
-						<span key={++index}>RTT: {stats.RTT ?? -1} ms</span><br />
-						<span key={++index}>Fps: {stats.Fps ?? -1}</span><br />
+					<div key={index}>
+						<b key={index}>SSRC: {stats.ssrc}</b><br />
+						<span key={index}>sending: {stats.sendingKbps ?? -1} kbps</span><br />
+						<span key={index}>RTT: {stats.RTT ?? -1} ms</span><br />
+						<span key={index}>Fps: {stats.Fps ?? -1}</span><br />
 						<br />
 						
 					</div>
