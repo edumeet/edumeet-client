@@ -94,13 +94,13 @@ const createRoomMiddleware = ({
 								break;
 							}
 
-							/* case 'activeSpeaker': {
-								const { peerId } = notification.data;
+							case 'activeSpeaker': {
+								const { peerId, sessionId } = notification.data;
 								const isMe = peerId === getState().me.id;
 
-								dispatch(roomActions.setActiveSpeakerId({ peerId, isMe }));
+								dispatch(roomSessionsActions.setActiveSpeakerId({ sessionId, peerId, isMe }));
 								break;
-							} */
+							} 
 
 							case 'moderator:kick':
 							case 'escapeMeeting': {

@@ -21,6 +21,7 @@ import { MediaDevice } from '../services/deviceService';
 import { Permission } from '../utils/roles';
 import {
 	makeDevicesSelector,
+	makeIsActiveSpeakerSelector,
 	makePeerConsumerSelector,
 	makePeerSelector,
 	makePeersInSessionSelector,
@@ -212,6 +213,18 @@ export const usePrompt = (when = true): void => {
 	);
 
 	return useBlocker(blocker, when);
+};
+
+/**
+ * Hook to learn if id is active speaker or not.
+ * 
+ * @param id - id to evaluate.
+ * @returns {boolean} true if id is active speaker.
+ */
+export const useIsActiveSpeaker = (id: string): boolean => {
+	const isActiveSpeaker = useMemo(() => makeIsActiveSpeakerSelector(id), []);
+
+	return useAppSelector(isActiveSpeaker);
 };
 
 type ResultBox<T> = { v: T }

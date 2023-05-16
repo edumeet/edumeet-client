@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, useIsActiveSpeaker } from '../../store/hooks';
 import { meProducersSelector } from '../../store/selectors';
 import MicButton from '../controlbuttons/MicButton';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
@@ -35,14 +35,15 @@ const Me = ({
 		useAppSelector((state) => state.settings.controlButtonsBar);
 	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
 	const audioOnly = useAppSelector((state) => state.settings.audioOnly);
-	// const activeSpeaker = useAppSelector((state) => state.me.id === state.room.activeSpeakerId);
+	const id = useAppSelector((state) => state.me.id);
+	const isActiveSpeaker = useIsActiveSpeaker(id);
 	const browser = useAppSelector((state) => state.me.browser);
 	const showStats = useAppSelector((state) => state.ui.showStats);
 	
 	return (
 		<>
 			<VideoBox
-				// activeSpeaker={activeSpeaker}
+				activeSpeaker={isActiveSpeaker}
 				order={1}
 				margin={spacing}
 				width={style.width}
@@ -83,7 +84,7 @@ const Me = ({
 			</VideoBox>
 			{ screenProducer && (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={2}
 					margin={spacing}
 					width={style.width}
@@ -108,7 +109,7 @@ const Me = ({
 			)}
 			{ extraVideoProducers.map((producer) => (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={3}
 					margin={spacing}
 					key={producer.id}
