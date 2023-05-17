@@ -50,7 +50,7 @@ export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 /**
- * Hook to access the comsumers of a peer.
+ * Hook to access the consumers of a peer.
  * 
  * @param peerId - The id of the peer.
  * @returns {PeerConsumers} The consumers of the peer.
