@@ -96,7 +96,10 @@ const createRoomMiddleware = ({
 
 							case 'activeSpeaker': {
 								const { peerId, sessionId } = notification.data;
-								const isMe = peerId === getState().me.id;
+								const { id, sessionId: mySessionId } = getState().me;
+
+								if (sessionId !== mySessionId) break;
+								const isMe = peerId === id;
 
 								dispatch(roomSessionsActions.setActiveSpeakerId({ sessionId, peerId, isMe }));
 								break;
