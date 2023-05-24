@@ -10,7 +10,6 @@ export interface UiState {
 	settingsOpen: boolean;
 	filesharingOpen: boolean;
 	extraVideoOpen: boolean;
-	rolesManagerOpen: boolean;
 	helpOpen: boolean;
 	aboutOpen: boolean;
 	lobbyDialogOpen: boolean;
@@ -28,7 +27,6 @@ const initialState: UiState = {
 	settingsOpen: false,
 	filesharingOpen: false,
 	extraVideoOpen: false,
-	rolesManagerOpen: false,
 	helpOpen: false,
 	aboutOpen: false,
 	lobbyDialogOpen: false,

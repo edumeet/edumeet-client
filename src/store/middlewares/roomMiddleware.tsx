@@ -38,13 +38,11 @@ const createRoomMiddleware = ({
 								const {
 									sessionId,
 									creationTimestamp,
-									roles,
-									roomPermissions,
-									userRoles,
-									allowWhenRoleMissing,
+									permissions,
 									turnServers,
 									rtcStatsOptions,
 									clientMonitorSenderConfig,
+									// TODO: get the rest of the data from the server
 								} = notification.data;
 
 								batch(() => {
@@ -55,12 +53,7 @@ const createRoomMiddleware = ({
 										...initialRoomSession,
 									}));
 									dispatch(meActions.setSessionId(sessionId));
-									dispatch(permissionsActions.addRoles(roles));
-									dispatch(permissionsActions.setRoomPermissions(roomPermissions));
-									dispatch(permissionsActions.setUserRoles(userRoles));
-									allowWhenRoleMissing && dispatch(
-										permissionsActions.setAllowWhenRoleMissing(allowWhenRoleMissing)
-									);
+									dispatch(permissionsActions.setPermissions(permissions));
 									dispatch(webrtcActions.setIceServers(turnServers));
 									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
 									dispatch(roomActions.setState('joined'));

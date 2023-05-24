@@ -34,7 +34,6 @@ const createPeerMiddleware = ({
 									displayName,
 									picture,
 									audioOnly,
-									roles,
 									raisedHand,
 									raisedHandTimestamp
 								} = notification.data;
@@ -45,7 +44,6 @@ const createPeerMiddleware = ({
 									displayName,
 									picture,
 									audioOnly,
-									roles,
 									raisedHand,
 									raisedHandTimestamp,
 									transcripts: [],

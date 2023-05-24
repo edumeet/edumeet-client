@@ -1,42 +1,29 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PERSIST } from 'redux-persist';
-import { Permission, Role } from '../../utils/roles';
+import { Permission } from '../../utils/roles';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { roomActions } from './roomSlice';
 
 export interface PermissionsState {
-	roles: number[]; // Role IDs
 	loginEnabled?: boolean;
 	loggedIn?: boolean;
 	locked?: boolean;
 	signInRequired?: boolean;
-	userRoles?: Record<number, Role>;
-	roomPermissions?: Record<string, Role[]>;
-	allowWhenRoleMissing?: Permission[];
+	permissions: Permission[];
 }
 
 const initialState: PermissionsState = {
-	roles: [],
 	loginEnabled: true,
 	loggedIn: false,
 	locked: false,
 	signInRequired: false,
+	permissions: [],
 };
 
 const permissionsSlice = createSlice({
 	name: 'permissions',
 	initialState,
 	reducers: {
-		addRoles: ((state, action: PayloadAction<number[]>) => {
-			state.roles = action.payload;
-		}),
-		addRole: ((state, action: PayloadAction<number>) => {
-			state.roles.push(action.payload);
-		}),
-		removeRole: ((state, action: PayloadAction<number>) => {
-			state.roles =
-				state.roles.filter((role) => role !== action.payload);
-		}),
 		setLoginEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.loginEnabled = action.payload;
 		}),
@@ -49,15 +36,15 @@ const permissionsSlice = createSlice({
 		setSignInRequired: ((state, action: PayloadAction<boolean>) => {
 			state.signInRequired = action.payload;
 		}),
-		setUserRoles: ((state, action: PayloadAction<Record<number, Role>>) => {
-			state.userRoles = action.payload;
+		setPermissions: ((state, action: PayloadAction<Permission[]>) => {
+			state.permissions = action.payload;
 		}),
-		setRoomPermissions: ((state, action: PayloadAction<Record<Permission, Role[]>>) => {
-			state.roomPermissions = action.payload;
+		addPermission: ((state, action: PayloadAction<Permission>) => {
+			state.permissions.push(action.payload);
 		}),
-		setAllowWhenRoleMissing: ((state, action: PayloadAction<Permission[]>) => {
-			state.allowWhenRoleMissing = action.payload;
-		}),
+		removePermission: ((state, action: PayloadAction<Permission>) => {
+			state.permissions = state.permissions.filter((p) => p !== action.payload);
+		})
 	},
 	extraReducers: (builder) => {
 		builder
@@ -66,14 +53,10 @@ const permissionsSlice = createSlice({
 			})
 			.addCase(roomActions.setState, (state, action) => {
 				if (action.payload === 'left') {
-					state.roles = [];
 					state.loggedIn = false;
 					state.locked = false;
 					state.signInRequired = false;
-					state.userRoles = undefined;
-					state.roomPermissions = undefined;
-					state.allowWhenRoleMissing = undefined;
-					state.roomPermissions = undefined;
+					state.permissions = [];
 				}
 			});
 	}

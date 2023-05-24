@@ -1,11 +1,4 @@
 /* eslint-disable no-unused-vars,no-shadow */
-export interface Role {
-	id: number;
-	label: string;
-	level: number;
-	promotable: boolean;
-}
-
 export type Permission = string;
 
 export const permissions: Record<string, Permission> = {
@@ -40,11 +33,3 @@ export const permissions: Record<string, Permission> = {
 	// The role(s) have permission to join/leave rooms
 	CHANGE_ROOM: 'CHANGE_ROOM',
 };
-
-/* export const Roles: Record<string, Role> = {
-	ADMIN: { id: 2529, label: 'admin', level: 50, promotable: true },
-	MODERATOR: { id: 5337, label: 'moderator', level: 40, promotable: true },
-	PRESENTER: { id: 9583, label: 'presenter', level: 30, promotable: true },
-	AUTHENTICATED: { id: 5714, label: 'authenticated', level: 20, promotable: false },
-	NORMAL: { id: 4261, label: 'normal', level: 10, promotable: false },
-}; */
