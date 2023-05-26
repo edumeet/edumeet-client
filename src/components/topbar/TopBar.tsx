@@ -65,8 +65,8 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 const LogoImg = styled('img')(({ theme }) => ({
 	display: 'none',
 	marginLeft: 20,
-	maxWidth: theme.spacing(12),
-	maxHeight: theme.spacing(6),
+	maxWidth: 200,
+	maxHeight: 32,
 	[theme.breakpoints.up('sm')]: {
 		display: 'block'
 	}
