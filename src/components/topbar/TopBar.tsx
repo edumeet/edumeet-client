@@ -4,7 +4,7 @@ import {
 	Toolbar,
 	Typography
 } from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { Fragment, useEffect, useState } from 'react';
 import {
 	useAppDispatch,
