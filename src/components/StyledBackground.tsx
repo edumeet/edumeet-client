@@ -1,13 +1,17 @@
 import { styled } from '@mui/material/styles';
 import { memo } from 'react';
 
-export default memo(styled('div')(({ theme }) => ({
+interface BackgroundProps {
+	backgroundimage?: string;
+}
+
+export default memo(styled('div')<BackgroundProps>(({ theme, backgroundimage }) => ({
 	display: 'flex',
 	width: '100%',
 	height: '100%',
 	background: theme.background,
-	...(theme.backgroundImage && {
-		backgroundImage: `url(${theme.backgroundImage})`
+	...(backgroundimage && {
+		backgroundImage: `url(${backgroundimage})`
 	}),
 	backgroundAttachment: 'fixed',
 	backgroundPosition: 'center',

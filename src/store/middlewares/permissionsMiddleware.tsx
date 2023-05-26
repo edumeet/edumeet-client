@@ -38,12 +38,12 @@ const createPermissionsMiddleware = ({
 							}
 
 							case 'permissionAdded': {
-								dispatch(permissionsActions.addPermission(notification.data));
+								dispatch(permissionsActions.addPermission(notification.data.permission));
 								break;
 							}
 
 							case 'permissionRemoved': {
-								dispatch(permissionsActions.removePermission(notification.data));
+								dispatch(permissionsActions.removePermission(notification.data.permission));
 								break;
 							}
 						}

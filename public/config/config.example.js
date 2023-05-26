@@ -7,6 +7,8 @@
 
 // eslint-disable-next-line
 var config = {
+	// Location of management service.
+	managementUrl: 'http://localhost:3030',
 	// If ability to log in is enabled.
 	loginEnabled: true,
 

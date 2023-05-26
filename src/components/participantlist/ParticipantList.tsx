@@ -28,6 +28,7 @@ const ListHeader = styled(Typography)(({ theme }) => ({
 }));
 
 const ParticipantList = (): JSX.Element => {
+	const breakoutsEnabled = useAppSelector((state) => state.room.breakoutsEnabled);
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const participants = useAppSelector(parentParticipantListSelector);
 	const canCreateRooms = usePermissionSelector(permissions.CREATE_ROOM);
@@ -38,7 +39,7 @@ const ParticipantList = (): JSX.Element => {
 	return (
 		<ParticipantListDiv>
 			{ isModerator && <ListModerator /> }
-			{ (rooms.length > 0 || canCreateRooms) &&
+			{ (breakoutsEnabled && (rooms.length > 0 || canCreateRooms)) &&
 				<>
 					<ListHeader>
 						{ breakoutRoomsLabel() }

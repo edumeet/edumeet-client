@@ -65,6 +65,8 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 const LogoImg = styled('img')(({ theme }) => ({
 	display: 'none',
 	marginLeft: 20,
+	maxWidth: theme.spacing(6),
+	maxHeight: theme.spacing(6),
 	[theme.breakpoints.up('sm')]: {
 		display: 'block'
 	}
@@ -107,8 +109,10 @@ const TopBar = ({
 	fullscreen,
 	onFullscreen
 }: TopBarProps): JSX.Element => {
-	const theme = useTheme();
+	const logo = useAppSelector((state) => state.room.logo);
 	const dispatch = useAppDispatch();
+	const filesharingEnabled = useAppSelector((state) => state.room.filesharingEnabled);
+	const localRecordingEnabled = useAppSelector((state) => state.room.localRecordingEnabled);
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 	const canRecord = useAppSelector((state) => state.me.canRecord);
@@ -191,8 +195,8 @@ const TopBar = ({
 							<MenuIcon />
 						</IconButton>
 					</PulsingBadge>
-					{ theme.logo ?
-						<LogoImg alt='Logo' src={theme.logo}/> :
+					{ logo ?
+						<LogoImg alt='Logo' src={logo}/> :
 						<Typography variant='h6' noWrap color='inherit'>
 							{edumeetConfig.title}
 						</Typography>
@@ -221,9 +225,9 @@ const TopBar = ({
 					<DesktopDiv>
 						<HelpButton type='iconbutton' />
 						{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
-						<FilesharingButton type='iconbutton' />
+						{ filesharingEnabled && <FilesharingButton type='iconbutton' /> }
 						{ !audioOnly && <ExtraVideoButton type='iconbutton' />}
-						{ canRecord && <RecordButton type='iconbutton' /> }
+						{ localRecordingEnabled && canRecord && <RecordButton type='iconbutton' /> }
 						{ fullscreenEnabled &&
 							<FullscreenButton
 								type='iconbutton'
@@ -238,7 +242,7 @@ const TopBar = ({
 						{ loginEnabled && <LoginButton type='iconbutton' /> }
 					</DesktopDiv>
 					<MobileDiv>
-						{ canRecord && <RecordButton type='iconbutton' /> }
+						{ localRecordingEnabled && canRecord && <RecordButton type='iconbutton' /> }
 						{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						<IconButton
 							aria-haspopup
@@ -266,7 +270,7 @@ const TopBar = ({
 				<Participants onClick={handleMenuClose} />
 				<Fullscreen onClick={handleMenuClose} />
 				<ExtraVideo onClick={handleMenuClose} />
-				<Filesharing onClick={handleMenuClose} />
+				{ filesharingEnabled && <Filesharing onClick={handleMenuClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMenuClose} /> }
 				<Help onClick={handleMenuClose} />
 			</FloatingMenu>

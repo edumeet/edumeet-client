@@ -6,7 +6,6 @@ import {
 	Grid,
 	styled,
 	Typography,
-	useTheme
 } from '@mui/material';
 import StyledDialog from '../../components/dialog/StyledDialog';
 import edumeetConfig from '../../utils/edumeetConfig';
@@ -29,7 +28,7 @@ const PrecallDialog = ({
 	content,
 	actions
 }: PrecallDialogProps): JSX.Element => {
-	const theme = useTheme();
+	const logo = useAppSelector((state) => state.room.logo);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
@@ -44,8 +43,8 @@ const PrecallDialog = ({
 				>
 					<Grid item>
 						<Typography variant='h5'>Edumeet</Typography>
-						{ theme.logo ?
-							<img alt='Logo' src={theme.logo} /> :
+						{ logo ?
+							<img alt='Logo' src={logo} /> :
 							<Typography variant='h5'> {edumeetConfig.title} </Typography>
 						}
 					</Grid>

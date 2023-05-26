@@ -21,6 +21,7 @@ type AppParams = {
 
 const App = (): JSX.Element => {
 	useNotifier();
+	const backgroundImage = useAppSelector((state) => state.room.backgroundImage);
 	const dispatch = useAppDispatch();
 	const roomState = useAppSelector((state) => state.room.state) as RoomConnectionState;
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
@@ -52,6 +53,7 @@ const App = (): JSX.Element => {
 			<StyledBackground
 				onDrop={handleFileDrop}
 				onDragOver={(event) => event.preventDefault()}
+				backgroundimage={backgroundImage}
 			>
 				{
 					roomState === 'joined' ?

@@ -27,6 +27,7 @@ const MeAvatar = styled('img')({
 });
 
 const ListMe = (): JSX.Element => {
+	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const picture = useAppSelector((state) => state.me.picture);
 	const displayName = useAppSelector((state) => state.settings.displayName);
 
@@ -35,7 +36,7 @@ const ListMe = (): JSX.Element => {
 			<MeAvatar src={picture ?? '/images/buddy.svg'} />
 			<MeInfoDiv>{ displayName }</MeInfoDiv>
 			<EscapeMeetingButton type='iconbutton' size='small' />
-			<RaiseHandButton type='iconbutton' size='small' />
+			{ raiseHandEnabled && <RaiseHandButton type='iconbutton' size='small' /> }
 		</MeDiv>
 	);
 };

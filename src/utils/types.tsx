@@ -2,6 +2,7 @@ import { ThemeOptions } from '@mui/material';
 import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
+	managementUrl: undefined,
 	loginEnabled: false,
 	developmentPort: 8443,
 	productionPort: 443,
@@ -103,6 +104,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 };
 
 export interface EdumeetConfig {
+	managementUrl?: string;
 	loginEnabled: boolean;
 	developmentPort: number;
 	productionPort: number;

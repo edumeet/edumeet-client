@@ -72,6 +72,8 @@ const tabs: ToolAreaTab[] = [
 const MeetingDrawer = (): JSX.Element => {
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
+
+	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
 	const browser = useAppSelector((state) => state.me.browser);
 	const raisedHands = useAppSelector(raisedHandsSelector);
 	const drawerWindow = useAppSelector((state) => state.ui.drawerWindow);
@@ -124,22 +126,24 @@ const MeetingDrawer = (): JSX.Element => {
 										}
 										variant='fullWidth'
 									>
+										{ chatEnabled && (
+											<Tab
+												label={
+													<Badge
+														color='secondary'
+														badgeContent={(unreadMessages + unreadFiles)}
+													>
+														<ChatIcon />
+														{(browser.platform !== 'mobile') && chatLabel()}
+													</Badge>
+												}
+											/>
+										)}
 										<Tab
 											label={
 												<Badge color='secondary' badgeContent={raisedHands}>
 													<GroupIcon />
 													{(browser.platform !== 'mobile') && participantsLabel()}
-												</Badge>
-											}
-										/>
-										<Tab
-											label={
-												<Badge
-													color='secondary'
-													badgeContent={(unreadMessages + unreadFiles)}
-												>
-													<ChatIcon />
-													{(browser.platform !== 'mobile') && chatLabel()}
 												</Badge>
 											}
 										/>
@@ -158,7 +162,7 @@ const MeetingDrawer = (): JSX.Element => {
 										</IconButton>
 									)}
 								</MeetingDrawerAppBar>
-								{ currentTab === 'chat' && <Chat /> }
+								{ chatEnabled && currentTab === 'chat' && <Chat /> }
 								{ currentTab === 'users' && <ParticipantList /> }
 							</MeetingDrawerDiv>
 						</StyledSwipeableDrawer>
