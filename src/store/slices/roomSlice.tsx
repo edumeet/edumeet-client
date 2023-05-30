@@ -10,6 +10,7 @@ export interface RoomState {
 	id?: string;
 	logo?: string;
 	backgroundImage?: string;
+	joinInProgress?: boolean;
 	updateBreakoutInProgress?: boolean;
 	transitBreakoutRoomInProgress?: boolean;
 	lockInProgress?: boolean;

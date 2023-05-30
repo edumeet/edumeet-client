@@ -15,7 +15,6 @@ import { lock, unlock } from './permissionsActions';
 import { drawerActions } from '../slices/drawerSlice';
 import { devicesChangedLabel } from '../../components/translated/translatedComponents';
 import { permissionsActions } from '../slices/permissionsSlice';
-import { settingsActions } from '../slices/settingsSlice';
 import { Logger } from 'edumeet-common';
 
 const logger = new Logger('listenerActions');
@@ -294,13 +293,9 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	messageListener = ({ data }: MessageEvent) => {
 		if (data.type === 'edumeet-login') {
-			const { data: {
-				displayName,
-				picture,
-			} } = data;
+			const { data: token } = data;
 
-			displayName && dispatch(settingsActions.setDisplayName(displayName));
-			picture && dispatch(meActions.setPicture(picture));
+			dispatch(permissionsActions.setToken(token));
 			dispatch(permissionsActions.setLoggedIn(true));
 		} else if (data.type === 'edumeet-logout')
 			dispatch(permissionsActions.setLoggedIn(false));

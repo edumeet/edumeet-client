@@ -9,13 +9,18 @@ const logger = new Logger('LoginActions');
 export const login = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
+	{ config }
 ): Promise<void> => {
 	logger.debug('login()');
 
-	const { id: peerId } = getState().me;
-	const { id: roomId } = getState().room;
+	const response = await fetch(`${config.managementUrl}/tenantFQDNs?fqdn=${location.hostname}`);
+	const jsonData = await response.json();
 
-	window.open(`/auth/login?peerId=${peerId}&roomId=${roomId}`, 'loginWindow');
+	if (jsonData.total === 0) return logger.error('login() | no tenant found');
+
+	const { tenantId } = jsonData.data[0];
+
+	window.open(`${config.managementUrl}/oauth/tenant?tenantId=${tenantId}`, 'loginWindow');
 };
 
 export const logout = (): AppThunk<Promise<void>> => async (

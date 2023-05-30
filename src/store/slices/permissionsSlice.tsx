@@ -7,6 +7,7 @@ import { roomActions } from './roomSlice';
 export interface PermissionsState {
 	loginEnabled?: boolean;
 	loggedIn?: boolean;
+	token?: string;
 	locked?: boolean;
 	signInRequired?: boolean;
 	permissions: Permission[];
@@ -29,6 +30,9 @@ const permissionsSlice = createSlice({
 		}),
 		setLoggedIn: ((state, action: PayloadAction<boolean>) => {
 			state.loggedIn = action.payload;
+		}),
+		setToken: ((state, action: PayloadAction<string>) => {
+			state.token = action.payload;
 		}),
 		setLocked: ((state, action: PayloadAction<boolean>) => {
 			state.locked = action.payload;

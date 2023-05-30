@@ -4,8 +4,6 @@ import {
 	Typography,
 } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { signalingActions } from '../../store/slices/signalingSlice';
-import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	disableAllMediaLabel,
@@ -24,6 +22,7 @@ import PrecallDialog from '../../components/precalldialog/PrecallDialog';
 import { roomActions } from '../../store/slices/roomSlice';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import AudioOnlySwitch from '../../components/audioonlyswitch/AudioOnlySwitch';
+import { connect } from '../../store/actions/roomActions';
 
 interface JoinProps {
 	roomId: string;
@@ -31,7 +30,6 @@ interface JoinProps {
 
 const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const stateAudioOnly = useAppSelector((state) => state.settings.audioOnly);
-	const peerId = useAppSelector((state) => state.me.id);
 	const {
 		previewMicTrackId,
 		previewWebcamTrackId,
@@ -40,10 +38,10 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
+	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
 
 	const [ name, setName ] = useState(stateDisplayName || '');
 	const [ audioOnly, setAudioOnly ] = useState(stateAudioOnly || false);
-	const [ joined, setJoined ] = useState(false);
 	const {
 		audioMuted,
 		videoMuted
@@ -63,15 +61,10 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	};
 
 	const handleJoin = () => {
-		const encodedRoomId = encodeURIComponent(roomId);
-		const url = getSignalingUrl(peerId, encodedRoomId);
-
-		setJoined(true);
-
 		dispatch(settingsActions.setDisplayName(name));
 		dispatch(settingsActions.setAudioOnly(audioOnly));
-		dispatch(signalingActions.setUrl(url));
-		dispatch(signalingActions.connect());
+
+		dispatch(connect(roomId));
 	};
 
 	useEffect(() => {
@@ -139,7 +132,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					onClick={handleJoin}
 					variant='contained'
 					color='primary'
-					disabled={!name || joined}
+					disabled={!name || joinInProgress}
 					fullWidth
 					data-testid='join-button'
 				>

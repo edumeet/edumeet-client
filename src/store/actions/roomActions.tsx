@@ -10,8 +10,43 @@ import { webrtcActions } from '../slices/webrtcSlice';
 import { AppThunk } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
+import { getSignalingUrl } from '../../utils/signalingHelpers';
 
 const logger = new Logger('RoomActions');
+
+export const connect = (roomId: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ config }
+): Promise<void> => {
+	logger.debug('connect()');
+
+	dispatch(roomActions.updateRoom({ joinInProgress: true }));
+
+	try {
+		const encodedRoomId = encodeURIComponent(roomId);
+		const peerId = getState().me.id;
+		const token = getState().permissions.token;
+
+		const response = await fetch(`${config.managementUrl}/tenantFQDNs?fqdn=${location.hostname}`);
+		const jsonData = await response.json();
+
+		if (jsonData.total === 0) throw new Error('login() | no tenant found');
+
+		const { tenantId } = jsonData.data[0];
+
+		if (!tenantId) throw new Error('login() | no tenantId found');
+
+		const url = getSignalingUrl(peerId, encodedRoomId, tenantId, token);
+	
+		dispatch(signalingActions.setUrl(url));
+		dispatch(signalingActions.connect());
+	} catch (error) {
+		logger.error('connect() [error:"%o"]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ joinInProgress: false }));
+	}
+};
 
 // This action is triggered when the server sends "roomReady" to us.
 // This means that we start our joining process which is:
