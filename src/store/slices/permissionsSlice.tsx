@@ -5,16 +5,16 @@ import edumeetConfig from '../../utils/edumeetConfig';
 import { roomActions } from './roomSlice';
 
 export interface PermissionsState {
-	loginEnabled?: boolean;
-	loggedIn?: boolean;
+	loginEnabled: boolean;
+	loggedIn: boolean;
 	token?: string;
-	locked?: boolean;
+	locked: boolean;
 	signInRequired?: boolean;
 	permissions: Permission[];
 }
 
 const initialState: PermissionsState = {
-	loginEnabled: true,
+	loginEnabled: edumeetConfig.loginEnabled,
 	loggedIn: false,
 	locked: false,
 	signInRequired: false,
@@ -31,7 +31,7 @@ const permissionsSlice = createSlice({
 		setLoggedIn: ((state, action: PayloadAction<boolean>) => {
 			state.loggedIn = action.payload;
 		}),
-		setToken: ((state, action: PayloadAction<string>) => {
+		setToken: ((state, action: PayloadAction<string | undefined>) => {
 			state.token = action.payload;
 		}),
 		setLocked: ((state, action: PayloadAction<boolean>) => {

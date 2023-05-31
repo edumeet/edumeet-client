@@ -5,7 +5,7 @@ import { AudioPreset, Resolution, RoomLayout } from '../../utils/types';
 import { producersActions } from './producersSlice';
 
 export interface SettingsState {
-	displayName?: string;
+	displayName: string;
 	audioOnly: boolean;
 	lastN: number;
 	mirroredSelfView: boolean;
@@ -45,6 +45,7 @@ export interface SettingsState {
 type SettingsUpdate = Partial<SettingsState>;
 
 const initialState: SettingsState = {
+	displayName: 'Guest',
 	audioOnly: false,
 	mirroredSelfView: true,
 	roomLayout: edumeetConfig.defaultLayout,

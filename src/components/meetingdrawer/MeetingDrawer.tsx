@@ -65,8 +65,8 @@ const TabsHeader = styled(Tabs)({
 });
 
 const tabs: ToolAreaTab[] = [
-	'users',
 	'chat',
+	'users',
 ];
 
 const MeetingDrawer = (): JSX.Element => {

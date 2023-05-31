@@ -7,8 +7,8 @@ import { Logger } from 'edumeet-common';
 const logger = new Logger('LoginActions');
 
 export const login = (): AppThunk<Promise<void>> => async (
-	dispatch,
-	getState,
+	_dispatch,
+	_getState,
 	{ config }
 ): Promise<void> => {
 	logger.debug('login()');
@@ -26,13 +26,15 @@ export const login = (): AppThunk<Promise<void>> => async (
 export const logout = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
+	{ signalingService }
 ): Promise<void> => {
 	logger.debug('logout()');
 
-	const { id: peerId } = getState().me;
-	const { id: roomId } = getState().room;
+	dispatch(permissionsActions.setToken());
+	dispatch(permissionsActions.setLoggedIn(false));
 
-	window.open(`/auth/logout?peerId=${peerId}&roomId=${roomId}`, 'logoutWindow');
+	if (getState().signaling.state === 'connected')
+		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
 };
 
 export const lock = (): AppThunk<Promise<void>> => async (

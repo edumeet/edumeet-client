@@ -81,10 +81,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	const rtpCapabilities = mediaService.rtpCapabilities;
 	const { displayName, audioOnly } = getState().settings;
 	const { sessionId, picture } = getState().me;
-	const { loggedIn } = getState().permissions;
 
 	const {
-		authenticated,
 		peers,
 		tracker,
 		chatHistory,
@@ -104,10 +102,6 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	batch(() => {
 		dispatch(roomActions.setMode(roomMode));
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
-
-		if (loggedIn !== authenticated)
-			dispatch(permissionsActions.setLoggedIn(Boolean(authenticated)));
-
 		dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
 		dispatch(peersActions.addPeers(peers));
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));

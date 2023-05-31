@@ -32,7 +32,7 @@ let devicesUpdatedListener: (event: DevicesUpdated) => void;
 export const startListeners = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ deviceService }
+	{ signalingService, deviceService }
 ): Promise<void> => {
 	logger.debug('startListeners()');
 
@@ -291,14 +291,16 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	document.addEventListener('keyup', keyupListener);
 
-	messageListener = ({ data }: MessageEvent) => {
+	messageListener = async ({ data }: MessageEvent) => {
 		if (data.type === 'edumeet-login') {
 			const { data: token } = data;
 
 			dispatch(permissionsActions.setToken(token));
 			dispatch(permissionsActions.setLoggedIn(true));
-		} else if (data.type === 'edumeet-logout')
-			dispatch(permissionsActions.setLoggedIn(false));
+
+			if (getState().signaling.state === 'connected')
+				await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+		}
 	};
 
 	window.addEventListener('message', messageListener);
