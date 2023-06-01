@@ -44,7 +44,6 @@ const createRoomMiddleware = ({
 									allowWhenRoleMissing,
 									turnServers,
 									rtcStatsOptions,
-									clientMonitorSenderConfig,
 								} = notification.data;
 
 								batch(() => {
@@ -66,11 +65,6 @@ const createRoomMiddleware = ({
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
-
-								if (clientMonitorSenderConfig) {
-									mediaService.getMonitor()?.setRoomId(sessionId);
-									mediaService.getMonitor()?.connect(clientMonitorSenderConfig);
-								}
 
 								break;
 							}

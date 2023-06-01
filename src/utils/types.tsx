@@ -97,8 +97,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		chatColor: 'rgba(224, 224, 224, 0.52)'
 	},
 	observertc: {
-		collectingPeriodInMs: 5000,
-		statsExpirationTimeInMs: 60000,
+		collectingPeriodInMs: 2000,
 	}
 };
 
