@@ -8,6 +8,7 @@ import PeerActionsButton from '../controlbuttons/PeerActionsButton';
 import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
+import QualityIndicator from '../peerstatsview/QualityIndicator';
 import PeerStatsView from '../peerstatsview/PeerStatsView';
 import PeerTranscription from '../peertranscription/PeerTranscription';
 import StateIndicators from '../stateindicators/StateIndicators';
@@ -75,6 +76,7 @@ const Peer = ({
 						consumer={webcamConsumer}
 					/> }
 					{webcamConsumer && showStats && <PeerStatsView consumerId={webcamConsumer.id}/>}
+					{webcamConsumer && <QualityIndicator consumerId={webcamConsumer.id} />}
 				</VideoBox>
 			)}
 			
