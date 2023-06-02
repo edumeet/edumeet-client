@@ -130,6 +130,7 @@
 	"room.extraVideo": null,
 	"room.extraVideoDuplication": null,
 	"room.help": null,
+	"room.stats": null,
 	"room.hideSelfView": null,
 	"room.joined": "Te-ai alăturat camerei",
 	"room.leaveConfirmationMessage": null,

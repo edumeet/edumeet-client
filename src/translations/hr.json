@@ -134,6 +134,7 @@
 	"room.extraVideo": "Dodatni video izvor",
 	"room.extraVideoDuplication": "Video izvor se već koristi",
 	"room.help": "Pomoć",
+	"room.stats": null,
 	"room.hideSelfView": "Sakrij svoj video",
 	"room.joined": "Ušli ste u sobu",
 	"room.leaveConfirmationMessage": "Želite li izaći iz sobe?",

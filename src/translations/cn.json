@@ -131,6 +131,7 @@
 	"room.extraVideo": null,
 	"room.extraVideoDuplication": null,
 	"room.help": null,
+	"room.stats": null,
 	"room.hideSelfView": null,
 	"room.joined": "您已加入房间",
 	"room.leaveConfirmationMessage": null,

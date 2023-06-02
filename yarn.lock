@@ -1725,10 +1725,10 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@observertc/client-monitor-js@2.1.5-7662362.0":
-  version "2.1.5-7662362.0"
-  resolved "https://registry.yarnpkg.com/@observertc/client-monitor-js/-/client-monitor-js-2.1.5-7662362.0.tgz#b6c3f193d02518d484e78cc24bf2ddf33d0d24c3"
-  integrity sha512-Mr9EpZdJ8ddEN8d6ofPRigh6Xg8HfTgx32z1J+fH/6fBGe6peiDNU38+jXX4raYQ1BjuVCU8KT587YXq/yQxKA==
+"@observertc/client-monitor-js@2.1.5-5356534.0":
+  version "2.1.5-5356534.0"
+  resolved "https://registry.yarnpkg.com/@observertc/client-monitor-js/-/client-monitor-js-2.1.5-5356534.0.tgz#b1b0b171ff0b01a3c4b839401288b90c17622772"
+  integrity sha512-c35tEtvbT2tOxALMq1iljC6MiIXD3M8TkJQPnp+Qp1EB7w8JybqwTH1Qa1rMK4Oo/mo5If9ScL8gkKQB6dHEfA==
   dependencies:
     "@types/events" "^3.0.0"
     "@types/uuid" "^8.3.4"

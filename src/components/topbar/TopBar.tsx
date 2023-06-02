@@ -50,6 +50,7 @@ import Transcription from '../menuitems/Transcription';
 import { AccessTime } from '@mui/icons-material';
 import Help from '../menuitems/Help';
 import HelpButton from '../controlbuttons/HelpButton';
+import StatsButton from '../controlbuttons/StatsButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -220,6 +221,7 @@ const TopBar = ({
 					</GrowingDiv>
 					<DesktopDiv>
 						<HelpButton type='iconbutton' />
+						<StatsButton type='iconbutton' />
 						{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
 						<FilesharingButton type='iconbutton' />
 						{ !audioOnly && <ExtraVideoButton type='iconbutton' />}

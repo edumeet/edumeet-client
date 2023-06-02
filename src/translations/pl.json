@@ -134,6 +134,7 @@
 	"room.extraVideo": "Dodatkowe wideo",
 	"room.extraVideoDuplication": "Źródło wideo jest już używane.",
 	"room.help": "Pomoc",
+	"room.stats": null,
 	"room.hideSelfView": "Ukryj pogląd swojego wideo",
 	"room.joined": "Podłączono do konferencji",
 	"room.leaveConfirmationMessage": "Czy na pewno chcesz opuścić pokój?",

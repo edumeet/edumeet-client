@@ -8,6 +8,7 @@ import WebcamButton from '../controlbuttons/WebcamButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import PeerStatsView from '../peerstatsview/PeerStatsView';
+import CongestionIndicator from '../peerstatsview/CongestionIndicator';
 import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
@@ -80,6 +81,7 @@ const Me = ({
 					producer={webcamProducer}
 				/> }
 				{showStats && <PeerStatsView producerId={webcamProducer?.id}/>}
+				<CongestionIndicator />
 			</VideoBox>
 			{ screenProducer && (
 				<VideoBox

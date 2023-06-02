@@ -13,6 +13,7 @@ type InboundStats = {
 	ssrc: number;
 	receivedKbps?: number;
 	fractionLoss?: number;
+	meanOpinionScore?: number;
 }
 
 type OutboundStats = {
@@ -26,25 +27,15 @@ function createOutboundStats(trackStats: OutboundTrackEntry): OutboundStats[] {
 	const result: OutboundStats[] = [];
 					
 	for (const outboundRtpEntry of trackStats.outboundRtps()) {
-		const remoteInboundRtpEntry = outboundRtpEntry.getRemoteInboundRtp();
+		
 		const stats = outboundRtpEntry.stats;
-		const { bytesSent, timestamp } = (outboundRtpEntry.appData?.traces || {}) as Record<string, number>;
-		const now = Date.now();
-		const elapsedTimeInSec = (now - (timestamp ?? 0)) / 1000;
-		const dBytesSent = (stats.bytesSent ?? 0) - (bytesSent ?? 0);
 		const item: OutboundStats = {
 			ssrc: stats.ssrc,
-			sendingKbps: Math.floor(((dBytesSent * 8) / 1000) / elapsedTimeInSec),
+			sendingKbps: Math.floor(outboundRtpEntry.updates.sendingBitrate / 1000),
 			Fps: stats.framesPerSecond,
-			RTT: (remoteInboundRtpEntry?.stats.roundTripTime ?? 0) * 1000,
 		};
 		
 		result.push(item);
-
-		outboundRtpEntry.appData.traces = {
-			bytesSent: stats.bytesSent,
-			timestamp: now,
-		};
 	}
 
 	return result;
@@ -55,33 +46,15 @@ function createInboundStats(trackStats: InboundTrackEntry): InboundStats[] {
 
 	for (const inboundRtpEntry of trackStats.inboundRtps()) {
 		// inboundRtpStats.stats
-		const stats = inboundRtpEntry.stats;
-		const { 
-			packetsLost, 
-			packetsReceived, 
-			bytesReceived, 
-			timestamp } = (inboundRtpEntry.appData?.traces || {}) as Record<string, number>;
-		const now = Date.now();
-		const elapsedTimeInSec = (now - (timestamp ?? 0)) / 1000;
-		const dBytesReceived = (stats.bytesReceived ?? 0) - (bytesReceived ?? 0);
-		const dPacketsLost = (stats.packetsLost ?? 0) - (packetsLost ?? 0);
-		const dPacketsReceived = (stats.packetsReceived ?? 0) - packetsReceived;
+		
 		const item: InboundStats = {
-			ssrc: stats.ssrc,
-			receivedKbps: Math.floor(((dBytesReceived * 8) / 1000) / elapsedTimeInSec),
-			fractionLoss: Math.round(
-				(dPacketsLost / (dPacketsLost + dPacketsReceived)) * 100
-			) / 100
+			ssrc: inboundRtpEntry.stats.ssrc,
+			receivedKbps: Math.floor(((inboundRtpEntry.updates.receivingBitrate) / 1000)),
+			fractionLoss: Math.round(inboundRtpEntry.updates.fractionLoss * 100) / 100,
+			meanOpinionScore: inboundRtpEntry.meanOpinionScore,
 		};
 
 		result.push(item);
-
-		inboundRtpEntry.appData.traces = {
-			packetsLost: stats.packetsLost,
-			packetsReceived: stats.packetsReceived,
-			bytesReceived: stats.bytesReceived,
-			timestamp: now,
-		};
 	}
 
 	return result;
@@ -175,20 +148,21 @@ const PeerStatsView = ({
 		>
 			{inboundStats.map((stats, index) => {
 				return (
-					<div key={index}>
-						<b key={index}>SSRC: {stats.ssrc}</b><br />
-						<span key={index}>receiving: {stats.receivedKbps ?? -1} kbps</span><br />
-						<span key={index}>FractionLoss: {stats.fractionLoss ?? -1}</span><br />
+					<div key={index + 10}>
+						<b key={index + 1}>SSRC: {stats.ssrc}</b><br />
+						<span key={index + 2}>receiving: {stats.receivedKbps ?? -1} kbps</span><br />
+						<span key={index + 3}>FractionLoss: {stats.fractionLoss ?? -1}</span><br />
+						<span key={index + 4}>MOS: {stats.meanOpinionScore}</span><br />
 					</div>
 				);
 			})}
 			{outboundStats.map((stats, index) => {
 				return (
-					<div key={index}>
-						<b key={index}>SSRC: {stats.ssrc}</b><br />
-						<span key={index}>sending: {stats.sendingKbps ?? -1} kbps</span><br />
-						<span key={index}>RTT: {stats.RTT ?? -1} ms</span><br />
-						<span key={index}>Fps: {stats.Fps ?? -1}</span><br />
+					<div key={index + 100010}>
+						<b key={index + 1}>SSRC: {stats.ssrc}</b><br />
+						<span key={index + 2}>sending: {stats.sendingKbps ?? -1} kbps</span><br />
+						<span key={index + 3}>RTT: {stats.RTT ?? -1} ms</span><br />
+						<span key={index + 4}>Fps: {stats.Fps ?? -1}</span><br />
 						<br />
 						
 					</div>

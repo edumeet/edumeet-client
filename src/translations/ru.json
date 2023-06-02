@@ -130,6 +130,7 @@
 	"room.extraVideo": "Дополнительное видео",
 	"room.extraVideoDuplication": null,
 	"room.help": "Помощь",
+	"room.stats": null,
 	"room.hideSelfView": null,
 	"room.joined": "Вы подключены к видеоконференции",
 	"room.leaveConfirmationMessage": null,

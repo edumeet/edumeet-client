@@ -130,6 +130,7 @@
 	"room.extraVideo": "İlave video",
 	"room.extraVideoDuplication": "İlave video diğeriyle aynı",
 	"room.help": "Yardım",
+	"room.stats": null,
 	"room.hideSelfView": "Kendi görüntümü gizle",
 	"room.joined": "Odaya katıldınız",
 	"room.leaveConfirmationMessage": null,

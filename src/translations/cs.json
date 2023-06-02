@@ -130,6 +130,7 @@
 	"room.extraVideo": "Další video",
 	"room.extraVideoDuplication": "Videozařízení se již používá.",
 	"room.help": "Pomoc",
+	"room.stats": null,
 	"room.hideSelfView": "Schovat své video",
 	"room.joined": "Připojili jste se do místnosti",
 	"room.leaveConfirmationMessage": null,

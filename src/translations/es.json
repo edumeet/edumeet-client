@@ -130,6 +130,7 @@
 	"room.extraVideo": null,
 	"room.extraVideoDuplication": null,
 	"room.help": null,
+	"room.stats": null,
 	"room.hideSelfView": null,
 	"room.joined": "Se ha unido a la sala",
 	"room.leaveConfirmationMessage": null,

@@ -172,6 +172,11 @@ export const helpLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Help'
 });
 
+export const statsLabel = (): string => intl.formatMessage({
+	id: 'room.stats',
+	defaultMessage: 'Network Stats'
+});
+
 export const aboutLabel = (): string => intl.formatMessage({
 	id: 'room.about',
 	defaultMessage: 'About'

@@ -131,6 +131,7 @@
 	"room.extraVideo": "Ekstra video",
 	"room.extraVideoDuplication": "Video kilde allerede delt",
 	"room.help": "Hjelp",
+	"room.stats": null,
 	"room.hideSelfView": "Skjule eget bilde",
 	"room.joined": "Du ble med i møtet",
 	"room.leaveConfirmationMessage": "Er du sikker på at du vil forlate møtet?",

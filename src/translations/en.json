@@ -131,6 +131,7 @@
 	"room.extraVideo": "Extra video",
 	"room.extraVideoDuplication": "The video source is already in use.",
 	"room.help": "Help",
+	"room.stats": "Network Stats",
 	"room.hideSelfView": "Hide self view video",
 	"room.joined": "You have joined the room",
 	"room.leaveConfirmationMessage": "Do you want to leave the room?",

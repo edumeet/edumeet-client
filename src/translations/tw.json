@@ -130,6 +130,7 @@
 	"room.extraVideo": "其他視訊",
 	"room.extraVideoDuplication": null,
 	"room.help": "幫助",
+	"room.stats": null,
 	"room.hideSelfView": null,
 	"room.joined": "您已加入會議室",
 	"room.leaveConfirmationMessage": null,

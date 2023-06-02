@@ -134,6 +134,7 @@
 	"room.extraVideo": "Video extra",
 	"room.extraVideoDuplication": "Errore duplicazione video extra",
 	"room.help": "Aiuto",
+	"room.stats": null,
 	"room.hideSelfView": "Nascondi il tuo box video",
 	"room.joined": "Sei entrato nella stanza",
 	"room.leaveConfirmationMessage": "Vuoi lasciare il lobby?",
