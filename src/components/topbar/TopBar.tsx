@@ -59,7 +59,7 @@ interface TopBarProps {
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
 	backgroundColor: theme.appBarColor,
-	height: '64px',
+	height: '48px',
 }));
 
 const LogoImg = styled('img')(({ theme }) => ({
@@ -179,9 +179,7 @@ const TopBar = ({
 	return (
 		<Fragment>
 			<StyledAppBar position='fixed'>
-				<Toolbar sx={{
-					margin: 'auto 0'
-				}}>
+				<Toolbar variant='dense'>
 					<PulsingBadge
 						color='secondary'
 						badgeContent={unread}

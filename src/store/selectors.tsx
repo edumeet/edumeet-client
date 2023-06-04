@@ -23,6 +23,7 @@ const unreadMessages: Selector<number> = (state) => state.drawer.unreadMessages;
 const unreadFiles: Selector<number> = (state) => state.drawer.unreadFiles;
 const lastNSelector: Selector<number> = (state) => state.settings.lastN;
 const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNonVideo;
+const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
 
 /**
@@ -396,6 +397,7 @@ export const videoBoxesSelector = createSelector(
 	extraVideoProducersSelector,
 	spotlightPeersSelector,
 	hideNonVideoSelector,
+	hideSelfViewSelector,
 	spotlightWebcamConsumerSelector,
 	spotlightScreenConsumerSelector,
 	spotlightExtraVideoConsumerSelector,
@@ -404,11 +406,12 @@ export const videoBoxesSelector = createSelector(
 		extraVideoProducers,
 		spotlightPeers,
 		hideNonVideo,
+		hideSelfView,
 		webcamConsumers,
 		screenConsumers,
 		extraVideoConsumers
 	) => {
-		let videoBoxes = 1; // Always add a box for Me view
+		let videoBoxes = hideSelfView ? 0 : 1; // Maybe add a box for Me view
 
 		// Add our own screen share, if it exists
 		if (screenProducer)

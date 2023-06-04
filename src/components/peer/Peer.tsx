@@ -18,13 +18,11 @@ import Volume from '../volume/Volume';
 interface PeerProps {
 	key: string;
 	id: string;
-	spacing: number;
 	style: Record<'width' | 'height', number>
 }
 
 const Peer = ({
 	id,
-	spacing,
 	style
 }: PeerProps): JSX.Element => {
 	const {
@@ -45,7 +43,6 @@ const Peer = ({
 				<VideoBox
 					// activeSpeaker={activeSpeaker}
 					order={1}
-					margin={spacing}
 					width={style.width}
 					height={style.height}
 					zIndex={0}
@@ -82,7 +79,6 @@ const Peer = ({
 				<VideoBox
 					// activeSpeaker={activeSpeaker}
 					order={2}
-					margin={spacing}
 					width={style.width}
 					height={style.height}
 				>
@@ -102,7 +98,6 @@ const Peer = ({
 				<VideoBox
 					// activeSpeaker={activeSpeaker}
 					order={3}
-					margin={spacing}
 					key={consumer.id}
 					width={style.width}
 					height={style.height}

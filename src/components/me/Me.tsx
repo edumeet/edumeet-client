@@ -14,12 +14,10 @@ import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
 
 interface MeProps {
-	spacing: number;
 	style: Record<'width' | 'height', number>
 }
 
 const Me = ({
-	spacing,
 	style
 }: MeProps): JSX.Element => {
 	const {
@@ -44,7 +42,6 @@ const Me = ({
 			<VideoBox
 				// activeSpeaker={activeSpeaker}
 				order={1}
-				margin={spacing}
 				width={style.width}
 				height={style.height}
 				zIndex={0}
@@ -85,7 +82,6 @@ const Me = ({
 				<VideoBox
 					// activeSpeaker={activeSpeaker}
 					order={2}
-					margin={spacing}
 					width={style.width}
 					height={style.height}
 				>
@@ -110,7 +106,6 @@ const Me = ({
 				<VideoBox
 					// activeSpeaker={activeSpeaker}
 					order={3}
-					margin={spacing}
 					key={producer.id}
 					width={style.width}
 					height={style.height}

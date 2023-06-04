@@ -14,22 +14,24 @@ const ControlButtonsBar = (): JSX.Element => {
 		<>
 			{ (hideSelfView || controlButtonsBar || isMobile) &&
 				<MediaControls
-					orientation={ isMobile ? 'horizontal' : 'vertical' }
-					horizontalPlacement={ isMobile ? 'center' : 'left' }
-					verticalPlacement={ isMobile ? 'bottom' :'center' }
+					orientation='horizontal'
+					horizontalPlacement='center'
+					verticalPlacement='bottom'
 					autoHide={ !isMobile }
 				>
 					<MicButton
 						onColor='default'
 						offColor='error'
 						disabledColor='default'
+						toolTipLocation='bottom'
 					/>
 					<WebcamButton
 						onColor='default'
 						offColor='error'
 						disabledColor='default'
+						toolTipLocation='bottom'
 					/>
-					{ !isMobile && <ScreenshareButton /> }
+					{ !isMobile && <ScreenshareButton toolTipLocation='bottom' /> }
 				</MediaControls>
 			}
 		</>
