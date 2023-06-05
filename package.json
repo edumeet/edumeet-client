@@ -32,7 +32,7 @@
 		"hark": "^1.2.3",
 		"https-browserify": "^1.0.0",
 		"marked": "^4.0.14",
-		"mediasoup-client": "^3.6.58",
+		"mediasoup-client": "^3.6.84",
 		"notistack": "^2.0.4",
 		"random-string": "^0.2.0",
 		"react": "^18.2.0",
@@ -50,6 +50,10 @@
 		"uuid": "^8.3.2",
 		"webtorrent": "^1.8.3",
 		"ws": "^8.8.0"
+	},
+	"resolutions": {
+		"//": "See https://github.com/facebook/create-react-app/issues/11773",
+		"react-error-overlay": "6.0.9"
 	},
 	"scripts": {
 		"start": "HTTPS=true PORT=4443 react-scripts --openssl-legacy-provider start",
@@ -94,6 +98,7 @@
 		"@types/ws": "^8.5.3",
 		"@typescript-eslint/eslint-plugin": "^5.12.1",
 		"@typescript-eslint/parser": "^5.12.1",
+		"react-error-overlay": "6.0.9",
 		"eslint-plugin-jest": "^26.1.1"
 	}
 }

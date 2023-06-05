@@ -96,7 +96,7 @@ const Democratic = (): JSX.Element => {
 				setWindowSize(window.innerWidth + window.innerHeight);
 	
 				timeoutId = undefined;
-			}, 100);
+			}, 50);
 		};
 
 		window.addEventListener('resize', resizeListener);
