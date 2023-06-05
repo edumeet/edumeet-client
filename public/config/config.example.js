@@ -48,15 +48,6 @@ var config = {
 	// Enable or disable simulcast for screen sharing video.
 	simulcastSharing: false,
 
-	// If set to true Local Recording feature will be enabled.
-	localRecordingEnabled: false,
-
-	// The Socket.io request timeout.
-	requestTimeout: 20000,
-
-	// The Socket.io request maximum retries.
-	requestRetries: 3,
-
 	// Auto gain control enabled.
 	autoGainControl: true,
 
@@ -135,21 +126,8 @@ var config = {
 		}
 	},
 
-	// It sets the maximum number of participants in one room that can join unmuted.
-	// The next participant will join automatically muted.
-	// Set it to 0 to auto mute all.
-	// Set it to negative (-1) to never automatically auto mute but use it with caution, 
-	// full mesh audio strongly decrease room capacity!
-	autoMuteThreshold: 4,
-
-	// The default layout.
-	defaultLayout: 'democratic',
-
 	// If true, the media control buttons will be shown in separate control bar, not in the ME container.
-	buttonControlBar: false,
-
-	// The position of the notifications.
-	notificationPosition: 'right',
+	buttonControlBar: true,
 
 	// It sets the notifications sounds.
 	// Valid keys are: 'parkedPeer', 'parkedPeers', 'raisedHand', 
@@ -171,12 +149,6 @@ var config = {
 
 	// The title to show if the logo is not specified.
 	title: 'edumeet',
-
-	// The service & Support URL; if `null`, it will be not displayed on the about dialogs.
-	supportUrl: 'https://support.example.com',
-
-	// The privacy and data protection external URL or local HTML path.
-	privacyUrl: 'privacy/privacy.html',
 
 	// Client theme. Take a look at mui theme documentation.
 	theme: {

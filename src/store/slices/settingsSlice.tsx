@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { detect } from '../../utils/intlManager';
-import { AudioPreset, Resolution, RoomLayout } from '../../utils/types';
+import { AudioPreset, Resolution } from '../../utils/types';
 import { producersActions } from './producersSlice';
 
 export interface SettingsState {
@@ -12,7 +12,6 @@ export interface SettingsState {
 	hideNonVideo: boolean;
 	hideSelfView: boolean;
 	controlButtonsBar: boolean;
-	roomLayout: RoomLayout;
 	aspectRatio: number;
 	selectedAudioDevice?: string;
 	selectedVideoDevice?: string;
@@ -20,7 +19,6 @@ export interface SettingsState {
 	frameRate: number;
 	screenSharingResolution: Resolution;
 	screenSharingFrameRate: number;
-	supportedRecorderMimeTypes: string[],
 	preferredRecorderMimeType: string,
 	audioPreset: string,
 	audioPresets: Record<string, AudioPreset>,
@@ -48,17 +46,15 @@ const initialState: SettingsState = {
 	displayName: 'Guest',
 	audioOnly: false,
 	mirroredSelfView: true,
-	roomLayout: edumeetConfig.defaultLayout,
 	resolution: edumeetConfig.resolution,
 	frameRate: edumeetConfig.frameRate,
 	screenSharingResolution: edumeetConfig.screenSharingResolution,
 	screenSharingFrameRate: edumeetConfig.screenSharingFrameRate,
-	supportedRecorderMimeTypes: [],
 	preferredRecorderMimeType: 'video/webm',
 	lastN: edumeetConfig.lastN,
 	hideNonVideo: edumeetConfig.hideNonVideo,
 	hideSelfView: false,
-	controlButtonsBar: false,
+	controlButtonsBar: edumeetConfig.buttonControlBar,
 	aspectRatio: edumeetConfig.aspectRatio,
 	audioPreset: edumeetConfig.audioPreset,
 	audioPresets: edumeetConfig.audioPresets,
@@ -94,9 +90,6 @@ const settingsSlice = createSlice({
 		setLastN: ((state, action: PayloadAction<number>) => {
 			state.lastN = action.payload;
 		}),
-		setRoomLayout: ((state, action: PayloadAction<RoomLayout>) => {
-			state.roomLayout = action.payload;
-		}),
 		setMirroredSelfView: ((state, action: PayloadAction<boolean>) => {
 			state.mirroredSelfView = action.payload;
 		}),
@@ -129,9 +122,6 @@ const settingsSlice = createSlice({
 		}),
 		setScreenSharingFrameRate: ((state, action: PayloadAction<number>) => {
 			state.screenSharingFrameRate = action.payload;
-		}),
-		setSupportedRecorderMimeTypes: ((state, action: PayloadAction<string[]>) => {
-			state.supportedRecorderMimeTypes = action.payload;
 		}),
 		setPreferredRecorderMimeType: ((state, action: PayloadAction<string>) => {
 			state.preferredRecorderMimeType = action.payload;

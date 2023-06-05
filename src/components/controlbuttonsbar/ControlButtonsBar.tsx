@@ -3,12 +3,13 @@ import MediaControls from '../../components/mediacontrols/MediaControls';
 import MicButton from '../../components/controlbuttons/MicButton';
 import WebcamButton from '../../components/controlbuttons/WebcamButton';
 import ScreenshareButton from '../../components/controlbuttons/ScreenshareButton';
+import { isMobileSelector } from '../../store/selectors';
 
 const ControlButtonsBar = (): JSX.Element => {
 	const controlButtonsBar =
 		useAppSelector((state) => state.settings.controlButtonsBar);
 	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
-	const isMobile = useAppSelector((state) => state.me.browser.platform === 'mobile');
+	const isMobile = useAppSelector(isMobileSelector);
 
 	return (
 		<>

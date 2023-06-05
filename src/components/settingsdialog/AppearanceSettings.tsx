@@ -12,6 +12,7 @@ import {
 	mirroredSelfViewLabel,
 	controlButtonsBarLabel,
 } from '../translated/translatedComponents';
+import { isMobileSelector } from '../../store/selectors';
 
 const AppearanceSettings = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -21,7 +22,7 @@ const AppearanceSettings = (): JSX.Element => {
 		hideSelfView,
 		controlButtonsBar
 	} = useAppSelector((state) => state.settings);
-	const isMobile = useAppSelector((state) => state.me.browser.platform === 'mobile');
+	const isMobile = useAppSelector(isMobileSelector);
 
 	const handleChange = (
 		event: React.ChangeEvent<HTMLInputElement>,

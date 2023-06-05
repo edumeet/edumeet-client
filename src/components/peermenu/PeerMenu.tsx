@@ -4,9 +4,8 @@ import AudioGainSlider from '../audiogainslider/AudioGainSlider';
 import MuteAudio from '../menuitems/MuteAudio';
 import MuteWebcam from '../menuitems/MuteWebcam';
 import MuteScreenshare from '../menuitems/MuteScreenshare';
-import { Divider, styled, Typography } from '@mui/material';
+import { Divider } from '@mui/material';
 import { permissions } from '../../utils/roles';
-import { moderatorActionsLabel } from '../translated/translatedComponents';
 import StopAudio from '../menuitems/StopAudio';
 import StopVideo from '../menuitems/StopVideo';
 import StopScreenshare from '../menuitems/StopScreenshare';
@@ -25,12 +24,6 @@ interface PeerMenuProps {
 	peerId: string;
 	onClick?: () => void;
 }
-
-const ModeratorHeading = styled(Typography)(({ theme }) => ({
-	fontSize: '1rem',
-	fontWeight: 'bold',
-	margin: theme.spacing(1),
-}));
 
 const PeerMenu = ({
 	anchorEl,
@@ -62,55 +55,15 @@ const PeerMenu = ({
 					onClose={onClick}
 				>
 					{ micConsumer && <AudioGainSlider consumer={micConsumer} /> }
-					{ micConsumer &&
-						<MuteAudio
-							onClick={onClick}
-							peer={peer}
-							micConsumer={micConsumer}
-						/>
-					}
-					{ webcamConsumer &&
-						<MuteWebcam
-							onClick={onClick}
-							peer={peer}
-							webcamConsumer={webcamConsumer}
-						/>
-					}
-					{ screenConsumer &&
-						<MuteScreenshare
-							onClick={onClick}
-							peer={peer}
-							screenConsumer={screenConsumer}
-						/>
-					}
-					{ extraVideoConsumers.map((consumer) => (
-						<MuteWebcam
-							onClick={onClick}
-							key={consumer.id}
-							peer={peer}
-							webcamConsumer={consumer}
-						/>
-					)) }
-					{ isModerator &&
-						<Divider />
-					}
-					{ isModerator &&
-						<ModeratorHeading>
-							{ moderatorActionsLabel() }
-						</ModeratorHeading>
-					}
-					{ isModerator && micConsumer &&
-						<StopAudio onClick={onClick} peer={peer} />
-					}
-					{ isModerator && webcamConsumer &&
-						<StopVideo onClick={onClick} peer={peer} />
-					}
-					{ isModerator && screenConsumer &&
-						<StopScreenshare onClick={onClick} peer={peer} />
-					}
-					{ isModerator &&
-						<Kick onClick={onClick} peer={peer} />
-					}
+					{ micConsumer && <MuteAudio onClick={onClick} peer={peer} micConsumer={micConsumer} /> }
+					{ webcamConsumer && <MuteWebcam onClick={onClick} peer={peer} webcamConsumer={webcamConsumer} /> }
+					{ screenConsumer && <MuteScreenshare onClick={onClick} peer={peer} screenConsumer={screenConsumer} /> }
+					{ extraVideoConsumers.map((consumer) => <MuteWebcam onClick={onClick} key={consumer.id} peer={peer} webcamConsumer={consumer} />) }
+					{ isModerator && <Divider /> }
+					{ isModerator && micConsumer && <StopAudio onClick={onClick} peer={peer} /> }
+					{ isModerator && webcamConsumer && <StopVideo onClick={onClick} peer={peer} /> }
+					{ isModerator && screenConsumer && <StopScreenshare onClick={onClick} peer={peer} /> }
+					{ isModerator && <Kick onClick={onClick} peer={peer} /> }
 				</FloatingMenu>
 			) }
 		</>

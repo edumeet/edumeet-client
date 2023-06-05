@@ -3,6 +3,7 @@ import {
 	usePeer,
 	usePeerConsumers
 } from '../../store/hooks';
+import { isMobileSelector } from '../../store/selectors';
 import FullscreenVideoButton from '../controlbuttons/FullscreenVideoButton';
 import PeerActionsButton from '../controlbuttons/PeerActionsButton';
 import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
@@ -36,6 +37,7 @@ const Peer = ({
 	// const activeSpeaker = useAppSelector((state) => id === state.room.activeSpeakerId);
 	const showParticipant = !hideNonVideo || (hideNonVideo && webcamConsumer);
 	const showStats = useAppSelector((state) => state.ui.showStats);
+	const isMobile = useAppSelector(isMobileSelector);
 
 	return (
 		<>
@@ -56,22 +58,16 @@ const Peer = ({
 					>
 						{ webcamConsumer && (
 							<>
-								<FullscreenVideoButton
-									consumerId={webcamConsumer.id}
-								/>
-								<WindowedVideoButton
-									consumerId={webcamConsumer.id}
-								/>
+								<FullscreenVideoButton consumerId={webcamConsumer.id} />
+								{ !isMobile && <WindowedVideoButton consumerId={webcamConsumer.id} /> }
 							</>
 						)}
 						<PeerActionsButton peerId={id} />
 					</MediaControls>
 					<PeerTranscription id={id} />
 					{ micConsumer && <Volume consumer={micConsumer} /> }
-					{ webcamConsumer && <VideoView
-						consumer={webcamConsumer}
-					/> }
-					{webcamConsumer && showStats && <PeerStatsView consumerId={webcamConsumer.id}/>}
+					{ webcamConsumer && <VideoView consumer={webcamConsumer} /> }
+					{ webcamConsumer && showStats && <PeerStatsView consumerId={webcamConsumer.id}/> }
 				</VideoBox>
 			)}
 			
@@ -88,10 +84,10 @@ const Peer = ({
 						verticalPlacement='center'
 					>
 						<FullscreenVideoButton consumerId={screenConsumer.id} />
-						<WindowedVideoButton consumerId={screenConsumer.id} />
+						{ !isMobile && <WindowedVideoButton consumerId={screenConsumer.id} /> }
 					</MediaControls>
 					<VideoView consumer={screenConsumer} contain />
-					{showStats && <PeerStatsView consumerId={screenConsumer.id}/>}
+					{ showStats && <PeerStatsView consumerId={screenConsumer.id}/> }
 				</VideoBox>
 			)}
 			{ extraVideoConsumers?.map((consumer) => (
@@ -108,10 +104,10 @@ const Peer = ({
 						verticalPlacement='center'
 					>
 						<FullscreenVideoButton consumerId={consumer.id} />
-						<WindowedVideoButton consumerId={consumer.id} />
+						{ !isMobile && <WindowedVideoButton consumerId={consumer.id} /> }
 					</MediaControls>
 					<VideoView consumer={consumer} />
-					{showStats && <PeerStatsView consumerId={consumer.id}/>}
+					{ showStats && <PeerStatsView consumerId={consumer.id}/> }
 				</VideoBox>
 			)) }
 		</>

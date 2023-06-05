@@ -16,9 +16,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	aspectRatio: 1.7778, // 16:9
 	simulcast: true,
 	simulcastSharing: false,
-	localRecordingEnabled: false,
-	requestTimeout: 20000,
-	requestRetries: 3,
 	autoGainControl: true,
 	echoCancellation: true,
 	noiseSuppression: true,
@@ -67,10 +64,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'opusMaxPlaybackRate': 48000
 		}
 	},
-	autoMuteThreshold: 4,
-	defaultLayout: 'democratic',
-	buttonControlBar: false,
-	notificationPosition: 'right',
+	buttonControlBar: true,
 	notificationSounds: {
 		'chatMessage': {
 			'play': '/sounds/notify-chat.mp3'
@@ -84,8 +78,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		}
 	},
 	title: 'edumeet',
-	supportUrl: 'https://support.example.com',
-	privacyUrl: 'privacy/privacy.html',
 	theme: {
 		background: 'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
 		appBarColor: '#313131',
@@ -118,9 +110,6 @@ export interface EdumeetConfig {
 	aspectRatio: number;
 	simulcast: boolean;
 	simulcastSharing: boolean;
-	localRecordingEnabled: boolean;
-	requestTimeout: number;
-	requestRetries: number;
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
@@ -136,19 +125,12 @@ export interface EdumeetConfig {
 	opusMaxPlaybackRate: number;
 	audioPreset: string;
 	audioPresets: Record<string, AudioPreset>;
-	autoMuteThreshold: number;
-	defaultLayout: RoomLayout;
 	buttonControlBar: boolean;
-	notificationPosition: 'right' | 'left';
 	notificationSounds: Record<NotificationType, NotificationSound>;
 	title: string;
-	supportUrl: string;
-	privacyUrl: string;
 	theme: ThemeOptions;
 	observertc: ClientMonitorConfig;
 }
-
-export type RoomLayout = 'filmstrip' | 'democratic';
 
 export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
 

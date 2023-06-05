@@ -26,6 +26,8 @@ const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNo
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
 
+export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
+
 /**
  * Returns the peers as an array.
  * 
