@@ -1,7 +1,6 @@
 import { HeadsetMic, Videocam } from '@mui/icons-material';
 import { List, ListItem, ListItemIcon, ListItemText, styled } from '@mui/material';
 import { useAppSelector } from '../../store/hooks';
-import AudioPresetSelector from '../audiopresetselector/AudioPresetSelector';
 import AudioInputChooser from '../devicechooser/AudioInputChooser';
 import VideoInputChooser from '../devicechooser/VideoInputChooser';
 import MediaPreview from '../mediapreview/MediaPreview';
@@ -27,7 +26,6 @@ const MediaSettings = (): JSX.Element => {
 			</ListItem>
 			<NestedList>
 				<AudioInputChooser preview withConfirm />
-				<AudioPresetSelector />
 				<AdvancedAudioSettings />
 			</NestedList>
 			{ !audioOnly && (

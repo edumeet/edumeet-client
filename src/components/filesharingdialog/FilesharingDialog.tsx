@@ -29,6 +29,7 @@ const ShareLabel = styled('label')(({ theme }) => ({
 const FilesharingDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const filesharingOpen = useAppSelector((state) => state.ui.filesharingOpen);
+	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
 	const isFilesharingModerator = usePermissionSelector(permissions.MODERATE_FILES);
 	const startFileSharingInProgress =
 		useAppSelector((state) => state.room.startFileSharingInProgress);
@@ -61,12 +62,13 @@ const FilesharingDialog = (): JSX.Element => {
 				multiple
 				type='file'
 				onChange={handleAttachFile}
+				disabled={!hasFilesharingPermission || startFileSharingInProgress}
 			/>
 			<ShareLabel htmlFor='file-input'>
 				<Button
 					variant='contained'
 					component='span'
-					disabled={startFileSharingInProgress}
+					disabled={!hasFilesharingPermission || startFileSharingInProgress}
 				>
 					{ shareFileLabel() }
 				</Button>

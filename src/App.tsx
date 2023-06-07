@@ -4,7 +4,8 @@ import { startListeners, stopListeners } from './store/actions/startActions';
 import {
 	useAppDispatch,
 	useAppSelector,
-	useNotifier
+	useNotifier,
+	usePermissionSelector
 } from './store/hooks';
 import StyledBackground from './components/StyledBackground';
 import Join from './views/join/Join';
@@ -14,6 +15,7 @@ import { sendFiles } from './store/actions/filesharingActions';
 import { uiActions } from './store/slices/uiSlice';
 import { roomActions, RoomConnectionState } from './store/slices/roomSlice';
 import { LeavePrompt } from './components/leaveprompt/LeavePrompt';
+import { permissions } from './utils/roles';
 
 type AppParams = {
 	id: string;
@@ -25,6 +27,7 @@ const App = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const roomState = useAppSelector((state) => state.room.state) as RoomConnectionState;
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
+	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
 
 	useEffect(() => {
 		dispatch(startListeners());
@@ -36,9 +39,9 @@ const App = (): JSX.Element => {
 	}, []);
 
 	const handleFileDrop = (event: React.DragEvent<HTMLDivElement>): void => {
-		if (roomState !== 'joined') return;
-
 		event.preventDefault();
+
+		if (roomState !== 'joined' || !hasFilesharingPermission) return;
 
 		const droppedFiles = event.dataTransfer.files;
 

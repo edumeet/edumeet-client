@@ -16,6 +16,8 @@ import { drawerActions } from '../slices/drawerSlice';
 import { devicesChangedLabel } from '../../components/translated/translatedComponents';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
+import { setRaisedHand } from './meActions';
+import { batch } from 'react-redux';
 
 const logger = new Logger('listenerActions');
 
@@ -71,6 +73,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	const audioPermissionSelector = makePermissionSelector(permissions.SHARE_AUDIO);
 	const videoPermissionSelector = makePermissionSelector(permissions.SHARE_VIDEO);
+	const lockPermissionSelector = makePermissionSelector(permissions.LOCK_ROOM);
 
 	keydownListener = ({ repeat, target, key }): void => {
 		if (repeat) return;
@@ -173,27 +176,37 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 				if (lockInProgress) return;
 
+				const hasLockPermission = lockPermissionSelector(getState());
+
+				if (!hasLockPermission) return;
+
 				const locked = getState().permissions.locked;
 
-				if (locked) {
-					dispatch(unlock());
-				} else {
-					dispatch(lock());
-				}
+				locked ? dispatch(unlock()) : dispatch(lock());
 
 				break;
 			}
 
 			case 'p': {
-				dispatch(drawerActions.toggle());
-				dispatch(drawerActions.setTab('users'));
+				const participantListOpen = getState().ui.participantListOpen;
+
+				batch(() => {
+					dispatch(drawerActions.toggle());
+					dispatch(drawerActions.setTab('users'));
+					dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
+				});
 
 				break;
 			}
 
 			case 'c': {
-				dispatch(drawerActions.toggle());
-				dispatch(drawerActions.setTab('chat'));
+				const chatOpen = getState().ui.chatOpen;
+
+				batch(() => {
+					dispatch(drawerActions.toggle());
+					dispatch(drawerActions.setTab('chat'));
+					dispatch(uiActions.setUi({ chatOpen: !chatOpen }));
+				});
 
 				break;
 			}
@@ -203,6 +216,26 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 				dispatch(uiActions.setUi({ showStats: !showStats }));
 				
+				break;
+			}
+
+			case 'r': {
+				const raisedHandInProgress = getState().me.raisedHandInProgress;
+
+				if (raisedHandInProgress) return;
+
+				const raisedHand = getState().me.raisedHand;
+
+				dispatch(setRaisedHand(!raisedHand));
+
+				break;
+			}
+
+			case 'h': {
+				const helpOpen = getState().ui.helpOpen;
+
+				dispatch(uiActions.setUi({ helpOpen: !helpOpen }));
+
 				break;
 			}
 

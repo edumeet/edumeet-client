@@ -49,6 +49,7 @@
 	"label.chatInput": "Чат хабарламасын енгізіңіз...",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "Жабу",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

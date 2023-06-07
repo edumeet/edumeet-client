@@ -49,6 +49,7 @@
 	"label.chatInput": "輸入聊天訊息",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "關閉",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

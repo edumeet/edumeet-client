@@ -10,7 +10,7 @@ import {
 	useTheme
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { raisedHandsSelector } from '../../store/selectors';
+import { isMobileSelector, raisedHandsSelector } from '../../store/selectors';
 import { drawerActions, ToolAreaTab } from '../../store/slices/drawerSlice';
 import GroupIcon from '@mui/icons-material/Group';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -60,11 +60,13 @@ const MeetingDrawerWindow = styled('div')({
 
 const MeetingDrawerAppBar = styled(AppBar)({
 	display: 'flex',
-	flexDirection: 'row'
+	flexDirection: 'row',
+	justifyContent: 'center',
 });
 
 const TabsHeader = styled(Tabs)({
-	flexGrow: 1
+	flexGrow: 1,
+	justifyContent: 'center'
 });
 
 const tabs: ToolAreaTab[] = [
@@ -77,7 +79,7 @@ const MeetingDrawer = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
-	const browser = useAppSelector((state) => state.me.browser);
+	const isMobile = useAppSelector(isMobileSelector);
 	const raisedHands = useAppSelector(raisedHandsSelector);
 	const drawerWindow = useAppSelector((state) => state.ui.drawerWindow);
 	const {
@@ -98,7 +100,7 @@ const MeetingDrawer = (): JSX.Element => {
 					onClose={() => dispatch(uiActions.setUi({ drawerWindow: !drawerWindow }))}
 				>
 					<MeetingDrawerWindow>
-						<Chat />
+						{ chatEnabled && <Chat /> }
 						<ParticipantList />
 					</MeetingDrawerWindow>
 				</SeparateWindow>
@@ -121,52 +123,45 @@ const MeetingDrawer = (): JSX.Element => {
 									position='static'
 									color='default'
 								>
-									<TabsHeader
-										value={tabs.indexOf(currentTab)}
-										onChange={
-											(_event, value) =>
-												dispatch(drawerActions.setTab(tabs[value]))
-										}
-										variant='fullWidth'
-									>
-										{ chatEnabled && (
+									{ chatEnabled &&
+										<TabsHeader
+											value={tabs.indexOf(currentTab)}
+											onChange={(_event, value) => dispatch(drawerActions.setTab(tabs[value]))}
+											variant='fullWidth'
+										>
+											{ chatEnabled &&
+												<Tab
+													label={
+														<Badge color='secondary' badgeContent={(unreadMessages + unreadFiles)}>
+															<ChatIcon />
+															{ !isMobile && chatLabel() }
+														</Badge>
+													}
+												/>
+											}
 											<Tab
 												label={
-													<Badge
-														color='secondary'
-														badgeContent={(unreadMessages + unreadFiles)}
-													>
-														<ChatIcon />
-														{(browser.platform !== 'mobile') && chatLabel()}
+													<Badge color='secondary' badgeContent={raisedHands}>
+														<GroupIcon />
+														{ !isMobile && participantsLabel() }
 													</Badge>
 												}
 											/>
-										)}
-										<Tab
-											label={
-												<Badge color='secondary' badgeContent={raisedHands}>
-													<GroupIcon />
-													{(browser.platform !== 'mobile') && participantsLabel()}
-												</Badge>
-											}
-										/>
-									</TabsHeader>
-									{ browser.platform !== 'mobile' && (
-										<IconButton
-											onClick={() =>
-												dispatch(uiActions.setUi({ drawerWindow: !drawerWindow }))}
-										>
+										</TabsHeader>
+									}
+									{ !isMobile &&
+										<IconButton onClick={() => dispatch(uiActions.setUi({ drawerWindow: !drawerWindow }))}>
 											<NewWindowIcon />
 										</IconButton>
-									)}
-									{ browser.platform !== 'mobile' && (
+									}
+									{ !isMobile &&
 										<IconButton onClick={toggleDrawer}>
 											{ theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon /> }
 										</IconButton>
-									)}
+									}
 								</MeetingDrawerAppBar>
 								{ chatEnabled && currentTab === 'chat' && <Chat /> }
-								{ currentTab === 'users' && <ParticipantList /> }
+								{ (currentTab === 'users' || !chatEnabled) && <ParticipantList /> }
 							</MeetingDrawerDiv>
 						</StyledSwipeableDrawer>
 					</Hidden>

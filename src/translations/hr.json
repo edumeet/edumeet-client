@@ -53,6 +53,7 @@
 	"label.chatInput": "Razgovor porukama",
 	"label.chatNewMessages": "Nova poruka",
 	"label.chatNoMessages": "Nema poruka",
+	"label.chatScrollToBottom": null,
 	"label.close": "Zatvori",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

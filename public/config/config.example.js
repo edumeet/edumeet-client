@@ -160,6 +160,7 @@ var config = {
 		// The page background image URL
 		backgroundImage: 'images/background.jpg',
 		appBarColor: '#313131', // AppBar background color
+		appBarFloating: true, // If true, the AppBar will be moved in a bit from the top and sides of the page
 		// If not null, it shows the logo loaded from the specified URL, otherwise it shows the title.
 		logo: 'images/logo.edumeet.svg',
 		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',

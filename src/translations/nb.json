@@ -50,6 +50,7 @@
 	"label.chatInput": "Skriv melding...",
 	"label.chatNewMessages": "Nye meldinger",
 	"label.chatNoMessages": "Ingen meldinger",
+	"label.chatScrollToBottom": "Gå til bunnen",
 	"label.close": "Lukk",
 	"label.closeBreakoutRoom": "Lukk",
 	"label.createBreakoutRoom": "Opprett breakout-rom",

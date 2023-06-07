@@ -49,6 +49,7 @@
 	"label.chatInput": "Introduce mesajul de chat...",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "Închide",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

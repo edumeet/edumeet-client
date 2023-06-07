@@ -1,8 +1,6 @@
 import {
-	screenSharingUnsupportedLabel,
 	shareFileLabel,
 	shareLabel,
-	startScreenSharingLabel,
 	startVideoLabel,
 	videoUnsupportedLabel
 } from '../translated/translatedComponents';
@@ -15,28 +13,21 @@ import {
 } from '../../store/hooks';
 import { permissions } from '../../utils/roles';
 import { MediaState } from '../../utils/types';
-import ScreenIcon from '@mui/icons-material/ScreenShare';
 import AddVideoIcon from '@mui/icons-material/VideoCall';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import {
-	updateScreenSharing
-} from '../../store/actions/mediaActions';
 import { uiActions } from '../../store/slices/uiSlice';
 
 const ShareButton = (): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const hasScreenPermission = usePermissionSelector(permissions.SHARE_SCREEN);
 	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
 
 	const {
 		canSendWebcam,
 		videoInProgress,
-		canShareScreen,
-		screenSharingInProgress
 	} = useAppSelector((state) => state.me);
 
-	let videoState: MediaState, videoTip, screenState: MediaState, screenTip;
+	let videoState: MediaState, videoTip;
 
 	if (!canSendWebcam || !hasExtraVideoPermission) {
 		videoState = 'unsupported';
@@ -46,38 +37,13 @@ const ShareButton = (): JSX.Element => {
 		videoTip = startVideoLabel();
 	}
 
-	if (!canShareScreen || !hasScreenPermission) {
-		screenState = 'unsupported';
-		screenTip = screenSharingUnsupportedLabel();
-	} else {
-		screenState = 'off';
-		screenTip = startScreenSharingLabel();
-	}
-
 	return (
 		<SpeedDial
 			ariaLabel={shareLabel()}
 			icon={<AddIcon />}
-			direction='left'
-			FabProps={{ size: 'medium' }}
+			direction='up'
+			FabProps={{ size: 'small' }}
 		>
-			{ canShareScreen && !screenSharingInProgress && (
-				<SpeedDialAction
-					icon={<ScreenIcon />}
-					tooltipTitle={screenTip}
-					onClick={() => {
-						if (screenState === 'unsupported') return;
-
-						if (screenState === 'off') {
-							dispatch(updateScreenSharing({
-								start: true
-							}));
-						} else {
-							// Shouldn't happen
-						}
-					}}
-				/>
-			)}
 			{ canSendWebcam && !videoInProgress && (
 				<SpeedDialAction
 					icon={<AddVideoIcon />}

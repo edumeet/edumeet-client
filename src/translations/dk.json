@@ -49,6 +49,7 @@
 	"label.chatInput": "Indtast chatbesked ...",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "Luk",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

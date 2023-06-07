@@ -22,10 +22,9 @@ const ParticipantListDiv = styled(Box)(({ theme }) => ({
 	padding: theme.spacing(1)
 }));
 
-const ListHeader = styled(Typography)(({ theme }) => ({
-	marginTop: theme.spacing(3),
+const ListHeader = styled(Typography)({
 	fontWeight: 'bolder'
-}));
+});
 
 const ParticipantList = (): JSX.Element => {
 	const breakoutsEnabled = useAppSelector((state) => state.room.breakoutsEnabled);

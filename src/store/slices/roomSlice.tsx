@@ -2,8 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
 
 export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left';
-export type SettingsTab = 'media' | 'appearance' | 'advanced';
-export type HelpTab = 'shortcuts';
 export type RoomMode = 'P2P' | 'SFU';
 
 export interface RoomState {

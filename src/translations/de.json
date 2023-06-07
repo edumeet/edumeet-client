@@ -49,6 +49,7 @@
 	"label.chatInput": "Schreibe eine Nachricht...",
 	"label.chatNewMessages": "Neue Meldungen",
 	"label.chatNoMessages": "Keine Meldungen",
+	"label.chatScrollToBottom": null,
 	"label.close": "Schließen",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

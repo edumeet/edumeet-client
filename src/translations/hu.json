@@ -53,6 +53,7 @@
 	"label.chatInput": "Chat üzenet ...",
 	"label.chatNewMessages": "Új üzenet érkezett",
 	"label.chatNoMessages": "Nincs megjelenítendő üzenet",
+	"label.chatScrollToBottom": null,
 	"label.close": "Bezár",
 	"label.closeBreakoutRoom": "Bezárás",
 	"label.createBreakoutRoom": "Létrehozás",

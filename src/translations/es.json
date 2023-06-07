@@ -49,6 +49,7 @@
 	"label.chatInput": "Escriba su mensaje...",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "Cerrar",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

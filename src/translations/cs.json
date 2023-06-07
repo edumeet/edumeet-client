@@ -49,6 +49,7 @@
 	"label.chatInput": "Napište zprávu chatu",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": "Žádné zprávy",
+	"label.chatScrollToBottom": null,
 	"label.close": "Zavřít",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

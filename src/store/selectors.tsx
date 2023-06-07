@@ -27,6 +27,10 @@ const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSe
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
 
 export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
+export const controlButtonsVisibleSelector: Selector<boolean> = (state) =>
+	state.settings.controlButtonsBar ||
+	state.settings.hideSelfView ||
+	isMobileSelector(state);
 
 /**
  * Returns the peers as an array.

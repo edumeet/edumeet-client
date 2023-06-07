@@ -53,6 +53,7 @@
 	"label.chatInput": "Inserire messaggio...",
 	"label.chatNewMessages": "Nuovi messaggi",
 	"label.chatNoMessages": "Niente messaggi",
+	"label.chatScrollToBottom": null,
 	"label.close": "Chiudi",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

@@ -11,6 +11,7 @@ import {
 	hideSelfViewLabel,
 	mirroredSelfViewLabel,
 	controlButtonsBarLabel,
+	enableNotificationSoundsLabel,
 } from '../translated/translatedComponents';
 import { isMobileSelector } from '../../store/selectors';
 
@@ -20,7 +21,8 @@ const AppearanceSettings = (): JSX.Element => {
 		mirroredSelfView,
 		hideNonVideo,
 		hideSelfView,
-		controlButtonsBar
+		controlButtonsBar,
+		notificationSounds
 	} = useAppSelector((state) => state.settings);
 	const isMobile = useAppSelector(isMobileSelector);
 
@@ -79,6 +81,16 @@ const AppearanceSettings = (): JSX.Element => {
 						/>
 					}
 					label={hideNoVideoParticipantsLabel()}
+				/>
+				<FormControlLabel
+					control={
+						<Switch
+							checked={ notificationSounds }
+							onChange={ (event) => handleChange(event, 'notificationSounds') }
+							inputProps={ { 'aria-label': 'controlled' } }
+						/>
+					}
+					label={ enableNotificationSoundsLabel() }
 				/>
 			</FormGroup>
 		</>

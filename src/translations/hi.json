@@ -49,6 +49,7 @@
 	"label.chatInput": "चैट संदेश दर्ज करें ...",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "बंद करे",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

@@ -4,6 +4,7 @@ import {
 } from '../../store/hooks';
 import EscapeMeetingButton from '../controlbuttons/EscapeMeetingButton';
 import RaiseHandButton from '../controlbuttons/RaiseHandButton';
+import { meLabel } from '../translated/translatedComponents';
 
 const MeDiv = styled(Paper)(({ theme }) => ({
 	display: 'flex',
@@ -34,7 +35,7 @@ const ListMe = (): JSX.Element => {
 	return (
 		<MeDiv>
 			<MeAvatar src={picture ?? '/images/buddy.svg'} />
-			<MeInfoDiv>{ displayName }</MeInfoDiv>
+			<MeInfoDiv>{ `(${meLabel()}) ${displayName}` }</MeInfoDiv>
 			<EscapeMeetingButton type='iconbutton' size='small' />
 			{ raiseHandEnabled && <RaiseHandButton type='iconbutton' size='small' /> }
 		</MeDiv>

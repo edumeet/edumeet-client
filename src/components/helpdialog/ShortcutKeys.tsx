@@ -4,6 +4,7 @@ import {
 	lockRoomLabel,
 	muteAudioLabel,
 	openSettingsLabel,
+	raiseHandLabel,
 	showChatLabel,
 	showParticipantsLabel,
 	showStatsLabel,
@@ -19,6 +20,10 @@ const shortcuts: Array<{ value: string, label: () => string }> = [ {
 {
 	value: 'V',
 	label: stopVideoLabel
+},
+{
+	value: 'R',
+	label: raiseHandLabel
 },
 {
 	value: 'S',

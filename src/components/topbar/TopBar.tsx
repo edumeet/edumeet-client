@@ -7,21 +7,23 @@ import {
 import { styled } from '@mui/material/styles';
 import { Fragment, useEffect, useState } from 'react';
 import {
-	useAppDispatch,
+	// useAppDispatch,
 	useAppSelector,
 	usePermissionSelector
 } from '../../store/hooks';
 import {
+	controlButtonsVisibleSelector,
 	fullscreenConsumerSelector,
+	// isMobileSelector,
 	lobbyPeersLengthSelector,
 	roomSessionCreationTimestampSelector,
-	unreadSelector
+	// unreadSelector
 } from '../../store/selectors';
-import { drawerActions } from '../../store/slices/drawerSlice';
-import MenuIcon from '@mui/icons-material/Menu';
+// import { drawerActions } from '../../store/slices/drawerSlice';
+// import MenuIcon from '@mui/icons-material/Menu';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import edumeetConfig from '../../utils/edumeetConfig';
-import { openDrawerLabel } from '../translated/translatedComponents';
+// import { openDrawerLabel } from '../translated/translatedComponents';
 import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import Login from '../menuitems/Login';
@@ -29,7 +31,7 @@ import Lock from '../menuitems/Lock';
 import Settings from '../menuitems/Settings';
 import Participants from '../menuitems/Participants';
 import Fullscreen from '../menuitems/Fullscreen';
-import PulsingBadge from '../pulsingbadge/PulsingBadge';
+// import PulsingBadge from '../pulsingbadge/PulsingBadge';
 import LobbyButton from '../controlbuttons/LobbyButton';
 import LockButton from '../controlbuttons/LockButton';
 import FullscreenButton from '../controlbuttons/FullscreenButton';
@@ -48,8 +50,6 @@ import Filesharing from '../menuitems/Filesharing';
 import TranscriptionButton from '../controlbuttons/TranscriptionButton';
 import Transcription from '../menuitems/Transcription';
 import { AccessTime } from '@mui/icons-material';
-import Help from '../menuitems/Help';
-import HelpButton from '../controlbuttons/HelpButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -59,7 +59,17 @@ interface TopBarProps {
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
 	backgroundColor: theme.appBarColor,
-	height: '48px',
+	...(theme.appBarFloating && {
+		top: 4,
+		left: 4,
+		width: 'calc(100% - 8px)',
+		borderRadius: 10,
+	}),
+	height: 48,
+	'& .MuiToolbar-root': {
+		paddingLeft: theme.spacing(1),
+		paddingRight: theme.spacing(1),
+	}
 }));
 
 const LogoImg = styled('img')(({ theme }) => ({
@@ -110,18 +120,18 @@ const TopBar = ({
 	onFullscreen
 }: TopBarProps): JSX.Element => {
 	const logo = useAppSelector((state) => state.room.logo);
-	const dispatch = useAppDispatch();
 	const filesharingEnabled = useAppSelector((state) => state.room.filesharingEnabled);
 	const localRecordingEnabled = useAppSelector((state) => state.room.localRecordingEnabled);
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
+	const canShareExtraVideo = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 	const canRecord = useAppSelector((state) => state.me.canRecord);
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
 	const audioOnly = useAppSelector((state) => state.settings.audioOnly);
 	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
-	const unread = useAppSelector(unreadSelector);
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
+	const controlButtonsBar = useAppSelector(controlButtonsVisibleSelector);
 
 	const [ mobileMoreAnchorEl, setMobileMoreAnchorEl ] = useState<HTMLElement | null>();
 
@@ -180,19 +190,21 @@ const TopBar = ({
 		<Fragment>
 			<StyledAppBar position='fixed'>
 				<Toolbar variant='dense'>
-					<PulsingBadge
-						color='secondary'
-						badgeContent={unread}
-						onClick={() => dispatch(drawerActions.toggle())}
-					>
-						<IconButton
-							color='inherit'
-							aria-label={openDrawerLabel()}
-							size='small'
+					{ /* isMobile &&
+						<PulsingBadge
+							color='secondary'
+							badgeContent={unread}
+							onClick={() => dispatch(drawerActions.toggle())}
 						>
-							<MenuIcon />
-						</IconButton>
-					</PulsingBadge>
+							<IconButton
+								color='inherit'
+								aria-label={openDrawerLabel()}
+								size='small'
+							>
+								<MenuIcon />
+							</IconButton>
+						</PulsingBadge>
+					*/ }
 					{ logo ?
 						<LogoImg alt='Logo' src={logo}/> :
 						<Typography variant='h6' noWrap color='inherit'>
@@ -221,32 +233,23 @@ const TopBar = ({
 						}
 					</GrowingDiv>
 					<DesktopDiv>
-						<HelpButton type='iconbutton' />
 						{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
-						{ filesharingEnabled && <FilesharingButton type='iconbutton' /> }
-						{ !audioOnly && <ExtraVideoButton type='iconbutton' />}
-						{ localRecordingEnabled && canRecord && <RecordButton type='iconbutton' /> }
-						{ fullscreenEnabled &&
-							<FullscreenButton
-								type='iconbutton'
-								fullscreen={fullscreen}
-								onClick={onFullscreen}
-							/>
-						}
-						<ParticipantsButton type='iconbutton' />
+						{ !controlButtonsBar && filesharingEnabled && <FilesharingButton type='iconbutton' /> }
+						{ !controlButtonsBar && canShareExtraVideo && !audioOnly && <ExtraVideoButton type='iconbutton' />}
+						{ !controlButtonsBar && localRecordingEnabled && canRecord && <RecordButton type='iconbutton' /> }
+						{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
+						{ !controlButtonsBar && <ParticipantsButton type='iconbutton' /> }
 						<SettingsButton type='iconbutton' />
-						<LockButton type='iconbutton' />
+						{ canLock && <LockButton type='iconbutton' /> }
 						{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						{ loginEnabled && <LoginButton type='iconbutton' /> }
 					</DesktopDiv>
 					<MobileDiv>
-						{ localRecordingEnabled && canRecord && <RecordButton type='iconbutton' /> }
+						{ !controlButtonsBar && localRecordingEnabled && canRecord && <RecordButton type='iconbutton' /> }
 						{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 						<IconButton
 							aria-haspopup
-							onClick={(event) => {
-								setMobileMoreAnchorEl(event.currentTarget);
-							}}
+							onClick={(event) => setMobileMoreAnchorEl(event.currentTarget)}
 							color='inherit'
 							size='small'
 						>
@@ -265,12 +268,11 @@ const TopBar = ({
 				{ loginEnabled && <Login onClick={handleMenuClose} /> }
 				{ canLock && <Lock onClick={handleMenuClose} /> }
 				<Settings onClick={handleMenuClose} />
-				<Participants onClick={handleMenuClose} />
+				{ !controlButtonsBar && <Participants onClick={handleMenuClose} /> }
 				<Fullscreen onClick={handleMenuClose} />
-				<ExtraVideo onClick={handleMenuClose} />
-				{ filesharingEnabled && <Filesharing onClick={handleMenuClose} /> }
+				{ !controlButtonsBar && canShareExtraVideo && !audioOnly && <ExtraVideo onClick={handleMenuClose} /> }
+				{ !controlButtonsBar && filesharingEnabled && <Filesharing onClick={handleMenuClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMenuClose} /> }
-				<Help onClick={handleMenuClose} />
 			</FloatingMenu>
 		</Fragment>
 	);

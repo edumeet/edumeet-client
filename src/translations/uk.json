@@ -49,6 +49,7 @@
 	"label.chatInput": "Введіть повідомлення чату ...",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "Закрити",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

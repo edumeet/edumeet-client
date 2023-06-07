@@ -49,6 +49,7 @@
 	"label.chatInput": "Sohbet mesajı gir...",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "Kapat",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

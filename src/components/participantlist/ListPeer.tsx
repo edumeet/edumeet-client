@@ -1,6 +1,6 @@
 import { Box, Chip, IconButton, Paper, styled } from '@mui/material';
 import { Peer } from '../../store/slices/peersSlice';
-import PanIcon from '@mui/icons-material/PanTool';
+import PanIcon from '@mui/icons-material/BackHand';
 import { useAppDispatch, usePeerConsumers } from '../../store/hooks';
 import { lowerPeerHand } from '../../store/actions/peerActions';
 import Volume from '../volume/Volume';
@@ -25,14 +25,13 @@ const PeerDiv = styled(Paper)(({ theme }) => ({
 	display: 'flex',
 	padding: theme.spacing(0.5),
 	marginTop: theme.spacing(0.5),
-	alignItems: 'center'
+	alignItems: 'center',
 }));
 
 const PeerInfoDiv = styled(Box)(({ theme }) => ({
 	display: 'flex',
 	marginLeft: theme.spacing(1),
 	flexGrow: 1,
-	alignItems: 'center',
 }));
 
 const PeerAvatar = styled('img')({
@@ -95,9 +94,9 @@ const ListPeer = ({
 				}
 				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
 				{ /* hasMedia && <StyledChip disabled label={<MediaIcons />} variant='outlined' size='small' /> */ }
-				{ hasScreen && <StyledChip disabled label={<ScreenShareIcon />} variant='outlined' size='small' /> }
-				{ hasVideo && <StyledChip disabled label={<WebcamIcon />} variant='outlined' size='small' /> }
-				{ hasAudio && <StyledChip disabled label={<MicUnMutedIcon />} variant='outlined' size='small' /> }
+				{ hasScreen && <StyledChip disabled label={<ScreenShareIcon fontSize='small' />} variant='filled' size='small' /> }
+				{ hasVideo && <StyledChip disabled label={<WebcamIcon fontSize='small' />} variant='filled' size='small' /> }
+				{ hasAudio && <StyledChip disabled label={<MicUnMutedIcon fontSize='small' />} variant='filled' size='small' /> }
 				<Volume consumer={micConsumer} small />
 				{ shouldShow && 
 					<IconButton

@@ -50,6 +50,7 @@
 	"label.chatInput": "输入聊天消息",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "关闭",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

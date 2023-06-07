@@ -49,6 +49,7 @@
 	"label.chatInput": "Indique mensagem...",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "Fechar",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

@@ -10,22 +10,30 @@ import {
 import { drawerActions } from '../../store/slices/drawerSlice';
 import { peersLengthSelector } from '../../store/selectors';
 import { Badge } from '@mui/material';
+import { batch } from 'react-redux';
+import { uiActions } from '../../store/slices/uiSlice';
 
 const ParticipantsButton = ({
 	...props
 }: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const peersLength = useAppSelector(peersLengthSelector);
+	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 
 	const openUsersTab = () => {
-		dispatch(drawerActions.toggle());
-		dispatch(drawerActions.setTab('users'));
+		batch(() => {
+			dispatch(drawerActions.toggle());
+			dispatch(drawerActions.setTab('users'));
+			dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
+		});
 	};
 
 	return (
 		<ControlButton
 			toolTip={showParticipantsLabel()}
 			onClick={() => openUsersTab()}
+			on={participantListOpen}
+			onColor='primary'
 			{ ...props }
 		>
 			<Badge

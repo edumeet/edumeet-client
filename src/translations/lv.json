@@ -49,6 +49,7 @@
 	"label.chatInput": "Rakstiet tērziņa ziņu...",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "Aizvērt",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

@@ -50,6 +50,7 @@
 	"label.chatInput": "Enter chat message...",
 	"label.chatNewMessages": "New messages",
 	"label.chatNoMessages": "No messages",
+	"label.chatScrollToBottom": "Scroll to bottom",
 	"label.close": "Close",
 	"label.closeBreakoutRoom": "Close",
 	"label.createBreakoutRoom": "Create",

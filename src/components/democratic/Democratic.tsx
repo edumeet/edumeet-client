@@ -1,7 +1,7 @@
 import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
-import { spotlightPeersSelector, videoBoxesSelector } from '../../store/selectors';
+import { controlButtonsVisibleSelector, spotlightPeersSelector, videoBoxesSelector } from '../../store/selectors';
 import Me from '../me/Me';
 import Peer from '../peer/Peer';
 
@@ -14,9 +14,11 @@ const DemocraticDiv = styled('div')<DemocraticProps>(({
 	controlbuttons
 }) => ({
 	width: '100%',
+	height: '100%',
 	display: 'flex',
 	...(controlbuttons && {
-		marginBottom: theme.spacing(8)
+		marginBottom: 64,
+		height: 'calc(100% - 64px)',
 	}),
 	flexDirection: 'row',
 	gap: theme.spacing(1),
@@ -25,7 +27,6 @@ const DemocraticDiv = styled('div')<DemocraticProps>(({
 	justifyContent: 'center',
 	alignItems: 'center',
 	alignContent: 'center',
-	marginTop: 48,
 	transition: 'margin-left 0.5s ease-in-out'
 }));
 
@@ -33,8 +34,10 @@ const Democratic = (): JSX.Element => {
 	const theme = useTheme();
 	const peersRef = useRef<HTMLDivElement>(null);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
-	const controlButtonsBar = useAppSelector((state) => state.settings.controlButtonsBar);
+	const controlButtonsBar = useAppSelector(controlButtonsVisibleSelector);
 	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
+	const chatOpen = useAppSelector((state) => state.ui.chatOpen);
+	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 	const boxes = useAppSelector(videoBoxesSelector);
 	const spotlightPeers = useAppSelector(spotlightPeersSelector);
 	const [ windowSize, setWindowSize ] = useState(0);
@@ -57,8 +60,8 @@ const Democratic = (): JSX.Element => {
 		for (rows = 1; rows <= boxes; rows = rows + 1) {
 			const columns = Math.ceil(boxes / rows);
 
-			const verticalGaps = (rows + 1) * parseInt(theme.spacing(1));
-			const horizontalGaps = (columns + 1) * parseInt(theme.spacing(1));
+			const verticalGaps = rows * parseInt(theme.spacing(1));
+			const horizontalGaps = columns * parseInt(theme.spacing(1));
 
 			x = (width - horizontalGaps) / columns;
 			y = x / aspectRatio;
@@ -113,7 +116,9 @@ const Democratic = (): JSX.Element => {
 		boxes,
 		windowSize,
 		controlButtonsBar,
-		hideSelfView
+		hideSelfView,
+		chatOpen,
+		participantListOpen
 	]);
 
 	const style = {
@@ -124,9 +129,9 @@ const Democratic = (): JSX.Element => {
 	return (
 		<DemocraticDiv
 			ref={peersRef}
-			controlbuttons={(controlButtonsBar || hideSelfView) ? 1 : 0}
+			controlbuttons={(controlButtonsBar) ? 1 : 0}
 		>
-			{ !hideSelfView && <Me style={style} /> }
+			<Me style={style} />
 			{ spotlightPeers.map((peer) => (
 				<Peer
 					key={peer}

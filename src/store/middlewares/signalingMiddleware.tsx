@@ -38,13 +38,9 @@ const createSignalingMiddleware = ({
 					dispatch(signalingActions.connected());
 				});
 
-				/* signalingService.on('disconnect', () => {
-					dispatch(signalingActions.disconnect());
-				});
-
-				signalingService.on('reconnect', () => {
+				signalingService.on('reconnecting', () => {
 					dispatch(signalingActions.reconnecting());
-				}); */
+				});
 
 				const { url } = getState().signaling;
 				const socketConnection = IOClientConnection.create({ url });

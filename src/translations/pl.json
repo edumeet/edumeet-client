@@ -53,6 +53,7 @@
 	"label.chatInput": "Treść wiadomości...",
 	"label.chatNewMessages": "Nowe Wiadomości",
 	"label.chatNoMessages": "Brak wiadomości",
+	"label.chatScrollToBottom": null,
 	"label.close": "Zamknij",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,

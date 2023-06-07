@@ -49,6 +49,7 @@
 	"label.chatInput": "Γράψτε το μήνυμά σας...",
 	"label.chatNewMessages": null,
 	"label.chatNoMessages": null,
+	"label.chatScrollToBottom": null,
 	"label.close": "Κλείσιμο",
 	"label.closeBreakoutRoom": null,
 	"label.createBreakoutRoom": null,
