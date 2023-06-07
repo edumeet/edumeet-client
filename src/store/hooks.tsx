@@ -113,8 +113,8 @@ export const usePermissionSelector = (permission: Permission): boolean => {
  * @param kind - The kind of the devices to get.
  * @returns {MediaDevice[]} The list of media devices.
  */
-export const useDeviceSelector = (kind: MediaDeviceKind): MediaDevice[] => {
-	const devicesSelector = useMemo(() => makeDevicesSelector(kind), [ kind ]);
+export const useDeviceSelector = (kind: MediaDeviceKind, exludedDeviceId?: string): MediaDevice[] => {
+	const devicesSelector = useMemo(() => makeDevicesSelector(kind, exludedDeviceId), [ kind ]);
 
 	return useAppSelector(devicesSelector);
 };

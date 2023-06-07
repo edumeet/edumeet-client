@@ -46,10 +46,10 @@ export const peersArraySelector = createSelector(
  * @returns {Selector<MediaDevice[]>} Selector that returns the subset of devices.
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const makeDevicesSelector = (kind: MediaDeviceKind) => {
+export const makeDevicesSelector = (kind: MediaDeviceKind, excludedDeviceId?: string) => {
 	return createSelector(
 		devicesSelector,
-		(devices: MediaDevice[]) => devices.filter((d) => d.kind === kind)
+		(devices: MediaDevice[]) => devices.filter((d) => (d.kind === kind) && (d.deviceId !== excludedDeviceId))
 	);
 };
 

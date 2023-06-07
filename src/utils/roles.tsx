@@ -19,7 +19,7 @@ export const permissions: Record<string, Permission> = {
 	// The role(s) have permission to share screen
 	SHARE_SCREEN: 'SHARE_SCREEN',
 	// The role(s) have permission to produce extra video
-	EXTRA_VIDEO: 'EXTRA_VIDEO',
+	SHARE_EXTRA_VIDEO: 'SHARE_EXTRA_VIDEO',
 	// The role(s) have permission to share files
 	SHARE_FILE: 'SHARE_FILE',
 	// The role(s) have permission to moderate files

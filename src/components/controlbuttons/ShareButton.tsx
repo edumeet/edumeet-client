@@ -26,7 +26,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 const ShareButton = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasScreenPermission = usePermissionSelector(permissions.SHARE_SCREEN);
-	const hasExtraVideoPermission = usePermissionSelector(permissions.EXTRA_VIDEO);
+	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
 
 	const {

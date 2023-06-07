@@ -19,7 +19,7 @@ const ExtraVideo = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const hasExtraVideoPermission = usePermissionSelector(permissions.EXTRA_VIDEO);
+	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 
 	const {
 		canSendWebcam,

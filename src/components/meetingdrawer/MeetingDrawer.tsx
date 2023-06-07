@@ -26,11 +26,14 @@ import Chat from '../chat/Chat';
 const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
 	'& .MuiDrawer-paper': {
 		width: '30vw',
-		[theme.breakpoints.down('lg')]: {
+		[theme.breakpoints.down('xl')]: {
 			width: '40vw'
 		},
+		[theme.breakpoints.down('lg')]: {
+			width: '50vw'
+		},
 		[theme.breakpoints.down('md')]: {
-			width: '60vw'
+			width: '70vw'
 		},
 		[theme.breakpoints.down('sm')]: {
 			width: '80vw'
