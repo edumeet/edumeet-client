@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "ध्वनि उच्चारण यंत्र के चयन में असमर्थ",
 	"settings.cantSelectCamera": " कैमरे का चयन करने में असमर्थ",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": " गूंज रद्द",
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": "अपने वीडियो फ्रेम की स्पष्टता चुनें",

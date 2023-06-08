@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Неможливо вибрати аудіо вихідний пристрій",
 	"settings.cantSelectCamera": "Неможливо вибрати відеопристрій",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": "Видалення відлуння",
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": "Виберіть частоту кадрів відео",

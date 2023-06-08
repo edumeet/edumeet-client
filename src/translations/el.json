@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Δεν είναι δυνατή η επιλογή συσκευής εξόδου ήχου",
 	"settings.cantSelectCamera": "Αδυναμία επιλογής συσκευής video",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": null,
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": null,

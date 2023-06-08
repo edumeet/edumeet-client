@@ -194,7 +194,6 @@
 	"settings.cantSelectAudioOutput": "Nem sikerült a kimeneti hangeszközt kiválasztani",
 	"settings.cantSelectCamera": "Nem lehet a videoeszközt kiválasztani",
 	"settings.channelCount": "Válaszd ki az audio csatorna számát",
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": "Visszhangelnyomás",
 	"settings.enableOpusDetails": "OPUS-részletek engedélyezése (oldal újratöltése szükséges)",
 	"settings.frameRate": "Képkockaváltás sebessége",

@@ -149,7 +149,3 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 	MiddlewareOptions,
 	Action<string>
 >;
-
-export const LeavePromptContext = createContext<() => Promise<void>>(() =>
-	Promise.resolve()
-);

@@ -12,7 +12,6 @@ export interface SettingsState {
 	hideSelfView: boolean;
 	verticalDivide: boolean;
 	dynamicWidth: boolean;
-	confirmExit: boolean;
 	aspectRatio: number;
 	selectedAudioDevice?: string;
 	selectedVideoDevice?: string;
@@ -56,7 +55,6 @@ const initialState: SettingsState = {
 	hideSelfView: false,
 	verticalDivide: true,
 	dynamicWidth: true,
-	confirmExit: false,
 	aspectRatio: edumeetConfig.aspectRatio,
 	audioPreset: edumeetConfig.audioPreset,
 	audioPresets: edumeetConfig.audioPresets,
@@ -103,9 +101,6 @@ const settingsSlice = createSlice({
 		}),
 		setDynamicWidth: ((state, action: PayloadAction<boolean>) => {
 			state.dynamicWidth = action.payload;
-		}),
-		setConfirmExit: ((state, action: PayloadAction<boolean>) => {
-			state.confirmExit = action.payload;
 		}),
 		setAspectRatio: ((state, action: PayloadAction<number>) => {
 			state.aspectRatio = action.payload;

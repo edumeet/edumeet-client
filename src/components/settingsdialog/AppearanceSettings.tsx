@@ -12,7 +12,6 @@ import {
 	mirroredSelfViewLabel,
 	enableNotificationSoundsLabel,
 	enableVerticallyStackedSidePanels,
-	enableConfirmOnExit,
 } from '../translated/translatedComponents';
 
 const AppearanceSettings = (): JSX.Element => {
@@ -23,7 +22,6 @@ const AppearanceSettings = (): JSX.Element => {
 		hideSelfView,
 		notificationSounds,
 		verticalDivide,
-		confirmExit,
 	} = useAppSelector((state) => state.settings);
 
 	const handleChange = (
@@ -88,16 +86,6 @@ const AppearanceSettings = (): JSX.Element => {
 						/>
 					}
 					label={ enableVerticallyStackedSidePanels() }
-				/>
-				<FormControlLabel
-					control={
-						<Switch
-							checked={ confirmExit }
-							onChange={ (event) => handleChange(event, 'confirmExit') }
-							inputProps={ { 'aria-label': 'controlled' } }
-						/>
-					}
-					label={ enableConfirmOnExit() }
 				/>
 			</FormGroup>
 		</>

@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Kann Audioausgabegerät nicht aktivieren",
 	"settings.cantSelectCamera": "Kann Videogerät nicht aktivieren",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": "Echounterdrückung",
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": "Wähle eine Video-Bildfrequenz",

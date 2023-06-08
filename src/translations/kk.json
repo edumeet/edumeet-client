@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Дыбыс шығару құрылғысын таңдау мүмкін болмады",
 	"settings.cantSelectCamera": "Бейне құрылғыны таңдау мүмкін болмады",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": "Жаңғырықты басу",
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": "Бейне кадр жиілігін таңдаңыз",

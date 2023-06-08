@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "無法選擇音訊輸出設備",
 	"settings.cantSelectCamera": "無法選擇此視訊來源",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": "抑制回音",
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": null,

@@ -20,7 +20,7 @@
 		"isolatedModules": true,
 		"noEmit": true,
 		"jsx": "react-jsx",
-		"types": [ "vite/client", "@types/wicg-file-system-access", "@types/jest" ],
+		"types": [ "vite/client", "@types/wicg-file-system-access" ],
 	},
 	"include": [
 		"src/**/*"

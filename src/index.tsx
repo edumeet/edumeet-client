@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Route, BrowserRouter, Routes } from 'react-router-dom';
+import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import { RawIntlProvider } from 'react-intl';
 import './index.css';
 import debug from 'debug';
@@ -61,6 +61,15 @@ const SnackbarCloseButton = ({
 	);
 };
 
+const router = createBrowserRouter(
+	createRoutesFromElements(
+		<>
+			<Route path='/' element={<LandingPage />} />
+			<Route path='/:id' element={<App />} />
+		</>
+	)
+);
+
 /**
  * Return either the app or the unsupported browser page
  * based on feature detection.
@@ -83,12 +92,7 @@ const RootComponent = () => {
 			<SnackbarProvider action={
 				(snackbarKey: SnackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} />
 			}>
-				<BrowserRouter>
-					<Routes>
-						<Route path='/' element={<LandingPage />} />
-						<Route path='/:id' element={<App />} />
-					</Routes>
-				</BrowserRouter>
+				<RouterProvider router={router} />
 			</SnackbarProvider>
 		);
 	}

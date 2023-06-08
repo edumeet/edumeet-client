@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Não foi possível selecionar o dispositivo de saída de áudio",
 	"settings.cantSelectCamera": "Impossível selecionar dispositivo de vídeo",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": null,
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": "Quadros por Segundo",

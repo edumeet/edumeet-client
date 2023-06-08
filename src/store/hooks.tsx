@@ -1,9 +1,6 @@
 import { SnackbarKey, useSnackbar } from 'notistack';
-import {
-	useEffect,
-	useMemo,
-	useRef
-} from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { unstable_useBlocker as useBlocker } from 'react-router-dom';
 import {
 	TypedUseSelectorHook,
 	useDispatch,
@@ -22,8 +19,9 @@ import {
 } from './selectors';
 import { notificationsActions } from './slices/notificationsSlice';
 import { Peer } from './slices/peersSlice';
-import type { RootState, AppDispatch } from './store';
+import { RootState, AppDispatch } from './store';
 import { Transcript } from '../services/mediaService';
+import { leaveRoom } from './actions/roomActions';
 
 /**
  * Hook to access the redux dispatch function.
@@ -146,6 +144,22 @@ export const useNotifier = (): void => {
 			storeDisplayed(key);
 		});
 	}, [ notifications, closeSnackbar, enqueueSnackbar, dispatch ]);
+};
+
+/**
+ * Hook to show a leave prompt when the user tries to leave the page.
+ * 
+ * @param when - Whether to show the leave prompt or not.
+ * @returns {void}
+ */
+export const usePrompt = (): void => {
+	const dispatch = useAppDispatch();
+
+	useBlocker(() => {
+		dispatch(leaveRoom());
+
+		return true;
+	});
 };
 
 type ResultBox<T> = { v: T }

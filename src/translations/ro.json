@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Imposibil de selectat dispozitivul de ieșire audio",
 	"settings.cantSelectCamera": "Încercarea de a selecta dispozitivul video a eșuat",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": null,
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": null,

@@ -191,7 +191,6 @@
 	"settings.cantSelectAudioOutput": "Kan ikke velge lydutgangsenhet",
 	"settings.cantSelectCamera": "Kan ikke velge videoenhet",
 	"settings.channelCount": "Antall kanaler",
-	"settings.confirmOnExit": "Bekreft ved avslutning",
 	"settings.echoCancellation": "Echokansellering",
 	"settings.enableOpusDetails": "Aktiver opus detaljer",
 	"settings.frameRate": "Velg bildefrekvens",

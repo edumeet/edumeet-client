@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Není možno vybrat výstupní zařízení audia",
 	"settings.cantSelectCamera": "Není možné vybrat video zařízení",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": "Zrušení ozvěny",
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": "Počet snímků Vašeho videa",

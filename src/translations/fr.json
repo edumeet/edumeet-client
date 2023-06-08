@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Impossible de sélectionner le périphérique de sortie audio",
 	"settings.cantSelectCamera": "Impossible de sélectionner votre caméra",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": null,
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": null,

@@ -18,9 +18,12 @@ import { setDisplayName } from '../../store/actions/meActions';
 import {
 	useAppDispatch,
 	useAppSelector,
+	usePrompt,
 } from '../../store/hooks';
 
 const Lobby = (): JSX.Element => {
+	usePrompt();
+
 	const dispatch = useAppDispatch();
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const {

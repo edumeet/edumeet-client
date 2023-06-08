@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Kan ikke vælge lydoutputenhed",
 	"settings.cantSelectCamera": "Kan ikke vælge kamera",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": null,
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": null,

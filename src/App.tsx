@@ -14,7 +14,6 @@ import Room from './views/room/Room';
 import { sendFiles } from './store/actions/filesharingActions';
 import { uiActions } from './store/slices/uiSlice';
 import { roomActions, RoomConnectionState } from './store/slices/roomSlice';
-import { LeavePrompt } from './components/leaveprompt/LeavePrompt';
 import { permissions } from './utils/roles';
 
 type AppParams = {
@@ -52,19 +51,17 @@ const App = (): JSX.Element => {
 	};
 
 	return (
-		<LeavePrompt>
-			<StyledBackground
-				onDrop={handleFileDrop}
-				onDragOver={(event) => event.preventDefault()}
-				backgroundimage={backgroundImage}
-			>
-				{
-					roomState === 'joined' ?
-						<Room /> : roomState === 'lobby' ?
-							<Lobby /> : roomState === 'new' && <Join roomId={id} />
-				}
-			</StyledBackground>
-		</LeavePrompt>
+		<StyledBackground
+			onDrop={handleFileDrop}
+			onDragOver={(event) => event.preventDefault()}
+			backgroundimage={backgroundImage}
+		>
+			{
+				roomState === 'joined' ?
+					<Room /> : roomState === 'lobby' ?
+						<Lobby /> : roomState === 'new' && <Join roomId={id} />
+			}
+		</StyledBackground>
 		
 	);
 };

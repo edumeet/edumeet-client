@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Невозможно выбрать устройство вывода звука",
 	"settings.cantSelectCamera": "Невозможно выбрать видеоустройство",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": "Подавление эха",
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": "Выберите частоту кадров видео",

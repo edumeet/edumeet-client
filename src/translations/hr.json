@@ -194,7 +194,6 @@
 	"settings.cantSelectAudioOutput": "Nije moguće odabrati izlazni uređaj za zvuk",
 	"settings.cantSelectCamera": "Nije moguće odabrati kameru",
 	"settings.channelCount": "Broj zvučnih kanala",
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": "Poništavanje jeke",
 	"settings.enableOpusDetails": "Omogući OPUS detalje(potrebno osvježavanje stranice)",
 	"settings.frameRate": "Brzina osvježavanja",

@@ -194,7 +194,6 @@
 	"settings.cantSelectAudioOutput": "Nie można wybrać urządzenia wyjściowego audio",
 	"settings.cantSelectCamera": "Nie można wybrać urządzenia wideo",
 	"settings.channelCount": "Wybierz liczbę kanałów audio",
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": "Usuń echo",
 	"settings.enableOpusDetails": "Włącz szczegóły OPUS (wymagane ponowne załadowanie strony)",
 	"settings.frameRate": "Liczba klatek na sekundę",

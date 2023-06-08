@@ -190,7 +190,6 @@
 	"settings.cantSelectAudioOutput": "Ses çıkış cihazı seçilemedi",
 	"settings.cantSelectCamera": "Video aygıtı seçilemiyor",
 	"settings.channelCount": null,
-	"settings.confirmOnExit": null,
 	"settings.echoCancellation": "Yankı giderme",
 	"settings.enableOpusDetails": null,
 	"settings.frameRate": "Video kare hızını ayarla",
