@@ -10,7 +10,7 @@
 		"@emotion/styled": "^11.8.1",
 		"@jitsi/rtcstats": "github:jitsi/rtcstats",
 		"@mui/icons-material": "^5.11.16",
-		"@mui/material": "^5.4.3",
+		"@mui/material": "^5.13.4",
 		"@observertc/client-monitor-js": "1.3.2",
 		"@reduxjs/toolkit": "^1.5.1",
 		"@testing-library/jest-dom": "^5.16.4",
@@ -21,9 +21,8 @@
 		"@types/react": "^18.0.14",
 		"@types/react-dom": "^18.0.5",
 		"@types/react-redux": "^7.1.7",
-		"awaitqueue": "^2.4.0",
+		"awaitqueue": "^3.0.1",
 		"bowser": "^2.11.0",
-		"create-torrent": "^5.0.2",
 		"debug": "^4.3.3",
 		"dompurify": "^2.3.6",
 		"edumeet-common": "edumeet/edumeet-common#0.5.2",
@@ -41,26 +40,20 @@
 		"react-intl": "^6.0.4",
 		"react-intl-redux": "^2.2.0",
 		"react-redux": "^8.0.2",
-		"react-router-dom": "^6.2.1",
-		"react-scripts": "4.0.3",
+		"react-router-dom": "^6.12.1",
 		"redux-logger": "^3.0.6",
 		"redux-persist": "^6.0.0",
 		"reselect": "4.0.0",
 		"typescript": "~4.7.4",
 		"uuid": "^8.3.2",
-		"webtorrent": "^1.8.3",
+		"webtorrent": "^2.0.37",
 		"ws": "^8.8.0"
 	},
-	"resolutions": {
-		"//": "See https://github.com/facebook/create-react-app/issues/11773",
-		"react-error-overlay": "6.0.9"
-	},
 	"scripts": {
-		"start": "HTTPS=true PORT=4443 react-scripts --openssl-legacy-provider start",
-		"build": "react-scripts --openssl-legacy-provider build",
-		"test": "react-scripts --trace-warnings --openssl-legacy-provider test --silent",
-		"lint": "eslint . --ext .ts,.tsx",
-		"eject": "react-scripts eject"
+		"start": "vite",
+		"build": "tsc && vite build",
+		"serve": "vite preview",
+		"lint": "eslint . --ext .ts,.tsx"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
@@ -83,7 +76,6 @@
 		]
 	},
 	"devDependencies": {
-		"@types/create-torrent": "^5.0.0",
 		"@types/debug": "^4.1.7",
 		"@types/dompurify": "^2.3.3",
 		"@types/file-saver": "^2.0.5",
@@ -98,7 +90,10 @@
 		"@types/ws": "^8.5.3",
 		"@typescript-eslint/eslint-plugin": "^5.12.1",
 		"@typescript-eslint/parser": "^5.12.1",
-		"react-error-overlay": "6.0.9",
-		"eslint-plugin-jest": "^26.1.1"
+		"@vitejs/plugin-basic-ssl": "^1.0.1",
+		"@vitejs/plugin-react": "^4.0.0",
+		"eslint-plugin-jest": "^26.1.1",
+		"vite": "^4.3.9",
+		"vite-tsconfig-paths": "^4.2.0"
 	}
 }

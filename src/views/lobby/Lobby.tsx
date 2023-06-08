@@ -18,7 +18,6 @@ import { setDisplayName } from '../../store/actions/meActions';
 import {
 	useAppDispatch,
 	useAppSelector,
-	usePrompt
 } from '../../store/hooks';
 
 const Lobby = (): JSX.Element => {
@@ -29,8 +28,6 @@ const Lobby = (): JSX.Element => {
 		previewWebcamTrackId,
 	} = useAppSelector((state) => state.me);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
-
-	usePrompt();
 
 	const handleDisplayNameChange = () => {
 		dispatch(setDisplayName(

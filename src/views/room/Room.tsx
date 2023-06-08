@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import fscreen from 'fscreen';
 import Settings from '../../components/settingsdialog/SettingsDialog';
 import TopBar from '../../components/topbar/TopBar';
-import { usePrompt } from '../../store/hooks';
 import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
 import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import AudioPeers from '../../components/audiopeers/AudioPeers';
@@ -16,8 +15,6 @@ import HelpButton from '../../components/controlbuttons/HelpButton';
 
 const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
-
-	usePrompt();
 
 	useEffect(() => {
 		if (fscreen.fullscreenEnabled)

@@ -14,7 +14,7 @@ import {
 } from './store/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import * as serviceWorker from './serviceWorker';
+// import * as serviceWorker from './serviceWorker';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { detectDevice } from 'mediasoup-client';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
@@ -30,7 +30,7 @@ import { Logger } from 'edumeet-common';
 import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
 
-if (process.env.REACT_APP_DEBUG === '*' || process.env.NODE_ENV !== 'production') {
+if (import.meta.env.VITE_APP_DEBUG === '*' || import.meta.env.NODE_ENV !== 'production') {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');
 }
 
@@ -115,4 +115,4 @@ root.render(
 	</React.StrictMode>
 );
 
-serviceWorker.unregister();
+// serviceWorker.unregister();

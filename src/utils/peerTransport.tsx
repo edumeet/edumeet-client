@@ -68,7 +68,7 @@ export class PeerTransport extends EventEmitter {
 
 		this.closed = true;
 		try { this.pc.close(); } catch (error) {}
-		this.queue.close();
+		this.queue.stop();
 	}
 
 	public async addTrack(track: MediaStreamTrack): Promise<RTCRtpTransceiver> {

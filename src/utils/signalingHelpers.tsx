@@ -11,7 +11,7 @@ import edumeetConfig from './edumeetConfig';
  */
 export const getSignalingUrl = (peerId: string, roomId: string, tenantId: string, token: string | undefined): string => {
 	const hostname = edumeetConfig.serverHostname || window.location.hostname;
-	const port = process.env.NODE_ENV !== 'production' ?
+	const port = import.meta.env.NODE_ENV !== 'production' ?
 		edumeetConfig.developmentPort : edumeetConfig.productionPort;
 
 	let tokenParam = '';

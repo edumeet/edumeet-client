@@ -1,17 +1,9 @@
 import { SnackbarKey, useSnackbar } from 'notistack';
 import {
-	useCallback,
-	ContextType,
-	useContext,
 	useEffect,
 	useMemo,
 	useRef
 } from 'react';
-import { Blocker, History, Transition } from 'history';
-import {
-	Navigator as BaseNavigator,
-	UNSAFE_NavigationContext as NavigationContext
-} from 'react-router-dom';
 import {
 	TypedUseSelectorHook,
 	useDispatch,
@@ -31,9 +23,7 @@ import {
 import { notificationsActions } from './slices/notificationsSlice';
 import { Peer } from './slices/peersSlice';
 import type { RootState, AppDispatch } from './store';
-import { LeavePromptContext } from './store';
 import { Transcript } from '../services/mediaService';
-import { leaveRoom } from './actions/roomActions';
 
 /**
  * Hook to access the redux dispatch function.
@@ -156,66 +146,6 @@ export const useNotifier = (): void => {
 			storeDisplayed(key);
 		});
 	}, [ notifications, closeSnackbar, enqueueSnackbar, dispatch ]);
-};
-
-interface Navigator extends BaseNavigator {
-	block: History['block'];
-}
-
-type NavigationContextWithBlock = ContextType<typeof NavigationContext> & {
-	navigator: Navigator;
-};
-
-export const useBlocker = (blocker: Blocker): void => {
-	const { navigator } = useContext(
-		NavigationContext
-	) as NavigationContextWithBlock;
-
-	const confirmExit = useAppSelector((store) => store.settings.confirmExit);
-	const previousConfirmExit = useRef(confirmExit);
-	const dispatch = useAppDispatch();
-
-	previousConfirmExit.current = confirmExit;
-
-	useEffect(() => {
-		const unblock = confirmExit ? navigator.block((tx: Transition) => {
-			const autoUnblockingTx = {
-				...tx,
-				retry() {
-					unblock();
-					tx.retry();
-				}
-			};
-
-			blocker(autoUnblockingTx);
-		}) : () => !confirmExit && dispatch(leaveRoom());
-
-		return unblock;
-	}, [ navigator, blocker, confirmExit ]);
-};
-
-/**
- * Hook to show a leave prompt when the user tries to leave the page.
- * 
- * @param when - Whether to show the leave prompt or not.
- * @returns {void}
- */
-export const usePrompt = (): void => {
-	const showPrompt = useContext(LeavePromptContext);
-
-	const blocker = useCallback(
-		async (tx: Transition) => {
-			try {
-				await showPrompt();
-				tx.retry();
-			} catch (e) {
-				// Do nothing
-			}
-		},
-		[ showPrompt ]
-	);
-
-	return useBlocker(blocker);
 };
 
 type ResultBox<T> = { v: T }
