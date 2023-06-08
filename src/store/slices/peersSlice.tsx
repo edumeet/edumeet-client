@@ -7,7 +7,6 @@ export interface Peer {
 	sessionId: string;
 	displayName?: string;
 	picture?: string;
-	audioOnly?: boolean;
 	videoInProgress?: boolean;
 	stopVideoInProgress?: boolean;
 	audioInProgress?: boolean;
@@ -53,7 +52,6 @@ const peersSlice = createSlice({
 				const {
 					displayName,
 					picture,
-					audioOnly,
 					videoInProgress,
 					stopVideoInProgress,
 					audioInProgress,
@@ -70,8 +68,6 @@ const peersSlice = createSlice({
 					peer.displayName = displayName;
 				if (picture)
 					peer.picture = picture;
-				if (audioOnly)
-					peer.audioOnly = audioOnly;
 				if (videoInProgress !== undefined)
 					peer.videoInProgress = videoInProgress;
 				if (stopVideoInProgress !== undefined)

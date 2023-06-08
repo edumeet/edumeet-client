@@ -7,10 +7,8 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import {
 	showParticipantsLabel,
 } from '../translated/translatedComponents';
-import { drawerActions } from '../../store/slices/drawerSlice';
 import { peersLengthSelector } from '../../store/selectors';
 import { Badge } from '@mui/material';
-import { batch } from 'react-redux';
 import { uiActions } from '../../store/slices/uiSlice';
 
 const ParticipantsButton = ({
@@ -20,13 +18,7 @@ const ParticipantsButton = ({
 	const peersLength = useAppSelector(peersLengthSelector);
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 
-	const openUsersTab = () => {
-		batch(() => {
-			dispatch(drawerActions.toggle());
-			dispatch(drawerActions.setTab('users'));
-			dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
-		});
-	};
+	const openUsersTab = () => dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
 
 	return (
 		<ControlButton
@@ -36,10 +28,7 @@ const ParticipantsButton = ({
 			onColor='primary'
 			{ ...props }
 		>
-			<Badge
-				color='primary'
-				badgeContent={peersLength + 1}
-			>
+			<Badge color='primary' badgeContent={peersLength + 1}>
 				<PeopleIcon />
 			</Badge>
 		</ControlButton>

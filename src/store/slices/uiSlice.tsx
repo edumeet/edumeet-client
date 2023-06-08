@@ -5,7 +5,6 @@ export type SettingsTab = 'media' | 'appearance';
 export interface UiState {
 	fullScreenConsumer?: string;
 	windowConsumer?: string;
-	drawerWindow: boolean;
 	settingsOpen: boolean;
 	filesharingOpen: boolean;
 	extraVideoOpen: boolean;
@@ -23,7 +22,6 @@ type UiUpdate = Partial<Omit<UiState, 'currentSettingsTab'>>;
 
 const initialState: UiState = {
 	showStats: false,
-	drawerWindow: false,
 	settingsOpen: false,
 	filesharingOpen: false,
 	extraVideoOpen: false,

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import { RawIntlProvider } from 'react-intl';
 import './index.css';
@@ -94,7 +94,11 @@ const RootComponent = () => {
 	}
 };
 
-ReactDOM.render(
+const container = document.getElementById('edumeet');
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(container!);
+
+root.render(
 	<React.StrictMode>
 		<CssBaseline />
 		<Provider store={store}>
@@ -108,8 +112,7 @@ ReactDOM.render(
 				</ThemeProvider>
 			</PersistGate>
 		</Provider>
-	</React.StrictMode>,
-	document.getElementById('edumeet'),
+	</React.StrictMode>
 );
 
 serviceWorker.unregister();

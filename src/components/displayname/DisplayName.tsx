@@ -10,9 +10,13 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 	bottom: theme.spacing(1),
 	left: theme.spacing(1),
 	zIndex: 22,
+	color: 'white',
+	'& .MuiFilledInput-root': {
+		color: 'white',
+	},
 	'& .MuiOutlinedInput-root': {
 		color: 'white',
-	}
+	},
 }));
 
 const StyledChip = styled(Chip)(({ theme }) => ({
@@ -74,7 +78,6 @@ const DisplayName = ({
 				label={`${prefix}${value}`}
 				variant='filled'
 				size='small'
-				color={disabled ? 'default' : 'primary'}
 				onClick={() => !disabled && setIsEditing(true)}
 				avatar={ peerId ? <StateIndicators peerId={peerId} /> : undefined }
 			/>

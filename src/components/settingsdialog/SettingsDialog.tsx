@@ -1,10 +1,4 @@
-import {
-	Button,
-	DialogActions,
-	DialogTitle,
-	Tab,
-	Tabs
-} from '@mui/material';
+import { Button, DialogActions, Tab, Tabs } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SettingsTab, uiActions } from '../../store/slices/uiSlice';
 import StyledDialog from '../dialog/StyledDialog';
@@ -12,7 +6,6 @@ import {
 	appearanceSettingsLabel,
 	closeLabel,
 	mediaSettingsLabel,
-	settingsLabel,
 } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import MediaSettings from './MediaSettings';
@@ -38,11 +31,8 @@ const SettingsDialog = (): JSX.Element => {
 		<StyledDialog
 			open={settingsOpen}
 			onClose={handleCloseSettings}
-			maxWidth='md'
+			maxWidth='xs'
 		>
-			<DialogTitle>
-				{ settingsLabel() }
-			</DialogTitle>
 			<Tabs
 				value={tabs.indexOf(currentSettingsTab)}
 				onChange={(_event, value) =>

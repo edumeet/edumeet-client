@@ -18,25 +18,62 @@ const WrapperContainer = styled(Box)({
 	gap: 4,
 });
 
-const SideContent = styled(Box)(({ theme }) => ({
+interface SideContentProps {
+	verticaldivide?: number;
+	dynamicwidth?: number;
+	bothopen?: number;
+}
+
+const SideContent = styled(Box)<SideContentProps>(({
+	theme,
+	verticaldivide,
+	dynamicwidth,
+	bothopen,
+}) => ({
 	height: '100%',
 	display: 'flex',
-	flexDirection: 'column',
+	flexDirection: verticaldivide ? 'column' : 'row',
 	gap: 4,
-	borderRadius: 10,
-	width: '30vw',
-	[theme.breakpoints.down('xl')]: {
-		width: '40vw'
-	},
-	[theme.breakpoints.down('lg')]: {
-		width: '50vw'
-	},
-	[theme.breakpoints.down('md')]: {
-		width: '70vw'
-	},
-	[theme.breakpoints.down('sm')]: {
-		width: '80vw'
-	}
+	...(dynamicwidth && {
+		width: '30vw',
+		[theme.breakpoints.down('xl')]: {
+			width: '40vw'
+		},
+		[theme.breakpoints.down('lg')]: {
+			width: '50vw'
+		},
+		[theme.breakpoints.down('md')]: {
+			width: '70vw'
+		},
+		[theme.breakpoints.down('sm')]: {
+			width: '80vw'
+		},
+		...(!verticaldivide && {
+			...(bothopen ? {
+				width: '50vw',
+				[theme.breakpoints.down('xl')]: {
+					width: '60vw'
+				},
+				[theme.breakpoints.down('lg')]: {
+					width: '70vw'
+				},
+				[theme.breakpoints.down('md')]: {
+					width: '80vw'
+				},
+			} : {
+				width: '25vw',
+				[theme.breakpoints.down('xl')]: {
+					width: '30vw'
+				},
+				[theme.breakpoints.down('lg')]: {
+					width: '35vw'
+				},
+				[theme.breakpoints.down('md')]: {
+					width: '40vw'
+				},
+			}),
+		})
+	}),
 }));
 
 interface SideContainerProps {
@@ -48,6 +85,7 @@ const SideContainer = styled(Paper)<SideContainerProps>(({ height, width }) => (
 	height,
 	width,
 	overflowY: 'auto',
+	borderRadius: 10,
 }));
 
 const MainContent = (): JSX.Element => {
@@ -55,18 +93,25 @@ const MainContent = (): JSX.Element => {
 	const chatOpen = useAppSelector((state) => state.ui.chatOpen);
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 	const eitherOpen = chatOpen || participantListOpen;
+	const bothOpen = chatOpen && participantListOpen;
+	const verticalDivide = useAppSelector((state) => state.settings.verticalDivide);
+	const dynamicWidth = useAppSelector((state) => state.settings.dynamicWidth);
 
-	const height = chatOpen && participantListOpen ? '50%' : '100%';
+	const height = (chatOpen && participantListOpen) && verticalDivide ? '50%' : '100%';
 
 	return (
 		<WrapperContainer>
+			<Democratic />
 			{ !isMobile && eitherOpen &&
-				<SideContent>
-					{ participantListOpen && <SideContainer height={height}><ParticipantList /></SideContainer> }
-					{ chatOpen && <SideContainer height={height}><Chat /></SideContainer> }
+				<SideContent
+					verticaldivide={verticalDivide ? 1 : 0}
+					dynamicwidth={dynamicWidth ? 1 : 0}
+					bothopen={bothOpen ? 1 : 0}
+				>
+					{ participantListOpen && <SideContainer height={height} width='100%'><ParticipantList /></SideContainer> }
+					{ chatOpen && <SideContainer height={height} width='100%'><Chat /></SideContainer> }
 				</SideContent>
 			}
-			<Democratic />
 		</WrapperContainer>
 	);
 };

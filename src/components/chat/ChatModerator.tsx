@@ -1,7 +1,6 @@
 import { styled } from '@mui/material';
 import { memo } from 'react';
 import ClearChatButton from '../textbuttons/ClearChatButton';
-import { moderatorActionsLabel } from '../translated/translatedComponents';
 
 const ListUl = styled('ul')(({ theme }) => ({
 	listStyleType: 'none',
@@ -10,10 +9,6 @@ const ListUl = styled('ul')(({ theme }) => ({
 	backgroundColor: 'rgba(255, 255, 255, 1)',
 	margin: 0,
 }));
-
-const ListHeaderLi = styled('li')({
-	fontWeight: 'bolder'
-});
 
 const ListItemLi = styled('li')({
 	width: '100%',
@@ -27,9 +22,6 @@ const ListItemLi = styled('li')({
 const ChatModerator = (): JSX.Element => {
 	return (
 		<ListUl>
-			<ListHeaderLi>
-				{ moderatorActionsLabel() }
-			</ListHeaderLi>
 			<ListItemLi>
 				<ClearChatButton />
 			</ListItemLi>

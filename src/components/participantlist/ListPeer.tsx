@@ -5,11 +5,11 @@ import { useAppDispatch, usePeerConsumers } from '../../store/hooks';
 import { lowerPeerHand } from '../../store/actions/peerActions';
 import Volume from '../volume/Volume';
 import { useState } from 'react';
-import MoreIcon from '@mui/icons-material/MoreVert';
 import PeerMenu from '../peermenu/PeerMenu';
 import ScreenShareIcon from '@mui/icons-material/ScreenShareOutlined';
 import MicUnMutedIcon from '@mui/icons-material/MicNoneOutlined';
 import WebcamIcon from '@mui/icons-material/VideocamOutlined';
+import MoreButton from '../controlbuttons/MoreButton';
 
 interface ListPeerProps {
 	peer: Peer;
@@ -47,35 +47,14 @@ const ListPeer = ({
 	isModerator
 }: ListPeerProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-
-	const {
-		micConsumer,
-		webcamConsumer,
-		screenConsumer,
-		extraVideoConsumers
-	} = usePeerConsumers(peer.id);
-
-	const shouldShow = (isModerator || micConsumer || webcamConsumer || screenConsumer || extraVideoConsumers.length !== 0);
-
+	const { micConsumer, webcamConsumer, screenConsumer } = usePeerConsumers(peer.id);
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
-
-	const handleMenuClose = () => {
-		setMoreAnchorEl(null);
-	};
-
+	const handleMenuClose = () => setMoreAnchorEl(null);
+	
+	const shouldShow = Boolean(isModerator || micConsumer);
 	const hasAudio = micConsumer && !micConsumer.localPaused && !micConsumer.remotePaused;
 	const hasVideo = webcamConsumer && !webcamConsumer.localPaused && !webcamConsumer.remotePaused;
 	const hasScreen = screenConsumer && !screenConsumer.localPaused && !screenConsumer.remotePaused;
-
-	/* const hasMedia = hasAudio || hasVideo || hasScreen;
-
-	const MediaIcons = (): JSX.Element => (
-		<>
-			{ hasScreen && <ScreenShareIcon /> }
-			{ hasVideo && <WebcamIcon /> }
-			{ hasAudio && <MicUnMutedIcon /> }
-		</>
-	); */
 
 	return (
 		<>
@@ -98,24 +77,9 @@ const ListPeer = ({
 				{ hasVideo && <StyledChip disabled label={<WebcamIcon fontSize='small' />} variant='filled' size='small' /> }
 				{ hasAudio && <StyledChip disabled label={<MicUnMutedIcon fontSize='small' />} variant='filled' size='small' /> }
 				<Volume consumer={micConsumer} small />
-				{ shouldShow && 
-					<IconButton
-						aria-haspopup
-						onClick={(event) => {
-							setMoreAnchorEl(event.currentTarget);
-						}}
-						color='inherit'
-						size='small'
-					>
-						<MoreIcon />
-					</IconButton>
-				}
+				<MoreButton onClick={(event) => setMoreAnchorEl(event.currentTarget)} type='iconbutton' size='small' />
 			</PeerDiv>
-			<PeerMenu
-				anchorEl={moreAnchorEl}
-				peerId={peer.id}
-				onClick={handleMenuClose}
-			/>
+			{ shouldShow && <PeerMenu anchorEl={moreAnchorEl} peerId={peer.id} onClick={handleMenuClose} /> }
 		</>
 	);
 };

@@ -12,12 +12,10 @@ import { producersActions } from '../slices/producersSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
-import { drawerActions } from '../slices/drawerSlice';
 import { devicesChangedLabel } from '../../components/translated/translatedComponents';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
 import { setRaisedHand } from './meActions';
-import { batch } from 'react-redux';
 
 const logger = new Logger('listenerActions');
 
@@ -190,11 +188,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			case 'p': {
 				const participantListOpen = getState().ui.participantListOpen;
 
-				batch(() => {
-					dispatch(drawerActions.toggle());
-					dispatch(drawerActions.setTab('users'));
-					dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
-				});
+				dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
 
 				break;
 			}
@@ -202,11 +196,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			case 'c': {
 				const chatOpen = getState().ui.chatOpen;
 
-				batch(() => {
-					dispatch(drawerActions.toggle());
-					dispatch(drawerActions.setTab('chat'));
-					dispatch(uiActions.setUi({ chatOpen: !chatOpen }));
-				});
+				dispatch(uiActions.setUi({ chatOpen: !chatOpen }));
 
 				break;
 			}

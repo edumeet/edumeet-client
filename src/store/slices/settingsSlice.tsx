@@ -6,12 +6,13 @@ import { producersActions } from './producersSlice';
 
 export interface SettingsState {
 	displayName: string;
-	audioOnly: boolean;
 	lastN: number;
 	mirroredSelfView: boolean;
 	hideNonVideo: boolean;
 	hideSelfView: boolean;
-	controlButtonsBar: boolean;
+	verticalDivide: boolean;
+	dynamicWidth: boolean;
+	confirmExit: boolean;
 	aspectRatio: number;
 	selectedAudioDevice?: string;
 	selectedVideoDevice?: string;
@@ -44,7 +45,6 @@ type SettingsUpdate = Partial<SettingsState>;
 
 const initialState: SettingsState = {
 	displayName: 'Guest',
-	audioOnly: false,
 	mirroredSelfView: true,
 	resolution: edumeetConfig.resolution,
 	frameRate: edumeetConfig.frameRate,
@@ -54,7 +54,9 @@ const initialState: SettingsState = {
 	lastN: edumeetConfig.lastN,
 	hideNonVideo: edumeetConfig.hideNonVideo,
 	hideSelfView: false,
-	controlButtonsBar: edumeetConfig.buttonControlBar,
+	verticalDivide: true,
+	dynamicWidth: true,
+	confirmExit: false,
 	aspectRatio: edumeetConfig.aspectRatio,
 	audioPreset: edumeetConfig.audioPreset,
 	audioPresets: edumeetConfig.audioPresets,
@@ -84,9 +86,6 @@ const settingsSlice = createSlice({
 		setDisplayName: ((state, action: PayloadAction<string>) => {
 			state.displayName = action.payload;
 		}),
-		setAudioOnly: ((state, action: PayloadAction<boolean>) => {
-			state.audioOnly = action.payload;
-		}),
 		setLastN: ((state, action: PayloadAction<number>) => {
 			state.lastN = action.payload;
 		}),
@@ -99,8 +98,14 @@ const settingsSlice = createSlice({
 		setHideSelfView: ((state, action: PayloadAction<boolean>) => {
 			state.hideSelfView = action.payload;
 		}),
-		setSeparateMediaControls: ((state, action: PayloadAction<boolean>) => {
-			state.controlButtonsBar = action.payload;
+		setVerticalDivide: ((state, action: PayloadAction<boolean>) => {
+			state.verticalDivide = action.payload;
+		}),
+		setDynamicWidth: ((state, action: PayloadAction<boolean>) => {
+			state.dynamicWidth = action.payload;
+		}),
+		setConfirmExit: ((state, action: PayloadAction<boolean>) => {
+			state.confirmExit = action.payload;
 		}),
 		setAspectRatio: ((state, action: PayloadAction<number>) => {
 			state.aspectRatio = action.payload;

@@ -36,23 +36,6 @@ test('Should set name on join', async () => {
 	expect(store.getState().settings.displayName).toBe('MyName');
 });
 
-test('Should use audio-only when checked', async () => {
-	// eslint-disable-next-line
-	const { store } = require('../../store/store');
-
-	render(<Provider store={store} ><Join roomId='test' /></Provider>);
-
-	await act(() => Promise.resolve());
-	const audioOnlySwitch = screen.getByTestId('audioonly-switch').querySelector('input') as HTMLInputElement;
-	const joinBtn = screen.getByTestId('join-button') as HTMLButtonElement;
-
-	expect(store.getState().settings.audioOnly).toBe(false);
-	fireEvent.click(audioOnlySwitch);
-	expect(audioOnlySwitch).toBeChecked();
-	fireEvent.click(joinBtn);
-	expect(store.getState().settings.audioOnly).toBe(true);
-});
-
 test('Should push url state to history on headless', async () => {
 	// eslint-disable-next-line
 	const { store } = require('../../store/store');

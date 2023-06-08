@@ -19,18 +19,12 @@ const roomSessionsSelect: Selector<Record<string, RoomSession>> = (state) => sta
 const peersSelector: Selector<Record<string, Peer>> = (state) => state.peers;
 const sessionIdSelector: Selector<string> = (state) => state.me.sessionId;
 const lobbyPeersSelector: Selector<LobbyPeer[]> = (state) => state.lobbyPeers;
-const unreadMessages: Selector<number> = (state) => state.drawer.unreadMessages;
-const unreadFiles: Selector<number> = (state) => state.drawer.unreadFiles;
 const lastNSelector: Selector<number> = (state) => state.settings.lastN;
 const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNonVideo;
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
 
 export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
-export const controlButtonsVisibleSelector: Selector<boolean> = (state) =>
-	state.settings.controlButtonsBar ||
-	state.settings.hideSelfView ||
-	isMobileSelector(state);
 
 /**
  * Returns the peers as an array.
@@ -342,22 +336,6 @@ export const lobbyPeersLengthSelector = createSelector(
 export const raisedHandsSelector = createSelector(
 	peersArraySelector,
 	(peers) => peers.reduce((a, b) => (a + (b.raisedHand ? 1 : 0)), 0)
-);
-
-/**
- * Returns the number of notifications that is a sum of:
- * 1. Number of unread chat messages
- * 2. Number of unviewed files
- * 3. Number of peers that have raised their hand
- * 
- * @returns {number} the number of notifications.
- */
-export const unreadSelector = createSelector(
-	unreadMessages,
-	unreadFiles,
-	raisedHandsSelector,
-	(messages, files, raisedHands) =>
-		messages + files + raisedHands
 );
 
 /**

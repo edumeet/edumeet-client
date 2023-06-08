@@ -13,20 +13,11 @@ import ControlButtonsBar from '../../components/controlbuttonsbar/ControlButtons
 import Help from '../../components/helpdialog/HelpDialog';
 import MainContent from '../../components/maincontent/MainContent';
 import HelpButton from '../../components/controlbuttons/HelpButton';
-import { styled } from '@mui/material/styles';
-import { Box } from '@mui/material';
-
-const HelpContainer = styled(Box)(({ theme }) => ({
-	position: 'absolute',
-	bottom: theme.spacing(1),
-	right: theme.spacing(1),
-	color: 'white',
-}));
 
 const Room = (): JSX.Element => {
 	const [ isFullscreen, setFullscreen ] = useState(false);
 
-	usePrompt(true);
+	usePrompt();
 
 	useEffect(() => {
 		if (fscreen.fullscreenEnabled)
@@ -64,9 +55,7 @@ const Room = (): JSX.Element => {
 			<Help />
 			<FilesharingDialog />
 			<ExtraVideoDialog />
-			<HelpContainer>
-				<HelpButton type='iconbutton' />
-			</HelpContainer>
+			<HelpButton type='iconbutton' />
 		</>
 	);
 };

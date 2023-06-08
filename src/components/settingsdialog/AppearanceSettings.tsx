@@ -10,10 +10,10 @@ import {
 	hideNoVideoParticipantsLabel,
 	hideSelfViewLabel,
 	mirroredSelfViewLabel,
-	controlButtonsBarLabel,
 	enableNotificationSoundsLabel,
+	enableVerticallyStackedSidePanels,
+	enableConfirmOnExit,
 } from '../translated/translatedComponents';
-import { isMobileSelector } from '../../store/selectors';
 
 const AppearanceSettings = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -21,10 +21,10 @@ const AppearanceSettings = (): JSX.Element => {
 		mirroredSelfView,
 		hideNonVideo,
 		hideSelfView,
-		controlButtonsBar,
-		notificationSounds
+		notificationSounds,
+		verticalDivide,
+		confirmExit,
 	} = useAppSelector((state) => state.settings);
-	const isMobile = useAppSelector(isMobileSelector);
 
 	const handleChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -59,19 +59,6 @@ const AppearanceSettings = (): JSX.Element => {
 					}
 					label={hideSelfViewLabel()}
 				/>
-				{ !isMobile && (
-					<FormControlLabel
-						control={
-							<Switch
-								disabled={hideSelfView}
-								checked={controlButtonsBar}
-								onChange={(event) => handleChange(event, 'controlButtonsBar')}
-								inputProps={{ 'aria-label': 'controlled' }}
-							/>
-						}
-						label={controlButtonsBarLabel()}
-					/>
-				) }
 				<FormControlLabel
 					control={
 						<Switch
@@ -91,6 +78,26 @@ const AppearanceSettings = (): JSX.Element => {
 						/>
 					}
 					label={ enableNotificationSoundsLabel() }
+				/>
+				<FormControlLabel
+					control={
+						<Switch
+							checked={ verticalDivide }
+							onChange={ (event) => handleChange(event, 'verticalDivide') }
+							inputProps={ { 'aria-label': 'controlled' } }
+						/>
+					}
+					label={ enableVerticallyStackedSidePanels() }
+				/>
+				<FormControlLabel
+					control={
+						<Switch
+							checked={ confirmExit }
+							onChange={ (event) => handleChange(event, 'confirmExit') }
+							inputProps={ { 'aria-label': 'controlled' } }
+						/>
+					}
+					label={ enableConfirmOnExit() }
 				/>
 			</FormGroup>
 		</>

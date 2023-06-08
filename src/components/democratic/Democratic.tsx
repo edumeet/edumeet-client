@@ -1,25 +1,17 @@
 import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
-import { controlButtonsVisibleSelector, spotlightPeersSelector, videoBoxesSelector } from '../../store/selectors';
+import { spotlightPeersSelector, videoBoxesSelector } from '../../store/selectors';
 import Me from '../me/Me';
 import Peer from '../peer/Peer';
 
-interface DemocraticProps {
-	controlbuttons?: number;
-}
-
-const DemocraticDiv = styled('div')<DemocraticProps>(({
-	theme,
-	controlbuttons
+const DemocraticDiv = styled('div')(({
+	theme
 }) => ({
 	width: '100%',
-	height: '100%',
+	height: 'calc(100% - 64px)',
+	marginBottom: 64,
 	display: 'flex',
-	...(controlbuttons && {
-		marginBottom: 64,
-		height: 'calc(100% - 64px)',
-	}),
 	flexDirection: 'row',
 	gap: theme.spacing(1),
 	flexWrap: 'wrap',
@@ -27,15 +19,14 @@ const DemocraticDiv = styled('div')<DemocraticProps>(({
 	justifyContent: 'center',
 	alignItems: 'center',
 	alignContent: 'center',
-	transition: 'margin-left 0.5s ease-in-out'
 }));
 
 const Democratic = (): JSX.Element => {
 	const theme = useTheme();
 	const peersRef = useRef<HTMLDivElement>(null);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
-	const controlButtonsBar = useAppSelector(controlButtonsVisibleSelector);
 	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
+	const verticalDivide = useAppSelector((state) => state.settings.verticalDivide);
 	const chatOpen = useAppSelector((state) => state.ui.chatOpen);
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 	const boxes = useAppSelector(videoBoxesSelector);
@@ -46,8 +37,7 @@ const Democratic = (): JSX.Element => {
 	const updateDimensions = (): void => {
 		const { current } = peersRef;
 
-		if (!current || !boxes)
-			return;
+		if (!current || !boxes) return;
 
 		const width = current.clientWidth;
 		const height = current.clientHeight;
@@ -75,8 +65,7 @@ const Democratic = (): JSX.Element => {
 
 			space = (height - verticalGaps) - (y * (rows));
 
-			if (space < y)
-				break;
+			if (space < y) break;
 		}
 
 		const { peerWidth, peerHeight } = dimensions;
@@ -94,16 +83,10 @@ const Democratic = (): JSX.Element => {
 
 		const resizeListener = () => {
 			clearTimeout(timeoutId);
-
-			timeoutId = setTimeout(() => {
-				setWindowSize(window.innerWidth + window.innerHeight);
-	
-				timeoutId = undefined;
-			}, 50);
+			timeoutId = setTimeout(() => setWindowSize(window.innerWidth + window.innerHeight), 50);
 		};
 
 		window.addEventListener('resize', resizeListener);
-
 		updateDimensions();
 
 		return () => {
@@ -115,10 +98,10 @@ const Democratic = (): JSX.Element => {
 	useEffect(() => updateDimensions(), [
 		boxes,
 		windowSize,
-		controlButtonsBar,
 		hideSelfView,
 		chatOpen,
-		participantListOpen
+		participantListOpen,
+		verticalDivide,
 	]);
 
 	const style = {
@@ -127,15 +110,12 @@ const Democratic = (): JSX.Element => {
 	};
 
 	return (
-		<DemocraticDiv
-			ref={peersRef}
-			controlbuttons={(controlButtonsBar) ? 1 : 0}
-		>
+		<DemocraticDiv ref={peersRef}>
 			<Me style={style} />
-			{ spotlightPeers.map((peer) => (
+			{ spotlightPeers.map((peerId) => (
 				<Peer
-					key={peer}
-					id={peer}
+					key={peerId}
+					id={peerId}
 					style={style}
 				/>
 			))}

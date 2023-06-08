@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { intl } from '../../utils/intlManager';
 
 export const noLabel = (): string => intl.formatMessage({
@@ -126,11 +125,6 @@ export const leaveRoomLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Leaving the room'
 });
 
-export const controlButtonsBarLabel = (): string => intl.formatMessage({
-	id: 'settings.buttonControlBar',
-	defaultMessage: 'Separate media controls'
-});
-
 export const showSelfViewLabel = (): string => intl.formatMessage({
 	id: 'room.showSelfView',
 	defaultMessage: 'Show self view video'
@@ -200,11 +194,6 @@ export const joinLabel = (): string => intl.formatMessage({
 export const moreActionsLabel = (): string => intl.formatMessage({
 	id: 'label.moreActions',
 	defaultMessage: 'More actions'
-});
-
-export const openDrawerLabel = (): string => intl.formatMessage({
-	id: 'label.openDrawer',
-	defaultMessage: 'Open drawer'
 });
 
 export const showParticipantsLabel = (): string => intl.formatMessage({
@@ -554,19 +543,14 @@ export const unMuteParticipantVideoLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Unmute video'
 });
 
-export const mutedPTTLabel = (): ReactNode => intl.formatMessage({
+export const mutedPTTLabel = (): string => intl.formatMessage({
 	id: 'me.mutedPTT',
-	defaultMessage: 'You are muted{br}hold down SPACE-BAR to talk'
-}, { br: <br /> });
+	defaultMessage: 'You are muted, hold down SPACE-BAR to talk'
+});
 
 export const usePTTLabel = (): string => intl.formatMessage({
 	id: 'label.usePTT',
 	defaultMessage: 'Use Push-to-Talk'
-});
-
-export const audioOnlyModeLabel = (): string => intl.formatMessage({
-	id: 'label.audioOnlyMode',
-	defaultMessage: 'Use audio-only mode'
 });
 
 export const audioSettingsLabel = (): string => intl.formatMessage({
@@ -702,4 +686,14 @@ export const showStatsLabel = (): string => intl.formatMessage({
 export const enableNotificationSoundsLabel = (): string => intl.formatMessage({
 	id: 'settings.notificationSounds',
 	defaultMessage: 'Notification sounds'
+});
+
+export const enableVerticallyStackedSidePanels = (): string => intl.formatMessage({
+	id: 'settings.verticallyStackedSidePanels',
+	defaultMessage: 'Vertically stacked side panels'
+});
+
+export const enableConfirmOnExit = (): string => intl.formatMessage({
+	id: 'settings.confirmOnExit',
+	defaultMessage: 'Confirm on exit'
 });

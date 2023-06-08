@@ -20,13 +20,14 @@ const WindowedVideo = (): JSX.Element => {
 					aspectRatio={aspectRatio}
 				>
 					<VideoBox
+						roundedCorners={false}
 						sx={{
 							display: 'flex',
 							width: '100%',
 							height: '100%'
 						}}
 					>
-						<VideoView consumer={consumer} contain />
+						<VideoView consumer={consumer} contain roundedCorners={false} />
 					</VideoBox>
 				</SeparateWindow>
 			))}

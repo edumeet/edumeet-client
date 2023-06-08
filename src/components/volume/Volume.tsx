@@ -12,41 +12,27 @@ type VolumeBarProps = {
 	volume?: number;
 }
 
-const VolumeContainer = styled('div')<VolumeBarProps>(({ small }) => ({
+const VolumeContainer = styled('div')<VolumeBarProps>(({ theme, small }) => ({
 	position: small ? 'relative' : 'absolute',
 	display: 'flex',
-	flexDirection: small ? 'row' : 'column',
-	...(small && {
-		float: 'right',
-		backgroundSize: '75%'
-	}),
-	justifyContent: small ? 'flex-start' : 'center',
-	width: small ? '1vmin' : 10,
-	...(!small && {
-		top: 0,
-		bottom: 0,
-		right: 2,
-		alignItems: 'center'
-	}),
+	width: theme.spacing(1),
+	top: 0,
+	bottom: 0,
+	right: 2,
+	alignItems: 'center',
 	zIndex: 21
 }));
 
 const VolumeBar = styled('div')<VolumeBarProps>(({ small, volume = 0 }) => ({
 	width: small ? 3 : 6,
-	borderRadius: small ? 2 : 6,
-	transitionDuration: '0.25s',
-	transitionProperty: small ? 'opacity, background-color' : 'height background-color',
+	borderRadius: 6,
+	transitionDuration: '0.10s',
+	transitionProperty: small ? 'height' : 'height, background-color',
 	...(small ? {
-		backgroundSize: '75%',
-		backgroundRepeat: 'no-repeat',
 		backgroundColor: 'rgba(0, 0, 0, 1)',
-		position: 'absolute',
-		top: '50%',
-		transform: 'translateY(-50%)',
-		height: `${volume / 5}vh`,
+		height: volume * 3,
 	} : {
-		background: 'rgba(yellow, 0.65)',
-		backgroundColor: `rgba(255, ${255 - (23 * volume)}, 0, 0.65)`,
+		backgroundColor: `rgba(${100 + (20 * volume)}, ${255 - (20 * volume)}, 0, 0.65)`,
 		height: `${volume * 10}%`,
 	})
 }));

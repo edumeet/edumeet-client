@@ -33,6 +33,7 @@ import { Peer } from './slices/peersSlice';
 import type { RootState, AppDispatch } from './store';
 import { LeavePromptContext } from './store';
 import { Transcript } from '../services/mediaService';
+import { leaveRoom } from './actions/roomActions';
 
 /**
  * Hook to access the redux dispatch function.
@@ -165,16 +166,19 @@ type NavigationContextWithBlock = ContextType<typeof NavigationContext> & {
 	navigator: Navigator;
 };
 
-export const useBlocker = (blocker: Blocker, when = true): void => {
+export const useBlocker = (blocker: Blocker): void => {
 	const { navigator } = useContext(
 		NavigationContext
 	) as NavigationContextWithBlock;
 
-	useEffect(() => {
-		if (!when)
-			return;
+	const confirmExit = useAppSelector((store) => store.settings.confirmExit);
+	const previousConfirmExit = useRef(confirmExit);
+	const dispatch = useAppDispatch();
 
-		const unblock = navigator.block((tx: Transition) => {
+	previousConfirmExit.current = confirmExit;
+
+	useEffect(() => {
+		const unblock = confirmExit ? navigator.block((tx: Transition) => {
 			const autoUnblockingTx = {
 				...tx,
 				retry() {
@@ -184,10 +188,10 @@ export const useBlocker = (blocker: Blocker, when = true): void => {
 			};
 
 			blocker(autoUnblockingTx);
-		});
+		}) : () => !confirmExit && dispatch(leaveRoom());
 
 		return unblock;
-	}, [ navigator, blocker, when ]);
+	}, [ navigator, blocker, confirmExit ]);
 };
 
 /**
@@ -196,7 +200,7 @@ export const useBlocker = (blocker: Blocker, when = true): void => {
  * @param when - Whether to show the leave prompt or not.
  * @returns {void}
  */
-export const usePrompt = (when = true): void => {
+export const usePrompt = (): void => {
 	const showPrompt = useContext(LeavePromptContext);
 
 	const blocker = useCallback(
@@ -211,7 +215,7 @@ export const usePrompt = (when = true): void => {
 		[ showPrompt ]
 	);
 
-	return useBlocker(blocker, when);
+	return useBlocker(blocker);
 };
 
 type ResultBox<T> = { v: T }
