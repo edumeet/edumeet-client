@@ -2,7 +2,7 @@ import { AppBar, Toolbar, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { useAppSelector, usePermissionSelector } from '../../store/hooks';
-import { lobbyPeersLengthSelector, roomSessionCreationTimestampSelector } from '../../store/selectors';
+import { isMobileSelector, lobbyPeersLengthSelector, roomSessionCreationTimestampSelector } from '../../store/selectors';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { permissions } from '../../utils/roles';
 import LobbyButton from '../controlbuttons/LobbyButton';
@@ -37,20 +37,25 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 }));
 
 const LogoImg = styled('img')(({ theme }) => ({
+	display: 'none',
 	marginLeft: theme.spacing(1),
 	marginRight: theme.spacing(1),
 	maxWidth: 200,
 	maxHeight: 32,
+	[theme.breakpoints.up('sm')]: {
+		display: 'block'
+	}
 }));
 
 interface TopBarDivProps {
 	gap?: number;
 	grow?: number;
+	margin?: number;
 }
 
-const TopBarDiv = styled('div')<TopBarDivProps>(({ theme, gap = 0, grow = 0 }) => ({
+const TopBarDiv = styled('div')<TopBarDivProps>(({ theme, gap = 0, grow = 0, margin = 0 }) => ({
 	display: 'flex',
-	marginRight: theme.spacing(2),
+	marginRight: theme.spacing(margin),
 	gap: theme.spacing(gap),
 	flexGrow: grow
 }));
@@ -68,6 +73,7 @@ const TopBar = ({
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
 	const roomCreationTimestamp = useAppSelector(roomSessionCreationTimestampSelector);
 	const [ meetingDuration, setMeetingDuration ] = useState<number>(0);
+	const isMoile = useAppSelector(isMobileSelector);
 
 	useEffect(() => {
 		if (roomCreationTimestamp) {
@@ -98,12 +104,12 @@ const TopBar = ({
 					</Typography>
 				}
 				<TopBarDiv gap={1}>
-					<AccessTime />
+					{ !isMoile && <AccessTime /> }
 					<Typography>{ formatDuration(meetingDuration) }</Typography>
 				</TopBarDiv>
 				<TopBarDiv grow={1} />
-				<TopBarDiv>
-					{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
+				<TopBarDiv margin={2}>
+					{ !isMoile && canTranscribe && <TranscriptionButton type='iconbutton' /> }
 					{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
 					<SettingsButton type='iconbutton' />
 					{ canLock && <LockButton type='iconbutton' /> }

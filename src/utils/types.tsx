@@ -88,7 +88,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		videoShadow: 'rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px',
 		videoAvatarImage: 'images/buddy.svg',
 		videoRoundedCorners: true,
-		chatColor: 'rgba(224, 224, 224, 0.52)'
+		chatColor: 'rgba(255, 255, 255, 0.4)'
 	},
 	observertc: {
 		collectingPeriodInMs: 5000,

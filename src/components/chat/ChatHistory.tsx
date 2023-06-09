@@ -57,6 +57,7 @@ const ChatHistory = (): JSX.Element => {
 				<ScrollToBottom
 					variant='contained'
 					onClick={() => chatHistoryRef.current?.scrollToBottom()}
+					size='small'
 				>
 					{ chatScrollToBottomLabel() }
 				</ScrollToBottom>

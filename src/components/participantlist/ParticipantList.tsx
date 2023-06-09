@@ -19,7 +19,7 @@ import ListBreakoutRoom from '../breakoutrooms/ListBreakoutRoom';
 const ParticipantListDiv = styled(Box)(({ theme }) => ({
 	width: '100%',
 	overflowY: 'auto',
-	padding: theme.spacing(1)
+	padding: theme.spacing(1),
 }));
 
 const ListHeader = styled(Typography)({

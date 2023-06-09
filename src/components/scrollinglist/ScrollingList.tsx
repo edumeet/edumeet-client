@@ -2,13 +2,11 @@ import { styled } from '@mui/material';
 import { createRef, PureComponent, ReactNode } from 'react';
 
 const ScrollingListDiv = styled('div')(({ theme }) => ({
-	position: 'relative',
 	display: 'flex',
+	flexGrow: 1,
 	flexDirection: 'column',
-	maxHeight: 'inherit',
-	height: 'inherit',
 	overflowY: 'auto',
-	padding: theme.spacing(1)
+	padding: theme.spacing(1),
 }));
 
 const SCROLL_OFFSET_TRIGGER = 2;

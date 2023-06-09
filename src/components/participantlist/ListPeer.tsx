@@ -26,6 +26,7 @@ const PeerDiv = styled(Paper)(({ theme }) => ({
 	padding: theme.spacing(0.5),
 	marginTop: theme.spacing(0.5),
 	alignItems: 'center',
+	backgroundColor: theme.chatColor,
 }));
 
 const PeerInfoDiv = styled(Box)(({ theme }) => ({

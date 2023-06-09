@@ -86,6 +86,7 @@ const SideContainer = styled(Paper)<SideContainerProps>(({ height, width }) => (
 	width,
 	overflowY: 'auto',
 	borderRadius: 10,
+	backgroundColor: 'rgba(255, 255, 255, 0.7)',
 }));
 
 const MainContent = (): JSX.Element => {

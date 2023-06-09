@@ -4,6 +4,8 @@ import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import SeparateWindow from '../separatewindow/SeparateWindow';
 import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
+import { useEffect, useState } from 'react';
+import { StateConsumer } from '../../store/slices/consumersSlice';
 
 const WindowedVideo = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -11,9 +13,15 @@ const WindowedVideo = (): JSX.Element => {
 	const consumers = useAppSelector(windowedConsumersSelector);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 
+	const [ consumersToRender, setConsumersToRender ] = useState<StateConsumer[]>(consumers);
+
+	useEffect(() => {
+		setTimeout(() => setConsumersToRender(consumers), 0);
+	}, [ consumers ]);
+
 	return (
 		<>
-			{ consumers.map((consumer) => (
+			{ consumersToRender.map((consumer) => (
 				<SeparateWindow
 					key={consumer.id}
 					onClose={() => dispatch(roomSessionsActions.removeWindowedConsumer({ sessionId, consumerId: consumer.id }))}

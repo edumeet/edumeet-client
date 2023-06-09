@@ -23,8 +23,10 @@ interface AccordionProps {
 }
 
 const StyledAccordion = styled(Accordion)<AccordionProps>(({
+	theme,
 	insession
 }) => ({
+	backgroundColor: theme.chatColor,
 	...(insession && {
 		backgroundColor: 'lightgray',
 	})

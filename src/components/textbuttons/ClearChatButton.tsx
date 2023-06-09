@@ -18,6 +18,7 @@ const ClearChatButton = (): JSX.Element => {
 			color='error'
 			variant='contained'
 			onClick={handleClearChat}
+			size='small'
 		>
 			{ clearChatLabel() }
 		</Button>
