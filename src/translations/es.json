@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "La sala ahora es privada",
-	"room.locketWait": "La sala es privada - espere hasta que alguien le invite ...",
+	"room.lockedWait": "La sala es privada - espere hasta que alguien le invite ...",
 	"room.loggedIn": "Ha iniciado sesión",
 	"room.loggedOut": "Ha cerrado su sesión",
 	"room.loweredHand": null,

@@ -112,7 +112,7 @@ export const promoteFromLobbyLabel = (): string => intl.formatMessage({
 
 export const roomLockedLabel = (): string => intl.formatMessage({
 	id: 'room.lockedWait',
-	defaultMessage: 'The room is locked - hang on until somebody lets you in ...'
+	defaultMessage: 'Locked - wait for the host to let you in'
 });
 
 export const confirmLeaveLabel = (): string => intl.formatMessage({

@@ -148,7 +148,7 @@
 	"room.localRecordingStarted": "{displayName} rozpoczął nagrywanie lokalne",
 	"room.localRecordingStopped": "{displayName} zatrzymał nagrywanie lokalne",
 	"room.locked": "Pokój jest zakluczony",
-	"room.locketWait": "Pokój jest zakluczony - proszę poczekać na otwarcie...",
+	"room.lockedWait": "Pokój jest zakluczony - proszę poczekać na otwarcie...",
 	"room.loggedIn": "Zalogowano",
 	"room.loggedOut": "Wylogowano",
 	"room.loweredHand": "{displayName} opuścił rękę",

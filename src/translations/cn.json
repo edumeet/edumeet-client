@@ -145,7 +145,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "房间已锁定",
-	"room.locketWait": "房间已锁定-挂起，直到有人允许您进入...",
+	"room.lockedWait": "房间已锁定-挂起，直到有人允许您进入...",
 	"room.loggedIn": "您已登录",
 	"room.loggedOut": "您已登出",
 	"room.loweredHand": null,

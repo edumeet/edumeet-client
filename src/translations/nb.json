@@ -145,7 +145,7 @@
 	"room.localRecordingStarted": "Lokalt opptak startet",
 	"room.localRecordingStopped": "Lokalt opptak stoppet",
 	"room.locked": "Møtet er låst",
-	"room.locketWait": "Møtet er låst, vent til noen slipper deg inn",
+	"room.lockedWait": "Møtet er låst, vent til noen slipper deg inn",
 	"room.loggedIn": "Du er logget inn",
 	"room.loggedOut": "Du er logget ut",
 	"room.loweredHand": "{displayName} tok ned hånden",

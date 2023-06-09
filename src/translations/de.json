@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": "{displayName} hat lokale Aufnahme gestartet",
 	"room.localRecordingStopped": "{displayname} hat lokale Aufnahme gestoppt",
 	"room.locked": "Raum wurde abgeschlossen",
-	"room.locketWait": "Der Raum ist abgeschlossen - warte, bis dich jemand rein lässt...",
+	"room.lockedWait": "Der Raum ist abgeschlossen - warte, bis dich jemand rein lässt...",
 	"room.loggedIn": "Angemeldet",
 	"room.loggedOut": "Abgemeldet",
 	"room.loweredHand": "{displayName} senkt die Hand",

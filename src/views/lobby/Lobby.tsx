@@ -1,35 +1,24 @@
 import { AccountCircle } from '@mui/icons-material';
-import { Typography } from '@mui/material';
 import { useState } from 'react';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
-import PrecallDialog from '../../components/precalldialog/PrecallDialog';
+import GenericDialog from '../../components/genericdialog/GenericDialog';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import {
-	disableAllMediaLabel,
-	enableAllMediaLabel,
-	enableCameraLabel,
-	enableMicrophoneLabel,
-	roomLockedLabel,
-	yourNameLabel
-} from '../../components/translated/translatedComponents';
+import { roomLockedLabel, yourNameLabel } from '../../components/translated/translatedComponents';
 import { setDisplayName } from '../../store/actions/meActions';
 import {
 	useAppDispatch,
 	useAppSelector,
 	usePrompt,
 } from '../../store/hooks';
+import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 
 const Lobby = (): JSX.Element => {
 	usePrompt();
 
 	const dispatch = useAppDispatch();
 	const displayName = useAppSelector((state) => state.settings.displayName);
-	const {
-		previewMicTrackId,
-		previewWebcamTrackId,
-	} = useAppSelector((state) => state.me);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
 
 	const handleDisplayNameChange = () => {
@@ -39,20 +28,13 @@ const Lobby = (): JSX.Element => {
 	};
 
 	return (
-		<PrecallDialog
+		<GenericDialog
+			title={ <PrecallTitle /> }
 			content={
 				<>
-					{ roomLockedLabel() }
 					<MediaPreview />
 					<AudioInputChooser preview />
 					<VideoInputChooser preview />
-					<Typography variant='h5'>
-						{ (previewMicTrackId && previewWebcamTrackId) ?
-							enableAllMediaLabel() : previewMicTrackId ?
-								enableMicrophoneLabel() : previewWebcamTrackId ?
-									enableCameraLabel() : disableAllMediaLabel()
-						}
-					</Typography>
 					<TextInputField
 						label={yourNameLabel()}
 						value={localDisplayName ?? 'Guest'}
@@ -62,6 +44,7 @@ const Lobby = (): JSX.Element => {
 					/>
 				</>
 			}
+			actions={roomLockedLabel()}
 		/>
 	);
 };

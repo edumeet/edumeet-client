@@ -1,17 +1,10 @@
-import {
-	Button,
-	DialogActions,
-	DialogTitle,
-} from '@mui/material';
+import { Button } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions } from '../../store/slices/uiSlice';
-import StyledDialog from '../dialog/StyledDialog';
-import {
-	closeLabel,
-	helpLabel,
-} from '../translated/translatedComponents';
+import { closeLabel } from '../translated/translatedComponents';
 import ShortcutKeys from './ShortcutKeys';
+import GenericDialog from '../genericdialog/GenericDialog';
 
 const HelpDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -24,24 +17,22 @@ const HelpDialog = (): JSX.Element => {
 	};
 
 	return (
-		<StyledDialog
+		<GenericDialog
 			open={ helpOpen }
 			onClose={ handleCloseHelp }
-			maxWidth='md'
-		>
-			<DialogTitle>
-				{ helpLabel() }
-			</DialogTitle>
-			<ShortcutKeys />
-			<DialogActions>
+			maxWidth='xs'
+			content={ <ShortcutKeys /> }
+			actions={
 				<Button
 					onClick={ handleCloseHelp }
 					startIcon={ <Close /> }
+					variant='contained'
+					size='small'
 				>
 					{ closeLabel() }
 				</Button>
-			</DialogActions>
-		</StyledDialog>
+			}
+		/>
 	);
 };
 

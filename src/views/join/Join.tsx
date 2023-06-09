@@ -1,37 +1,24 @@
 import { useEffect, useState } from 'react';
-import {
-	Button,
-	Typography,
-} from '@mui/material';
+import { Button } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-	disableAllMediaLabel,
-	enableAllMediaLabel,
-	enableCameraLabel,
-	enableMicrophoneLabel,
-	joinLabel,
-	yourNameLabel
-} from '../../components/translated/translatedComponents';
+import { joinLabel, yourNameLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
 import { updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
-import PrecallDialog from '../../components/precalldialog/PrecallDialog';
+import GenericDialog from '../../components/genericdialog/GenericDialog';
 import { roomActions } from '../../store/slices/roomSlice';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { connect } from '../../store/actions/roomActions';
+import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 
 interface JoinProps {
 	roomId: string;
 }
 
 const Join = ({ roomId }: JoinProps): JSX.Element => {
-	const {
-		previewMicTrackId,
-		previewWebcamTrackId,
-	} = useAppSelector((state) => state.me);
 	const dispatch = useAppDispatch();
 
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
@@ -84,19 +71,13 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	}, []);
 
 	return (
-		<PrecallDialog
+		<GenericDialog
+			title={ <PrecallTitle /> }
 			content={
 				<>
 					<MediaPreview />
 					<AudioInputChooser preview />
 					<VideoInputChooser preview />
-					<Typography variant='h5'>
-						{ (previewMicTrackId && previewWebcamTrackId) ?
-							enableAllMediaLabel() : previewMicTrackId ?
-								enableMicrophoneLabel() : previewWebcamTrackId ?
-									enableCameraLabel() : disableAllMediaLabel()
-						}
-					</Typography>
 					<TextInputField
 						label={yourNameLabel()}
 						value={name}
@@ -112,10 +93,9 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 				<Button
 					onClick={handleJoin}
 					variant='contained'
-					color='primary'
 					disabled={!name || joinInProgress}
-					fullWidth
 					data-testid='join-button'
+					size='small'
 				>
 					{ joinLabel() }
 				</Button>

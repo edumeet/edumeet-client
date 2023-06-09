@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "Oda kilitlendi",
-	"room.locketWait": "Oda kilitli - birisi sizi içeri alana kadar bekleyiniz ...",
+	"room.lockedWait": "Oda kilitli - birisi sizi içeri alana kadar bekleyiniz ...",
 	"room.loggedIn": "Giriş yaptınız",
 	"room.loggedOut": "Çıkış yaptınız",
 	"room.loweredHand": "{displayName} elini indirdi",

@@ -145,7 +145,7 @@
 	"room.localRecordingStarted": "{displayName} started local recording",
 	"room.localRecordingStopped": "{displayName} stopped local recording",
 	"room.locked": "Room is now locked",
-	"room.locketWait": "The room is locked - hang on until somebody lets you in ...",
+	"room.lockedWait": "Locked - wait for the host to let you in",
 	"room.loggedIn": "You are logged in",
 	"room.loggedOut": "You are logged out",
 	"room.loweredHand": "{displayName} put their hand down",

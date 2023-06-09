@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "Camera e blocată",
-	"room.locketWait": "Camera este închisă - așteaptă până când cineva te lasă să intri ...",
+	"room.lockedWait": "Camera este închisă - așteaptă până când cineva te lasă să intri ...",
 	"room.loggedIn": "Ești autentificat",
 	"room.loggedOut": "Ești deconectat",
 	"room.loweredHand": null,

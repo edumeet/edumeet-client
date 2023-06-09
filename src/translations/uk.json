@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "Кімната зараз заблокована",
-	"room.locketWait": "Кімната заблокована - дочекайтеся, поки хтось не впустить вас у ...",
+	"room.lockedWait": "Кімната заблокована - дочекайтеся, поки хтось не впустить вас у ...",
 	"room.loggedIn": "Ви ввійшли в систему",
 	"room.loggedOut": "Ви вийшли з системи",
 	"room.loweredHand": " {displayName} опустив руку",

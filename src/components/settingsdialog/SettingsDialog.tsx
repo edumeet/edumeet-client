@@ -1,15 +1,11 @@
-import { Button, DialogActions, Tab, Tabs } from '@mui/material';
+import { Button, Tab, Tabs } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SettingsTab, uiActions } from '../../store/slices/uiSlice';
-import StyledDialog from '../dialog/StyledDialog';
-import {
-	appearanceSettingsLabel,
-	closeLabel,
-	mediaSettingsLabel,
-} from '../translated/translatedComponents';
+import { appearanceSettingsLabel, closeLabel, mediaSettingsLabel } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import MediaSettings from './MediaSettings';
 import AppearanceSettings from './AppearanceSettings';
+import GenericDialog from '../genericdialog/GenericDialog';
 
 const tabs: SettingsTab[] = [
 	'media',
@@ -28,32 +24,37 @@ const SettingsDialog = (): JSX.Element => {
 	};
 
 	return (
-		<StyledDialog
+		<GenericDialog
 			open={settingsOpen}
 			onClose={handleCloseSettings}
-			maxWidth='xs'
-		>
-			<Tabs
-				value={tabs.indexOf(currentSettingsTab)}
-				onChange={(_event, value) =>
-					dispatch(uiActions.setCurrentSettingsTab(tabs[value]))
-				}
-				variant='fullWidth'
-			>
-				<Tab label={mediaSettingsLabel()} />
-				<Tab label={appearanceSettingsLabel()} />
-			</Tabs>
-			{ currentSettingsTab === 'media' && <MediaSettings /> }
-			{ currentSettingsTab === 'appearance' && <AppearanceSettings /> }
-			<DialogActions>
+			maxWidth='sm'
+			content={
+				<>
+					<Tabs
+						value={tabs.indexOf(currentSettingsTab)}
+						onChange={(_event, value) =>
+							dispatch(uiActions.setCurrentSettingsTab(tabs[value]))
+						}
+						variant='fullWidth'
+					>
+						<Tab label={mediaSettingsLabel()} />
+						<Tab label={appearanceSettingsLabel()} />
+					</Tabs>
+					{ currentSettingsTab === 'media' && <MediaSettings /> }
+					{ currentSettingsTab === 'appearance' && <AppearanceSettings /> }
+				</>
+			}
+			actions={
 				<Button
+					variant='contained'
 					onClick={handleCloseSettings}
 					startIcon={<CloseIcon />}
+					size='small'
 				>
 					{ closeLabel()}
 				</Button>
-			</DialogActions>
-		</StyledDialog>
+			}
+		/>
 	);
 };
 

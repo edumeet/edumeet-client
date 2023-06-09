@@ -19,25 +19,18 @@ interface ListFilerProps {
 	isMe: boolean;
 }
 
-const FileDiv = styled('div')(({ theme }) => ({
-	width: '100%',
-	overflow: 'hidden',
+const FileDiv = styled('div')({
 	cursor: 'auto',
 	display: 'flex',
 	flexDirection: 'column',
-	marginTop: theme.spacing(1),
-	marginBottom: theme.spacing(1),
-}));
+});
 
-const FileInfoDiv = styled('div')(({ theme }) => ({
+const FileInfoDiv = styled('div')({
 	display: 'flex',
 	flexDirection: 'row',
-	fontSize: '1rem',
-	paddingLeft: theme.spacing(1),
-	flexGrow: 1,
 	alignItems: 'center',
 	justifyContent: 'space-between',
-}));
+});
 
 const ListFile = ({
 	file,
@@ -114,6 +107,7 @@ const ListFile = ({
 									aria-label={saveFileLabel()}
 									variant='contained'
 									onClick={() => saveSubFile(subFile)}
+									size='small'
 								>
 									{ saveFileLabel() }
 								</Button>
@@ -130,6 +124,7 @@ const ListFile = ({
 							variant='contained'
 							onClick={startTorrent}
 							disabled={startInProgress}
+							size='small'
 						>
 							{ downloadFileLabel() }
 						</Button>

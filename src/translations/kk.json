@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "Бейнеконференцияға қосылу енді жабық",
-	"room.locketWait": "Бейнеконференция жабық - сізді кіргізгенше күте тұрыңыз ...",
+	"room.lockedWait": "Бейнеконференция жабық - сізді кіргізгенше күте тұрыңыз ...",
 	"room.loggedIn": "Сіз кірдіңіз",
 	"room.loggedOut": "Сіз шықтыңыз",
 	"room.loweredHand": "{displayName} қолын түсірді",

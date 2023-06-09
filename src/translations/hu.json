@@ -148,7 +148,7 @@
 	"room.localRecordingStarted": "{displayName} helyi rögzítést indított",
 	"room.localRecordingStopped": "{displayName} leállította a helyi rögzítést",
 	"room.locked": "A konferenciába való belépés letiltva",
-	"room.locketWait": "Az automatikus belépés tiltva van - Várj amíg valaki beenged ...",
+	"room.lockedWait": "Az automatikus belépés tiltva van - Várj amíg valaki beenged ...",
 	"room.loggedIn": "Sikeres belépés",
 	"room.loggedOut": "Sikeres kijelentkezés",
 	"room.loweredHand": "{displayName} leeresztette a kezét",

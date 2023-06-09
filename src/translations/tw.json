@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "會議室已鎖定",
-	"room.locketWait": "會議室已上鎖！ 請等待其他人允許您進入…",
+	"room.lockedWait": "會議室已上鎖！ 請等待其他人允許您進入…",
 	"room.loggedIn": "您已登入",
 	"room.loggedOut": "您已登出",
 	"room.loweredHand": "{displayName} 放下了他的手",

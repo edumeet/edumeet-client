@@ -1,29 +1,18 @@
-import {
-	Button,
-	DialogActions,
-	DialogTitle,
-	styled,
-} from '@mui/material';
+import { Button, styled } from '@mui/material';
 import { useAppDispatch, useAppSelector, usePermissionSelector } from '../../store/hooks';
 import { uiActions } from '../../store/slices/uiSlice';
-import StyledDialog from '../dialog/StyledDialog';
-import {
-	closeLabel,
-	filesharingLabel, shareFileLabel, startingFileSharingLabel
-} from '../translated/translatedComponents';
+import { closeLabel, shareFileLabel, startingFileSharingLabel } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 import { sendFiles } from '../../store/actions/filesharingActions';
 import FilesharingList from './FilesharingList';
 import { permissions } from '../../utils/roles';
-import FilesharingModerator from './FilesharingModerator';
+import GenericDialog from '../genericdialog/GenericDialog';
+import ClearFilesharingButton from '../textbuttons/ClearFilesharingButton';
 
 const ShareLabel = styled('label')(({ theme }) => ({
 	display: 'flex',
 	gap: theme.spacing(1),
-	alignContent: 'center',
-	marginLeft: theme.spacing(1),
-	marginRight: theme.spacing(1),
 }));
 
 const FilesharingDialog = (): JSX.Element => {
@@ -48,42 +37,45 @@ const FilesharingDialog = (): JSX.Element => {
 	};
 
 	return (
-		<StyledDialog
+		<GenericDialog
 			open={filesharingOpen}
 			onClose={handleCloseFilesharing}
-		>
-			<DialogTitle>
-				{ filesharingLabel() }
-			</DialogTitle>
-			{ isFilesharingModerator && <FilesharingModerator /> }
-			<input
-				hidden
-				id='file-input'
-				multiple
-				type='file'
-				onChange={handleAttachFile}
-				disabled={!hasFilesharingPermission || startFileSharingInProgress}
-			/>
-			<ShareLabel htmlFor='file-input'>
-				<Button
-					variant='contained'
-					component='span'
-					disabled={!hasFilesharingPermission || startFileSharingInProgress}
-				>
-					{ shareFileLabel() }
-				</Button>
-				{ startFileSharingInProgress && startingFileSharingLabel() }
-			</ShareLabel>
-			<FilesharingList />
-			<DialogActions>
+			maxWidth='sm'
+			content={
+				<>
+					<input
+						hidden
+						id='file-input'
+						multiple
+						type='file'
+						onChange={handleAttachFile}
+						disabled={!hasFilesharingPermission || startFileSharingInProgress}
+					/>
+					<ShareLabel htmlFor='file-input'>
+						{ isFilesharingModerator && <ClearFilesharingButton /> }
+						<Button
+							variant='contained'
+							component='span'
+							disabled={!hasFilesharingPermission || startFileSharingInProgress}
+						>
+							{ shareFileLabel() }
+						</Button>
+						{ startFileSharingInProgress && startingFileSharingLabel() }
+					</ShareLabel>
+					<FilesharingList />
+				</>
+			}
+			actions={
 				<Button
 					onClick={handleCloseFilesharing}
 					startIcon={<CloseIcon />}
+					variant='contained'
+					size='small'
 				>
 					{ closeLabel() }
 				</Button>
-			</DialogActions>
-		</StyledDialog>
+			}
+		/>
 	);
 };
 

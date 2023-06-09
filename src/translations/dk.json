@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "Mødet er nu låst",
-	"room.locketWait": "Værelset er låst - vent venligst, indtil nogen slipper dig ind ...",
+	"room.lockedWait": "Værelset er låst - vent venligst, indtil nogen slipper dig ind ...",
 	"room.loggedIn": "Du er logget ind",
 	"room.loggedOut": "Du er logget ud",
 	"room.loweredHand": null,

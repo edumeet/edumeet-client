@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "Místnost je uzamčena",
-	"room.locketWait": "Místnost je uzamčena. Počkejte prosím, než budete vpuštěni dovnitř.",
+	"room.lockedWait": "Místnost je uzamčena. Počkejte prosím, než budete vpuštěni dovnitř.",
 	"room.loggedIn": "Jste přihlášeni",
 	"room.loggedOut": "Jste odhlášeni",
 	"room.loweredHand": "{displayName} dal ruku dolů",

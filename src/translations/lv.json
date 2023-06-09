@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "Sapulces telpa tagad ir AIZSLĒGTA",
-	"room.locketWait": "Sapulce telpa ir slēgta. Jūs atrodaties tās uzgaidāmajā telpā. Uzkavējieties, kamēr kāds Jūs sapulcē ielaiž ...",
+	"room.lockedWait": "Sapulce telpa ir slēgta. Jūs atrodaties tās uzgaidāmajā telpā. Uzkavējieties, kamēr kāds Jūs sapulcē ielaiž ...",
 	"room.loggedIn": "Jūs esat ierakstījies (sistēmā)",
 	"room.loggedOut": "Jūs esat izrakstījies (no sistēmas)",
 	"room.loweredHand": "{displayName} nolaida roku",

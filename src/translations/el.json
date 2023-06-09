@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "Το δωμάτιο είναι πλέον κλειδωμένο",
-	"room.locketWait": "Το δωμάτιο είναι κλειδωμένο - περιμένετε μέχρι να σας αφήσει κάποιος ...",
+	"room.lockedWait": "Το δωμάτιο είναι κλειδωμένο - περιμένετε μέχρι να σας αφήσει κάποιος ...",
 	"room.loggedIn": "Είστε συνδεδεμένοι",
 	"room.loggedOut": "Έχετε αποσυνδεθεί",
 	"room.loweredHand": null,

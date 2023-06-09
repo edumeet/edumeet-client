@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "A sala está bloqueada",
-	"room.locketWait": "A sala está bloqueada - aguarde até que alguem o deixe entrar...",
+	"room.lockedWait": "A sala está bloqueada - aguarde até que alguem o deixe entrar...",
 	"room.loggedIn": "Realizou o acesso",
 	"room.loggedOut": "Terminou o acesso",
 	"room.loweredHand": "Mão Abaixada",

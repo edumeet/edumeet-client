@@ -31,6 +31,7 @@ const Democratic = (): JSX.Element => {
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 	const boxes = useAppSelector(videoBoxesSelector);
 	const spotlightPeers = useAppSelector(spotlightPeersSelector);
+	const currentSession = useAppSelector((state) => state.me.sessionId);
 	const [ windowSize, setWindowSize ] = useState(0);
 	const [ dimensions, setDimensions ] = useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
@@ -102,6 +103,7 @@ const Democratic = (): JSX.Element => {
 		chatOpen,
 		participantListOpen,
 		verticalDivide,
+		currentSession,
 	]);
 
 	const style = {

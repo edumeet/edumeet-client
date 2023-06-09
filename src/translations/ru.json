@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "Доступ к видеоконференции закрыт",
-	"room.locketWait": "Видеоконференция закрыта - подождите, пока Вас впустят ...",
+	"room.lockedWait": "Видеоконференция закрыта - подождите, пока Вас впустят ...",
 	"room.loggedIn": "Вы вошли",
 	"room.loggedOut": "Вы вышли",
 	"room.loweredHand": "{displayName} опустил(а) руку",

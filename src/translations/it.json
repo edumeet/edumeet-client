@@ -148,7 +148,7 @@
 	"room.localRecordingStarted": "{displayName} ha iniziato la videoregistrazione",
 	"room.localRecordingStopped": "{displayName} ha sospeso la videoregistrazione",
 	"room.locked": "La stanza è ora bloccata",
-	"room.locketWait": "La stanza è bloccata - resta in attesa finchè qualcuno non ti fa entrare...",
+	"room.lockedWait": "La stanza è bloccata - resta in attesa finchè qualcuno non ti fa entrare...",
 	"room.loggedIn": "Hai eseguito il log in",
 	"room.loggedOut": "Hai eseguito il log out",
 	"room.loweredHand": "{displayName} ha abbassato la mano",

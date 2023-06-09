@@ -148,7 +148,7 @@
 	"room.localRecordingStarted": "{displayName} je pokrenuo lokalno snimanje",
 	"room.localRecordingStopped": "{displayName} je zaustavio snimanje",
 	"room.locked": "Soba je sada zaključana",
-	"room.locketWait": "Soba je zaključana - pričekajte odobrenje...",
+	"room.lockedWait": "Soba je zaključana - pričekajte odobrenje...",
 	"room.loggedIn": "Prijavljeni ste",
 	"room.loggedOut": "Odjavljeni ste",
 	"room.loweredHand": "{displayName} je spustio ruku",

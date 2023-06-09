@@ -144,7 +144,7 @@
 	"room.localRecordingStarted": null,
 	"room.localRecordingStopped": null,
 	"room.locked": "लोगों को जोड़ने पर प्रतिबंद है",
-	"room.locketWait": "लोगों के जुड़ने पर प्रतिबंद हैं - कृपया अनुमति मिलने तक रुकें",
+	"room.lockedWait": "लोगों के जुड़ने पर प्रतिबंद हैं - कृपया अनुमति मिलने तक रुकें",
 	"room.loggedIn": "आप लॉग इन हैं",
 	"room.loggedOut": "आप लॉग आउट हैं",
 	"room.loweredHand": "{displayName} ने हाथ नीचे कीया है ",
