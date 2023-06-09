@@ -10,6 +10,7 @@ interface VideoBoxProps {
 	order?: number;
 	zIndex?: number;
 	activeSpeaker?: boolean;
+	roundedCorners?: boolean;
 	children?: ReactNode;
 	sx?: SxProps<Theme>;
 }
@@ -21,7 +22,8 @@ type StyledVideoBoxProps = {
 	margin?: number;
 	order?: number;
 	zIndex?: number;
-	activeSpeaker?: boolean;
+	activespeaker?: boolean;
+	roundedcorners?: number;
 };
 
 const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
@@ -32,7 +34,8 @@ const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
 	margin,
 	order,
 	zIndex,
-	activeSpeaker,
+	activespeaker,
+	roundedcorners,
 }) => ({
 	position,
 	width,
@@ -40,7 +43,7 @@ const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
 	margin: theme.spacing(margin || 0),
 	order,
 	zIndex,
-	...(activeSpeaker && {
+	...(activespeaker && {
 		border: theme.activeSpeakerBorder
 	}),
 	boxShadow: theme.videoShadow,
@@ -49,7 +52,7 @@ const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
 	backgroundPosition: 'bottom',
 	backgroundSize: 'auto 85%',
 	backgroundRepeat: 'no-repeat',
-	borderRadius: theme.videoRoundedCorners ? theme.spacing(1) : '0',
+	borderRadius: roundedcorners ? theme.videoRoundedCorners ? 10 : '0' : '0',
 }));
 
 const VideoBox = ({
@@ -62,17 +65,19 @@ const VideoBox = ({
 	sx,
 	activeSpeaker,
 	children,
+	roundedCorners = true,
 }: VideoBoxProps): JSX.Element => {
 	return (
 		<StyledVideoBox
 			position={position}
 			width={width}
 			height={height}
-			activeSpeaker={activeSpeaker}
+			activespeaker={activeSpeaker}
 			order={order}
 			margin={margin}
 			zIndex={zIndex}
 			children={children}
+			roundedcorners={roundedCorners ? 1 : 0}
 			sx={sx}
 		/>
 	);

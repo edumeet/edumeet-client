@@ -2,6 +2,7 @@ import { ThemeOptions } from '@mui/material';
 import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
+	managementUrl: undefined,
 	loginEnabled: false,
 	developmentPort: 8443,
 	productionPort: 443,
@@ -15,9 +16,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	aspectRatio: 1.7778, // 16:9
 	simulcast: true,
 	simulcastSharing: false,
-	localRecordingEnabled: false,
-	requestTimeout: 20000,
-	requestRetries: 3,
 	autoGainControl: true,
 	echoCancellation: true,
 	noiseSuppression: true,
@@ -66,10 +64,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'opusMaxPlaybackRate': 48000
 		}
 	},
-	autoMuteThreshold: 4,
-	defaultLayout: 'democratic',
-	buttonControlBar: false,
-	notificationPosition: 'right',
+	buttonControlBar: true,
 	notificationSounds: {
 		'chatMessage': {
 			'play': '/sounds/notify-chat.mp3'
@@ -83,18 +78,17 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		}
 	},
 	title: 'edumeet',
-	supportUrl: 'https://support.example.com',
-	privacyUrl: 'privacy/privacy.html',
 	theme: {
 		background: 'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
-		appBarColor: '#313131',
+		appBarColor: 'rgba(0, 0, 0, 0.4)',
+		appBarFloating: true,
 		logo: 'images/logo.edumeet.svg',
 		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
 		videoBackroundColor: 'rgba(49, 49, 49, 0.9)',
 		videoShadow: 'rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px',
 		videoAvatarImage: 'images/buddy.svg',
 		videoRoundedCorners: true,
-		chatColor: 'rgba(224, 224, 224, 0.52)'
+		chatColor: 'rgba(255, 255, 255, 0.4)'
 	},
 	observertc: {
 		collectingPeriodInMs: 5000,
@@ -103,6 +97,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 };
 
 export interface EdumeetConfig {
+	managementUrl?: string;
 	loginEnabled: boolean;
 	developmentPort: number;
 	productionPort: number;
@@ -116,9 +111,6 @@ export interface EdumeetConfig {
 	aspectRatio: number;
 	simulcast: boolean;
 	simulcastSharing: boolean;
-	localRecordingEnabled: boolean;
-	requestTimeout: number;
-	requestRetries: number;
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
@@ -134,19 +126,12 @@ export interface EdumeetConfig {
 	opusMaxPlaybackRate: number;
 	audioPreset: string;
 	audioPresets: Record<string, AudioPreset>;
-	autoMuteThreshold: number;
-	defaultLayout: RoomLayout;
 	buttonControlBar: boolean;
-	notificationPosition: 'right' | 'left';
 	notificationSounds: Record<NotificationType, NotificationSound>;
 	title: string;
-	supportUrl: string;
-	privacyUrl: string;
 	theme: ThemeOptions;
 	observertc: ClientMonitorConfig;
 }
-
-export type RoomLayout = 'filmstrip' | 'democratic';
 
 export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
 

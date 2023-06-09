@@ -13,8 +13,8 @@ import {
 import WebAssetIcon from '@mui/icons-material/WebAsset';
 import ErrorIcon from '@mui/icons-material/Error';
 import { FormattedMessage } from 'react-intl';
-import StyledDialog from '../../components/dialog/StyledDialog';
 import { memo } from 'react';
+import { RawStyledDialog } from '../../components/genericdialog/GenericDialog';
 
 interface UnsupportedBrowserProps {
 	platform: string;
@@ -40,7 +40,7 @@ const UnsupportedBrowser = ({
 		dense = true;
 
 	return (
-		<StyledDialog
+		<RawStyledDialog
 			open
 			scroll={'body'}
 		>
@@ -101,7 +101,7 @@ const UnsupportedBrowser = ({
 					</Grid>
 				</Grid>
 			</DialogContent>
-		</StyledDialog>
+		</RawStyledDialog>
 	);
 };
 

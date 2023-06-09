@@ -4,8 +4,9 @@ import { Button } from '@mui/material';
 import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { joinLabel, roomNameLabel } from '../../components/translated/translatedComponents';
-import PrecallDialog from '../../components/precalldialog/PrecallDialog';
+import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
+import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 
 const LandingPage = (): JSX.Element => {
 	const navigate = useNavigate();
@@ -17,7 +18,8 @@ const LandingPage = (): JSX.Element => {
 
 	return (
 		<StyledBackground>
-			<PrecallDialog
+			<GenericDialog
+				title={ <PrecallTitle /> }
 				content={
 					<TextInputField
 						label={roomNameLabel()}
@@ -32,8 +34,8 @@ const LandingPage = (): JSX.Element => {
 					<Button
 						onClick={onClicked}
 						variant='contained'
-						color='primary'
 						disabled={!roomId}
+						size='small'
 					>
 						{ joinLabel()}
 					</Button>

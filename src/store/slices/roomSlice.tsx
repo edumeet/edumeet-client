@@ -1,12 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import edumeetConfig from '../../utils/edumeetConfig';
 
-export type RoomConnectionState = 'new' | 'lobby' | 'overRoomLimit' | 'joined' | 'kicked' | 'left';
-export type SettingsTab = 'media' | 'appearance' | 'advanced';
-export type HelpTab = 'shortcuts';
+export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left';
 export type RoomMode = 'P2P' | 'SFU';
 
 export interface RoomState {
 	id?: string;
+	logo?: string;
+	backgroundImage?: string;
+	joinInProgress?: boolean;
 	updateBreakoutInProgress?: boolean;
 	transitBreakoutRoomInProgress?: boolean;
 	lockInProgress?: boolean;
@@ -22,13 +24,25 @@ export interface RoomState {
 	transcriptionRunning?: boolean;
 	state: RoomConnectionState;
 	roomMode: RoomMode;
+	breakoutsEnabled?: boolean;
+	chatEnabled?: boolean;
+	filesharingEnabled?: boolean;
+	raiseHandEnabled?: boolean;
+	localRecordingEnabled?: boolean;
 }
 
 type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
 
 const initialState: RoomState = {
+	logo: edumeetConfig.theme.logo,
+	backgroundImage: edumeetConfig.theme.backgroundImage,
 	roomMode: 'P2P',
 	state: 'new',
+	breakoutsEnabled: true,
+	chatEnabled: true,
+	filesharingEnabled: true,
+	raiseHandEnabled: true,
+	localRecordingEnabled: true,
 };
 
 const roomSlice = createSlice({

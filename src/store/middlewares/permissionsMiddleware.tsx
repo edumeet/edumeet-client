@@ -36,6 +36,16 @@ const createPermissionsMiddleware = ({
 								dispatch(permissionsActions.setLocked(false));
 								break;
 							}
+
+							case 'permissionAdded': {
+								dispatch(permissionsActions.addPermission(notification.data.permission));
+								break;
+							}
+
+							case 'permissionRemoved': {
+								dispatch(permissionsActions.removePermission(notification.data.permission));
+								break;
+							}
 						}
 					} catch (error) {
 						logger.error('error on signalService "notification" event [error:%o]', error);

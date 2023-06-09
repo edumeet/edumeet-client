@@ -1,9 +1,17 @@
 import { memo, ReactNode } from 'react';
+import { styled } from '@mui/material/styles';
 import { Menu } from '@mui/material';
 
 export interface MenuItemProps {
 	onClick: () => void;
 }
+
+const StyledMenu = styled(Menu)({
+	'& .MuiList-root': {
+		paddingTop: 0,
+		paddingBottom: 0
+	}
+});
 
 interface FloatingMenuProps {
 	anchorEl: HTMLElement | null | undefined;
@@ -29,7 +37,7 @@ const FloatingMenu = ({
 	children
 }: FloatingMenuProps): JSX.Element => {
 	return (
-		<Menu
+		<StyledMenu
 			anchorEl={anchorEl}
 			anchorOrigin={anchorOrigin}
 			transformOrigin={transformOrigin}
@@ -37,7 +45,7 @@ const FloatingMenu = ({
 			onClose={onClose}
 		>
 			{ children }
-		</Menu>
+		</StyledMenu>
 	);
 };
 

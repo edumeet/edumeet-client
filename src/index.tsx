@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import { Route, BrowserRouter, Routes } from 'react-router-dom';
+import { createRoot } from 'react-dom/client';
+import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import { RawIntlProvider } from 'react-intl';
 import './index.css';
 import debug from 'debug';
@@ -14,7 +14,7 @@ import {
 } from './store/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import * as serviceWorker from './serviceWorker';
+// import * as serviceWorker from './serviceWorker';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { detectDevice } from 'mediasoup-client';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
@@ -30,7 +30,7 @@ import { Logger } from 'edumeet-common';
 import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
 
-if (process.env.REACT_APP_DEBUG === '*' || process.env.NODE_ENV !== 'production') {
+if (import.meta.env.VITE_APP_DEBUG === '*' || import.meta.env.NODE_ENV !== 'production') {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');
 }
 
@@ -61,6 +61,15 @@ const SnackbarCloseButton = ({
 	);
 };
 
+const router = createBrowserRouter(
+	createRoutesFromElements(
+		<>
+			<Route path='/' element={<LandingPage />} />
+			<Route path='/:id' element={<App />} />
+		</>
+	)
+);
+
 /**
  * Return either the app or the unsupported browser page
  * based on feature detection.
@@ -83,18 +92,17 @@ const RootComponent = () => {
 			<SnackbarProvider action={
 				(snackbarKey: SnackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} />
 			}>
-				<BrowserRouter>
-					<Routes>
-						<Route path='/' element={<LandingPage />} />
-						<Route path='/:id' element={<App />} />
-					</Routes>
-				</BrowserRouter>
+				<RouterProvider router={router} />
 			</SnackbarProvider>
 		);
 	}
 };
 
-ReactDOM.render(
+const container = document.getElementById('edumeet');
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(container!);
+
+root.render(
 	<React.StrictMode>
 		<CssBaseline />
 		<Provider store={store}>
@@ -108,8 +116,7 @@ ReactDOM.render(
 				</ThemeProvider>
 			</PersistGate>
 		</Provider>
-	</React.StrictMode>,
-	document.getElementById('edumeet'),
+	</React.StrictMode>
 );
 
-serviceWorker.unregister();
+// serviceWorker.unregister();

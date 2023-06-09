@@ -1,30 +1,22 @@
-import MoreIcon from '@mui/icons-material/MoreVert';
-import ControlButton, { ControlButtonProps } from './ControlButton';
 import { useState } from 'react';
 import PeerMenu from '../peermenu/PeerMenu';
 import { usePeerConsumers, usePermissionSelector } from '../../store/hooks';
 import { permissions } from '../../utils/roles';
+import MoreButton from './MoreButton';
 
-interface PeerActionsButtonProps extends ControlButtonProps {
+interface PeerActionsButtonProps {
 	peerId: string;
 }
 
 const PeerActionsButton = ({
-	peerId,
-	...props
+	peerId
 }: PeerActionsButtonProps): JSX.Element => {
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
 
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
-	const {
-		micConsumer,
-		webcamConsumer,
-		screenConsumer,
-		extraVideoConsumers
-	} = usePeerConsumers(peerId);
+	const { micConsumer } = usePeerConsumers(peerId);
 
-	const shoudShow = peerId && (isModerator || 
-	micConsumer || webcamConsumer || screenConsumer || extraVideoConsumers.length !== 0);
+	const shouldShow = peerId && (isModerator || micConsumer);
 
 	const handleMenuClose = () => {
 		setMoreAnchorEl(null);
@@ -32,16 +24,9 @@ const PeerActionsButton = ({
 
 	return (
 		<>
-			{ shoudShow && (
+			{ shouldShow && (
 				<>
-					<ControlButton
-						onClick={(event) => {
-							setMoreAnchorEl(event.currentTarget);
-						}}
-						{ ...props }
-					>
-						<MoreIcon />
-					</ControlButton>
+					<MoreButton onClick={(event) => setMoreAnchorEl(event.currentTarget)} />
 					<PeerMenu
 						anchorEl={moreAnchorEl}
 						anchorOrigin={{ vertical: 'center', horizontal: 'left' }}

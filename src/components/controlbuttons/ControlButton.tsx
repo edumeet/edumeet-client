@@ -7,6 +7,7 @@ export interface ControlButtonProps {
 	toolTip?: string;
 	toolTipLocation?: 'left' | 'bottom';
 	disabled?: boolean;
+	variant?: 'circular' | 'extended';
 	on?: boolean;
 	onColor?: ButtonColor;
 	offColor?: ButtonColor;
@@ -22,6 +23,7 @@ const ControlButton = ({
 	toolTip,
 	toolTipLocation = type === 'fab' ? 'left' : 'bottom',
 	disabled,
+	variant,
 	on,
 	onColor = 'inherit',
 	offColor = 'inherit',
@@ -41,12 +43,11 @@ const ControlButton = ({
 				<Button
 					aria-label={toolTip}
 					disabled={disabled}
-					color={
-						disabled ? disabledColor : on ? onColor : offColor
-					}
+					color={disabled ? disabledColor : on ? onColor : offColor}
 					size={size}
 					onClick={onClick}
 					children={children}
+					variant={variant}
 				/>
 			</div>
 		</Tooltip>

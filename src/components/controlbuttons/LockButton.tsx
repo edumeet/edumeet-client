@@ -18,7 +18,7 @@ const LockButton = ({
 }: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const locked = useAppSelector((state) => state.permissions.locked);
-	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
+	const canChangeLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 
 	return (
 		<ControlButton
@@ -26,7 +26,7 @@ const LockButton = ({
 			onClick={() =>
 				(locked ? dispatch(unlock()) : dispatch(lock()))
 			}
-			disabled={!canPromote}
+			disabled={!canChangeLock}
 			{ ...props }
 		>
 			{ locked ? <LockIcon />:<LockOpenIcon /> }

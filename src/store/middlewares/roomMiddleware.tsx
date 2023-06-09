@@ -10,6 +10,7 @@ import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
 import { meActions } from '../slices/meSlice';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
+import { settingsActions } from '../slices/settingsSlice';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -38,13 +39,18 @@ const createRoomMiddleware = ({
 								const {
 									sessionId,
 									creationTimestamp,
-									roles,
-									roomPermissions,
-									userRoles,
-									allowWhenRoleMissing,
 									turnServers,
 									rtcStatsOptions,
 									clientMonitorSenderConfig,
+									logo,
+									background,
+									maxActiveVideos,
+									breakoutsEnabled,
+									chatEnabled,
+									filesharingEnabled,
+									raiseHandEnabled,
+									localRecordingEnabled,
+									// TODO: get the rest of the data from the server
 								} = notification.data;
 
 								batch(() => {
@@ -55,14 +61,19 @@ const createRoomMiddleware = ({
 										...initialRoomSession,
 									}));
 									dispatch(meActions.setSessionId(sessionId));
-									dispatch(permissionsActions.addRoles(roles));
-									dispatch(permissionsActions.setRoomPermissions(roomPermissions));
-									dispatch(permissionsActions.setUserRoles(userRoles));
-									allowWhenRoleMissing && dispatch(
-										permissionsActions.setAllowWhenRoleMissing(allowWhenRoleMissing)
-									);
 									dispatch(webrtcActions.setIceServers(turnServers));
 									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
+									dispatch(settingsActions.setLastN(maxActiveVideos));
+									dispatch(roomActions.updateRoom({
+										logo,
+										backgroundImage: background,
+										breakoutsEnabled,
+										chatEnabled,
+										filesharingEnabled,
+										raiseHandEnabled,
+										localRecordingEnabled,
+									}));
+
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
@@ -75,22 +86,42 @@ const createRoomMiddleware = ({
 								break;
 							}
 
+							case 'roomUpdate': {
+								const {
+									locked,
+									chatEnabled,
+									filesharingEnabled,
+									raiseHandEnabled,
+									localRecordingEnabled,
+									breakoutsEnabled,
+									logo,
+									background,
+									maxActiveVideos,
+								} = notification.data;
+
+								batch(() => {
+									dispatch(roomActions.updateRoom({
+										chatEnabled,
+										filesharingEnabled,
+										raiseHandEnabled,
+										localRecordingEnabled,
+										breakoutsEnabled,
+										logo,
+										backgroundImage: background,
+									}));
+									dispatch(permissionsActions.setLocked(locked));
+									dispatch(settingsActions.setLastN(maxActiveVideos));
+								});
+
+								break;
+							}
+
 							case 'enteredLobby': {
 								batch(() => {
 									dispatch(roomActions.setState('lobby'));
 									dispatch(setDisplayName(getState().settings.displayName ?? 'Guest'));
 									dispatch(setPicture(getState().me.picture ?? ''));
 								});
-								break;
-							}
-
-							case 'overRoomLimit': {
-								dispatch(roomActions.setState('overRoomLimit'));
-								break;
-							}
-
-							case 'roomBack': {
-								dispatch(roomActions.setState('joined'));
 								break;
 							}
 

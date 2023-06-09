@@ -2,8 +2,8 @@ import {
 	useAppDispatch,
 	useAppSelector,
 } from '../../store/hooks';
-import PanIconFilled from '@mui/icons-material/PanTool';
-import PanIcon from '@mui/icons-material/PanToolOutlined';
+import PanIconFilled from '@mui/icons-material/BackHand';
+import PanIcon from '@mui/icons-material/BackHandOutlined';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import {
 	raiseHandLabel,

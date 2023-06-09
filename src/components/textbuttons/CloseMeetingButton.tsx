@@ -21,6 +21,7 @@ const CloseMeetingButton = (): JSX.Element => {
 			variant='contained'
 			onClick={handleCloseMeeting}
 			disabled={closeMeetingInProgress}
+			size='small'
 		>
 			{ closeMeetingLabel() }
 		</Button>

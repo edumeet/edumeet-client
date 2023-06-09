@@ -12,11 +12,10 @@ import { producersActions } from '../slices/producersSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
-import { drawerActions } from '../slices/drawerSlice';
 import { devicesChangedLabel } from '../../components/translated/translatedComponents';
 import { permissionsActions } from '../slices/permissionsSlice';
-import { settingsActions } from '../slices/settingsSlice';
 import { Logger } from 'edumeet-common';
+import { setRaisedHand } from './meActions';
 
 const logger = new Logger('listenerActions');
 
@@ -33,7 +32,7 @@ let devicesUpdatedListener: (event: DevicesUpdated) => void;
 export const startListeners = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ deviceService }
+	{ signalingService, deviceService }
 ): Promise<void> => {
 	logger.debug('startListeners()');
 
@@ -72,6 +71,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	const audioPermissionSelector = makePermissionSelector(permissions.SHARE_AUDIO);
 	const videoPermissionSelector = makePermissionSelector(permissions.SHARE_VIDEO);
+	const lockPermissionSelector = makePermissionSelector(permissions.LOCK_ROOM);
 
 	keydownListener = ({ repeat, target, key }): void => {
 		if (repeat) return;
@@ -174,27 +174,29 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 				if (lockInProgress) return;
 
+				const hasLockPermission = lockPermissionSelector(getState());
+
+				if (!hasLockPermission) return;
+
 				const locked = getState().permissions.locked;
 
-				if (locked) {
-					dispatch(unlock());
-				} else {
-					dispatch(lock());
-				}
+				locked ? dispatch(unlock()) : dispatch(lock());
 
 				break;
 			}
 
 			case 'p': {
-				dispatch(drawerActions.toggle());
-				dispatch(drawerActions.setTab('users'));
+				const participantListOpen = getState().ui.participantListOpen;
+
+				dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
 
 				break;
 			}
 
 			case 'c': {
-				dispatch(drawerActions.toggle());
-				dispatch(drawerActions.setTab('chat'));
+				const chatOpen = getState().ui.chatOpen;
+
+				dispatch(uiActions.setUi({ chatOpen: !chatOpen }));
 
 				break;
 			}
@@ -204,6 +206,26 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 				dispatch(uiActions.setUi({ showStats: !showStats }));
 				
+				break;
+			}
+
+			case 'r': {
+				const raisedHandInProgress = getState().me.raisedHandInProgress;
+
+				if (raisedHandInProgress) return;
+
+				const raisedHand = getState().me.raisedHand;
+
+				dispatch(setRaisedHand(!raisedHand));
+
+				break;
+			}
+
+			case 'h': {
+				const helpOpen = getState().ui.helpOpen;
+
+				dispatch(uiActions.setUi({ helpOpen: !helpOpen }));
+
 				break;
 			}
 
@@ -292,18 +314,16 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	document.addEventListener('keyup', keyupListener);
 
-	messageListener = ({ data }: MessageEvent) => {
+	messageListener = async ({ data }: MessageEvent) => {
 		if (data.type === 'edumeet-login') {
-			const { data: {
-				displayName,
-				picture,
-			} } = data;
+			const { data: token } = data;
 
-			displayName && dispatch(settingsActions.setDisplayName(displayName));
-			picture && dispatch(meActions.setPicture(picture));
+			dispatch(permissionsActions.setToken(token));
 			dispatch(permissionsActions.setLoggedIn(true));
-		} else if (data.type === 'edumeet-logout')
-			dispatch(permissionsActions.setLoggedIn(false));
+
+			if (getState().signaling.state === 'connected')
+				await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+		}
 	};
 
 	window.addEventListener('message', messageListener);

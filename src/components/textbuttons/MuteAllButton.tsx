@@ -20,6 +20,7 @@ const MuteAllButton = (): JSX.Element => {
 			variant='contained'
 			onClick={handleMuteAll}
 			disabled={muteAllInProgress}
+			size='small'
 		>
 			{ muteAllLabel() }
 		</Button>

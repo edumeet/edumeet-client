@@ -36,7 +36,6 @@ import webrtcSlice from './slices/webrtcSlice';
 import permissionsSlice from './slices/permissionsSlice';
 import lobbyPeersSlice from './slices/lobbyPeersSlice';
 import settingsSlice from './slices/settingsSlice';
-import drawerSlice from './slices/drawerSlice';
 import peersSlice from './slices/peersSlice';
 import producersSlice from './slices/producersSlice';
 import notificationsSlice from './slices/notificationsSlice';
@@ -95,7 +94,6 @@ const middlewareOptions = {
 
 const reducer = combineReducers({
 	consumers: consumersSlice.reducer,
-	drawer: drawerSlice.reducer,
 	notifications: notificationsSlice.reducer,
 	lobbyPeers: lobbyPeersSlice.reducer,
 	me: meSlice.reducer,
@@ -151,7 +149,3 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 	MiddlewareOptions,
 	Action<string>
 >;
-
-export const LeavePromptContext = createContext<() => Promise<void>>(() =>
-	Promise.resolve()
-);

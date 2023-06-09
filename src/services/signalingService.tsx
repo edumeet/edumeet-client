@@ -5,6 +5,7 @@ import { SocketMessage } from '../utils/types';
 /* eslint-disable no-unused-vars */
 export declare interface SignalingService {
 	on(event: 'connected', listener: () => void): this;
+	on(event: 'reconnecting', listener: () => void): this;
 	on(event: 'close', listener: () => void): this;
 	on(event: 'notification', listener: InboundNotification): this;
 	on(event: 'request', listener: InboundRequest): this;
@@ -63,6 +64,15 @@ export class SignalingService extends EventEmitter {
 				this.emit('connected');
 
 			this.connected = true;
+		});
+
+		connection.on('reconnect', () => {
+			logger.debug('reconnect');
+
+			if (this.connected)
+				this.emit('reconnecting');
+
+			this.connected = false;
 		});
 
 		connection.once('close', () => {
