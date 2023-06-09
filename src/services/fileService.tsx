@@ -31,17 +31,12 @@ export class FileService {
 		});
 	}
 
-	public async sendFiles(files: FileList, sessionId?: string): Promise<string> {
+	public async sendFiles(files: FileList): Promise<string> {
 		return new Promise((resolve) => {
 			this.webTorrent?.seed(
 				files,
-				{ /* announceList: [ [ this.tracker ] ] */ },
-				async (newTorrent) => {
-					await this.signalingService.sendRequest('sendFile', { magnetURI: newTorrent.magnetURI, sessionId })
-						.catch((err) => logger.warn('sendFile, unable to send file [magnetURI:%s, error:%o]', newTorrent.magnetURI, err));
-
-					return resolve(newTorrent.magnetURI);
-				}
+				{ /* TODO: announceList: [ [ this.tracker ] ] */ },
+				(newTorrent) => resolve(newTorrent.magnetURI)
 			);
 		});
 	}

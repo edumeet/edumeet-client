@@ -14,7 +14,7 @@ const logger = new Logger('FilesharingActions');
 export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ fileService }
+	{ signalingService, fileService }
 ): Promise<void> => {
 	logger.debug('sendFiles() [files:"%s"]', files);
 
@@ -22,8 +22,9 @@ export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 
 	try {
 		const sessionId = getState().me.sessionId;
-		
-		const magnetURI = await fileService.sendFiles(files, sessionId);
+		const magnetURI = await fileService.sendFiles(files);
+
+		await signalingService.sendRequest('sendFile', { magnetURI, sessionId });
 
 		const peerId = getState().me.id;
 		const displayName = getState().settings.displayName;

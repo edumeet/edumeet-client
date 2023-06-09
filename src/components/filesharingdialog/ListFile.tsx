@@ -52,11 +52,13 @@ const ListFile = ({
 
 	useEffect(() => {
 		if (file.started || isMe) {
-			const torrentFile = fileService.getTorrent(file.magnetURI);
+			(async () => {
+				const torrentFile = await fileService.getTorrent(file.magnetURI);
 
-			setTorrent(torrentFile);
-			setDone(isMe || Boolean(torrentFile?.done));
-			setProgress(torrentFile?.progress || 0);
+				setTorrent(torrentFile);
+				setDone(isMe || Boolean(torrentFile?.done));
+				setProgress(torrentFile?.progress || 0);
+			})();
 		}
 	}, []);
 

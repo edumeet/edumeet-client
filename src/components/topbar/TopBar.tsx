@@ -1,14 +1,8 @@
 import { AppBar, Toolbar, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Fragment, useEffect, useState } from 'react';
-import {
-	useAppSelector,
-	usePermissionSelector
-} from '../../store/hooks';
-import {
-	lobbyPeersLengthSelector,
-	roomSessionCreationTimestampSelector,
-} from '../../store/selectors';
+import { useEffect, useState } from 'react';
+import { useAppSelector, usePermissionSelector } from '../../store/hooks';
+import { lobbyPeersLengthSelector, roomSessionCreationTimestampSelector } from '../../store/selectors';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { permissions } from '../../utils/roles';
 import LobbyButton from '../controlbuttons/LobbyButton';
@@ -18,7 +12,7 @@ import LoginButton from '../controlbuttons/LoginButton';
 import SettingsButton from '../controlbuttons/SettingsButton';
 import LeaveButton from '../textbuttons/LeaveButton';
 import TranscriptionButton from '../controlbuttons/TranscriptionButton';
-import { AccessTime } from '@mui/icons-material';
+import AccessTime from '@mui/icons-material/AccessTime';
 import { formatDuration } from '../../utils/formatDuration';
 
 interface TopBarProps {
@@ -43,35 +37,23 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 }));
 
 const LogoImg = styled('img')(({ theme }) => ({
-	display: 'none',
-	marginLeft: 20,
+	marginLeft: theme.spacing(1),
+	marginRight: theme.spacing(1),
 	maxWidth: 200,
 	maxHeight: 32,
-	[theme.breakpoints.up('sm')]: {
-		display: 'block'
-	}
 }));
 
-const DurationDiv = styled('div')(({ theme }) => ({
+interface TopBarDivProps {
+	gap?: number;
+	grow?: number;
+}
+
+const TopBarDiv = styled('div')<TopBarDivProps>(({ theme, gap = 0, grow = 0 }) => ({
 	display: 'flex',
-	padding: theme.spacing(0, 2),
-	'.MuiTypography-root': {
-		marginLeft: theme.spacing(1),
-	}
+	marginRight: theme.spacing(2),
+	gap: theme.spacing(gap),
+	flexGrow: grow
 }));
-
-const GrowingDiv = styled('div')({
-	display: 'flex',
-	flexGrow: 1
-});
-
-const DividerDiv = styled('div')(({ theme }) => ({
-	marginLeft: theme.spacing(3)
-}));
-
-const ButtonsDiv = styled('div')({
-	display: 'flex'
-});
 
 const TopBar = ({
 	fullscreenEnabled,
@@ -97,7 +79,6 @@ const TopBar = ({
 
 				expected += interval;
 				setMeetingDuration(Date.now() - roomCreationTimestamp);
-
 				setTimeout(driftAwareTimer, Math.max(0, interval - dt));
 			};
 
@@ -108,33 +89,30 @@ const TopBar = ({
 	}, []);
 
 	return (
-		<Fragment>
-			<StyledAppBar position='fixed'>
-				<Toolbar variant='dense'>
-					{ logo ?
-						<LogoImg alt='Logo' src={logo}/> :
-						<Typography variant='h6' noWrap color='inherit'>
-							{edumeetConfig.title}
-						</Typography>
-					}
-					<DurationDiv>
-						<AccessTime />
-						<Typography>{ formatDuration(meetingDuration) }</Typography>
-					</DurationDiv>
-					<GrowingDiv />
-					<ButtonsDiv>
-						{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
-						{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
-						<SettingsButton type='iconbutton' />
-						{ canLock && <LockButton type='iconbutton' /> }
-						{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
-						{ loginEnabled && <LoginButton type='iconbutton' /> }
-					</ButtonsDiv>
-					<DividerDiv />
-					<LeaveButton />
-				</Toolbar>
-			</StyledAppBar>
-		</Fragment>
+		<StyledAppBar position='fixed'>
+			<Toolbar variant='dense'>
+				{ logo ?
+					<LogoImg alt='Logo' src={logo}/> :
+					<Typography variant='h6' noWrap color='inherit'>
+						{edumeetConfig.title}
+					</Typography>
+				}
+				<TopBarDiv gap={1}>
+					<AccessTime />
+					<Typography>{ formatDuration(meetingDuration) }</Typography>
+				</TopBarDiv>
+				<TopBarDiv grow={1} />
+				<TopBarDiv>
+					{ canTranscribe && <TranscriptionButton type='iconbutton' /> }
+					{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
+					<SettingsButton type='iconbutton' />
+					{ canLock && <LockButton type='iconbutton' /> }
+					{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
+					{ loginEnabled && <LoginButton type='iconbutton' /> }
+				</TopBarDiv>
+				<LeaveButton />
+			</Toolbar>
+		</StyledAppBar>
 	);
 };
 
