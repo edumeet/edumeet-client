@@ -70,9 +70,9 @@ export const leaveBreakoutRoomLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Leave'
 });
 
-export const closeBreakoutRoomLabel = (): string => intl.formatMessage({
-	id: 'label.closeBreakoutRoom',
-	defaultMessage: 'Close'
+export const clearOutBreakoutRoomLabel = (): string => intl.formatMessage({
+	id: 'label.clearOutBreakoutRoom',
+	defaultMessage: 'Clear out'
 });
 
 export const removeBreakoutRoomLabel = (): string => intl.formatMessage({
@@ -83,6 +83,11 @@ export const removeBreakoutRoomLabel = (): string => intl.formatMessage({
 export const shareLabel = (): string => intl.formatMessage({
 	id: 'label.shareFile',
 	defaultMessage: 'Share'
+});
+
+export const generalErrorLabel = (): string => intl.formatMessage({
+	id: 'room.generalError',
+	defaultMessage: 'An error has occurred, please reload the page'
 });
 
 export const extraVideoLabel = (): string => intl.formatMessage({

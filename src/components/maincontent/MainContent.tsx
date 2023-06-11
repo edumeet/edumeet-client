@@ -7,16 +7,16 @@ import Chat from '../chat/Chat';
 import { useAppSelector } from '../../store/hooks';
 import { isMobileSelector } from '../../store/selectors';
 
-const WrapperContainer = styled(Box)({
+const WrapperContainer = styled(Box)(({ theme }) => ({
 	width: 'calc(100% - 8px)',
 	height: 'calc(100% - 60px)',
 	display: 'flex',
-	marginLeft: 4,
-	marginRight: 4,
-	marginBottom: 4,
+	marginLeft: theme.spacing(0.5),
+	marginRight: theme.spacing(0.5),
+	marginBottom: theme.spacing(0.5),
 	marginTop: 56,
-	gap: 4,
-});
+	gap: theme.spacing(0.5),
+}));
 
 interface SideContentProps {
 	verticaldivide?: number;
@@ -33,14 +33,14 @@ const SideContent = styled(Box)<SideContentProps>(({
 	height: '100%',
 	display: 'flex',
 	flexDirection: verticaldivide ? 'column' : 'row',
-	gap: 4,
+	gap: theme.spacing(0.5),
 	...(dynamicwidth && {
-		width: '30vw',
+		width: '40vw',
 		[theme.breakpoints.down('xl')]: {
-			width: '40vw'
+			width: '50vw'
 		},
 		[theme.breakpoints.down('lg')]: {
-			width: '50vw'
+			width: '60vw'
 		},
 		[theme.breakpoints.down('md')]: {
 			width: '70vw'
@@ -50,26 +50,26 @@ const SideContent = styled(Box)<SideContentProps>(({
 		},
 		...(!verticaldivide && {
 			...(bothopen ? {
-				width: '50vw',
+				width: '60vw',
 				[theme.breakpoints.down('xl')]: {
-					width: '60vw'
-				},
-				[theme.breakpoints.down('lg')]: {
 					width: '70vw'
 				},
-				[theme.breakpoints.down('md')]: {
+				[theme.breakpoints.down('lg')]: {
 					width: '80vw'
 				},
+				[theme.breakpoints.down('md')]: {
+					width: '90vw'
+				},
 			} : {
-				width: '25vw',
+				width: '30vw',
 				[theme.breakpoints.down('xl')]: {
-					width: '30vw'
+					width: '40vw'
 				},
 				[theme.breakpoints.down('lg')]: {
-					width: '35vw'
+					width: '50vw'
 				},
 				[theme.breakpoints.down('md')]: {
-					width: '40vw'
+					width: '60vw'
 				},
 			}),
 		})
@@ -81,12 +81,12 @@ interface SideContainerProps {
 	width?: string;
 }
 
-const SideContainer = styled(Paper)<SideContainerProps>(({ height, width }) => ({
+const SideContainer = styled(Paper)<SideContainerProps>(({ theme, height, width }) => ({
 	height,
 	width,
 	overflowY: 'auto',
-	borderRadius: 10,
-	backgroundColor: 'rgba(255, 255, 255, 0.7)',
+	borderRadius: theme.roundedness,
+	backgroundColor: theme.sideContainerBackgroundColor,
 }));
 
 const MainContent = (): JSX.Element => {

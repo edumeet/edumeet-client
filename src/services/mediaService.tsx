@@ -480,6 +480,19 @@ export class MediaService extends EventEmitter {
 						);
 						break;
 					}
+
+					case 'newProducerLayer': {
+						const { producerId, spatialLayer } = notification.data;
+
+						const producer = this.producers.get(producerId);
+
+						if (!producer)
+							throw new Error('producer not found');
+
+						producer.setMaxSpatialLayer(spatialLayer);
+
+						break;
+					}
 				}
 			} catch (error) {
 				logger.error('error on signalService "notification" event [error:%o]', error);

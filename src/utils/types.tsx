@@ -85,10 +85,11 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		logo: 'images/logo.edumeet.svg',
 		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
 		videoBackroundColor: 'rgba(49, 49, 49, 0.9)',
-		videoShadow: 'rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px',
 		videoAvatarImage: 'images/buddy.svg',
-		videoRoundedCorners: true,
-		chatColor: 'rgba(255, 255, 255, 0.4)'
+		roundedness: 10,
+		sideContentItemColor: 'rgba(255, 255, 255, 0.4)',
+		sideContentItemDarkColor: 'rgba(150, 150, 150, 0.4)',
+		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
 	observertc: {
 		collectingPeriodInMs: 5000,

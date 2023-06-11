@@ -29,6 +29,7 @@ import { setLocale } from './store/actions/localeActions';
 import { Logger } from 'edumeet-common';
 import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
+import ErrorBoundary from './views/errorboundary/ErrorBoundary';
 
 if (import.meta.env.VITE_APP_DEBUG === '*' || import.meta.env.NODE_ENV !== 'production') {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');
@@ -64,8 +65,8 @@ const SnackbarCloseButton = ({
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<>
-			<Route path='/' element={<LandingPage />} />
-			<Route path='/:id' element={<App />} />
+			<Route path='/' element={<LandingPage />} errorElement={<ErrorBoundary />} />
+			<Route path='/:id' element={<App />} errorElement={<ErrorBoundary />} />
 		</>
 	)
 );

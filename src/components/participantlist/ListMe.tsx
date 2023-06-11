@@ -10,7 +10,7 @@ const MeDiv = styled(Paper)(({ theme }) => ({
 	display: 'flex',
 	padding: theme.spacing(0.5),
 	marginTop: theme.spacing(0.5),
-	backgroundColor: theme.chatColor,
+	backgroundColor: theme.sideContentItemColor,
 }));
 
 const MeInfoDiv = styled(Box)(({ theme }) => ({

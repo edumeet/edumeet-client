@@ -31,7 +31,7 @@ const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
 	position,
 	height,
 	width,
-	margin,
+	margin = 0,
 	order,
 	zIndex,
 	activespeaker,
@@ -40,19 +40,19 @@ const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
 	position,
 	width,
 	height,
-	margin: theme.spacing(margin || 0),
+	margin: theme.spacing(margin),
 	order,
 	zIndex,
 	...(activespeaker && {
 		border: theme.activeSpeakerBorder
 	}),
-	boxShadow: theme.videoShadow,
+	boxShadow: theme.shadows[10],
 	backgroundColor: theme.videoBackroundColor,
 	backgroundImage: `url(${theme.videoAvatarImage})`,
 	backgroundPosition: 'bottom',
 	backgroundSize: 'auto 85%',
 	backgroundRepeat: 'no-repeat',
-	borderRadius: roundedcorners ? theme.videoRoundedCorners ? 10 : '0' : '0',
+	borderRadius: roundedcorners ? theme.roundedness : '0',
 }));
 
 const VideoBox = ({

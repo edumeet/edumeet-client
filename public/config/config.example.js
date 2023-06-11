@@ -165,9 +165,10 @@ var config = {
 		logo: 'images/logo.edumeet.svg',
 		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
 		videoBackroundColor: 'rgba(49, 49, 49, 0.9)',
-		videoShadow: '1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12)',
 		videoAvatarImage: 'images/buddy.svg',
-		chatColor: 'rgba(224, 224, 224, 0.52)',
+		sideContentItemColor: 'rgba(255, 255, 255, 0.4)',
+		sideContentItemDarkColor: 'rgba(150, 150, 150, 0.4)',
+		roundedness: 10, // Rounded corners on the various elements
 	},
 
 	// Configuration for ObserveRTC

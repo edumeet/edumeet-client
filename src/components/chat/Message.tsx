@@ -9,7 +9,7 @@ export type MessageFormat = 'single' | 'combinedBegin' | 'combinedMiddle' | 'com
 const StyledMessage = styled('div')(({ theme }) => ({
 	display: 'flex',
 	flexShrink: 0,
-	backgroundColor: theme.chatColor,
+	backgroundColor: theme.sideContentItemColor,
 	boxShadow: theme.shadows[2],
 	padding: theme.spacing(0),
 	wordWrap: 'break-word',
@@ -117,7 +117,7 @@ const Message = ({
 					<img alt='A' src='/images/buddy.svg' />
 					:
 					<StyledMessageTime>
-						<FormattedTime value={new Date(time || Date.now())} />
+						<FormattedTime value={new Date(time || Date.now())} hour12={false} />
 					</StyledMessageTime>
 				}
 			</StyledMessageAvatar>
@@ -127,6 +127,7 @@ const Message = ({
 						<b>
 							{ isMe ? meLabel() : <b>{name}</b> } - <FormattedTime
 								value={new Date(time || Date.now())}
+								hour12={false}
 							/>
 						</b>
 					</Typography>

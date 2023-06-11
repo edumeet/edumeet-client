@@ -9,10 +9,11 @@ declare module '@mui/material/styles' {
 		logo: string;
 		activeSpeakerBorder: string;
 		videoBackroundColor: string;
-		videoShadow: string;
 		videoAvatarImage: string;
-		videoRoundedCorners: boolean;
-		chatColor?: string;
+		roundedness: number;
+		sideContentItemColor?: string;
+		sideContentItemDarkColor?: string;
+		sideContainerBackgroundColor?: string;
 	}
 
 	interface ThemeOptions {
@@ -23,10 +24,11 @@ declare module '@mui/material/styles' {
 		logo?: string;
 		activeSpeakerBorder?: string;
 		videoBackroundColor?: string;
-		videoShadow?: string;
 		videoAvatarImage?: string;
-		videoRoundedCorners?: boolean;
-		chatColor?: string;
+		roundedness?: number;
+		sideContentItemColor?: string;
+		sideContentItemDarkColor?: string;
+		sideContainerBackgroundColor?: string;
 	}
 }
 
