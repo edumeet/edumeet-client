@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { stopPreviewMic, updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
@@ -30,12 +30,15 @@ const AudioInputChooser = ({
 	const audioDevices = useDeviceSelector('audioinput');
 	const audioInProgress = useAppSelector((state) => state.me.audioInProgress);
 	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);
+	const [ selectedAudioDevice, setSelectedAudioDevice ] = useState(audioDevice);
+	const [ appliedAudioDevice, setAppliedAudioDevice ] = useState('');
 
 	const handleDeviceChange = (deviceId: string): void => {
 		if (deviceId) {
+			setAppliedAudioDevice(deviceId); // Update applied audio device only when the user clicks "Apply"
+
 			if (preview) {
 				setConfirm(true);
-
 				dispatch(updatePreviewMic({
 					restart: true,
 					newDeviceId: deviceId,
@@ -51,12 +54,22 @@ const AudioInputChooser = ({
 	};
 
 	const handleConfirm = (): void => {
-		// TODO: Add replace track support
+		setSelectedAudioDevice(appliedAudioDevice);
 		dispatch(updateMic({
 			restart: true
 		}));
-
 		setConfirm(false);
+	};
+
+	const handleClose = (): void => {
+		setConfirm(false);
+		if (selectedAudioDevice !== audioDevice) {
+			// Revert to the actual active audio device
+			dispatch(updateMic({
+				restart: true,
+				newDeviceId: selectedAudioDevice
+			}));
+		}
 	};
 
 	useEffect(() => {
@@ -79,7 +92,7 @@ const AudioInputChooser = ({
 	return (
 		<ChooserDiv>
 			<DeviceChooser
-				value={audioDevice ?? ''}
+				value={selectedAudioDevice ?? ''}
 				setValue={handleDeviceChange}
 				name={audioDeviceLabel()}
 				devicesLabel={selectAudioDeviceLabel()}
@@ -87,14 +100,28 @@ const AudioInputChooser = ({
 				disabled={audioDevices.length === 0 || audioInProgress}
 				devices={audioDevices}
 			/>
-			{ withConfirm && micProducer && (
+			{withConfirm && micProducer && (
 				<Button
 					onClick={handleConfirm}
 					disabled={!confirm || audioInProgress}
 				>
-					{ applyLabel() }
+					{applyLabel()}
 				</Button>
 			)}
+			<Dialog open={confirm} onClose={handleClose}>
+				<DialogTitle>{applyLabel()}</DialogTitle>
+				<DialogContent>
+					<p>
+						You have selected a new audio source but not applied it. Do you want to exit without applying?
+					</p>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose}>Cancel</Button>
+					<Button onClick={handleConfirm} autoFocus>
+						{applyLabel()}
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</ChooserDiv>
 	);
 };
