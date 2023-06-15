@@ -11,13 +11,13 @@ import { AppThunk } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
+import { getTenantFromFqdn } from './managementActions';
 
 const logger = new Logger('RoomActions');
 
 export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ config }
 ): Promise<void> => {
 	logger.debug('connect()');
 
@@ -27,15 +27,9 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		const encodedRoomId = encodeURIComponent(roomId);
 		const peerId = getState().me.id;
 		const token = getState().permissions.token;
+		const tenantId = await dispatch(getTenantFromFqdn(location.hostname));
 
-		const response = await fetch(`${config.managementUrl}/tenantFQDNs?fqdn=${location.hostname}`);
-		const jsonData = await response.json();
-
-		if (jsonData.total === 0) throw new Error('login() | no tenant found');
-
-		const { tenantId } = jsonData.data[0];
-
-		if (!tenantId) throw new Error('login() | no tenantId found');
+		if (!tenantId) throw new Error('connect() | no tenantId found');
 
 		const url = getSignalingUrl(peerId, encodedRoomId, tenantId, token);
 	
@@ -57,7 +51,7 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 export const joinRoom = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, mediaService, performanceMonitor }
+	{ signalingService, mediaService /* , performanceMonitor */ }
 ): Promise<void> => {
 	logger.debug('joinRoom()');
 
@@ -68,9 +62,9 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 
 	mediaService.rtcStatsInit(rtcStatsOptions);
 
-	performanceMonitor.on('performance', (performance) => {
+	/* performanceMonitor.on('performance', (performance) => {
 		logger.debug('"performance" event [trend:%s, performance:%s]', performance.trend, performance.performance);
-	});
+	}); */
 
 	await mediaService.createTransports(iceServers);
 
@@ -95,7 +89,6 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		displayName,
 		picture,
 		rtpCapabilities,
-		returning: false, // TODO: fix reconnect
 	});
 
 	batch(() => {

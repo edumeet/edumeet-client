@@ -46,15 +46,17 @@ import { createContext } from 'react';
 import { DeviceService } from '../services/deviceService';
 import { FileService } from '../services/fileService';
 import recordingSlice from './slices/recordingSlice';
-import { PerformanceMonitor } from '../utils/performanceMonitor';
 import roomSessionsSlice from './slices/roomSessionsSlice';
+import { Application, feathers } from '@feathersjs/feathers/lib';
+import rest from '@feathersjs/rest-client';
+import authentication from '@feathersjs/authentication-client';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
-	performanceMonitor: PerformanceMonitor;
 	fileService: FileService;
 	deviceService: DeviceService;
 	signalingService: SignalingService;
+	managementService: Application;
 	config: EdumeetConfig;
 }
 
@@ -67,7 +69,9 @@ const persistConfig = {
 
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
-const performanceMonitor = new PerformanceMonitor();
+const managementService = feathers()
+	.configure(rest(edumeetConfig.managementUrl).fetch(window.fetch.bind(window)))
+	.configure(authentication());
 
 export const mediaService = new MediaService({ signalingService });
 export const fileService = new FileService({ signalingService });
@@ -86,10 +90,10 @@ export const ServiceContext = createContext<{
 const middlewareOptions = {
 	config: edumeetConfig,
 	mediaService,
-	performanceMonitor,
 	fileService,
 	deviceService,
 	signalingService,
+	managementService,
 };
 
 const reducer = combineReducers({

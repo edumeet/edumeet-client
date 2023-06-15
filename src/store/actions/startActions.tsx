@@ -9,10 +9,8 @@ import {
 import { permissions } from '../../utils/roles';
 import { updateMic, updateWebcam } from './mediaActions';
 import { producersActions } from '../slices/producersSlice';
-import { notificationsActions } from '../slices/notificationsSlice';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
-import { devicesChangedLabel } from '../../components/translated/translatedComponents';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
 import { setRaisedHand } from './meActions';
@@ -32,7 +30,7 @@ let devicesUpdatedListener: (event: DevicesUpdated) => void;
 export const startListeners = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, deviceService }
+	{ signalingService, deviceService, managementService }
 ): Promise<void> => {
 	logger.debug('startListeners()');
 
@@ -52,11 +50,11 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		dispatch(meActions.setDevices(devices));
 
-		if (newDevices.length || removedDevices.length) {
+		/* if (newDevices.length || removedDevices.length) {
 			dispatch(notificationsActions.enqueueNotification({
 				message: devicesChangedLabel()
 			}));
-		}
+		} */
 	};
 
 	deviceService.on('devicesUpdated', devicesUpdatedListener);
@@ -317,6 +315,8 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 	messageListener = async ({ data }: MessageEvent) => {
 		if (data.type === 'edumeet-login') {
 			const { data: token } = data;
+
+			await managementService.authentication.setAccessToken(token);
 
 			dispatch(permissionsActions.setToken(token));
 			dispatch(permissionsActions.setLoggedIn(true));

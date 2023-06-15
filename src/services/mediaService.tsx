@@ -348,7 +348,7 @@ export class MediaService extends EventEmitter {
 						} else {
 							const resolutionWatcher = new ResolutionWatcher();
 
-							let lastSpatialLayer = 0;
+							let lastSpatialLayer = 2;
 
 							resolutionWatcher.on('newResolution', async (resolution) => {
 								const { width } = resolution;

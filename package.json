@@ -8,6 +8,10 @@
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
+		"@feathersjs/authentication-client": "^5.0.5",
+		"@feathersjs/feathers": "^5.0.5",
+		"@feathersjs/rest-client": "^5.0.5",
+		"@feathersjs/socketio-client": "^5.0.5",
 		"@jitsi/rtcstats": "github:jitsi/rtcstats",
 		"@mui/icons-material": "^5.11.16",
 		"@mui/material": "^5.13.4",

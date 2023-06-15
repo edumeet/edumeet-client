@@ -1,4 +1,4 @@
-import { Box, Chip, IconButton, Paper, styled } from '@mui/material';
+import { Box, IconButton, Paper, styled } from '@mui/material';
 import { Peer } from '../../store/slices/peersSlice';
 import PanIcon from '@mui/icons-material/BackHand';
 import { useAppDispatch, usePeerConsumers } from '../../store/hooks';
@@ -16,9 +16,16 @@ interface ListPeerProps {
 	isModerator: boolean;
 }
 
-const StyledChip = styled(Chip)(({ theme }) => ({
-	alignItems: 'start',
+const StyledIcons = styled(Box)(({ theme }) => ({
+	display: 'flex',
+	gap: theme.spacing(0.5),
 	marginRight: theme.spacing(0.5),
+	paddingLeft: theme.spacing(0.5),
+	paddingRight: theme.spacing(0.5),
+	paddingTop: theme.spacing(0.25),
+	paddingBottom: theme.spacing(0.25),
+	borderRadius: theme.roundedness,
+	backgroundColor: theme.sideContentItemDarkColor,
 }));
 
 const PeerDiv = styled(Paper)(({ theme }) => ({
@@ -73,10 +80,12 @@ const ListPeer = ({
 					</IconButton>
 				}
 				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
-				{ /* hasMedia && <StyledChip disabled label={<MediaIcons />} variant='outlined' size='small' /> */ }
-				{ hasScreen && <StyledChip disabled label={<ScreenShareIcon fontSize='small' />} variant='filled' size='small' /> }
-				{ hasVideo && <StyledChip disabled label={<WebcamIcon fontSize='small' />} variant='filled' size='small' /> }
-				{ hasAudio && <StyledChip disabled label={<MicUnMutedIcon fontSize='small' />} variant='filled' size='small' /> }
+				<StyledIcons>
+					{ /* hasMedia && <StyledChip disabled label={<MediaIcons />} variant='outlined' size='small' /> */ }
+					{ hasScreen && /* <StyledChip disabled label={ */ <ScreenShareIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
+					{ hasVideo && /* <StyledChip disabled label={ */ <WebcamIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
+					{ hasAudio && /* <StyledChip disabled label={ */ <MicUnMutedIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
+				</StyledIcons>
 				<Volume consumer={micConsumer} small />
 				<MoreButton onClick={(event) => setMoreAnchorEl(event.currentTarget)} type='iconbutton' size='small' />
 			</PeerDiv>
