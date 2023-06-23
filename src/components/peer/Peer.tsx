@@ -76,6 +76,7 @@ const Peer = ({
 					width={style.width}
 					height={style.height}
 				>
+					<DisplayName displayName={peer?.displayName} peerId={id} />
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'
@@ -96,6 +97,7 @@ const Peer = ({
 					width={style.width}
 					height={style.height}
 				>
+					<DisplayName displayName={peer?.displayName} peerId={id} />
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'

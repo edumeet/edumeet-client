@@ -76,7 +76,7 @@ const ListPeer = ({
 						}}
 						size='small'
 					>
-						<PanIcon />
+						<PanIcon fontSize='small' />
 					</IconButton>
 				}
 				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>

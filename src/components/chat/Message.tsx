@@ -8,7 +8,6 @@ export type MessageFormat = 'single' | 'combinedBegin' | 'combinedMiddle' | 'com
 
 const StyledMessage = styled('div')(({ theme }) => ({
 	display: 'flex',
-	flexShrink: 0,
 	backgroundColor: theme.sideContentItemColor,
 	boxShadow: theme.shadows[2],
 	padding: theme.spacing(0),
@@ -17,33 +16,34 @@ const StyledMessage = styled('div')(({ theme }) => ({
 	width: '66%',
 }));
 
-const StyledMessageAvatar = styled('div')({
+const StyledMessageAvatar = styled('div')(({ theme }) => ({
 	dispay: 'flex',
-	width: '75px',
+	width: theme.spacing(8),
 	display: 'flex',
 	justifyContent: 'center',
 	'& img': {
 		borderRadius: '50%',
-		width: '2rem',
-		height: '2rem',
+		width: theme.spacing(4),
+		height: theme.spacing(4),
 		alignSelf: 'center',
 		objectFit: 'cover',
 		backgroundColor: '#e0e0e085'
 	}
-});
+}));
 
-const StyledMessageTime = styled('div')({
-	width: '75px',
-	alignSelf: 'center',
-	fontSize: '13px',
-	color: '#999999',
-	dispay: 'flex',
+const StyledMessageTime = styled('div')(({ theme }) => ({
 	display: 'flex',
-	justifyContent: 'center'
-});
+	width: theme.spacing(8),
+	alignSelf: 'center',
+	justifyContent: 'center',
+	fontSize: theme.typography.caption.fontSize,
+	color: theme.palette.text.disabled,
+}));
 
 const StyledMessageContent = styled('div')(({ theme }) => ({
-	margin: theme.spacing(1),
+	marginRight: theme.spacing(2),
+	marginTop: theme.spacing(0.5),
+	marginBottom: theme.spacing(0.5),
 	'& p': {
 		margin: '0'
 	}

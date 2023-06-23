@@ -69,9 +69,9 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	const audioPermissionSelector = makePermissionSelector(permissions.SHARE_AUDIO);
 	const videoPermissionSelector = makePermissionSelector(permissions.SHARE_VIDEO);
-	const lockPermissionSelector = makePermissionSelector(permissions.LOCK_ROOM);
+	const lockPermissionSelector = makePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 
-	keydownListener = ({ repeat, target, key }): void => {
+	keydownListener = ({ repeat, target, key, ctrlKey, altKey, shiftKey, metaKey }): void => {
 		if (repeat) return;
 
 		const source = target as HTMLElement;
@@ -81,6 +81,8 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				.includes(source?.tagName?.toLowerCase())
 		)
 			return;
+
+		if (ctrlKey || altKey || shiftKey || metaKey) return;
 
 		logger.debug('[keydown:%s]', key);
 
@@ -264,8 +266,8 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	document.addEventListener('keydown', keydownListener);
 
-	keyupListener = (event): void => {
-		const source = event.target as HTMLElement;
+	keyupListener = ({ target, key, ctrlKey, altKey, shiftKey, metaKey }): void => {
+		const source = target as HTMLElement;
 
 		if (
 			[ 'input', 'textarea', 'div' ]
@@ -273,9 +275,11 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 		)
 			return;
 
-		logger.debug('[keyup:%s]', event.key);
+		if (ctrlKey || altKey || shiftKey || metaKey) return;
 
-		switch (event.key) {
+		logger.debug('[keyup:%s]', key);
+
+		switch (key) {
 			case ' ': {
 				const audioInProgress = getState().me.audioInProgress;
 
@@ -306,8 +310,6 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				break;
 			}
 		}
-
-		event.preventDefault();
 	};
 
 	document.addEventListener('keyup', keyupListener);

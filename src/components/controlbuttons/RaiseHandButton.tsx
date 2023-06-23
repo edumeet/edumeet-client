@@ -10,9 +10,10 @@ import {
 } from '../translated/translatedComponents';
 import { setRaisedHand } from '../../store/actions/meActions';
 
-const RaiseHandButton = (
-	props
-: ControlButtonProps): JSX.Element => {
+const RaiseHandButton = ({
+	size,
+	...props
+} : ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const {
 		raisedHand,
@@ -26,9 +27,10 @@ const RaiseHandButton = (
 				dispatch(setRaisedHand(!raisedHand));
 			}}
 			disabled={raisedHandInProgress}
+			size={size}
 			{ ...props }
 		>
-			{ raisedHand ? <PanIconFilled /> : <PanIcon /> }
+			{ raisedHand ? <PanIconFilled fontSize={size} /> : <PanIcon fontSize={size} /> }
 		</ControlButton>
 	);
 };

@@ -42,14 +42,13 @@ const createRoomMiddleware = ({
 									turnServers,
 									rtcStatsOptions,
 									clientMonitorSenderConfig,
-									logo,
-									background,
 									maxActiveVideos,
 									breakoutsEnabled,
 									chatEnabled,
 									filesharingEnabled,
 									raiseHandEnabled,
 									localRecordingEnabled,
+									settings,
 									// TODO: get the rest of the data from the server
 								} = notification.data;
 
@@ -65,13 +64,18 @@ const createRoomMiddleware = ({
 									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
 									dispatch(settingsActions.setLastN(maxActiveVideos));
 									dispatch(roomActions.updateRoom({
-										logo,
-										backgroundImage: background,
+										logo: settings.logo,
+										backgroundImage: settings.background,
 										breakoutsEnabled,
 										chatEnabled,
 										filesharingEnabled,
 										raiseHandEnabled,
 										localRecordingEnabled,
+										videoCodec: settings.videoCodec ?? 'vp8',
+										simulcast: settings.simulcast ?? true,
+										audioCodec: settings.audioCodec ?? 'opus',
+										screenSharingCodec: settings.screenSharingCodec ?? 'vp8',
+										screenSharingSimulcast: settings.screenSharingSimulcast ?? true,
 									}));
 
 									dispatch(roomActions.setState('joined'));
@@ -94,9 +98,8 @@ const createRoomMiddleware = ({
 									raiseHandEnabled,
 									localRecordingEnabled,
 									breakoutsEnabled,
-									logo,
-									background,
 									maxActiveVideos,
+									settings,
 								} = notification.data;
 
 								batch(() => {
@@ -106,8 +109,13 @@ const createRoomMiddleware = ({
 										raiseHandEnabled,
 										localRecordingEnabled,
 										breakoutsEnabled,
-										logo,
-										backgroundImage: background,
+										logo: settings.logo,
+										backgroundImage: settings.background,
+										videoCodec: settings.videoCodec ?? 'vp8',
+										simulcast: settings.simulcast ?? true,
+										audioCodec: settings.audioCodec ?? 'opus',
+										screenSharingCodec: settings.screenSharingCodec ?? 'vp8',
+										screenSharingSimulcast: settings.screenSharingSimulcast ?? true,
 									}));
 									dispatch(permissionsActions.setLocked(locked));
 									dispatch(settingsActions.setLastN(maxActiveVideos));

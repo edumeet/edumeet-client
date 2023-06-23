@@ -19,7 +19,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { detectDevice } from 'mediasoup-client';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
 import CssBaseline from '@mui/material/CssBaseline';
-import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import UnsupportedBrowser from './views/unsupported/UnsupportedBrowser';
 import LandingPage from './views/landingpage/LandingPage';
 import edumeetConfig from './utils/edumeetConfig';
@@ -27,8 +26,7 @@ import { intl } from './utils/intlManager';
 import { useAppDispatch } from './store/hooks';
 import { setLocale } from './store/actions/localeActions';
 import { Logger } from 'edumeet-common';
-import { IconButton } from '@mui/material';
-import { Close } from '@mui/icons-material';
+
 import ErrorBoundary from './views/errorboundary/ErrorBoundary';
 
 if (import.meta.env.VITE_APP_DEBUG === '*' || import.meta.env.NODE_ENV !== 'production') {
@@ -46,22 +44,6 @@ const webrtcUnavailable =
 	!navigator.mediaDevices.getUserMedia ||
 	!window.RTCPeerConnection;
 
-interface SnackbarCloseButtonProps {
-	snackbarKey: SnackbarKey;
-}
-
-const SnackbarCloseButton = ({
-	snackbarKey
-}: SnackbarCloseButtonProps): JSX.Element => {
-	const { closeSnackbar } = useSnackbar();
-
-	return (
-		<IconButton onClick={() => closeSnackbar(snackbarKey)}>
-			<Close />
-		</IconButton>
-	);
-};
-
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<>
@@ -77,7 +59,7 @@ const router = createBrowserRouter(
  * 
  * @returns {JSX.Element} Either the app or the unsupported browser page
  */
-const RootComponent = () => {
+const RootComponent = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -89,13 +71,7 @@ const RootComponent = () => {
 
 		return (<UnsupportedBrowser platform={device.platform} webrtcUnavailable />);
 	} else {
-		return (
-			<SnackbarProvider action={
-				(snackbarKey: SnackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} />
-			}>
-				<RouterProvider router={router} />
-			</SnackbarProvider>
-		);
+		return (<RouterProvider router={router} />);
 	}
 };
 

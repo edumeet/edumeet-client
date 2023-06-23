@@ -58,6 +58,7 @@ const Me = ({
 					width={style.width}
 					height={style.height}
 				>
+					<DisplayName disabled={false} displayName={displayName} isMe />
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'
@@ -81,6 +82,7 @@ const Me = ({
 					width={style.width}
 					height={style.height}
 				>
+					<DisplayName disabled={false} displayName={displayName} isMe />
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'

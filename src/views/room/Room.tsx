@@ -12,9 +12,10 @@ import ControlButtonsBar from '../../components/controlbuttonsbar/ControlButtons
 import Help from '../../components/helpdialog/HelpDialog';
 import MainContent from '../../components/maincontent/MainContent';
 import HelpButton from '../../components/controlbuttons/HelpButton';
-import { usePrompt } from '../../store/hooks';
+import { useNotifier, usePrompt } from '../../store/hooks';
 
 const Room = (): JSX.Element => {
+	useNotifier();
 	usePrompt();
 
 	const [ isFullscreen, setFullscreen ] = useState(false);

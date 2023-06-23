@@ -29,8 +29,8 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 		width: 'calc(100% - 8px)',
 		borderRadius: theme.roundedness,
 	}),
-	height: 48,
 	'& .MuiToolbar-root': {
+		minHeight: 40,
 		paddingLeft: theme.spacing(1),
 		paddingRight: theme.spacing(1),
 	}

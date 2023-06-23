@@ -3,6 +3,7 @@ import edumeetConfig from '../../utils/edumeetConfig';
 
 export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left';
 export type RoomMode = 'P2P' | 'SFU';
+export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';
 
 export interface RoomState {
 	id?: string;
@@ -29,6 +30,11 @@ export interface RoomState {
 	filesharingEnabled?: boolean;
 	raiseHandEnabled?: boolean;
 	localRecordingEnabled?: boolean;
+	videoCodec?: VideoCodec;
+	simulcast?: boolean;
+	audioCodec?: string;
+	screenSharingCodec?: VideoCodec;
+	screenSharingSimulcast?: boolean;
 }
 
 type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
@@ -43,6 +49,11 @@ const initialState: RoomState = {
 	filesharingEnabled: true,
 	raiseHandEnabled: true,
 	localRecordingEnabled: true,
+	videoCodec: 'vp8',
+	simulcast: edumeetConfig.simulcast,
+	audioCodec: 'opus',
+	screenSharingCodec: 'vp8',
+	screenSharingSimulcast: edumeetConfig.simulcastSharing,
 };
 
 const roomSlice = createSlice({

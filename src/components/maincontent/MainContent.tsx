@@ -9,12 +9,12 @@ import { isMobileSelector } from '../../store/selectors';
 
 const WrapperContainer = styled(Box)(({ theme }) => ({
 	width: 'calc(100% - 8px)',
-	height: 'calc(100% - 60px)',
+	height: 'calc(100% - 52px)',
 	display: 'flex',
 	marginLeft: theme.spacing(0.5),
 	marginRight: theme.spacing(0.5),
 	marginBottom: theme.spacing(0.5),
-	marginTop: 56,
+	marginTop: 48,
 	gap: theme.spacing(0.5),
 }));
 
