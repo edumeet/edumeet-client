@@ -3,7 +3,7 @@ name: Bug report
 about: Please fill in the appropriate fields to help us solve your issue
 title: "[BUG]"
 labels: bug
-assignees: havfo
+assignees: havfo, pnts-se
 
 ---
 
