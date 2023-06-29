@@ -37,7 +37,7 @@ const Me = ({
 		<>
 			{ !hideSelfView && (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={1}
 					width={style.width}
 					height={style.height}
