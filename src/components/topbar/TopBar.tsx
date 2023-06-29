@@ -14,6 +14,7 @@ import LeaveButton from '../textbuttons/LeaveButton';
 import TranscriptionButton from '../controlbuttons/TranscriptionButton';
 import AccessTime from '@mui/icons-material/AccessTime';
 import { formatDuration } from '../../utils/formatDuration';
+import LogoutButton from '../controlbuttons/LogoutButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -64,7 +65,7 @@ const TopBar = ({
 	fullscreenEnabled,
 	fullscreen,
 	onFullscreen
-}: TopBarProps): JSX.Element => {
+}: TopBarProps): React.JSX.Element => {
 	const logo = useAppSelector((state) => state.room.logo);
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
@@ -74,6 +75,7 @@ const TopBar = ({
 	const roomCreationTimestamp = useAppSelector(roomSessionCreationTimestampSelector);
 	const [ meetingDuration, setMeetingDuration ] = useState<number>(0);
 	const isMoile = useAppSelector(isMobileSelector);
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	useEffect(() => {
 		if (roomCreationTimestamp) {
@@ -114,7 +116,9 @@ const TopBar = ({
 					<SettingsButton type='iconbutton' />
 					{ canLock && <LockButton type='iconbutton' /> }
 					{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
-					{ loginEnabled && <LoginButton type='iconbutton' /> }
+					{ loginEnabled &&
+						<>{loggedIn ? <LogoutButton type="iconbutton" /> : <LoginButton type='iconbutton' /> }</>
+					}
 				</TopBarDiv>
 				<LeaveButton />
 			</Toolbar>
