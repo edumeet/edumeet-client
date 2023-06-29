@@ -2,17 +2,18 @@ import {
 	useAppDispatch,
 	useAppSelector,
 } from '../../store/hooks';
-import PanIconFilled from '@mui/icons-material/PanTool';
-import PanIcon from '@mui/icons-material/PanToolOutlined';
+import PanIconFilled from '@mui/icons-material/BackHand';
+import PanIcon from '@mui/icons-material/BackHandOutlined';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import {
 	raiseHandLabel,
 } from '../translated/translatedComponents';
 import { setRaisedHand } from '../../store/actions/meActions';
 
-const RaiseHandButton = (
-	props
-: ControlButtonProps): JSX.Element => {
+const RaiseHandButton = ({
+	size,
+	...props
+} : ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const {
 		raisedHand,
@@ -26,9 +27,10 @@ const RaiseHandButton = (
 				dispatch(setRaisedHand(!raisedHand));
 			}}
 			disabled={raisedHandInProgress}
+			size={size}
 			{ ...props }
 		>
-			{ raisedHand ? <PanIconFilled /> : <PanIcon /> }
+			{ raisedHand ? <PanIconFilled fontSize={size} /> : <PanIcon fontSize={size} /> }
 		</ControlButton>
 	);
 };

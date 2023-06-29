@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import fscreen from 'fscreen';
-import MeetingDrawer from '../../components/meetingdrawer/MeetingDrawer';
-import Democratic from '../../components/democratic/Democratic';
 import Settings from '../../components/settingsdialog/SettingsDialog';
 import TopBar from '../../components/topbar/TopBar';
-import { usePrompt } from '../../store/hooks';
 import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
 import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import AudioPeers from '../../components/audiopeers/AudioPeers';
@@ -13,11 +10,15 @@ import FilesharingDialog from '../../components/filesharingdialog/FilesharingDia
 import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog';
 import ControlButtonsBar from '../../components/controlbuttonsbar/ControlButtonsBar';
 import Help from '../../components/helpdialog/HelpDialog';
+import MainContent from '../../components/maincontent/MainContent';
+import HelpButton from '../../components/controlbuttons/HelpButton';
+import { useNotifier, usePrompt } from '../../store/hooks';
 
 const Room = (): JSX.Element => {
-	const [ isFullscreen, setFullscreen ] = useState(false);
+	useNotifier();
+	usePrompt();
 
-	usePrompt(true);
+	const [ isFullscreen, setFullscreen ] = useState(false);
 
 	useEffect(() => {
 		if (fscreen.fullscreenEnabled)
@@ -48,14 +49,14 @@ const Room = (): JSX.Element => {
 				fullscreen={isFullscreen}
 				onFullscreen={handleToggleFullscreen}
 			/>
-			<MeetingDrawer />
 			<ControlButtonsBar />
-			<Democratic />
+			<MainContent />
 			<LobbyDialog />
 			<Settings />
 			<Help />
 			<FilesharingDialog />
 			<ExtraVideoDialog />
+			<HelpButton type='iconbutton' />
 		</>
 	);
 };

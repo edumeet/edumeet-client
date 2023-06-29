@@ -37,7 +37,7 @@ const MediaControlsDiv = styled('div')<MediaControlsDivProps>(({
 		'&:hover': {
 			opacity: 1
 		},
-		opacity: 0.2,
+		opacity: 0.4,
 	}),
 	alignItems: alignitems,
 	justifyContent: justifycontent,

@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { closeBreakoutRoomLabel } from '../translated/translatedComponents';
+import { clearOutBreakoutRoomLabel } from '../translated/translatedComponents';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ejectBreakoutRoom } from '../../store/actions/roomActions';
 
@@ -15,14 +15,14 @@ const EjectBreakoutRoomButton = ({
 
 	return (
 		<Button
-			aria-label={closeBreakoutRoomLabel()}
+			aria-label={clearOutBreakoutRoomLabel()}
 			disabled={updateBreakoutInProgress}
 			color='error'
 			variant='contained'
 			size='small'
 			onClick={() => dispatch(ejectBreakoutRoom(sessionId))}
 		>
-			{ closeBreakoutRoomLabel() }
+			{ clearOutBreakoutRoomLabel() }
 		</Button>
 	);
 };

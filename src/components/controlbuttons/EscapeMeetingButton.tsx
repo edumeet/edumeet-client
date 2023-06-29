@@ -4,9 +4,10 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { escapeMeetingLabel } from '../translated/translatedComponents';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 
-const EscapeMeetingButton = (
-	props
-: ControlButtonProps): JSX.Element => {
+const EscapeMeetingButton = ({
+	size,
+	...props
+} : ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const {
 		escapeMeeting,
@@ -20,9 +21,10 @@ const EscapeMeetingButton = (
 				dispatch(setEscapeMeeting(!escapeMeeting));
 			} }
 			disabled={ escapeMeetingInProgress }
+			size={ size }
 			{ ...props }
 		>
-			{ escapeMeeting ? <NoMeetingRoom /> : <NoMeetingRoomOutlined /> }
+			{ escapeMeeting ? <NoMeetingRoom fontSize={size} /> : <NoMeetingRoomOutlined fontSize={size} /> }
 		</ControlButton>
 	);
 };

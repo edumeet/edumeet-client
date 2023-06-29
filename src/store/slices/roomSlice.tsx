@@ -1,12 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import edumeetConfig from '../../utils/edumeetConfig';
 
-export type RoomConnectionState = 'new' | 'lobby' | 'overRoomLimit' | 'joined' | 'kicked' | 'left';
-export type SettingsTab = 'media' | 'appearance' | 'advanced';
-export type HelpTab = 'shortcuts';
+export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left';
 export type RoomMode = 'P2P' | 'SFU';
+export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';
 
 export interface RoomState {
 	id?: string;
+	logo?: string;
+	backgroundImage?: string;
+	joinInProgress?: boolean;
 	updateBreakoutInProgress?: boolean;
 	transitBreakoutRoomInProgress?: boolean;
 	lockInProgress?: boolean;
@@ -22,13 +25,35 @@ export interface RoomState {
 	transcriptionRunning?: boolean;
 	state: RoomConnectionState;
 	roomMode: RoomMode;
+	breakoutsEnabled?: boolean;
+	chatEnabled?: boolean;
+	filesharingEnabled?: boolean;
+	raiseHandEnabled?: boolean;
+	localRecordingEnabled?: boolean;
+	videoCodec?: VideoCodec;
+	simulcast?: boolean;
+	audioCodec?: string;
+	screenSharingCodec?: VideoCodec;
+	screenSharingSimulcast?: boolean;
 }
 
 type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
 
 const initialState: RoomState = {
+	logo: edumeetConfig.theme.logo,
+	backgroundImage: edumeetConfig.theme.backgroundImage,
 	roomMode: 'P2P',
 	state: 'new',
+	breakoutsEnabled: true,
+	chatEnabled: true,
+	filesharingEnabled: true,
+	raiseHandEnabled: true,
+	localRecordingEnabled: true,
+	videoCodec: 'vp8',
+	simulcast: edumeetConfig.simulcast,
+	audioCodec: 'opus',
+	screenSharingCodec: 'vp8',
+	screenSharingSimulcast: edumeetConfig.simulcastSharing,
 };
 
 const roomSlice = createSlice({

@@ -348,7 +348,7 @@ export class MediaService extends EventEmitter {
 						} else {
 							const resolutionWatcher = new ResolutionWatcher();
 
-							let lastSpatialLayer = 0;
+							let lastSpatialLayer = 2;
 
 							resolutionWatcher.on('newResolution', async (resolution) => {
 								const { width } = resolution;
@@ -478,6 +478,19 @@ export class MediaService extends EventEmitter {
 							changeEvent[notification.method] as MediaChange,
 							false
 						);
+						break;
+					}
+
+					case 'newProducerLayer': {
+						const { producerId, spatialLayer } = notification.data;
+
+						const producer = this.producers.get(producerId);
+
+						if (!producer)
+							throw new Error('producer not found');
+
+						producer.setMaxSpatialLayer(spatialLayer);
+
 						break;
 					}
 				}

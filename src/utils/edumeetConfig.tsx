@@ -5,26 +5,30 @@ declare module '@mui/material/styles' {
 		backgroundImage?: string;
 		background?: string;
 		appBarColor: string;
+		appBarFloating: boolean;
 		logo: string;
 		activeSpeakerBorder: string;
 		videoBackroundColor: string;
-		videoShadow: string;
 		videoAvatarImage: string;
-		videoRoundedCorners: boolean;
-		chatColor?: string;
+		roundedness: number;
+		sideContentItemColor?: string;
+		sideContentItemDarkColor?: string;
+		sideContainerBackgroundColor?: string;
 	}
 
 	interface ThemeOptions {
 		backgroundImage?: string;
 		background?: string;
 		appBarColor?: string;
+		appBarFloating?: boolean;
 		logo?: string;
 		activeSpeakerBorder?: string;
 		videoBackroundColor?: string;
-		videoShadow?: string;
 		videoAvatarImage?: string;
-		videoRoundedCorners?: boolean;
-		chatColor?: string;
+		roundedness?: number;
+		sideContentItemColor?: string;
+		sideContentItemDarkColor?: string;
+		sideContainerBackgroundColor?: string;
 	}
 }
 

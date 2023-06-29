@@ -23,10 +23,12 @@ interface AccordionProps {
 }
 
 const StyledAccordion = styled(Accordion)<AccordionProps>(({
+	theme,
 	insession
 }) => ({
+	backgroundColor: theme.sideContentItemColor,
 	...(insession && {
-		backgroundColor: 'lightgray',
+		backgroundColor: theme.sideContentItemDarkColor,
 	})
 }));
 

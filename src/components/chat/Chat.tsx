@@ -15,12 +15,13 @@ const ChatDiv = styled('div')({
 
 const Chat = (): JSX.Element => {
 	const isChatModerator = usePermissionSelector(permissions.MODERATE_CHAT);
+	const canChat = usePermissionSelector(permissions.SEND_CHAT);
 
 	return (
 		<ChatDiv>
 			{ isChatModerator && <ChatModerator /> }
 			<ChatHistory />
-			<ChatInput />
+			{ canChat && <ChatInput /> }
 		</ChatDiv>
 	);
 };

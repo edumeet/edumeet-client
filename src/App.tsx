@@ -4,7 +4,7 @@ import { startListeners, stopListeners } from './store/actions/startActions';
 import {
 	useAppDispatch,
 	useAppSelector,
-	useNotifier
+	usePermissionSelector
 } from './store/hooks';
 import StyledBackground from './components/StyledBackground';
 import Join from './views/join/Join';
@@ -13,17 +13,37 @@ import Room from './views/room/Room';
 import { sendFiles } from './store/actions/filesharingActions';
 import { uiActions } from './store/slices/uiSlice';
 import { roomActions, RoomConnectionState } from './store/slices/roomSlice';
-import { LeavePrompt } from './components/leaveprompt/LeavePrompt';
+import { permissions } from './utils/roles';
+import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
+import { IconButton } from '@mui/material';
+import { Close } from '@mui/icons-material';
 
 type AppParams = {
 	id: string;
 };
 
+interface SnackbarCloseButtonProps {
+	snackbarKey: SnackbarKey;
+}
+
+const SnackbarCloseButton = ({
+	snackbarKey
+}: SnackbarCloseButtonProps): JSX.Element => {
+	const { closeSnackbar } = useSnackbar();
+
+	return (
+		<IconButton onClick={() => closeSnackbar(snackbarKey)}>
+			<Close />
+		</IconButton>
+	);
+};
+
 const App = (): JSX.Element => {
-	useNotifier();
+	const backgroundImage = useAppSelector((state) => state.room.backgroundImage);
 	const dispatch = useAppDispatch();
 	const roomState = useAppSelector((state) => state.room.state) as RoomConnectionState;
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
+	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
 
 	useEffect(() => {
 		dispatch(startListeners());
@@ -35,9 +55,9 @@ const App = (): JSX.Element => {
 	}, []);
 
 	const handleFileDrop = (event: React.DragEvent<HTMLDivElement>): void => {
-		if (roomState !== 'joined') return;
-
 		event.preventDefault();
+
+		if (roomState !== 'joined' || !hasFilesharingPermission) return;
 
 		const droppedFiles = event.dataTransfer.files;
 
@@ -48,10 +68,13 @@ const App = (): JSX.Element => {
 	};
 
 	return (
-		<LeavePrompt>
+		<SnackbarProvider action={
+			(snackbarKey: SnackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} />
+		}>
 			<StyledBackground
 				onDrop={handleFileDrop}
 				onDragOver={(event) => event.preventDefault()}
+				backgroundimage={backgroundImage}
 			>
 				{
 					roomState === 'joined' ?
@@ -59,8 +82,7 @@ const App = (): JSX.Element => {
 							<Lobby /> : roomState === 'new' && <Join roomId={id} />
 				}
 			</StyledBackground>
-		</LeavePrompt>
-		
+		</SnackbarProvider>
 	);
 };
 

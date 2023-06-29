@@ -66,9 +66,6 @@ can be found here: [config.example.js](public/config/config.example.js).
 | screenSharingFrameRate | The default screen sharing framerate. | `"nat"` | ``5`` |
 | simulcast | Enable or disable simulcast for webcam video. | `"boolean"` | ``true`` |
 | simulcastSharing | Enable or disable simulcast for screen sharing video. | `"boolean"` | ``false`` |
-| localRecordingEnabled | If set to true Local Recording feature will be enabled. | `"boolean"` | ``false`` |
-| requestTimeout | The Socket.io request timeout. | `"nat"` | ``20000`` |
-| requestRetries | The Socket.io request maximum retries. | `"nat"` | ``3`` |
 | autoGainControl | Auto gain control enabled. | `"boolean"` | ``true`` |
 | echoCancellation | Echo cancellation enabled. | `"boolean"` | ``true`` |
 | noiseSuppression | Noise suppression enabled. | `"boolean"` | ``true`` |
@@ -84,14 +81,9 @@ can be found here: [config.example.js](public/config/config.example.js).
 | opusMaxPlaybackRate | The OPUS playback rate. | `[  8000,  16000,  24000,  44100,  48000]` | ``48000`` |
 | audioPreset | The audio preset | `"string"` | ``"conference"`` |
 | audioPresets | The audio presets. | `"object"` | ``{  "conference": {    "name": "Conference audio",    "autoGainControl": true,    "echoCancellation": true,    "noiseSuppression": true,    "voiceActivatedUnmute": false,    "noiseThreshold": -60,    "sampleRate": 48000,    "channelCount": 1,    "sampleSize": 16,    "opusStereo": false,    "opusDtx": true,    "opusFec": true,    "opusPtime": 20,    "opusMaxPlaybackRate": 48000  },  "hifi": {    "name": "HiFi streaming",    "autoGainControl": false,    "echoCancellation": false,    "noiseSuppression": false,    "voiceActivatedUnmute": false,    "noiseThreshold": -60,    "sampleRate": 48000,    "channelCount": 2,    "sampleSize": 16,    "opusStereo": true,    "opusDtx": false,    "opusFec": true,    "opusPtime": 60,    "opusMaxPlaybackRate": 48000  }}`` |
-| autoMuteThreshold | It sets the maximum number of participants in one room that can join unmuted. The next participant will join automatically muted. Set it to 0 to auto mute all. Set it to negative (-1) to never automatically auto mute but use it with caution,  full mesh audio strongly decrease room capacity! | `"nat"` | ``4`` |
 | background | The page background image URL | `"string"` | ``"images/background.jpg"`` |
-| defaultLayout | The default layout. | `[  "democratic",  "filmstrip"]` | ``"democratic"`` |
 | buttonControlBar | If true, the media control buttons will be shown in separate control bar, not in the ME container. | `"boolean"` | ``false`` |
-| notificationPosition | The position of the notifications. | `[  "left",  "right"]` | ``"right"`` |
 | logo | If not null, it shows the logo loaded from the specified URL, otherwise it shows the title. | `"url"` | ``"images/logo.edumeet.svg"`` |
 | title | The title to show if the logo is not specified. | `"string"` | ``"edumeet"`` |
-| supportUrl | The service & Support URL; if `null`, it will be not displayed on the about dialogs. | `"url"` | ``"https://support.example.com"`` |
-| privacyUrl | The privacy and data protection external URL or local HTML path. | `"string"` | ``"privacy/privacy.html"`` |
 
 ---

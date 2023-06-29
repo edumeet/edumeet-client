@@ -153,15 +153,15 @@ export const loadLocale = async (locale: string): Promise<string> => {
 
 	try {
 		res = localeList.filter((item) => item.locale.includes(locale))[0];
-		res.messages = await import(`../translations/${res.file}`);
+		res.messages = await import(`../translations/${res.file}.json`);
 	} catch {
 		res = localeList.filter((item) => item.locale.includes('en'))[0];
-		res.messages = await import(`../translations/${res.file}`);
+		res.messages = await import(`../translations/${res.file}.json`);
 	}
 
 	intl = createIntl({
 		locale: res.locale[0],
-		messages: res.messages
+		messages: res.messages.default,
 	}, cache);
 
 	return res.locale[0];

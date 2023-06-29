@@ -7,7 +7,6 @@ export interface Peer {
 	sessionId: string;
 	displayName?: string;
 	picture?: string;
-	audioOnly?: boolean;
 	videoInProgress?: boolean;
 	stopVideoInProgress?: boolean;
 	audioInProgress?: boolean;
@@ -15,15 +14,13 @@ export interface Peer {
 	screenInProgress?: boolean;
 	stopScreenSharingInProgress?: boolean;
 	kickInProgress?: boolean;
-	modifyRolesInProgress?: boolean;
 	raisedHandInProgress?: boolean;
 	raisedHand?: boolean;
 	raisedHandTimestamp?: number;
-	roles: number[]; // Role IDs
 	transcripts?: Transcript[];
 }
 
-type PeerUpdate = Omit<Peer, 'sessionId' | 'roles' | 'transcripts'>;
+type PeerUpdate = Omit<Peer, 'sessionId' | 'transcripts'>;
 
 const initialState: Record<string, Peer> = {};
 
@@ -55,7 +52,6 @@ const peersSlice = createSlice({
 				const {
 					displayName,
 					picture,
-					audioOnly,
 					videoInProgress,
 					stopVideoInProgress,
 					audioInProgress,
@@ -63,7 +59,6 @@ const peersSlice = createSlice({
 					screenInProgress,
 					stopScreenSharingInProgress,
 					kickInProgress,
-					modifyRolesInProgress,
 					raisedHandInProgress,
 					raisedHand,
 					raisedHandTimestamp
@@ -73,8 +68,6 @@ const peersSlice = createSlice({
 					peer.displayName = displayName;
 				if (picture)
 					peer.picture = picture;
-				if (audioOnly)
-					peer.audioOnly = audioOnly;
 				if (videoInProgress !== undefined)
 					peer.videoInProgress = videoInProgress;
 				if (stopVideoInProgress !== undefined)
@@ -89,30 +82,12 @@ const peersSlice = createSlice({
 					peer.stopScreenSharingInProgress = stopScreenSharingInProgress;
 				if (kickInProgress !== undefined)
 					peer.kickInProgress = kickInProgress;
-				if (modifyRolesInProgress !== undefined)
-					peer.modifyRolesInProgress = modifyRolesInProgress;
 				if (raisedHandInProgress !== undefined)
 					peer.raisedHandInProgress = raisedHandInProgress;
 				if (raisedHand !== undefined)
 					peer.raisedHand = raisedHand;
 				if (raisedHandTimestamp !== undefined)
 					peer.raisedHandTimestamp = raisedHandTimestamp;
-			}
-		}),
-		addRole: ((state, action: PayloadAction<{ id: string, roleId: number }>) => {
-			const { roleId } = action.payload;
-			const peer = state[action.payload.id];
-
-			if (peer)
-				peer.roles.push(roleId);
-		}),
-		removeRole: ((state, action: PayloadAction<{ id: string, roleId: number }>) => {
-			const { roleId } = action.payload;
-			const peer = state[action.payload.id];
-
-			if (peer) {
-				peer.roles =
-					peer.roles.filter((role) => role !== roleId);
 			}
 		}),
 		updateTranscript: ((state, action: PayloadAction<PeerTranscript>) => {

@@ -3,31 +3,38 @@ import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { Logger } from 'edumeet-common';
+import { getTenantFromFqdn } from './managementActions';
 
 const logger = new Logger('LoginActions');
 
 export const login = (): AppThunk<Promise<void>> => async (
 	dispatch,
-	getState,
+	_getState,
+	{ config }
 ): Promise<void> => {
 	logger.debug('login()');
 
-	const { id: peerId } = getState().me;
-	const { id: roomId } = getState().room;
+	const tenantId = await dispatch(getTenantFromFqdn(location.hostname));
 
-	window.open(`/auth/login?peerId=${peerId}&roomId=${roomId}`, 'loginWindow');
+	if (!tenantId) return logger.error('login() | no tenant found');
+
+	window.open(`${config.managementUrl}/oauth/tenant?tenantId=${tenantId}`, 'loginWindow');
 };
 
 export const logout = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
+	{ signalingService, managementService }
 ): Promise<void> => {
 	logger.debug('logout()');
 
-	const { id: peerId } = getState().me;
-	const { id: roomId } = getState().room;
+	await managementService.authentication.removeAccessToken();
 
-	window.open(`/auth/logout?peerId=${peerId}&roomId=${roomId}`, 'logoutWindow');
+	dispatch(permissionsActions.setToken());
+	dispatch(permissionsActions.setLoggedIn(false));
+
+	if (getState().signaling.state === 'connected')
+		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
 };
 
 export const lock = (): AppThunk<Promise<void>> => async (

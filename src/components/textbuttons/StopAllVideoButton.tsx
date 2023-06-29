@@ -20,6 +20,7 @@ const StopAllVideoButton = (): JSX.Element => {
 			variant='contained'
 			onClick={handleStopAll}
 			disabled={muteAllInProgress}
+			size='small'
 		>
 			{ stopAllVideoLabel() }
 		</Button>

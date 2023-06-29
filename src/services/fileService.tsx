@@ -1,4 +1,3 @@
-import createTorrent from 'create-torrent';
 import { Logger } from 'edumeet-common';
 import WebTorrent from 'webtorrent';
 import { SignalingService } from './signalingService';
@@ -32,32 +31,13 @@ export class FileService {
 		});
 	}
 
-	public async sendFiles(files: FileList, sessionId?: string): Promise<string> {
-		return new Promise((resolve, reject) => {
-			createTorrent(files, async (error, torrent) => {
-				if (error)
-					return reject(error);
-	
-				const existingTorrent = this.webTorrent?.get(torrent);
-	
-				if (existingTorrent) {
-					await this.signalingService.sendRequest('sendFile', { magnetURI: existingTorrent.magnetURI, sessionId })
-						.catch((err) => logger.warn('sendFile, unable to send file [magnetURI:%s, error:%o]', existingTorrent.magnetURI, err));
-
-					return resolve(existingTorrent.magnetURI);
-				}
-	
-				this.webTorrent?.seed(
-					files,
-					{ /* announceList: [ [ this.tracker ] ] */ },
-					async (newTorrent) => {
-						await this.signalingService.sendRequest('sendFile', { magnetURI: newTorrent.magnetURI, sessionId })
-							.catch((err) => logger.warn('sendFile, unable to send file [magnetURI:%s, error:%o]', newTorrent.magnetURI, err));
-
-						return resolve(newTorrent.magnetURI);
-					}
-				);
-			});
+	public async sendFiles(files: FileList): Promise<string> {
+		return new Promise((resolve) => {
+			this.webTorrent?.seed(
+				files,
+				{ /* TODO: announceList: [ [ this.tracker ] ] */ },
+				(newTorrent) => resolve(newTorrent.magnetURI)
+			);
 		});
 	}
 

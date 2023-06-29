@@ -36,7 +36,6 @@ import webrtcSlice from './slices/webrtcSlice';
 import permissionsSlice from './slices/permissionsSlice';
 import lobbyPeersSlice from './slices/lobbyPeersSlice';
 import settingsSlice from './slices/settingsSlice';
-import drawerSlice from './slices/drawerSlice';
 import peersSlice from './slices/peersSlice';
 import producersSlice from './slices/producersSlice';
 import notificationsSlice from './slices/notificationsSlice';
@@ -47,15 +46,17 @@ import { createContext } from 'react';
 import { DeviceService } from '../services/deviceService';
 import { FileService } from '../services/fileService';
 import recordingSlice from './slices/recordingSlice';
-import { PerformanceMonitor } from '../utils/performanceMonitor';
 import roomSessionsSlice from './slices/roomSessionsSlice';
+import { Application, feathers } from '@feathersjs/feathers/lib';
+import rest from '@feathersjs/rest-client';
+import authentication from '@feathersjs/authentication-client';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
-	performanceMonitor: PerformanceMonitor;
 	fileService: FileService;
 	deviceService: DeviceService;
 	signalingService: SignalingService;
+	managementService: Application;
 	config: EdumeetConfig;
 }
 
@@ -68,7 +69,9 @@ const persistConfig = {
 
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
-const performanceMonitor = new PerformanceMonitor();
+const managementService = feathers()
+	.configure(rest(edumeetConfig.managementUrl).fetch(window.fetch.bind(window)))
+	.configure(authentication());
 
 export const mediaService = new MediaService({ signalingService });
 export const fileService = new FileService({ signalingService });
@@ -87,15 +90,14 @@ export const ServiceContext = createContext<{
 const middlewareOptions = {
 	config: edumeetConfig,
 	mediaService,
-	performanceMonitor,
 	fileService,
 	deviceService,
 	signalingService,
+	managementService,
 };
 
 const reducer = combineReducers({
 	consumers: consumersSlice.reducer,
-	drawer: drawerSlice.reducer,
 	notifications: notificationsSlice.reducer,
 	lobbyPeers: lobbyPeersSlice.reducer,
 	me: meSlice.reducer,
@@ -151,7 +153,3 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 	MiddlewareOptions,
 	Action<string>
 >;
-
-export const LeavePromptContext = createContext<() => Promise<void>>(() =>
-	Promise.resolve()
-);

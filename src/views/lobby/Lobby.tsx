@@ -1,42 +1,25 @@
 import { AccountCircle } from '@mui/icons-material';
-import { Typography } from '@mui/material';
 import { useState } from 'react';
-import AudioOnlySwitch from '../../components/audioonlyswitch/AudioOnlySwitch';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
-import PrecallDialog from '../../components/precalldialog/PrecallDialog';
+import GenericDialog from '../../components/genericdialog/GenericDialog';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import {
-	disableAllMediaLabel,
-	enableAllMediaLabel,
-	enableCameraLabel,
-	enableMicrophoneLabel,
-	roomLockedLabel,
-	yourNameLabel
-} from '../../components/translated/translatedComponents';
-import { setAudioOnly, setDisplayName } from '../../store/actions/meActions';
-import { stopPreviewWebcam, updatePreviewWebcam } from '../../store/actions/mediaActions';
+import { roomLockedLabel, yourNameLabel } from '../../components/translated/translatedComponents';
+import { setDisplayName } from '../../store/actions/meActions';
 import {
 	useAppDispatch,
 	useAppSelector,
-	usePrompt
+	usePrompt,
 } from '../../store/hooks';
+import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 
 const Lobby = (): JSX.Element => {
+	usePrompt();
+
 	const dispatch = useAppDispatch();
 	const displayName = useAppSelector((state) => state.settings.displayName);
-	const audioOnly = useAppSelector((state) => state.settings.audioOnly);
-	const {
-		previewMicTrackId,
-		previewWebcamTrackId,
-		videoInProgress
-	} = useAppSelector((state) => state.me);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
-	const [ localAudioOnly, setLocalAudioOnly ] = useState(audioOnly);
-	const { videoMuted } = useAppSelector((state) => state.settings);
-
-	usePrompt(true);
 
 	const handleDisplayNameChange = () => {
 		dispatch(setDisplayName(
@@ -44,31 +27,14 @@ const Lobby = (): JSX.Element => {
 		));
 	};
 
-	const handleAudioOnlyChage = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setLocalAudioOnly(event.target.checked);
-		dispatch(setAudioOnly(event.target.checked));
-
-		if (!videoMuted && event.target.checked)
-			dispatch(stopPreviewWebcam());
-		else if (videoMuted && !event.target.checked)
-			dispatch(updatePreviewWebcam());
-	};
-
 	return (
-		<PrecallDialog
+		<GenericDialog
+			title={ <PrecallTitle /> }
 			content={
 				<>
-					{ roomLockedLabel() }
-					<MediaPreview audioOnly={localAudioOnly} />
+					<MediaPreview />
 					<AudioInputChooser preview />
-					{ !localAudioOnly && <VideoInputChooser preview /> }
-					<Typography variant='h5'>
-						{ (previewMicTrackId && previewWebcamTrackId) ?
-							enableAllMediaLabel() : previewMicTrackId ?
-								enableMicrophoneLabel() : previewWebcamTrackId ?
-									enableCameraLabel() : disableAllMediaLabel()
-						}
-					</Typography>
+					<VideoInputChooser preview />
 					<TextInputField
 						label={yourNameLabel()}
 						value={localDisplayName ?? 'Guest'}
@@ -76,13 +42,9 @@ const Lobby = (): JSX.Element => {
 						startAdornment={<AccountCircle />}
 						onBlur={handleDisplayNameChange}
 					/>
-					<AudioOnlySwitch
-						checked={localAudioOnly}
-						disabled={videoInProgress}
-						onChange={handleAudioOnlyChage}
-					/>
 				</>
 			}
+			actions={roomLockedLabel()}
 		/>
 	);
 };

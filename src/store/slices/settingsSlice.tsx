@@ -1,18 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { detect } from '../../utils/intlManager';
-import { AudioPreset, Resolution, RoomLayout } from '../../utils/types';
+import { AudioPreset, Resolution } from '../../utils/types';
 import { producersActions } from './producersSlice';
 
 export interface SettingsState {
-	displayName?: string;
-	audioOnly: boolean;
+	displayName: string;
 	lastN: number;
 	mirroredSelfView: boolean;
 	hideNonVideo: boolean;
 	hideSelfView: boolean;
-	controlButtonsBar: boolean;
-	roomLayout: RoomLayout;
+	verticalDivide: boolean;
+	dynamicWidth: boolean;
 	aspectRatio: number;
 	selectedAudioDevice?: string;
 	selectedVideoDevice?: string;
@@ -20,7 +19,6 @@ export interface SettingsState {
 	frameRate: number;
 	screenSharingResolution: Resolution;
 	screenSharingFrameRate: number;
-	supportedRecorderMimeTypes: string[],
 	preferredRecorderMimeType: string,
 	audioPreset: string,
 	audioPresets: Record<string, AudioPreset>,
@@ -45,19 +43,18 @@ export interface SettingsState {
 type SettingsUpdate = Partial<SettingsState>;
 
 const initialState: SettingsState = {
-	audioOnly: false,
+	displayName: 'Guest',
 	mirroredSelfView: true,
-	roomLayout: edumeetConfig.defaultLayout,
 	resolution: edumeetConfig.resolution,
 	frameRate: edumeetConfig.frameRate,
 	screenSharingResolution: edumeetConfig.screenSharingResolution,
 	screenSharingFrameRate: edumeetConfig.screenSharingFrameRate,
-	supportedRecorderMimeTypes: [],
 	preferredRecorderMimeType: 'video/webm',
 	lastN: edumeetConfig.lastN,
 	hideNonVideo: edumeetConfig.hideNonVideo,
 	hideSelfView: false,
-	controlButtonsBar: false,
+	verticalDivide: true,
+	dynamicWidth: true,
 	aspectRatio: edumeetConfig.aspectRatio,
 	audioPreset: edumeetConfig.audioPreset,
 	audioPresets: edumeetConfig.audioPresets,
@@ -87,14 +84,8 @@ const settingsSlice = createSlice({
 		setDisplayName: ((state, action: PayloadAction<string>) => {
 			state.displayName = action.payload;
 		}),
-		setAudioOnly: ((state, action: PayloadAction<boolean>) => {
-			state.audioOnly = action.payload;
-		}),
 		setLastN: ((state, action: PayloadAction<number>) => {
 			state.lastN = action.payload;
-		}),
-		setRoomLayout: ((state, action: PayloadAction<RoomLayout>) => {
-			state.roomLayout = action.payload;
 		}),
 		setMirroredSelfView: ((state, action: PayloadAction<boolean>) => {
 			state.mirroredSelfView = action.payload;
@@ -105,8 +96,11 @@ const settingsSlice = createSlice({
 		setHideSelfView: ((state, action: PayloadAction<boolean>) => {
 			state.hideSelfView = action.payload;
 		}),
-		setSeparateMediaControls: ((state, action: PayloadAction<boolean>) => {
-			state.controlButtonsBar = action.payload;
+		setVerticalDivide: ((state, action: PayloadAction<boolean>) => {
+			state.verticalDivide = action.payload;
+		}),
+		setDynamicWidth: ((state, action: PayloadAction<boolean>) => {
+			state.dynamicWidth = action.payload;
 		}),
 		setAspectRatio: ((state, action: PayloadAction<number>) => {
 			state.aspectRatio = action.payload;
@@ -128,9 +122,6 @@ const settingsSlice = createSlice({
 		}),
 		setScreenSharingFrameRate: ((state, action: PayloadAction<number>) => {
 			state.screenSharingFrameRate = action.payload;
-		}),
-		setSupportedRecorderMimeTypes: ((state, action: PayloadAction<string[]>) => {
-			state.supportedRecorderMimeTypes = action.payload;
 		}),
 		setPreferredRecorderMimeType: ((state, action: PayloadAction<string>) => {
 			state.preferredRecorderMimeType = action.payload;

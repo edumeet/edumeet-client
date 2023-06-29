@@ -4,11 +4,13 @@ import {
 } from '../../store/hooks';
 import EscapeMeetingButton from '../controlbuttons/EscapeMeetingButton';
 import RaiseHandButton from '../controlbuttons/RaiseHandButton';
+import { meLabel } from '../translated/translatedComponents';
 
 const MeDiv = styled(Paper)(({ theme }) => ({
 	display: 'flex',
 	padding: theme.spacing(0.5),
 	marginTop: theme.spacing(0.5),
+	backgroundColor: theme.sideContentItemColor,
 }));
 
 const MeInfoDiv = styled(Box)(({ theme }) => ({
@@ -27,15 +29,16 @@ const MeAvatar = styled('img')({
 });
 
 const ListMe = (): JSX.Element => {
+	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const picture = useAppSelector((state) => state.me.picture);
 	const displayName = useAppSelector((state) => state.settings.displayName);
 
 	return (
 		<MeDiv>
 			<MeAvatar src={picture ?? '/images/buddy.svg'} />
-			<MeInfoDiv>{ displayName }</MeInfoDiv>
+			<MeInfoDiv>{ `(${meLabel()}) ${displayName}` }</MeInfoDiv>
 			<EscapeMeetingButton type='iconbutton' size='small' />
-			<RaiseHandButton type='iconbutton' size='small' />
+			{ raiseHandEnabled && <RaiseHandButton type='iconbutton' size='small' /> }
 		</MeDiv>
 	);
 };

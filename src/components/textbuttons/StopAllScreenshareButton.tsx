@@ -20,6 +20,7 @@ const StopAllScreenshareButton = (): JSX.Element => {
 			variant='contained'
 			onClick={handleStopAll}
 			disabled={muteAllInProgress}
+			size='small'
 		>
 			{ stopAllScreensharingLabel() }
 		</Button>

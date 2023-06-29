@@ -19,15 +19,15 @@ import ListBreakoutRoom from '../breakoutrooms/ListBreakoutRoom';
 const ParticipantListDiv = styled(Box)(({ theme }) => ({
 	width: '100%',
 	overflowY: 'auto',
-	padding: theme.spacing(1)
+	padding: theme.spacing(1),
 }));
 
-const ListHeader = styled(Typography)(({ theme }) => ({
-	marginTop: theme.spacing(3),
+const ListHeader = styled(Typography)({
 	fontWeight: 'bolder'
-}));
+});
 
 const ParticipantList = (): JSX.Element => {
+	const breakoutsEnabled = useAppSelector((state) => state.room.breakoutsEnabled);
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const participants = useAppSelector(parentParticipantListSelector);
 	const canCreateRooms = usePermissionSelector(permissions.CREATE_ROOM);
@@ -38,7 +38,7 @@ const ParticipantList = (): JSX.Element => {
 	return (
 		<ParticipantListDiv>
 			{ isModerator && <ListModerator /> }
-			{ (rooms.length > 0 || canCreateRooms) &&
+			{ (breakoutsEnabled && (rooms.length > 0 || canCreateRooms)) &&
 				<>
 					<ListHeader>
 						{ breakoutRoomsLabel() }

@@ -47,7 +47,7 @@ const SeparateWindow = ({
 			return;
 		}
 
-		externalWindow.addEventListener('beforeunload', () => onClose?.());
+		setTimeout(() => externalWindow.addEventListener('beforeunload', () => onClose?.()), 0);
 
 		externalWindow.document.body.style.margin = '0';
 		externalWindow.document.head.appendChild(titleEl);
@@ -62,13 +62,7 @@ const SeparateWindow = ({
 		titleEl.innerText = title;
 	}, [ title, titleEl ]);
 
-	return isOpened ?
-		createPortal(
-			<CacheProvider value={cache}>{ children }</CacheProvider>,
-			containerEl
-		)
-		:
-		null;
+	return isOpened ? createPortal(<CacheProvider value={cache}>{ children }</CacheProvider>, containerEl) : null;
 };
 
 export default SeparateWindow;

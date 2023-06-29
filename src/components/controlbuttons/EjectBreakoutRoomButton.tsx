@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { closeBreakoutRoomLabel } from '../translated/translatedComponents';
+import { clearOutBreakoutRoomLabel } from '../translated/translatedComponents';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { ejectBreakoutRoom } from '../../store/actions/roomActions';
 import EjectIcon from '@mui/icons-material/Eject';
@@ -17,7 +17,7 @@ const EjectBreakoutRoomButton = ({
 
 	return (
 		<ControlButton
-			toolTip={ closeBreakoutRoomLabel() }
+			toolTip={ clearOutBreakoutRoomLabel() }
 			onClick={() => dispatch(ejectBreakoutRoom(sessionId))}
 			disabled={ createRoomInProgress }
 			{ ...props }

@@ -12,8 +12,7 @@ interface AudioGainSliderProps {
 
 const StyledSliderBox = styled(Box)(({ theme }) => ({
 	width: 200,
-	marginLeft: theme.spacing(1),
-	marginRight: theme.spacing(1),
+	margin: theme.spacing(1),
 }));
 
 const AudioGainSlider = ({

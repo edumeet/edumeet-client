@@ -1,10 +1,4 @@
-import {
-	Avatar,
-	ListItem,
-	ListItemAvatar,
-	ListItemSecondaryAction,
-	ListItemText,
-} from '@mui/material';
+import { ListItem, ListItemSecondaryAction, Typography } from '@mui/material';
 import { memo } from 'react';
 import { LobbyPeer } from '../../store/slices/lobbyPeersSlice';
 import PromoteButton from '../controlbuttons/PromoteButton';
@@ -20,10 +14,7 @@ const ListLobbyPeer = ({
 }: ListLobbyPeerProps): JSX.Element => {
 	return (
 		<ListItem alignItems='flex-start'>
-			<ListItemAvatar>
-				<Avatar src={peer.picture} />
-			</ListItemAvatar>
-			<ListItemText primary={peer.displayName} />
+			<Typography>{ peer.displayName }</Typography>
 			<ListItemSecondaryAction>
 				<PromoteButton
 					peer={peer}

@@ -27,7 +27,7 @@ export const ChooserDiv = styled('div')(({ theme }) => ({
 
 export const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
 	padding: theme.spacing(0, 0.5),
-	backgroundColor: '#fff'
+	backgroundColor: 'white',
 }));
 
 const DeviceChooser = ({

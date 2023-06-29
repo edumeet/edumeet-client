@@ -16,6 +16,7 @@ import {
 	SampleSizeSelector
 } from '../SettingsSelectors';
 import NoiseSlider from '../../noiseslider/NoiseSlider';
+import AudioPresetSelector from '../../audiopresetselector/AudioPresetSelector';
 
 const sampleRateData: Array<number> = [ 8000, 16000, 24000, 44100, 48000 ];
 const channelCountData: Array<number> = [ 1, 2 ];
@@ -37,6 +38,7 @@ const AdvancedAudioSettings = (): JSX.Element => {
 			</ListItemButton>
 			<Collapse in={ open } timeout='auto' unmountOnExit>
 				<List component='div'>
+					<AudioPresetSelector />
 					<EchoCancellationSwitch />
 					<AutoGainControlSwitch />
 					<NoiseSuppressionSwitch />

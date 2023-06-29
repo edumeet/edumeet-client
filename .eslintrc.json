@@ -1,13 +1,9 @@
 {
-	"extends": [
-		"plugin:@typescript-eslint/recommended",
-		"plugin:jest/recommended"
-	],
-	"plugins": ["react", "@typescript-eslint", "jest"],
+	"extends": [ "plugin:@typescript-eslint/recommended" ],
+	"plugins": ["react", "@typescript-eslint" ],
 	"env": {
 		"browser": true,
-		"es6": true,
-		"jest": true
+		"es6": true
 	},
 	"globals": {
 		"Atomics": "readonly",
@@ -22,7 +18,7 @@
 		"sourceType": "module",
 		"project": "./tsconfig.json"
 	},
-	"ignorePatterns": ["**/config.js"],
+	"ignorePatterns": ["**/config.js", "vite.config.ts", "src/vite-env.d.ts"],
 	"rules": {
 		"array-bracket-spacing": [ 2, "always", {
 			"objectsInArrays": true,

@@ -10,7 +10,8 @@ import {
 	hideNoVideoParticipantsLabel,
 	hideSelfViewLabel,
 	mirroredSelfViewLabel,
-	controlButtonsBarLabel,
+	enableNotificationSoundsLabel,
+	enableVerticallyStackedSidePanels,
 } from '../translated/translatedComponents';
 
 const AppearanceSettings = (): JSX.Element => {
@@ -19,9 +20,9 @@ const AppearanceSettings = (): JSX.Element => {
 		mirroredSelfView,
 		hideNonVideo,
 		hideSelfView,
-		controlButtonsBar
+		notificationSounds,
+		verticalDivide,
 	} = useAppSelector((state) => state.settings);
-	const isMobile = useAppSelector((state) => state.me.browser.platform === 'mobile');
 
 	const handleChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -56,19 +57,6 @@ const AppearanceSettings = (): JSX.Element => {
 					}
 					label={hideSelfViewLabel()}
 				/>
-				{ !isMobile && (
-					<FormControlLabel
-						control={
-							<Switch
-								disabled={hideSelfView}
-								checked={controlButtonsBar}
-								onChange={(event) => handleChange(event, 'controlButtonsBar')}
-								inputProps={{ 'aria-label': 'controlled' }}
-							/>
-						}
-						label={controlButtonsBarLabel()}
-					/>
-				) }
 				<FormControlLabel
 					control={
 						<Switch
@@ -78,6 +66,26 @@ const AppearanceSettings = (): JSX.Element => {
 						/>
 					}
 					label={hideNoVideoParticipantsLabel()}
+				/>
+				<FormControlLabel
+					control={
+						<Switch
+							checked={ notificationSounds }
+							onChange={ (event) => handleChange(event, 'notificationSounds') }
+							inputProps={ { 'aria-label': 'controlled' } }
+						/>
+					}
+					label={ enableNotificationSoundsLabel() }
+				/>
+				<FormControlLabel
+					control={
+						<Switch
+							checked={ verticalDivide }
+							onChange={ (event) => handleChange(event, 'verticalDivide') }
+							inputProps={ { 'aria-label': 'controlled' } }
+						/>
+					}
+					label={ enableVerticallyStackedSidePanels() }
 				/>
 			</FormGroup>
 		</>

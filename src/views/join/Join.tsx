@@ -1,49 +1,30 @@
 import { useEffect, useState } from 'react';
-import {
-	Button,
-	Typography,
-} from '@mui/material';
+import { Button } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { signalingActions } from '../../store/slices/signalingSlice';
-import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-	disableAllMediaLabel,
-	enableAllMediaLabel,
-	enableCameraLabel,
-	enableMicrophoneLabel,
-	joinLabel,
-	yourNameLabel
-} from '../../components/translated/translatedComponents';
+import { joinLabel, yourNameLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
-import { stopPreviewWebcam, updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
+import { updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
-import PrecallDialog from '../../components/precalldialog/PrecallDialog';
+import GenericDialog from '../../components/genericdialog/GenericDialog';
 import { roomActions } from '../../store/slices/roomSlice';
 import { settingsActions } from '../../store/slices/settingsSlice';
-import AudioOnlySwitch from '../../components/audioonlyswitch/AudioOnlySwitch';
+import { connect } from '../../store/actions/roomActions';
+import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 
 interface JoinProps {
 	roomId: string;
 }
 
 const Join = ({ roomId }: JoinProps): JSX.Element => {
-	const stateAudioOnly = useAppSelector((state) => state.settings.audioOnly);
-	const peerId = useAppSelector((state) => state.me.id);
-	const {
-		previewMicTrackId,
-		previewWebcamTrackId,
-		videoInProgress
-	} = useAppSelector((state) => state.me);
 	const dispatch = useAppDispatch();
 
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
+	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
 
 	const [ name, setName ] = useState(stateDisplayName || '');
-	const [ audioOnly, setAudioOnly ] = useState(stateAudioOnly || false);
-	const [ joined, setJoined ] = useState(false);
 	const {
 		audioMuted,
 		videoMuted
@@ -53,25 +34,10 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		setName(value.trim() ? value : value.trim());
 	};
 
-	const handleAudioOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setAudioOnly(event.target.checked);
-
-		if (!videoMuted && event.target.checked)
-			dispatch(stopPreviewWebcam());
-		else if (videoMuted && !event.target.checked)
-			dispatch(updatePreviewWebcam());
-	};
-
 	const handleJoin = () => {
-		const encodedRoomId = encodeURIComponent(roomId);
-		const url = getSignalingUrl(peerId, encodedRoomId);
-
-		setJoined(true);
-
 		dispatch(settingsActions.setDisplayName(name));
-		dispatch(settingsActions.setAudioOnly(audioOnly));
-		dispatch(signalingActions.setUrl(url));
-		dispatch(signalingActions.connect());
+
+		dispatch(connect(roomId));
 	};
 
 	useEffect(() => {
@@ -100,24 +66,18 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		if (!audioMuted)
 			dispatch(updatePreviewMic());
 
-		if (!videoMuted && !audioOnly)
+		if (!videoMuted)
 			dispatch(updatePreviewWebcam());
 	}, []);
 
 	return (
-		<PrecallDialog
+		<GenericDialog
+			title={ <PrecallTitle /> }
 			content={
 				<>
-					<MediaPreview audioOnly={audioOnly} />
+					<MediaPreview />
 					<AudioInputChooser preview />
-					{ !audioOnly && <VideoInputChooser preview /> }
-					<Typography variant='h5'>
-						{ (previewMicTrackId && previewWebcamTrackId) ?
-							enableAllMediaLabel() : previewMicTrackId ?
-								enableMicrophoneLabel() : previewWebcamTrackId ?
-									enableCameraLabel() : disableAllMediaLabel()
-						}
-					</Typography>
+					<VideoInputChooser preview />
 					<TextInputField
 						label={yourNameLabel()}
 						value={name}
@@ -127,21 +87,15 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 						autoFocus
 						data-testid='name-input'
 					/>
-					<AudioOnlySwitch
-						checked={audioOnly}
-						disabled={videoInProgress}
-						onChange={handleAudioOnlyChange}
-					/>
 				</>
 			}
 			actions={
 				<Button
 					onClick={handleJoin}
 					variant='contained'
-					color='primary'
-					disabled={!name || joined}
-					fullWidth
+					disabled={!name || joinInProgress}
 					data-testid='join-button'
+					size='small'
 				>
 					{ joinLabel() }
 				</Button>

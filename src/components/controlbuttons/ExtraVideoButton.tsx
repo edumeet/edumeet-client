@@ -15,7 +15,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 
 const ExtraVideoButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const hasExtraVideoPermission = usePermissionSelector(permissions.EXTRA_VIDEO);
+	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 
 	const {
 		canSendWebcam,

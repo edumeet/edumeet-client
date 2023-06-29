@@ -1,17 +1,6 @@
 import { SnackbarKey, useSnackbar } from 'notistack';
-import {
-	useCallback,
-	ContextType,
-	useContext,
-	useEffect,
-	useMemo,
-	useRef
-} from 'react';
-import { Blocker, History, Transition } from 'history';
-import {
-	Navigator as BaseNavigator,
-	UNSAFE_NavigationContext as NavigationContext
-} from 'react-router-dom';
+import { useEffect, useMemo, useRef } from 'react';
+import { unstable_useBlocker as useBlocker } from 'react-router-dom';
 import {
 	TypedUseSelectorHook,
 	useDispatch,
@@ -31,9 +20,9 @@ import {
 } from './selectors';
 import { notificationsActions } from './slices/notificationsSlice';
 import { Peer } from './slices/peersSlice';
-import type { RootState, AppDispatch } from './store';
-import { LeavePromptContext } from './store';
+import { RootState, AppDispatch } from './store';
 import { Transcript } from '../services/mediaService';
+import { leaveRoom } from './actions/roomActions';
 
 /**
  * Hook to access the redux dispatch function.
@@ -114,8 +103,8 @@ export const usePermissionSelector = (permission: Permission): boolean => {
  * @param kind - The kind of the devices to get.
  * @returns {MediaDevice[]} The list of media devices.
  */
-export const useDeviceSelector = (kind: MediaDeviceKind): MediaDevice[] => {
-	const devicesSelector = useMemo(() => makeDevicesSelector(kind), [ kind ]);
+export const useDeviceSelector = (kind: MediaDeviceKind, exludedDeviceId?: string): MediaDevice[] => {
+	const devicesSelector = useMemo(() => makeDevicesSelector(kind, exludedDeviceId), [ kind ]);
 
 	return useAppSelector(devicesSelector);
 };
@@ -158,61 +147,20 @@ export const useNotifier = (): void => {
 	}, [ notifications, closeSnackbar, enqueueSnackbar, dispatch ]);
 };
 
-interface Navigator extends BaseNavigator {
-	block: History['block'];
-}
-
-type NavigationContextWithBlock = ContextType<typeof NavigationContext> & {
-	navigator: Navigator;
-};
-
-export const useBlocker = (blocker: Blocker, when = true): void => {
-	const { navigator } = useContext(
-		NavigationContext
-	) as NavigationContextWithBlock;
-
-	useEffect(() => {
-		if (!when)
-			return;
-
-		const unblock = navigator.block((tx: Transition) => {
-			const autoUnblockingTx = {
-				...tx,
-				retry() {
-					unblock();
-					tx.retry();
-				}
-			};
-
-			blocker(autoUnblockingTx);
-		});
-
-		return unblock;
-	}, [ navigator, blocker, when ]);
-};
-
 /**
  * Hook to show a leave prompt when the user tries to leave the page.
  * 
  * @param when - Whether to show the leave prompt or not.
  * @returns {void}
  */
-export const usePrompt = (when = true): void => {
-	const showPrompt = useContext(LeavePromptContext);
+export const usePrompt = (): void => {
+	const dispatch = useAppDispatch();
 
-	const blocker = useCallback(
-		async (tx: Transition) => {
-			try {
-				await showPrompt();
-				tx.retry();
-			} catch (e) {
-				// Do nothing
-			}
-		},
-		[ showPrompt ]
-	);
+	useBlocker(() => {
+		dispatch(leaveRoom());
 
-	return useBlocker(blocker, when);
+		return true;
+	});
 };
 
 /**
