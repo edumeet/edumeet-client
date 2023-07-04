@@ -9,6 +9,7 @@ import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from 'edumeet-common';
 import { settingsActions } from '../slices/settingsSlice';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -29,7 +30,8 @@ const logger = new Logger('MediaMiddleware');
  * @returns {Middleware} Redux middleware.
  */
 const createMediaMiddleware = ({
-	mediaService
+	mediaService,
+	signalingService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
@@ -44,6 +46,28 @@ const createMediaMiddleware = ({
 		(next) => async (action) => {
 			if (signalingActions.connect.match(action)) {
 				mediaService.init();
+				signalingService.on('notification', (notification) => {
+					try {
+						switch (notification.method) {
+							case 'noMediaAvailable': {
+								dispatch(notificationsActions.enqueueNotification({
+									message: 'no media connection available',
+									options: { variant: 'error' }
+								}));
+								break;
+							}
+							case 'mediaConnectionError': {
+								dispatch(notificationsActions.enqueueNotification({
+									message: 'media connection error',
+									options: { variant: 'error' }
+								}));
+								break;
+							}
+						}
+					} catch (err) {
+						logger.error(err);
+					}
+				});
 			}
 
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
