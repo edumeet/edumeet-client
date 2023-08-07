@@ -1,5 +1,6 @@
 import {
 	useAppSelector,
+	useIsActiveSpeaker,
 	usePeer,
 	usePeerConsumers
 } from '../../store/hooks';
@@ -33,7 +34,7 @@ const Peer = ({
 	} = usePeerConsumers(id);
 	const hideNonVideo = useAppSelector((state) => state.settings.hideNonVideo);
 	const peer = usePeer(id);
-	// const activeSpeaker = useAppSelector((state) => id === state.room.activeSpeakerId);
+	const isActiveSpeaker = useIsActiveSpeaker(id);
 	const showParticipant = !hideNonVideo || (hideNonVideo && webcamConsumer);
 	const showStats = useAppSelector((state) => state.ui.showStats);
 	const isMobile = useAppSelector(isMobileSelector);
@@ -42,7 +43,7 @@ const Peer = ({
 		<>
 			{ showParticipant && (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={1}
 					width={style.width}
 					height={style.height}
@@ -71,7 +72,7 @@ const Peer = ({
 			
 			{ screenConsumer && (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={2}
 					width={style.width}
 					height={style.height}
@@ -91,7 +92,7 @@ const Peer = ({
 			)}
 			{ extraVideoConsumers?.map((consumer) => (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={3}
 					key={consumer.id}
 					width={style.width}

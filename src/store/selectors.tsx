@@ -561,9 +561,19 @@ export interface PeerConsumers {
 
 /**
  * Factory function that returns a selector that returns true if the
- * client has the permission.
+ * id matches active speaker in session.
  * 
- * @param {Permission} permission - The permission.
- * @returns {Selector<boolean>} Selector for the permission.
+ * @param {string} id - The permission.
+ * @returns {boolean} true if id matches the active speaker.
  */
+export const makeIsActiveSpeakerSelector = (id: string): Selector<boolean> => {
+	return createSelector(
+		sessionIdSelector,
+		roomSessionsSelect,
+		(sessionId, roomSessions) => {
+			return roomSessions[sessionId].activeSpeakerId === id;
+		}
+
+	); 
+};
 export const makePermissionSelector = (permission: Permission): Selector<boolean> => createSelector(mePermissionsSelect, (p) => p.includes(permission));
