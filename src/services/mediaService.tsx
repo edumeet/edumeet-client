@@ -83,6 +83,10 @@ export declare interface MediaService {
 	on(event: 'transcriptionStopped', listener: () => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'transcript', listener: (transcription: PeerTranscript) => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'noMediaAvailable', listener: () => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'mediaConnectionError', listener: () => void): this;
 }
 
 export class MediaService extends EventEmitter {
@@ -256,6 +260,14 @@ export class MediaService extends EventEmitter {
 		this.signalingService.on('notification', async (notification) => {
 			try {
 				switch (notification.method) {
+					case 'noMediaAvailable': {
+						this.emit(notification.method);
+						break;
+					}
+					case 'mediaConnectionError': {
+						this.emit(notification.method);
+						break;
+					}
 					case 'offer': {
 						const { peerId, offer } = notification.data;
 

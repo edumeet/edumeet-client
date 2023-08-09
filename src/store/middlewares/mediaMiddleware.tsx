@@ -31,7 +31,6 @@ const logger = new Logger('MediaMiddleware');
  */
 const createMediaMiddleware = ({
 	mediaService,
-	signalingService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
@@ -46,28 +45,6 @@ const createMediaMiddleware = ({
 		(next) => async (action) => {
 			if (signalingActions.connect.match(action)) {
 				mediaService.init();
-				signalingService.on('notification', (notification) => {
-					try {
-						switch (notification.method) {
-							case 'noMediaAvailable': {
-								dispatch(notificationsActions.enqueueNotification({
-									message: 'no media connection available',
-									options: { variant: 'error' }
-								}));
-								break;
-							}
-							case 'mediaConnectionError': {
-								dispatch(notificationsActions.enqueueNotification({
-									message: 'media connection error',
-									options: { variant: 'error' }
-								}));
-								break;
-							}
-						}
-					} catch (err) {
-						logger.error(err);
-					}
-				});
 			}
 
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
@@ -154,6 +131,20 @@ const createMediaMiddleware = ({
 				mediaService.on('producerResumed', (producer) => {
 					dispatch(producersActions.setProducerResumed({
 						producerId: producer.id
+					}));
+				});
+
+				mediaService.on('noMediaAvailable', () => {
+					dispatch(notificationsActions.enqueueNotification({
+						message: 'No media connection available',
+						options: { variant: 'error' }
+					}));
+				});
+
+				mediaService.on('mediaConnectionError', () => {
+					dispatch(notificationsActions.enqueueNotification({
+						message: 'Media connection error',
+						options: { variant: 'error' }
 					}));
 				});
 			}
