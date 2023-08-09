@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, useIsActiveSpeaker } from '../../store/hooks';
 import { isMobileSelector, meProducersSelector } from '../../store/selectors';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
 import StopProducerButton from '../controlbuttons/StopProducerButton';
@@ -17,7 +17,7 @@ interface MeProps {
 
 const Me = ({
 	style
-}: MeProps): JSX.Element => {
+}: MeProps): React.JSX.Element => {
 	const {
 		micProducer,
 		webcamProducer,
@@ -28,6 +28,8 @@ const Me = ({
 	const mirroredSelfView = useAppSelector((state) => state.settings.mirroredSelfView);
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
+	const id = useAppSelector((state) => state.me.id);
+	const isActiveSpeaker = useIsActiveSpeaker(id);
 	const isMobile = useAppSelector(isMobileSelector);
 	const showStats = useAppSelector((state) => state.ui.showStats);
 	
@@ -35,7 +37,7 @@ const Me = ({
 		<>
 			{ !hideSelfView && (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={1}
 					width={style.width}
 					height={style.height}
@@ -53,7 +55,7 @@ const Me = ({
 			)}
 			{ screenProducer && (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={2}
 					width={style.width}
 					height={style.height}
@@ -76,7 +78,7 @@ const Me = ({
 			)}
 			{ extraVideoProducers.map((producer) => (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={3}
 					key={producer.id}
 					width={style.width}

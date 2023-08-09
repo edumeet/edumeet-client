@@ -22,7 +22,7 @@ type StyledVideoBoxProps = {
 	margin?: number;
 	order?: number;
 	zIndex?: number;
-	activespeaker?: boolean;
+	activespeaker?: number;
 	roundedcorners?: number;
 };
 
@@ -72,7 +72,7 @@ const VideoBox = ({
 			position={position}
 			width={width}
 			height={height}
-			activespeaker={activeSpeaker}
+			activespeaker={activeSpeaker ? 1 : 0}
 			order={order}
 			margin={margin}
 			zIndex={zIndex}

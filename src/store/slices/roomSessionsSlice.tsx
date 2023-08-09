@@ -200,7 +200,8 @@ const roomSessionsSlice = createSlice({
 				for (const peer of action.payload) {
 					const roomSession = state[peer.sessionId];
 
-					roomSession?.spotlights.push(peer.id);
+					if (!roomSession?.spotlights.includes(peer.id))
+						roomSession?.spotlights.push(peer.id);
 				}
 			})
 			.addCase(peersActions.setPeerSessionId, (state, action) => {

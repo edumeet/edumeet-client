@@ -10,6 +10,7 @@ import { MediaDevice } from '../services/deviceService';
 import { Permission } from '../utils/roles';
 import {
 	makeDevicesSelector,
+	makeIsActiveSpeakerSelector,
 	makePeerConsumerSelector,
 	makePeerSelector,
 	makePeersInSessionSelector,
@@ -38,7 +39,7 @@ export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 /**
- * Hook to access the comsumers of a peer.
+ * Hook to access the consumers of a peer.
  * 
  * @param peerId - The id of the peer.
  * @returns {PeerConsumers} The consumers of the peer.
@@ -160,6 +161,18 @@ export const usePrompt = (): void => {
 
 		return true;
 	});
+};
+
+/**
+ * Hook to learn if id is active speaker or not.
+ * 
+ * @param id - id to evaluate.
+ * @returns {boolean} true if id is active speaker.
+ */
+export const useIsActiveSpeaker = (id: string): boolean => {
+	const isActiveSpeaker = useMemo(() => makeIsActiveSpeakerSelector(id), []);
+
+	return useAppSelector(isActiveSpeaker);
 };
 
 type ResultBox<T> = { v: T }
