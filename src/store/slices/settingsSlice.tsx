@@ -38,6 +38,7 @@ export interface SettingsState {
 	audioMuted?: boolean;
 	videoMuted?: boolean;
 	locale?: string;
+	blurBackground: boolean
 }
 
 type SettingsUpdate = Partial<SettingsState>;
@@ -71,7 +72,8 @@ const initialState: SettingsState = {
 	opusPtime: edumeetConfig.opusPtime,
 	opusMaxPlaybackRate: edumeetConfig.opusMaxPlaybackRate,
 	notificationSounds: true,
-	locale: detect()
+	locale: detect(),
+	blurBackground: false
 };
 
 const settingsSlice = createSlice({
@@ -176,7 +178,10 @@ const settingsSlice = createSlice({
 		}),
 		setLocale: ((state, action: PayloadAction<string>) => {
 			state.locale = action.payload;
-		})
+		}),
+		setBlurBackground: ((state, action: PayloadAction<boolean>) => {
+			state.blurBackground = action.payload;
+		}),
 	},
 	extraReducers: (builder) => {
 		builder

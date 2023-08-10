@@ -7,7 +7,9 @@ import { producersActions, ProducerSource } from '../slices/producersSlice';
 import { roomActions } from '../slices/roomSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
+import { BlurBackgroundService } from '../../services/blurBackgroundService';
 
+const blur = new BlurBackgroundService();
 const logger = new Logger('MediaActions');
 
 interface UpdateDeviceOptions {
@@ -257,6 +259,11 @@ export const updatePreviewWebcam = ({
 		});
 
 		([ track ] = stream.getVideoTracks());
+		const { width, height } = track.getSettings() as { width: number, height: number};
+		const blurStream = await blur.blurBackground(stream, {
+			width, height });
+
+		track = blurStream.getVideoTracks()[0];
 
 		const { deviceId: trackDeviceId } = track.getSettings();
 
@@ -603,6 +610,11 @@ export const updateWebcam = ({
 				});
 	
 				([ track ] = stream.getVideoTracks());
+				const { width, height } = track.getSettings() as { width: number, height: number};
+				const blurStream = await blur.blurBackground(stream, {
+					width, height });
+
+				track = blurStream.getVideoTracks()[0];
 			}
 
 			if (!track)

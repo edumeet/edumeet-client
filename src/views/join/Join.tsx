@@ -13,6 +13,7 @@ import { roomActions } from '../../store/slices/roomSlice';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
+import BlurBackgroundSwitch from '../../components/devicechooser/BlurBackgroundSwitch';
 
 interface JoinProps {
 	roomId: string;
@@ -78,6 +79,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					<MediaPreview />
 					<AudioInputChooser preview />
 					<VideoInputChooser preview />
+					<BlurBackgroundSwitch />
 					<TextInputField
 						label={yourNameLabel()}
 						value={name}
