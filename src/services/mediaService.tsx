@@ -17,6 +17,7 @@ import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
 import { Logger } from 'edumeet-common';
 import { ClientMonitor, createClientMonitor } from '@observertc/client-monitor-js';
 import edumeetConfig from '../utils/edumeetConfig';
+import { BlurBackground } from './BlurBackground';
 
 const logger = new Logger('MediaService');
 
@@ -109,6 +110,7 @@ export class MediaService extends EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
+	private blurInProgress = false;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
@@ -163,20 +165,55 @@ export class MediaService extends EventEmitter {
 		return this.tracks.get(trackId);
 	}
 
+	#hasTrack(kind: string, deviceId?: string) {
+		for (const track of this.tracks.values()) {
+			if (track.getSettings().deviceId === deviceId &&
+				track.kind === kind)
+			
+				return true;
+		}
+		
+		return false;
+	}
+
 	public getMonitor(): ClientMonitor | undefined {
 		return this.monitor;
 	}
 
-	public addTrack(track: MediaStreamTrack): void {
-		logger.debug('addTrack() [trackId:%s]', track.id);
+	public async addTrack(track: MediaStreamTrack, blurEffect: boolean): Promise<MediaStreamTrack> {
+		logger.debug('addTrack() [trackId:%s, kind: %s, deviceId: %s size: %s]', track.id, track.kind, track.getSettings().deviceId, this.tracks.size);
 
+		if (this.#hasTrack(track.kind, track.getSettings().deviceId)) {
+			throw new Error('track exists');
+		}
 		this.tracks.set(track.id, track);
-
 		track.addEventListener('ended', () => {
 			logger.debug('addTrack() | track "ended" [trackId:%s]', track.id);
 
 			this.tracks.delete(track.id);
 		});
+
+		if (blurEffect && track.kind === 'video' && !this.blurInProgress) {
+			const blurStream = new MediaStream();
+
+			blurStream.addTrack(track);
+			const blurBackground = new BlurBackground();
+
+			const blurVideoTrack = await blurBackground.startEffect(blurStream, { width: 256, height: 144 });
+
+			this.tracks.set(blurVideoTrack.id, blurVideoTrack);
+			
+			if (!blurVideoTrack) throw new Error('Could not create blurBackground track');
+
+			blurVideoTrack.addEventListener('ended', () => {
+				blurBackground.stopEffect();
+				this.blurInProgress = false;
+			});
+			
+			return blurVideoTrack;
+		}
+		
+		return track;
 	}
 
 	public removeTrack(trackId: string | undefined): void {
@@ -893,7 +930,7 @@ export class MediaService extends EventEmitter {
 		this.monitor = createClientMonitor(edumeetConfig.observertc);
 		this.monitor.collectors.addMediasoupDevice(this.mediasoup);
 		this.monitor.events.onStatsCollected((statsEntries) => {
-			logger.debug('initMonitor(): The latest stats entries [statsEntries: %o]', statsEntries);
+			// logger.debug('initMonitor(): The latest stats entries [statsEntries: %o]', statsEntries);
 		});
 		logger.debug('Monitor is initialized');
 		

@@ -27,7 +27,7 @@ export interface MeState {
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
 	escapeMeetingInProgress: boolean;
-	supportWASM?: boolean
+	supportWASM?: boolean;
 }
 
 const initialState: MeState = {
@@ -49,7 +49,7 @@ const initialState: MeState = {
 	screenSharingInProgress: false,
 	displayNameInProgress: false,
 	raisedHandInProgress: false,
-	escapeMeetingInProgress: false
+	escapeMeetingInProgress: false,
 };
 
 const meSlice = createSlice({

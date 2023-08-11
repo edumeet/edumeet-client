@@ -7,9 +7,7 @@ import { producersActions, ProducerSource } from '../slices/producersSlice';
 import { roomActions } from '../slices/roomSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
-import { BlurBackgroundService } from '../../services/blurBackgroundService';
 
-const blur = new BlurBackgroundService();
 const logger = new Logger('MediaActions');
 
 interface UpdateDeviceOptions {
@@ -214,7 +212,7 @@ export const updatePreviewWebcam = ({
 	getState,
 	{ mediaService, deviceService }
 ): Promise<void> => {
-	logger.debug('updatePreviewWebcam()');
+	logger.debug('updatePreviewWebcam() [restart: %s, newDeviceId: %s]', restart, newDeviceId);
 
 	dispatch(meActions.setVideoInProgress(true));
 
@@ -230,7 +228,8 @@ export const updatePreviewWebcam = ({
 			aspectRatio,
 			resolution,
 			frameRate,
-			selectedVideoDevice
+			selectedVideoDevice,
+			blurBackground
 		} = getState().settings;
 
 		const deviceId = deviceService.getDeviceId(selectedVideoDevice, 'videoinput');
@@ -238,16 +237,16 @@ export const updatePreviewWebcam = ({
 		if (!deviceId)
 			logger.warn('updatePreviewWebcam() no webcam devices');
 
-		if (restart) {
-			const { previewWebcamTrackId } = getState().me;
+		const { previewWebcamTrackId } = getState().me;
 
+		if (restart) {
 			if (previewWebcamTrackId) {
 				track = mediaService.getTrack(previewWebcamTrackId);
 
 				track?.stop();
 
 				dispatch(meActions.setPreviewWebcamTrackId());
-			}
+			} 
 		}
 
 		const stream = await navigator.mediaDevices.getUserMedia({
@@ -258,25 +257,22 @@ export const updatePreviewWebcam = ({
 			}
 		});
 
-		([ track ] = stream.getVideoTracks());
-		const { width, height } = track.getSettings() as { width: number, height: number};
-		const blurStream = await blur.blurBackground(stream, {
-			width, height });
-
-		track = blurStream.getVideoTracks()[0];
+		track = stream.getVideoTracks()[0];
 
 		const { deviceId: trackDeviceId } = track.getSettings();
 
 		// User may have chosen a different device than the one initially selected
 		// so we need to update the selected device in the settings just in case
 		dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
-
-		mediaService.addTrack(track);
-		dispatch(meActions.setPreviewWebcamTrackId(track.id));
-		if (updateMute)
-			dispatch(settingsActions.setVideoMuted(false));
-
-		await deviceService.updateMediaDevices();
+		try {
+			track = await mediaService.addTrack(track, blurBackground);
+			dispatch(meActions.setPreviewWebcamTrackId(track.id));
+			if (updateMute)
+				dispatch(settingsActions.setVideoMuted(false));
+			await deviceService.updateMediaDevices();
+		} catch (e) {
+			logger.error(e);
+		}
 	} catch (error) {
 		logger.error('updatePreviewWebcam() [error:%o]', error);
 	} finally {
@@ -523,7 +519,7 @@ export const updateVideoSettings = (
 	dispatch(settingsActions.updateSettings(settings));
 	dispatch(stopPreviewWebcam());
 	await dispatch(updateWebcam({ restart: true }));
-	await dispatch(updatePreviewWebcam());
+	await dispatch(updatePreviewWebcam({ restart: true }));
 };
 
 /**
@@ -611,7 +607,7 @@ export const updateWebcam = ({
 	
 				([ track ] = stream.getVideoTracks());
 				const { width, height } = track.getSettings() as { width: number, height: number};
-				const blurStream = await blur.blurBackground(stream, {
+				const blurStream = await blur.startEffect(stream, {
 					width, height });
 
 				track = blurStream.getVideoTracks()[0];
