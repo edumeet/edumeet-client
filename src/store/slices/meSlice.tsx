@@ -10,12 +10,15 @@ export interface MeState {
 	picture?: string;
 	previewWebcamTrackId?: string;
 	previewMicTrackId?: string;
+	liveWebcamTrackId?: string;
+	liveMicTrackId?: string
 	canSendMic: boolean;
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
 	canRecord: boolean;
 	canTranscribe: boolean;
 	canShareFiles: boolean;
+	hasWASMsupport: boolean;
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
 	escapeMeeting: boolean;
@@ -27,7 +30,6 @@ export interface MeState {
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
 	escapeMeetingInProgress: boolean;
-	supportWASM?: boolean;
 }
 
 const initialState: MeState = {
@@ -40,6 +42,7 @@ const initialState: MeState = {
 	canShareFiles: false,
 	canRecord: false,
 	canTranscribe: false,
+	hasWASMsupport: true,
 	devices: [],
 	raisedHand: false,
 	escapeMeeting: false,
@@ -70,6 +73,12 @@ const meSlice = createSlice({
 		}),
 		setPreviewMicTrackId: ((state, action: PayloadAction<string | undefined>) => {
 			state.previewMicTrackId = action.payload;
+		}),
+		setLiveWebcamTrackId: ((state, action: PayloadAction<string | undefined>) => {
+			state.liveWebcamTrackId = action.payload;
+		}),
+		setLiveMicTrackId: ((state, action: PayloadAction<string | undefined>) => {
+			state.liveMicTrackId = action.payload;
 		}),
 		setMediaCapabilities: ((
 			state,
@@ -109,7 +118,7 @@ const meSlice = createSlice({
 			state.displayNameInProgress = action.payload;
 		}),
 		setSupportWASM: ((state, action: PayloadAction<boolean>) => {
-			state.supportWASM = action.payload;
+			state.hasWASMsupport = action.payload;
 		}),
 	},
 });

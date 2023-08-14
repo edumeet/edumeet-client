@@ -149,7 +149,7 @@ export const updatePreviewMic = ({
 
 		dispatch(settingsActions.setSelectedAudioDevice(trackDeviceId));
 
-		mediaService.addTrack(track);
+		mediaService.addTrack(track, trackDeviceId ?? '', true);
 		dispatch(meActions.setPreviewMicTrackId(track.id));
 		if (updateMute)
 			dispatch(settingsActions.setAudioMuted(false));
@@ -188,7 +188,7 @@ export const stopPreviewMic = ({
 		if (updateMute)
 			dispatch(settingsActions.setAudioMuted(true));
 
-		mediaService.removeTrack(track?.id);
+		mediaService.removePreviewTrack(track?.id);
 		track?.stop();
 	}
 
@@ -210,7 +210,7 @@ export const updatePreviewWebcam = ({
 }: UpdateDeviceOptions = {}): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ mediaService, deviceService }
+	{ mediaService, deviceService, blurBackgroundService }
 ): Promise<void> => {
 	logger.debug('updatePreviewWebcam() [restart: %s, newDeviceId: %s]', restart, newDeviceId);
 
@@ -264,15 +264,32 @@ export const updatePreviewWebcam = ({
 		// User may have chosen a different device than the one initially selected
 		// so we need to update the selected device in the settings just in case
 		dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
-		try {
-			track = await mediaService.addTrack(track, blurBackground);
-			dispatch(meActions.setPreviewWebcamTrackId(track.id));
-			if (updateMute)
-				dispatch(settingsActions.setVideoMuted(false));
-			await deviceService.updateMediaDevices();
-		} catch (e) {
-			logger.error(e);
+
+		let blurTrack;
+
+		if (blurBackground) {
+			try {
+				if (!deviceId) throw new Error('No device id');
+				blurBackgroundService.stopEffect();
+				await blurBackgroundService.loadBackend();
+				blurTrack = await blurBackgroundService.startEffect(stream);
+
+				mediaService.addTrack(blurTrack, deviceId, true);
+				dispatch(meActions.setPreviewWebcamTrackId(blurTrack.id));
+			} catch (e) {
+				logger.error(e);
+			}
 		}
+		
+		if (!blurTrack) { 
+			// Either blurBackground failed, or it's not enabled. Add unprocessed track.
+			if (!deviceId) throw new Error('No device id');
+			mediaService.addTrack(track, deviceId, true);
+			dispatch(meActions.setPreviewWebcamTrackId(track.id));
+		}
+		if (updateMute)
+			dispatch(settingsActions.setVideoMuted(false));
+		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updatePreviewWebcam() [error:%o]', error);
 	} finally {
@@ -306,7 +323,7 @@ export const stopPreviewWebcam = ({
 		if (updateMute)
 			dispatch(settingsActions.setVideoMuted(true));
 
-		mediaService.removeTrack(track?.id);
+		mediaService.removePreviewTrack(track?.id);
 		track?.stop();
 	}
 
@@ -540,7 +557,7 @@ export const updateWebcam = ({
 }): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ mediaService, deviceService, config }
+	{ mediaService, deviceService, config, blurBackgroundService }
 ): Promise<void> => {
 	logger.debug(
 		'updateWebcam [start:%s, restart:%s, newDeviceId:%s]',
@@ -553,11 +570,12 @@ export const updateWebcam = ({
 
 	let track: MediaStreamTrack | null | undefined;
 	let webcamProducer: Producer | null | undefined;
+	let stream: MediaStream | undefined;
 
 	try {
 		await deviceService.updateMediaDevices();
 
-		const canSendWebcam = getState().me.canSendWebcam;
+		const { canSendWebcam, liveWebcamTrackId, previewWebcamTrackId } = getState().me;
 
 		if (!canSendWebcam)
 			throw new Error('cannot produce video');
@@ -572,11 +590,11 @@ export const updateWebcam = ({
 			aspectRatio,
 			resolution,
 			frameRate,
-			selectedVideoDevice
+			selectedVideoDevice,
+			blurBackground
 		} = getState().settings;
 		
 		const deviceId = deviceService.getDeviceId(selectedVideoDevice, 'videoinput');
-		const previewWebcamTrackId = getState().me.previewWebcamTrackId;
 
 		if (!deviceId)
 			logger.warn('no webcam devices');
@@ -593,11 +611,11 @@ export const updateWebcam = ({
 				}));
 			}
 
-			if (previewWebcamTrackId)
-				track = mediaService.getTrack(previewWebcamTrackId);
+			if (liveWebcamTrackId)
+				track = mediaService.getTrack(liveWebcamTrackId);
 
 			if (!track) {
-				const stream = await navigator.mediaDevices.getUserMedia({
+				stream = await navigator.mediaDevices.getUserMedia({
 					video: {
 						deviceId: { ideal: deviceId },
 						...getVideoConstrains(resolution, aspectRatio),
@@ -606,24 +624,52 @@ export const updateWebcam = ({
 				});
 	
 				([ track ] = stream.getVideoTracks());
-				const { width, height } = track.getSettings() as { width: number, height: number};
-				const blurStream = await blur.startEffect(stream, {
-					width, height });
-
-				track = blurStream.getVideoTracks()[0];
 			}
 
 			if (!track)
 				throw new Error('no webcam track');
 
-			dispatch(meActions.setPreviewWebcamTrackId());
-			mediaService.removeTrack(previewWebcamTrackId);
+			let blurTrack: MediaStreamTrack | undefined;
 
-			const { deviceId: trackDeviceId, width, height } = track.getSettings();
+			if (blurBackground) {
+				try {
+					if (!deviceId) throw new Error('No device id');
+					blurBackgroundService.stopEffect();
+					await blurBackgroundService.loadBackend();
 
-			// User may have chosen a different device than the one initially selected
-			// so we need to update the selected device in the settings just in case
-			dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
+					if (stream) blurTrack = await blurBackgroundService.startEffect(stream);
+					else {
+						stream = new MediaStream();
+						stream.addTrack(track);
+						blurTrack = await blurBackgroundService.startEffect(stream);
+					} 
+
+					mediaService.addTrack(blurTrack, deviceId, false);
+					dispatch(meActions.setLiveWebcamTrackId(blurTrack.id));
+				} catch (e) {
+					logger.error(e);
+				}
+			}
+		
+			if (!blurTrack) { 
+				// Either blurBackground failed, or it's not enabled. Add unprocessed track.
+				mediaService.addTrack(track, deviceId ?? '', false);
+				dispatch(meActions.setLiveWebcamTrackId(track.id));
+				const { deviceId: trackDeviceId } = track.getSettings();
+				
+				// User may have chosen a different device than the one initially selected
+				// so we need to update the selected device in the settings just in case
+				dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
+			}
+			if (previewWebcamTrackId) {
+				const previewTrack = mediaService.getTrack(previewWebcamTrackId);
+
+				previewTrack?.stop();
+				mediaService.removeTrack(previewWebcamTrackId);
+				dispatch(meActions.setPreviewWebcamTrackId());
+			}
+
+			const { width, height } = blurTrack ? blurTrack.getSettings() : track.getSettings();
 
 			if (config.simulcast) {
 				const encodings = getEncodings(
@@ -636,7 +682,7 @@ export const updateWebcam = ({
 					encodings.map((encoding) => encoding.scaleResolutionDownBy);
 
 				webcamProducer = await mediaService.produce({
-					track,
+					track: blurTrack ?? track,
 					encodings,
 					codecOptions: {
 						videoGoogleStartBitrate: 1000
@@ -650,7 +696,7 @@ export const updateWebcam = ({
 				});
 			} else {
 				webcamProducer = await mediaService.produce({
-					track,
+					track: blurTrack ?? track,
 					appData: {
 						source: 'webcam',
 						width,

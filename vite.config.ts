@@ -14,7 +14,9 @@ export default defineConfig({
 				},
 			},
 		}),
-		eslint(),
+		eslint({
+			exclude: ["src/services/lib/tflite/tflite-simd.js", "src/services/lib/tflite/tflite.js"]
+		}),
 		viteTsconfigPaths(),
 		basicSsl()
 	],

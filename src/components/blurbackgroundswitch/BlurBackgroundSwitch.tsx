@@ -11,10 +11,9 @@ const BlurBackgroundSwitch = (): JSX.Element => {
 
 	const handleChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
-		setting: string
 	): void => {
 		dispatch(
-			settingsActions.updateSettings({ [`${setting}`]: event.target.checked })
+			settingsActions.setBlurBackground(event.target.checked)
 		);
 	};
 	
@@ -24,7 +23,7 @@ const BlurBackgroundSwitch = (): JSX.Element => {
 				<Switch
 					disabled={videoInProgress || !previewWebcamTrackId}
 					checked={ blurBackground }
-					onChange={ (event) => handleChange(event, 'blurBackground') }
+					onChange={handleChange}
 					inputProps={ { 'aria-label': 'controlled' } }
 				/>
 			}

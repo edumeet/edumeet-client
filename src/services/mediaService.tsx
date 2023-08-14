@@ -17,7 +17,6 @@ import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
 import { Logger } from 'edumeet-common';
 import { ClientMonitor, createClientMonitor } from '@observertc/client-monitor-js';
 import edumeetConfig from '../utils/edumeetConfig';
-import { BlurBackground } from './BlurBackground';
 
 const logger = new Logger('MediaService');
 
@@ -101,6 +100,8 @@ export class MediaService extends EventEmitter {
 	private dataConsumers: Map<string, DataConsumer> = new Map();
 	private dataProducers: Map<string, DataProducer> = new Map();
 	private tracks: Map<string, MediaStreamTrack> = new Map();
+	private previewTracks: Map<string, MediaStreamTrack> = new Map();
+	private trackDevice: Map<string, string> = new Map(); // Used to track duplicate tracks.
 	private peerTransports: Map<string, PeerTransport> = new Map();
 	private peers: string[] = [];
 	private p2p = true;
@@ -110,13 +111,14 @@ export class MediaService extends EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
-	private blurInProgress = false;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
 
 		this.signalingService = signalingService;
 		this.initMonitor();
+
+		setInterval(() => logger.debug('tracks: %s, previewTracks: %s', this.tracks.size, this.previewTracks.size), 3000);
 	}
 
 	public init(): void {
@@ -162,64 +164,55 @@ export class MediaService extends EventEmitter {
 	}
 
 	public getTrack(trackId: string): MediaStreamTrack | undefined {
-		return this.tracks.get(trackId);
+		const liveTrack = this.tracks.get(trackId);
+
+		if (liveTrack) return liveTrack;
+		const previewTrack = this.previewTracks.get(trackId);
+
+		if (previewTrack) return previewTrack;
 	}
 
-	#hasTrack(kind: string, deviceId?: string) {
-		for (const track of this.tracks.values()) {
-			if (track.getSettings().deviceId === deviceId &&
-				track.kind === kind)
-			
-				return true;
+	#removeDuplicateTracks(kind: string, deviceId: string, preview:boolean) {
+		logger.debug('#hasTrack [kind: %s, deviceId: %s, preview: %s]', kind, deviceId, preview);
+
+		for (const t of this[`${preview ? 'previewTracks' : 'tracks'}`].values()) {
+			if (this.trackDevice.get(t.id) === deviceId &&
+				t.kind === kind) {
+				logger.debug('removing duplicate track %s', t.id);
+
+				t.stop();
+				this[`${preview ? 'previewTracks' : 'tracks'}`].delete(t.id);
+			}
 		}
-		
-		return false;
 	}
 
 	public getMonitor(): ClientMonitor | undefined {
 		return this.monitor;
 	}
 
-	public async addTrack(track: MediaStreamTrack, blurEffect: boolean): Promise<MediaStreamTrack> {
-		logger.debug('addTrack() [trackId:%s, kind: %s, deviceId: %s size: %s]', track.id, track.kind, track.getSettings().deviceId, this.tracks.size);
+	public addTrack(track: MediaStreamTrack, deviceId: string, preview: boolean): void {
+		logger.debug('addTrack() [trackId:%s, kind: %s, deviceId: %s, preview: %s]', track.id, track.kind, deviceId, preview);
+		this.trackDevice.set(track.id, deviceId);
+		this.#removeDuplicateTracks(track.kind, deviceId, preview);
 
-		if (this.#hasTrack(track.kind, track.getSettings().deviceId)) {
-			throw new Error('track exists');
-		}
-		this.tracks.set(track.id, track);
+		this[`${preview ? 'previewTracks' : 'tracks'}`].set(track.id, track);
 		track.addEventListener('ended', () => {
 			logger.debug('addTrack() | track "ended" [trackId:%s]', track.id);
 
 			this.tracks.delete(track.id);
 		});
-
-		if (blurEffect && track.kind === 'video' && !this.blurInProgress) {
-			const blurStream = new MediaStream();
-
-			blurStream.addTrack(track);
-			const blurBackground = new BlurBackground();
-
-			const blurVideoTrack = await blurBackground.startEffect(blurStream, { width: 256, height: 144 });
-
-			this.tracks.set(blurVideoTrack.id, blurVideoTrack);
-			
-			if (!blurVideoTrack) throw new Error('Could not create blurBackground track');
-
-			blurVideoTrack.addEventListener('ended', () => {
-				blurBackground.stopEffect();
-				this.blurInProgress = false;
-			});
-			
-			return blurVideoTrack;
-		}
-		
-		return track;
 	}
 
 	public removeTrack(trackId: string | undefined): void {
 		logger.debug('removeTrack() [trackId:%s]', trackId);
 
 		trackId && this.tracks.delete(trackId);
+	}
+	
+	public removePreviewTrack(trackId: string | undefined): void {
+		logger.debug('removePreviewTrack() [trackId:%s]', trackId);
+
+		trackId && this.previewTracks.delete(trackId);
 	}
 
 	public enableP2P(clientId: string): void {

@@ -14,7 +14,7 @@ const MediaPreview = ({
 	withControls = true,
 }: MediaPreviewProps): JSX.Element => {
 	const theme = useTheme();
-	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);
+	const { previewWebcamTrackId, videoInProgress } = useAppSelector((state) => state.me);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 
 	return (
@@ -43,7 +43,7 @@ const MediaPreview = ({
 						/>
 					</MediaControls>
 				)}
-				{ previewWebcamTrackId && <VideoView
+				{ previewWebcamTrackId && !videoInProgress && <VideoView
 					mirrored
 					trackId={previewWebcamTrackId}
 				/> }

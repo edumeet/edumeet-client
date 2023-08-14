@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { joinLabel, yourNameLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
-import { updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
+import { updatePreviewMic, updatePreviewWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
@@ -13,7 +13,8 @@ import { roomActions } from '../../store/slices/roomSlice';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
-import BlurBackgroundSwitch from '../../components/devicechooser/BlurBackgroundSwitch';
+import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
+import { meActions } from '../../store/slices/meSlice';
 
 interface JoinProps {
 	roomId: string;
@@ -24,6 +25,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
 	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
+	const { previewWebcamTrackId } = useAppSelector((state) => state.me);
 
 	const [ name, setName ] = useState(stateDisplayName || '');
 	const {
@@ -39,6 +41,8 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		dispatch(settingsActions.setDisplayName(name));
 
 		dispatch(connect(roomId));
+		dispatch(meActions.setLiveWebcamTrackId(previewWebcamTrackId));
+		dispatch(updateWebcam());
 	};
 
 	useEffect(() => {

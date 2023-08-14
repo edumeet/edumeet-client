@@ -24,14 +24,12 @@ import { Logger, timeoutPromise } from 'edumeet-common';
 const logger = new Logger('BlurBackgroundService');
 
 const models = {
-	modelLandscape: '/model/selfie_segmentation_landscape.tflite'
+	modelLandscape: {
+		path: '/model/selfie_segmentation_landscape.tflite',
+		width: 256,
+		height: 144 }
 };
-/* eslint-enable lines-around-comment */
 
-interface BlurBackgroundOptions {
-	width: number,
-	height: number
-}
 const WORKER_MSG = Object.freeze({
 	SET_TIMEOUT: 'setTimeout',
 	CLEAR_TIMEOUT: 'clearTimeout',
@@ -41,8 +39,17 @@ const WORKER_MSG = Object.freeze({
 /**
  * Blur background using WASM.
  */
-export class BlurBackground extends EventEmitter {
+export class BlurBackgroundService extends EventEmitter {
 	#backend?: TFLite;
+	#loadingBackend = false;
+	// eslint-disable-next-line no-unused-vars
+	resolveBackendReady!: () => void;
+	// eslint-disable-next-line no-unused-vars
+	rejectBackendReady!: () => void;
+	backendReady = new Promise<void>((resolve, reject) => {
+		this.resolveBackendReady = resolve;
+		this.rejectBackendReady = reject;
+	});
 	#model?: ArrayBuffer;
 	#stream?: MediaStream;
 	#segMask?: ImageData;
@@ -56,19 +63,18 @@ export class BlurBackground extends EventEmitter {
 	// HTML elements
 	#segMaskCanvas = document.createElement('canvas');
 	#outputCanvas = document.createElement('canvas');
-	#inputVideo;
+	#inputVideo = document.createElement('video');
 
 	// 2d Contexts
 	#segMaskCtx: CanvasRenderingContext2D | null = null;
 	#outputCanvasCtx: CanvasRenderingContext2D | null = null;
 
 	constructor() {
-		logger.debug('constructor()');
 		super();
-		this.#inputVideo = document.createElement('video');
+		logger.debug('constructor()');
 	}
 
-	#notSupported() {
+	#MSTnotSupported() {
 		return (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints); 
 	}
 
@@ -79,22 +85,32 @@ export class BlurBackground extends EventEmitter {
 
 			this.#inputVideo.srcObject = null;
 			this.#worker?.terminate();
+			this.#worker = undefined;
 		} catch (e) {
 			logger.error(e);
 		}
 	}
 
-	async startEffect(stream: MediaStream, options: BlurBackgroundOptions) {
-		logger.debug('startEffect() [stream.id: %s, options: %o]', stream.id, options);
-		if (this.#notSupported()) {
-			this.emit('notSupported');
-			throw new Error('Not supported');
+	public async loadBackend() {
+		if (this.#MSTnotSupported()) {
+			this.emit('MSTNotSupported');
+			throw new Error('MediaStreamTrack getSettings/getConstraints not supported');
 		}
-		const { width, height } = options;
+		if (!this.#loadingBackend) {
+			this.#loadBackend();
+			this.#loadingBackend = true;
+		}
+		await this.backendReady;
+	}
 
+	async startEffect(
+		stream: MediaStream,
+		width = models.modelLandscape.width,
+		height = models.modelLandscape.height) {
+		logger.debug('startEffect() [stream.id: %s, width: %s, height: %s]', stream.id, width, height);
+		this.#inputVideo = document.createElement('video');
 		this.#segWidth = width;
 		this.#segHeight = height;
-		await this.#loadBackend();
 
 		const trackSettings = stream.getTracks()[0].getSettings();
 
@@ -102,7 +118,7 @@ export class BlurBackground extends EventEmitter {
 		this.#outputCanvas.width = trackSettings.width as number;
 		this.#segPixelCount = this.#segWidth * this.#segHeight;
 		this.#segMask = new ImageData(this.#segWidth, this.#segHeight);
-		this.#worker = this.#createWebWorker();
+		if (!this.#worker) this.#worker = this.#createWebWorker();
 		this.#stream = stream;
 		
 		return this.#createStream(this.#worker).getVideoTracks()[0];
@@ -110,36 +126,42 @@ export class BlurBackground extends EventEmitter {
 
 	async #loadBackend() {
 		logger.debug('#loadBackend()');
-		// Try if browser support SIMD.
 		try {
-			this.#backend = await timeoutPromise(createTFLiteSIMDModule(), 1000);
-		} catch (error) {
-			logger.error(error);
-		}
-
-		// Try without SIMD support.
-		if (!this.#backend) {
+		// Try if browser support SIMD.
 			try {
-				this.#backend = await timeoutPromise(createTFLiteModule(), 1000);
+				this.#backend = await timeoutPromise(createTFLiteSIMDModule(), 1000);
 			} catch (error) {
 				logger.error(error);
-			} 
-		}
+			}
 
-		if (!this.#backend) {
-			this.emit('notSupported');
-			throw new Error('Not supported');
-		}
-		if (!this.#model) {
-			const modelResponse = await fetch(models.modelLandscape);
+			// Try without SIMD support.
+			if (!this.#backend) {
+				try {
+					this.#backend = await timeoutPromise(createTFLiteModule(), 1000);
+				} catch (error) {
+					logger.error(error);
+				} 
+			}
 
-			if (!modelResponse.ok) throw new Error('Could not load model');
+			if (!this.#backend) {
+				this.emit('WASMnotSupported');
+				throw new Error('WASM Not supported by browser');
+			}
+			if (!this.#model) {
+				const modelResponse = await fetch(models.modelLandscape.path);
 
-			this.#model = await modelResponse.arrayBuffer();
-			this.#backend.HEAPU8.set(new Uint8Array(this.#model), this.#backend._getModelBufferMemoryOffset());
-			this.#backend._loadModel(this.#model.byteLength);
-			this.#outputMemoryOffset = this.#backend._getOutputMemoryOffset() / 4;
-			this.#inputMemoryOffset = this.#backend._getInputMemoryOffset() / 4;
+				if (!modelResponse.ok) throw new Error('Could not load model');
+
+				this.#model = await modelResponse.arrayBuffer();
+				this.#backend.HEAPU8.set(new Uint8Array(this.#model), this.#backend._getModelBufferMemoryOffset());
+				this.#backend._loadModel(this.#model.byteLength);
+				this.#outputMemoryOffset = this.#backend._getOutputMemoryOffset() / 4;
+				this.#inputMemoryOffset = this.#backend._getInputMemoryOffset() / 4;
+			}
+			this.resolveBackendReady();
+		} catch (e) {
+			logger.error(e);
+			this.rejectBackendReady(); 
 		}
 	}
 
@@ -212,14 +234,19 @@ export class BlurBackground extends EventEmitter {
 	}
 	
 	#renderSegMask(worker: Worker) {
-		this.#doResize();
-		this.#doInference();
-		this.#doPostProcessing();
+		try {
+			this.#doResize();
+			this.#doInference();
+			this.#doPostProcessing();
 
-		worker.postMessage({
-			method: WORKER_MSG.SET_TIMEOUT,
-			timeMs: 1000 / 30
-		});
+			worker.postMessage({
+				method: WORKER_MSG.SET_TIMEOUT,
+				timeMs: 1000 / 30
+			});
+		} catch (e) {
+			logger.error(e);
+			this.emit('blurBackgroundError');
+		}
 	}
 	#doResize() {
 		if (!this.#segMask) throw new Error('No segmentation mask');
@@ -242,7 +269,7 @@ export class BlurBackground extends EventEmitter {
 			this.#segWidth,
 			this.#segHeight);
 	
-		if (!this.#backend || !this.#inputMemoryOffset) throw new Error();
+		if (!this.#backend || !this.#inputMemoryOffset) throw new Error('No ML backend');
 		for (let i = 0; i < this.#segPixelCount; i++) {
 			this.#backend.HEAPF32[this.#inputMemoryOffset + (i * 3)] = Number(imageData.data[i * 4] / 255);
 			this.#backend.HEAPF32[this.#inputMemoryOffset + (i * 3) + 1] = Number(imageData.data[(i * 4) + 1] / 255);
@@ -251,7 +278,7 @@ export class BlurBackground extends EventEmitter {
 	}
 
 	#doInference() {
-		if (!this.#backend) throw new Error('No backend');
+		if (!this.#backend) throw new Error('No ML backend');
 		if (!this.#outputMemoryOffset) throw new Error('No output memory offset');
 		this.#backend._runInference();
 
@@ -266,8 +293,8 @@ export class BlurBackground extends EventEmitter {
 	}
 
 	#doPostProcessing() {
-		if (!this.#outputCanvasCtx) throw new Error('No output canvas context');
-		if (!this.#outputCanvas) throw new Error('No output canvas');
+		if (!this.#outputCanvasCtx) throw new Error('No output context');
+		if (!this.#outputCanvas) throw new Error('No output canvas-element');
 
 		this.#outputCanvasCtx.globalCompositeOperation = 'copy';
 		this.#outputCanvasCtx.filter = 'blur(8px)';

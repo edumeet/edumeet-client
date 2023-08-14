@@ -6,6 +6,7 @@ import MediaPreview from '../mediapreview/MediaPreview';
 import { audioSettingsLabel, videoSettingsLabel } from '../translated/translatedComponents';
 import AdvancedAudioSettings from './advancedsettings/AdvancedAudioSettings';
 import AdvancedVideoSettings from './advancedsettings/AdvancedVideoSettings';
+import BlurBackgroundSwitch from '../blurbackgroundswitch/BlurBackgroundSwitch';
 
 const NestedList = styled(List)(({ theme }) => ({
 	padding: theme.spacing(0, 1.5)
@@ -33,6 +34,7 @@ const MediaSettings = (): JSX.Element => {
 			</ListItem>
 			<NestedList>
 				<VideoInputChooser preview withConfirm />
+				<BlurBackgroundSwitch />
 				<AdvancedVideoSettings />
 			</NestedList>
 		</List>

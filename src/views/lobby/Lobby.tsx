@@ -13,6 +13,7 @@ import {
 	usePrompt,
 } from '../../store/hooks';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
+import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
 
 const Lobby = (): JSX.Element => {
 	usePrompt();
@@ -35,6 +36,7 @@ const Lobby = (): JSX.Element => {
 					<MediaPreview />
 					<AudioInputChooser preview />
 					<VideoInputChooser preview />
+					<BlurBackgroundSwitch />
 					<TextInputField
 						label={yourNameLabel()}
 						value={localDisplayName ?? 'Guest'}
