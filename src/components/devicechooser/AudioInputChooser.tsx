@@ -1,12 +1,10 @@
 import { Button } from '@mui/material';
-import { useEffect } from 'react';
-import { stopPreviewMic, updateLiveMic, updatePreviewMic } from '../../store/actions/mediaActions';
+import { updateLiveMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
 	useDeviceSelector
 } from '../../store/hooks';
-import { meProducersSelector } from '../../store/selectors';
 import {
 	applyLabel,
 	audioDeviceLabel,
@@ -14,6 +12,7 @@ import {
 	selectAudioDeviceLabel
 } from '../translated/translatedComponents';
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
+import { mediaActions } from '../../store/slices/mediaSlice';
 
 interface AudioInputChooserProps {
 	withConfirm?: boolean;
@@ -23,9 +22,8 @@ const AudioInputChooser = ({
 	withConfirm
 }: AudioInputChooserProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const { micProducer } = useAppSelector(meProducersSelector);
 	const audioDevices = useDeviceSelector('audioinput');
-	const { audioInProgress, previewAudioDeviceId, audioMuted } = useAppSelector((state) => state.media);
+	const { audioInProgress, previewAudioDeviceId } = useAppSelector((state) => state.media);
 
 	const handleDeviceChange = (deviceId: string): void => {
 		if (deviceId) {
@@ -34,17 +32,10 @@ const AudioInputChooser = ({
 	};
 
 	const handleConfirm = (): void => {
+		dispatch(mediaActions.setLiveAudioDeviceId(previewAudioDeviceId));
+		dispatch(mediaActions.setAudioMuted(false));
 		dispatch(updateLiveMic());
 	};
-
-	useEffect(() => {
-		if (!audioMuted)
-			dispatch(updatePreviewMic());
-
-		return (): void => {
-			dispatch(stopPreviewMic());
-		};
-	}, []);
 
 	return (
 		<ChooserDiv>
@@ -57,7 +48,7 @@ const AudioInputChooser = ({
 				disabled={audioDevices.length === 0 || audioInProgress}
 				devices={audioDevices}
 			/>
-			{withConfirm && micProducer && (
+			{withConfirm && (
 				<Button
 					onClick={handleConfirm}
 					disabled={!confirm || audioInProgress}

@@ -34,9 +34,6 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	} else if (webcamProducer) {
 		webcamState = 'on';
 		webcamTip = stopVideoLabel();
-	} else if (!webcamProducer && liveVideoDeviceId) {
-		webcamState = 'muted';
-		webcamTip = startVideoLabel();
 	} else {
 		webcamState = 'off';
 		webcamTip = startVideoLabel();
@@ -49,13 +46,13 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 				if (webcamState === 'unsupported') return;
 
 				if (webcamState === 'off') {
-					dispatch(updatePreviewMic());
-					dispatch(updatePreviewWebcam());
-					dispatch(uiActions.setUi({ settingsOpen: !settingsOpen })); 
-				}
-					
-				if (webcamState === 'muted') {
-					dispatch(updateLiveWebcam());
+					if (liveVideoDeviceId) {
+						dispatch(updateLiveWebcam());
+					} else {
+						dispatch(updatePreviewMic());
+						dispatch(updatePreviewWebcam());
+						dispatch(uiActions.setUi({ settingsOpen: !settingsOpen })); 
+					}
 				}
 
 				if (webcamProducer) {
