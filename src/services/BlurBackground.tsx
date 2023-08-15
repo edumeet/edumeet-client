@@ -1,3 +1,15 @@
+/**
+ * ML Backend: TF Lite
+ * Copyright 2018 Google LLC
+ * License: Apache 2.0
+ * https://github.com/google-coral/tflite/blob/master/LICENSE
+ * 
+ * Model: MediaPipe Selfie Segmentation
+ * Copyirhgt 2021 Google LLC
+ * License: Apache 2.0
+ * https://storage.googleapis.com/mediapipe-assets/Model%20Card%20MediaPipe%20Selfie%20Segmentation.pdf
+ */
+
 import { EventEmitter } from 'events';
 import { Logger, timeoutPromise } from 'edumeet-common';
 
@@ -23,10 +35,16 @@ export interface TFLite {
 
 const models = {
 	modelLandscape: {
-		path: '/model/selfie_segmentation_landscape.tflite',
+		path: '/model/selfie_segmenter_landscape.tflite',
 		width: 256,
-		height: 144 }
+		height: 144 },
+	modelGeneral: {
+		path: '/model/selfie_segmenter.tflite',
+		width: 256,
+		height: 256
+	}
 };
+
 const WORKER_MSG = Object.freeze({
 	SET_TIMEOUT: 'setTimeout',
 	CLEAR_TIMEOUT: 'clearTimeout',
@@ -103,8 +121,8 @@ export class BlurBackground extends EventEmitter {
 
 	async startEffect(
 		stream: MediaStream,
-		width = models.modelLandscape.width,
-		height = models.modelLandscape.height) {
+		width = models.modelGeneral.width,
+		height = models.modelGeneral.height) {
 		logger.debug('startEffect() [stream.id: %s, width: %s, height: %s]', stream.id, width, height);
 		this.#inputVideo = document.createElement('video');
 		this.#segWidth = width;
@@ -146,7 +164,7 @@ export class BlurBackground extends EventEmitter {
 				throw new Error('WASM Not supported by browser');
 			}
 			if (!this.#model) {
-				const modelResponse = await fetch(models.modelLandscape.path);
+				const modelResponse = await fetch(models.modelGeneral.path);
 
 				if (!modelResponse.ok) throw new Error('Could not load model');
 
