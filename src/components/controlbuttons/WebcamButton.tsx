@@ -15,7 +15,8 @@ import {
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { stopLiveWebcam, updateLiveWebcam } from '../../store/actions/mediaActions';
+import { stopLiveWebcam, updateLiveWebcam, updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
+import { uiActions } from '../../store/slices/uiSlice';
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -23,8 +24,9 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const webcamProducer = useAppSelector(webcamProducerSelector);
 	const { liveVideoDeviceId, videoInProgress } = useAppSelector((state) => state.media);
 	const {	canSendWebcam } = useAppSelector((state) => state.me);
+	const { settingsOpen } = useAppSelector((state) => state.ui);
 
-	let webcamState: MediaState, webcamTip;
+	let webcamState!: MediaState, webcamTip;
 
 	if (!canSendWebcam || !hasVideoPermission) {
 		webcamState = 'unsupported';
@@ -32,6 +34,9 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	} else if (webcamProducer) {
 		webcamState = 'on';
 		webcamTip = stopVideoLabel();
+	} else if (!webcamProducer && liveVideoDeviceId) {
+		webcamState = 'muted';
+		webcamTip = startVideoLabel();
 	} else {
 		webcamState = 'off';
 		webcamTip = startVideoLabel();
@@ -44,9 +49,16 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 				if (webcamState === 'unsupported') return;
 
 				if (webcamState === 'off') {
-					liveVideoDeviceId && dispatch(updateLiveWebcam());
-					// TODO: Launch preview video chooser
-				} else if (webcamProducer) {
+					dispatch(updatePreviewMic());
+					dispatch(updatePreviewWebcam());
+					dispatch(uiActions.setUi({ settingsOpen: !settingsOpen })); 
+				}
+					
+				if (webcamState === 'muted') {
+					dispatch(updateLiveWebcam());
+				}
+
+				if (webcamProducer) {
 					dispatch(
 						producersActions.closeProducer({
 							producerId: webcamProducer.id,
@@ -55,8 +67,6 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 						})
 					);
 					dispatch(stopLiveWebcam());
-				} else {
-					// Shouldn't happen
 				}
 			}}
 			disabled={webcamState === 'unsupported' || videoInProgress}

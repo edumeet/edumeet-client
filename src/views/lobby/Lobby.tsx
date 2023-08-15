@@ -34,8 +34,8 @@ const Lobby = (): JSX.Element => {
 			content={
 				<>
 					<MediaPreview />
-					<AudioInputChooser preview />
-					<VideoInputChooser preview />
+					<AudioInputChooser />
+					<VideoInputChooser />
 					<BlurBackgroundSwitch />
 					<TextInputField
 						label={yourNameLabel()}

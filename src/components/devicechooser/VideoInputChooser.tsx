@@ -1,12 +1,10 @@
 import { Button } from '@mui/material';
-import { useEffect } from 'react';
-import { stopPreviewWebcam, updatePreviewWebcam, updateLiveWebcam } from '../../store/actions/mediaActions';
+import { updatePreviewWebcam, updateLiveWebcam } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
 	useDeviceSelector
 } from '../../store/hooks';
-import { meProducersSelector } from '../../store/selectors';
 import {
 	applyLabel,
 	noVideoDevicesLabel,
@@ -24,7 +22,6 @@ const VideoInputChooser = ({
 	withConfirm
 }: VideoInputChooserProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const { webcamProducer } = useAppSelector(meProducersSelector);
 	const videoDevices = useDeviceSelector('videoinput');
 	const { videoInProgress, previewVideoDeviceId, previewBlurBackground } = useAppSelector((state) => state.media);
 
@@ -38,6 +35,7 @@ const VideoInputChooser = ({
 		if (previewVideoDeviceId) {
 			dispatch(mediaActions.setLiveVideoDeviceId(previewVideoDeviceId));
 			dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
+			dispatch(mediaActions.setVideoMuted(false));
 			dispatch(updateLiveWebcam());
 		}
 	};
@@ -53,7 +51,7 @@ const VideoInputChooser = ({
 				disabled={videoDevices.length === 0 || videoInProgress}
 				devices={videoDevices}
 			/>
-			{ withConfirm && webcamProducer && (
+			{ withConfirm && (
 				<Button
 					onClick={handleConfirm}
 					disabled={videoInProgress}
