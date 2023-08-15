@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { joinLabel, yourNameLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
-import { updatePreviewMic, updatePreviewWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
@@ -14,7 +13,6 @@ import { settingsActions } from '../../store/slices/settingsSlice';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
-import { meActions } from '../../store/slices/meSlice';
 
 interface JoinProps {
 	roomId: string;
@@ -23,15 +21,10 @@ interface JoinProps {
 const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 
-	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
+	const { displayName } = useAppSelector((state) => state.settings);
 	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
-	const { previewWebcamTrackId } = useAppSelector((state) => state.me);
 
-	const [ name, setName ] = useState(stateDisplayName || '');
-	const {
-		audioMuted,
-		videoMuted
-	} = useAppSelector((state) => state.settings);
+	const [ name, setName ] = useState(displayName || '');
 
 	const handleDisplayNameChange = (value: string) => {
 		setName(value.trim() ? value : value.trim());
@@ -39,10 +32,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	const handleJoin = () => {
 		dispatch(settingsActions.setDisplayName(name));
-
 		dispatch(connect(roomId));
-		dispatch(meActions.setLiveWebcamTrackId(previewWebcamTrackId));
-		dispatch(updateWebcam());
 	};
 
 	useEffect(() => {
@@ -67,12 +57,6 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	useEffect(() => {
 		dispatch(roomActions.updateRoom({ id: roomId }));
-
-		if (!audioMuted)
-			dispatch(updatePreviewMic());
-
-		if (!videoMuted)
-			dispatch(updatePreviewWebcam());
 	}, []);
 
 	return (
@@ -81,8 +65,8 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 			content={
 				<>
 					<MediaPreview />
-					<AudioInputChooser preview />
-					<VideoInputChooser preview />
+					<AudioInputChooser />
+					<VideoInputChooser />
 					<BlurBackgroundSwitch />
 					<TextInputField
 						label={yourNameLabel()}

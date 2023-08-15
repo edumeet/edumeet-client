@@ -115,8 +115,8 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 
-					producer.kind === 'video' && dispatch(settingsActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(settingsActions.setAudioMuted(true));
+					producer.kind === 'video' && dispatch(mediaActions.setVideoMuted(true));
+					producer.kind === 'audio' && dispatch(mediaActions.setAudioMuted(true));
 				});
 
 				mediaService.on('producerPaused', (producer) => {
@@ -124,8 +124,8 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 					
-					producer.kind === 'video' && dispatch(settingsActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(settingsActions.setAudioMuted(true));
+					producer.kind === 'video' && dispatch(mediaActions.setVideoMuted(true));
+					producer.kind === 'audio' && dispatch(mediaActions.setAudioMuted(true));
 				});
 
 				mediaService.on('producerResumed', (producer) => {

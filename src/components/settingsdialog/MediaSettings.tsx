@@ -23,7 +23,7 @@ const MediaSettings = (): JSX.Element => {
 				<ListItemText primary={ audioSettingsLabel() } />
 			</ListItem>
 			<NestedList>
-				<AudioInputChooser preview withConfirm />
+				<AudioInputChooser withConfirm />
 				<AdvancedAudioSettings />
 			</NestedList>
 			<ListItem>
@@ -33,7 +33,7 @@ const MediaSettings = (): JSX.Element => {
 				<ListItemText primary={ videoSettingsLabel() } />
 			</ListItem>
 			<NestedList>
-				<VideoInputChooser preview withConfirm />
+				<VideoInputChooser withConfirm />
 				<BlurBackgroundSwitch />
 				<AdvancedVideoSettings />
 			</NestedList>

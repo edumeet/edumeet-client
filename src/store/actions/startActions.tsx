@@ -7,7 +7,7 @@ import {
 	webcamProducerSelector
 } from '../selectors';
 import { permissions } from '../../utils/roles';
-import { updateMic, updateWebcam } from './mediaActions';
+import { updateLiveMic, updateLiveWebcam } from './mediaActions';
 import { producersActions } from '../slices/producersSlice';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
@@ -100,7 +100,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const micProducer = micProducerSelector(getState());
 
 				if (!micProducer) {
-					dispatch(updateMic({
+					dispatch(updateLiveMic({
 						start: true
 					}));
 				} else if (!micProducer.paused) {
@@ -137,7 +137,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const webcamProducer = webcamProducerSelector(getState());
 
 				if (!webcamProducer) {
-					dispatch(updateWebcam({
+					dispatch(updateLiveWebcam({
 						start: true
 					}));
 				} else {
@@ -242,7 +242,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const micProducer = micProducerSelector(getState());
 
 				if (!micProducer) {
-					dispatch(updateMic({
+					dispatch(updateLiveMic({
 						start: true
 					}));
 				} else if (micProducer.paused) {

@@ -8,10 +8,6 @@ export interface MeState {
 	sessionId: string;
 	browser: Omit<DeviceInfo, 'bowser'>;
 	picture?: string;
-	previewWebcamTrackId?: string;
-	previewMicTrackId?: string;
-	liveWebcamTrackId?: string;
-	liveMicTrackId?: string
 	canSendMic: boolean;
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
@@ -24,8 +20,6 @@ export interface MeState {
 	escapeMeeting: boolean;
 	autoMuted: boolean;
 	// Status flags
-	audioInProgress: boolean;
-	videoInProgress: boolean;
 	screenSharingInProgress: boolean;
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
@@ -47,8 +41,6 @@ const initialState: MeState = {
 	raisedHand: false,
 	escapeMeeting: false,
 	autoMuted: true,
-	audioInProgress: false,
-	videoInProgress: false,
 	screenSharingInProgress: false,
 	displayNameInProgress: false,
 	raisedHandInProgress: false,
@@ -67,18 +59,6 @@ const meSlice = createSlice({
 		}),
 		setPicture: ((state, action: PayloadAction<string>) => {
 			state.picture = action.payload;
-		}),
-		setPreviewWebcamTrackId: ((state, action: PayloadAction<string | undefined>) => {
-			state.previewWebcamTrackId = action.payload;
-		}),
-		setPreviewMicTrackId: ((state, action: PayloadAction<string | undefined>) => {
-			state.previewMicTrackId = action.payload;
-		}),
-		setLiveWebcamTrackId: ((state, action: PayloadAction<string | undefined>) => {
-			state.liveWebcamTrackId = action.payload;
-		}),
-		setLiveMicTrackId: ((state, action: PayloadAction<string | undefined>) => {
-			state.liveMicTrackId = action.payload;
 		}),
 		setMediaCapabilities: ((
 			state,
@@ -99,12 +79,6 @@ const meSlice = createSlice({
 			state.autoMuted = action.payload;
 		}),
 		// Status flags
-		setAudioInProgress: ((state, action: PayloadAction<boolean>) => {
-			state.audioInProgress = action.payload;
-		}),
-		setVideoInProgress: ((state, action: PayloadAction<boolean>) => {
-			state.videoInProgress = action.payload;
-		}),
 		setScreenSharingInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.screenSharingInProgress = action.payload;
 		}),

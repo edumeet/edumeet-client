@@ -27,6 +27,8 @@ declare global {
 	}
 }
 
+export type TrackType = 'liveTracks' | 'previewTracks'
+
 export type MediaChange = 'pause' | 'resume' | 'close';
 
 export interface MediaCapabilities {
@@ -99,7 +101,7 @@ export class MediaService extends EventEmitter {
 	private consumers: Map<string, Consumer> = new Map();
 	private dataConsumers: Map<string, DataConsumer> = new Map();
 	private dataProducers: Map<string, DataProducer> = new Map();
-	private tracks: Map<string, MediaStreamTrack> = new Map();
+	private liveTracks: Map<string, MediaStreamTrack> = new Map();
 	private previewTracks: Map<string, MediaStreamTrack> = new Map();
 	private trackDevice: Map<string, string> = new Map(); // Used to track duplicate tracks.
 	private peerTransports: Map<string, PeerTransport> = new Map();
@@ -118,7 +120,10 @@ export class MediaService extends EventEmitter {
 		this.signalingService = signalingService;
 		this.initMonitor();
 
-		setInterval(() => logger.debug('tracks: %s, previewTracks: %s', this.tracks.size, this.previewTracks.size), 3000);
+		setInterval(() => {
+			logger.debug('liveTracks: %s, previewTracks: %s', this.liveTracks.size, this.previewTracks.size);
+			logger.debug('consumers: %s, producers: %s', this.consumers.size, this.producers.size);
+		}, 3000);
 	}
 
 	public init(): void {
@@ -139,11 +144,11 @@ export class MediaService extends EventEmitter {
 		this.peerTransports.clear();
 		this.peers = [];
 
-		for (const track of this.tracks.values()) {
+		for (const track of this.liveTracks.values()) {
 			track.stop();
 		}
 
-		this.tracks.clear();
+		this.liveTracks.clear();
 		this.monitor?.close();
 	}
 
@@ -164,7 +169,7 @@ export class MediaService extends EventEmitter {
 	}
 
 	public getTrack(trackId: string): MediaStreamTrack | undefined {
-		const liveTrack = this.tracks.get(trackId);
+		const liveTrack = this.liveTracks.get(trackId);
 
 		if (liveTrack) return liveTrack;
 		const previewTrack = this.previewTracks.get(trackId);
@@ -172,16 +177,15 @@ export class MediaService extends EventEmitter {
 		if (previewTrack) return previewTrack;
 	}
 
-	#removeDuplicateTracks(kind: string, deviceId: string, preview:boolean) {
-		logger.debug('#hasTrack [kind: %s, deviceId: %s, preview: %s]', kind, deviceId, preview);
+	#removeDuplicateTracks(kind: string, deviceId: string, trackType: TrackType) {
+		logger.debug('#hasTrack [kind: %s, deviceId: %s, trackType: %s]', kind, deviceId, trackType);
+		for (const track of this[trackType].values()) {
+			if (this.trackDevice.get(track.id) === deviceId &&
+				track.kind === kind) {
+				logger.debug('removing duplicate track %s', track.id);
 
-		for (const t of this[`${preview ? 'previewTracks' : 'tracks'}`].values()) {
-			if (this.trackDevice.get(t.id) === deviceId &&
-				t.kind === kind) {
-				logger.debug('removing duplicate track %s', t.id);
-
-				t.stop();
-				this[`${preview ? 'previewTracks' : 'tracks'}`].delete(t.id);
+				track.stop();
+				this[trackType].delete(track.id);
 			}
 		}
 	}
@@ -190,29 +194,37 @@ export class MediaService extends EventEmitter {
 		return this.monitor;
 	}
 
-	public addTrack(track: MediaStreamTrack, deviceId: string, preview: boolean): void {
-		logger.debug('addTrack() [trackId:%s, kind: %s, deviceId: %s, preview: %s]', track.id, track.kind, deviceId, preview);
+	public addTrack(track: MediaStreamTrack, deviceId: string, trackType: TrackType): void {
+		logger.debug('addTrack() [trackId:%s, kind: %s, deviceId: %s, trackType: %s]', track.id, track.kind, deviceId, trackType);
 		this.trackDevice.set(track.id, deviceId);
-		this.#removeDuplicateTracks(track.kind, deviceId, preview);
+		this.#removeDuplicateTracks(track.kind, deviceId, trackType);
 
-		this[`${preview ? 'previewTracks' : 'tracks'}`].set(track.id, track);
+		this[trackType].set(track.id, track);
 		track.addEventListener('ended', () => {
 			logger.debug('addTrack() | track "ended" [trackId:%s]', track.id);
 
-			this.tracks.delete(track.id);
+			this[trackType].delete(track.id);
+			this.trackDevice.delete(track.id);
 		});
 	}
 
-	public removeTrack(trackId: string | undefined): void {
+	public removeLiveTrack(trackId: string | undefined): void {
 		logger.debug('removeTrack() [trackId:%s]', trackId);
 
-		trackId && this.tracks.delete(trackId);
+		if (trackId) {
+			this.liveTracks.delete(trackId);
+			this.trackDevice.delete(trackId);
+		}
+
 	}
 	
 	public removePreviewTrack(trackId: string | undefined): void {
 		logger.debug('removePreviewTrack() [trackId:%s]', trackId);
 
-		trackId && this.previewTracks.delete(trackId);
+		if (trackId) {
+			this.previewTracks.delete(trackId);
+			this.trackDevice.delete(trackId);
+		}
 	}
 
 	public enableP2P(clientId: string): void {

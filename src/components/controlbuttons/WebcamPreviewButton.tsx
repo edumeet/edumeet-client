@@ -15,10 +15,9 @@ import {
 const WebcamPreviewButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 
-	const {
+	const { previewAudioDeviceId,
 		previewWebcamTrackId,
-		videoInProgress,
-	} = useAppSelector((state) => state.me);
+		videoInProgress	} = useAppSelector((state) => state.media);
 
 	let webcamState: MediaState, webcamTip;
 
@@ -37,7 +36,7 @@ const WebcamPreviewButton = (props: ControlButtonProps): JSX.Element => {
 				if (webcamState === 'unsupported') return;
 
 				if (webcamState === 'off') {
-					dispatch(updatePreviewWebcam());
+					dispatch(updatePreviewWebcam(previewAudioDeviceId));
 				} else if (previewWebcamTrackId) {
 					dispatch(stopPreviewWebcam());
 				} else {

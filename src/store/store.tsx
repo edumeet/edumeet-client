@@ -50,8 +50,8 @@ import roomSessionsSlice from './slices/roomSessionsSlice';
 import { Application, feathers } from '@feathersjs/feathers/lib';
 import rest from '@feathersjs/rest-client';
 import authentication from '@feathersjs/authentication-client';
-import createEffectsMiddleware from './middlewares/effectsMiddleware';
-import { BlurBackgroundService } from '../services/blurBackgroundService';
+import mediaSlice from './slices/mediaSlice';
+import { EffectService } from '../services/effectsService';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
@@ -59,7 +59,7 @@ export interface MiddlewareOptions {
 	deviceService: DeviceService;
 	signalingService: SignalingService;
 	managementService: Application;
-	blurBackgroundService: BlurBackgroundService
+	effectService: EffectService;
 	config: EdumeetConfig;
 }
 
@@ -78,7 +78,7 @@ const managementService = feathers()
 
 export const mediaService = new MediaService({ signalingService });
 export const fileService = new FileService({ signalingService });
-export const blurBackgroundService = new BlurBackgroundService();
+export const effectService = new EffectService();
 
 /**
  * The entire App is wrapped in this context, so that all
@@ -98,7 +98,7 @@ const middlewareOptions = {
 	deviceService,
 	signalingService,
 	managementService,
-	blurBackgroundService
+	effectService
 };
 
 const reducer = combineReducers({
@@ -116,6 +116,7 @@ const reducer = combineReducers({
 	ui: uiSlice.reducer,
 	webrtc: webrtcSlice.reducer,
 	recording: recordingSlice.reducer,
+	media: mediaSlice.reducer
 });
 
 const pReducer = persistReducer<RootState>(persistConfig, reducer);
@@ -140,7 +141,6 @@ export const store = configureStore({
 			createRoomMiddleware(middlewareOptions),
 			createNotificationMiddleware(middlewareOptions),
 			createRecordingMiddleware(middlewareOptions),
-			createEffectsMiddleware(),
 			createLogger({
 				duration: true,
 				timestamp: false,

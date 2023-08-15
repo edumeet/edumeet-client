@@ -1,20 +1,20 @@
 import { FormControlLabel, Switch } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { settingsActions } from '../../store/slices/settingsSlice';
+import { updatePreviewWebcam } from '../../store/actions/mediaActions';
+import { mediaActions } from '../../store/slices/mediaSlice';
 
 const BlurBackgroundSwitch = (): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const { blurBackground } = useAppSelector((state) => state.settings);
-	const { videoInProgress, previewWebcamTrackId
-
-	} = useAppSelector((state) => state.me);
+	const { videoInProgress, previewWebcamTrackId, previewBlurBackground 
+	} = useAppSelector((state) => state.media);
 
 	const handleChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
 	): void => {
 		dispatch(
-			settingsActions.setBlurBackground(event.target.checked)
+			mediaActions.setPreviewBlurBackground(event.target.checked)
 		);
+		dispatch(updatePreviewWebcam());
 	};
 	
 	return (
@@ -22,7 +22,7 @@ const BlurBackgroundSwitch = (): JSX.Element => {
 			control={
 				<Switch
 					disabled={videoInProgress || !previewWebcamTrackId}
-					checked={ blurBackground }
+					checked={ previewBlurBackground }
 					onChange={handleChange}
 					inputProps={ { 'aria-label': 'controlled' } }
 				/>

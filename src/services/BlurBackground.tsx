@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { Logger, timeoutPromise } from 'edumeet-common';
 
 declare function createTFLiteModule(): Promise<TFLite>
 declare function createTFLiteSIMDModule(): Promise<TFLite>
@@ -19,9 +20,6 @@ export interface TFLite {
   HEAPU8: any
   HEAPF32: any
 }
-import { Logger, timeoutPromise } from 'edumeet-common';
-
-const logger = new Logger('BlurBackgroundService');
 
 const models = {
 	modelLandscape: {
@@ -29,17 +27,17 @@ const models = {
 		width: 256,
 		height: 144 }
 };
-
 const WORKER_MSG = Object.freeze({
 	SET_TIMEOUT: 'setTimeout',
 	CLEAR_TIMEOUT: 'clearTimeout',
 	TIMEOUT_TICK: 'timeoutTick'
 });
+const logger = new Logger('BlurBackground');
 
 /**
  * Blur background using WASM.
  */
-export class BlurBackgroundService extends EventEmitter {
+export class BlurBackground extends EventEmitter {
 	#backend?: TFLite;
 	#loadingBackend = false;
 	// eslint-disable-next-line no-unused-vars
@@ -78,7 +76,7 @@ export class BlurBackgroundService extends EventEmitter {
 		return (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints); 
 	}
 
-	async stopEffect() {
+	public async stopEffect() {
 		logger.debug('stopEffect()');
 		try {
 			this.#stream?.getVideoTracks().forEach((t) => t.stop());

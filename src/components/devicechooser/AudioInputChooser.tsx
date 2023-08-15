@@ -1,6 +1,6 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { stopPreviewMic, updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
+import { Button } from '@mui/material';
+import { useEffect } from 'react';
+import { stopPreviewMic, updateLiveMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -16,83 +16,40 @@ import {
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 
 interface AudioInputChooserProps {
-	preview?: boolean;
 	withConfirm?: boolean;
 }
 
 const AudioInputChooser = ({
-	preview,
 	withConfirm
 }: AudioInputChooserProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const [ confirm, setConfirm ] = useState(false);
 	const { micProducer } = useAppSelector(meProducersSelector);
 	const audioDevices = useDeviceSelector('audioinput');
-	const audioInProgress = useAppSelector((state) => state.me.audioInProgress);
-	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);
-	const [ selectedAudioDevice, setSelectedAudioDevice ] = useState(audioDevice);
-	const [ appliedAudioDevice, setAppliedAudioDevice ] = useState('');
+	const { audioInProgress, previewAudioDeviceId, audioMuted } = useAppSelector((state) => state.media);
 
 	const handleDeviceChange = (deviceId: string): void => {
 		if (deviceId) {
-			setAppliedAudioDevice(deviceId); // Update applied audio device only when the user clicks "Apply"
-
-			if (preview) {
-				setConfirm(true);
-				dispatch(updatePreviewMic({
-					restart: true,
-					newDeviceId: deviceId,
-					updateMute: !withConfirm
-				}));
-			} else {
-				dispatch(updateMic({
-					restart: true,
-					newDeviceId: deviceId
-				}));
-			}
+			dispatch(updatePreviewMic(deviceId));
 		}
 	};
 
 	const handleConfirm = (): void => {
-		setSelectedAudioDevice(appliedAudioDevice);
-		dispatch(updateMic({
-			restart: true
-		}));
-		setConfirm(false);
-	};
-
-	const handleClose = (): void => {
-		setConfirm(false);
-		if (selectedAudioDevice !== audioDevice) {
-			// Revert to the actual active audio device
-			dispatch(updateMic({
-				restart: true,
-				newDeviceId: selectedAudioDevice
-			}));
-		}
+		dispatch(updateLiveMic());
 	};
 
 	useEffect(() => {
-		if (withConfirm) {
-			dispatch(updatePreviewMic({
-				restart: true,
-				updateMute: !withConfirm
-			}));
-		}
+		if (!audioMuted)
+			dispatch(updatePreviewMic());
 
 		return (): void => {
-			if (withConfirm) {
-				dispatch(stopPreviewMic({
-					updateMute: !withConfirm
-				}));
-			}
+			dispatch(stopPreviewMic());
 		};
 	}, []);
 
 	return (
 		<ChooserDiv>
 			<DeviceChooser
-				value={selectedAudioDevice ?? ''}
+				value={previewAudioDeviceId ?? ''}
 				setValue={handleDeviceChange}
 				name={audioDeviceLabel()}
 				devicesLabel={selectAudioDeviceLabel()}
@@ -108,20 +65,6 @@ const AudioInputChooser = ({
 					{applyLabel()}
 				</Button>
 			)}
-			<Dialog open={confirm} onClose={handleClose}>
-				<DialogTitle>{applyLabel()}</DialogTitle>
-				<DialogContent>
-					<p>
-						You have selected a new audio source but not applied it. Do you want to exit without applying?
-					</p>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={handleConfirm} autoFocus>
-						{applyLabel()}
-					</Button>
-				</DialogActions>
-			</Dialog>
 		</ChooserDiv>
 	);
 };

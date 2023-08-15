@@ -16,7 +16,7 @@ import {
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { updateMic } from '../../store/actions/mediaActions';
+import { updateLiveMic } from '../../store/actions/mediaActions';
 
 const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -25,8 +25,9 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 
 	const {
 		canSendMic,
-		audioInProgress,
 	} = useAppSelector((state) => state.me);
+
+	const {	audioInProgress, liveAudioDeviceId } = useAppSelector((state) => state.media);
 
 	let micState: MediaState, micTip;
 
@@ -51,9 +52,8 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				if (micState === 'unsupported') return;
 
 				if (micState === 'off') {
-					dispatch(updateMic({
-						start: true
-					}));
+					liveAudioDeviceId && dispatch(updateLiveMic());
+					// TODO: else start preview dialog
 				} else if (micProducer) {
 					if (micState === 'on') {
 						dispatch(
