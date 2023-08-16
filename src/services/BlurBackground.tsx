@@ -1,50 +1,6 @@
-/**
- * ML Backend: TF Lite
- * Copyright 2018 Google LLC
- * License: Apache 2.0
- * https://github.com/google-coral/tflite/blob/master/LICENSE
- * 
- * Model: MediaPipe Selfie Segmentation
- * Copyirhgt 2021 Google LLC
- * License: Apache 2.0
- * https://storage.googleapis.com/mediapipe-assets/Model%20Card%20MediaPipe%20Selfie%20Segmentation.pdf
- */
 
-import { Logger, timeoutPromise } from 'edumeet-common';
-
-declare function createTFLiteModule(): Promise<TFLite>
-declare function createTFLiteSIMDModule(): Promise<TFLite>
-
-export interface TFLite {
-  _getModelBufferMemoryOffset(): number
-  _getInputMemoryOffset(): number
-  _getInputHeight(): number
-  _getInputWidth(): number
-  _getInputChannelCount(): number
-  _getOutputMemoryOffset(): number
-  _getOutputHeight(): number
-  _getOutputWidth(): number
-  _getOutputChannelCount(): number
-  // eslint-disable-next-line no-unused-vars
-  _loadModel(bufferSize: number): number
-  _runInference(): number
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  HEAPU8: any
-  HEAPF32: any
-  /* eslint-enable @typescript-eslint/no-explicit-any */
-}
-
-const models = {
-	modelLandscape: {
-		path: '/model/selfie_segmenter_landscape.tflite',
-		width: 256,
-		height: 144 },
-	modelGeneral: {
-		path: '/model/selfie_segmenter.tflite',
-		width: 256,
-		height: 256
-	}
-};
+import { Logger } from 'edumeet-common';
+import { TFLite } from './effectsService';
 
 const WORKER_MSG = Object.freeze({
 	SET_TIMEOUT: 'setTimeout',
@@ -67,20 +23,8 @@ export class BlurBackgroundNotSupportedError extends Error {
 	}
 }
 
-/**
- * Blur background using WASM.
- */
 export class BlurBackground {
 	#backend?: TFLite;
-	#loadingBackend = false;
-	// eslint-disable-next-line no-unused-vars
-	resolveBackendReady!: () => void;
-	// eslint-disable-next-line no-unused-vars
-	rejectBackendReady!: (e: Error) => void;
-	backendReady = new Promise<void>((resolve, reject) => {
-		this.resolveBackendReady = resolve;
-		this.rejectBackendReady = reject;
-	});
 	#model?: ArrayBuffer;
 	#stream?: MediaStream;
 	#segMask?: ImageData;
@@ -100,6 +44,15 @@ export class BlurBackground {
 	#segMaskCtx: CanvasRenderingContext2D | null = null;
 	#outputCanvasCtx: CanvasRenderingContext2D | null = null;
 
+	constructor(backend: TFLite, model: ArrayBuffer) {
+		this.#backend = backend
+		this.#model = model
+		this.#backend.HEAPU8.set(new Uint8Array(this.#model), this.#backend._getModelBufferMemoryOffset());
+		this.#backend._loadModel(this.#model.byteLength);
+		this.#outputMemoryOffset = this.#backend._getOutputMemoryOffset() / 4;
+		this.#inputMemoryOffset = this.#backend._getInputMemoryOffset() / 4;
+	}
+
 	public async stopEffect() {
 		logger.debug('stopEffect()');
 		try {
@@ -113,20 +66,10 @@ export class BlurBackground {
 		}
 	}
 
-	public async loadBackend() {
-		if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints)
-			throw new BlurBackgroundNotSupportedError('MediaStreamTrack.getSettings() and MediaStreamTrack.getConstraints() not supported');
-		if (!this.#loadingBackend) {
-			this.#loadBackend();
-			this.#loadingBackend = true;
-		}
-		await this.backendReady;
-	}
 
 	async startEffect(
-		stream: MediaStream,
-		width = models.modelGeneral.width,
-		height = models.modelGeneral.height) {
+		stream: MediaStream, width: number, height: number
+		) {
 		logger.debug('startEffect() [stream.id: %s, width: %s, height: %s]', stream.id, width, height);
 		this.#inputVideo = document.createElement('video');
 		this.#segWidth = width;
@@ -144,45 +87,6 @@ export class BlurBackground {
 		return this.#createStream(this.#worker).getVideoTracks()[0];
 	}
 
-	async #loadBackend() {
-		logger.debug('#loadBackend()');
-		try {
-		// Try if browser support SIMD.
-			try {
-				this.#backend = await timeoutPromise(createTFLiteSIMDModule(), 1000);
-			} catch (error) {
-				logger.error(error);
-			}
-
-			// If not, try without SIMD support.
-			if (!this.#backend) {
-				try {
-					this.#backend = await timeoutPromise(createTFLiteModule(), 1000);
-				} catch (error) {
-					logger.error(error);
-				} 
-			}
-
-			if (!this.#backend) {
-				throw new BlurBackgroundNotSupportedError('WASM Not supported by browser');
-			}
-			if (!this.#model) {
-				const modelResponse = await fetch(models.modelGeneral.path);
-
-				if (!modelResponse.ok) throw new Error('Could not load model');
-
-				this.#model = await modelResponse.arrayBuffer();
-				this.#backend.HEAPU8.set(new Uint8Array(this.#model), this.#backend._getModelBufferMemoryOffset());
-				this.#backend._loadModel(this.#model.byteLength);
-				this.#outputMemoryOffset = this.#backend._getOutputMemoryOffset() / 4;
-				this.#inputMemoryOffset = this.#backend._getInputMemoryOffset() / 4;
-			}
-			this.resolveBackendReady();
-		} catch (e) {
-			logger.error(e);
-			this.rejectBackendReady(e as Error); 
-		}
-	}
 
 	#createWebWorker(): Worker {
 		logger.debug('#createWebWorker()');
