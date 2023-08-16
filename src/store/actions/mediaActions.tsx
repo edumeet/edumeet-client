@@ -239,7 +239,7 @@ export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void
 			logger.warn('updatePreviewWebcam() no webcam device selected');
 
 		deviceId = previewVideoDeviceId ?? deviceService.getDeviceId('videoinput');
-		if (!deviceId) throw new Error('No webcam devices available');
+		if (!deviceId) logger.warn('No webcam devices available');
 		
 		stream = await navigator.mediaDevices.getUserMedia({
 			video: {
