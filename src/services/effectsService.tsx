@@ -93,7 +93,7 @@ export class EffectService {
 		// Try if browser support SIMD.
 		let backend: TFLite | undefined
 		try {
-			backend = await timeoutPromise(createTFLiteSIMDModule(), 3000);
+			backend = await timeoutPromise(createTFLiteSIMDModule(), 10000);
 			if (!backend) throw new Error()
 		} catch (error) {
 			logger.error(error);
@@ -102,7 +102,7 @@ export class EffectService {
 		// If not, try without SIMD support.
 		if (!backend) {
 			try {
-				backend = await timeoutPromise(createTFLiteModule(), 3000);
+				backend = await timeoutPromise(createTFLiteModule(), 10000);
 				if (!backend) throw new Error()
 			} catch (error) {
 				logger.error(error);
@@ -122,12 +122,8 @@ export class EffectService {
 		return await response.arrayBuffer()
 	}
 
-	public async startBlurEffect(
-		stream: MediaStream,
-		streamType: StreamType,
-		width?: number,
-		height?: number) {
-		logger.debug('startBlurEffect() [stream.id: %s, streamType: %s width: %s, height: %s]', stream.id, streamType, width, height);
+	public async startBlurEffect(stream: MediaStream, streamType: StreamType) {
+		logger.debug('startBlurEffect() [stream.id: %s, streamType: %s]', stream.id, streamType);
 		await this.backendReady
 
 		const backend = streamType === "live" ? this.#liveBackend : this.#previewBackend
