@@ -8,6 +8,9 @@ import { roomActions } from '../slices/roomSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
 import { mediaActions } from '../slices/mediaSlice';
+import { BlurBackgroundNotSupportedError } from '../../services/BlurBackground';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { blurBackgroundNotSupported } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('MediaActions');
 
@@ -105,7 +108,7 @@ export const updatePreviewMic = (newDeviceId?: string): AppThunk<Promise<void>> 
 		const { previewAudioDeviceId, previewMicTrackId } = getState().media;
 
 		if (previewMicTrackId) {
-			mediaService.getTrack(previewMicTrackId)?.stop();
+			mediaService.getTrack(previewMicTrackId, 'previewTracks')?.stop();
 			mediaService.removePreviewTrack(previewMicTrackId);
 			dispatch(mediaActions.setPreviewMicTrackId());
 		}
@@ -173,7 +176,7 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 	const { previewMicTrackId } = getState().media;
 
 	if (previewMicTrackId) {
-		const track = mediaService.getTrack(previewMicTrackId);
+		const track = mediaService.getTrack(previewMicTrackId, 'previewTracks');
 
 		dispatch(mediaActions.setPreviewMicTrackId());
 		dispatch(mediaActions.setPreviewAudioDeviceId());
@@ -208,7 +211,6 @@ export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void
 	let stream: MediaStream | undefined;
 
 	try {
-		dispatch(mediaActions.setDeviceUpdateInProgress(true));
 		await deviceService.updateMediaDevices();
 
 		if (newDeviceId) {
@@ -222,7 +224,7 @@ export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void
 		} = getState().media;
 
 		if (previewWebcamTrackId) {
-			mediaService.getTrack(previewWebcamTrackId)?.stop();
+			mediaService.getTrack(previewWebcamTrackId, 'previewTracks')?.stop();
 			mediaService.removePreviewTrack(previewWebcamTrackId);
 			dispatch(mediaActions.setPreviewWebcamTrackId());
 		}
@@ -267,6 +269,14 @@ export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void
 				dispatch(mediaActions.setPreviewWebcamTrackId(blurTrack.id));
 				dispatch(mediaActions.setVideoMuted(false));
 			} catch (e) {
+				if (e instanceof BlurBackgroundNotSupportedError) {
+					dispatch(mediaActions.setPreviewBlurBackground(false));
+					dispatch(meActions.setCanBlurBackground(false));
+					dispatch(notificationsActions.enqueueNotification({
+						message: blurBackgroundNotSupported(),
+						options: { variant: 'error' }
+					}));
+				}
 				logger.error(e);
 			}
 		}
@@ -283,7 +293,6 @@ export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void
 		logger.error('updatePreviewWebcam() [error:%o]', error);
 	} finally {
 		dispatch(mediaActions.setVideoInProgress(false));
-		dispatch(mediaActions.setDeviceUpdateInProgress(false));
 	}
 };
 
@@ -303,7 +312,7 @@ export const stopPreviewWebcam = (): AppThunk<Promise<void>> => async (
 	const { previewWebcamTrackId, previewBlurBackground } = getState().media;
 
 	if (previewWebcamTrackId) {
-		const track = mediaService.getTrack(previewWebcamTrackId);
+		const track = mediaService.getTrack(previewWebcamTrackId, 'previewTracks');
 
 		dispatch(mediaActions.setPreviewWebcamTrackId());
 		mediaService.removePreviewTrack(track?.id);
@@ -355,7 +364,7 @@ export const updateLiveMic = (): AppThunk<Promise<void>> => async (
 	dispatch(mediaActions.setAudioInProgress(true));
 
 	let track: MediaStreamTrack | null | undefined;
-	let micProducer: Producer | null | undefined;
+	let micProducer: Producer | undefined;
 
 	try {
 		await deviceService.updateMediaDevices();
@@ -368,7 +377,7 @@ export const updateLiveMic = (): AppThunk<Promise<void>> => async (
 		const { liveMicTrackId, liveAudioDeviceId } = getState().media;
 
 		if (liveMicTrackId) {
-			track = mediaService.getTrack(liveMicTrackId);
+			track = mediaService.getTrack(liveMicTrackId, 'liveTracks');
 			track?.stop();
 			mediaService.removeLiveTrack(liveMicTrackId);
 		}
@@ -534,7 +543,7 @@ export const updateLiveWebcam = (): AppThunk<Promise<void>> => async (
 		} = getState().media;
 
 		if (liveWebcamTrackId) {
-			track = mediaService.getTrack(liveWebcamTrackId);
+			track = mediaService.getTrack(liveWebcamTrackId, 'liveTracks');
 			track?.stop();
 			mediaService.removeLiveTrack(liveWebcamTrackId);
 		}
@@ -589,6 +598,10 @@ export const updateLiveWebcam = (): AppThunk<Promise<void>> => async (
 				mediaService.addTrack(blurTrack, liveVideoDeviceId, 'liveTracks');
 				dispatch(mediaActions.setLiveWebcamTrackId(blurTrack.id));
 			} catch (e) {
+				if (e instanceof BlurBackgroundNotSupportedError) {
+					dispatch(mediaActions.setLiveBlurBackground(false));
+					dispatch(meActions.setCanBlurBackground(false));
+				}
 				logger.error(e);
 			}
 		}
@@ -691,7 +704,7 @@ export const stopLiveWebcam = (): AppThunk<Promise<void>> => async (
 	const { liveWebcamTrackId, liveBlurBackground } = getState().media;
 
 	if (liveWebcamTrackId) {
-		const track = mediaService.getTrack(liveWebcamTrackId);
+		const track = mediaService.getTrack(liveWebcamTrackId, 'liveTracks');
 
 		dispatch(mediaActions.setLiveWebcamTrackId());
 		mediaService.removeLiveTrack(track?.id);
@@ -959,7 +972,7 @@ export const startExtraVideo = ({
 			frameRate,
 		} = getState().settings;
 		
-		const deviceId = deviceService.getDeviceId(newDeviceId, 'videoinput');
+		const deviceId = deviceService.getDeviceId('videoinput');
 
 		if (!deviceId)
 			logger.warn('no extravideo device');

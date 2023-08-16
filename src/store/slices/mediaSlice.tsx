@@ -4,19 +4,18 @@ import { producersActions } from './producersSlice';
 export interface MediaState {
 	previewAudioDeviceId?: string;
 	previewVideoDeviceId?: string;
-	liveAudioDeviceId?: string;
-	liveVideoDeviceId?: string;
-	audioMuted?: boolean;
-	videoMuted?: boolean;
-	liveBlurBackground: boolean
-	previewBlurBackground: boolean
-	audioInProgress: boolean;
-	videoInProgress: boolean;
 	previewWebcamTrackId?: string;
 	previewMicTrackId?: string;
+	previewBlurBackground: boolean
+	liveAudioDeviceId?: string;
+	liveVideoDeviceId?: string;
 	liveWebcamTrackId?: string;
 	liveMicTrackId?: string
-	deviceUpdateInProgress: boolean
+	liveBlurBackground: boolean
+	audioMuted?: boolean;
+	videoMuted?: boolean;
+	audioInProgress: boolean;
+	videoInProgress: boolean;
 }
 
 const initialState: MediaState = {
@@ -30,7 +29,6 @@ const initialState: MediaState = {
 	previewBlurBackground: false,
 	audioInProgress: false,
 	videoInProgress: false,
-	deviceUpdateInProgress: false
 };
 
 const mediaSlice = createSlice({
@@ -81,9 +79,6 @@ const mediaSlice = createSlice({
 		}),
 		setVideoInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.videoInProgress = action.payload;
-		}),
-		setDeviceUpdateInProgress: ((state, action: PayloadAction<boolean>) => {
-			state.deviceUpdateInProgress = action.payload;
 		}),
 	},
 	extraReducers: (builder) => {

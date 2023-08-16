@@ -44,6 +44,7 @@ const MediaPreview = ({
 					</MediaControls>
 				)}
 				{ previewWebcamTrackId && <VideoView
+					preview
 					mirrored
 					trackId={previewWebcamTrackId}
 				/> }

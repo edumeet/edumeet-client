@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
 import { joinLabel, yourNameLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
@@ -19,6 +19,7 @@ interface JoinProps {
 }
 
 const Join = ({ roomId }: JoinProps): JSX.Element => {
+	useNotifier();
 	const dispatch = useAppDispatch();
 
 	const { displayName } = useAppSelector((state) => state.settings);
@@ -75,7 +76,6 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 						onEnter={handleJoin}
 						startAdornment={<AccountCircle />}
 						autoFocus
-						data-testid='name-input'
 					/>
 				</>
 			}
@@ -84,7 +84,6 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					onClick={handleJoin}
 					variant='contained'
 					disabled={!name || joinInProgress}
-					data-testid='join-button'
 					size='small'
 				>
 					{ joinLabel() }

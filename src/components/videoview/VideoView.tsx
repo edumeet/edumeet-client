@@ -15,6 +15,7 @@ interface VideoViewProps {
 	consumer?: StateConsumer;
 	producer?: StateProducer;
 	roundedCorners?: boolean;
+	preview?: boolean
 }
 
 interface VideoProps {
@@ -54,7 +55,8 @@ const VideoView = ({
 	trackId,
 	consumer,
 	producer,
-	roundedCorners = true
+	roundedCorners = true,
+	preview = false
 }: VideoViewProps): JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const videoElement = useRef<HTMLVideoElement>(null);
@@ -70,8 +72,8 @@ const VideoView = ({
 
 		if (media)
 			({ track } = media);
-		else if (trackId)
-			track = mediaService.getTrack(trackId);
+		else if (preview && trackId)
+			track = mediaService.getTrack(trackId, 'previewTracks');
 
 		if (!track || !videoElement.current) return;
 

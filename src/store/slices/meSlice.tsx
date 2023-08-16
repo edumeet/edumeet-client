@@ -13,8 +13,8 @@ export interface MeState {
 	canShareScreen: boolean;
 	canRecord: boolean;
 	canTranscribe: boolean;
+	canBlurBackground: boolean;
 	canShareFiles: boolean;
-	hasWASMsupport: boolean;
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
 	escapeMeeting: boolean;
@@ -36,7 +36,7 @@ const initialState: MeState = {
 	canShareFiles: false,
 	canRecord: false,
 	canTranscribe: false,
-	hasWASMsupport: true,
+	canBlurBackground: true,
 	devices: [],
 	raisedHand: false,
 	escapeMeeting: false,
@@ -91,8 +91,8 @@ const meSlice = createSlice({
 		setDispayNameInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.displayNameInProgress = action.payload;
 		}),
-		setSupportWASM: ((state, action: PayloadAction<boolean>) => {
-			state.hasWASMsupport = action.payload;
+		setCanBlurBackground: ((state, action: PayloadAction<boolean>) => {
+			state.canBlurBackground = action.payload;
 		}),
 	},
 });

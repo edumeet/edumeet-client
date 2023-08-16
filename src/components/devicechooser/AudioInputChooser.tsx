@@ -51,7 +51,7 @@ const AudioInputChooser = ({
 			{withConfirm && (
 				<Button
 					onClick={handleConfirm}
-					disabled={!confirm || audioInProgress}
+					disabled={audioInProgress}
 				>
 					{applyLabel()}
 				</Button>

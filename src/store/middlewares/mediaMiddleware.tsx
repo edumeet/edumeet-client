@@ -7,9 +7,9 @@ import { videoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from 'edumeet-common';
-import { settingsActions } from '../slices/settingsSlice';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
+import { mediaActions } from '../slices/mediaSlice';
 
 const logger = new Logger('MediaMiddleware');
 

@@ -10,7 +10,6 @@
  * https://storage.googleapis.com/mediapipe-assets/Model%20Card%20MediaPipe%20Selfie%20Segmentation.pdf
  */
 
-import { EventEmitter } from 'events';
 import { Logger, timeoutPromise } from 'edumeet-common';
 
 declare function createTFLiteModule(): Promise<TFLite>
@@ -29,8 +28,10 @@ export interface TFLite {
   // eslint-disable-next-line no-unused-vars
   _loadModel(bufferSize: number): number
   _runInference(): number
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   HEAPU8: any
   HEAPF32: any
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
 const models = {
@@ -52,16 +53,30 @@ const WORKER_MSG = Object.freeze({
 });
 const logger = new Logger('BlurBackground');
 
+export class BlurBackgroundNotSupportedError extends Error {
+	constructor(message: string) {
+		super(message);
+
+		this.name = 'BlurBackgroundNotSupportedError';
+
+		if (Error.hasOwnProperty('captureStackTrace')) // Just in V8.
+			Error.captureStackTrace(this, BlurBackgroundNotSupportedError);
+		else
+			this.stack = (new Error(message)).stack;
+
+	}
+}
+
 /**
  * Blur background using WASM.
  */
-export class BlurBackground extends EventEmitter {
+export class BlurBackground {
 	#backend?: TFLite;
 	#loadingBackend = false;
 	// eslint-disable-next-line no-unused-vars
 	resolveBackendReady!: () => void;
 	// eslint-disable-next-line no-unused-vars
-	rejectBackendReady!: () => void;
+	rejectBackendReady!: (e: Error) => void;
 	backendReady = new Promise<void>((resolve, reject) => {
 		this.resolveBackendReady = resolve;
 		this.rejectBackendReady = reject;
@@ -85,15 +100,6 @@ export class BlurBackground extends EventEmitter {
 	#segMaskCtx: CanvasRenderingContext2D | null = null;
 	#outputCanvasCtx: CanvasRenderingContext2D | null = null;
 
-	constructor() {
-		super();
-		logger.debug('constructor()');
-	}
-
-	#MSTnotSupported() {
-		return (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints); 
-	}
-
 	public async stopEffect() {
 		logger.debug('stopEffect()');
 		try {
@@ -108,10 +114,8 @@ export class BlurBackground extends EventEmitter {
 	}
 
 	public async loadBackend() {
-		if (this.#MSTnotSupported()) {
-			this.emit('MSTNotSupported');
-			throw new Error('MediaStreamTrack getSettings/getConstraints not supported');
-		}
+		if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints)
+			throw new BlurBackgroundNotSupportedError('MediaStreamTrack.getSettings() and MediaStreamTrack.getConstraints() not supported');
 		if (!this.#loadingBackend) {
 			this.#loadBackend();
 			this.#loadingBackend = true;
@@ -150,7 +154,7 @@ export class BlurBackground extends EventEmitter {
 				logger.error(error);
 			}
 
-			// Try without SIMD support.
+			// If not, try without SIMD support.
 			if (!this.#backend) {
 				try {
 					this.#backend = await timeoutPromise(createTFLiteModule(), 1000);
@@ -160,8 +164,7 @@ export class BlurBackground extends EventEmitter {
 			}
 
 			if (!this.#backend) {
-				this.emit('WASMnotSupported');
-				throw new Error('WASM Not supported by browser');
+				throw new BlurBackgroundNotSupportedError('WASM Not supported by browser');
 			}
 			if (!this.#model) {
 				const modelResponse = await fetch(models.modelGeneral.path);
@@ -177,7 +180,7 @@ export class BlurBackground extends EventEmitter {
 			this.resolveBackendReady();
 		} catch (e) {
 			logger.error(e);
-			this.rejectBackendReady(); 
+			this.rejectBackendReady(e as Error); 
 		}
 	}
 
@@ -261,7 +264,6 @@ export class BlurBackground extends EventEmitter {
 			});
 		} catch (e) {
 			logger.error(e);
-			this.emit('blurBackgroundError');
 		}
 	}
 	#doResize() {

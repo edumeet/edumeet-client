@@ -119,11 +119,6 @@ export class MediaService extends EventEmitter {
 
 		this.signalingService = signalingService;
 		this.initMonitor();
-
-		setInterval(() => {
-			logger.debug('liveTracks: %s, previewTracks: %s', this.liveTracks.size, this.previewTracks.size);
-			logger.debug('consumers: %s, producers: %s', this.consumers.size, this.producers.size);
-		}, 3000);
 	}
 
 	public init(): void {
@@ -148,6 +143,10 @@ export class MediaService extends EventEmitter {
 			track.stop();
 		}
 
+		for (const track of this.previewTracks.values()) {
+			track.stop();
+		}
+
 		this.liveTracks.clear();
 		this.monitor?.close();
 	}
@@ -168,13 +167,9 @@ export class MediaService extends EventEmitter {
 		return Array.from(this.producers.values());
 	}
 
-	public getTrack(trackId: string): MediaStreamTrack | undefined {
-		const liveTrack = this.liveTracks.get(trackId);
-
-		if (liveTrack) return liveTrack;
-		const previewTrack = this.previewTracks.get(trackId);
-
-		if (previewTrack) return previewTrack;
+	public getTrack(trackId: string, trackType: TrackType): MediaStreamTrack | undefined {
+		if (trackType === 'liveTracks') return this.liveTracks.get(trackId);
+		if (trackType === 'previewTracks') return this.previewTracks.get(trackId);
 	}
 
 	#removeDuplicateTracks(kind: string, deviceId: string, trackType: TrackType) {
@@ -935,7 +930,7 @@ export class MediaService extends EventEmitter {
 		this.monitor = createClientMonitor(edumeetConfig.observertc);
 		this.monitor.collectors.addMediasoupDevice(this.mediasoup);
 		this.monitor.events.onStatsCollected((statsEntries) => {
-			// logger.debug('initMonitor(): The latest stats entries [statsEntries: %o]', statsEntries);
+			logger.debug('initMonitor(): The latest stats entries [statsEntries: %o]', statsEntries);
 		});
 		logger.debug('Monitor is initialized');
 		

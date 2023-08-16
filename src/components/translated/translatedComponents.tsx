@@ -702,3 +702,13 @@ export const enableConfirmOnExit = (): string => intl.formatMessage({
 	id: 'settings.confirmOnExit',
 	defaultMessage: 'Confirm on exit'
 });
+
+export const enableBlurBackground = (): string => intl.formatMessage({
+	id: 'settings.enableBlurBackground',
+	defaultMessage: 'Enable blur background effect'
+});
+
+export const blurBackgroundNotSupported = (): string => intl.formatMessage({
+	id: 'settings.blurBackgroundNotSupported',
+	defaultMessage: 'Blur background effect not supported'
+});
