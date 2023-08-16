@@ -130,9 +130,7 @@ export class EffectService {
 		logger.debug('startBlurEffect() [stream.id: %s, streamType: %s width: %s, height: %s]', stream.id, streamType, width, height);
 		await this.backendReady
 
-		// const model = streamType === "live" ? this.#liveModel : this.#previewModel
 		const backend = streamType === "live" ? this.#liveBackend : this.#previewBackend
-		// const model = await this.#loadModel()
 		const model = this.#model
 		if (!backend || !model) throw new BlurBackgroundNotSupportedError("Not supported")
 		const effect = new BlurBackground(backend, model);
