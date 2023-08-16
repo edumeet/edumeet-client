@@ -206,8 +206,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 	logger.debug('joinBreakoutRoom()');
 
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
-	const audioEnabled = getState().media.liveAudioDeviceId;
-	const videoEnabled = getState().media.liveVideoDeviceId;
+	const audioEnabled = getState().media.liveAudioDeviceId && !getState().media.audioMuted;
+	const videoEnabled = getState().media.liveVideoDeviceId && !getState().media.videoMuted;
 
 	try {
 		const {
