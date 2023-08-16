@@ -34,7 +34,7 @@ const createMediaMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
-	const transcriptTimeouts = new Map<string, NodeJS.Timer>();
+	const transcriptTimeouts = new Map<string, NodeJS.Timeout>();
 
 	const middleware: Middleware = ({
 		dispatch, getState

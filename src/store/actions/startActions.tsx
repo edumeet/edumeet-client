@@ -88,7 +88,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case 'm': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress, liveAudioDeviceId } = getState().media;
 
 				if (audioInProgress) return;
 
@@ -100,9 +100,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const micProducer = micProducerSelector(getState());
 
 				if (!micProducer) {
-					dispatch(updateLiveMic({
-						start: true
-					}));
+					liveAudioDeviceId && dispatch(updateLiveMic());
 				} else if (!micProducer.paused) {
 					dispatch(
 						producersActions.setProducerPaused({
@@ -125,7 +123,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			}
 
 			case 'v': {
-				const videoInProgress = getState().me.videoInProgress;
+				const { videoInProgress, liveVideoDeviceId } = getState().media;
 
 				if (videoInProgress) return;
 
@@ -137,9 +135,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const webcamProducer = webcamProducerSelector(getState());
 
 				if (!webcamProducer) {
-					dispatch(updateLiveWebcam({
-						start: true
-					}));
+					liveVideoDeviceId && dispatch(updateLiveWebcam());
 				} else {
 					dispatch(
 						producersActions.closeProducer({
@@ -230,7 +226,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			}
 
 			case ' ': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress, liveAudioDeviceId } = getState().media;
 
 				if (audioInProgress) return;
 
@@ -242,9 +238,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const micProducer = micProducerSelector(getState());
 
 				if (!micProducer) {
-					dispatch(updateLiveMic({
-						start: true
-					}));
+					liveAudioDeviceId && dispatch(updateLiveMic());
 				} else if (micProducer.paused) {
 					dispatch(
 						producersActions.setProducerResumed({
@@ -281,7 +275,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case ' ': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress } = getState().media;
 
 				if (audioInProgress) return;
 
