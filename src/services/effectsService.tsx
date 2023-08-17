@@ -53,13 +53,13 @@ const models = {
 export type StreamType = 'live' | 'preview'
 
 export class EffectService {
-	#blurBackgroundSupported = true
+	#blurBackgroundSupported = true;
 	#blurBackgroundEffects = new Map<StreamType, BlurBackground>();
-	#model?: ArrayBuffer
-	#liveMLBackend?: TFLite
-	#previewMLBackend?: TFLite
+	#model?: ArrayBuffer;
+	#liveMLBackend?: TFLite;
+	#previewMLBackend?: TFLite;
 	#isLoadingMLBackend = false;
-	#loadMLBackendTimeout = 10000
+	#loadMLBackendTimeout = 10000;
 	// eslint-disable-next-line no-unused-vars
 	resolveMLBackendReady!: () => void;
 	// eslint-disable-next-line no-unused-vars
@@ -70,25 +70,26 @@ export class EffectService {
 	});
 
 	constructor() {
-		logger.debug("constructor()")
+		logger.debug('constructor()');
+
 		/**
 		 * Don't load MLBackend on mobile.
 		 * It's probably not supported and it's 3 MB.
 		 */
-		if (deviceInfo().platform !== "mobile") this.#initML()
-		else this.#blurBackgroundSupported = false
+		if (deviceInfo().platform !== 'mobile') this.#initML();
+		else this.#blurBackgroundSupported = false;
 	}
 	
 	async #initML() {
 		logger.debug('#initML()');
 		if (this.#isLoadingMLBackend)
-			return await this.MLBackendReady
-		this.#isLoadingMLBackend = true
+			return await this.MLBackendReady;
+		this.#isLoadingMLBackend = true;
 		
 		try {
-			this.#liveMLBackend = await this.#loadBackend()
-			this.#previewMLBackend = await this.#loadBackend()
-			this.#model = await this.#loadModel()
+			this.#liveMLBackend = await this.#loadBackend();
+			this.#previewMLBackend = await this.#loadBackend();
+			this.#model = await this.#loadModel();
 
 			this.resolveMLBackendReady();
 		} catch (e) {
@@ -99,10 +100,11 @@ export class EffectService {
 
 	async #loadBackend() {
 		// Try if browser has SIMD-support.
-		let MLBackend: TFLite | undefined
+		let MLBackend: TFLite | undefined;
+
 		try {
 			MLBackend = await timeoutPromise(createTFLiteSIMDModule(), this.#loadMLBackendTimeout);
-			if (!MLBackend) throw new Error()
+			if (!MLBackend) throw new Error();
 		} catch (error) {
 			logger.error(error);
 		}
@@ -111,7 +113,7 @@ export class EffectService {
 		if (!MLBackend) {
 			try {
 				MLBackend = await timeoutPromise(createTFLiteModule(), this.#loadMLBackendTimeout);
-				if (!MLBackend) throw new Error()
+				if (!MLBackend) throw new Error();
 			} catch (error) {
 				logger.error(error);
 			} 
@@ -120,25 +122,28 @@ export class EffectService {
 		if (!MLBackend) {
 			throw new BlurBackgroundNotSupportedError('WASM Not supported by browser');
 		}
-		return MLBackend
+		
+		return MLBackend;
 	}
 
 	async #loadModel() {
-		logger.debug("#loadModel()")
+		logger.debug('#loadModel()');
 		const response = await fetch(models.modelGeneral.path);
+
 		if (!response.ok) throw new BlurBackgroundNotSupportedError('Could not load model');
 
-		return await response.arrayBuffer()
+		return await response.arrayBuffer();
 	}
 
 	public async startBlurEffect(stream: MediaStream, streamType: StreamType) {
 		logger.debug('startBlurEffect() [stream.id: %s, streamType: %s]', stream.id, streamType);
 		if (!this.#blurBackgroundSupported)
-			throw new BlurBackgroundNotSupportedError("Not supported")
+			throw new BlurBackgroundNotSupportedError('Not supported');
 		
-		await this.MLBackendReady
-		const MLBackend = streamType === "live" ? this.#liveMLBackend : this.#previewMLBackend
-		if (!MLBackend || !this.#model) throw new BlurBackgroundNotSupportedError("Not supported")
+		await this.MLBackendReady;
+		const MLBackend = streamType === 'live' ? this.#liveMLBackend : this.#previewMLBackend;
+
+		if (!MLBackend || !this.#model) throw new BlurBackgroundNotSupportedError('Not supported');
 		const effect = new BlurBackground(MLBackend, this.#model);
 
 		const track = await effect.startEffect(stream, models.modelGeneral.width, models.modelGeneral.height);
@@ -149,9 +154,9 @@ export class EffectService {
 	}
 
 	public stopBlurEffect(streamType: StreamType) {
-		logger.debug("stopBlurEffect() [streamType: %s]", streamType)
+		logger.debug('stopBlurEffect() [streamType: %s]', streamType);
 		if (!this.#blurBackgroundSupported)
-			throw new BlurBackgroundNotSupportedError("Not supported")
+			throw new BlurBackgroundNotSupportedError('Not supported');
 		const effect = this.#blurBackgroundEffects.get(streamType);
 
 		effect?.stopEffect();
