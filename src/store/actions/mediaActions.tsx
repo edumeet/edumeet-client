@@ -100,10 +100,8 @@ export const updatePreviewMic = (newDeviceId?: string): AppThunk<Promise<void>> 
 	try {
 		await deviceService.updateMediaDevices();
 
-		if (newDeviceId) {
+		if (newDeviceId)
 			dispatch(mediaActions.setPreviewAudioDeviceId(newDeviceId));
-			deviceId = newDeviceId;
-		}
 
 		const { previewAudioDeviceId, previewMicTrackId } = getState().media;
 
@@ -122,9 +120,7 @@ export const updatePreviewMic = (newDeviceId?: string): AppThunk<Promise<void>> 
 			sampleSize,
 		} = getState().settings;
 
-		deviceId = previewAudioDeviceId ?? deviceService.getDeviceId('audioinput');
-		if (!deviceId) throw new Error('updatePreviewMic() no audio input devices available');
-
+		deviceId = previewAudioDeviceId;
 		const stream = await navigator.mediaDevices.getUserMedia({
 			audio: {
 				deviceId: { ideal: deviceId },
@@ -213,10 +209,8 @@ export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void
 	try {
 		await deviceService.updateMediaDevices();
 
-		if (newDeviceId) {
+		if (newDeviceId)
 			dispatch(mediaActions.setPreviewVideoDeviceId(newDeviceId));
-			deviceId = newDeviceId;
-		}
 		
 		const { previewWebcamTrackId,
 			previewVideoDeviceId,
@@ -235,12 +229,7 @@ export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void
 			frameRate,
 		} = getState().settings;
 
-		if (!previewVideoDeviceId)
-			logger.warn('updatePreviewWebcam() no webcam device selected');
-
-		deviceId = previewVideoDeviceId ?? deviceService.getDeviceId('videoinput');
-		if (!deviceId) logger.warn('No webcam devices available');
-		
+		deviceId = previewVideoDeviceId;
 		stream = await navigator.mediaDevices.getUserMedia({
 			video: {
 				deviceId: { ideal: deviceId },
@@ -568,7 +557,7 @@ export const updateLiveWebcam = (): AppThunk<Promise<void>> => async (
 			}));
 		}
 
-		// At this point we want the exact device, or none at all.
+		// At this point we want the exact device chosen, or none at all.
 		stream = await navigator.mediaDevices.getUserMedia({
 			video: {
 				deviceId: { exact: liveVideoDeviceId },
@@ -587,14 +576,8 @@ export const updateLiveWebcam = (): AppThunk<Promise<void>> => async (
 		if (liveBlurBackground) {
 			try {
 				effectService.stopBlurEffect('live');
-
-				if (stream) blurTrack = await effectService.startBlurEffect(stream, 'live');
-				else {
-					stream = new MediaStream();
-					stream.addTrack(track);
-					blurTrack = await effectService.startBlurEffect(stream, 'live');
-				} 
-
+				blurTrack = await effectService.startBlurEffect(stream, 'live');
+				logger.debug(blurTrack);
 				mediaService.addTrack(blurTrack, liveVideoDeviceId, 'liveTracks');
 				dispatch(mediaActions.setLiveWebcamTrackId(blurTrack.id));
 			} catch (e) {
@@ -611,7 +594,6 @@ export const updateLiveWebcam = (): AppThunk<Promise<void>> => async (
 			mediaService.addTrack(track, liveVideoDeviceId, 'liveTracks');
 			dispatch(mediaActions.setLiveWebcamTrackId(track.id));
 		}
-
 		const { width, height } = blurTrack ? blurTrack.getSettings() : track.getSettings();
 
 		if (config.simulcast) {
