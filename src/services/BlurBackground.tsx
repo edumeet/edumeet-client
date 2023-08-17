@@ -1,4 +1,3 @@
-
 import { Logger } from 'edumeet-common';
 import { TFLite } from './effectsService';
 
@@ -45,8 +44,8 @@ export class BlurBackground {
 	#outputCanvasCtx: CanvasRenderingContext2D | null = null;
 
 	constructor(backend: TFLite, model: ArrayBuffer) {
-		this.#backend = backend
-		this.#model = model
+		this.#backend = backend;
+		this.#model = model;
 		this.#backend.HEAPU8.set(new Uint8Array(this.#model), this.#backend._getModelBufferMemoryOffset());
 		this.#backend._loadModel(this.#model.byteLength);
 		this.#outputMemoryOffset = this.#backend._getOutputMemoryOffset() / 4;
@@ -66,27 +65,41 @@ export class BlurBackground {
 		}
 	}
 
-
 	async startEffect(
-		stream: MediaStream, width: number, height: number
-		) {
-		logger.debug('startEffect() [stream.id: %s, width: %s, height: %s]', stream.id, width, height);
+		inputStream: MediaStream, modelWidth: number, modelHeight: number
+	) {
+		logger.debug('startEffect() [inputStream.id: %s, modelWidth: %s, modelHeight: %s]', inputStream.id, modelWidth, modelHeight);
 		this.#inputVideo = document.createElement('video');
-		this.#segWidth = width;
-		this.#segHeight = height;
+		this.#segWidth = modelWidth;
+		this.#segHeight = modelHeight;
 
-		const trackSettings = stream.getTracks()[0].getSettings();
+		let width, height;
 
-		this.#outputCanvas.height = trackSettings.height as number;
-		this.#outputCanvas.width = trackSettings.width as number;
+		({ width, height } = inputStream.getTracks()[0].getSettings());
+
+		if (!width || !height) throw new Error('Missing track width and/or height');
+
+		this.#outputCanvas.height = height;
+		this.#outputCanvas.width = width;
 		this.#segPixelCount = this.#segWidth * this.#segHeight;
 		this.#segMask = new ImageData(this.#segWidth, this.#segHeight);
 		if (!this.#worker) this.#worker = this.#createWebWorker();
-		this.#stream = stream;
+		this.#stream = inputStream;
 		
-		return this.#createStream(this.#worker).getVideoTracks()[0];
-	}
+		const blurTrack = this.#createStream(this.#worker).getVideoTracks()[0];
+		const { width: trackWidth, height: trackHeight } = blurTrack.getSettings();
 
+		if (trackWidth && trackHeight) {
+			width = trackWidth;
+			height = trackHeight;
+		}
+		
+		return {
+			blurTrack,
+			width: width,
+			height: height
+		};
+	}
 
 	#createWebWorker(): Worker {
 		logger.debug('#createWebWorker()');

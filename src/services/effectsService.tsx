@@ -135,8 +135,8 @@ export class EffectService {
 		return await response.arrayBuffer();
 	}
 
-	public async startBlurEffect(stream: MediaStream, streamType: StreamType) {
-		logger.debug('startBlurEffect() [stream.id: %s, streamType: %s]', stream.id, streamType);
+	public async startBlurEffect(inputStream: MediaStream, streamType: StreamType) {
+		logger.debug('startBlurEffect() [stream.id: %s, streamType: %s]', inputStream.id, streamType);
 		if (!this.#blurBackgroundSupported)
 			throw new BlurBackgroundNotSupportedError('Not supported');
 		
@@ -146,11 +146,11 @@ export class EffectService {
 		if (!MLBackend || !this.#model) throw new BlurBackgroundNotSupportedError('Not supported');
 		const effect = new BlurBackground(MLBackend, this.#model);
 
-		const track = await effect.startEffect(stream, models.modelGeneral.width, models.modelGeneral.height);
+		const { blurTrack, width, height } = await effect.startEffect(inputStream, models.modelGeneral.width, models.modelGeneral.height);
 
 		this.#blurBackgroundEffects.set(streamType, effect);		
 		
-		return track;
+		return { blurTrack, width, height };
 	}
 
 	public stopBlurEffect(streamType: StreamType) {

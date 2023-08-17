@@ -252,7 +252,7 @@ export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void
 			try {
 				if (!deviceId) throw new Error('No deviceId found');
 				effectService.stopBlurEffect('preview');
-				blurTrack = await effectService.startBlurEffect(stream, 'preview');
+				({ blurTrack } = await effectService.startBlurEffect(stream, 'preview'));
 
 				mediaService.addTrack(blurTrack, deviceId, 'previewTracks');
 				dispatch(mediaActions.setPreviewWebcamTrackId(blurTrack.id));
@@ -572,11 +572,12 @@ export const updateLiveWebcam = (): AppThunk<Promise<void>> => async (
 			throw new Error('no live webcam track');
 
 		let blurTrack: MediaStreamTrack | undefined;
+		let width: number | undefined, height: number | undefined;
 
 		if (liveBlurBackground) {
 			try {
 				effectService.stopBlurEffect('live');
-				blurTrack = await effectService.startBlurEffect(stream, 'live');
+				({ blurTrack, width, height } = await effectService.startBlurEffect(stream, 'live'));
 				logger.debug(blurTrack);
 				mediaService.addTrack(blurTrack, liveVideoDeviceId, 'liveTracks');
 				dispatch(mediaActions.setLiveWebcamTrackId(blurTrack.id));
@@ -593,8 +594,8 @@ export const updateLiveWebcam = (): AppThunk<Promise<void>> => async (
 			// Either blurBackground failed, or it's not enabled. Add unprocessed track.
 			mediaService.addTrack(track, liveVideoDeviceId, 'liveTracks');
 			dispatch(mediaActions.setLiveWebcamTrackId(track.id));
+			({ width, height } = track.getSettings());
 		}
-		const { width, height } = blurTrack ? blurTrack.getSettings() : track.getSettings();
 
 		if (config.simulcast) {
 			const encodings = getEncodings(
