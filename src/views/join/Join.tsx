@@ -24,6 +24,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	const { displayName } = useAppSelector((state) => state.settings);
 	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
+	const mediaLoading = useAppSelector((state) => state.media.videoInProgress || state.media.audioInProgress);
 
 	const [ name, setName ] = useState(displayName || '');
 
@@ -83,7 +84,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 				<Button
 					onClick={handleJoin}
 					variant='contained'
-					disabled={!name || joinInProgress}
+					disabled={!name || joinInProgress || mediaLoading }
 					size='small'
 				>
 					{ joinLabel() }
