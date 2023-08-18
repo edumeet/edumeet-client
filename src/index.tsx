@@ -6,15 +6,12 @@ import './index.css';
 import debug from 'debug';
 import App from './App';
 import {
-	persistor,
 	store,
 	mediaService,
 	fileService,
 	ServiceContext
 } from './store/store';
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-// import * as serviceWorker from './serviceWorker';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { detectDevice } from 'mediasoup-client';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
@@ -59,7 +56,7 @@ const router = createBrowserRouter(
  * 
  * @returns {JSX.Element} Either the app or the unsupported browser page
  */
-const RootComponent = (): JSX.Element => {
+const RootComponent = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -83,17 +80,13 @@ root.render(
 	<React.StrictMode>
 		<CssBaseline />
 		<Provider store={store}>
-			<PersistGate persistor={persistor}>
-				<ThemeProvider theme={theme}>
-					<RawIntlProvider value={intl}>
-						<ServiceContext.Provider value={{ mediaService, fileService }}>
-							<RootComponent />
-						</ServiceContext.Provider>
-					</RawIntlProvider>
-				</ThemeProvider>
-			</PersistGate>
+			<ThemeProvider theme={theme}>
+				<RawIntlProvider value={intl}>
+					<ServiceContext.Provider value={{ mediaService, fileService }}>
+						<RootComponent />
+					</ServiceContext.Provider>
+				</RawIntlProvider>
+			</ThemeProvider>
 		</Provider>
 	</React.StrictMode>
 );
-
-// serviceWorker.unregister();

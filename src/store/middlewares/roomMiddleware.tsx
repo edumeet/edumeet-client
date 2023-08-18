@@ -62,7 +62,7 @@ const createRoomMiddleware = ({
 									dispatch(meActions.setSessionId(sessionId));
 									dispatch(webrtcActions.setIceServers(turnServers));
 									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
-									dispatch(settingsActions.setLastN(maxActiveVideos));
+									dispatch(settingsActions.setMaxActiveVideos(maxActiveVideos));
 									dispatch(roomActions.updateRoom({
 										logo: settings.logo,
 										backgroundImage: settings.background,
@@ -118,7 +118,7 @@ const createRoomMiddleware = ({
 										screenSharingSimulcast: settings.screenSharingSimulcast ?? true,
 									}));
 									dispatch(permissionsActions.setLocked(locked));
-									dispatch(settingsActions.setLastN(maxActiveVideos));
+									dispatch(settingsActions.setMaxActiveVideos(maxActiveVideos));
 								});
 
 								break;
