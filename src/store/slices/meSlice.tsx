@@ -15,6 +15,7 @@ export interface MeState {
 	canTranscribe: boolean;
 	canBlurBackground: boolean;
 	canShareFiles: boolean;
+	canSelectAudioOutput: boolean
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
 	escapeMeeting: boolean;
@@ -37,6 +38,7 @@ const initialState: MeState = {
 	canRecord: false,
 	canTranscribe: false,
 	canBlurBackground: true,
+	canSelectAudioOutput: ('sinkId' in HTMLMediaElement.prototype),
 	devices: [],
 	raisedHand: false,
 	escapeMeeting: false,

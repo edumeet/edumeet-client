@@ -508,19 +508,34 @@ export const advancedSettingsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Advanced'
 });
 
-export const audioDeviceLabel = (): string => intl.formatMessage({
-	id: 'settings.audio',
-	defaultMessage: 'Audio input device'
-});
+// export const audioInputDeviceLabel = (): string => intl.formatMessage({
+// 	id: 'settings.audioInput',
+// 	defaultMessage: 'Audio input device'
+// });
 
-export const selectAudioDeviceLabel = (): string => intl.formatMessage({
-	id: 'settings.selectAudio',
+// export const audioOutputDeviceLabel = (): string => intl.formatMessage({
+// 	id: 'settings.audioOutput',
+// 	defaultMessage: 'Audio output device'
+// });
+
+export const selectAudioInputDeviceLabel = (): string => intl.formatMessage({
+	id: 'settings.selectAudioInput',
 	defaultMessage: 'Select audio input device'
 });
 
-export const noAudioDevicesLabel = (): string => intl.formatMessage({
-	id: 'settings.cantSelectAudio',
+export const selectAudioOutputDeviceLabel = (): string => intl.formatMessage({
+	id: 'settings.selectAudioOutput',
+	defaultMessage: 'Select audio output device'
+});
+
+export const noAudioInputDevicesLabel = (): string => intl.formatMessage({
+	id: 'settings.cantSelectAudioInput',
 	defaultMessage: 'Unable to select audio input device'
+});
+
+export const noAudioOutputDevicesLabel = (): string => intl.formatMessage({
+	id: 'settings.cantSelectAudioOutput',
+	defaultMessage: 'Unable to select audio output device'
 });
 
 export const videoDeviceLabel = (): string => intl.formatMessage({

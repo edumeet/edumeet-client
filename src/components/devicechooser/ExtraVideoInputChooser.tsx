@@ -6,7 +6,6 @@ import {
 import {
 	noVideoDevicesLabel,
 	selectVideoDeviceLabel,
-	videoDeviceLabel
 } from '../translated/translatedComponents';
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 
@@ -32,7 +31,6 @@ const ExtraVideoInputChooser = ({
 			<DeviceChooser
 				value={videoDevice}
 				setValue={handleDeviceChange}
-				name={videoDeviceLabel()}
 				devicesLabel={selectVideoDeviceLabel()}
 				noDevicesLabel={noVideoDevicesLabel()}
 				disabled={videoDevices.length === 0 || videoInProgress}

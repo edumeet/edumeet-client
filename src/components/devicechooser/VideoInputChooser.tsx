@@ -9,7 +9,6 @@ import {
 	applyLabel,
 	noVideoDevicesLabel,
 	selectVideoDeviceLabel,
-	videoDeviceLabel
 } from '../translated/translatedComponents';
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 import { mediaActions } from '../../store/slices/mediaSlice';
@@ -45,7 +44,6 @@ const VideoInputChooser = ({
 			<DeviceChooser
 				value={previewVideoDeviceId ?? ''}
 				setValue={handleDeviceChange}
-				name={videoDeviceLabel()}
 				devicesLabel={selectVideoDeviceLabel()}
 				noDevicesLabel={noVideoDevicesLabel()}
 				disabled={videoDevices.length === 0 || videoInProgress}

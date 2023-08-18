@@ -2,7 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { producersActions } from './producersSlice';
 
 export interface MediaState {
-	previewAudioDeviceId?: string;
+	previewAudioInputDeviceId?: string;
+	previewAudioOutputDeviceId?: string
 	previewVideoDeviceId?: string;
 	previewWebcamTrackId?: string;
 	previewMicTrackId?: string;
@@ -19,10 +20,6 @@ export interface MediaState {
 }
 
 const initialState: MediaState = {
-	previewAudioDeviceId: undefined,
-	previewVideoDeviceId: undefined,
-	liveAudioDeviceId: undefined,
-	liveVideoDeviceId: undefined,
 	audioMuted: true,
 	videoMuted: true,
 	liveBlurBackground: false,
@@ -35,8 +32,11 @@ const mediaSlice = createSlice({
 	name: 'media',
 	initialState,
 	reducers: {
-		setPreviewAudioDeviceId: ((state, action: PayloadAction<string | undefined>) => {
-			state.previewAudioDeviceId = action.payload;
+		setPreviewAudioInputDeviceId: ((state, action: PayloadAction<string | undefined>) => {
+			state.previewAudioInputDeviceId = action.payload;
+		}),
+		setPreviewAudioOutputDeviceId: ((state, action: PayloadAction<string | undefined>) => {
+			state.previewAudioOutputDeviceId = action.payload;
 		}),
 		setPreviewVideoDeviceId: ((state, action: PayloadAction<string | undefined>) => {
 			state.previewVideoDeviceId = action.payload;
@@ -80,6 +80,9 @@ const mediaSlice = createSlice({
 		setVideoInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.videoInProgress = action.payload;
 		}),
+		testAudioOutput: () => {
+			// handle in middleWare
+		}
 	},
 	extraReducers: (builder) => {
 		builder
