@@ -22,10 +22,12 @@ const ExtraVideo = ({
 	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 
 	const {
-		canSendWebcam,
-		videoInProgress,
+		canSendWebcam
 	} = useAppSelector((state) => state.me);
-
+	const {
+		videoInProgress
+	} = useAppSelector((state) => state.media);
+	
 	let videoState: MediaState, videoTip;
 
 	if (!canSendWebcam || !hasExtraVideoPermission) {

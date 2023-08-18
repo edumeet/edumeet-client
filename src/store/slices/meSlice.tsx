@@ -8,21 +8,18 @@ export interface MeState {
 	sessionId: string;
 	browser: Omit<DeviceInfo, 'bowser'>;
 	picture?: string;
-	previewWebcamTrackId?: string;
-	previewMicTrackId?: string;
 	canSendMic: boolean;
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
 	canRecord: boolean;
 	canTranscribe: boolean;
+	canBlurBackground: boolean;
 	canShareFiles: boolean;
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
 	escapeMeeting: boolean;
 	autoMuted: boolean;
 	// Status flags
-	audioInProgress: boolean;
-	videoInProgress: boolean;
 	screenSharingInProgress: boolean;
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
@@ -39,12 +36,11 @@ const initialState: MeState = {
 	canShareFiles: false,
 	canRecord: false,
 	canTranscribe: false,
+	canBlurBackground: true,
 	devices: [],
 	raisedHand: false,
 	escapeMeeting: false,
 	autoMuted: true,
-	audioInProgress: false,
-	videoInProgress: false,
 	screenSharingInProgress: false,
 	displayNameInProgress: false,
 	raisedHandInProgress: false,
@@ -63,12 +59,6 @@ const meSlice = createSlice({
 		}),
 		setPicture: ((state, action: PayloadAction<string>) => {
 			state.picture = action.payload;
-		}),
-		setPreviewWebcamTrackId: ((state, action: PayloadAction<string | undefined>) => {
-			state.previewWebcamTrackId = action.payload;
-		}),
-		setPreviewMicTrackId: ((state, action: PayloadAction<string | undefined>) => {
-			state.previewMicTrackId = action.payload;
 		}),
 		setMediaCapabilities: ((
 			state,
@@ -89,12 +79,6 @@ const meSlice = createSlice({
 			state.autoMuted = action.payload;
 		}),
 		// Status flags
-		setAudioInProgress: ((state, action: PayloadAction<boolean>) => {
-			state.audioInProgress = action.payload;
-		}),
-		setVideoInProgress: ((state, action: PayloadAction<boolean>) => {
-			state.videoInProgress = action.payload;
-		}),
 		setScreenSharingInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.screenSharingInProgress = action.payload;
 		}),
@@ -106,6 +90,9 @@ const meSlice = createSlice({
 		}),
 		setDispayNameInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.displayNameInProgress = action.payload;
+		}),
+		setCanBlurBackground: ((state, action: PayloadAction<boolean>) => {
+			state.canBlurBackground = action.payload;
 		}),
 	},
 });

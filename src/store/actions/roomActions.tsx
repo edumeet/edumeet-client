@@ -8,10 +8,11 @@ import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { webrtcActions } from '../slices/webrtcSlice';
 import { AppThunk } from '../store';
-import { updateMic, updateWebcam } from './mediaActions';
+import { stopPreviewMic, stopPreviewWebcam, updateLiveMic, updateLiveWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { getTenantFromFqdn } from './managementActions';
+import { mediaActions } from '../slices/mediaSlice';
 
 const logger = new Logger('RoomActions');
 
@@ -101,12 +102,21 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(webrtcActions.setTracker(tracker));
 
-		const { audioMuted, videoMuted } = getState().settings;
+		const { videoMuted, audioMuted, previewVideoDeviceId, previewAudioDeviceId, previewBlurBackground } = getState().media;
 
-		if (!audioMuted)
-			dispatch(updateMic({ start: true }));
-		if (!videoMuted)
-			dispatch(updateWebcam({ start: true }));
+		dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
+
+		if (!audioMuted && previewAudioDeviceId) {
+			dispatch(mediaActions.setLiveAudioDeviceId(previewAudioDeviceId));
+			dispatch(updateLiveMic());
+		}
+		if (!videoMuted && previewVideoDeviceId) {
+			dispatch(mediaActions.setLiveVideoDeviceId(previewVideoDeviceId));
+			dispatch(updateLiveWebcam());
+		}
+
+		dispatch(stopPreviewMic());
+		dispatch(stopPreviewWebcam());
 	});
 
 	/* const rtcStatsMetaData = { 
@@ -196,8 +206,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 	logger.debug('joinBreakoutRoom()');
 
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
-	const audioEnabled = !getState().settings.audioMuted;
-	const videoEnabled = !getState().settings.videoMuted;
+	const audioEnabled = getState().media.liveAudioDeviceId && !getState().media.audioMuted;
+	const videoEnabled = getState().media.liveVideoDeviceId && !getState().media.videoMuted;
 
 	try {
 		const {
@@ -209,8 +219,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 			dispatch(meActions.setSessionId(sessionId));
 			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-			dispatch(updateMic({ start: audioEnabled }));
-			dispatch(updateWebcam({ start: videoEnabled }));
+			audioEnabled && dispatch(updateLiveMic());
+			videoEnabled && dispatch(updateLiveWebcam());
 		});
 	} catch (error) {
 		logger.error('joinBreakoutRoom() [error:%o]', error);

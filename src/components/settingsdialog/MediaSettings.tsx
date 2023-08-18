@@ -6,12 +6,17 @@ import MediaPreview from '../mediapreview/MediaPreview';
 import { audioSettingsLabel, videoSettingsLabel } from '../translated/translatedComponents';
 import AdvancedAudioSettings from './advancedsettings/AdvancedAudioSettings';
 import AdvancedVideoSettings from './advancedsettings/AdvancedVideoSettings';
+import BlurBackgroundSwitch from '../blurbackgroundswitch/BlurBackgroundSwitch';
+import { useAppSelector } from '../../store/hooks';
+import { isMobileSelector } from '../../store/selectors';
 
 const NestedList = styled(List)(({ theme }) => ({
 	padding: theme.spacing(0, 1.5)
 }));
 
 const MediaSettings = (): JSX.Element => {
+	const isMobile = useAppSelector(isMobileSelector);
+	
 	return (
 		<List>
 			<MediaPreview withControls={false} />
@@ -22,7 +27,7 @@ const MediaSettings = (): JSX.Element => {
 				<ListItemText primary={ audioSettingsLabel() } />
 			</ListItem>
 			<NestedList>
-				<AudioInputChooser preview withConfirm />
+				<AudioInputChooser withConfirm />
 				<AdvancedAudioSettings />
 			</NestedList>
 			<ListItem>
@@ -32,7 +37,8 @@ const MediaSettings = (): JSX.Element => {
 				<ListItemText primary={ videoSettingsLabel() } />
 			</ListItem>
 			<NestedList>
-				<VideoInputChooser preview withConfirm />
+				<VideoInputChooser withConfirm />
+				{!isMobile && <BlurBackgroundSwitch />}
 				<AdvancedVideoSettings />
 			</NestedList>
 		</List>

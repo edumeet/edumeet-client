@@ -13,12 +13,15 @@ import {
 	usePrompt,
 } from '../../store/hooks';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
+import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
+import { isMobileSelector } from '../../store/selectors';
 
 const Lobby = (): JSX.Element => {
 	usePrompt();
 
 	const dispatch = useAppDispatch();
 	const displayName = useAppSelector((state) => state.settings.displayName);
+	const isMobile = useAppSelector(isMobileSelector);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
 
 	const handleDisplayNameChange = () => {
@@ -33,8 +36,9 @@ const Lobby = (): JSX.Element => {
 			content={
 				<>
 					<MediaPreview />
-					<AudioInputChooser preview />
-					<VideoInputChooser preview />
+					<AudioInputChooser />
+					<VideoInputChooser />
+					{!isMobile && <BlurBackgroundSwitch />}
 					<TextInputField
 						label={yourNameLabel()}
 						value={localDisplayName ?? 'Guest'}

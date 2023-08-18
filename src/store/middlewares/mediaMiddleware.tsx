@@ -7,9 +7,9 @@ import { videoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from 'edumeet-common';
-import { settingsActions } from '../slices/settingsSlice';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
+import { mediaActions } from '../slices/mediaSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -34,7 +34,7 @@ const createMediaMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
-	const transcriptTimeouts = new Map<string, NodeJS.Timer>();
+	const transcriptTimeouts = new Map<string, NodeJS.Timeout>();
 
 	const middleware: Middleware = ({
 		dispatch, getState
@@ -115,8 +115,8 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 
-					producer.kind === 'video' && dispatch(settingsActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(settingsActions.setAudioMuted(true));
+					producer.kind === 'video' && dispatch(mediaActions.setVideoMuted(true));
+					producer.kind === 'audio' && dispatch(mediaActions.setAudioMuted(true));
 				});
 
 				mediaService.on('producerPaused', (producer) => {
@@ -124,8 +124,8 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 					
-					producer.kind === 'video' && dispatch(settingsActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(settingsActions.setAudioMuted(true));
+					producer.kind === 'video' && dispatch(mediaActions.setVideoMuted(true));
+					producer.kind === 'audio' && dispatch(mediaActions.setAudioMuted(true));
 				});
 
 				mediaService.on('producerResumed', (producer) => {

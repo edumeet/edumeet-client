@@ -229,6 +229,8 @@
 	"settings.verticallyStackedSidePanels": "Vertically stacked side panels",
 	"settings.voiceActivatedUnmute": "Voice activated unmute",
 	"settings.webcamFrameRate": "Select your webcam frame rate",
+	"settings.enableBlurBackground": "Enable blur background effect",
+	"settings.blurBackgroundNotSupported": "Blur background effect not supported",
 	"socket.disconnected": "You are disconnected",
 	"socket.reconnected": "You are reconnected",
 	"socket.reconnecting": "You are disconnected, attempting to reconnect",
