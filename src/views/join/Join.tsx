@@ -13,6 +13,7 @@ import { settingsActions } from '../../store/slices/settingsSlice';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
+import { isMobileSelector } from '../../store/selectors';
 
 interface JoinProps {
 	roomId: string;
@@ -25,6 +26,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const { displayName } = useAppSelector((state) => state.settings);
 	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
 	const mediaLoading = useAppSelector((state) => state.media.videoInProgress || state.media.audioInProgress);
+	const isMobile = useAppSelector(isMobileSelector);
 
 	const [ name, setName ] = useState(displayName || '');
 
@@ -69,7 +71,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					<MediaPreview />
 					<AudioInputChooser />
 					<VideoInputChooser />
-					<BlurBackgroundSwitch />
+					{!isMobile && <BlurBackgroundSwitch />}
 					<TextInputField
 						label={yourNameLabel()}
 						value={name}
