@@ -6,11 +6,12 @@ This is the client service for the Edumeet project.
 ![](img/edumeet-client.drawio.png)
 
 ## Usage
-This service is the frontend of an edumeet installation and consist of static content. It's a React app but we do not use `yarn run serve` to deploy it. We are not doing SSL configuration here. In the Dockerfile we expose the service on port 80 using Nginx image. We expect a reverse proxy to sit in front and do SSL termination.
+This is the client service for the Edumeet project.
 
 ### Running the service in development
 
-This will start the service using https with a self-signed certificate. It's exposed on port `443`.
+This will start the service using https with a self-signed certificate. It's exposed on port `4443`.
+Https is needed for things such as `navigator.mediaService.getUserMedia()`. 
 
 ```bash
 $ yarn install
@@ -27,16 +28,15 @@ To run the service you need to have Node.js version 18 or higher installed.
 
 ### Running the service in production
 
-We run the service as a docker container. 
-You would in most cases want to replace the `config/` and `images/` directories with your own content. See below for an example using docker as container runtime.
-
+Build the service:
 ```bash
-$ docker build . -t user/edumeet-client
-$ docker run -v $(pwd)/config:/usr/share/nginx/html/config -v $(pwd)/images:/usr/share/nginx/html/images -p 80:80 -d user/edumeet-client
+$ yarn build
 ```
+This will produce a `./build` directory, ready to be deployed. Https is needed for things such as `navigator.mediaService.getUserMedia()`. 
 
+You would in most cases want to replace the `config/` and `images/` directories with your own content.
 
-
+https://github.com/edumeet/edumeet-docker/tree/4.x has guidelines for running the next generation Edumeet as docker containers.
 
 ## Configuration
 The app configuration file should be a valid javascript file defining a single
@@ -56,7 +56,8 @@ can be found here: [config.example.js](public/config/config.example.js).
 
 | Name | Description | Format | Default value |
 | :--- | :---------- | :----- | :------------ |
-| loginEnabled | If the login is enabled. | `"boolean"` | ``false`` |
+| loginEnabled | If the login is enabled. | `"boolean"` | ``true`` |
+| managementUrl | URL to management service | `"string"` | ``"http://localhost:3030"`` |
 | developmentPort | The development room server service listening port. | `"port"` | ``8443`` |
 | productionPort | The production room server service listening port. | `"port"` | ``443`` |
 | serverHostname | If the room server service runs on a different host than the client service you can specify the host name. | `"string"` | ``""`` |
