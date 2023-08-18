@@ -389,7 +389,7 @@ export class MediaService extends EventEmitter {
 							const consumerHark = hark(harkStream, {
 								play: false,
 								interval: 100,
-								threshold: -60, // TODO: get from state
+								threshold: -60,
 								history: 100
 							});
 

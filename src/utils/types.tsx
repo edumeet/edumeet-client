@@ -19,8 +19,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	autoGainControl: true,
 	echoCancellation: true,
 	noiseSuppression: true,
-	voiceActivatedUnmute: false,
-	noiseThreshold: -60,
 	sampleRate: 48000,
 	channelCount: 1,
 	sampleSize: 16,
@@ -36,8 +34,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'autoGainControl': true,
 			'echoCancellation': true,
 			'noiseSuppression': true,
-			'voiceActivatedUnmute': false,
-			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 1,
 			'sampleSize': 16,
@@ -52,8 +48,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'autoGainControl': false,
 			'echoCancellation': false,
 			'noiseSuppression': false,
-			'voiceActivatedUnmute': false,
-			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 2,
 			'sampleSize': 16,
@@ -115,8 +109,6 @@ export interface EdumeetConfig {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
-	voiceActivatedUnmute: boolean;
-	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -146,8 +138,6 @@ export interface AudioPreset {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
-	voiceActivatedUnmute: boolean;
-	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;

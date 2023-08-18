@@ -588,16 +588,6 @@ export const noiseSuppressionLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Noise suppression'
 });
 
-export const voiceActivatedUnmuteLabel = (): string => intl.formatMessage({
-	id: 'settings.voiceActivatedUnmute',
-	defaultMessage: 'Voice activated unmute'
-});
-
-export const noiseThresholdLabel = (): string => intl.formatMessage({
-	id: 'settings.noiseThreshold',
-	defaultMessage: 'Noise threshold'
-});
-
 export const selectAudioSampleRateLabel = (): string => intl.formatMessage({
 	id: 'settings.sampleRate',
 	defaultMessage: 'Select the audio sample rate'
