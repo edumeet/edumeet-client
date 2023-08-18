@@ -114,6 +114,8 @@ export class MediaService extends EventEmitter {
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
 
+	public previewVolumeWatcher?: VolumeWatcher;
+
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
 
@@ -357,7 +359,6 @@ export class MediaService extends EventEmitter {
 							id,
 							kind,
 							rtpParameters,
-							// type,
 							appData,
 							producerPaused,
 						} = notification.data;
@@ -790,7 +791,7 @@ export class MediaService extends EventEmitter {
 			const producerHark = hark(harkStream, {
 				play: false,
 				interval: 100,
-				threshold: -60, // TODO: get from state
+				threshold: -60,
 				history: 100
 			});
 
