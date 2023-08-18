@@ -70,8 +70,6 @@ can be found here: [config.example.js](public/config/config.example.js).
 | autoGainControl | Auto gain control enabled. | `"boolean"` | ``true`` |
 | echoCancellation | Echo cancellation enabled. | `"boolean"` | ``true`` |
 | noiseSuppression | Noise suppression enabled. | `"boolean"` | ``true`` |
-| voiceActivatedUnmute | Automatically unmute speaking above noiseThreshold. | `"boolean"` | ``false`` |
-| noiseThreshold | This is only for voiceActivatedUnmute and audio-indicator. | `"int"` | ``-60`` |
 | sampleRate | The audio sample rate. | `[  8000,  16000,  24000,  44100,  48000]` | ``48000`` |
 | channelCount | The audio channels count. | `[  1,  2]` | ``1`` |
 | sampleSize | The audio sample size count. | `[  8,  16,  24,  32]` | ``16`` |
@@ -81,7 +79,7 @@ can be found here: [config.example.js](public/config/config.example.js).
 | opusPtime | The OPUS packet time. | `[  3,  5,  10,  20,  30,  40,  50,  60]` | ``20`` |
 | opusMaxPlaybackRate | The OPUS playback rate. | `[  8000,  16000,  24000,  44100,  48000]` | ``48000`` |
 | audioPreset | The audio preset | `"string"` | ``"conference"`` |
-| audioPresets | The audio presets. | `"object"` | ``{  "conference": {    "name": "Conference audio",    "autoGainControl": true,    "echoCancellation": true,    "noiseSuppression": true,    "voiceActivatedUnmute": false,    "noiseThreshold": -60,    "sampleRate": 48000,    "channelCount": 1,    "sampleSize": 16,    "opusStereo": false,    "opusDtx": true,    "opusFec": true,    "opusPtime": 20,    "opusMaxPlaybackRate": 48000  },  "hifi": {    "name": "HiFi streaming",    "autoGainControl": false,    "echoCancellation": false,    "noiseSuppression": false,    "voiceActivatedUnmute": false,    "noiseThreshold": -60,    "sampleRate": 48000,    "channelCount": 2,    "sampleSize": 16,    "opusStereo": true,    "opusDtx": false,    "opusFec": true,    "opusPtime": 60,    "opusMaxPlaybackRate": 48000  }}`` |
+| audioPresets | The audio presets. | `"object"` | ``{  "conference": {    "name": "Conference audio",    "autoGainControl": true,    "echoCancellation": true,    "noiseSuppression": true,    "sampleRate": 48000,    "channelCount": 1,    "sampleSize": 16,    "opusStereo": false,    "opusDtx": true,    "opusFec": true,    "opusPtime": 20,    "opusMaxPlaybackRate": 48000  },  "hifi": {    "name": "HiFi streaming",    "autoGainControl": false,    "echoCancellation": false,    "noiseSuppression": false,    "sampleRate": 48000,    "channelCount": 2,    "sampleSize": 16,    "opusStereo": true,    "opusDtx": false,    "opusFec": true,    "opusPtime": 60,    "opusMaxPlaybackRate": 48000  }}`` |
 | background | The page background image URL | `"string"` | ``"images/background.jpg"`` |
 | buttonControlBar | If true, the media control buttons will be shown in separate control bar, not in the ME container. | `"boolean"` | ``false`` |
 | logo | If not null, it shows the logo loaded from the specified URL, otherwise it shows the title. | `"url"` | ``"images/logo.edumeet.svg"`` |
