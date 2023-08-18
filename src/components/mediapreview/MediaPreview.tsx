@@ -5,6 +5,9 @@ import WebcamPreviewButton from '../controlbuttons/WebcamPreviewButton';
 import MediaControls from '../mediacontrols/MediaControls';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
+import { useContext } from 'react';
+import { ServiceContext } from '../../store/store';
+import Volume from '../volume/Volume';
 
 interface MediaPreviewProps {
 	withControls?: boolean;
@@ -14,8 +17,10 @@ const MediaPreview = ({
 	withControls = true,
 }: MediaPreviewProps): JSX.Element => {
 	const theme = useTheme();
+	const { mediaService } = useContext(ServiceContext);
 	const { previewWebcamTrackId } = useAppSelector((state) => state.media);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
+	const previewVolumeWatcher = mediaService.previewVolumeWatcher;
 
 	return (
 		<>
@@ -48,6 +53,7 @@ const MediaPreview = ({
 					mirrored
 					trackId={previewWebcamTrackId}
 				/> }
+				{previewVolumeWatcher && <Volume previewVolumeWatcher={previewVolumeWatcher} />}
 			</VideoBox>
 		</>
 	);

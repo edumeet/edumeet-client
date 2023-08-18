@@ -11,6 +11,8 @@ import { mediaActions } from '../slices/mediaSlice';
 import { BlurBackgroundNotSupportedError } from '../../services/BlurBackground';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { blurBackgroundNotSupported } from '../../components/translated/translatedComponents';
+import hark from 'hark';
+import { VolumeWatcher } from '../../utils/volumeWatcher';
 
 const logger = new Logger('MediaActions');
 
@@ -146,6 +148,19 @@ export const updatePreviewMic = (newDeviceId?: string): AppThunk<Promise<void>> 
 		dispatch(mediaActions.setPreviewMicTrackId(track.id));
 		dispatch(mediaActions.setAudioMuted(false));
 
+		// Add VolumeWatcher
+		const harkStream = new MediaStream();
+
+		harkStream.addTrack(track);
+		const previewMicHark = hark(harkStream, {
+			play: false,
+			interval: 100,
+			threshold: -60,
+			history: 100
+		});
+
+		mediaService.previewVolumeWatcher = new VolumeWatcher({ hark: previewMicHark }); 
+
 		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updatePreviewMic() [error:%o]', error);
@@ -180,6 +195,8 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 		mediaService.removePreviewTrack(track?.id);
 		track?.stop();
 	}
+
+	delete mediaService.previewVolumeWatcher;
 
 	dispatch(mediaActions.setPreviewAudioDeviceId());
 	dispatch(mediaActions.setAudioInProgress(false));
