@@ -48,7 +48,9 @@ const createMediaMiddleware = ({
 				mediaService.init();
 			}
 
-			if (mediaActions.setLiveAudioOutputDeviceId.match(action)) {
+			const { canSelectAudioOutput } = getState().me;
+
+			if (canSelectAudioOutput && mediaActions.setLiveAudioOutputDeviceId.match(action)) {
 				if (typeof action.payload === 'string') mediaService.setAudioOutputDeviceId(action.payload);
 			}
 

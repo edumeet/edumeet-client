@@ -114,7 +114,7 @@ export class MediaService extends EventEmitter {
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
 	private audioOutputDeviceId?: string;
-	private audioOutputElements: HTMLMediaElementWithSink[] = [];
+	private audioOutputElements = new Map<string, HTMLMediaElementWithSink>();
 
 	public previewVolumeWatcher?: VolumeWatcher;
 
@@ -159,17 +159,17 @@ export class MediaService extends EventEmitter {
 		logger.debug('setAudioOutputDeviceId() [deviceId: %s]', deviceId);
 		if (deviceId === this.audioOutputDeviceId) return;
 		this.audioOutputDeviceId = deviceId;
-		this.audioOutputElements = [];
+		this.audioOutputElements.clear();
 		this.consumers.forEach((c) => {
 			const audioElement = this.#createAudioOutputElement(c);
 
-			this.audioOutputElements.push(audioElement as HTMLMediaElementWithSink);
+			this.audioOutputElements.set(c.id, audioElement as HTMLMediaElementWithSink);
 		});
 	}
 
 	#createAudioOutputElement(consumer: Consumer) {
 		logger.debug('#createAudioOutputElement [consumer.id: %s]', consumer.id);
-		if (!this.audioOutputDeviceId) return;
+		if (!this.audioOutputDeviceId) throw new Error('No audio output device id set');
 		const audioElement = new Audio() as HTMLMediaElementWithSink;
 		const stream = new MediaStream();
 
@@ -425,9 +425,14 @@ export class MediaService extends EventEmitter {
 							consumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
 
 							if (this.audioOutputDeviceId) {
-								const audioElement = this.#createAudioOutputElement(consumer);
+								try {
+									const audioElement = this.#createAudioOutputElement(consumer);
 
-								this.audioOutputElements.push(audioElement);
+									this.audioOutputElements.set(consumer.id, audioElement);
+								} catch (e) {
+									logger.error(e);
+								}
+
 							}
 						} else {
 							const resolutionWatcher = new ResolutionWatcher();
@@ -457,6 +462,7 @@ export class MediaService extends EventEmitter {
 						this.consumers.set(consumer.id, consumer);
 
 						consumer.observer.once('close', () => {
+							this.audioOutputElements.delete(consumer.id);
 							this.consumers.delete(consumer.id);
 						});
 
