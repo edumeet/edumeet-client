@@ -34,7 +34,7 @@ const AudioOutputChooser = ({
 	};
 
 	const handleConfirm = (): void => {
-		// TODO: implement set live audioOutputDevice
+		dispatch(mediaActions.setLiveAudioOutputDeviceId(previewAudioOutputDeviceId));
 	};
 
 	return (

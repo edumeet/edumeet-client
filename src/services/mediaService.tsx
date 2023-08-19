@@ -13,7 +13,7 @@ import { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProd
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
 import traceInit from '@jitsi/rtcstats/trace-ws';
-import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
+import { HTMLMediaElementWithSink, RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
 import { Logger } from 'edumeet-common';
 import { ClientMonitor, createClientMonitor } from '@observertc/client-monitor-js';
 import edumeetConfig from '../utils/edumeetConfig';
@@ -113,6 +113,8 @@ export class MediaService extends EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
+	private audioOutputDeviceId?: string;
+	private audioOutputElements: HTMLMediaElementWithSink[] = [];
 
 	public previewVolumeWatcher?: VolumeWatcher;
 
@@ -151,6 +153,32 @@ export class MediaService extends EventEmitter {
 
 		this.liveTracks.clear();
 		this.monitor?.close();
+	}
+
+	public setAudioOutputDeviceId(deviceId: string) {
+		logger.debug('setAudioOutputDeviceId() [deviceId: %s]', deviceId);
+		if (deviceId === this.audioOutputDeviceId) return;
+		this.audioOutputDeviceId = deviceId;
+		this.audioOutputElements = [];
+		this.consumers.forEach((c) => {
+			const audioElement = this.#createAudioOutputElement(c);
+
+			this.audioOutputElements.push(audioElement as HTMLMediaElementWithSink);
+		});
+	}
+
+	#createAudioOutputElement(consumer: Consumer) {
+		logger.debug('#createAudioOutputElement [consumer.id: %s]', consumer.id);
+		if (!this.audioOutputDeviceId) return;
+		const audioElement = new Audio() as HTMLMediaElementWithSink;
+		const stream = new MediaStream();
+
+		stream.addTrack(consumer.track);
+		audioElement.srcObject = stream;
+
+		audioElement.setSinkId(this.audioOutputDeviceId);
+		
+		return audioElement;
 	}
 
 	public getConsumer(consumerId: string): Consumer | undefined {
@@ -395,6 +423,12 @@ export class MediaService extends EventEmitter {
 
 							consumer.appData.hark = consumerHark;
 							consumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
+
+							if (this.audioOutputDeviceId) {
+								const audioElement = this.#createAudioOutputElement(consumer);
+
+								this.audioOutputElements.push(audioElement);
+							}
 						} else {
 							const resolutionWatcher = new ResolutionWatcher();
 

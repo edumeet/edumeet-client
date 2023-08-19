@@ -5,11 +5,7 @@ import { peersActions } from '../slices/peersSlice';
 import { MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { mediaActions } from '../slices/mediaSlice';
-
-export interface HTMLMediaElementWithSink extends HTMLMediaElement {
-	// eslint-disable-next-line no-unused-vars
-	setSinkId(deviceId: string): void
-}
+import { HTMLMediaElementWithSink } from '../../utils/types';
 
 interface SoundAlert {
 	audio: HTMLMediaElementWithSink,

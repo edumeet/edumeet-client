@@ -126,6 +126,11 @@ export interface EdumeetConfig {
 	observertc: ClientMonitorConfig;
 }
 
+export interface HTMLMediaElementWithSink extends HTMLMediaElement {
+	// eslint-disable-next-line no-unused-vars
+	setSinkId(deviceId: string): void
+}
+
 export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
 
 export interface SimulcastProfile {

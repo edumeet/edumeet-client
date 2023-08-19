@@ -9,6 +9,7 @@ import AdvancedVideoSettings from './advancedsettings/AdvancedVideoSettings';
 import BlurBackgroundSwitch from '../blurbackgroundswitch/BlurBackgroundSwitch';
 import { useAppSelector } from '../../store/hooks';
 import { isMobileSelector } from '../../store/selectors';
+import AudioOutputChooser from '../devicechooser/AudioOutputChooser';
 
 const NestedList = styled(List)(({ theme }) => ({
 	padding: theme.spacing(0, 1.5)
@@ -28,6 +29,7 @@ const MediaSettings = (): JSX.Element => {
 			</ListItem>
 			<NestedList>
 				<AudioInputChooser withConfirm />
+				<AudioOutputChooser withConfirm />
 				<AdvancedAudioSettings />
 			</NestedList>
 			<ListItem>

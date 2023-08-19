@@ -8,7 +8,8 @@ export interface MediaState {
 	previewWebcamTrackId?: string;
 	previewMicTrackId?: string;
 	previewBlurBackground: boolean
-	liveAudioDeviceId?: string;
+	liveAudioInputDeviceId?: string;
+	liveAudioOutputDeviceId?: string;
 	liveVideoDeviceId?: string;
 	liveWebcamTrackId?: string;
 	liveMicTrackId?: string
@@ -53,8 +54,11 @@ const mediaSlice = createSlice({
 		setPreviewMicTrackId: ((state, action: PayloadAction<string | undefined>) => {
 			state.previewMicTrackId = action.payload;
 		}),
-		setLiveAudioDeviceId: ((state, action: PayloadAction<string | undefined>) => {
-			state.liveAudioDeviceId = action.payload;
+		setLiveAudioInputDeviceId: ((state, action: PayloadAction<string | undefined>) => {
+			state.liveAudioInputDeviceId = action.payload;
+		}),
+		setLiveAudioOutputDeviceId: ((state, action: PayloadAction<string | undefined>) => {
+			state.liveAudioOutputDeviceId = action.payload;
 		}),
 		setLiveVideoDeviceId: ((state, action: PayloadAction<string | undefined>) => {
 			state.liveVideoDeviceId = action.payload;

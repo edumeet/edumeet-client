@@ -102,12 +102,15 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(webrtcActions.setTracker(tracker));
 
-		const { videoMuted, audioMuted, previewVideoDeviceId, previewAudioInputDeviceId, previewBlurBackground } = getState().media;
+		const { videoMuted, audioMuted, previewVideoDeviceId, previewAudioInputDeviceId, previewBlurBackground, previewAudioOutputDeviceId } = getState().media;
 
 		dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
+		
+		if (previewAudioOutputDeviceId)
+			dispatch(mediaActions.setLiveAudioOutputDeviceId(previewAudioOutputDeviceId));
 
 		if (!audioMuted && previewAudioInputDeviceId) {
-			dispatch(mediaActions.setLiveAudioDeviceId(previewAudioInputDeviceId));
+			dispatch(mediaActions.setLiveAudioInputDeviceId(previewAudioInputDeviceId));
 			dispatch(updateLiveMic());
 		}
 		if (!videoMuted && previewVideoDeviceId) {
@@ -206,7 +209,7 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 	logger.debug('joinBreakoutRoom()');
 
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
-	const audioEnabled = getState().media.liveAudioDeviceId && !getState().media.audioMuted;
+	const audioEnabled = getState().media.liveAudioInputDeviceId && !getState().media.audioMuted;
 	const videoEnabled = getState().media.liveVideoDeviceId && !getState().media.videoMuted;
 
 	try {

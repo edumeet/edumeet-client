@@ -22,7 +22,7 @@ const AudioInputChooser = ({
 }: AudioInputChooserProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const audioDevices = useDeviceSelector('audioinput');
-	const { audioInProgress, previewAudioInputDeviceId: previewAudioDeviceId } = useAppSelector((state) => state.media);
+	const { audioInProgress, previewAudioInputDeviceId } = useAppSelector((state) => state.media);
 
 	const handleDeviceChange = (deviceId: string): void => {
 		if (deviceId) {
@@ -31,7 +31,7 @@ const AudioInputChooser = ({
 	};
 
 	const handleConfirm = (): void => {
-		dispatch(mediaActions.setLiveAudioDeviceId(previewAudioDeviceId));
+		dispatch(mediaActions.setLiveAudioInputDeviceId(previewAudioInputDeviceId));
 		dispatch(mediaActions.setAudioMuted(false));
 		dispatch(updateLiveMic());
 	};
@@ -39,7 +39,7 @@ const AudioInputChooser = ({
 	return (
 		<ChooserDiv>
 			<DeviceChooser
-				value={previewAudioDeviceId ?? ''}
+				value={previewAudioInputDeviceId ?? ''}
 				setValue={handleDeviceChange}
 				devicesLabel={selectAudioInputDeviceLabel()}
 				noDevicesLabel={noAudioInputDevicesLabel()}

@@ -10,6 +10,7 @@ import { Logger } from 'edumeet-common';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { mediaActions } from '../slices/mediaSlice';
+import { settingsActions } from '../slices/settingsSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -45,6 +46,10 @@ const createMediaMiddleware = ({
 		(next) => async (action) => {
 			if (signalingActions.connect.match(action)) {
 				mediaService.init();
+			}
+
+			if (mediaActions.setLiveAudioOutputDeviceId.match(action)) {
+				if (typeof action.payload === 'string') mediaService.setAudioOutputDeviceId(action.payload);
 			}
 
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
