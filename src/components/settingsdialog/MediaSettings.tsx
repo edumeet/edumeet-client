@@ -17,6 +17,7 @@ const NestedList = styled(List)(({ theme }) => ({
 
 const MediaSettings = (): JSX.Element => {
 	const isMobile = useAppSelector(isMobileSelector);
+	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
 	
 	return (
 		<List>
@@ -29,7 +30,7 @@ const MediaSettings = (): JSX.Element => {
 			</ListItem>
 			<NestedList>
 				<AudioInputChooser withConfirm />
-				<AudioOutputChooser withConfirm />
+				{ canSelectAudioOutput && <AudioOutputChooser withConfirm /> }
 				<AdvancedAudioSettings />
 			</NestedList>
 			<ListItem>
