@@ -10,6 +10,7 @@ import { Logger } from 'edumeet-common';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { mediaActions } from '../slices/mediaSlice';
+import { mediaNodeConnectionError, mediaNodeSvcUnavailable } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -142,14 +143,14 @@ const createMediaMiddleware = ({
 
 				mediaService.on('noMediaAvailable', () => {
 					dispatch(notificationsActions.enqueueNotification({
-						message: 'No media connection available',
+						message: mediaNodeSvcUnavailable(),
 						options: { variant: 'error' }
 					}));
 				});
 
 				mediaService.on('mediaConnectionError', () => {
 					dispatch(notificationsActions.enqueueNotification({
-						message: 'Media connection error',
+						message: mediaNodeConnectionError(),
 						options: { variant: 'error' }
 					}));
 				});
