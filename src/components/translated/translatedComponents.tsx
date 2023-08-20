@@ -15,6 +15,11 @@ export const joinedRoomLabel = (): string => intl.formatMessage({
 	defaultMessage: 'You have joined the room'
 });
 
+export const errorJoiningRoomLabel = (): string => intl.formatMessage({
+	id: 'room.errorJoiningRoom',
+	defaultMessage: 'Error while joining the room'
+});
+
 export const peerJoinedRoomLabel = (displayName: string): string => intl.formatMessage({
 	id: 'room.newPeer',
 	defaultMessage: '{displayName} joined the room'
@@ -716,4 +721,19 @@ export const enableBlurBackground = (): string => intl.formatMessage({
 export const blurBackgroundNotSupported = (): string => intl.formatMessage({
 	id: 'settings.blurBackgroundNotSupported',
 	defaultMessage: 'Blur background effect not supported'
+});
+
+export const mgmtSvcUnavailable = (): string => intl.formatMessage({
+	id: 'svc.mgmtUnavailable',
+	defaultMessage: 'Management service unavailable'
+});
+
+export const mediaNodeSvcUnavailable = (): string => intl.formatMessage({
+	id: 'svc.mediaNodeUnavailable',
+	defaultMessage: 'Media-node service unavailable'
+});
+
+export const mediaNodeConnectionError = (): string => intl.formatMessage({
+	id: 'svc.mediaConnectionNodeError',
+	defaultMessage: 'Media-node service connection error'
 });
