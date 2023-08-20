@@ -88,7 +88,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case 'm': {
-				const { audioInProgress, liveAudioDeviceId } = getState().media;
+				const { audioInProgress, liveAudioInputDeviceId } = getState().media;
 
 				if (audioInProgress) return;
 
@@ -100,7 +100,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const micProducer = micProducerSelector(getState());
 
 				if (!micProducer) {
-					liveAudioDeviceId && dispatch(updateLiveMic());
+					liveAudioInputDeviceId && dispatch(updateLiveMic());
 				} else if (!micProducer.paused) {
 					dispatch(
 						producersActions.setProducerPaused({
@@ -226,7 +226,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			}
 
 			case ' ': {
-				const { audioInProgress, liveAudioDeviceId } = getState().media;
+				const { audioInProgress, liveAudioInputDeviceId } = getState().media;
 
 				if (audioInProgress) return;
 
@@ -238,7 +238,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const micProducer = micProducerSelector(getState());
 
 				if (!micProducer) {
-					liveAudioDeviceId && dispatch(updateLiveMic());
+					liveAudioInputDeviceId && dispatch(updateLiveMic());
 				} else if (micProducer.paused) {
 					dispatch(
 						producersActions.setProducerResumed({

@@ -15,6 +15,7 @@ import {
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
 import { isMobileSelector } from '../../store/selectors';
+import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 
 const Lobby = (): JSX.Element => {
 	usePrompt();
@@ -22,6 +23,7 @@ const Lobby = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const isMobile = useAppSelector(isMobileSelector);
+	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
 
 	const handleDisplayNameChange = () => {
@@ -37,6 +39,7 @@ const Lobby = (): JSX.Element => {
 				<>
 					<MediaPreview />
 					<AudioInputChooser />
+					{canSelectAudioOutput && <AudioOutputChooser /> }
 					<VideoInputChooser />
 					{!isMobile && <BlurBackgroundSwitch />}
 					<TextInputField

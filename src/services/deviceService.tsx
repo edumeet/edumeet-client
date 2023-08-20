@@ -23,6 +23,13 @@ export declare interface DeviceService {
 export class DeviceService extends EventEmitter {
 	private devices: MediaDevice[] = [];
 
+	constructor() {
+		super();
+		logger.debug('constructor()');
+		navigator.mediaDevices.getUserMedia({ audio: true }).then(() => this.updateMediaDevices())
+			.catch((e) => logger.error(e));
+	}
+
 	public async updateMediaDevices(): Promise<void> {
 		logger.debug('updateMediaDevices()');
 

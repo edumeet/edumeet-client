@@ -4,14 +4,16 @@ import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { peersActions } from '../slices/peersSlice';
 import { MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { mediaActions } from '../slices/mediaSlice';
+import { HTMLMediaElementWithSink } from '../../utils/types';
 
 interface SoundAlert {
-	[type: string]: {
-		audio: HTMLAudioElement;
-		debounce: number;
-		last?: number;
-	};
+	audio: HTMLMediaElementWithSink,
+	debounce: number,
+	last?: number
 }
+
+const soundAlerts = new Map<string, SoundAlert>();
 
 const logger = new Logger('NotificationMiddleware');
 
@@ -20,15 +22,20 @@ const createNotificationMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createNotificationMiddleware()');
 
-	const soundAlerts: SoundAlert = {
-		'default': {
-			audio: new Audio('/sounds/notify.mp3'),
-			debounce: 0
-		}
+	const defaultSoundAlert: SoundAlert = {
+		audio: new Audio('/sounds/notify.mp3') as HTMLMediaElementWithSink,
+		debounce: 0
+	};
+
+	const attachAudioOutput = (outputDeviceId: string) => {
+		soundAlerts.forEach((sa) => {
+			sa.audio.setSinkId(outputDeviceId).catch((e) => logger.error(e));
+		});
+		defaultSoundAlert.audio.setSinkId(outputDeviceId);
 	};
 
 	const playNotificationSounds = async (type: string) => {
-		const soundAlert = soundAlerts[type] ?? soundAlerts['default'];
+		const soundAlert = soundAlerts.get(type) ?? defaultSoundAlert;
 
 		const now = Date.now();
 
@@ -45,10 +52,10 @@ const createNotificationMiddleware = ({
 	// Load notification alerts sounds and make them available
 	for (const [ k, v ] of Object.entries(config.notificationSounds)) {
 		if (v?.play) {
-			soundAlerts[k] = {
-				audio: new Audio(v.play),
+			soundAlerts.set(k, {
+				audio: new Audio(v.play) as HTMLMediaElementWithSink,
 				debounce: v.debounce ?? 0
-			};
+			});
 		}
 	}
 
@@ -88,6 +95,14 @@ const createNotificationMiddleware = ({
 				// New peer
 				if (peersActions.addPeer.match(action)) {
 					await playNotificationSounds('newPeer');
+				}
+
+				if (mediaActions.testAudioOutput.match(action)) {
+					await playNotificationSounds('testAudioOutput');
+				}
+
+				if (mediaActions.setPreviewAudioOutputDeviceId.match(action)) {
+					if (action.payload) attachAudioOutput(action.payload);
 				}
 			}
 

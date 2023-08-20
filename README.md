@@ -6,8 +6,6 @@ This is the client service for the Edumeet project.
 ![](img/edumeet-client.drawio.png)
 
 ## Usage
-This is the client service for the Edumeet project.
-
 ### Running the service in development
 
 This will start the service using https with a self-signed certificate. It's exposed on port `4443`.
@@ -17,12 +15,6 @@ Https is needed for things such as `navigator.mediaService.getUserMedia()`.
 $ yarn install
 $ yarn start
 ```
-
-To debug in browser console you can read the store like so:  
-`document.getElementById('edumeet')._reactRootContainer.current.memoizedState.element.props.children[1].props.store.getState()`  
-
-You can read the mediaservice like so:  
-`const mediaService = document.getElementById('edumeet')._reactRootContainer.current.memoizedState.element.props.children[1].props.children.props.children.props.children.props.children.props.value.mediaService`
 
 To run the service you need to have Node.js version 18 or higher installed.
 

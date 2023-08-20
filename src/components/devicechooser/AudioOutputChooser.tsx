@@ -1,5 +1,4 @@
 import { Button } from '@mui/material';
-import { updateLiveMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -7,45 +6,51 @@ import {
 } from '../../store/hooks';
 import {
 	applyLabel,
-	noAudioInputDevicesLabel,
-	selectAudioInputDeviceLabel
+	noAudioOutputDevicesLabel,
+	selectAudioOutputDeviceLabel
 } from '../translated/translatedComponents';
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 import { mediaActions } from '../../store/slices/mediaSlice';
+import { Logger } from 'edumeet-common';
+
+const logger = new Logger('AudioOutputChooser');
 
 interface AudioInputChooserProps {
 	withConfirm?: boolean;
 }
 
-const AudioInputChooser = ({
+const AudioOutputChooser = ({
 	withConfirm
-}: AudioInputChooserProps): JSX.Element => {
+}: AudioInputChooserProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
-	const audioDevices = useDeviceSelector('audioinput');
-	const { audioInProgress, previewAudioInputDeviceId } = useAppSelector((state) => state.media);
+	const audioDevices = useDeviceSelector('audiooutput');
+	const { audioInProgress, previewAudioOutputDeviceId } = useAppSelector((state) => state.media);
 
 	const handleDeviceChange = (deviceId: string): void => {
 		if (deviceId) {
-			dispatch(updatePreviewMic(deviceId));
+			logger.debug('output deviceId: %s', deviceId);
+			dispatch(mediaActions.setPreviewAudioOutputDeviceId(deviceId));
 		}
 	};
 
 	const handleConfirm = (): void => {
-		dispatch(mediaActions.setLiveAudioInputDeviceId(previewAudioInputDeviceId));
-		dispatch(mediaActions.setAudioMuted(false));
-		dispatch(updateLiveMic());
+		dispatch(mediaActions.setLiveAudioOutputDeviceId(previewAudioOutputDeviceId));
 	};
 
 	return (
 		<ChooserDiv>
 			<DeviceChooser
-				value={previewAudioInputDeviceId ?? ''}
+				value={previewAudioOutputDeviceId ?? ''}
 				setValue={handleDeviceChange}
-				devicesLabel={selectAudioInputDeviceLabel()}
-				noDevicesLabel={noAudioInputDevicesLabel()}
+				devicesLabel={selectAudioOutputDeviceLabel()}
+				noDevicesLabel={noAudioOutputDevicesLabel()}
 				disabled={audioDevices.length === 0 || audioInProgress}
 				devices={audioDevices}
 			/>
+			<Button onClick={() => dispatch(mediaActions.testAudioOutput())}
+				disabled={audioDevices.length === 0}>
+				Test
+			</Button>
 			{withConfirm && (
 				<Button
 					onClick={handleConfirm}
@@ -58,4 +63,4 @@ const AudioInputChooser = ({
 	);
 };
 
-export default AudioInputChooser;
+export default AudioOutputChooser;

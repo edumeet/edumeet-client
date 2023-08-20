@@ -103,9 +103,9 @@ export const updatePreviewMic = (newDeviceId?: string): AppThunk<Promise<void>> 
 		await deviceService.updateMediaDevices();
 
 		if (newDeviceId)
-			dispatch(mediaActions.setPreviewAudioDeviceId(newDeviceId));
+			dispatch(mediaActions.setPreviewAudioInputDeviceId(newDeviceId));
 
-		const { previewAudioDeviceId, previewMicTrackId } = getState().media;
+		const { previewAudioInputDeviceId, previewMicTrackId } = getState().media;
 
 		if (previewMicTrackId) {
 			mediaService.getTrack(previewMicTrackId, 'previewTracks')?.stop();
@@ -122,7 +122,7 @@ export const updatePreviewMic = (newDeviceId?: string): AppThunk<Promise<void>> 
 			sampleSize,
 		} = getState().settings;
 
-		deviceId = previewAudioDeviceId;
+		deviceId = previewAudioInputDeviceId;
 		const stream = await navigator.mediaDevices.getUserMedia({
 			audio: {
 				deviceId: { ideal: deviceId },
@@ -142,7 +142,7 @@ export const updatePreviewMic = (newDeviceId?: string): AppThunk<Promise<void>> 
 		
 		// We may have ended up with a different device than the one selected
 		// so we need to update the selected device in the settings just in case
-		dispatch(mediaActions.setPreviewAudioDeviceId(deviceId));
+		dispatch(mediaActions.setPreviewAudioInputDeviceId(deviceId));
 
 		mediaService.addTrack(track, deviceId, 'previewTracks');
 		dispatch(mediaActions.setPreviewMicTrackId(track.id));
@@ -190,7 +190,7 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 		const track = mediaService.getTrack(previewMicTrackId, 'previewTracks');
 
 		dispatch(mediaActions.setPreviewMicTrackId());
-		dispatch(mediaActions.setPreviewAudioDeviceId());
+		dispatch(mediaActions.setPreviewAudioInputDeviceId());
 
 		mediaService.removePreviewTrack(track?.id);
 		track?.stop();
@@ -198,7 +198,7 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 
 	delete mediaService.previewVolumeWatcher;
 
-	dispatch(mediaActions.setPreviewAudioDeviceId());
+	dispatch(mediaActions.setPreviewAudioInputDeviceId());
 	dispatch(mediaActions.setAudioInProgress(false));
 };
 
@@ -380,7 +380,7 @@ export const updateLiveMic = (): AppThunk<Promise<void>> => async (
 		if (!canSendMic)
 			throw new Error('cannot produce audio');
 
-		const { liveMicTrackId, liveAudioDeviceId } = getState().media;
+		const { liveMicTrackId, liveAudioInputDeviceId } = getState().media;
 
 		if (liveMicTrackId) {
 			track = mediaService.getTrack(liveMicTrackId, 'liveTracks');
@@ -402,7 +402,7 @@ export const updateLiveMic = (): AppThunk<Promise<void>> => async (
 			opusMaxPlaybackRate,
 		} = getState().settings;
 
-		if (!liveAudioDeviceId)
+		if (!liveAudioInputDeviceId)
 			throw new Error('Selected live audio device not found');
 
 		micProducer =
@@ -422,7 +422,7 @@ export const updateLiveMic = (): AppThunk<Promise<void>> => async (
 		// At this point we want the exact device, or none at all.
 		const stream = await navigator.mediaDevices.getUserMedia({
 			audio: {
-				deviceId: { exact: liveAudioDeviceId },
+				deviceId: { exact: liveAudioInputDeviceId },
 				sampleRate,
 				channelCount,
 				autoGainControl,
@@ -437,7 +437,7 @@ export const updateLiveMic = (): AppThunk<Promise<void>> => async (
 		if (!track)
 			throw new Error('no live mic track');
 
-		mediaService.addTrack(track, liveAudioDeviceId, 'liveTracks');
+		mediaService.addTrack(track, liveAudioInputDeviceId, 'liveTracks');
 		dispatch(mediaActions.setLiveMicTrackId(track.id));
 
 		micProducer = await mediaService.produce({

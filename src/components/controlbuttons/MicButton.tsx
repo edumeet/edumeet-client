@@ -28,7 +28,7 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 		canSendMic,
 	} = useAppSelector((state) => state.me);
 
-	const {	audioInProgress, liveAudioDeviceId } = useAppSelector((state) => state.media);
+	const {	audioInProgress, liveAudioInputDeviceId } = useAppSelector((state) => state.media);
 	const { settingsOpen } = useAppSelector((state) => state.ui);
 
 	let micState: MediaState, micTip;
@@ -54,7 +54,7 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				if (micState === 'unsupported') return;
 
 				if (micState === 'off') {
-					if (liveAudioDeviceId) {
+					if (liveAudioInputDeviceId) {
 						dispatch(updateLiveMic());
 					} else {
 						dispatch(updatePreviewMic());
