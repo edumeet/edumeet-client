@@ -53,6 +53,10 @@ const meSlice = createSlice({
 	name: 'me',
 	initialState,
 	reducers: {
+		resetMe: ((state) => {
+			return { ...initialState, id: uuid(), browser: state.browser, devices: state.devices };
+			
+		}),
 		setMe: ((state, action: PayloadAction<string>) => {
 			state.id = action.payload;
 		}),

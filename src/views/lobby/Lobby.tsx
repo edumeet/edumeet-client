@@ -10,7 +10,7 @@ import { setDisplayName } from '../../store/actions/meActions';
 import {
 	useAppDispatch,
 	useAppSelector,
-	usePrompt,
+	useNotifier,
 } from '../../store/hooks';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
@@ -18,7 +18,7 @@ import { isMobileSelector } from '../../store/selectors';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 
 const Lobby = (): JSX.Element => {
-	usePrompt();
+	useNotifier();
 
 	const dispatch = useAppDispatch();
 	const displayName = useAppSelector((state) => state.settings.displayName);
