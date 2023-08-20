@@ -16,12 +16,6 @@ $ yarn install
 $ yarn start
 ```
 
-To debug in browser console you can read the store like so:  
-`document.getElementById('edumeet')._reactRootContainer.current.memoizedState.element.props.children[1].props.store.getState()`  
-
-You can read the mediaservice like so:  
-`const mediaService = document.getElementById('edumeet')._reactRootContainer.current.memoizedState.element.props.children[1].props.children.props.children.props.children.props.children.props.value.mediaService`
-
 To run the service you need to have Node.js version 18 or higher installed.
 
 ### Running the service in production
