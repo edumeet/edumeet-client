@@ -13,6 +13,8 @@ import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsS
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { getTenantFromFqdn } from './managementActions';
 import { mediaActions } from '../slices/mediaSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { errorJoiningRoomLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('RoomActions');
 
@@ -38,6 +40,11 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		dispatch(signalingActions.connect());
 	} catch (error) {
 		logger.error('connect() [error:"%o"]', error);
+		dispatch(notificationsActions.enqueueNotification({
+			message: errorJoiningRoomLabel(),
+			options: { variant: 'error' }
+		}));
+
 	} finally {
 		dispatch(roomActions.updateRoom({ joinInProgress: false }));
 	}
