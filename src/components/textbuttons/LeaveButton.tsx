@@ -1,14 +1,24 @@
 import { Button } from '@mui/material';
 import { leaveLabel } from '../translated/translatedComponents';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../store/hooks';
+import { leaveRoom } from '../../store/actions/roomActions';
 
-const LeaveButton = (): JSX.Element => {
+const LeaveButton = (): React.JSX.Element => {
+	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
+
+	const handleLeave = () => {
+		dispatch(leaveRoom());
+		navigate('/');
+	};
 
 	return (
 		<Button
 			aria-label={leaveLabel()}
 			color='error'
 			variant='contained'
-			onClick={() => location.replace(window.location.href.split('?')[0])}
+			onClick={handleLeave} 
 			size='small'
 		>
 			{ leaveLabel() }

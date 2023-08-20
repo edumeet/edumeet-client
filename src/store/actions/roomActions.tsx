@@ -144,11 +144,13 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
-	dispatch
+	dispatch, getState, { mediaService }
 ): Promise<void> => {
 	logger.debug('leaveRoom()');
 
+	mediaService.close();
 	dispatch(signalingActions.disconnect());
+	dispatch(meActions.resetMe());
 };
 
 export const createBreakoutRoom = (name: string): AppThunk<Promise<void>> => async (
