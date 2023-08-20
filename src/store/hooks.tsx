@@ -1,6 +1,5 @@
 import { SnackbarKey, useSnackbar } from 'notistack';
 import { useEffect, useMemo, useRef } from 'react';
-import { unstable_useBlocker as useBlocker } from 'react-router-dom';
 import {
 	TypedUseSelectorHook,
 	useDispatch,
@@ -22,7 +21,6 @@ import { notificationsActions } from './slices/notificationsSlice';
 import { Peer } from './slices/peersSlice';
 import { RootState, AppDispatch } from './store';
 import { Transcript } from '../services/mediaService';
-import { leaveRoom } from './actions/roomActions';
 
 /**
  * Hook to access the redux dispatch function.
