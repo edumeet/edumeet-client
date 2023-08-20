@@ -3,8 +3,10 @@ import { useAppSelector } from '../../store/hooks';
 import edumeetConfig from '../../utils/edumeetConfig';
 import LoginButton from '../controlbuttons/LoginButton';
 import { loginLabel, logoutLabel } from '../translated/translatedComponents';
+import LogoutButton from '../controlbuttons/LogoutButton';
+import React from 'react';
 
-const PrecallTitle = (): JSX.Element => {
+const PrecallTitle = (): React.JSX.Element => {
 	const logo = useAppSelector((state) => state.room.logo);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
@@ -35,10 +37,11 @@ const PrecallTitle = (): JSX.Element => {
 						<Grid item>
 							<Grid container direction='column' alignItems='center'>
 								<Grid item>
-									<LoginButton
+									{ loggedIn ? <LogoutButton
 										type='iconbutton'
 										toolTipLocation='left'
-									/>
+									/> : <LoginButton type="iconbutton" toolTipLocation='left' />
+									}
 								</Grid>
 								<Grid item>
 									{ loggedIn ? logoutLabel() : loginLabel() }

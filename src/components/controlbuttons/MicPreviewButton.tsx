@@ -15,7 +15,7 @@ const MicPreviewButton = (props: ControlButtonProps): JSX.Element => {
 	const {
 		previewMicTrackId,
 		audioInProgress,
-	} = useAppSelector((state) => state.me);
+	} = useAppSelector((state) => state.media);
 
 	let micState: MediaState, micTip;
 

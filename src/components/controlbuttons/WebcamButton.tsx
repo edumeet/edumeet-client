@@ -15,19 +15,18 @@ import {
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { updateWebcam } from '../../store/actions/mediaActions';
+import { stopLiveWebcam, updateLiveWebcam, updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
+import { uiActions } from '../../store/slices/uiSlice';
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasVideoPermission = usePermissionSelector(permissions.SHARE_VIDEO);
 	const webcamProducer = useAppSelector(webcamProducerSelector);
+	const { liveVideoDeviceId, videoInProgress } = useAppSelector((state) => state.media);
+	const {	canSendWebcam } = useAppSelector((state) => state.me);
+	const { settingsOpen } = useAppSelector((state) => state.ui);
 
-	const {
-		canSendWebcam,
-		videoInProgress,
-	} = useAppSelector((state) => state.me);
-
-	let webcamState: MediaState, webcamTip;
+	let webcamState!: MediaState, webcamTip;
 
 	if (!canSendWebcam || !hasVideoPermission) {
 		webcamState = 'unsupported';
@@ -47,10 +46,16 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 				if (webcamState === 'unsupported') return;
 
 				if (webcamState === 'off') {
-					dispatch(updateWebcam({
-						start: true
-					}));
-				} else if (webcamProducer) {
+					if (liveVideoDeviceId) {
+						dispatch(updateLiveWebcam());
+					} else {
+						dispatch(updatePreviewMic());
+						dispatch(updatePreviewWebcam());
+						dispatch(uiActions.setUi({ settingsOpen: !settingsOpen })); 
+					}
+				}
+
+				if (webcamProducer) {
 					dispatch(
 						producersActions.closeProducer({
 							producerId: webcamProducer.id,
@@ -58,8 +63,7 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 							source: 'webcam'
 						})
 					);
-				} else {
-					// Shouldn't happen
+					dispatch(stopLiveWebcam());
 				}
 			}}
 			disabled={webcamState === 'unsupported' || videoInProgress}

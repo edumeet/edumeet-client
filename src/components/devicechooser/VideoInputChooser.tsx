@@ -1,96 +1,58 @@
 import { Button } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { stopPreviewWebcam, updatePreviewWebcam, updateWebcam } from '../../store/actions/mediaActions';
+import { updatePreviewWebcam, updateLiveWebcam } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
 	useDeviceSelector
 } from '../../store/hooks';
-import { meProducersSelector } from '../../store/selectors';
 import {
 	applyLabel,
 	noVideoDevicesLabel,
 	selectVideoDeviceLabel,
-	videoDeviceLabel
 } from '../translated/translatedComponents';
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
+import { mediaActions } from '../../store/slices/mediaSlice';
 
 interface VideoInputChooserProps {
-	preview?: boolean;
 	withConfirm?: boolean;
 }
 
 const VideoInputChooser = ({
-	preview,
 	withConfirm
 }: VideoInputChooserProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const [ confirm, setConfirm ] = useState(false);
-	const { webcamProducer } = useAppSelector(meProducersSelector);
 	const videoDevices = useDeviceSelector('videoinput');
-	const videoInProgress = useAppSelector((state) => state.me.videoInProgress);
-	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
+	const { videoInProgress, previewVideoDeviceId, previewBlurBackground } = useAppSelector((state) => state.media);
 
 	const handleDeviceChange = (deviceId: string): void => {
 		if (deviceId) {
-			if (preview) {
-				setConfirm(true);
-
-				dispatch(updatePreviewWebcam({
-					restart: true,
-					newDeviceId: deviceId,
-					updateMute: !withConfirm
-				}));
-			} else {
-				dispatch(updateWebcam({
-					restart: true,
-					newDeviceId: deviceId
-				}));
-			}
+			dispatch(updatePreviewWebcam(deviceId));
 		}
 	};
 
 	const handleConfirm = (): void => {
-		// TODO: Add replace track support
-		dispatch(updateWebcam({
-			restart: true
-		}));
-
-		setConfirm(false);
-	};
-
-	useEffect(() => {
-		if (withConfirm) {
-			dispatch(updatePreviewWebcam({
-				restart: true,
-				updateMute: !withConfirm
-			}));
+		if (previewVideoDeviceId) {
+			dispatch(mediaActions.setLiveVideoDeviceId(previewVideoDeviceId));
+			dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
+			dispatch(mediaActions.setVideoMuted(false));
+			dispatch(updateLiveWebcam());
 		}
-
-		return (): void => {
-			if (withConfirm) {
-				dispatch(stopPreviewWebcam({
-					updateMute: !withConfirm
-				}));
-			}
-		};
-	}, []);
+	};
 
 	return (
 		<ChooserDiv>
 			<DeviceChooser
-				value={videoDevice ?? ''}
+				value={previewVideoDeviceId ?? ''}
 				setValue={handleDeviceChange}
-				name={videoDeviceLabel()}
 				devicesLabel={selectVideoDeviceLabel()}
 				noDevicesLabel={noVideoDevicesLabel()}
 				disabled={videoDevices.length === 0 || videoInProgress}
 				devices={videoDevices}
 			/>
-			{ withConfirm && webcamProducer && (
+			{ withConfirm && (
 				<Button
 					onClick={handleConfirm}
-					disabled={!confirm || videoInProgress}
+					disabled={videoInProgress}
 				>
 					{ applyLabel() }
 				</Button>

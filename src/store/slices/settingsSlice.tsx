@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { detect } from '../../utils/intlManager';
 import { AudioPreset, Resolution } from '../../utils/types';
-import { producersActions } from './producersSlice';
 
 export interface SettingsState {
 	displayName: string;
@@ -13,8 +12,6 @@ export interface SettingsState {
 	verticalDivide: boolean;
 	dynamicWidth: boolean;
 	aspectRatio: number;
-	selectedAudioDevice?: string;
-	selectedVideoDevice?: string;
 	resolution: Resolution;
 	frameRate: number;
 	screenSharingResolution: Resolution;
@@ -25,7 +22,6 @@ export interface SettingsState {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
-	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -35,8 +31,6 @@ export interface SettingsState {
 	opusPtime: number;
 	opusMaxPlaybackRate: number;
 	notificationSounds: boolean;
-	audioMuted?: boolean;
-	videoMuted?: boolean;
 	locale?: string;
 }
 
@@ -61,7 +55,6 @@ const initialState: SettingsState = {
 	autoGainControl: edumeetConfig.autoGainControl,
 	echoCancellation: edumeetConfig.echoCancellation,
 	noiseSuppression: edumeetConfig.noiseSuppression,
-	noiseThreshold: edumeetConfig.noiseThreshold,
 	sampleRate: edumeetConfig.sampleRate,
 	channelCount: edumeetConfig.channelCount,
 	sampleSize: edumeetConfig.sampleSize,
@@ -71,7 +64,7 @@ const initialState: SettingsState = {
 	opusPtime: edumeetConfig.opusPtime,
 	opusMaxPlaybackRate: edumeetConfig.opusMaxPlaybackRate,
 	notificationSounds: true,
-	locale: detect()
+	locale: detect(),
 };
 
 const settingsSlice = createSlice({
@@ -105,12 +98,6 @@ const settingsSlice = createSlice({
 		setAspectRatio: ((state, action: PayloadAction<number>) => {
 			state.aspectRatio = action.payload;
 		}),
-		setSelectedAudioDevice: ((state, action: PayloadAction<string | undefined>) => {
-			state.selectedAudioDevice = action.payload;
-		}),
-		setSelectedVideoDevice: ((state, action: PayloadAction<string | undefined>) => {
-			state.selectedVideoDevice = action.payload;
-		}),
 		setResolution: ((state, action: PayloadAction<Resolution>) => {
 			state.resolution = action.payload;
 		}),
@@ -137,9 +124,6 @@ const settingsSlice = createSlice({
 		}),
 		setNoiseSuppression: ((state, action: PayloadAction<boolean>) => {
 			state.noiseSuppression = action.payload;
-		}),
-		setNoiseThreshold: ((state, action: PayloadAction<number>) => {
-			state.noiseThreshold = action.payload;
 		}),
 		setSampleRate: ((state, action: PayloadAction<number>) => {
 			state.sampleRate = action.payload;
@@ -168,49 +152,10 @@ const settingsSlice = createSlice({
 		setNotificationSounds: ((state, action: PayloadAction<boolean>) => {
 			state.notificationSounds = action.payload;
 		}),
-		setAudioMuted: ((state, action: PayloadAction<boolean>) => {
-			state.audioMuted = action.payload;
-		}),
-		setVideoMuted: ((state, action: PayloadAction<boolean>) => {
-			state.videoMuted = action.payload;
-		}),
 		setLocale: ((state, action: PayloadAction<string>) => {
 			state.locale = action.payload;
-		})
+		}),
 	},
-	extraReducers: (builder) => {
-		builder
-			.addCase(producersActions.closeProducer, (state, action) => {
-				const { local, source } = action.payload;
-
-				if (!local) return;
-
-				if (source === 'mic')
-					state.audioMuted = true;
-				else if (source === 'webcam')
-					state.videoMuted = true;
-			})
-			.addCase(producersActions.setProducerPaused, (state, action) => {
-				const { local, source } = action.payload;
-
-				if (!local) return;
-
-				if (source === 'mic')
-					state.audioMuted = true;
-				else if (source === 'webcam')
-					state.videoMuted = true;
-			})
-			.addCase(producersActions.setProducerResumed, (state, action) => {
-				const { local, source } = action.payload;
-
-				if (!local) return;
-
-				if (source === 'mic')
-					state.audioMuted = false;
-				else if (source === 'webcam')
-					state.videoMuted = false;
-			});
-	}
 });
 
 export const settingsActions = settingsSlice.actions;

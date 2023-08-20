@@ -57,12 +57,6 @@ var config = {
 	// Noise suppression enabled.
 	noiseSuppression: true,
 
-	// Automatically unmute speaking above noiseThreshold.
-	voiceActivatedUnmute: false,
-
-	// This is only for voiceActivatedUnmute and audio-indicator.
-	noiseThreshold: -60,
-
 	// The audio sample rate.
 	sampleRate: 48000,
 
@@ -97,8 +91,6 @@ var config = {
 			'autoGainControl': true,
 			'echoCancellation': true,
 			'noiseSuppression': true,
-			'voiceActivatedUnmute': false,
-			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 1,
 			'sampleSize': 16,
@@ -113,8 +105,6 @@ var config = {
 			'autoGainControl': false,
 			'echoCancellation': false,
 			'noiseSuppression': false,
-			'voiceActivatedUnmute': false,
-			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 2,
 			'sampleSize': 16,

@@ -15,6 +15,11 @@ export const joinedRoomLabel = (): string => intl.formatMessage({
 	defaultMessage: 'You have joined the room'
 });
 
+export const errorJoiningRoomLabel = (): string => intl.formatMessage({
+	id: 'room.errorJoiningRoom',
+	defaultMessage: 'Error while joining the room'
+});
+
 export const peerJoinedRoomLabel = (displayName: string): string => intl.formatMessage({
 	id: 'room.newPeer',
 	defaultMessage: '{displayName} joined the room'
@@ -508,19 +513,34 @@ export const advancedSettingsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Advanced'
 });
 
-export const audioDeviceLabel = (): string => intl.formatMessage({
-	id: 'settings.audio',
-	defaultMessage: 'Audio input device'
-});
+// export const audioInputDeviceLabel = (): string => intl.formatMessage({
+// 	id: 'settings.audioInput',
+// 	defaultMessage: 'Audio input device'
+// });
 
-export const selectAudioDeviceLabel = (): string => intl.formatMessage({
-	id: 'settings.selectAudio',
+// export const audioOutputDeviceLabel = (): string => intl.formatMessage({
+// 	id: 'settings.audioOutput',
+// 	defaultMessage: 'Audio output device'
+// });
+
+export const selectAudioInputDeviceLabel = (): string => intl.formatMessage({
+	id: 'settings.selectAudioInput',
 	defaultMessage: 'Select audio input device'
 });
 
-export const noAudioDevicesLabel = (): string => intl.formatMessage({
-	id: 'settings.cantSelectAudio',
+export const selectAudioOutputDeviceLabel = (): string => intl.formatMessage({
+	id: 'settings.selectAudioOutput',
+	defaultMessage: 'Select audio output device'
+});
+
+export const noAudioInputDevicesLabel = (): string => intl.formatMessage({
+	id: 'settings.cantSelectAudioInput',
 	defaultMessage: 'Unable to select audio input device'
+});
+
+export const noAudioOutputDevicesLabel = (): string => intl.formatMessage({
+	id: 'settings.cantSelectAudioOutput',
+	defaultMessage: 'Unable to select audio output device'
 });
 
 export const videoDeviceLabel = (): string => intl.formatMessage({
@@ -586,16 +606,6 @@ export const autoGainControlLabel = (): string => intl.formatMessage({
 export const noiseSuppressionLabel = (): string => intl.formatMessage({
 	id: 'settings.noiseSuppression',
 	defaultMessage: 'Noise suppression'
-});
-
-export const voiceActivatedUnmuteLabel = (): string => intl.formatMessage({
-	id: 'settings.voiceActivatedUnmute',
-	defaultMessage: 'Voice activated unmute'
-});
-
-export const noiseThresholdLabel = (): string => intl.formatMessage({
-	id: 'settings.noiseThreshold',
-	defaultMessage: 'Noise threshold'
 });
 
 export const selectAudioSampleRateLabel = (): string => intl.formatMessage({
@@ -701,4 +711,29 @@ export const enableVerticallyStackedSidePanels = (): string => intl.formatMessag
 export const enableConfirmOnExit = (): string => intl.formatMessage({
 	id: 'settings.confirmOnExit',
 	defaultMessage: 'Confirm on exit'
+});
+
+export const enableBlurBackground = (): string => intl.formatMessage({
+	id: 'settings.enableBlurBackground',
+	defaultMessage: 'Enable blur background effect'
+});
+
+export const blurBackgroundNotSupported = (): string => intl.formatMessage({
+	id: 'settings.blurBackgroundNotSupported',
+	defaultMessage: 'Blur background effect not supported'
+});
+
+export const mgmtSvcUnavailable = (): string => intl.formatMessage({
+	id: 'svc.mgmtUnavailable',
+	defaultMessage: 'Management service unavailable'
+});
+
+export const mediaNodeSvcUnavailable = (): string => intl.formatMessage({
+	id: 'svc.mediaNodeUnavailable',
+	defaultMessage: 'Media-node service unavailable'
+});
+
+export const mediaNodeConnectionError = (): string => intl.formatMessage({
+	id: 'svc.mediaConnectionNodeError',
+	defaultMessage: 'Media-node service connection error'
 });

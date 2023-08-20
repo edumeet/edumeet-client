@@ -7,8 +7,10 @@ import { videoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from 'edumeet-common';
-import { settingsActions } from '../slices/settingsSlice';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { mediaActions } from '../slices/mediaSlice';
+import { mediaNodeConnectionError, mediaNodeSvcUnavailable } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -29,11 +31,11 @@ const logger = new Logger('MediaMiddleware');
  * @returns {Middleware} Redux middleware.
  */
 const createMediaMiddleware = ({
-	mediaService
+	mediaService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
-	const transcriptTimeouts = new Map<string, NodeJS.Timer>();
+	const transcriptTimeouts = new Map<string, NodeJS.Timeout>();
 
 	const middleware: Middleware = ({
 		dispatch, getState
@@ -44,6 +46,12 @@ const createMediaMiddleware = ({
 		(next) => async (action) => {
 			if (signalingActions.connect.match(action)) {
 				mediaService.init();
+			}
+
+			const { canSelectAudioOutput } = getState().me;
+
+			if (canSelectAudioOutput && mediaActions.setLiveAudioOutputDeviceId.match(action)) {
+				if (typeof action.payload === 'string') mediaService.setAudioOutputDeviceId(action.payload);
 			}
 
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
@@ -114,8 +122,8 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 
-					producer.kind === 'video' && dispatch(settingsActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(settingsActions.setAudioMuted(true));
+					producer.kind === 'video' && dispatch(mediaActions.setVideoMuted(true));
+					producer.kind === 'audio' && dispatch(mediaActions.setAudioMuted(true));
 				});
 
 				mediaService.on('producerPaused', (producer) => {
@@ -123,13 +131,27 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 					
-					producer.kind === 'video' && dispatch(settingsActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(settingsActions.setAudioMuted(true));
+					producer.kind === 'video' && dispatch(mediaActions.setVideoMuted(true));
+					producer.kind === 'audio' && dispatch(mediaActions.setAudioMuted(true));
 				});
 
 				mediaService.on('producerResumed', (producer) => {
 					dispatch(producersActions.setProducerResumed({
 						producerId: producer.id
+					}));
+				});
+
+				mediaService.on('noMediaAvailable', () => {
+					dispatch(notificationsActions.enqueueNotification({
+						message: mediaNodeSvcUnavailable(),
+						options: { variant: 'error' }
+					}));
+				});
+
+				mediaService.on('mediaConnectionError', () => {
+					dispatch(notificationsActions.enqueueNotification({
+						message: mediaNodeConnectionError(),
+						options: { variant: 'error' }
 					}));
 				});
 			}

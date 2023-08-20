@@ -13,7 +13,7 @@ import { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProd
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
 import traceInit from '@jitsi/rtcstats/trace-ws';
-import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
+import { HTMLMediaElementWithSink, RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
 import { Logger } from 'edumeet-common';
 import { ClientMonitor, createClientMonitor } from '@observertc/client-monitor-js';
 import edumeetConfig from '../utils/edumeetConfig';
@@ -26,6 +26,8 @@ declare global {
 		webkitSpeechRecognition: any;
 	}
 }
+
+export type TrackType = 'liveTracks' | 'previewTracks'
 
 export type MediaChange = 'pause' | 'resume' | 'close';
 
@@ -83,6 +85,10 @@ export declare interface MediaService {
 	on(event: 'transcriptionStopped', listener: () => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'transcript', listener: (transcription: PeerTranscript) => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'noMediaAvailable', listener: () => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'mediaConnectionError', listener: () => void): this;
 }
 
 export class MediaService extends EventEmitter {
@@ -95,7 +101,9 @@ export class MediaService extends EventEmitter {
 	private consumers: Map<string, Consumer> = new Map();
 	private dataConsumers: Map<string, DataConsumer> = new Map();
 	private dataProducers: Map<string, DataProducer> = new Map();
-	private tracks: Map<string, MediaStreamTrack> = new Map();
+	private liveTracks: Map<string, MediaStreamTrack> = new Map();
+	private previewTracks: Map<string, MediaStreamTrack> = new Map();
+	private trackDevice: Map<string, string> = new Map(); // Used to track duplicate tracks.
 	private peerTransports: Map<string, PeerTransport> = new Map();
 	private peers: string[] = [];
 	private p2p = true;
@@ -105,6 +113,10 @@ export class MediaService extends EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
+	private audioOutputDeviceId?: string;
+	private audioOutputElements = new Map<string, HTMLMediaElementWithSink>();
+
+	public previewVolumeWatcher?: VolumeWatcher;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
@@ -131,12 +143,51 @@ export class MediaService extends EventEmitter {
 		this.peerTransports.clear();
 		this.peers = [];
 
-		for (const track of this.tracks.values()) {
+		for (const track of this.liveTracks.values()) {
 			track.stop();
 		}
 
-		this.tracks.clear();
+		for (const track of this.previewTracks.values()) {
+			track.stop();
+		}
+
+		this.liveTracks.clear();
 		this.monitor?.close();
+	}
+
+	public setAudioOutputDeviceId(deviceId: string) {
+		logger.debug('setAudioOutputDeviceId() [deviceId: %s]', deviceId);
+		if (deviceId === this.audioOutputDeviceId) return;
+		this.audioOutputDeviceId = deviceId;
+
+		// Clean up existing audio elements.
+		this.audioOutputElements.forEach((aoe) => {
+			aoe.pause();
+		});
+		this.audioOutputElements.clear();
+
+		// Create new audio elements.
+		this.consumers.forEach((c) => {
+			const audioElement = this.#createAudioOutputElement(c);
+
+			this.audioOutputElements.set(c.id, audioElement);
+		});
+	}
+
+	#createAudioOutputElement(consumer: Consumer) {
+		logger.debug('#createAudioOutputElement [consumer.id: %s]', consumer.id);
+		if (!this.audioOutputDeviceId) throw new Error('No audio output device id set');
+		const audioElement = new Audio() as HTMLMediaElementWithSink;
+
+		audioElement.autoplay = true;
+		const stream = new MediaStream();
+
+		stream.addTrack(consumer.track);
+		audioElement.srcObject = stream;
+
+		audioElement.setSinkId(this.audioOutputDeviceId).catch((e) => logger.error(e));
+		
+		return audioElement;
 	}
 
 	public getConsumer(consumerId: string): Consumer | undefined {
@@ -155,30 +206,59 @@ export class MediaService extends EventEmitter {
 		return Array.from(this.producers.values());
 	}
 
-	public getTrack(trackId: string): MediaStreamTrack | undefined {
-		return this.tracks.get(trackId);
+	public getTrack(trackId: string, trackType: TrackType): MediaStreamTrack | undefined {
+		if (trackType === 'liveTracks') return this.liveTracks.get(trackId);
+		if (trackType === 'previewTracks') return this.previewTracks.get(trackId);
+	}
+
+	#removeDuplicateTracks(kind: string, deviceId: string, trackType: TrackType) {
+		logger.debug('#hasTrack [kind: %s, deviceId: %s, trackType: %s]', kind, deviceId, trackType);
+		for (const track of this[trackType].values()) {
+			if (this.trackDevice.get(track.id) === deviceId &&
+				track.kind === kind) {
+				logger.debug('removing duplicate track %s', track.id);
+
+				track.stop();
+				this[trackType].delete(track.id);
+			}
+		}
 	}
 
 	public getMonitor(): ClientMonitor | undefined {
 		return this.monitor;
 	}
 
-	public addTrack(track: MediaStreamTrack): void {
-		logger.debug('addTrack() [trackId:%s]', track.id);
+	public addTrack(track: MediaStreamTrack, deviceId: string, trackType: TrackType): void {
+		logger.debug('addTrack() [trackId:%s, kind: %s, deviceId: %s, trackType: %s]', track.id, track.kind, deviceId, trackType);
+		this.trackDevice.set(track.id, deviceId);
+		this.#removeDuplicateTracks(track.kind, deviceId, trackType);
 
-		this.tracks.set(track.id, track);
-
+		this[trackType].set(track.id, track);
 		track.addEventListener('ended', () => {
 			logger.debug('addTrack() | track "ended" [trackId:%s]', track.id);
 
-			this.tracks.delete(track.id);
+			this[trackType].delete(track.id);
+			this.trackDevice.delete(track.id);
 		});
 	}
 
-	public removeTrack(trackId: string | undefined): void {
+	public removeLiveTrack(trackId: string | undefined): void {
 		logger.debug('removeTrack() [trackId:%s]', trackId);
 
-		trackId && this.tracks.delete(trackId);
+		if (trackId) {
+			this.liveTracks.delete(trackId);
+			this.trackDevice.delete(trackId);
+		}
+
+	}
+	
+	public removePreviewTrack(trackId: string | undefined): void {
+		logger.debug('removePreviewTrack() [trackId:%s]', trackId);
+
+		if (trackId) {
+			this.previewTracks.delete(trackId);
+			this.trackDevice.delete(trackId);
+		}
 	}
 
 	public enableP2P(clientId: string): void {
@@ -256,6 +336,14 @@ export class MediaService extends EventEmitter {
 		this.signalingService.on('notification', async (notification) => {
 			try {
 				switch (notification.method) {
+					case 'noMediaAvailable': {
+						this.emit(notification.method);
+						break;
+					}
+					case 'mediaConnectionError': {
+						this.emit(notification.method);
+						break;
+					}
 					case 'offer': {
 						const { peerId, offer } = notification.data;
 
@@ -308,7 +396,6 @@ export class MediaService extends EventEmitter {
 							id,
 							kind,
 							rtpParameters,
-							// type,
 							appData,
 							producerPaused,
 						} = notification.data;
@@ -339,12 +426,23 @@ export class MediaService extends EventEmitter {
 							const consumerHark = hark(harkStream, {
 								play: false,
 								interval: 100,
-								threshold: -60, // TODO: get from state
+								threshold: -60,
 								history: 100
 							});
 
 							consumer.appData.hark = consumerHark;
 							consumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
+
+							if (this.audioOutputDeviceId) {
+								try {
+									const audioElement = this.#createAudioOutputElement(consumer);
+
+									this.audioOutputElements.set(consumer.id, audioElement);
+								} catch (e) {
+									logger.error(e);
+								}
+
+							}
 						} else {
 							const resolutionWatcher = new ResolutionWatcher();
 
@@ -373,6 +471,10 @@ export class MediaService extends EventEmitter {
 						this.consumers.set(consumer.id, consumer);
 
 						consumer.observer.once('close', () => {
+							this.audioOutputElements.delete(consumer.id);
+							const audioElement = this.consumers.get(consumer.id);
+
+							audioElement?.pause();
 							this.consumers.delete(consumer.id);
 						});
 
@@ -741,7 +843,7 @@ export class MediaService extends EventEmitter {
 			const producerHark = hark(harkStream, {
 				play: false,
 				interval: 100,
-				threshold: -60, // TODO: get from state
+				threshold: -60,
 				history: 100
 			});
 

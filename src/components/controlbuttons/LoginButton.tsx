@@ -1,25 +1,19 @@
-import {
-	useAppDispatch,
-	useAppSelector,
-} from '../../store/hooks';
+import { useAppDispatch } from '../../store/hooks';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import {
-	loginLabel,
-	logoutLabel
-} from '../translated/translatedComponents';
-import { login, logout } from '../../store/actions/permissionsActions';
+import { loginLabel } from '../translated/translatedComponents';
+import { login } from '../../store/actions/permissionsActions';
+import React from 'react';
 
 const LoginButton = ({
 	...props
-}: ControlButtonProps): JSX.Element => {
+}: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
-	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	return (
 		<ControlButton
-			toolTip={loggedIn ? logoutLabel() : loginLabel()}
-			onClick={() => (loggedIn ? dispatch(logout()) : dispatch(login()))}
+			toolTip={loginLabel()}
+			onClick={() => dispatch(login())}
 			{ ...props }
 		>
 			<AccountCircle />

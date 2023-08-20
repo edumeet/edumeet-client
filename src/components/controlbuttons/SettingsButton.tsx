@@ -8,6 +8,7 @@ import {
 	showSettingsLabel,
 } from '../translated/translatedComponents';
 import { uiActions } from '../../store/slices/uiSlice';
+import { updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
 
 const SettingsButton = ({
 	...props
@@ -18,9 +19,11 @@ const SettingsButton = ({
 	return (
 		<ControlButton
 			toolTip={showSettingsLabel()}
-			onClick={() => dispatch(
-				uiActions.setUi({ settingsOpen: !settingsOpen })
-			)}
+			onClick={() => {
+				dispatch(updatePreviewMic());
+				dispatch(updatePreviewWebcam());
+				dispatch(uiActions.setUi({ settingsOpen: !settingsOpen }));
+			}}
 			{ ...props }
 		>
 			<SettingsIcon />

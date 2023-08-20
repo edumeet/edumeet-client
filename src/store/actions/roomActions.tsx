@@ -8,10 +8,13 @@ import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { webrtcActions } from '../slices/webrtcSlice';
 import { AppThunk } from '../store';
-import { updateMic, updateWebcam } from './mediaActions';
+import { stopPreviewMic, stopPreviewWebcam, updateLiveMic, updateLiveWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { getTenantFromFqdn } from './managementActions';
+import { mediaActions } from '../slices/mediaSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { errorJoiningRoomLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('RoomActions');
 
@@ -37,6 +40,11 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		dispatch(signalingActions.connect());
 	} catch (error) {
 		logger.error('connect() [error:"%o"]', error);
+		dispatch(notificationsActions.enqueueNotification({
+			message: errorJoiningRoomLabel(),
+			options: { variant: 'error' }
+		}));
+
 	} finally {
 		dispatch(roomActions.updateRoom({ joinInProgress: false }));
 	}
@@ -101,12 +109,25 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(webrtcActions.setTracker(tracker));
 
-		const { audioMuted, videoMuted } = getState().settings;
+		const { videoMuted, audioMuted, previewVideoDeviceId, previewAudioInputDeviceId, previewBlurBackground, previewAudioOutputDeviceId } = getState().media;
+		const { canSelectAudioOutput } = getState().me;
 
-		if (!audioMuted)
-			dispatch(updateMic({ start: true }));
-		if (!videoMuted)
-			dispatch(updateWebcam({ start: true }));
+		dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
+		
+		if (canSelectAudioOutput && previewAudioOutputDeviceId)
+			dispatch(mediaActions.setLiveAudioOutputDeviceId(previewAudioOutputDeviceId));
+
+		if (!audioMuted && previewAudioInputDeviceId) {
+			dispatch(mediaActions.setLiveAudioInputDeviceId(previewAudioInputDeviceId));
+			dispatch(updateLiveMic());
+		}
+		if (!videoMuted && previewVideoDeviceId) {
+			dispatch(mediaActions.setLiveVideoDeviceId(previewVideoDeviceId));
+			dispatch(updateLiveWebcam());
+		}
+
+		dispatch(stopPreviewMic());
+		dispatch(stopPreviewWebcam());
 	});
 
 	/* const rtcStatsMetaData = { 
@@ -196,8 +217,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 	logger.debug('joinBreakoutRoom()');
 
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
-	const audioEnabled = !getState().settings.audioMuted;
-	const videoEnabled = !getState().settings.videoMuted;
+	const audioEnabled = getState().media.liveAudioInputDeviceId && !getState().media.audioMuted;
+	const videoEnabled = getState().media.liveVideoDeviceId && !getState().media.videoMuted;
 
 	try {
 		const {
@@ -209,8 +230,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 			dispatch(meActions.setSessionId(sessionId));
 			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-			dispatch(updateMic({ start: audioEnabled }));
-			dispatch(updateWebcam({ start: videoEnabled }));
+			audioEnabled && dispatch(updateLiveMic());
+			videoEnabled && dispatch(updateLiveWebcam());
 		});
 	} catch (error) {
 		logger.error('joinBreakoutRoom() [error:%o]', error);

@@ -23,6 +23,13 @@ export declare interface DeviceService {
 export class DeviceService extends EventEmitter {
 	private devices: MediaDevice[] = [];
 
+	constructor() {
+		super();
+		logger.debug('constructor()');
+		navigator.mediaDevices.getUserMedia({ audio: true }).then(() => this.updateMediaDevices())
+			.catch((e) => logger.error(e));
+	}
+
 	public async updateMediaDevices(): Promise<void> {
 		logger.debug('updateMediaDevices()');
 
@@ -61,13 +68,9 @@ export class DeviceService extends EventEmitter {
 	}
 
 	public getDeviceId(
-		deviceId: string | undefined,
 		kind: MediaDeviceKind
 	): string | undefined {
-		let device = this.devices.find((d) => d.deviceId === deviceId);
-
-		if (!device)
-			device = this.devices.find((d) => d.kind === kind);
+		const device = this.devices.find((d) => d.kind === kind);
 
 		return device?.deviceId;
 	}
