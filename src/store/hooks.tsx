@@ -148,22 +148,6 @@ export const useNotifier = (): void => {
 };
 
 /**
- * Hook to show a leave prompt when the user tries to leave the page.
- * 
- * @param when - Whether to show the leave prompt or not.
- * @returns {void}
- */
-export const usePrompt = (): void => {
-	const dispatch = useAppDispatch();
-
-	useBlocker(() => {
-		dispatch(leaveRoom());
-
-		return true;
-	});
-};
-
-/**
  * Hook to learn if id is active speaker or not.
  * 
  * @param id - id to evaluate.
