@@ -29,7 +29,7 @@ const createNotificationMiddleware = ({
 
 	const attachAudioOutput = (outputDeviceId: string) => {
 		soundAlerts.forEach((sa) => {
-			sa.audio.setSinkId(outputDeviceId);
+			sa.audio.setSinkId(outputDeviceId).catch((e) => logger.error(e));
 		});
 		defaultSoundAlert.audio.setSinkId(outputDeviceId);
 	};

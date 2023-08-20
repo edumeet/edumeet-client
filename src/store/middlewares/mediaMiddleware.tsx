@@ -10,7 +10,6 @@ import { Logger } from 'edumeet-common';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { mediaActions } from '../slices/mediaSlice';
-import { settingsActions } from '../slices/settingsSlice';
 
 const logger = new Logger('MediaMiddleware');
 

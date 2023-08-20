@@ -6,8 +6,6 @@ This is the client service for the Edumeet project.
 ![](img/edumeet-client.drawio.png)
 
 ## Usage
-This is the client service for the Edumeet project.
-
 ### Running the service in development
 
 This will start the service using https with a self-signed certificate. It's exposed on port `4443`.

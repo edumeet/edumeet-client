@@ -159,11 +159,18 @@ export class MediaService extends EventEmitter {
 		logger.debug('setAudioOutputDeviceId() [deviceId: %s]', deviceId);
 		if (deviceId === this.audioOutputDeviceId) return;
 		this.audioOutputDeviceId = deviceId;
+
+		// Clean up existing audio elements.
+		this.audioOutputElements.forEach((aoe) => {
+			aoe.pause();
+		});
 		this.audioOutputElements.clear();
+
+		// Create new audio elements.
 		this.consumers.forEach((c) => {
 			const audioElement = this.#createAudioOutputElement(c);
 
-			this.audioOutputElements.set(c.id, audioElement as HTMLMediaElementWithSink);
+			this.audioOutputElements.set(c.id, audioElement);
 		});
 	}
 
@@ -171,12 +178,14 @@ export class MediaService extends EventEmitter {
 		logger.debug('#createAudioOutputElement [consumer.id: %s]', consumer.id);
 		if (!this.audioOutputDeviceId) throw new Error('No audio output device id set');
 		const audioElement = new Audio() as HTMLMediaElementWithSink;
+
+		audioElement.autoplay = true;
 		const stream = new MediaStream();
 
 		stream.addTrack(consumer.track);
 		audioElement.srcObject = stream;
 
-		audioElement.setSinkId(this.audioOutputDeviceId);
+		audioElement.setSinkId(this.audioOutputDeviceId).catch((e) => logger.error(e));
 		
 		return audioElement;
 	}
@@ -463,6 +472,9 @@ export class MediaService extends EventEmitter {
 
 						consumer.observer.once('close', () => {
 							this.audioOutputElements.delete(consumer.id);
+							const audioElement = this.consumers.get(consumer.id);
+
+							audioElement?.pause();
 							this.consumers.delete(consumer.id);
 						});
 

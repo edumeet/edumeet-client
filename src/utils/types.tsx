@@ -128,7 +128,7 @@ export interface EdumeetConfig {
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
 	// eslint-disable-next-line no-unused-vars
-	setSinkId(deviceId: string): void
+	setSinkId(deviceId: string): Promise<void>
 }
 
 export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
