@@ -737,3 +737,8 @@ export const mediaNodeConnectionError = (): string => intl.formatMessage({
 	id: 'svc.mediaConnectionNodeError',
 	defaultMessage: 'Media-node service connection error'
 });
+
+export const mediaNodeConnectionSuccess = (): string => intl.formatMessage({
+	id: 'svc.mediaConnectionNodeSuccess',
+	defaultMessage: 'Got connection to Media-node service'
+});
