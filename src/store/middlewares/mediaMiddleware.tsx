@@ -76,6 +76,8 @@ const createMediaMiddleware = ({
 								options: { variant: 'error' }
 							}));
 						dispatch(meActions.setMediaConnectionStatus('error'));
+						dispatch(mediaActions.resetLiveMic());
+						dispatch(mediaActions.resetLiveWebcam());
 					}
 
 					if (notification.method === 'mediaConnectionError') {

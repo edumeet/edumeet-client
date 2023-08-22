@@ -86,7 +86,15 @@ const mediaSlice = createSlice({
 		}),
 		testAudioOutput: () => {
 			// handle in middleWare
-		}
+		},
+		resetLiveWebcam: ((state) => {
+			state.liveVideoDeviceId = undefined;
+			state.videoMuted = true;
+		}),
+		resetLiveMic: ((state) => {
+			state.liveAudioInputDeviceId = undefined;
+			state.audioMuted = true;
+		})
 	},
 	extraReducers: (builder) => {
 		builder
