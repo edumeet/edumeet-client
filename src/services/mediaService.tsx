@@ -156,6 +156,7 @@ export class MediaService extends EventEmitter {
 		}
 
 		this.liveTracks.clear();
+		this.previewTracks.clear();
 		this.monitor?.close();
 	}
 
@@ -733,6 +734,7 @@ export class MediaService extends EventEmitter {
 			this.recvTransport = await this.createTransport('createRecvTransport', iceServers);
 		} catch (error) {
 			logger.error('error on starting mediasoup transports [error:%o]', error);
+			throw error;
 		}
 
 		return {

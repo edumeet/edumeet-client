@@ -6,6 +6,9 @@ import { SocketMessage } from '../utils/types';
 export declare interface SignalingService {
 	on(event: 'connected', listener: () => void): this;
 	on(event: 'reconnecting', listener: () => void): this;
+	on(event: 'reconnect_attempt', listener: (attempt: number) => void): this;
+	on(event: 'reconnect_error', listener: (error: Error) => void): this;
+	on(event: 'error', listener: (error: Error) => void): this;
 	on(event: 'close', listener: () => void): this;
 	on(event: 'notification', listener: InboundNotification): this;
 	on(event: 'request', listener: InboundRequest): this;
@@ -45,16 +48,31 @@ export class SignalingService extends EventEmitter {
 
 		this.connections.add(connection);
 
-		connection.on('notification', async (notification) => {
+		connection.on('notification', (notification) => {
 			logger.debug('notification received [method: %s]', notification.method);
 
 			this.emit('notification', notification);
 		});
 
-		connection.on('request', async (request, respond, reject) => {
+		connection.on('request', (request, respond, reject) => {
 			logger.debug('request received [method: %s]', request.method);
 
 			this.emit('request', request, respond, reject);
+		});
+
+		connection.on('reconnect_attempt', (attempt: number) => {
+			logger.debug('reconnect attempt %s', attempt);
+			this.emit('reconnect_attempt', attempt);
+		});
+		
+		connection.on('reconnect_error', (error) => {
+			logger.debug('reconnect_error %o', error);
+			// this.emit('reconnect_error', error);
+		});
+		
+		connection.on('error', (error) => {
+			logger.debug('error %o', error);
+			this.emit('error', error);
 		});
 
 		connection.on('connect', () => {
@@ -76,6 +94,7 @@ export class SignalingService extends EventEmitter {
 		});
 
 		connection.once('close', () => {
+			logger.debug('close');
 			this.connections.remove(connection);
 
 			if (this.connections.length === 0)

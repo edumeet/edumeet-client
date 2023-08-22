@@ -111,6 +111,7 @@ export const leaveRoom = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('leaveRoom()');
 
+	mediaService.removeAllListeners();
 	mediaService.close();
 	dispatch(signalingActions.disconnect());
 	dispatch(meActions.resetMe());

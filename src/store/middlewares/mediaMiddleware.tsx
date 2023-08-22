@@ -11,7 +11,8 @@ import { notificationsActions } from '../slices/notificationsSlice';
 import { mediaActions } from '../slices/mediaSlice';
 import { mediaNodeConnectionError, mediaNodeConnectionSuccess, mediaNodeSvcUnavailable } from '../../components/translated/translatedComponents';
 import { meActions } from '../slices/meSlice';
-import { startMedia } from '../actions/mediaActions';
+import { startMedia, stopLiveMic, stopLiveWebcam } from '../actions/mediaActions';
+import { signalingActions } from '../slices/signalingSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -45,12 +46,20 @@ const createMediaMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
+			if (signalingActions.setReconnectAttempts.match(action) && action.payload > 2) {
+				// At this point it's probably safe to assume something's wrong.
+				dispatch(meActions.setMediaConnectionStatus('error'));
+				dispatch(stopLiveWebcam());
+				dispatch(stopLiveMic());
+			}
+
 			const { canSelectAudioOutput } = getState().me;
 
 			if (canSelectAudioOutput && mediaActions.setLiveAudioOutputDeviceId.match(action)) {
 				if (typeof action.payload === 'string') mediaService.setAudioOutputDeviceId(action.payload);
 			}
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
+
 				signalingService.on('notification', (notification) => {
 					if (notification.method === 'mediaReady') {
 						const { mediaConnectionStatus, startMediaServiceInProgress } = getState().me;
@@ -178,18 +187,18 @@ const createMediaMiddleware = ({
 			}
 			
 			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'not_connected') {
-				mediaService.removeAllListeners();
 				mediaService.close();
+				mediaService.removeAllListeners();
 			}
 			
 			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'error') {
-				mediaService.removeAllListeners();
 				mediaService.close();
+				mediaService.removeAllListeners();
 			}
 
 			if (roomActions.setState.match(action) && action.payload === 'left') {
-				mediaService.removeAllListeners();
 				mediaService.close();
+				mediaService.removeAllListeners();
 			}
 
 			// These actions are dispatched from the UI somewhere manually (button clicks, etc)

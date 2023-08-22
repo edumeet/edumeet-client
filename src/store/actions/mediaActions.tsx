@@ -92,7 +92,7 @@ export const startMedia = (): AppThunk<Promise<void>> => async (
 		});
 
 	} catch (error) {
-		logger.error(error);
+		logger.error('startMedia() [error: %o]', error);
 		mediaService.removeAllListeners();
 		mediaService.close();
 	} finally {
@@ -555,6 +555,32 @@ export const updateLiveMic = (): AppThunk<Promise<void>> => async (
 };
 
 /**
+ * This thunk action stops the preview video track.
+ * 
+ * @param options - Options.
+ * @returns {void}
+ */
+export const stopLiveMic = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService }
+): Promise<void> => {
+	logger.debug('stopLiveWebcam()');
+	dispatch(mediaActions.setAudioInProgress(true));
+	const { liveMicTrackId } = getState().media;
+
+	if (liveMicTrackId) {
+		const track = mediaService.getTrack(liveMicTrackId, 'liveTracks');
+
+		dispatch(mediaActions.resetLiveMic());
+		mediaService.removeLiveTrack(track?.id);
+		track?.stop();
+	}
+
+	dispatch(mediaActions.setAudioInProgress(false));
+};
+
+/**
  * This thunk action updates the video settings in the store,
  * stops the preview video track, starts/restarts the main video
  * track and starts/restarts the preview video track.
@@ -770,7 +796,7 @@ export const stopLiveWebcam = (): AppThunk<Promise<void>> => async (
 	if (liveWebcamTrackId) {
 		const track = mediaService.getTrack(liveWebcamTrackId, 'liveTracks');
 
-		dispatch(mediaActions.setLiveWebcamTrackId());
+		dispatch(mediaActions.resetLiveWebcam());
 		mediaService.removeLiveTrack(track?.id);
 		track?.stop();
 	}

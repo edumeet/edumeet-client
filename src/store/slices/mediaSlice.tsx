@@ -89,10 +89,12 @@ const mediaSlice = createSlice({
 		},
 		resetLiveWebcam: ((state) => {
 			state.liveVideoDeviceId = undefined;
+			state.liveWebcamTrackId = undefined;
 			state.videoMuted = true;
 		}),
 		resetLiveMic: ((state) => {
 			state.liveAudioInputDeviceId = undefined;
+			state.liveMicTrackId = undefined;
 			state.audioMuted = true;
 		})
 	},

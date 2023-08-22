@@ -5,11 +5,13 @@ export type SignalingConnectionState = 'new' | 'connecting' | 'connected' | 'rec
 export interface SignalingState {
 	state: SignalingConnectionState;
 	url: string;
+	reconnectAttempts: number
 }
 
 const initialState: SignalingState = {
 	state: 'new',
 	url: 'wss://localhost',
+	reconnectAttempts: 0
 };
 
 const signalingSlice = createSlice({
@@ -31,6 +33,10 @@ const signalingSlice = createSlice({
 		setUrl: ((state, action: PayloadAction<string>) => {
 			state.url = action.payload;
 		}),
+		setReconnectAttempts: ((state, action: PayloadAction<number>) => {
+			state.reconnectAttempts = action.payload;
+		}),
+
 	},
 });
 
