@@ -725,20 +725,40 @@ export const blurBackgroundNotSupported = (): string => intl.formatMessage({
 
 export const mgmtSvcUnavailable = (): string => intl.formatMessage({
 	id: 'svc.mgmtUnavailable',
-	defaultMessage: 'Management service unavailable'
+	defaultMessage: 'Management service: Unavailable'
 });
 
 export const mediaNodeSvcUnavailable = (): string => intl.formatMessage({
 	id: 'svc.mediaNodeUnavailable',
-	defaultMessage: 'Media-node service unavailable'
+	defaultMessage: 'Media-node service: Unavailable'
 });
 
 export const mediaNodeConnectionError = (): string => intl.formatMessage({
 	id: 'svc.mediaConnectionNodeError',
-	defaultMessage: 'Media-node service connection error'
+	defaultMessage: 'Media-node service: Connection error'
 });
 
 export const mediaNodeConnectionSuccess = (): string => intl.formatMessage({
 	id: 'svc.mediaConnectionNodeSuccess',
-	defaultMessage: 'Got connection to Media-node service'
+	defaultMessage: 'Media-Node service: Got connection'
+});
+
+export const roomServerLostConnection = (): string => intl.formatMessage({
+	id: 'svc.roomServerLostConnection',
+	defaultMessage: 'Room-server: Lost connection'
+});
+
+export const roomServerRetryingConection = (attempt: number): string => intl.formatMessage({
+	id: 'svc.roomServerRetryingConnection',
+	defaultMessage: `Room-server: Retrying connection. Attempt: ${attempt}`
+});
+
+export const roomServerConnectionError = (message: string): string => intl.formatMessage({
+	id: 'svc.roomServerConnectionError',
+	defaultMessage: `Room-server: ${message}`
+});
+
+export const roomServerConnectionSuccess = (): string => intl.formatMessage({
+	id: 'svc.roomServerConnectionSuccess',
+	defaultMessage: 'Room-server: Got connection'
 });
