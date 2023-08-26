@@ -15,13 +15,14 @@ const SettingsButton = ({
 }: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const settingsOpen = useAppSelector((state) => state.ui.settingsOpen);
+	const { liveAudioInputDeviceId, liveVideoDeviceId } = useAppSelector((state) => state.media);
 
 	return (
 		<ControlButton
 			toolTip={showSettingsLabel()}
 			onClick={() => {
-				dispatch(updatePreviewMic());
-				dispatch(updatePreviewWebcam());
+				dispatch(updatePreviewMic(liveAudioInputDeviceId));
+				dispatch(updatePreviewWebcam(liveVideoDeviceId));
 				dispatch(uiActions.setUi({ settingsOpen: !settingsOpen }));
 			}}
 			{ ...props }
