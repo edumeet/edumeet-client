@@ -8,13 +8,14 @@ import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { updatePreviewMic, stopPreviewMic } from '../../store/actions/mediaActions';
+import { mediaActions } from '../../store/slices/mediaSlice';
 
 const MicPreviewButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	const {
 		previewMicTrackId,
-		audioInProgress,
+		audioInProgress, previewAudioInputDeviceId
 	} = useAppSelector((state) => state.media);
 
 	let micState: MediaState, micTip;
@@ -32,8 +33,9 @@ const MicPreviewButton = (props: ControlButtonProps): JSX.Element => {
 			toolTip={micTip}
 			onClick={() => {
 				if (micState === 'off') {
-					dispatch(updatePreviewMic());
+					dispatch(updatePreviewMic(previewAudioInputDeviceId));
 				} else if (previewMicTrackId) {
+					dispatch(mediaActions.setAudioMuted(true));
 					dispatch(stopPreviewMic());
 				} else {
 					// Shouldn't happen
