@@ -7,7 +7,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	developmentPort: 8443,
 	productionPort: 443,
 	serverHostname: undefined,
-	lastN: 11,
 	hideNonVideo: false,
 	resolution: 'medium',
 	frameRate: 30,
@@ -97,7 +96,6 @@ export interface EdumeetConfig {
 	developmentPort: number;
 	productionPort: number;
 	serverHostname?: string;
-	lastN: number;
 	hideNonVideo: boolean;
 	resolution: Resolution;
 	frameRate: number;

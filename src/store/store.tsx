@@ -67,7 +67,7 @@ const persistConfig = {
 	key: 'root',
 	storage,
 	stateReconciler: autoMergeLevel2,
-	whitelist: [ 'settings', 'intl', 'config' ],
+	whitelist: [ 'settings' ]
 };
 
 const signalingService = new SignalingService();
