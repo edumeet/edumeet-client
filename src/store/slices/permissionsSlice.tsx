@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { PERSIST } from 'redux-persist';
 import { Permission } from '../../utils/roles';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { roomActions } from './roomSlice';
-import { PERSIST } from 'redux-persist';
 
 export interface PermissionsState {
 	loginEnabled: boolean;
