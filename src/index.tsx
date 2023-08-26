@@ -6,12 +6,14 @@ import './index.css';
 import debug from 'debug';
 import App from './App';
 import {
+	persistor,
 	store,
 	mediaService,
 	fileService,
 	ServiceContext
 } from './store/store';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { detectDevice } from 'mediasoup-client';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
@@ -80,13 +82,15 @@ root.render(
 	<React.StrictMode>
 		<CssBaseline />
 		<Provider store={store}>
-			<ThemeProvider theme={theme}>
-				<RawIntlProvider value={intl}>
-					<ServiceContext.Provider value={{ mediaService, fileService }}>
-						<RootComponent />
-					</ServiceContext.Provider>
-				</RawIntlProvider>
-			</ThemeProvider>
+			<PersistGate persistor={persistor}>
+				<ThemeProvider theme={theme}>
+					<RawIntlProvider value={intl}>
+						<ServiceContext.Provider value={{ mediaService, fileService }}>
+							<RootComponent />
+						</ServiceContext.Provider>
+					</RawIntlProvider>
+				</ThemeProvider>
+			</PersistGate>
 		</Provider>
 	</React.StrictMode>
 );

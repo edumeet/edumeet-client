@@ -5,6 +5,18 @@ import {
 	Action,
 } from '@reduxjs/toolkit';
 import { createLogger } from 'redux-logger';
+import {
+	persistStore,
+	persistReducer,
+	FLUSH,
+	REHYDRATE,
+	PAUSE,
+	PERSIST,
+	PURGE,
+	REGISTER,
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import { MediaService } from '../services/mediaService';
 import { SignalingService } from '../services/signalingService';
 import createMediaMiddleware from './middlewares/mediaMiddleware';
@@ -50,6 +62,13 @@ export interface MiddlewareOptions {
 	effectService: EffectService;
 	config: EdumeetConfig;
 }
+
+const persistConfig = {
+	key: 'root',
+	storage,
+	stateReconciler: autoMergeLevel2,
+	whitelist: [ 'settings' ]
+};
 
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
@@ -100,10 +119,15 @@ const reducer = combineReducers({
 	media: mediaSlice.reducer
 });
 
+const pReducer = persistReducer<RootState>(persistConfig, reducer);
+
 export const store = configureStore({
-	reducer: reducer,
+	reducer: pReducer,
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
+			serializableCheck: {
+				ignoredActions: [ FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER ],
+			},
 			thunk: {
 				extraArgument: middlewareOptions
 			}
@@ -126,6 +150,7 @@ export const store = configureStore({
 		)
 });
 
+export const persistor = persistStore(store);
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof reducer>;
 export type AppThunk<ReturnType = void> = ThunkAction<
