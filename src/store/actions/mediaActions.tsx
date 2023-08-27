@@ -190,7 +190,6 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 		const track = mediaService.getTrack(previewMicTrackId, 'previewTracks');
 
 		dispatch(mediaActions.setPreviewMicTrackId());
-		dispatch(mediaActions.setPreviewAudioInputDeviceId());
 
 		mediaService.removePreviewTrack(track?.id);
 		track?.stop();
@@ -198,7 +197,6 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 
 	delete mediaService.previewVolumeWatcher;
 
-	dispatch(mediaActions.setPreviewAudioInputDeviceId());
 	dispatch(mediaActions.setAudioInProgress(false));
 };
 
@@ -326,7 +324,6 @@ export const stopPreviewWebcam = (): AppThunk<Promise<void>> => async (
 	}
 
 	previewBlurBackground && effectService.stopBlurEffect('preview');
-	dispatch(mediaActions.setPreviewVideoDeviceId());
 	dispatch(mediaActions.setVideoInProgress(false));
 };
 
