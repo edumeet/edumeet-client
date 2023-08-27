@@ -27,8 +27,9 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const { displayName } = useAppSelector((state) => state.settings);
 	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
 	const mediaLoading = useAppSelector((state) => state.media.videoInProgress || state.media.audioInProgress);
-	const { previewAudioInputDeviceId, previewVideoDeviceId } = useAppSelector((state) => state.media);
 	const isMobile = useAppSelector(isMobileSelector);
+	const showAudioChooser = useAppSelector((state) => state.media.previewAudioInputDeviceId && !state.media.audioMuted);
+	const showVideoChooser = useAppSelector((state) => state.media.previewVideoDeviceId && !state.media.videoMuted);
 
 	const [ name, setName ] = useState(displayName || '');
 
@@ -71,9 +72,9 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 			content={
 				<>
 					<MediaPreview />
-					{previewAudioInputDeviceId && <AudioInputChooser /> }
-					{previewVideoDeviceId && <VideoInputChooser /> }
-					{!isMobile && previewVideoDeviceId && <BlurBackgroundSwitch />}
+					{showAudioChooser && <AudioInputChooser /> }
+					{showVideoChooser && <VideoInputChooser /> }
+					{showVideoChooser && !isMobile && <BlurBackgroundSwitch />}
 					<ChooserDiv>
 						<TextInputField
 							label={yourNameLabel()}
