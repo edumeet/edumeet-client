@@ -31,7 +31,7 @@
 		"hark": "^1.2.3",
 		"https-browserify": "^1.0.0",
 		"marked": "^5.0.5",
-		"mediasoup-client": "^3.6.84",
+		"mediasoup-client": "^3.6.100",
 		"notistack": "^3.0.1",
 		"random-string": "^0.2.0",
 		"react": "^18.2.0",
