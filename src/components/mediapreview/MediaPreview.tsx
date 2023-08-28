@@ -8,7 +8,6 @@ import VideoView from '../videoview/VideoView';
 import { useContext } from 'react';
 import { ServiceContext } from '../../store/store';
 import Volume from '../volume/Volume';
-import TestAudioOutputButton from '../controlbuttons/TestAudioOutputButton';
 
 interface MediaPreviewProps {
 	withControls?: boolean;
@@ -47,7 +46,6 @@ const MediaPreview = ({
 							offColor='error'
 							disabledColor='default'
 						/>
-						<TestAudioOutputButton />
 					</MediaControls>
 				)}
 				{ previewWebcamTrackId && <VideoView

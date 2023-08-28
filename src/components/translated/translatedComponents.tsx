@@ -523,9 +523,9 @@ export const advancedSettingsLabel = (): string => intl.formatMessage({
 // 	defaultMessage: 'Audio output device'
 // });
 
-export const testAudioOutputLabel = (): string => intl.formatMessage({
-	id: 'settings.testAudioOutput',
-	defaultMessage: 'Test audio output'
+export const tryToLoadAudioDevices = (): string => intl.formatMessage({
+	id: 'settings.tryToLoadAudioDevices',
+	defaultMessage: 'Try to load audio devices'
 });
 
 export const selectAudioInputDeviceLabel = (): string => intl.formatMessage({

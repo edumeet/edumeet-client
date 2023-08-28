@@ -15,6 +15,7 @@ import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
 import { isMobileSelector } from '../../store/selectors';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
+import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 
 interface JoinProps {
 	roomId: string;
@@ -30,6 +31,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const isMobile = useAppSelector(isMobileSelector);
 	const showAudioChooser = useAppSelector((state) => state.media.previewAudioInputDeviceId && !state.media.audioMuted);
 	const showVideoChooser = useAppSelector((state) => state.media.previewVideoDeviceId && !state.media.videoMuted);
+	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
 
 	const [ name, setName ] = useState(displayName || '');
 
@@ -75,6 +77,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 					{showAudioChooser && <AudioInputChooser /> }
 					{showVideoChooser && <VideoInputChooser /> }
 					{showVideoChooser && !isMobile && <BlurBackgroundSwitch />}
+					{canSelectAudioOutput && <AudioOutputChooser /> }
 					<ChooserDiv>
 						<TextInputField
 							label={yourNameLabel()}
