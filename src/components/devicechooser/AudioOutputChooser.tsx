@@ -50,7 +50,7 @@ const AudioOutputChooser = ({
 	return (
 		<ChooserDiv>
 			<DeviceChooser
-				value={previewAudioOutputDeviceId ?? hasDevices ? audioDevices[0].deviceId : ''}
+				value={previewAudioOutputDeviceId ?? ''}
 				setValue={handleDeviceChange}
 				devicesLabel={hasDevices ? selectAudioOutputDeviceLabel() : noAudioOutputDevicesLabel()}
 				noDevicesLabel={noAudioOutputDevicesLabel()}
