@@ -184,6 +184,7 @@
 	"settings.aspectRatio": "Video aspect ratio",
 	"settings.audioInput": "Audio device",
 	"settings.audioOutput": "Audio output device",
+	"settings.tryToLoadAudioDevices": "Try to load audio devices",
 	"settings.audioPreset": "Select the audio preset",
 	"settings.autoGainControl": "Auto gain control",
 	"settings.buttonControlBar": "Separate media controls",

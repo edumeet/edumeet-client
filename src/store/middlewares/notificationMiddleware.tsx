@@ -104,6 +104,10 @@ const createNotificationMiddleware = ({
 				if (mediaActions.setPreviewAudioOutputDeviceId.match(action)) {
 					if (action.payload) attachAudioOutput(action.payload);
 				}
+				
+				if (mediaActions.setLiveAudioOutputDeviceId.match(action)) {
+					if (action.payload) attachAudioOutput(action.payload);
+				}
 			}
 
 			return next(action);

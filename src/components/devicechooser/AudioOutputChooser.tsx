@@ -7,28 +7,38 @@ import {
 import {
 	applyLabel,
 	noAudioOutputDevicesLabel,
-	selectAudioOutputDeviceLabel
+	selectAudioOutputDeviceLabel,
+	tryToLoadAudioDevices
 } from '../translated/translatedComponents';
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 import { mediaActions } from '../../store/slices/mediaSlice';
-import { Logger } from 'edumeet-common';
-
-const logger = new Logger('AudioOutputChooser');
+import { getUserMedia } from '../../store/actions/mediaActions';
 
 interface AudioInputChooserProps {
 	withConfirm?: boolean;
 }
+
+const dummyDevice = {
+	kind: 'audiooutput',
+	label: tryToLoadAudioDevices(),
+	deviceId: 'TRY_TO_LOAD_AUDIO_DEVICES'
+} as MediaDeviceInfo;
 
 const AudioOutputChooser = ({
 	withConfirm
 }: AudioInputChooserProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const audioDevices = useDeviceSelector('audiooutput');
+	const hasDevices = audioDevices.length > 0;
 	const { audioInProgress, previewAudioOutputDeviceId } = useAppSelector((state) => state.media);
 
 	const handleDeviceChange = (deviceId: string): void => {
+		if (deviceId === dummyDevice.deviceId) {
+			dispatch(getUserMedia('audio'));
+			
+			return;
+		}
 		if (deviceId) {
-			logger.debug('output deviceId: %s', deviceId);
 			dispatch(mediaActions.setPreviewAudioOutputDeviceId(deviceId));
 		}
 	};
@@ -42,14 +52,13 @@ const AudioOutputChooser = ({
 			<DeviceChooser
 				value={previewAudioOutputDeviceId ?? ''}
 				setValue={handleDeviceChange}
-				devicesLabel={selectAudioOutputDeviceLabel()}
+				devicesLabel={hasDevices ? selectAudioOutputDeviceLabel() : noAudioOutputDevicesLabel()}
 				noDevicesLabel={noAudioOutputDevicesLabel()}
-				disabled={audioDevices.length === 0 || audioInProgress}
-				devices={audioDevices}
+				disabled={audioInProgress}
+				devices={hasDevices ? audioDevices : [ dummyDevice ]}
 			/>
-			<Button onClick={() => dispatch(mediaActions.testAudioOutput())}
-				disabled={audioDevices.length === 0}>
-				Test
+			<Button onClick={() => dispatch(mediaActions.testAudioOutput())}>
+				test
 			</Button>
 			{withConfirm && (
 				<Button
