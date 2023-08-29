@@ -543,6 +543,10 @@ export class MediaService extends EventEmitter {
 
 						break;
 					}
+
+					case 'consumerScore': {
+						logger.error(notification.data);
+					}
 				}
 			} catch (error) {
 				logger.error('error on signalService "notification" event [error:%o]', error);
@@ -924,11 +928,11 @@ export class MediaService extends EventEmitter {
 	}
 
 	public initMonitor(): void {
-		if (!edumeetConfig.observertc) {
+		logger.debug('initMonitor()');
+		if (!edumeetConfig.observertc.enabled) {
 			return;
 		}
-
-		this.monitor = createClientMonitor(edumeetConfig.observertc);
+		this.monitor = createClientMonitor(edumeetConfig.observertc.config);
 		this.monitor.collectors.addMediasoupDevice(this.mediasoup);
 		this.monitor.events.onStatsCollected((statsEntries) => {
 			logger.debug('initMonitor(): The latest stats entries [statsEntries: %o]', statsEntries);
