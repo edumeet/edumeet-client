@@ -16,13 +16,16 @@ import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
 import { isMobileSelector } from '../../store/selectors';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
+import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 
-const Lobby = (): JSX.Element => {
+const Lobby = (): React.JSX.Element => {
 	useNotifier();
 
 	const dispatch = useAppDispatch();
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const isMobile = useAppSelector(isMobileSelector);
+	const showAudioChooser = useAppSelector((state) => state.media.previewAudioInputDeviceId && !state.media.audioMuted);
+	const showVideoChooser = useAppSelector((state) => state.media.previewVideoDeviceId && !state.media.videoMuted);
 	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
 
@@ -38,17 +41,18 @@ const Lobby = (): JSX.Element => {
 			content={
 				<>
 					<MediaPreview />
-					<AudioInputChooser />
+					{showAudioChooser && <AudioInputChooser /> }
+					{showVideoChooser && <VideoInputChooser /> }
+					{showVideoChooser && !isMobile && <BlurBackgroundSwitch />}
 					{canSelectAudioOutput && <AudioOutputChooser /> }
-					<VideoInputChooser />
-					{!isMobile && <BlurBackgroundSwitch />}
-					<TextInputField
-						label={yourNameLabel()}
-						value={localDisplayName ?? 'Guest'}
-						setValue={setLocalDisplayName}
-						startAdornment={<AccountCircle />}
-						onBlur={handleDisplayNameChange}
-					/>
+					<ChooserDiv>
+						<TextInputField
+							label={yourNameLabel()}
+							value={localDisplayName ?? 'Guest'}
+							setValue={setLocalDisplayName}
+							startAdornment={<AccountCircle />}
+							onBlur={handleDisplayNameChange}
+						/></ChooserDiv>
 				</>
 			}
 			actions={roomLockedLabel()}

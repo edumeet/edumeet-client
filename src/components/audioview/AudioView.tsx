@@ -1,16 +1,22 @@
 import { useContext, useEffect, useRef } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 import { ServiceContext } from '../../store/store';
+import { HTMLMediaElementWithSink } from '../../utils/types';
+import { Logger } from 'edumeet-common';
+
+const logger = new Logger('AudioView');
 
 interface AudioViewProps {
 	consumer: StateConsumer;
+	deviceId?: string
 }
 
 const AudioView = ({
-	consumer
+	consumer,
+	deviceId
 }: AudioViewProps): JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
-	const audioElement = useRef<HTMLAudioElement>(null);
+	const audioElement = useRef<HTMLMediaElementWithSink>(null);
 
 	useEffect(() => {
 		const { track } = mediaService.getConsumer(consumer.id) ?? {};
@@ -27,6 +33,13 @@ const AudioView = ({
 		stream.addTrack(track);
 		audioElement.current.srcObject = stream;
 
+		if (deviceId) {
+			audioElement.current.oncanplay = () => {
+				if (audioElement.current)
+					audioElement.current.setSinkId(deviceId).catch((e) => logger.error(e));
+			};
+		}
+
 		return () => {
 			if (audioElement.current) {
 				audioElement.current.srcObject = null;
@@ -34,7 +47,7 @@ const AudioView = ({
 				audioElement.current.onpause = null;
 			}
 		};
-	}, []);
+	}, [ deviceId ]);
 
 	useEffect(() => {
 		const { audioGain } = consumer;
