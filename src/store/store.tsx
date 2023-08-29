@@ -73,7 +73,7 @@ const persistConfig = {
 const mediaPersistConfig = {
 	key: 'edumeetMedia',
 	storage,
-	whitelist: [ 'previewVideoDeviceId', 'previewAudioInputDeviceId' ]
+	whitelist: [ 'previewVideoDeviceId', 'previewAudioInputDeviceId', 'previewAudioOutputDeviceId' ]
 };
 
 const signalingService = new SignalingService();
