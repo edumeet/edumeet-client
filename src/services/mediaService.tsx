@@ -74,11 +74,15 @@ export declare interface MediaService {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'consumerResumed', listener: (consumer: Consumer) => void): this;
 	// eslint-disable-next-line no-unused-vars
+	on(event: 'consumerScore', listener: (consumerId: string, score: number) => void): this;
+	// eslint-disable-next-line no-unused-vars
 	on(event: 'producerClosed', listener: (producer: Producer) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'producerPaused', listener: (producer: Producer) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'producerResumed', listener: (producer: Producer) => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'producerScore', listener: (producerId: string, score: number) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'transcriptionStarted', listener: () => void): this;
 	// eslint-disable-next-line no-unused-vars
@@ -545,7 +549,19 @@ export class MediaService extends EventEmitter {
 					}
 
 					case 'consumerScore': {
-						logger.error(notification.data);
+						const { consumerId, score: { score } } = notification.data;
+
+						this.emit('consumerScore', consumerId, score);
+						break;
+					}
+
+					case 'producerScore': {
+						const { producerId, score } = notification.data;
+						const lowestScore = score.reduce((prev, curr) =>
+							(prev.score < curr.score ? prev : curr));
+
+						this.emit('producerScore', producerId, lowestScore.score);
+						break;
 					}
 				}
 			} catch (error) {

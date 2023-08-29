@@ -10,6 +10,7 @@ import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
+import RTPQuality from '../rtpquality/RtpQuality';
 
 interface MeProps {
 	style: Record<'width' | 'height', number>
@@ -32,7 +33,8 @@ const Me = ({
 	const isActiveSpeaker = useIsActiveSpeaker(id);
 	const isMobile = useAppSelector(isMobileSelector);
 	const showStats = useAppSelector((state) => state.ui.showStats);
-	
+	const score = webcamProducer?.score ?? micProducer?.score;
+
 	return (
 		<>
 			{ !hideSelfView && (
@@ -46,6 +48,7 @@ const Me = ({
 					<DisplayName disabled={false} displayName={displayName} isMe />
 					{ micProducer && !isMobile && <UnmuteAlert micProducer={micProducer} /> }
 					{ micProducer && <Volume producer={micProducer} /> }
+					{typeof score === 'number' && score < 10 && <RTPQuality score={score} />}
 					{ webcamProducer && <VideoView
 						mirrored={mirroredSelfView}
 						producer={webcamProducer}
