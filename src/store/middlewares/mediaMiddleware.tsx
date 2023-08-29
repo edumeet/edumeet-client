@@ -48,12 +48,6 @@ const createMediaMiddleware = ({
 				mediaService.init();
 			}
 
-			const { canSelectAudioOutput } = getState().me;
-
-			if (canSelectAudioOutput && mediaActions.setLiveAudioOutputDeviceId.match(action)) {
-				if (typeof action.payload === 'string') mediaService.setAudioOutputDeviceId(action.payload);
-			}
-
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
 				// Server has provided us with a new Consumer. The MediaService
 				// has created it for us and we need to add it to the store.
