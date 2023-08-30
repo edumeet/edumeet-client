@@ -11,7 +11,7 @@ export interface StateConsumer {
 	localPaused: boolean;
 	remotePaused: boolean;
 	source: ProducerSource;
-	score: number
+	score?: number
 }
 
 type ConsumersState = StateConsumer[];
