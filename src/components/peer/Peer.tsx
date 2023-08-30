@@ -12,6 +12,7 @@ import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import PeerStatsView from '../peerstatsview/PeerStatsView';
 import PeerTranscription from '../peertranscription/PeerTranscription';
+import RTPQuality from '../rtpquality/RtpQuality';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
@@ -38,6 +39,7 @@ const Peer = ({
 	const showParticipant = !hideNonVideo || (hideNonVideo && webcamConsumer);
 	const showStats = useAppSelector((state) => state.ui.showStats);
 	const isMobile = useAppSelector(isMobileSelector);
+	const score = webcamConsumer?.score ?? micConsumer?.score;
 
 	return (
 		<>
@@ -65,6 +67,7 @@ const Peer = ({
 					</MediaControls>
 					<PeerTranscription id={id} />
 					{ micConsumer && <Volume consumer={micConsumer} /> }
+					{typeof score === 'number' && score < 11 && <RTPQuality score={score} />}
 					{ webcamConsumer && <VideoView consumer={webcamConsumer} /> }
 					{ webcamConsumer && showStats && <PeerStatsView consumerId={webcamConsumer.id}/> }
 				</VideoBox>
