@@ -557,7 +557,7 @@ export class MediaService extends EventEmitter {
 
 					case 'producerScore': {
 						const { producerId, score } = notification.data;
-						const lowestScore = score.reduce((prev, curr) =>
+						const lowestScore = score.reduce((prev: {score:number}, curr: { score: number }) =>
 							(prev.score < curr.score ? prev : curr));
 
 						this.emit('producerScore', producerId, lowestScore.score);

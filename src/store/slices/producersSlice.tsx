@@ -6,7 +6,7 @@ export interface StateProducer {
 	kind: string;
 	source: ProducerSource;
 	paused: boolean;
-	score: number;
+	score?: number;
 }
 
 export type ProducerSource = 'mic' | 'webcam' | 'screen' | 'extravideo';
