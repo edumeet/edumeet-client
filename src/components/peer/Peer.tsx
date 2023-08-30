@@ -67,7 +67,7 @@ const Peer = ({
 					</MediaControls>
 					<PeerTranscription id={id} />
 					{ micConsumer && <Volume consumer={micConsumer} /> }
-					{typeof score === 'number' && score < 11 && <RTPQuality score={score} />}
+					{typeof score === 'number' && score < 10 && <RTPQuality score={score} />}
 					{ webcamConsumer && <VideoView consumer={webcamConsumer} /> }
 					{ webcamConsumer && showStats && <PeerStatsView consumerId={webcamConsumer.id}/> }
 				</VideoBox>
