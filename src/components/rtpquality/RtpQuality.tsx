@@ -1,4 +1,4 @@
-import { SignalCellular0Bar, SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar, SignalCellularOff } from '@mui/icons-material';
+import { SignalCellular0Bar, SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar } from '@mui/icons-material';
 import { styled } from '@mui/material';
 import { orange, red, yellow } from '@mui/material/colors';
 import { isMobileSelector } from '../../store/selectors';
