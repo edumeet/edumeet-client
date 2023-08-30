@@ -148,6 +148,14 @@ const createMediaMiddleware = ({
 						options: { variant: 'error' }
 					}));
 				});
+
+				mediaService.on('consumerScore', (consumerId, score) => {
+					dispatch(consumersActions.setScore({ consumerId, score }));	
+				});
+				
+				mediaService.on('producerScore', (producerId, score) => {
+					dispatch(producersActions.setScore({ producerId, score }));	
+				});
 			}
 
 			if (roomActions.setState.match(action) && action.payload === 'left') {

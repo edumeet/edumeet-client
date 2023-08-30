@@ -85,8 +85,11 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
 	observertc: {
-		collectingPeriodInMs: 5000,
-		statsExpirationTimeInMs: 60000,
+		enabled: true,
+		config: {
+			collectingPeriodInMs: 5000,
+			statsExpirationTimeInMs: 60000,
+		}
 	}
 };
 
@@ -121,7 +124,10 @@ export interface EdumeetConfig {
 	notificationSounds: Record<NotificationType, NotificationSound>;
 	title: string;
 	theme: ThemeOptions;
-	observertc: ClientMonitorConfig;
+	observertc: {
+		enabled: boolean,
+		config: ClientMonitorConfig;
+	}
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {

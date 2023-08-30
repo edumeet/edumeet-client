@@ -6,6 +6,7 @@ export interface StateProducer {
 	kind: string;
 	source: ProducerSource;
 	paused: boolean;
+	score: number;
 }
 
 export type ProducerSource = 'mic' | 'webcam' | 'screen' | 'extravideo';
@@ -59,6 +60,14 @@ const producersSlice = createSlice({
 			if (producer)
 				producer.paused = false;
 		}),
+		setScore: ((state, action: PayloadAction<{ producerId: string, score: number}>) => {
+			const { producerId, score } = action.payload; 
+			const producer = state.find((c) => c.id === producerId);
+
+			if (producer) {
+				producer.score = score;
+			}
+		})
 	},
 	extraReducers: (builder) => {
 		builder
