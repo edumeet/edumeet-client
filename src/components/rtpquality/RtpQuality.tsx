@@ -1,18 +1,28 @@
 import { SignalCellular0Bar, SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar, SignalCellularOff } from '@mui/icons-material';
 import { styled } from '@mui/material';
 import { orange, red, yellow } from '@mui/material/colors';
-import { Logger } from 'edumeet-common';
+import { isMobileSelector } from '../../store/selectors';
+import { useAppSelector } from '../../store/hooks';
+import { cloneElement } from 'react';
 
-const logger = new Logger('RTPQuality');
+type RTPQualityContainerProps = {
+	size: number,
+	borderColor: string,
+	backgroundColor: string,
+	borderWidth: string 
+}
 
-const RTPQualityContainer = styled('div')(({ theme }) => ({
+const RTPQualityContainer = styled('div')<RTPQualityContainerProps>(({ theme, size, borderColor, backgroundColor, borderWidth }) => ({
 	position: 'absolute',
-	width: theme.spacing(5),
-	height: theme.spacing(5),
+	width: theme.spacing(size),
+	height: theme.spacing(size),
 	top: 5,
 	right: 5,
 	zIndex: 21,
-	backgroundColor: 'black'
+	backgroundColor,
+	borderColor,
+	borderWidth,
+	borderStyle: 'solid'
 }));
 
 interface RTPQualityProps {
@@ -22,47 +32,59 @@ interface RTPQualityProps {
 const RTPQuality = ({
 	score,
 }: RTPQualityProps): React.JSX.Element => {
-	let qualityElement = <SignalCellularOff style={{ color: red[500] }} fontSize='large'/>;
+	const isMobile = useAppSelector(isMobileSelector);
+	let qualityElement = undefined;
+	let borderColor = '';
 
-	logger.debug(score);
+	const backgroundColor = 'rgba(0,0,0,0.2)';
+	const fontSize = isMobile ? 'medium' : 'large'; 
+	const borderWidth = isMobile ? '1px': '2px';
+	const containerSize = isMobile ? 3.2 : 4.7;
 
 	switch (score) {
 		case 0:
 		case 1:
 		{
-			qualityElement = <SignalCellular0Bar style={{ color: red[500] }} fontSize='large'/>;
+			qualityElement = <SignalCellular0Bar style={{ color: red[400] }} />;
+			borderColor = red[400];
 			break;
 		}
 		case 2:
 		case 3:
 		{
-			qualityElement = <SignalCellular1Bar style={{ color: red[500] }} fontSize='large'/>;
+			qualityElement = <SignalCellular1Bar style={{ color: red[400] }} />;
+			borderColor = red[400];
 			break;
-
 		}				
 		case 4:
 		case 5:
 		case 6:
 		{
-			qualityElement = <SignalCellular2Bar style={{ color: orange[500] }}fontSize='large'/>;
+			qualityElement = <SignalCellular2Bar style={{ color: orange[400] }} />;
+			borderColor = orange[400];
 			break;
-
 		}				
 		case 7:
 		case 8:
 		case 9:
 		{
-			qualityElement = <SignalCellular3Bar style={{ color: yellow[500] }}fontSize='large' sx={{ bccolor: 'transparent' }}/>;
+			qualityElement = <SignalCellular3Bar style={{ color: yellow[400] }} />;
+			borderColor = yellow[400];
 			break;
-
 		}				
 	}
-	logger.debug(qualityElement);
+
+	if (qualityElement)	qualityElement = cloneElement(qualityElement, { fontSize });
 
 	return (
-		<RTPQualityContainer>
-			{ qualityElement}
-		</RTPQualityContainer>
+		<>
+			{qualityElement && (
+				<RTPQualityContainer size={containerSize} borderColor={borderColor} backgroundColor={backgroundColor} borderWidth={borderWidth
+				}>
+					{ qualityElement}
+				</RTPQualityContainer>
+			)}
+		</>
 	);
 };
 
