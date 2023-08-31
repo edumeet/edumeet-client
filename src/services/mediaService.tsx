@@ -89,10 +89,6 @@ export declare interface MediaService {
 	on(event: 'transcriptionStopped', listener: () => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'transcript', listener: (transcription: PeerTranscript) => void): this;
-	// eslint-disable-next-line no-unused-vars
-	on(event: 'noMediaAvailable', listener: () => void): this;
-	// eslint-disable-next-line no-unused-vars
-	on(event: 'mediaConnectionError', listener: () => void): this;
 }
 
 export class MediaService extends EventEmitter {
