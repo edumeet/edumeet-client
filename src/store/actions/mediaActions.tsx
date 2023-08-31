@@ -1,4 +1,4 @@
-import { Logger } from 'edumeet-common';
+import { Logger, MediaKind } from 'edumeet-common';
 import { Producer } from 'mediasoup-client/lib/Producer';
 import { getEncodings, getVideoConstrains } from '../../utils/encodingsHandler';
 import { Resolution } from '../../utils/types';
@@ -244,7 +244,6 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 		const track = mediaService.getTrack(previewMicTrackId, 'previewTracks');
 
 		dispatch(mediaActions.setPreviewMicTrackId());
-		dispatch(mediaActions.setPreviewAudioInputDeviceId());
 
 		mediaService.removePreviewTrack(track?.id);
 		track?.stop();
@@ -252,7 +251,6 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 
 	delete mediaService.previewVolumeWatcher;
 
-	dispatch(mediaActions.setPreviewAudioInputDeviceId());
 	dispatch(mediaActions.setAudioInProgress(false));
 };
 
@@ -380,7 +378,6 @@ export const stopPreviewWebcam = (): AppThunk<Promise<void>> => async (
 	}
 
 	previewBlurBackground && effectService.stopBlurEffect('preview');
-	dispatch(mediaActions.setPreviewVideoDeviceId());
 	dispatch(mediaActions.setVideoInProgress(false));
 };
 
@@ -1118,4 +1115,18 @@ export const startExtraVideo = ({
 	} finally {
 		dispatch(mediaActions.setVideoInProgress(false));
 	}
+};
+
+/** 
+ * @param options - Options.
+ * @returns {Promise<void>} Promise.
+ */
+export const getUserMedia = (mediaKind: MediaKind): AppThunk<Promise<void>> => async (getState, dispatch, { deviceService }): Promise<void> => {
+	logger.debug('getUserMedia() [mediaKind:%s]', mediaKind);
+
+	await navigator.mediaDevices.getUserMedia({
+		audio: mediaKind === 'audio',
+		video: mediaKind === 'video'
+	}).catch((e) => logger.error(e));
+	await deviceService.updateMediaDevices();
 };

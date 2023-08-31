@@ -4,6 +4,7 @@ import AudioView from '../audioview/AudioView';
 
 const AudioPeers = (): JSX.Element => {
 	const micConsumers = useAppSelector(micConsumerSelector);
+	const deviceId = useAppSelector((state) => state.media.liveAudioOutputDeviceId);
 
 	return (
 		<div>
@@ -11,6 +12,7 @@ const AudioPeers = (): JSX.Element => {
 				!consumer.localPaused && !consumer.remotePaused && <AudioView
 					key={consumer.id}
 					consumer={consumer}
+					deviceId={deviceId}
 				/>
 			)) }
 		</div>

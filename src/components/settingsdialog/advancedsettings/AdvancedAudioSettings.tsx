@@ -16,6 +16,8 @@ import {
 	SampleSizeSelector
 } from '../SettingsSelectors';
 import AudioPresetSelector from '../../audiopresetselector/AudioPresetSelector';
+import AudioOutputChooser from '../../devicechooser/AudioOutputChooser';
+import { useAppSelector } from '../../../store/hooks';
 
 const sampleRateData: Array<number> = [ 8000, 16000, 24000, 44100, 48000 ];
 const channelCountData: Array<number> = [ 1, 2 ];
@@ -24,6 +26,7 @@ const opusPtimeData: Array<number> = [ 3, 5, 10, 20, 30, 40, 50, 60 ];
 
 const AdvancedAudioSettings = (): JSX.Element => {
 	const [ open, setOpen ] = useState(false);
+	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
 
 	const handleClick = () => {
 		setOpen(!open);
@@ -37,6 +40,7 @@ const AdvancedAudioSettings = (): JSX.Element => {
 			</ListItemButton>
 			<Collapse in={ open } timeout='auto' unmountOnExit>
 				<List component='div'>
+					{ canSelectAudioOutput && <AudioOutputChooser withConfirm /> }
 					<AudioPresetSelector />
 					<EchoCancellationSwitch />
 					<AutoGainControlSwitch />

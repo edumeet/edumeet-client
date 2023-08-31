@@ -14,6 +14,7 @@ import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
 import { isMobileSelector } from '../../store/selectors';
+import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 
 interface JoinProps {
@@ -28,6 +29,8 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
 	const mediaLoading = useAppSelector((state) => state.media.videoInProgress || state.media.audioInProgress);
 	const isMobile = useAppSelector(isMobileSelector);
+	const showAudioChooser = useAppSelector((state) => state.media.previewAudioInputDeviceId && !state.media.audioMuted);
+	const showVideoChooser = useAppSelector((state) => state.media.previewVideoDeviceId && !state.media.videoMuted);
 	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
 
 	const [ name, setName ] = useState(displayName || '');
@@ -71,19 +74,20 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 			content={
 				<>
 					<MediaPreview />
-					<AudioInputChooser />
-
+					{showAudioChooser && <AudioInputChooser /> }
+					{showVideoChooser && <VideoInputChooser /> }
+					{showVideoChooser && !isMobile && <BlurBackgroundSwitch />}
 					{canSelectAudioOutput && <AudioOutputChooser /> }
-					<VideoInputChooser />
-					{!isMobile && <BlurBackgroundSwitch />}
-					<TextInputField
-						label={yourNameLabel()}
-						value={name}
-						setValue={handleDisplayNameChange}
-						onEnter={handleJoin}
-						startAdornment={<AccountCircle />}
-						autoFocus
-					/>
+					<ChooserDiv>
+						<TextInputField
+							label={yourNameLabel()}
+							value={name}
+							setValue={handleDisplayNameChange}
+							onEnter={handleJoin}
+							startAdornment={<AccountCircle />}
+							autoFocus
+						/>
+					</ChooserDiv>
 				</>
 			}
 			actions={

@@ -11,11 +11,12 @@ import {
 	updatePreviewWebcam,
 	stopPreviewWebcam
 } from '../../store/actions/mediaActions';
+import { mediaActions } from '../../store/slices/mediaSlice';
 
-const WebcamPreviewButton = (props: ControlButtonProps): JSX.Element => {
+const WebcamPreviewButton = (props: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
-	const { previewAudioInputDeviceId,
+	const { previewVideoDeviceId,
 		previewWebcamTrackId,
 		videoInProgress	} = useAppSelector((state) => state.media);
 
@@ -33,15 +34,12 @@ const WebcamPreviewButton = (props: ControlButtonProps): JSX.Element => {
 		<ControlButton
 			toolTip={webcamTip}
 			onClick={() => {
-				if (webcamState === 'unsupported') return;
-
 				if (webcamState === 'off') {
-					dispatch(updatePreviewWebcam(previewAudioInputDeviceId));
-				} else if (previewWebcamTrackId) {
-					dispatch(stopPreviewWebcam());
+					dispatch(updatePreviewWebcam(previewVideoDeviceId));
 				} else {
-					// Shouldn't happen
-				}
+					dispatch(mediaActions.setVideoMuted(true));
+					dispatch(stopPreviewWebcam());
+				} 
 			}}
 			disabled={videoInProgress}
 			on={webcamState === 'on'}

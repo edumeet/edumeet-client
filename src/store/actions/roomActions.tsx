@@ -86,13 +86,14 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(webrtcActions.setTracker(tracker));
 
-		const { previewBlurBackground, previewAudioOutputDeviceId, previewAudioInputDeviceId, audioMuted, videoMuted, previewVideoDeviceId } = getState().media;
-		const { canSelectAudioOutput } = getState().me;
+		const { canBlurBackground, canSelectAudioOutput } = getState().me;
+		const { videoMuted, audioMuted, previewVideoDeviceId, previewAudioInputDeviceId, previewBlurBackground, previewAudioOutputDeviceId } = getState().media;
 
-		dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
-		
-		if (canSelectAudioOutput && previewAudioOutputDeviceId)
+		if (canBlurBackground)
+			dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
+		if (canSelectAudioOutput && previewAudioOutputDeviceId) {
 			dispatch(mediaActions.setLiveAudioOutputDeviceId(previewAudioOutputDeviceId));
+		}
 		
 		if (!audioMuted && previewAudioInputDeviceId) {
 			dispatch(mediaActions.setLiveAudioInputDeviceId(previewAudioInputDeviceId));

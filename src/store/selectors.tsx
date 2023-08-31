@@ -19,7 +19,7 @@ const roomSessionsSelect: Selector<Record<string, RoomSession>> = (state) => sta
 const peersSelector: Selector<Record<string, Peer>> = (state) => state.peers;
 const sessionIdSelector: Selector<string> = (state) => state.me.sessionId;
 const lobbyPeersSelector: Selector<LobbyPeer[]> = (state) => state.lobbyPeers;
-const lastNSelector: Selector<number> = (state) => state.settings.lastN;
+const maxActiveVideosSelector: Selector<number> = (state) => state.settings.maxActiveVideos;
 const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNonVideo;
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
@@ -106,18 +106,18 @@ export const sessionIdSpotlightsSelector = createSelector(
 
 /**
  * Returns the list of peerIds that are currently selected or
- * spotlighted. Cropped to lastN if enabled.
+ * spotlighted. Cropped to maxActiveVideos.
  * 
  * @returns {string[]} the list of peerIds.
 */ 
 export const spotlightPeersSelector = createSelector(
-	lastNSelector,
+	maxActiveVideosSelector,
 	currentRoomSessionSelector,
-	(lastN, roomSession) => {
+	(maxActiveVideos, roomSession) => {
 		const { spotlights, selectedPeers } = roomSession;
 
 		return selectedPeers.concat(spotlights.filter((item) => selectedPeers.indexOf(item) < 0))
-			.slice(0, lastN)
+			.slice(0, maxActiveVideos)
 			.sort((a, b) => String(a).localeCompare(String(b)));
 	}
 );

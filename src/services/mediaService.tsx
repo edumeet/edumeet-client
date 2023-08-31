@@ -13,7 +13,7 @@ import { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProd
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
 import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
 import traceInit from '@jitsi/rtcstats/trace-ws';
-import { HTMLMediaElementWithSink, RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
+import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
 import { Logger } from 'edumeet-common';
 import { ClientMonitor, createClientMonitor } from '@observertc/client-monitor-js';
 import edumeetConfig from '../utils/edumeetConfig';
@@ -74,11 +74,15 @@ export declare interface MediaService {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'consumerResumed', listener: (consumer: Consumer) => void): this;
 	// eslint-disable-next-line no-unused-vars
+	on(event: 'consumerScore', listener: (consumerId: string, score: number) => void): this;
+	// eslint-disable-next-line no-unused-vars
 	on(event: 'producerClosed', listener: (producer: Producer) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'producerPaused', listener: (producer: Producer) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'producerResumed', listener: (producer: Producer) => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'producerScore', listener: (producerId: string, score: number) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'transcriptionStarted', listener: () => void): this;
 	// eslint-disable-next-line no-unused-vars
@@ -113,8 +117,6 @@ export class MediaService extends EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
-	private audioOutputDeviceId?: string;
-	private audioOutputElements = new Map<string, HTMLMediaElementWithSink>();
 
 	public previewVolumeWatcher?: VolumeWatcher;
 
@@ -158,41 +160,6 @@ export class MediaService extends EventEmitter {
 		this.liveTracks.clear();
 		this.previewTracks.clear();
 		this.monitor?.close();
-	}
-
-	public setAudioOutputDeviceId(deviceId: string) {
-		logger.debug('setAudioOutputDeviceId() [deviceId: %s]', deviceId);
-		if (deviceId === this.audioOutputDeviceId) return;
-		this.audioOutputDeviceId = deviceId;
-
-		// Clean up existing audio elements.
-		this.audioOutputElements.forEach((aoe) => {
-			aoe.pause();
-		});
-		this.audioOutputElements.clear();
-
-		// Create new audio elements.
-		this.consumers.forEach((c) => {
-			const audioElement = this.#createAudioOutputElement(c);
-
-			this.audioOutputElements.set(c.id, audioElement);
-		});
-	}
-
-	#createAudioOutputElement(consumer: Consumer) {
-		logger.debug('#createAudioOutputElement [consumer.id: %s]', consumer.id);
-		if (!this.audioOutputDeviceId) throw new Error('No audio output device id set');
-		const audioElement = new Audio() as HTMLMediaElementWithSink;
-
-		audioElement.autoplay = true;
-		const stream = new MediaStream();
-
-		stream.addTrack(consumer.track);
-		audioElement.srcObject = stream;
-
-		audioElement.setSinkId(this.audioOutputDeviceId).catch((e) => logger.error(e));
-		
-		return audioElement;
 	}
 
 	public getConsumer(consumerId: string): Consumer | undefined {
@@ -422,24 +389,13 @@ export class MediaService extends EventEmitter {
 
 							const consumerHark = hark(harkStream, {
 								play: false,
-								interval: 100,
+								interval: 50,
 								threshold: -60,
 								history: 100
 							});
 
 							consumer.appData.hark = consumerHark;
 							consumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
-
-							if (this.audioOutputDeviceId) {
-								try {
-									const audioElement = this.#createAudioOutputElement(consumer);
-
-									this.audioOutputElements.set(consumer.id, audioElement);
-								} catch (e) {
-									logger.error(e);
-								}
-
-							}
 						} else {
 							const resolutionWatcher = new ResolutionWatcher();
 
@@ -468,10 +424,6 @@ export class MediaService extends EventEmitter {
 						this.consumers.set(consumer.id, consumer);
 
 						consumer.observer.once('close', () => {
-							this.audioOutputElements.delete(consumer.id);
-							const audioElement = this.consumers.get(consumer.id);
-
-							audioElement?.pause();
 							this.consumers.delete(consumer.id);
 						});
 
@@ -590,6 +542,22 @@ export class MediaService extends EventEmitter {
 
 						producer.setMaxSpatialLayer(spatialLayer);
 
+						break;
+					}
+
+					case 'consumerScore': {
+						const { consumerId, score: { score } } = notification.data;
+
+						this.emit('consumerScore', consumerId, score);
+						break;
+					}
+
+					case 'producerScore': {
+						const { producerId, score } = notification.data;
+						const highestScore = score.reduce((prev: {score:number}, curr: { score: number }) =>
+							(prev.score > curr.score ? prev : curr));
+
+						this.emit('producerScore', producerId, highestScore.score);
 						break;
 					}
 				}
@@ -974,11 +942,11 @@ export class MediaService extends EventEmitter {
 	}
 
 	public initMonitor(): void {
-		if (!edumeetConfig.observertc) {
+		logger.debug('initMonitor()');
+		if (!edumeetConfig.observertc.enabled) {
 			return;
 		}
-
-		this.monitor = createClientMonitor(edumeetConfig.observertc);
+		this.monitor = createClientMonitor(edumeetConfig.observertc.config);
 		this.monitor.collectors.addMediasoupDevice(this.mediasoup);
 		this.monitor.events.onStatsCollected((statsEntries) => {
 			logger.debug('initMonitor(): The latest stats entries [statsEntries: %o]', statsEntries);

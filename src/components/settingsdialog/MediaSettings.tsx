@@ -9,7 +9,6 @@ import AdvancedVideoSettings from './advancedsettings/AdvancedVideoSettings';
 import BlurBackgroundSwitch from '../blurbackgroundswitch/BlurBackgroundSwitch';
 import { useAppSelector } from '../../store/hooks';
 import { isMobileSelector } from '../../store/selectors';
-import AudioOutputChooser from '../devicechooser/AudioOutputChooser';
 import { useContext, useEffect } from 'react';
 import { ServiceContext } from '../../store/store';
 
@@ -20,7 +19,7 @@ const NestedList = styled(List)(({ theme }) => ({
 const MediaSettings = (): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const isMobile = useAppSelector(isMobileSelector);
-	const { mediaConnectionStatus, startMediaServiceInProgress, canSelectAudioOutput } = useAppSelector((state) => state.me);
+	const { mediaConnectionStatus, startMediaServiceInProgress } = useAppSelector((state) => state.me);
 
 	useEffect(() => {
 		if (mediaConnectionStatus === 'error' && !startMediaServiceInProgress) mediaService.retryConnection();
@@ -37,7 +36,6 @@ const MediaSettings = (): React.JSX.Element => {
 			</ListItem>
 			<NestedList>
 				<AudioInputChooser withConfirm />
-				{ canSelectAudioOutput && <AudioOutputChooser withConfirm /> }
 				<AdvancedAudioSettings />
 			</NestedList>
 			<ListItem>

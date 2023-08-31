@@ -5,7 +5,7 @@ import { AudioPreset, Resolution } from '../../utils/types';
 
 export interface SettingsState {
 	displayName: string;
-	lastN: number;
+	maxActiveVideos: number;
 	mirroredSelfView: boolean;
 	hideNonVideo: boolean;
 	hideSelfView: boolean;
@@ -44,7 +44,7 @@ const initialState: SettingsState = {
 	screenSharingResolution: edumeetConfig.screenSharingResolution,
 	screenSharingFrameRate: edumeetConfig.screenSharingFrameRate,
 	preferredRecorderMimeType: 'video/webm',
-	lastN: edumeetConfig.lastN,
+	maxActiveVideos: 12,
 	hideNonVideo: edumeetConfig.hideNonVideo,
 	hideSelfView: false,
 	verticalDivide: true,
@@ -77,8 +77,8 @@ const settingsSlice = createSlice({
 		setDisplayName: ((state, action: PayloadAction<string>) => {
 			state.displayName = action.payload;
 		}),
-		setLastN: ((state, action: PayloadAction<number>) => {
-			state.lastN = action.payload;
+		setMaxActiveVideos: ((state, action: PayloadAction<number>) => {
+			state.maxActiveVideos = action.payload;
 		}),
 		setMirroredSelfView: ((state, action: PayloadAction<boolean>) => {
 			state.mirroredSelfView = action.payload;

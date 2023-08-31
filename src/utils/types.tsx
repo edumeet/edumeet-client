@@ -7,7 +7,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	developmentPort: 8443,
 	productionPort: 443,
 	serverHostname: undefined,
-	lastN: 11,
 	hideNonVideo: false,
 	resolution: 'medium',
 	frameRate: 30,
@@ -86,8 +85,11 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
 	observertc: {
-		collectingPeriodInMs: 5000,
-		statsExpirationTimeInMs: 60000,
+		enabled: true,
+		config: {
+			collectingPeriodInMs: 5000,
+			statsExpirationTimeInMs: 60000,
+		}
 	}
 };
 
@@ -97,7 +99,6 @@ export interface EdumeetConfig {
 	developmentPort: number;
 	productionPort: number;
 	serverHostname?: string;
-	lastN: number;
 	hideNonVideo: boolean;
 	resolution: Resolution;
 	frameRate: number;
@@ -123,7 +124,10 @@ export interface EdumeetConfig {
 	notificationSounds: Record<NotificationType, NotificationSound>;
 	title: string;
 	theme: ThemeOptions;
-	observertc: ClientMonitorConfig;
+	observertc: {
+		enabled: boolean,
+		config: ClientMonitorConfig;
+	}
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {

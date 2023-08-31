@@ -52,14 +52,17 @@ const createMediaMiddleware = ({
 				dispatch(stopLiveWebcam());
 				dispatch(stopLiveMic());
 			}
-
-			const { canSelectAudioOutput } = getState().me;
-
-			if (canSelectAudioOutput && mediaActions.setLiveAudioOutputDeviceId.match(action)) {
-				if (typeof action.payload === 'string') mediaService.setAudioOutputDeviceId(action.payload);
+			
+			if (roomActions.setState.match(action) && action.payload === 'left') {
+				mediaService.close();
+				mediaService.removeAllListeners();
 			}
-			if (roomActions.setState.match(action) && action.payload === 'joined') {
 
+			if (roomActions.setState.match(action) && action.payload === 'joined') {
+				/**
+				 * At this point we have joined the room.
+				 * We have our peers and can do everything non-media related.
+				 */
 				signalingService.on('notification', (notification) => {
 					if (notification.method === 'mediaReady') {
 						const { mediaConnectionStatus, startMediaServiceInProgress } = getState().me;
@@ -97,11 +100,22 @@ const createMediaMiddleware = ({
 					}
 				});
 			}
+			
+			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'not_connected') {
+				mediaService.close();
+				mediaService.removeAllListeners();
+			}
+			
+			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'error') {
+				mediaService.close();
+				mediaService.removeAllListeners();
+			}
 
 			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'connected') {
-				// Server has provided us with a new Consumer. The MediaService
-				// has created it for us and we need to add it to the store.
-				// MediaService will notify us of any changes to Consumer.
+				/**
+				 * At this point our peer has been assigned a router.
+				 * We can start doing things related to media.
+				 */
 				mediaService.on('consumerCreated', (consumer, producerPaused) => {
 					const stateConsumer: StateConsumer = {
 						id: consumer.id,
@@ -183,22 +197,15 @@ const createMediaMiddleware = ({
 					dispatch(producersActions.setProducerResumed({
 						producerId: producer.id
 					}));
-				});
-			}
-			
-			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'not_connected') {
-				mediaService.close();
-				mediaService.removeAllListeners();
-			}
-			
-			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'error') {
-				mediaService.close();
-				mediaService.removeAllListeners();
-			}
 
-			if (roomActions.setState.match(action) && action.payload === 'left') {
-				mediaService.close();
-				mediaService.removeAllListeners();
+					mediaService.on('consumerScore', (consumerId, score) => {
+						dispatch(consumersActions.setScore({ consumerId, score }));	
+					});
+				
+					mediaService.on('producerScore', (producerId, score) => {
+						dispatch(producersActions.setScore({ producerId, score }));	
+					});
+				});
 			}
 
 			// These actions are dispatched from the UI somewhere manually (button clicks, etc)

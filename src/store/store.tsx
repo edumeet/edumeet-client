@@ -64,10 +64,16 @@ export interface MiddlewareOptions {
 }
 
 const persistConfig = {
-	key: 'root',
+	key: 'edumeetRoot',
 	storage,
 	stateReconciler: autoMergeLevel2,
-	whitelist: [ 'settings', 'intl', 'config' ],
+	whitelist: [ 'settings' ]
+};
+
+const mediaPersistConfig = {
+	key: 'edumeetMedia',
+	storage,
+	whitelist: [ 'previewVideoDeviceId', 'previewAudioInputDeviceId', 'previewAudioOutputDeviceId' ]
 };
 
 const signalingService = new SignalingService();
@@ -116,7 +122,7 @@ const reducer = combineReducers({
 	ui: uiSlice.reducer,
 	webrtc: webrtcSlice.reducer,
 	recording: recordingSlice.reducer,
-	media: mediaSlice.reducer
+	media: persistReducer(mediaPersistConfig, mediaSlice.reducer)
 });
 
 const pReducer = persistReducer<RootState>(persistConfig, reducer);

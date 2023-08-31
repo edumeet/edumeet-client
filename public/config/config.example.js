@@ -21,9 +21,6 @@ var config = {
 	// If the server component runs on a different host than the app you can specify the host name.
 	serverHostname: '',
 
-	// Number of videos to show based on speaker detection.
-	lastN: 11,
-
 	// Don't show the participant tile if the user has no video
 	hideNonVideo: false,
 
@@ -164,7 +161,10 @@ var config = {
 	// Configuration for ObserveRTC
 	// https://github.com/ObserveRTC/client-monitor-js#configurations
 	observertc: {
-		collectingPeriodInMs: 2000,
-		statsExpirationTimeInMs: 60000,
+		enabled: true,
+		config: {
+			collectingPeriodInMs: 5000,
+			statsExpirationTimeInMs: 60000,
+		}
 	}
 };
