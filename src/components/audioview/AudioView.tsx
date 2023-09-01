@@ -14,9 +14,19 @@ interface AudioViewProps {
 const AudioView = ({
 	consumer,
 	deviceId
-}: AudioViewProps): JSX.Element => {
+}: AudioViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const audioElement = useRef<HTMLMediaElementWithSink>(null);
+
+	const unlockAudio = () => {
+		audioElement?.current?.play().then(() => {
+			document.removeEventListener('touchstart', unlockAudio);
+		});
+	};
+
+	useEffect(() => {
+		document.body.addEventListener('touchstart', unlockAudio);
+	}, []);
 
 	useEffect(() => {
 		const { track } = mediaService.getConsumer(consumer.id) ?? {};
@@ -47,7 +57,7 @@ const AudioView = ({
 				audioElement.current.onpause = null;
 			}
 		};
-	}, [ deviceId ]);
+	}, [ consumer ]);
 
 	useEffect(() => {
 		const { audioGain } = consumer;
