@@ -51,36 +51,14 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 };
 
 // This action is triggered when the server sends "roomReady" to us.
-// This means that we start our joining process which is:
-// 1. Create our Mediasoup transports
-// 2. Discover our capabilities
-// 3. Signal the server that we are ready
-// 4. Update the state
+// This means that we have joined the room but still have no media connection.
 export const joinRoom = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, mediaService /* , performanceMonitor */ }
+	{ signalingService /* , performanceMonitor */ }
 ): Promise<void> => {
 	logger.debug('joinRoom()');
 
-	const {
-		iceServers,
-		rtcStatsOptions,
-	} = getState().webrtc;
-
-	mediaService.rtcStatsInit(rtcStatsOptions);
-
-	/* performanceMonitor.on('performance', (performance) => {
-		logger.debug('"performance" event [trend:%s, performance:%s]', performance.trend, performance.performance);
-	}); */
-
-	await mediaService.createTransports(iceServers);
-
-	dispatch(meActions.setMediaCapabilities(
-		mediaService.mediaCapabilities
-	));
-
-	const rtpCapabilities = mediaService.rtpCapabilities;
 	const { displayName } = getState().settings;
 	const { sessionId, picture } = getState().me;
 
@@ -95,8 +73,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		roomMode = 'SFU',
 	} = await signalingService.sendRequest('join', {
 		displayName,
-		picture,
-		rtpCapabilities,
+		picture
 	});
 
 	batch(() => {
@@ -109,38 +86,25 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(webrtcActions.setTracker(tracker));
 
-		const { canSelectAudioOutput } = getState().me;
+		const { canBlurBackground, canSelectAudioOutput } = getState().me;
 		const { videoMuted, audioMuted, previewVideoDeviceId, previewAudioInputDeviceId, previewBlurBackground, previewAudioOutputDeviceId } = getState().media;
 
-		dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
+		if (canBlurBackground)
+			dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
 		if (canSelectAudioOutput && previewAudioOutputDeviceId) {
 			dispatch(mediaActions.setLiveAudioOutputDeviceId(previewAudioOutputDeviceId));
 		}
 		
 		if (!audioMuted && previewAudioInputDeviceId) {
 			dispatch(mediaActions.setLiveAudioInputDeviceId(previewAudioInputDeviceId));
-			dispatch(updateLiveMic());
 		}
 		if (!videoMuted && previewVideoDeviceId) {
 			dispatch(mediaActions.setLiveVideoDeviceId(previewVideoDeviceId));
-			dispatch(updateLiveWebcam());
 		}
 
 		dispatch(stopPreviewMic());
 		dispatch(stopPreviewWebcam());
 	});
-
-	/* const rtcStatsMetaData = { 
-		applicationName: 'edumeet', // mandatoy
-		confName, // mandatory
-		confID: window.location.toString(),
-		meetingUniqueId: sessionId,
-		endpointId: meId,
-		deviceId: meId,
-		displayName,
-	};
-
-	mediaService.rtcStatsIdentity(rtcStatsMetaData); */
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
@@ -148,6 +112,7 @@ export const leaveRoom = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('leaveRoom()');
 
+	mediaService.removeAllListeners();
 	mediaService.close();
 	dispatch(signalingActions.disconnect());
 	dispatch(meActions.resetMe());

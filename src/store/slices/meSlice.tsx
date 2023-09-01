@@ -3,6 +3,8 @@ import { v4 as uuid } from 'uuid';
 import { MediaCapabilities } from '../../services/mediaService';
 import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 
+export type MediaConnectionStatus = 'connected' | 'not_connected' | 'error'
+
 export interface MeState {
 	id: string;
 	sessionId: string;
@@ -16,6 +18,7 @@ export interface MeState {
 	canBlurBackground: boolean;
 	canShareFiles: boolean;
 	canSelectAudioOutput: boolean
+	mediaConnectionStatus: MediaConnectionStatus
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
 	escapeMeeting: boolean;
@@ -25,6 +28,7 @@ export interface MeState {
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
 	escapeMeetingInProgress: boolean;
+	startMediaServiceInProgress: boolean
 }
 
 const initialState: MeState = {
@@ -39,6 +43,7 @@ const initialState: MeState = {
 	canTranscribe: false,
 	canBlurBackground: true,
 	canSelectAudioOutput: ('sinkId' in HTMLMediaElement.prototype),
+	mediaConnectionStatus: 'not_connected',
 	devices: [],
 	raisedHand: false,
 	escapeMeeting: false,
@@ -47,6 +52,7 @@ const initialState: MeState = {
 	displayNameInProgress: false,
 	raisedHandInProgress: false,
 	escapeMeetingInProgress: false,
+	startMediaServiceInProgress: false
 };
 
 const meSlice = createSlice({
@@ -99,6 +105,12 @@ const meSlice = createSlice({
 		}),
 		setCanBlurBackground: ((state, action: PayloadAction<boolean>) => {
 			state.canBlurBackground = action.payload;
+		}),
+		setStartMediaServiceInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.startMediaServiceInProgress = action.payload;
+		}),
+		setMediaConnectionStatus: ((state, action: PayloadAction<MediaConnectionStatus>) => {
+			state.mediaConnectionStatus = action.payload;
 		}),
 	},
 });

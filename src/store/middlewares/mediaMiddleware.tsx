@@ -5,12 +5,14 @@ import { roomActions } from '../slices/roomSlice';
 import { producersActions, ProducerSource } from '../slices/producersSlice';
 import { videoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
-import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from 'edumeet-common';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { mediaActions } from '../slices/mediaSlice';
-import { mediaNodeConnectionError, mediaNodeSvcUnavailable } from '../../components/translated/translatedComponents';
+import { mediaNodeConnectionError, mediaNodeConnectionSuccess, mediaNodeSvcUnavailable } from '../../components/translated/translatedComponents';
+import { meActions } from '../slices/meSlice';
+import { startMedia, stopLiveMic, stopLiveWebcam } from '../actions/mediaActions';
+import { signalingActions } from '../slices/signalingSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -31,7 +33,7 @@ const logger = new Logger('MediaMiddleware');
  * @returns {Middleware} Redux middleware.
  */
 const createMediaMiddleware = ({
-	mediaService,
+	mediaService, signalingService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
@@ -44,14 +46,74 @@ const createMediaMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
-			if (signalingActions.connect.match(action)) {
-				mediaService.init();
+			if (signalingActions.setReconnectAttempts.match(action)) {
+				// TODO: How do we handle reconnect?
+			}
+			
+			if (roomActions.setState.match(action) && action.payload === 'left') {
+				mediaService.close();
+				mediaService.removeAllListeners();
 			}
 
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
-				// Server has provided us with a new Consumer. The MediaService
-				// has created it for us and we need to add it to the store.
-				// MediaService will notify us of any changes to Consumer.
+				/**
+				 * At this point we have joined the room.
+				 * We have our peers and can do everything non-media related.
+				 * We add listeners to learn about media connection.
+				 */
+				signalingService.on('notification', (notification) => {
+					if (notification.method === 'mediaReady') {
+						const { mediaConnectionStatus, startMediaServiceInProgress } = getState().me;
+
+						if (mediaConnectionStatus !== 'connected') {
+							if (mediaConnectionStatus === 'error')
+								dispatch(notificationsActions.enqueueNotification({
+									message: mediaNodeConnectionSuccess(),
+									options: { variant: 'success' }
+								}));
+							
+							dispatch(meActions.setMediaConnectionStatus('connected'));
+							!startMediaServiceInProgress && dispatch(startMedia());
+						}
+					}
+					
+					if (notification.method === 'noMediaAvailable') {
+						const { mediaConnectionStatus } = getState().me;
+
+						if (mediaConnectionStatus !== 'error')
+							dispatch(notificationsActions.enqueueNotification({
+								message: mediaNodeSvcUnavailable(),
+								options: { variant: 'error' }
+							}));
+						dispatch(meActions.setMediaConnectionStatus('error'));
+						dispatch(mediaActions.resetLiveMic());
+						dispatch(mediaActions.resetLiveWebcam());
+					}
+
+					if (notification.method === 'mediaConnectionError') {
+						dispatch(notificationsActions.enqueueNotification({
+							message: mediaNodeConnectionError(),
+							options: { variant: 'error' }
+						}));
+					}
+				});
+			}
+			
+			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'not_connected') {
+				mediaService.close();
+				mediaService.removeAllListeners();
+			}
+			
+			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'error') {
+				mediaService.close();
+				mediaService.removeAllListeners();
+			}
+
+			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'connected') {
+				/**
+				 * At this point our peer has been assigned a router.
+				 * We can start doing things related to media.
+				 */
 				mediaService.on('consumerCreated', (consumer, producerPaused) => {
 					const stateConsumer: StateConsumer = {
 						id: consumer.id,
@@ -133,34 +195,15 @@ const createMediaMiddleware = ({
 					dispatch(producersActions.setProducerResumed({
 						producerId: producer.id
 					}));
-				});
 
-				mediaService.on('noMediaAvailable', () => {
-					dispatch(notificationsActions.enqueueNotification({
-						message: mediaNodeSvcUnavailable(),
-						options: { variant: 'error' }
-					}));
-				});
-
-				mediaService.on('mediaConnectionError', () => {
-					dispatch(notificationsActions.enqueueNotification({
-						message: mediaNodeConnectionError(),
-						options: { variant: 'error' }
-					}));
-				});
-
-				mediaService.on('consumerScore', (consumerId, score) => {
-					dispatch(consumersActions.setScore({ consumerId, score }));	
-				});
+					mediaService.on('consumerScore', (consumerId, score) => {
+						dispatch(consumersActions.setScore({ consumerId, score }));	
+					});
 				
-				mediaService.on('producerScore', (producerId, score) => {
-					dispatch(producersActions.setScore({ producerId, score }));	
+					mediaService.on('producerScore', (producerId, score) => {
+						dispatch(producersActions.setScore({ producerId, score }));	
+					});
 				});
-			}
-
-			if (roomActions.setState.match(action) && action.payload === 'left') {
-				mediaService.removeAllListeners();
-				mediaService.close();
 			}
 
 			// These actions are dispatched from the UI somewhere manually (button clicks, etc)

@@ -2,6 +2,8 @@ import { Middleware } from '@reduxjs/toolkit';
 import { IOClientConnection, Logger } from 'edumeet-common';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { roomServerConnectionError, roomServerConnectionSuccess, roomServerLostConnection, roomServerRetryingConection } from '../../components/translated/translatedComponents';
+import { notificationsActions } from '../slices/notificationsSlice';
 
 const logger = new Logger('SignalingMiddleware');
 
@@ -22,7 +24,7 @@ const logger = new Logger('SignalingMiddleware');
  * @returns {Middleware} Redux middleware.
  */
 const createSignalingMiddleware = ({
-	signalingService
+	signalingService 
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createSignalingMiddleware()');
 
@@ -35,11 +37,41 @@ const createSignalingMiddleware = ({
 		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
 				signalingService.on('connected', () => {
+					const { reconnectAttempts } = getState().signaling;
+
+					if (reconnectAttempts > 0) {
+						dispatch(notificationsActions.enqueueNotification({
+							message: roomServerConnectionSuccess(),
+							options: { variant: 'success' }
+						}));
+						dispatch(signalingActions.setReconnectAttempts(0));
+					}
+
 					dispatch(signalingActions.connected());
 				});
 
-				signalingService.on('reconnecting', () => {
+				signalingService.on('reconnect', () => {
 					dispatch(signalingActions.reconnecting());
+					dispatch(notificationsActions.enqueueNotification({
+						message: roomServerLostConnection(),
+						options: { variant: 'error' }
+					}));
+				});
+				
+				signalingService.on('error', (error) => {
+					dispatch(signalingActions.reconnecting());
+					dispatch(notificationsActions.enqueueNotification({
+						message: roomServerConnectionError(error.message),
+						options: { variant: 'error' }
+					}));
+				});
+				
+				signalingService.on('reconnect_attempt', (attempt) => {
+					dispatch(signalingActions.setReconnectAttempts(attempt));
+					dispatch(notificationsActions.enqueueNotification({
+						message: roomServerRetryingConection(attempt),
+						options: { variant: 'warning' }
+					}));
 				});
 
 				const { url } = getState().signaling;

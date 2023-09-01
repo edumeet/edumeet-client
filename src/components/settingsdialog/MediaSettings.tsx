@@ -9,13 +9,21 @@ import AdvancedVideoSettings from './advancedsettings/AdvancedVideoSettings';
 import BlurBackgroundSwitch from '../blurbackgroundswitch/BlurBackgroundSwitch';
 import { useAppSelector } from '../../store/hooks';
 import { isMobileSelector } from '../../store/selectors';
+import { useContext, useEffect } from 'react';
+import { ServiceContext } from '../../store/store';
 
 const NestedList = styled(List)(({ theme }) => ({
 	padding: theme.spacing(0, 1.5)
 }));
 
-const MediaSettings = (): JSX.Element => {
+const MediaSettings = (): React.JSX.Element => {
+	const { mediaService } = useContext(ServiceContext);
 	const isMobile = useAppSelector(isMobileSelector);
+	const { mediaConnectionStatus, startMediaServiceInProgress } = useAppSelector((state) => state.me);
+
+	useEffect(() => {
+		if (mediaConnectionStatus === 'error' && !startMediaServiceInProgress) mediaService.retryConnection();
+	}, [ mediaConnectionStatus, startMediaServiceInProgress ]);
 	
 	return (
 		<List>
