@@ -50,7 +50,7 @@ const createSignalingMiddleware = ({
 					dispatch(signalingActions.connected());
 				});
 
-				signalingService.on('reconnecting', () => {
+				signalingService.on('reconnect', () => {
 					dispatch(signalingActions.reconnecting());
 					dispatch(notificationsActions.enqueueNotification({
 						message: roomServerLostConnection(),
