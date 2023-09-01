@@ -46,11 +46,8 @@ const createMediaMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
-			if (signalingActions.setReconnectAttempts.match(action) && action.payload > 2) {
-				// At this point it's probably safe to assume something's wrong.
-				dispatch(meActions.setMediaConnectionStatus('error'));
-				dispatch(stopLiveWebcam());
-				dispatch(stopLiveMic());
+			if (signalingActions.setReconnectAttempts.match(action)) {
+				// TODO: How do we handle reconnect?
 			}
 			
 			if (roomActions.setState.match(action) && action.payload === 'left') {
@@ -62,6 +59,7 @@ const createMediaMiddleware = ({
 				/**
 				 * At this point we have joined the room.
 				 * We have our peers and can do everything non-media related.
+				 * We add listeners to learn about media connection.
 				 */
 				signalingService.on('notification', (notification) => {
 					if (notification.method === 'mediaReady') {
