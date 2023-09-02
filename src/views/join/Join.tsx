@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
@@ -16,12 +16,15 @@ import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBack
 import { isMobileSelector } from '../../store/selectors';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
+import { ServiceContext } from '../../store/store';
 
 interface JoinProps {
 	roomId: string;
 }
 
 const Join = ({ roomId }: JoinProps): JSX.Element => {
+	const { mediaService } = useContext(ServiceContext);
+
 	useNotifier();
 	const dispatch = useAppDispatch();
 
@@ -66,6 +69,24 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	useEffect(() => {
 		dispatch(roomActions.updateRoom({ id: roomId }));
+	}, []);
+	
+	const unlockAudio = () => {
+		const ctx = new AudioContext();
+
+		mediaService.audioContext = ctx;
+		ctx.resume();
+
+		document.removeEventListener('touchend', unlockAudio);
+	};
+
+	useEffect(() => {
+		// TODO: make sure we're on ios/webkit
+		document.body.addEventListener('touchend', unlockAudio);
+
+		return () => {
+			document.removeEventListener('touchend', unlockAudio);
+		};
 	}, []);
 
 	return (

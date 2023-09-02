@@ -3,6 +3,8 @@ import { StateConsumer } from '../../store/slices/consumersSlice';
 import { ServiceContext } from '../../store/store';
 import { HTMLMediaElementWithSink } from '../../utils/types';
 import { Logger } from 'edumeet-common';
+import { useAppSelector } from '../../store/hooks';
+import { isMobileSelector } from '../../store/selectors';
 
 const logger = new Logger('AudioView');
 
@@ -17,16 +19,7 @@ const AudioView = ({
 }: AudioViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const audioElement = useRef<HTMLMediaElementWithSink>(null);
-
-	const unlockAudio = () => {
-		audioElement?.current?.play().then(() => {
-			document.removeEventListener('touchstart', unlockAudio);
-		});
-	};
-
-	useEffect(() => {
-		document.body.addEventListener('touchstart', unlockAudio);
-	}, []);
+	const isMobile = useAppSelector(isMobileSelector);
 
 	useEffect(() => {
 		const { track } = mediaService.getConsumer(consumer.id) ?? {};
@@ -41,13 +34,17 @@ const AudioView = ({
 		const stream = new MediaStream();
 
 		stream.addTrack(track);
+		const audioContext = mediaService.audioContext;
+
+		if (audioContext && isMobile) {
+			const src = audioContext.createMediaStreamSource(stream);
+
+			src.connect(audioContext.destination);
+		}
 		audioElement.current.srcObject = stream;
 
-		if (deviceId) {
-			audioElement.current.oncanplay = () => {
-				if (audioElement.current)
-					audioElement.current.setSinkId(deviceId).catch((e) => logger.error(e));
-			};
+		if (deviceId && audioElement.current) {
+			audioElement.current.setSinkId(deviceId).catch((e) => logger.error(e));
 		}
 
 		return () => {
@@ -57,7 +54,7 @@ const AudioView = ({
 				audioElement.current.onpause = null;
 			}
 		};
-	}, [ consumer ]);
+	}, [ deviceId ]);
 
 	useEffect(() => {
 		const { audioGain } = consumer;
