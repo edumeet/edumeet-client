@@ -4,7 +4,6 @@ import { ServiceContext } from '../../store/store';
 import { HTMLMediaElementWithSink } from '../../utils/types';
 import { Logger } from 'edumeet-common';
 import { useAppSelector } from '../../store/hooks';
-import { isMobileSelector } from '../../store/selectors';
 
 const logger = new Logger('AudioView');
 
@@ -19,7 +18,7 @@ const AudioView = ({
 }: AudioViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const audioElement = useRef<HTMLMediaElementWithSink>(null);
-	const isMobile = useAppSelector(isMobileSelector);
+	const deviceOs = useAppSelector((state) => state.me.browser.os);
 
 	useEffect(() => {
 		const { track } = mediaService.getConsumer(consumer.id) ?? {};
@@ -34,12 +33,14 @@ const AudioView = ({
 		const stream = new MediaStream();
 
 		stream.addTrack(track);
-		const audioContext = mediaService.audioContext;
 
-		if (audioContext && isMobile) {
-			const src = audioContext.createMediaStreamSource(stream);
+		// Unlock audio on ios.
+		const ctx = mediaService.audioContext;
 
-			src.connect(audioContext.destination);
+		if (deviceOs === 'ios' && ctx) {
+			const src = ctx.createMediaStreamSource(stream);
+
+			src.connect(ctx.destination);
 		}
 		audioElement.current.srcObject = stream;
 

@@ -32,6 +32,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
 	const mediaLoading = useAppSelector((state) => state.media.videoInProgress || state.media.audioInProgress);
 	const isMobile = useAppSelector(isMobileSelector);
+	const deviceOs = useAppSelector((state) => state.me.browser.os);
 	const showAudioChooser = useAppSelector((state) => state.media.previewAudioInputDeviceId && !state.media.audioMuted);
 	const showVideoChooser = useAppSelector((state) => state.media.previewVideoDeviceId && !state.media.videoMuted);
 	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
@@ -70,22 +71,24 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	useEffect(() => {
 		dispatch(roomActions.updateRoom({ id: roomId }));
 	}, []);
-	
+
+	// Used to unlock audio on ios.
 	const unlockAudio = () => {
 		const ctx = new AudioContext();
 
 		mediaService.audioContext = ctx;
-		ctx.resume();
 
 		document.removeEventListener('touchend', unlockAudio);
 	};
 
+	// Listener for unlocking audio on ios.
 	useEffect(() => {
-		// TODO: make sure we're on ios/webkit
-		document.body.addEventListener('touchend', unlockAudio);
+		if (deviceOs === 'ios') 
+			document.body.addEventListener('touchend', unlockAudio);
 
 		return () => {
-			document.removeEventListener('touchend', unlockAudio);
+			if (deviceOs === 'ios')
+				document.removeEventListener('touchend', unlockAudio);
 		};
 	}, []);
 
