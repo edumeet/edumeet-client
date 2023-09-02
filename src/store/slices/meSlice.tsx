@@ -18,6 +18,7 @@ export interface MeState {
 	canBlurBackground: boolean;
 	canShareFiles: boolean;
 	canSelectAudioOutput: boolean
+	hasAudioContext: boolean
 	mediaConnectionStatus: MediaConnectionStatus
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
@@ -43,6 +44,7 @@ const initialState: MeState = {
 	canTranscribe: false,
 	canBlurBackground: true,
 	canSelectAudioOutput: ('sinkId' in HTMLMediaElement.prototype),
+	hasAudioContext: false,
 	mediaConnectionStatus: 'not_connected',
 	devices: [],
 	raisedHand: false,
@@ -90,6 +92,15 @@ const meSlice = createSlice({
 		setAutoMuted: ((state, action: PayloadAction<boolean>) => {
 			state.autoMuted = action.payload;
 		}),
+		setCanBlurBackground: ((state, action: PayloadAction<boolean>) => {
+			state.canBlurBackground = action.payload;
+		}),
+		setMediaConnectionStatus: ((state, action: PayloadAction<MediaConnectionStatus>) => {
+			state.mediaConnectionStatus = action.payload;
+		}),
+		activateAudioContext: (state) => {
+			state.hasAudioContext = true;
+		},
 		// Status flags
 		setScreenSharingInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.screenSharingInProgress = action.payload;
@@ -103,14 +114,8 @@ const meSlice = createSlice({
 		setDispayNameInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.displayNameInProgress = action.payload;
 		}),
-		setCanBlurBackground: ((state, action: PayloadAction<boolean>) => {
-			state.canBlurBackground = action.payload;
-		}),
 		setStartMediaServiceInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.startMediaServiceInProgress = action.payload;
-		}),
-		setMediaConnectionStatus: ((state, action: PayloadAction<MediaConnectionStatus>) => {
-			state.mediaConnectionStatus = action.payload;
 		}),
 	},
 });

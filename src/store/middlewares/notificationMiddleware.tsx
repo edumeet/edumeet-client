@@ -6,6 +6,7 @@ import { MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { mediaActions } from '../slices/mediaSlice';
 import { HTMLMediaElementWithSink } from '../../utils/types';
+import { meActions } from '../slices/meSlice';
 
 interface SoundAlert {
 	audio: HTMLMediaElementWithSink,
@@ -18,7 +19,7 @@ const soundAlerts = new Map<string, SoundAlert>();
 const logger = new Logger('NotificationMiddleware');
 
 const createNotificationMiddleware = ({
-	config
+	config, mediaService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createNotificationMiddleware()');
 
@@ -34,7 +35,7 @@ const createNotificationMiddleware = ({
 		defaultSoundAlert.audio.setSinkId(outputDeviceId);
 	};
 
-	const playNotificationSounds = async (type: string) => {
+	const playNotificationSound = async (type: string) => {
 		const soundAlert = soundAlerts.get(type) ?? defaultSoundAlert;
 
 		const now = Date.now();
@@ -45,19 +46,37 @@ const createNotificationMiddleware = ({
 		soundAlert.last = now;
 
 		await soundAlert.audio.play().catch((error) => {
-			logger.error('soundAlert.play() [error:"%o"]', error);
+			logger.error('playNotificationSound() [error:"%o"]', error);
 		});
 	};
 
 	// Load notification alerts sounds and make them available
-	for (const [ k, v ] of Object.entries(config.notificationSounds)) {
-		if (v?.play) {
-			soundAlerts.set(k, {
-				audio: new Audio(v.play) as HTMLMediaElementWithSink,
-				debounce: v.debounce ?? 0
-			});
+	const loadNotificationSounds = (hasIOSAudioContext?: boolean) => {
+		for (const [ k, v ] of Object.entries(config.notificationSounds)) {
+
+			if (v?.play) {
+				const audio = new Audio(v.play) as HTMLMediaElementWithSink;
+
+				if (hasIOSAudioContext) {
+					const ctx = mediaService.audioContext;
+
+					if (!ctx) return;
+
+					const src = ctx.createMediaElementSource(audio);
+
+					src.connect(ctx.destination);
+				}
+
+				soundAlerts.set(k, {
+					audio,
+					debounce: v.debounce ?? 0
+				});
+			}
 		}
-	}
+
+	};
+
+	loadNotificationSounds();
 
 	const middleware: Middleware = ({
 		getState
@@ -71,7 +90,7 @@ const createNotificationMiddleware = ({
 				if (peersActions.updatePeer.match(action)) {
 					const { raisedHand } = action.payload;
 
-					if (raisedHand) await playNotificationSounds('raisedHand');
+					if (raisedHand) await playNotificationSound('raisedHand');
 				}
 
 				// Chat message
@@ -79,26 +98,26 @@ const createNotificationMiddleware = ({
 					roomSessionsActions.addMessage.match(action) &&
 					action.payload.peerId !== getState().me.id
 				) {
-					await playNotificationSounds('chatMessage');
+					await playNotificationSound('chatMessage');
 				}
 
 				// Parked peer
 				if (lobbyPeersActions.addPeer.match(action)) {
-					await playNotificationSounds('parkedPeer');
+					await playNotificationSound('parkedPeer');
 				}
 
 				// Send file
 				if (roomSessionsActions.addFile.match(action)) {
-					await playNotificationSounds('sendFile');
+					await playNotificationSound('sendFile');
 				}
 
 				// New peer
 				if (peersActions.addPeer.match(action)) {
-					await playNotificationSounds('newPeer');
+					await playNotificationSound('newPeer');
 				}
 
 				if (mediaActions.testAudioOutput.match(action)) {
-					await playNotificationSounds('testAudioOutput');
+					await playNotificationSound('testAudioOutput');
 				}
 
 				if (mediaActions.setPreviewAudioOutputDeviceId.match(action)) {
@@ -108,6 +127,11 @@ const createNotificationMiddleware = ({
 				if (mediaActions.setLiveAudioOutputDeviceId.match(action)) {
 					if (action.payload) attachAudioOutput(action.payload);
 				}
+			}
+
+			if (meActions.activateAudioContext.match(action)) {
+				soundAlerts.clear();
+				loadNotificationSounds(true);
 			}
 
 			return next(action);

@@ -17,6 +17,7 @@ import { isMobileSelector } from '../../store/selectors';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 import { ServiceContext } from '../../store/store';
+import { meActions } from '../../store/slices/meSlice';
 
 interface JoinProps {
 	roomId: string;
@@ -77,6 +78,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 		const ctx = new AudioContext();
 
 		mediaService.audioContext = ctx;
+		dispatch(meActions.activateAudioContext());
 
 		document.removeEventListener('touchend', unlockAudio);
 	};
