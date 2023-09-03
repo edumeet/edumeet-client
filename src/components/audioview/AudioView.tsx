@@ -3,6 +3,7 @@ import { StateConsumer } from '../../store/slices/consumersSlice';
 import { ServiceContext } from '../../store/store';
 import { HTMLMediaElementWithSink } from '../../utils/types';
 import { Logger } from 'edumeet-common';
+import { useAppSelector } from '../../store/hooks';
 
 const logger = new Logger('AudioView');
 
@@ -14,9 +15,10 @@ interface AudioViewProps {
 const AudioView = ({
 	consumer,
 	deviceId
-}: AudioViewProps): JSX.Element => {
+}: AudioViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const audioElement = useRef<HTMLMediaElementWithSink>(null);
+	const deviceOs = useAppSelector((state) => state.me.browser.os);
 
 	useEffect(() => {
 		const { track } = mediaService.getConsumer(consumer.id) ?? {};
@@ -31,13 +33,19 @@ const AudioView = ({
 		const stream = new MediaStream();
 
 		stream.addTrack(track);
+
+		// Unlock audio on ios.
+		const ctx = mediaService.audioContext;
+
+		if (deviceOs === 'ios' && ctx) {
+			const src = ctx.createMediaStreamSource(stream);
+
+			src.connect(ctx.destination);
+		}
 		audioElement.current.srcObject = stream;
 
-		if (deviceId) {
-			audioElement.current.oncanplay = () => {
-				if (audioElement.current)
-					audioElement.current.setSinkId(deviceId).catch((e) => logger.error(e));
-			};
+		if (deviceId && audioElement.current) {
+			audioElement.current.setSinkId(deviceId).catch((e) => logger.error(e));
 		}
 
 		return () => {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
@@ -16,12 +16,16 @@ import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBack
 import { isMobileSelector } from '../../store/selectors';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
+import { ServiceContext } from '../../store/store';
+import { meActions } from '../../store/slices/meSlice';
 
 interface JoinProps {
 	roomId: string;
 }
 
 const Join = ({ roomId }: JoinProps): JSX.Element => {
+	const { mediaService } = useContext(ServiceContext);
+
 	useNotifier();
 	const dispatch = useAppDispatch();
 
@@ -29,6 +33,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
 	const mediaLoading = useAppSelector((state) => state.media.videoInProgress || state.media.audioInProgress);
 	const isMobile = useAppSelector(isMobileSelector);
+	const deviceOs = useAppSelector((state) => state.me.browser.os);
 	const showAudioChooser = useAppSelector((state) => state.media.previewAudioInputDeviceId && !state.media.audioMuted);
 	const showVideoChooser = useAppSelector((state) => state.media.previewVideoDeviceId && !state.media.videoMuted);
 	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
@@ -66,6 +71,27 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	useEffect(() => {
 		dispatch(roomActions.updateRoom({ id: roomId }));
+	}, []);
+
+	// Used to unlock audio on ios.
+	const unlockAudio = () => {
+		const ctx = new AudioContext();
+
+		mediaService.audioContext = ctx;
+		dispatch(meActions.activateAudioContext());
+
+		document.removeEventListener('touchend', unlockAudio);
+	};
+
+	// Listener for unlocking audio on ios.
+	useEffect(() => {
+		if (deviceOs === 'ios') 
+			document.body.addEventListener('touchend', unlockAudio);
+
+		return () => {
+			if (deviceOs === 'ios')
+				document.removeEventListener('touchend', unlockAudio);
+		};
 	}, []);
 
 	return (

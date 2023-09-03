@@ -115,6 +115,7 @@ export class MediaService extends EventEmitter {
 	private speechRecognitionRunning = false;
 
 	public previewVolumeWatcher?: VolumeWatcher;
+	public audioContext?: AudioContext;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
