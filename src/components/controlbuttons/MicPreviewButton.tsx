@@ -15,7 +15,7 @@ const MicPreviewButton = (props: ControlButtonProps): JSX.Element => {
 
 	const {
 		previewMicTrackId,
-		audioInProgress, previewAudioInputDeviceId
+		audioInProgress, liveAudioInputDeviceId
 	} = useAppSelector((state) => state.media);
 
 	let micState: MediaState, micTip;
@@ -33,7 +33,7 @@ const MicPreviewButton = (props: ControlButtonProps): JSX.Element => {
 			toolTip={micTip}
 			onClick={() => {
 				if (micState === 'off') {
-					dispatch(updatePreviewMic(previewAudioInputDeviceId));
+					dispatch(updatePreviewMic(liveAudioInputDeviceId));
 				} else if (previewMicTrackId) {
 					dispatch(mediaActions.setAudioMuted(true));
 					dispatch(stopPreviewMic());
