@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
@@ -16,16 +16,13 @@ import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBack
 import { isMobileSelector } from '../../store/selectors';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
-import { ServiceContext } from '../../store/store';
-import { meActions } from '../../store/slices/meSlice';
+import { createAudioContext } from '../../store/actions/mediaActions';
 
 interface JoinProps {
 	roomId: string;
 }
 
-const Join = ({ roomId }: JoinProps): JSX.Element => {
-	const { mediaService } = useContext(ServiceContext);
-
+const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 	useNotifier();
 	const dispatch = useAppDispatch();
 
@@ -75,11 +72,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	// Used to unlock audio on ios.
 	const unlockAudio = () => {
-		const ctx = new AudioContext();
-
-		mediaService.audioContext = ctx;
-		dispatch(meActions.activateAudioContext());
-
+		dispatch(createAudioContext());
 		document.removeEventListener('touchend', unlockAudio);
 	};
 

@@ -17,6 +17,7 @@ const AudioView = ({
 	deviceId
 }: AudioViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
+	const ctx = mediaService.audioContext;
 	const audioElement = useRef<HTMLMediaElementWithSink>(null);
 	const deviceOs = useAppSelector((state) => state.me.browser.os);
 
@@ -35,7 +36,6 @@ const AudioView = ({
 		stream.addTrack(track);
 
 		// Unlock audio on ios.
-		const ctx = mediaService.audioContext;
 
 		if (deviceOs === 'ios' && ctx) {
 			const src = ctx.createMediaStreamSource(stream);
@@ -55,7 +55,7 @@ const AudioView = ({
 				audioElement.current.onpause = null;
 			}
 		};
-	}, [ deviceId ]);
+	}, [ ctx, deviceId ]);
 
 	useEffect(() => {
 		const { audioGain } = consumer;
