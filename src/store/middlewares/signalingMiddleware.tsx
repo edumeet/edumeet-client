@@ -1,9 +1,10 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { IOClientConnection, Logger } from 'edumeet-common';
+import { Logger } from 'edumeet-common';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomServerConnectionError, roomServerConnectionSuccess, roomServerLostConnection, roomServerRetryingConection } from '../../components/translated/translatedComponents';
 import { notificationsActions } from '../slices/notificationsSlice';
+import { RoomServerConnection } from '../../utils/RoomServerConnection';
 
 const logger = new Logger('SignalingMiddleware');
 
@@ -74,7 +75,7 @@ const createSignalingMiddleware = ({
 				});
 
 				const { url } = getState().signaling;
-				const socketConnection = IOClientConnection.create({ url });
+				const socketConnection = RoomServerConnection.create({ url });
 
 				signalingService.addConnection(socketConnection);
 			}
