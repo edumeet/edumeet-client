@@ -22,7 +22,7 @@ const VideoInputChooser = ({
 }: VideoInputChooserProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const videoDevices = useDeviceSelector('videoinput');
-	const { videoInProgress, previewVideoDeviceId, previewBlurBackground } = useAppSelector((state) => state.media);
+	const { videoInProgress, liveVideoDeviceId, previewVideoDeviceId, previewBlurBackground } = useAppSelector((state) => state.media);
 
 	const handleDeviceChange = (deviceId: string): void => {
 		if (deviceId) {
@@ -42,7 +42,7 @@ const VideoInputChooser = ({
 	return (
 		<ChooserDiv>
 			<DeviceChooser
-				value={previewVideoDeviceId ?? ''}
+				value={liveVideoDeviceId ?? previewVideoDeviceId ?? ''}
 				setValue={handleDeviceChange}
 				devicesLabel={selectVideoDeviceLabel()}
 				noDevicesLabel={noVideoDevicesLabel()}

@@ -88,7 +88,6 @@ const mediaSlice = createSlice({
 			// handle in middleWare
 		},
 		resetLiveWebcam: ((state) => {
-			state.liveVideoDeviceId = undefined;
 			state.liveWebcamTrackId = undefined;
 			state.videoMuted = true;
 		}),
