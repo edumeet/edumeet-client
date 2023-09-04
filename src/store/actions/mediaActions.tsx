@@ -48,6 +48,24 @@ interface ScreenshareSettings {
 	screenSharingFrameRate?: number;
 }
 
+export const createAudioContext = (): AppThunk<Promise<void>> => async (
+	dispatch, getState, { mediaService }): Promise<void> => {
+	logger.debug('createAudioContext()');
+	const deviceOs = getState().me.browser.os;
+
+	if (mediaService.audioContext || deviceOs !== 'ios') return; 
+	const ctx = new AudioContext();
+
+	try {
+		ctx.state === 'suspended' && await ctx.resume();
+	} catch (e) {
+		logger.error('createAudioContext() [%o]', e);
+	} finally {
+		mediaService.audioContext = ctx;
+		dispatch(meActions.activateAudioContext());
+	}
+};
+
 // This action is triggered when the server sends "mediaReady" to us.
 // This means we have a server side router and can start media.
 // 1. Create our Mediasoup transports

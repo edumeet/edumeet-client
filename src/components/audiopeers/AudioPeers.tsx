@@ -2,7 +2,7 @@ import { useAppSelector } from '../../store/hooks';
 import { micConsumerSelector } from '../../store/selectors';
 import AudioView from '../audioview/AudioView';
 
-const AudioPeers = (): JSX.Element => {
+const AudioPeers = (): React.JSX.Element => {
 	const micConsumers = useAppSelector(micConsumerSelector);
 	const deviceId = useAppSelector((state) => state.media.liveAudioOutputDeviceId);
 

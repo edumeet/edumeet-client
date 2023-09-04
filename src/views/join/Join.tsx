@@ -18,14 +18,16 @@ import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 import { ServiceContext } from '../../store/store';
 import { meActions } from '../../store/slices/meSlice';
+import { Logger } from 'edumeet-common';
+import { createAudioContext } from '../../store/actions/mediaActions';
+
+const logger = new Logger('Join');
 
 interface JoinProps {
 	roomId: string;
 }
 
-const Join = ({ roomId }: JoinProps): JSX.Element => {
-	const { mediaService } = useContext(ServiceContext);
-
+const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 	useNotifier();
 	const dispatch = useAppDispatch();
 
@@ -75,11 +77,7 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	// Used to unlock audio on ios.
 	const unlockAudio = () => {
-		const ctx = new AudioContext();
-
-		mediaService.audioContext = ctx;
-		dispatch(meActions.activateAudioContext());
-
+		dispatch(createAudioContext());
 		document.removeEventListener('touchend', unlockAudio);
 	};
 
