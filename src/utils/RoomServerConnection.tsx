@@ -101,7 +101,7 @@ export class RoomServerConnection extends EventEmitter {
 			} catch (error) {
 				if (error instanceof SocketTimeoutError) {
 					logger.warn('sendRequest() timeout, retrying [attempt: %s]', tries + 1);
-					this.emit('error', new Error(`socket timeout attempt: ${tries + 1}`));
+					this.emit('error', new Error('Socket timeout'));
 				} else
 					throw error;
 			}
