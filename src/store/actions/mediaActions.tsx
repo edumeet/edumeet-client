@@ -494,7 +494,7 @@ export const updateLiveMic = (newDeviceId?: string): AppThunk<Promise<void>> => 
 			}));
 		}
 
-		const deviceId = newDeviceId ?? liveAudioInputDeviceId;
+		let deviceId = newDeviceId ?? liveAudioInputDeviceId;
 			
 		const stream = await navigator.mediaDevices.getUserMedia({
 			audio: {
@@ -509,11 +509,11 @@ export const updateLiveMic = (newDeviceId?: string): AppThunk<Promise<void>> => 
 		});
 
 		track = stream.getAudioTracks()[0];
+		if (!track) throw new Error('no live mic track');
+		deviceId = track.getSettings().deviceId;
+		if (!deviceId) throw new Error('No deviceId');
 
-		if (!track)
-			throw new Error('no live mic track');
-
-		mediaService.addTrack(track, liveAudioInputDeviceId, 'liveTracks');
+		mediaService.addTrack(track, deviceId, 'liveTracks');
 		dispatch(mediaActions.setLiveMicTrackId(track.id));
 
 		micProducer = await mediaService.produce({
@@ -689,11 +689,9 @@ export const updateLiveWebcam = (newVideoDeviceId?: string): AppThunk<Promise<vo
 		});
 
 		track = stream.getVideoTracks()[0];
+		if (!track) throw new Error('no live webcam track');
 		deviceId = track.getSettings().deviceId;
 		if (!deviceId) throw new Error('No deviceId');
-
-		if (!track)
-			throw new Error('no live webcam track');
 
 		let blurTrack: MediaStreamTrack | undefined;
 		let width: number | undefined, height: number | undefined;
