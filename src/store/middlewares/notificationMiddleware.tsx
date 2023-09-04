@@ -5,7 +5,7 @@ import { peersActions } from '../slices/peersSlice';
 import { MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { mediaActions } from '../slices/mediaSlice';
-import { HTMLMediaElementWithSink } from '../../utils/types';
+import { HTMLMediaElementWithSink, NotificationSound } from '../../utils/types';
 import { meActions } from '../slices/meSlice';
 
 interface SoundAlert {
@@ -14,7 +14,7 @@ interface SoundAlert {
 	last?: number
 }
 
-const soundAlerts = new Map<string, SoundAlert>();
+const notificationSounds = new Map<string, SoundAlert>();
 
 const logger = new Logger('NotificationMiddleware');
 
@@ -23,60 +23,83 @@ const createNotificationMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createNotificationMiddleware()');
 
-	const defaultSoundAlert: SoundAlert = {
-		audio: new Audio('/sounds/notify.mp3') as HTMLMediaElementWithSink,
-		debounce: 0
-	};
-
 	const attachAudioOutput = (outputDeviceId: string) => {
-		soundAlerts.forEach((sa) => {
-			sa.audio.setSinkId(outputDeviceId).catch((e) => logger.error(e));
+		notificationSounds.forEach((sound) => {
+			sound.audio.setSinkId(outputDeviceId).catch((e) => logger.error(e));
 		});
-		defaultSoundAlert.audio.setSinkId(outputDeviceId);
 	};
 
 	const playNotificationSound = async (type: string) => {
-		const soundAlert = soundAlerts.get(type) ?? defaultSoundAlert;
+		const notificationSound = notificationSounds.get(type) ?? notificationSounds.get('default');
+
+		if (!notificationSound) return;
 
 		const now = Date.now();
 
-		if (soundAlert?.last && (now - soundAlert.last) < soundAlert.debounce)
+		if (notificationSound?.last && (now - notificationSound.last) < notificationSound.debounce)
 			return;
 
-		soundAlert.last = now;
+		notificationSound.last = now;
 
-		await soundAlert.audio.play().catch((error) => {
+		await notificationSound.audio.play().catch((error) => {
 			logger.error('playNotificationSound() [error:"%o"]', error);
 		});
 	};
 
 	// Load notification alerts sounds and make them available
-	const loadNotificationSounds = (hasIOSAudioContext?: boolean) => {
-		for (const [ k, v ] of Object.entries(config.notificationSounds)) {
+	const loadNotificationSounds = async ({ useAudioContext }: { useAudioContext: boolean}) => {
+		logger.debug('loadNotificationSounds()');
+		// Audio context handling for unlocking audio on ios.
+		const ctx = mediaService.audioContext;
 
-			if (v?.play) {
-				const audio = new Audio(v.play) as HTMLMediaElementWithSink;
-
-				if (hasIOSAudioContext) {
-					const ctx = mediaService.audioContext;
-
-					if (!ctx) return;
-
-					const src = ctx.createMediaElementSource(audio);
-
-					src.connect(ctx.destination);
-				}
-
-				soundAlerts.set(k, {
-					audio,
-					debounce: v.debounce ?? 0
-				});
+		if (useAudioContext && ctx) {
+			try {
+				ctx.state === 'suspended' && await ctx.resume();
+			} catch (e) {
+				logger.error(e);
 			}
 		}
 
+		// Load default notification sound.
+		const notificationSound = { play: '/sounds/notify.mp3', debounce: 0 };
+
+		loadNotificationSound({ name: 'default', notificationSound, useAudioContext, ctx });
+
+		// Load notification sounds from config.
+		for (const [ name, ns ] of Object.entries(config.notificationSounds)) {
+			loadNotificationSound({ name, notificationSound: ns, useAudioContext, ctx });
+		}
 	};
 
-	loadNotificationSounds();
+	interface LoadSoundAlertOptions {
+		name: string,
+		notificationSound: NotificationSound,
+		useAudioContext: boolean
+		ctx?: AudioContext
+	}
+	const loadNotificationSound = ({ name, notificationSound, useAudioContext, ctx }: LoadSoundAlertOptions) => {
+		logger.debug('loadNotificationSound() [name: %s, useAudioContext: %s]', name, useAudioContext);
+		const { play, debounce } = notificationSound;
+
+		if (play) {
+			const audio = new Audio(play) as HTMLMediaElementWithSink;
+
+			// Audio context handling for unlocking audio on ios.
+			if (useAudioContext && ctx) {
+				const src = ctx.createMediaElementSource(audio);
+
+				src.connect(ctx.destination);
+			}
+			notificationSounds.set(name, {
+				audio,
+				debounce: debounce ?? 0
+			});
+		}
+	};
+
+	const useAudioContext = typeof mediaService.audioContext !== 'undefined';
+
+	loadNotificationSounds({ useAudioContext }).catch((e) => logger.error(e));
 
 	const middleware: Middleware = ({
 		getState
@@ -113,6 +136,7 @@ const createNotificationMiddleware = ({
 
 				// New peer
 				if (peersActions.addPeer.match(action)) {
+					logger.debug('playing sound');
 					await playNotificationSound('newPeer');
 				}
 
@@ -130,8 +154,9 @@ const createNotificationMiddleware = ({
 			}
 
 			if (meActions.activateAudioContext.match(action)) {
-				soundAlerts.clear();
-				loadNotificationSounds(true);
+				logger.debug('activating audio context');
+				notificationSounds.clear();
+				await loadNotificationSounds({ useAudioContext: true });
 			}
 
 			return next(action);
