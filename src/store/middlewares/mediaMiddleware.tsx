@@ -11,7 +11,7 @@ import { notificationsActions } from '../slices/notificationsSlice';
 import { mediaActions } from '../slices/mediaSlice';
 import { mediaNodeConnectionError, mediaNodeConnectionSuccess, mediaNodeSvcUnavailable } from '../../components/translated/translatedComponents';
 import { meActions } from '../slices/meSlice';
-import { startMedia, stopLiveMic, stopLiveWebcam } from '../actions/mediaActions';
+import { startMedia } from '../actions/mediaActions';
 import { signalingActions } from '../slices/signalingSlice';
 
 const logger = new Logger('MediaMiddleware');

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
@@ -16,12 +16,7 @@ import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBack
 import { isMobileSelector } from '../../store/selectors';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
-import { ServiceContext } from '../../store/store';
-import { meActions } from '../../store/slices/meSlice';
-import { Logger } from 'edumeet-common';
 import { createAudioContext } from '../../store/actions/mediaActions';
-
-const logger = new Logger('Join');
 
 interface JoinProps {
 	roomId: string;
