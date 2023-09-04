@@ -15,16 +15,14 @@ import {
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { stopLiveWebcam, updateLiveWebcam, updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
-import { uiActions } from '../../store/slices/uiSlice';
+import { stopLiveWebcam, updateLiveWebcam } from '../../store/actions/mediaActions';
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasVideoPermission = usePermissionSelector(permissions.SHARE_VIDEO);
 	const webcamProducer = useAppSelector(webcamProducerSelector);
-	const { liveVideoDeviceId, videoInProgress } = useAppSelector((state) => state.media);
+	const { videoInProgress } = useAppSelector((state) => state.media);
 	const {	canSendWebcam } = useAppSelector((state) => state.me);
-	const { settingsOpen } = useAppSelector((state) => state.ui);
 
 	let webcamState!: MediaState, webcamTip;
 
@@ -46,13 +44,7 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 				if (webcamState === 'unsupported') return;
 
 				if (webcamState === 'off') {
-					if (liveVideoDeviceId) {
-						dispatch(updateLiveWebcam());
-					} else {
-						dispatch(updatePreviewMic());
-						dispatch(updatePreviewWebcam());
-						dispatch(uiActions.setUi({ settingsOpen: !settingsOpen })); 
-					}
+					dispatch(updateLiveWebcam());
 				}
 
 				if (webcamProducer) {

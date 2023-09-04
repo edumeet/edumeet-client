@@ -44,7 +44,6 @@ const createSignalingMiddleware = ({
 							message: roomServerConnectionSuccess(),
 							options: { variant: 'success' }
 						}));
-						dispatch(signalingActions.setReconnectAttempts(0));
 					}
 
 					dispatch(signalingActions.connected());

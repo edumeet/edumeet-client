@@ -87,7 +87,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(webrtcActions.setTracker(tracker));
 
 		const { canBlurBackground, canSelectAudioOutput } = getState().me;
-		const { videoMuted, audioMuted, previewVideoDeviceId, previewAudioInputDeviceId, previewBlurBackground, previewAudioOutputDeviceId } = getState().media;
+		const { videoMuted, audioMuted, previewVideoDeviceId, liveVideoDeviceId, previewAudioInputDeviceId, liveAudioInputDeviceId, previewBlurBackground, previewAudioOutputDeviceId } = getState().media;
 
 		if (canBlurBackground)
 			dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
@@ -95,11 +95,11 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 			dispatch(mediaActions.setLiveAudioOutputDeviceId(previewAudioOutputDeviceId));
 		}
 		
-		if (!audioMuted && previewAudioInputDeviceId) {
-			dispatch(mediaActions.setLiveAudioInputDeviceId(previewAudioInputDeviceId));
+		if (!audioMuted) {
+			dispatch(mediaActions.setLiveAudioInputDeviceId(previewAudioInputDeviceId ?? liveAudioInputDeviceId ?? undefined));
 		}
-		if (!videoMuted && previewVideoDeviceId) {
-			dispatch(mediaActions.setLiveVideoDeviceId(previewVideoDeviceId));
+		if (!videoMuted) {
+			dispatch(mediaActions.setLiveVideoDeviceId(previewVideoDeviceId ?? liveVideoDeviceId ?? undefined));
 		}
 
 		dispatch(stopPreviewMic());
