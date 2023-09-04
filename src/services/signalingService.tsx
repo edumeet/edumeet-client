@@ -1,6 +1,7 @@
-import { BaseConnection, InboundNotification, InboundRequest, List, Logger, skipIfClosed } from 'edumeet-common';
+import { InboundNotification, InboundRequest, List, Logger, skipIfClosed } from 'edumeet-common';
 import EventEmitter from 'events';
 import { SocketMessage } from '../utils/types';
+import { RoomServerConnection } from '../utils/RoomServerConnection';
 
 /* eslint-disable no-unused-vars */
 export declare interface SignalingService {
@@ -19,7 +20,7 @@ const logger = new Logger('SignalingService');
 
 export class SignalingService extends EventEmitter {
 	public closed = false;
-	public connections = List<BaseConnection>();
+	public connections = List<RoomServerConnection>();
 	private connected = false;
 
 	@skipIfClosed
@@ -43,7 +44,7 @@ export class SignalingService extends EventEmitter {
 	}
 
 	@skipIfClosed
-	public addConnection(connection: BaseConnection): void {
+	public addConnection(connection: RoomServerConnection): void {
 		logger.debug('addConnection()');
 
 		this.connections.add(connection);
