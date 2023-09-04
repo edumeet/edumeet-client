@@ -16,20 +16,17 @@ import {
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { updateLiveMic, updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
-import { uiActions } from '../../store/slices/uiSlice';
+import { updateLiveMic } from '../../store/actions/mediaActions';
 
 const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasAudioPermission = usePermissionSelector(permissions.SHARE_AUDIO);
 	const micProducer = useAppSelector(micProducerSelector);
+	const {	audioInProgress } = useAppSelector((state) => state.media);
 
 	const {
 		canSendMic,
 	} = useAppSelector((state) => state.me);
-
-	const {	audioInProgress, liveAudioInputDeviceId } = useAppSelector((state) => state.media);
-	const { settingsOpen } = useAppSelector((state) => state.ui);
 
 	let micState: MediaState, micTip;
 
