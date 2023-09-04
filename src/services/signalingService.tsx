@@ -6,9 +6,6 @@ import { RoomServerConnection } from '../utils/RoomServerConnection';
 /* eslint-disable no-unused-vars */
 export declare interface SignalingService {
 	on(event: 'connected', listener: () => void): this;
-	on(event: 'reconnect', listener: () => void): this;
-	on(event: 'reconnect_attempt', listener: (attempt: number) => void): this;
-	on(event: 'reconnect_error', listener: (error: Error) => void): this;
 	on(event: 'error', listener: (error: Error) => void): this;
 	on(event: 'close', listener: () => void): this;
 	on(event: 'notification', listener: InboundNotification): this;
@@ -61,23 +58,13 @@ export class SignalingService extends EventEmitter {
 			this.emit('request', request, respond, reject);
 		});
 
-		connection.on('reconnect_attempt', (attempt: number) => {
-			logger.debug('reconnect attempt %s', attempt);
-			this.emit('reconnect_attempt', attempt);
-		});
-		
-		connection.on('reconnect_error', (error) => {
-			logger.debug('reconnect_error %o', error);
-			// this.emit('reconnect_error', error);
-		});
-		
 		connection.on('error', (error) => {
-			logger.debug('error %o', error);
+			logger.debug('socket error event: %o', error);
 			this.emit('error', error);
 		});
 
 		connection.on('connect', () => {
-			logger.debug('connect');
+			logger.debug('socket connect event');
 
 			if (!this.connected)
 				this.emit('connected');
@@ -85,21 +72,14 @@ export class SignalingService extends EventEmitter {
 			this.connected = true;
 		});
 
-		connection.on('reconnect', () => {
-			logger.debug('reconnect');
-
-			if (this.connected)
-				this.emit('reconnect');
-
-			this.connected = false;
-		});
-
 		connection.once('close', () => {
-			logger.debug('close');
+			logger.debug('socket close event');
 			this.connections.remove(connection);
 
 			if (this.connections.length === 0)
 				this.connected = false;
+
+			this.emit('close');
 		});
 	}
 

@@ -108,12 +108,11 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
-	dispatch, getState, { mediaService }
+	dispatch 
 ): Promise<void> => {
 	logger.debug('leaveRoom()');
 
-	mediaService.removeAllListeners();
-	mediaService.close();
+	dispatch(roomActions.setState('left'));
 	dispatch(signalingActions.disconnect());
 	dispatch(meActions.resetMe());
 };
