@@ -54,13 +54,7 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				if (micState === 'unsupported') return;
 
 				if (micState === 'off') {
-					if (liveAudioInputDeviceId) {
-						dispatch(updateLiveMic());
-					} else {
-						dispatch(updatePreviewMic());
-						dispatch(updatePreviewWebcam());
-						dispatch(uiActions.setUi({ settingsOpen: !settingsOpen })); 
-					}
+					dispatch(updateLiveMic());
 				} else if (micProducer) {
 					if (micState === 'on') {
 						dispatch(
