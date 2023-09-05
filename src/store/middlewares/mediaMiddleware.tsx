@@ -12,7 +12,6 @@ import { mediaActions } from '../slices/mediaSlice';
 import { mediaNodeConnectionError, mediaNodeConnectionSuccess, mediaNodeSvcUnavailable } from '../../components/translated/translatedComponents';
 import { meActions } from '../slices/meSlice';
 import { startMedia } from '../actions/mediaActions';
-import { signalingActions } from '../slices/signalingSlice';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -46,10 +45,6 @@ const createMediaMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
-			if (signalingActions.setReconnectAttempts.match(action)) {
-				// TODO: How do we handle reconnect?
-			}
-			
 			if (roomActions.setState.match(action) && action.payload === 'left') {
 				mediaService.close();
 				mediaService.removeAllListeners();

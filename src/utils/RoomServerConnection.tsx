@@ -26,6 +26,8 @@ interface ServerClientEvents {
 const logger = new Logger('RoomServerConnection');
 
 export class RoomServerConnection extends EventEmitter {
+	public id: string;
+
 	public static create({ url }: { url: string}): RoomServerConnection {
 		logger.debug('create() [url:%s]', url);
 	
@@ -33,6 +35,7 @@ export class RoomServerConnection extends EventEmitter {
 			transports: [ 'websocket', 'polling' ],
 			rejectUnauthorized: false,
 			closeOnBeforeunload: false,
+			reconnection: false
 		});
 	
 		return new RoomServerConnection(socket);
@@ -47,6 +50,7 @@ export class RoomServerConnection extends EventEmitter {
 		logger.debug('constructor()');
 
 		this.socket = socket;
+		this.id = socket.id;
 		this.handleSocket();
 	}
 
@@ -58,14 +62,11 @@ export class RoomServerConnection extends EventEmitter {
 
 		if (this.socket.connected)
 			this.socket.disconnect();
+		this.socket.io.off();
 
 		this.socket.removeAllListeners();
 
 		this.emit('close');
-	}
-
-	public get id(): string {
-		return this.socket.id;
 	}
 
 	@skipIfClosed
@@ -81,7 +82,7 @@ export class RoomServerConnection extends EventEmitter {
 			if (!this.socket) {
 				reject('No socket connection');
 			} else {
-				this.socket.timeout(3000).emit('request', socketMessage, (timeout, serverError, response) => {
+				this.socket.timeout(1500).emit('request', socketMessage, (timeout, serverError, response) => {
 					if (timeout) reject(new SocketTimeoutError('Request timed out'));
 					else if (serverError) reject(serverError);
 					else resolve(response);
@@ -98,9 +99,10 @@ export class RoomServerConnection extends EventEmitter {
 			try {
 				return await this.sendRequestOnWire(request);
 			} catch (error) {
-				if (error instanceof SocketTimeoutError)
-					logger.warn('sendRequest() timeout, retrying [attempt: %s]', tries);
-				else
+				if (error instanceof SocketTimeoutError) {
+					logger.warn('sendRequest() timeout, retrying [attempt: %s]', tries + 1);
+					this.emit('error', new Error('Socket timeout'));
+				} else
 					throw error;
 			}
 		}
@@ -115,13 +117,9 @@ export class RoomServerConnection extends EventEmitter {
 			this.emit('connect');
 		});
 
-		this.socket.once('disconnect', (reason) => {
+		this.socket.once('disconnect', () => {
 			logger.debug('socket disconnected');
-
-			if (reason === 'io server disconnect')
-				this.close();
-			else
-				this.emit('reconnect');
+			this.close();
 		});
 
 		this.socket.on('notification', (notification) => {
@@ -141,6 +139,11 @@ export class RoomServerConnection extends EventEmitter {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(error: any) => result(error, null)
 			);
+		});
+
+		// Listen and re-transmit events from manager.
+		this.socket.io.on('error', (error: Error) => {
+			this.emit('error', (error));
 		});
 	}
 }

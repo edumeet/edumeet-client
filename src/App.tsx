@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { startListeners, stopListeners } from './store/actions/startActions';
 import {
 	useAppDispatch,
@@ -44,6 +44,7 @@ const App = (): JSX.Element => {
 	const roomState = useAppSelector((state) => state.room.state) as RoomConnectionState;
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		dispatch(startListeners());
@@ -66,6 +67,13 @@ const App = (): JSX.Element => {
 			dispatch(sendFiles(droppedFiles));
 		}
 	};
+
+	useEffect(() => {
+		if (roomState ==='left') {
+			dispatch(roomActions.setState('new'));
+			navigate('/');
+		}
+	}, [ roomState ]);
 
 	return (
 		<SnackbarProvider action={

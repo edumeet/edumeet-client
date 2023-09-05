@@ -748,22 +748,7 @@ export const mediaNodeConnectionSuccess = (): string => intl.formatMessage({
 	defaultMessage: 'Media-Node service: Got connection'
 });
 
-export const roomServerLostConnection = (): string => intl.formatMessage({
-	id: 'svc.roomServerLostConnection',
-	defaultMessage: 'Room-server: Lost connection'
-});
-
-export const roomServerRetryingConection = (attempt: number): string => intl.formatMessage({
-	id: 'svc.roomServerRetryingConnection',
-	defaultMessage: `Room-server: Retrying connection. Attempt: ${attempt}`
-});
-
 export const roomServerConnectionError = (message: string): string => intl.formatMessage({
 	id: 'svc.roomServerConnectionError',
 	defaultMessage: `Room-server: ${message}`
-});
-
-export const roomServerConnectionSuccess = (): string => intl.formatMessage({
-	id: 'svc.roomServerConnectionSuccess',
-	defaultMessage: 'Room-server: Got connection'
 });
