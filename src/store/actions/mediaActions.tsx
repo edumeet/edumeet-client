@@ -8,7 +8,7 @@ import { roomActions } from '../slices/roomSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
 import { mediaActions } from '../slices/mediaSlice';
-import { BlurBackgroundNotSupportedError } from '../../services/BlurBackground';
+import { BlurBackgroundNotSupportedError } from '../../utils/blurbackground/BlurBackground';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { blurBackgroundNotSupported } from '../../components/translated/translatedComponents';
 import hark from 'hark';

@@ -11,7 +11,7 @@
  */
 
 import { Logger, timeoutPromise } from 'edumeet-common';
-import { BlurBackground, BlurBackgroundNotSupportedError } from './BlurBackground';
+import { BlurBackground, BlurBackgroundNotSupportedError } from '../utils/blurbackground/BlurBackground';
 import { deviceInfo } from '../utils/deviceInfo';
 
 const logger = new Logger('EffectsService');
@@ -39,11 +39,11 @@ export interface TFLite {
 }
 
 const models = {
-	modelLandscape: {
+	landscape: {
 		path: '/model/selfie_segmenter_landscape.tflite',
 		width: 256,
 		height: 144 },
-	modelGeneral: {
+	square: {
 		path: '/model/selfie_segmenter.tflite',
 		width: 256,
 		height: 256
@@ -68,6 +68,7 @@ export class EffectService {
 		this.resolveMLBackendReady = resolve;
 		this.rejectMLBackendReady = reject;
 	});
+	#selectedModel = models.landscape;
 
 	constructor() {
 		logger.debug('constructor()');
@@ -128,7 +129,7 @@ export class EffectService {
 
 	async #loadModel() {
 		logger.debug('#loadModel()');
-		const response = await fetch(models.modelGeneral.path);
+		const response = await fetch(this.#selectedModel.path);
 
 		if (!response.ok) throw new BlurBackgroundNotSupportedError('Could not load model');
 
@@ -146,7 +147,7 @@ export class EffectService {
 		if (!MLBackend || !this.#model) throw new BlurBackgroundNotSupportedError('Not supported');
 		const effect = new BlurBackground(MLBackend, this.#model);
 
-		const { blurTrack, width, height } = await effect.startEffect(inputStream, models.modelGeneral.width, models.modelGeneral.height);
+		const { blurTrack, width, height } = effect.createBlurTrack(inputStream, this.#selectedModel.width, this.#selectedModel.height);
 
 		this.#blurBackgroundEffects.set(streamType, effect);		
 		
