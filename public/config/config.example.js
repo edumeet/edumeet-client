@@ -166,5 +166,6 @@ var config = {
 			collectingPeriodInMs: 5000,
 			statsExpirationTimeInMs: 60000,
 		}
-	}
+	},
+	reduxLoggingEnabled: false
 };

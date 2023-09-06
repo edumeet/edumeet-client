@@ -5,7 +5,7 @@
  * https://github.com/google-coral/tflite/blob/master/LICENSE
  * 
  * Model: MediaPipe Selfie Segmentation
- * Copyirhgt 2021 Google LLC
+ * Copyright 2021 Google LLC
  * License: Apache 2.0
  * https://storage.googleapis.com/mediapipe-assets/Model%20Card%20MediaPipe%20Selfie%20Segmentation.pdf
  */
@@ -69,6 +69,7 @@ export class EffectService {
 		this.rejectMLBackendReady = reject;
 	});
 	#selectedModel = models.landscape;
+	webGLSupport?: boolean;
 
 	constructor() {
 		logger.debug('constructor()');
@@ -137,7 +138,7 @@ export class EffectService {
 	}
 
 	public async startBlurEffect(inputStream: MediaStream, streamType: StreamType) {
-		logger.debug('startBlurEffect() [stream.id: %s, streamType: %s]', inputStream.id, streamType);
+		logger.debug('startBlurEffect() [stream.id: %s, streamType: %s, pipeline: %s]', inputStream.id, streamType, this.webGLSupport ? 'webgl' : 'canvas');
 		if (!this.#blurBackgroundSupported)
 			throw new BlurBackgroundNotSupportedError('Not supported');
 		
@@ -147,7 +148,7 @@ export class EffectService {
 		if (!MLBackend || !this.#model) throw new BlurBackgroundNotSupportedError('Not supported');
 		const effect = new BlurBackground(MLBackend, this.#model);
 
-		const { blurTrack, width, height } = effect.createBlurTrack(inputStream, this.#selectedModel.width, this.#selectedModel.height);
+		const { blurTrack, width, height } = effect.createBlurTrack(inputStream, this.webGLSupport, this.#selectedModel.width, this.#selectedModel.height);
 
 		this.#blurBackgroundEffects.set(streamType, effect);		
 		

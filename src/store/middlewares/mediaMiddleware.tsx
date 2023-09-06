@@ -45,14 +45,6 @@ const createMediaMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
-			if (mediaActions.setPreviewBlurBackground.match(action) && action.payload === false) {
-				effectService.stopBlurEffect('preview');
-			}
-
-			if (mediaActions.setLiveBlurBackground.match(action) && action.payload === false) {
-				effectService.stopBlurEffect('live');
-			}
-
 			if (roomActions.setState.match(action) && action.payload === 'left') {
 				mediaService.close();
 				mediaService.removeAllListeners();

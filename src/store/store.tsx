@@ -52,6 +52,7 @@ import rest from '@feathersjs/rest-client';
 import authentication from '@feathersjs/authentication-client';
 import mediaSlice from './slices/mediaSlice';
 import { EffectService } from '../services/effectsService';
+import createEffectsMiddleware from './middlewares/effectsMiddleware';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
@@ -147,13 +148,13 @@ export const store = configureStore({
 			createRoomMiddleware(middlewareOptions),
 			createNotificationMiddleware(middlewareOptions),
 			createRecordingMiddleware(middlewareOptions),
-			createLogger({
+			createEffectsMiddleware(middlewareOptions),
+			...(edumeetConfig.reduxLoggingEnabled ? [ createLogger({
 				duration: true,
 				timestamp: false,
 				level: 'log',
 				logErrors: true,
-			})
-		)
+			}) ] : []))
 });
 
 export const persistor = persistStore(store);
