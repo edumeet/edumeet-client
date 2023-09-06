@@ -32,7 +32,7 @@ const logger = new Logger('MediaMiddleware');
  * @returns {Middleware} Redux middleware.
  */
 const createMediaMiddleware = ({
-	mediaService, signalingService
+	mediaService, signalingService, effectService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
@@ -45,6 +45,14 @@ const createMediaMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
+			if (mediaActions.setPreviewBlurBackground.match(action) && action.payload === false) {
+				effectService.stopBlurEffect('preview');
+			}
+
+			if (mediaActions.setLiveBlurBackground.match(action) && action.payload === false) {
+				effectService.stopBlurEffect('live');
+			}
+
 			if (roomActions.setState.match(action) && action.payload === 'left') {
 				mediaService.close();
 				mediaService.removeAllListeners();

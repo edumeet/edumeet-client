@@ -121,6 +121,7 @@ export class BlurBackground {
 		} else {
 			const id = timeoutIds.get(event.data.timeoutId)
 			clearTimeout(id)
+			timeoutIds.clear()
 		}
 		};
 	`;
