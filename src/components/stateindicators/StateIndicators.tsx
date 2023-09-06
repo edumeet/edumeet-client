@@ -15,7 +15,7 @@ const StateIndicators = ({
 
 	return (
 		<>
-			{ (!micConsumer || micConsumer?.remotePaused) && <MicOff color='error' fontSize='small' /> }
+			{ (!micConsumer || micConsumer?.remotePaused || micConsumer?.producerPaused) && <MicOff color='error' fontSize='small' /> }
 			{ micConsumer?.localPaused && <VolumeOff color='error' fontSize='small' /> }
 			{ peer?.raisedHand && <RaiseHand fontSize='small' /> }
 		</>

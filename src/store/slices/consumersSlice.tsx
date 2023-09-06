@@ -10,6 +10,7 @@ export interface StateConsumer {
 	audioGain?: number;
 	localPaused: boolean;
 	remotePaused: boolean;
+	producerPaused: boolean;
 	source: ProducerSource;
 	score?: number
 }
