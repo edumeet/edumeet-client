@@ -109,13 +109,14 @@ const createMediaMiddleware = ({
 				 * At this point our peer has been assigned a router.
 				 * We can start doing things related to media.
 				 */
-				mediaService.on('consumerCreated', (consumer, producerPaused) => {
+				mediaService.on('consumerCreated', (consumer, paused, producerPaused) => {
 					const stateConsumer: StateConsumer = {
 						id: consumer.id,
 						peerId: consumer.appData.peerId as string,
 						kind: consumer.kind,
 						localPaused: false,
-						remotePaused: producerPaused,
+						remotePaused: paused,
+						producerPaused,
 						source: consumer.appData.source as ProducerSource,
 					};
 

@@ -9,7 +9,7 @@ const AudioPeers = (): React.JSX.Element => {
 	return (
 		<div>
 			{ micConsumers.map((consumer) => (
-				!consumer.localPaused && !consumer.remotePaused && <AudioView
+				!consumer.localPaused && !consumer.remotePaused && !consumer.producerPaused && <AudioView
 					key={consumer.id}
 					consumer={consumer}
 					deviceId={deviceId}

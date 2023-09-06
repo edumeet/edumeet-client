@@ -48,7 +48,7 @@ const createNotificationMiddleware = ({
 
 	// Load notification alerts sounds and make them available
 	const loadNotificationSounds = async ({ useAudioContext }: { useAudioContext: boolean}) => {
-		logger.debug('loadNotificationSounds()');
+		logger.debug('loadNotificationSounds() [useAudioContext: %s]', useAudioContext);
 		// Audio context handling for unlocking audio on ios.
 		const ctx = mediaService.audioContext;
 
@@ -136,7 +136,6 @@ const createNotificationMiddleware = ({
 
 				// New peer
 				if (peersActions.addPeer.match(action)) {
-					logger.debug('playing sound');
 					await playNotificationSound('newPeer');
 				}
 
@@ -154,7 +153,6 @@ const createNotificationMiddleware = ({
 			}
 
 			if (meActions.activateAudioContext.match(action)) {
-				logger.debug('activating audio context');
 				notificationSounds.clear();
 				await loadNotificationSounds({ useAudioContext: true });
 			}

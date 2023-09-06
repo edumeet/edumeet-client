@@ -62,7 +62,7 @@ const changeEvent = {
 
 export declare interface MediaService {
 	// eslint-disable-next-line no-unused-vars
-	on(event: 'consumerCreated', listener: (consumer: Consumer, producerPaused: boolean) => void): this;
+	on(event: 'consumerCreated', listener: (consumer: Consumer, paused: boolean, producerPaused: boolean) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'dataConsumerCreated', listener: (dataConsumer: DataConsumer) => void): this;
 	// eslint-disable-next-line no-unused-vars
@@ -181,7 +181,7 @@ export class MediaService extends EventEmitter {
 	}
 
 	#removeDuplicateTracks(kind: string, deviceId: string, trackType: TrackType) {
-		logger.debug('#hasTrack [kind: %s, deviceId: %s, trackType: %s]', kind, deviceId, trackType);
+		logger.debug('#removeDuplicateTracks [kind: %s, deviceId: %s, trackType: %s]', kind, deviceId, trackType);
 		for (const track of this[trackType].values()) {
 			if (this.trackDevice.get(track.id) === deviceId &&
 				track.kind === kind) {
@@ -359,6 +359,7 @@ export class MediaService extends EventEmitter {
 							rtpParameters,
 							appData,
 							producerPaused,
+							paused
 						} = notification.data;
 
 						if (!this.recvTransport)
@@ -376,9 +377,6 @@ export class MediaService extends EventEmitter {
 						});
 
 						if (kind === 'audio') {
-							await this.signalingService.sendRequest('resumeConsumer', { consumerId: consumer.id })
-								.catch((error) => logger.warn('resumeConsumer, unable to resume server-side [consumerId:%s, error:%o]', consumer.id, error));
-
 							const { track } = consumer;
 							const harkStream = new MediaStream();
 
@@ -413,9 +411,7 @@ export class MediaService extends EventEmitter {
 									{ consumerId: consumer.id, spatialLayer, temporalLayer }
 								).catch((error) => logger.warn('setConsumerPreferredLayers, unable to set layers [consumerId:%s, error:%o]', consumer.id, error));
 							});
-
 							consumer.appData.resolutionWatcher = resolutionWatcher;
-							consumer.pause();
 						}
 
 						this.consumers.set(consumer.id, consumer);
@@ -428,7 +424,7 @@ export class MediaService extends EventEmitter {
 							this.changeConsumer(consumer.id, 'close', false);
 						});
 	
-						this.emit('consumerCreated', consumer, producerPaused);
+						this.emit('consumerCreated', consumer, paused, producerPaused);
 
 						break;
 					}
@@ -611,7 +607,7 @@ export class MediaService extends EventEmitter {
 		change: MediaChange,
 		local = true
 	): Promise<void> {
-		logger.debug(`${change}Consumer [consumerId:%s]`, consumerId);
+		logger.debug(`${change}Consumer [consumerId: %s, local: %s]`, consumerId, local);
 
 		const consumer = this.consumers.get(consumerId);
 

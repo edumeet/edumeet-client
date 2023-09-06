@@ -89,7 +89,7 @@ const VideoView = ({
 				videoElement.current.onpause = null;
 			}
 		};
-	}, [ trackId, consumer, producer ]);
+	}, [ trackId ]);
 
 	useEffect(() => {
 		if (!consumer)
@@ -128,7 +128,7 @@ const VideoView = ({
 			resizeObserver.disconnect();
 			resolutionReporter.close();
 		};
-	}, [ consumer ]);
+	}, []);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (
