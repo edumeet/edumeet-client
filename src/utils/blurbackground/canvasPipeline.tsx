@@ -1,37 +1,19 @@
 import { Logger } from 'edumeet-common';
-import { TFLite } from '../../services/effectsService';
+import { BlurBackgroundPipeline, BlurBackgroundPipelineOptions } from '../types';
 
 const logger = new Logger('canvasPipeline');
 
-interface CanvasPipelineOptions {
-    source: {
-        element: HTMLVideoElement,
-        width: number,
-        height: number,
-    },
-    canvas: HTMLCanvasElement,
-    backend: TFLite,
-    segmentation: {
-        width: number,
-        height: number
-    }
-}
-
-export type CanvasPipeline = {
-    render: () => void
-}
-
-export const createCanvasPipeline = ({ source, canvas, backend, segmentation }: CanvasPipelineOptions): CanvasPipeline => {
-	logger.debug('createCanvasPipeline() [input: %s x %s, segmentation: %s x %s] ', source.width, source.height, segmentation.width, segmentation.height);
+export const createCanvasPipeline = ({ source, canvas, backend, segmentation }: BlurBackgroundPipelineOptions): BlurBackgroundPipeline => {
+	logger.debug('createCanvasPipeline() [input: %o, segmentation: %o] ', source.dimensions, segmentation);
 	const segMaskCanvas = document.createElement('canvas');
-	const segMaskCtx = segMaskCanvas.getContext('2d');
+	const segMaskCtx = segMaskCanvas.getContext('2d', { willReadFrequently: true });
 	const segMask = new ImageData(segmentation.width, segmentation.height);
 
 	const outputMemoryOffset = backend._getOutputMemoryOffset() / 4;
 	const inputMemoryOffset = backend._getInputMemoryOffset() / 4;
 	const segPixelCount = segmentation.width * segmentation.height;
 
-	const ctx = canvas.getContext('2d');
+	const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
 	const render = () => {
 		try {
@@ -114,6 +96,10 @@ export const createCanvasPipeline = ({ source, canvas, backend, segmentation }: 
 		ctx.filter = 'blur(8px)';
 		ctx.drawImage(source.element, 0, 0);
 	};
+
+	const cleanup = () => {
+		// Not needed
+	};
 	
-	return { render };
+	return { render, cleanup };
 };

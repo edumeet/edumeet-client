@@ -1,6 +1,8 @@
 import { Logger } from 'edumeet-common';
 import { TFLite } from '../../services/effectsService';
-import { CanvasPipeline, createCanvasPipeline } from './canvasPipeline';
+import { createCanvasPipeline } from './canvasPipeline';
+import { BlurBackgroundPipeline } from '../types';
+import { createWebGLPipeline } from './webglPipeline';
 
 const logger = new Logger('BlurBackground');
 
@@ -28,7 +30,7 @@ export class BlurBackground {
 	#segWidth = 0;
 	#segHeight = 0;
 	#worker: Worker;
-	#pipeline?: CanvasPipeline;
+	#pipeline?: BlurBackgroundPipeline;
 	#targetFps = 30;
 	#timeoutId = 1;
 
@@ -51,13 +53,14 @@ export class BlurBackground {
 			this.#inputVideo.srcObject = null;
 			this.#worker.postMessage({ timeoutId: this.#timeoutId });
 			this.#worker.terminate();
+			this.#pipeline?.cleanup();
 		} catch (e) {
 			logger.error(e);
 		}
 	}
 
 	createBlurTrack(
-		inputStream: MediaStream, modelWidth: number, modelHeight: number
+		inputStream: MediaStream, webGlSupport: boolean, modelWidth: number, modelHeight: number
 	) {
 		logger.debug('startEffect() [inputStream.id: %s, modelWidth: %s, modelHeight: %s]', inputStream.id, modelWidth, modelHeight);
 		this.#inputVideo = document.createElement('video');
@@ -75,17 +78,18 @@ export class BlurBackground {
 		const blurTrack = this.#createBlurStream().getVideoTracks()[0];
 
 		if (!this.#backend) throw new Error('No ML Backend');
-		this.#pipeline = createCanvasPipeline({ source: {
+		const pipelineOptions = { source: {
 			element: this.#inputVideo,
-			width,
-			height
+			dimensions: { width, height }
 		},
 		canvas: this.#outputCanvas,
 		backend: this.#backend,
-		segmentation: {
-			width: this.#segWidth,
-			height: this.#segHeight
-		} });
+		segmentation: { width: this.#segWidth, height: this.#segHeight }
+		};
+
+		webGlSupport ?
+			this.#pipeline = createCanvasPipeline(pipelineOptions) :
+			this.#pipeline = createWebGLPipeline(pipelineOptions);
 
 		const { width: trackWidth, height: trackHeight } = blurTrack.getSettings();
 
