@@ -1,8 +1,9 @@
 import { Logger } from 'edumeet-common';
 import { TFLite } from '../../services/effectsService';
 import { createCanvasPipeline } from './canvasPipeline';
-import { BlurBackgroundPipeline } from '../types';
+import { BlurBackgroundPipeline, BlurBackgroundPipelineOptions } from '../types';
 import { createWebGLPipeline } from './webglPipeline';
+import EventEmitter from 'events';
 
 const logger = new Logger('BlurBackground');
 
@@ -23,7 +24,7 @@ export class BlurBackgroundNotSupportedError extends Error {
 	}
 }
 
-export class BlurBackground {
+export class BlurBackground extends EventEmitter {
 	#backend?: TFLite;
 	#model?: ArrayBuffer;
 	#stream?: MediaStream;
@@ -39,6 +40,7 @@ export class BlurBackground {
 	#outputCanvas = document.createElement('canvas');
 
 	constructor(backend: TFLite, model: ArrayBuffer) {
+		super();
 		this.#backend = backend;
 		this.#model = model;
 		this.#backend.HEAPU8.set(new Uint8Array(this.#model), this.#backend._getModelBufferMemoryOffset());
@@ -60,7 +62,7 @@ export class BlurBackground {
 	}
 
 	createBlurTrack(
-		inputStream: MediaStream, webGlSupport: boolean, modelWidth: number, modelHeight: number
+		inputStream: MediaStream, webGLSupport: boolean, modelWidth: number, modelHeight: number
 	) {
 		logger.debug('startEffect() [inputStream.id: %s, modelWidth: %s, modelHeight: %s]', inputStream.id, modelWidth, modelHeight);
 		this.#inputVideo = document.createElement('video');
@@ -87,9 +89,7 @@ export class BlurBackground {
 		segmentation: { width: this.#segWidth, height: this.#segHeight }
 		};
 
-		webGlSupport ?
-			this.#pipeline = createCanvasPipeline(pipelineOptions) :
-			this.#pipeline = createWebGLPipeline(pipelineOptions);
+		this.#createRenderingPipeline(pipelineOptions, webGLSupport);
 
 		const { width: trackWidth, height: trackHeight } = blurTrack.getSettings();
 
@@ -108,6 +108,24 @@ export class BlurBackground {
 			width: width,
 			height: height
 		};
+	}
+
+	#createRenderingPipeline(pipelineOptions: BlurBackgroundPipelineOptions, webGLSupport: boolean) {
+		if (webGLSupport) {
+			try {
+				this.#pipeline = createWebGLPipeline(pipelineOptions);
+			} catch (error) {
+				logger.error('createWebGLPipeline() %o', error);
+			}
+		}
+		if (!this.#pipeline) {
+			try {
+				this.#pipeline = createCanvasPipeline(pipelineOptions); 
+			} catch (error) {
+				logger.error('createCanvasPipeline() %o', error);
+			}
+		}
+		if (!this.#pipeline) throw new Error('No rendering pipeline');
 	}
 
 	#createWebWorker(): Worker {
@@ -168,15 +186,21 @@ export class BlurBackground {
 	}
 
 	#render() {
-		if (!this.#pipeline) throw new Error('No pipeline');
-		const startTime = performance.now();
+		try {
+			if (!this.#pipeline) throw new Error('No pipeline');
+			const startTime = performance.now();
 
-		this.#pipeline.render();
+			this.#pipeline.render();
+			this.#worker.postMessage({
+				timeoutId: this.#timeoutId,
+				timeoutMs: Math.max(0, (1000 / this.#targetFps) - (performance.now() - startTime))
+			});
+			this.#timeoutId++;
 
-		this.#worker.postMessage({
-			timeoutId: this.#timeoutId,
-			timeoutMs: Math.max(0, (1000 / this.#targetFps) - (performance.now() - startTime))
-		});
-		this.#timeoutId++;
+		} catch (error) {
+			logger.error('#render() %o', error);
+			this.emit('error');
+			this.stopEffect();
+		}
 	}
 }

@@ -4,6 +4,7 @@ import {
 	createTexture,
 } from '../helpers/webgl';
 import { shaderSources } from '../shaderSources';
+import { webglConfig } from '../webglConfig';
 
 export type BackgroundBlurStage = {
   render(): void
@@ -188,18 +189,13 @@ function buildBlendPass(
 	gl.uniform1i(inputFrameLocation, 0);
 	gl.uniform1i(personMaskLocation, 1);
 	gl.uniform1i(blurredInputFrame, 2);
-	gl.uniform2f(coverageLocation, 0.6, 0.9);
+	gl.uniform2f(coverageLocation, webglConfig.COVERAGE[0], webglConfig.COVERAGE[1]);
 
 	function render() {
 		gl.viewport(0, 0, outputWidth, outputHeight);
 		gl.useProgram(program);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-	}
-
-	function updateCoverage(coverage: [number, number]) {
-		gl.useProgram(program);
-		gl.uniform2f(coverageLocation, coverage[0], coverage[1]);
 	}
 
 	function cleanUp() {
@@ -210,7 +206,6 @@ function buildBlendPass(
 
 	return {
 		render,
-		updateCoverage,
 		cleanUp,
 	};
 }

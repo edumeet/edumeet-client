@@ -32,7 +32,7 @@ export function createProgram(
 ) {
 	const program = gl.createProgram();
 
-	if (!program) throw new Error();
+	if (!program) throw new Error('No WebGL program');
 
 	gl.attachShader(program, vertexShader);
 	gl.attachShader(program, fragmentShader);
@@ -53,7 +53,7 @@ export function compileShader(
 ) {
 	const shader = gl.createShader(shaderType);
 
-	if (!shader) throw new Error();
+	if (!shader) throw new Error('No WebGL shader');
 
 	gl.shaderSource(shader, shaderSource);
 	gl.compileShader(shader);
@@ -97,7 +97,7 @@ export async function readPixelsAsync(
 ) {
 	const buf = gl.createBuffer();
 
-	if (!buf) throw new Error();
+	if (!buf) throw new Error('No WebGL buffer');
 
 	gl.bindBuffer(gl.PIXEL_PACK_BUFFER, buf);
 	gl.bufferData(gl.PIXEL_PACK_BUFFER, dest.byteLength, gl.STREAM_READ);
@@ -130,7 +130,7 @@ async function getBufferSubDataAsync(
 ) {
 	const sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
 
-	if (!sync) throw new Error();
+	if (!sync) throw new Error('No WebGL sync');
 
 	gl.flush();
 	const res = await clientWaitAsync(worker, gl, sync);

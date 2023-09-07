@@ -7,13 +7,15 @@ import {
 	webcamProducerSelector
 } from '../selectors';
 import { permissions } from '../../utils/roles';
-import { updateLiveMic, updateLiveWebcam } from './mediaActions';
+import { updateLiveMic, updateLiveWebcam, updatePreviewWebcam } from './mediaActions';
 import { producersActions } from '../slices/producersSlice';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
 import { setRaisedHand } from './meActions';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { mediaActions } from '../slices/mediaSlice';
 
 const logger = new Logger('listenerActions');
 
@@ -30,9 +32,24 @@ let devicesUpdatedListener: (event: DevicesUpdated) => void;
 export const startListeners = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, deviceService, managementService }
+	{ signalingService, deviceService, managementService, effectService }
 ): Promise<void> => {
 	logger.debug('startListeners()');
+
+	effectService.on('error', () => {
+		dispatch(notificationsActions.enqueueNotification({
+			message: 'Blur video background error',
+			options: { variant: 'error' }
+		}));
+		if (getState().media.previewBlurBackground) {
+			dispatch(mediaActions.setPreviewBlurBackground(false));
+			dispatch(updatePreviewWebcam());
+		}
+		if (getState().media.liveBlurBackground) {
+			dispatch(mediaActions.setLiveBlurBackground(false));
+			dispatch(updateLiveWebcam());
+		}
+	});
 
 	devicesUpdatedListener = ({
 		devices,

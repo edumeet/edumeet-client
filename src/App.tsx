@@ -76,6 +76,9 @@ const App = (): JSX.Element => {
 		}
 	}, [ roomState ]);
 
+	/**
+	 * Detect WebGL-support.
+	 */
 	useEffect(() => {
 		window.addEventListener('load', () => {
 			const canvas = document.createElement('canvas');

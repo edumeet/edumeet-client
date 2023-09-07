@@ -13,6 +13,7 @@
 import { Logger, timeoutPromise } from 'edumeet-common';
 import { BlurBackground, BlurBackgroundNotSupportedError } from '../utils/blurbackground/BlurBackground';
 import { deviceInfo } from '../utils/deviceInfo';
+import { EventEmitter } from 'events';
 
 const logger = new Logger('EffectsService');
 
@@ -52,7 +53,7 @@ const models = {
 
 export type StreamType = 'live' | 'preview'
 
-export class EffectService {
+export class EffectService extends EventEmitter {
 	#blurBackgroundSupported = true;
 	#blurBackgroundEffects = new Map<StreamType, BlurBackground>();
 	#model?: ArrayBuffer;
@@ -73,6 +74,7 @@ export class EffectService {
 
 	constructor() {
 		logger.debug('constructor()');
+		super();
 
 		/**
 		 * Don't load MLBackend on mobile.
@@ -106,7 +108,7 @@ export class EffectService {
 
 		try {
 			MLBackend = await timeoutPromise(createTFLiteSIMDModule(), this.#loadMLBackendTimeout);
-			if (!MLBackend) throw new Error();
+			if (!MLBackend) throw new Error('No ML Backend');
 		} catch (error) {
 			logger.error(error);
 		}
@@ -115,7 +117,7 @@ export class EffectService {
 		if (!MLBackend) {
 			try {
 				MLBackend = await timeoutPromise(createTFLiteModule(), this.#loadMLBackendTimeout);
-				if (!MLBackend) throw new Error();
+				if (!MLBackend) throw new Error('No ML Backend');
 			} catch (error) {
 				logger.error(error);
 			} 
@@ -151,6 +153,11 @@ export class EffectService {
 		const { blurTrack, width, height } = effect.createBlurTrack(inputStream, this.webGLSupport === true, this.#selectedModel.width, this.#selectedModel.height);
 
 		this.#blurBackgroundEffects.set(streamType, effect);		
+		
+		effect.on('error', () => {
+			this.emit('error');
+			effect.removeAllListeners();
+		});
 		
 		return { blurTrack, width, height };
 	}

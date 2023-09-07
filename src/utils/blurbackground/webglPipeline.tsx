@@ -14,27 +14,16 @@ import { buildLoadSegmentationStage } from './webglStages/loadSegmentationStage'
 import { buildResizingStage } from './webglStages/resizingStage';
 import { compileShader, createTexture } from './helpers/webgl';
 import { WebGLWorker } from './helpers/WebglWorker';
+import { shaderSources } from './shaderSources';
 
 export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: BlurBackgroundPipelineOptions): BlurBackgroundPipeline => {
 	const worker = new WebGLWorker();
-	const vertexShaderSource = String.raw`#version 300 es
-  
-      in vec2 a_position;
-      in vec2 a_texCoord;
-  
-      out vec2 v_texCoord;
-  
-      void main() {
-        gl_Position = vec4(a_position, 0.0, 1.0);
-        v_texCoord = a_texCoord;
-      }
-    `;
   
 	const gl = canvas.getContext('webgl2');
 
 	if (!gl) throw new Error('No WebGL context');
   
-	const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+	const vertexShader = compileShader(gl, gl.VERTEX_SHADER, shaderSources.mainVertex);
   
 	const vertexArray = gl.createVertexArray();
 
@@ -42,7 +31,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
   
 	const positionBuffer = gl.createBuffer();
 
-	if (!positionBuffer) throw new Error();
+	if (!positionBuffer) throw new Error('No positionBuffer');
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 	gl.bufferData(
@@ -53,7 +42,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
   
 	const texCoordBuffer = gl.createBuffer();
 
-	if (!texCoordBuffer) throw new Error();
+	if (!texCoordBuffer) throw new Error('no texCoordBuffer');
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
 	gl.bufferData(
@@ -77,7 +66,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		segmentation.height
 	);
 
-	if (!segmentationTexture) throw new Error();
+	if (!segmentationTexture) throw new Error('No segmentationTexture');
 	const personMaskTexture = createTexture(
 		gl,
 		gl.RGBA8,
@@ -85,7 +74,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		source.dimensions.height
 	);
 
-	if (!personMaskTexture) throw new Error();
+	if (!personMaskTexture) throw new Error('No personMaskTexture');
   
 	const resizingStage = buildResizingStage(
 		worker,
@@ -124,7 +113,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 	);
   
 	async function render() {
-		if (!gl) throw new Error();
+		if (!gl) throw new Error('No rendering context');
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, inputFrameTexture);
   
@@ -149,7 +138,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 	}
   
 	function cleanup() {
-		if (!gl) throw new Error();
+		if (!gl) throw new Error('No rendering context');
 		backgroundStage.cleanUp();
 		jointBilateralFilterStage.cleanUp();
 		loadSegmentationStage.cleanUp();
