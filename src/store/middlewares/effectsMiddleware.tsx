@@ -1,5 +1,5 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { MiddlewareOptions } from '../store';
 import { Logger } from 'edumeet-common';
 import { mediaActions } from '../slices/mediaSlice';
 import { meActions } from '../slices/meSlice';
@@ -18,12 +18,7 @@ const createEffectsMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createEffectsMiddleware()');
 
-	const middleware: Middleware = ({
-		dispatch, getState
-	}: {
-		dispatch: AppDispatch,
-		getState: () => RootState
-	}) =>
+	const middleware: Middleware = () =>
 		(next) => async (action) => {
 			if (mediaActions.setPreviewBlurBackground.match(action) && action.payload === false) {
 				effectService.stopBlurEffect('preview');

@@ -148,7 +148,7 @@ export class EffectService {
 		if (!MLBackend || !this.#model) throw new BlurBackgroundNotSupportedError('Not supported');
 		const effect = new BlurBackground(MLBackend, this.#model);
 
-		const { blurTrack, width, height } = effect.createBlurTrack(inputStream, this.webGLSupport, this.#selectedModel.width, this.#selectedModel.height);
+		const { blurTrack, width, height } = effect.createBlurTrack(inputStream, this.webGLSupport === true, this.#selectedModel.width, this.#selectedModel.height);
 
 		this.#blurBackgroundEffects.set(streamType, effect);		
 		

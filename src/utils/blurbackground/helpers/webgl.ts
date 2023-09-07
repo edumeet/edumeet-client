@@ -1,4 +1,4 @@
-import { TimerWorker } from '../webglPipeline';
+import { WebGLWorker } from './WebglWorker';
 
 export function createPiplelineStageProgram(
 	gl: WebGL2RenderingContext,
@@ -70,7 +70,7 @@ export function createTexture(
 	width: number,
 	height: number,
 	minFilter = gl.NEAREST,
-	magFilter = gl.NEAREST
+	magFilter: 9728 | 9729 = gl.NEAREST
 ) {
 	const texture = gl.createTexture();
 
@@ -85,7 +85,7 @@ export function createTexture(
 }
 
 export async function readPixelsAsync(
-	timerWorker: TimerWorker, 
+	timerWorker: WebGLWorker, 
 	gl: WebGL2RenderingContext,
 	x: number,
 	y: number,
@@ -119,7 +119,7 @@ export async function readPixelsAsync(
 }
 
 async function getBufferSubDataAsync(
-	timerWorker: TimerWorker,
+	timerWorker: WebGLWorker,
 	gl: WebGL2RenderingContext,
 	target: number,
 	buffer: WebGLBuffer,
@@ -145,7 +145,7 @@ async function getBufferSubDataAsync(
 }
 
 function clientWaitAsync(
-	timerWorker: TimerWorker,
+	timerWorker: WebGLWorker,
 	gl: WebGL2RenderingContext,
 	sync: WebGLSync
 ) {
@@ -159,12 +159,12 @@ function clientWaitAsync(
 				return;
 			}
 			if (res === gl.TIMEOUT_EXPIRED) {
-				timerWorker.setTimeout(test);
+				timerWorker.setTimeout(test, 0);
 				
 				return;
 			}
 			resolve(res);
 		}
-		timerWorker.setTimeout(test);
+		timerWorker.setTimeout(test, 0);
 	});
 }
