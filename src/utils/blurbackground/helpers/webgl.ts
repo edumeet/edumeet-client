@@ -85,7 +85,7 @@ export function createTexture(
 }
 
 export async function readPixelsAsync(
-	timerWorker: WebGLWorker, 
+	worker: WebGLWorker, 
 	gl: WebGL2RenderingContext,
 	x: number,
 	y: number,
@@ -105,7 +105,7 @@ export async function readPixelsAsync(
 	gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
 
 	await getBufferSubDataAsync(
-		timerWorker,
+		worker,
 		gl,
 		gl.PIXEL_PACK_BUFFER,
 		buf,
@@ -119,7 +119,7 @@ export async function readPixelsAsync(
 }
 
 async function getBufferSubDataAsync(
-	timerWorker: WebGLWorker,
+	worker: WebGLWorker,
 	gl: WebGL2RenderingContext,
 	target: number,
 	buffer: WebGLBuffer,
@@ -133,7 +133,7 @@ async function getBufferSubDataAsync(
 	if (!sync) throw new Error();
 
 	gl.flush();
-	const res = await clientWaitAsync(timerWorker, gl, sync);
+	const res = await clientWaitAsync(worker, gl, sync);
 
 	gl.deleteSync(sync);
 
@@ -145,7 +145,7 @@ async function getBufferSubDataAsync(
 }
 
 function clientWaitAsync(
-	timerWorker: WebGLWorker,
+	worker: WebGLWorker,
 	gl: WebGL2RenderingContext,
 	sync: WebGLSync
 ) {
@@ -159,12 +159,12 @@ function clientWaitAsync(
 				return;
 			}
 			if (res === gl.TIMEOUT_EXPIRED) {
-				timerWorker.setTimeout(test, 0);
+				worker.setTimeout(test, 0);
 				
 				return;
 			}
 			resolve(res);
 		}
-		timerWorker.setTimeout(test, 0);
+		worker.setTimeout(test, 0);
 	});
 }
