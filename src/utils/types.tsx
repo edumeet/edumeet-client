@@ -1,5 +1,6 @@
 import { ThemeOptions } from '@mui/material';
 import { ClientMonitorConfig } from '@observertc/client-monitor-js';
+import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
@@ -90,7 +91,8 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			collectingPeriodInMs: 5000,
 			statsExpirationTimeInMs: 60000,
 		}
-	}
+	},
+	reduxLoggingEnabled: false
 };
 
 export interface EdumeetConfig {
@@ -127,7 +129,8 @@ export interface EdumeetConfig {
 	observertc: {
 		enabled: boolean,
 		config: ClientMonitorConfig;
-	}
+	},
+	reduxLoggingEnabled: boolean
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
@@ -209,4 +212,24 @@ export interface RTCStatsMetaData {
 	endpointId: string;
 	deviceId: string;
 	displayName: string;
+}
+
+export interface BlurBackgroundPipeline {
+	render: () => void;
+	cleanup: () => void;
+}
+
+export interface Dimensions {
+	width: number,
+	height: number
+}
+
+export interface BlurBackgroundPipelineOptions {
+    source: {
+        element: HTMLVideoElement,
+        dimensions: Dimensions
+    },
+    canvas: HTMLCanvasElement,
+    backend: TFLite,
+    segmentation: Dimensions
 }

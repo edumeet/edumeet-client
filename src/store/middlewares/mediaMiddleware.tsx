@@ -32,7 +32,7 @@ const logger = new Logger('MediaMiddleware');
  * @returns {Middleware} Redux middleware.
  */
 const createMediaMiddleware = ({
-	mediaService, signalingService
+	mediaService, signalingService 
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 

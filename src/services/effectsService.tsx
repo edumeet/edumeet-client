@@ -5,14 +5,15 @@
  * https://github.com/google-coral/tflite/blob/master/LICENSE
  * 
  * Model: MediaPipe Selfie Segmentation
- * Copyirhgt 2021 Google LLC
+ * Copyright 2021 Google LLC
  * License: Apache 2.0
  * https://storage.googleapis.com/mediapipe-assets/Model%20Card%20MediaPipe%20Selfie%20Segmentation.pdf
  */
 
 import { Logger, timeoutPromise } from 'edumeet-common';
-import { BlurBackground, BlurBackgroundNotSupportedError } from './BlurBackground';
+import { BlurBackground, BlurBackgroundNotSupportedError } from '../utils/blurbackground/BlurBackground';
 import { deviceInfo } from '../utils/deviceInfo';
+import { EventEmitter } from 'events';
 
 const logger = new Logger('EffectsService');
 
@@ -39,11 +40,11 @@ export interface TFLite {
 }
 
 const models = {
-	modelLandscape: {
+	landscape: {
 		path: '/model/selfie_segmenter_landscape.tflite',
 		width: 256,
 		height: 144 },
-	modelGeneral: {
+	square: {
 		path: '/model/selfie_segmenter.tflite',
 		width: 256,
 		height: 256
@@ -52,7 +53,7 @@ const models = {
 
 export type StreamType = 'live' | 'preview'
 
-export class EffectService {
+export class EffectService extends EventEmitter {
 	#blurBackgroundSupported = true;
 	#blurBackgroundEffects = new Map<StreamType, BlurBackground>();
 	#model?: ArrayBuffer;
@@ -68,9 +69,12 @@ export class EffectService {
 		this.resolveMLBackendReady = resolve;
 		this.rejectMLBackendReady = reject;
 	});
+	#selectedModel = models.landscape;
+	webGLSupport?: boolean;
 
 	constructor() {
 		logger.debug('constructor()');
+		super();
 
 		/**
 		 * Don't load MLBackend on mobile.
@@ -104,7 +108,7 @@ export class EffectService {
 
 		try {
 			MLBackend = await timeoutPromise(createTFLiteSIMDModule(), this.#loadMLBackendTimeout);
-			if (!MLBackend) throw new Error();
+			if (!MLBackend) throw new Error('No ML Backend');
 		} catch (error) {
 			logger.error(error);
 		}
@@ -113,7 +117,7 @@ export class EffectService {
 		if (!MLBackend) {
 			try {
 				MLBackend = await timeoutPromise(createTFLiteModule(), this.#loadMLBackendTimeout);
-				if (!MLBackend) throw new Error();
+				if (!MLBackend) throw new Error('No ML Backend');
 			} catch (error) {
 				logger.error(error);
 			} 
@@ -128,7 +132,7 @@ export class EffectService {
 
 	async #loadModel() {
 		logger.debug('#loadModel()');
-		const response = await fetch(models.modelGeneral.path);
+		const response = await fetch(this.#selectedModel.path);
 
 		if (!response.ok) throw new BlurBackgroundNotSupportedError('Could not load model');
 
@@ -136,7 +140,7 @@ export class EffectService {
 	}
 
 	public async startBlurEffect(inputStream: MediaStream, streamType: StreamType) {
-		logger.debug('startBlurEffect() [stream.id: %s, streamType: %s]', inputStream.id, streamType);
+		logger.debug('startBlurEffect() [stream.id: %s, streamType: %s, pipeline: %s]', inputStream.id, streamType, this.webGLSupport ? 'webgl' : 'canvas');
 		if (!this.#blurBackgroundSupported)
 			throw new BlurBackgroundNotSupportedError('Not supported');
 		
@@ -146,9 +150,14 @@ export class EffectService {
 		if (!MLBackend || !this.#model) throw new BlurBackgroundNotSupportedError('Not supported');
 		const effect = new BlurBackground(MLBackend, this.#model);
 
-		const { blurTrack, width, height } = await effect.startEffect(inputStream, models.modelGeneral.width, models.modelGeneral.height);
+		const { blurTrack, width, height } = effect.createBlurTrack(inputStream, this.webGLSupport === true, this.#selectedModel.width, this.#selectedModel.height);
 
 		this.#blurBackgroundEffects.set(streamType, effect);		
+		
+		effect.on('error', () => {
+			this.emit('error');
+			effect.removeAllListeners();
+		});
 		
 		return { blurTrack, width, height };
 	}

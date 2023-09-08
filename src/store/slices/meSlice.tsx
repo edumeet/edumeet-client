@@ -16,6 +16,7 @@ export interface MeState {
 	canRecord: boolean;
 	canTranscribe: boolean;
 	canBlurBackground: boolean;
+	hasWebGLSupport: boolean,
 	canShareFiles: boolean;
 	canSelectAudioOutput: boolean
 	hasAudioContext: boolean
@@ -43,6 +44,7 @@ const initialState: MeState = {
 	canRecord: false,
 	canTranscribe: false,
 	canBlurBackground: true,
+	hasWebGLSupport: false,
 	canSelectAudioOutput: ('sinkId' in HTMLMediaElement.prototype),
 	hasAudioContext: false,
 	mediaConnectionStatus: 'not_connected',
@@ -63,7 +65,6 @@ const meSlice = createSlice({
 	reducers: {
 		resetMe: ((state) => {
 			return { ...initialState, id: uuid(), browser: state.browser, devices: state.devices };
-			
 		}),
 		setMe: ((state, action: PayloadAction<string>) => {
 			state.id = action.payload;
@@ -94,6 +95,9 @@ const meSlice = createSlice({
 		}),
 		setCanBlurBackground: ((state, action: PayloadAction<boolean>) => {
 			state.canBlurBackground = action.payload;
+		}),
+		setHasWebGLSupport: ((state, action: PayloadAction<boolean>) => {
+			state.hasWebGLSupport = action.payload;
 		}),
 		setMediaConnectionStatus: ((state, action: PayloadAction<MediaConnectionStatus>) => {
 			state.mediaConnectionStatus = action.payload;
