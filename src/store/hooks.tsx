@@ -1,6 +1,5 @@
 import { SnackbarKey, useSnackbar } from 'notistack';
 import { useEffect, useMemo, useRef } from 'react';
-import { unstable_useBlocker as useBlocker } from 'react-router-dom';
 import {
 	TypedUseSelectorHook,
 	useDispatch,
@@ -10,6 +9,7 @@ import { MediaDevice } from '../services/deviceService';
 import { Permission } from '../utils/roles';
 import {
 	makeDevicesSelector,
+	makeIsActiveSpeakerSelector,
 	makePeerConsumerSelector,
 	makePeerSelector,
 	makePeersInSessionSelector,
@@ -21,7 +21,6 @@ import { notificationsActions } from './slices/notificationsSlice';
 import { Peer } from './slices/peersSlice';
 import { RootState, AppDispatch } from './store';
 import { Transcript } from '../services/mediaService';
-import { leaveRoom } from './actions/roomActions';
 
 /**
  * Hook to access the redux dispatch function.
@@ -38,7 +37,7 @@ export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 /**
- * Hook to access the comsumers of a peer.
+ * Hook to access the consumers of a peer.
  * 
  * @param peerId - The id of the peer.
  * @returns {PeerConsumers} The consumers of the peer.
@@ -147,19 +146,15 @@ export const useNotifier = (): void => {
 };
 
 /**
- * Hook to show a leave prompt when the user tries to leave the page.
+ * Hook to learn if id is active speaker or not.
  * 
- * @param when - Whether to show the leave prompt or not.
- * @returns {void}
+ * @param id - id to evaluate.
+ * @returns {boolean} true if id is active speaker.
  */
-export const usePrompt = (): void => {
-	const dispatch = useAppDispatch();
+export const useIsActiveSpeaker = (id: string): boolean => {
+	const isActiveSpeaker = useMemo(() => makeIsActiveSpeakerSelector(id), []);
 
-	useBlocker(() => {
-		dispatch(leaveRoom());
-
-		return true;
-	});
+	return useAppSelector(isActiveSpeaker);
 };
 
 type ResultBox<T> = { v: T }

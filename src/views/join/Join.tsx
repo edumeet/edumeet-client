@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
 import { joinLabel, yourNameLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
-import { updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
@@ -13,22 +12,30 @@ import { roomActions } from '../../store/slices/roomSlice';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
+import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
+import { isMobileSelector } from '../../store/selectors';
+import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
+import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
+import { createAudioContext } from '../../store/actions/mediaActions';
 
 interface JoinProps {
 	roomId: string;
 }
 
-const Join = ({ roomId }: JoinProps): JSX.Element => {
+const Join = ({ roomId }: JoinProps): React.JSX.Element => {
+	useNotifier();
 	const dispatch = useAppDispatch();
 
-	const stateDisplayName = useAppSelector((state) => state.settings.displayName);
+	const { displayName } = useAppSelector((state) => state.settings);
 	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
+	const mediaLoading = useAppSelector((state) => state.media.videoInProgress || state.media.audioInProgress);
+	const isMobile = useAppSelector(isMobileSelector);
+	const deviceOs = useAppSelector((state) => state.me.browser.os);
+	const showAudioChooser = useAppSelector((state) => state.media.previewAudioInputDeviceId && !state.media.audioMuted);
+	const showVideoChooser = useAppSelector((state) => state.media.previewVideoDeviceId && !state.media.videoMuted);
+	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
 
-	const [ name, setName ] = useState(stateDisplayName || '');
-	const {
-		audioMuted,
-		videoMuted
-	} = useAppSelector((state) => state.settings);
+	const [ name, setName ] = useState(displayName || '');
 
 	const handleDisplayNameChange = (value: string) => {
 		setName(value.trim() ? value : value.trim());
@@ -36,7 +43,6 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	const handleJoin = () => {
 		dispatch(settingsActions.setDisplayName(name));
-
 		dispatch(connect(roomId));
 	};
 
@@ -62,12 +68,23 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 
 	useEffect(() => {
 		dispatch(roomActions.updateRoom({ id: roomId }));
+	}, []);
 
-		if (!audioMuted)
-			dispatch(updatePreviewMic());
+	// Used to unlock audio on ios.
+	const unlockAudio = () => {
+		dispatch(createAudioContext());
+		document.removeEventListener('touchend', unlockAudio);
+	};
 
-		if (!videoMuted)
-			dispatch(updatePreviewWebcam());
+	// Listener for unlocking audio on ios.
+	useEffect(() => {
+		if (deviceOs === 'ios') 
+			document.body.addEventListener('touchend', unlockAudio);
+
+		return () => {
+			if (deviceOs === 'ios')
+				document.removeEventListener('touchend', unlockAudio);
+		};
 	}, []);
 
 	return (
@@ -76,25 +93,27 @@ const Join = ({ roomId }: JoinProps): JSX.Element => {
 			content={
 				<>
 					<MediaPreview />
-					<AudioInputChooser preview />
-					<VideoInputChooser preview />
-					<TextInputField
-						label={yourNameLabel()}
-						value={name}
-						setValue={handleDisplayNameChange}
-						onEnter={handleJoin}
-						startAdornment={<AccountCircle />}
-						autoFocus
-						data-testid='name-input'
-					/>
+					{showAudioChooser && <AudioInputChooser /> }
+					{showVideoChooser && <VideoInputChooser /> }
+					{showVideoChooser && !isMobile && <BlurBackgroundSwitch />}
+					{canSelectAudioOutput && <AudioOutputChooser /> }
+					<ChooserDiv>
+						<TextInputField
+							label={yourNameLabel()}
+							value={name}
+							setValue={handleDisplayNameChange}
+							onEnter={handleJoin}
+							startAdornment={<AccountCircle />}
+							autoFocus
+						/>
+					</ChooserDiv>
 				</>
 			}
 			actions={
 				<Button
 					onClick={handleJoin}
 					variant='contained'
-					disabled={!name || joinInProgress}
-					data-testid='join-button'
+					disabled={!name || joinInProgress || mediaLoading }
 					size='small'
 				>
 					{ joinLabel() }

@@ -975,7 +975,7 @@
   resolved "https://registry.yarnpkg.com/@types/cookiejar/-/cookiejar-2.1.2.tgz#66ad9331f63fe8a3d3d9d8c6e3906dd10f6446e8"
   integrity sha512-t73xJJrvdTjXrn4jLS9VSGRbz0nUY3cl2DMGDU48lKl+HR9dbbjW2A9r3g40VA++mQpy6uuHg33gy7du2BKpog==
 
-"@types/debug@^4.1.7":
+"@types/debug@^4.1.7", "@types/debug@^4.1.8":
   version "4.1.8"
   resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.8.tgz#cef723a5d0a90990313faec2d1e22aee5eecb317"
   integrity sha512-/vPO1EPOs306Cvhwv7KfVfYvOJqA/S/AXjaHQiJboCZzcNDb+TIJFN9/2C9DZ//ijSKWioNyUxD792QmDJ+HKQ==
@@ -1962,9 +1962,9 @@ ecdsa-sig-formatter@1.0.11:
   dependencies:
     safe-buffer "^5.0.1"
 
-edumeet-common@edumeet/edumeet-common#0.5.2:
-  version "0.5.2"
-  resolved "https://codeload.github.com/edumeet/edumeet-common/tar.gz/f87c5573ab8b4bbbd72f469954f207a28ad9485d"
+edumeet-common@edumeet/edumeet-common#0.6.0:
+  version "0.6.0"
+  resolved "https://codeload.github.com/edumeet/edumeet-common/tar.gz/2a6a1080054846e500b3c297f2e00cb5f486e567"
   dependencies:
     debug "^4.3.4"
     socket.io-client "^4.6.1"
@@ -1998,14 +1998,14 @@ engine.io-client@~3.5.0:
     xmlhttprequest-ssl "~1.6.2"
     yeast "0.1.2"
 
-engine.io-client@~6.4.0:
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-6.4.0.tgz#88cd3082609ca86d7d3c12f0e746d12db4f47c91"
-  integrity sha512-GyKPDyoEha+XZ7iEqam49vz6auPnNJ9ZBfy89f+rMMas8AuiMWOZ9PVzu8xb9ZC6rafUqiGHSCfu22ih66E+1g==
+engine.io-client@~6.5.2:
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-6.5.2.tgz#8709e22c291d4297ae80318d3c8baeae71f0e002"
+  integrity sha512-CQZqbrpEYnrpGqC07a9dJDz4gePZUgTPMU3NKJPSeQOyw27Tst4Pl3FemKoFGAlHzgZmKjoRmiJvbWfhCXUlIg==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
     debug "~4.3.1"
-    engine.io-parser "~5.0.3"
+    engine.io-parser "~5.2.1"
     ws "~8.11.0"
     xmlhttprequest-ssl "~2.0.0"
 
@@ -2020,10 +2020,10 @@ engine.io-parser@~2.2.0:
     blob "0.0.5"
     has-binary2 "~1.0.2"
 
-engine.io-parser@~5.0.3:
-  version "5.0.7"
-  resolved "https://registry.yarnpkg.com/engine.io-parser/-/engine.io-parser-5.0.7.tgz#ed5eae76c71f398284c578ab6deafd3ba7e4e4f6"
-  integrity sha512-P+jDFbvK6lE3n1OL+q9KuzdOFWkkZ/cMV9gol/SbVfpyqfvrfrFTOFJ6fQm2VC3PZHlU3QPhVwmbsCnauHF2MQ==
+engine.io-parser@~5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/engine.io-parser/-/engine.io-parser-5.2.1.tgz#9f213c77512ff1a6cc0c7a86108a7ffceb16fcfb"
+  integrity sha512-9JktcM3u18nU9N2Lz3bWeBgxVgOKpw7yhRaoxQA3FUDZzzw+9WlA6p4G4u0RixNkg14fH7EfEc/RhpurtiROTQ==
 
 engine.io@~3.6.0:
   version "3.6.1"
@@ -2292,10 +2292,15 @@ esutils@^2.0.2:
   resolved "https://registry.yarnpkg.com/esutils/-/esutils-2.0.3.tgz#74d2eb4de0b8da1293711910d50775b9b710ef64"
   integrity sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
 
-event-target-shim@^5.0.0, event-target-shim@^5.0.1:
+event-target-shim@^5.0.0:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
   integrity sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==
+
+event-target-shim@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-6.0.2.tgz#ea5348c3618ee8b62ff1d344f01908ee2b8a2b71"
+  integrity sha512-8q3LsZjRezbFZ2PN+uP+Q7pnHUMmAOziU2vA2OwoFaKIXxlxl38IylhSSgUorWu/rf4er67w0ikBqjBFk/pomA==
 
 events@^1.1.1:
   version "1.1.1"
@@ -2312,13 +2317,13 @@ extend@^3.0.1:
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
   integrity sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==
 
-fake-mediastreamtrack@^1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/fake-mediastreamtrack/-/fake-mediastreamtrack-1.1.6.tgz#2cbdfae201b9771cb8a6b988120ce0edf25eb6ca"
-  integrity sha512-lcoO5oPsW57istAsnjvQxNjBEahi18OdUhWfmEewwfPfzNZnji5OXuodQM+VnUPi/1HnQRJ6gBUjbt1TNXrkjQ==
+fake-mediastreamtrack@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/fake-mediastreamtrack/-/fake-mediastreamtrack-1.2.0.tgz#11e6e0c50d36d3bc988461c034beb81debee548b"
+  integrity sha512-AxHtlEmka1sqNoe3Ej1H1hJc9gjjO/6vCbCPm4D4QeEXvzhjYumA+iZ7wOi2WrmkAhGElHhBgWoNgJhFccectA==
   dependencies:
-    event-target-shim "^5.0.1"
-    uuid "^8.1.0"
+    event-target-shim "^6.0.2"
+    uuid "^9.0.0"
 
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
@@ -3218,21 +3223,21 @@ marked@^5.0.5:
   resolved "https://registry.yarnpkg.com/marked/-/marked-5.0.5.tgz#1c7bd284d7d29d7d75d6241b26e5d5bf3b558a12"
   integrity sha512-auTmKJTBwZM/GLVFOhmkY7pL8v/0DxiDaXRC2kEyajcNJ0XXn9NphLD0106dbWrbPwcyD4Y0Dus16OkCzUMkfg==
 
-mediasoup-client@^3.6.84:
-  version "3.6.84"
-  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.6.84.tgz#ae36724bf133d144a3ec0a055fa8b184b603dc25"
-  integrity sha512-eWkL0/rBPr9Bd8+qz4EqeYUg3+NtHNyAielk2BxfRiOyyKhknb38RabIM3L7eh9mi8qupZ3O11W7OkLSx+XRfQ==
+mediasoup-client@^3.6.100:
+  version "3.6.100"
+  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.6.100.tgz#184edf2368665d45ba02c57d2c946919237f7b34"
+  integrity sha512-ZYxJYXDh7TdjK+QHpYuSRG+OTZC8+CI/UkhVUs5P2RSM7iLVOjLrtVemuEEa9Hwqx9HuYPbo+l/meZtFSEqijw==
   dependencies:
-    "@types/debug" "^4.1.7"
+    "@types/debug" "^4.1.8"
     awaitqueue "^3.0.1"
-    bowser "^2.11.0"
     debug "^4.3.4"
     events "^3.3.0"
-    fake-mediastreamtrack "^1.1.6"
+    fake-mediastreamtrack "^1.2.0"
     h264-profile-level-id "^1.0.1"
     queue-microtask "^1.2.3"
     sdp-transform "^2.14.1"
-    supports-color "^9.3.1"
+    supports-color "^9.4.0"
+    ua-parser-js "^1.0.35"
 
 memory-chunk-store@^1.3.5:
   version "1.3.5"
@@ -3679,10 +3684,10 @@ react-flip-toolkit@^7.1.0:
     flip-toolkit "7.1.0"
     prop-types "^15.8.1"
 
-react-intl-redux@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/react-intl-redux/-/react-intl-redux-2.3.0.tgz#08fde47c733e00f450aa0fa2e7d68354c92cff8c"
-  integrity sha512-lIAco0dlVIn8Dzc+epHpZZD8oM2TD62SJTkJ+x33KnvYB5l9ouLTvgz1ztajHuhiIBFq6n2mWwnS74Vim8CMuQ==
+react-intl-redux@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-intl-redux/-/react-intl-redux-2.4.0.tgz#77d73fb91653a7b98a09f4ccd2fa81a6a76fadb6"
+  integrity sha512-mE73EEPs4zP/bOQzC2hS8S0MlBEnXJmYOrp+qnhiq2Lyy4WmukhbIBBw+vNJE6TJxIh4jX6zFeN+khjyWt4sdw==
   dependencies:
     "@babel/runtime" "^7.17.9"
     prop-types "^15.8.1"
@@ -4009,14 +4014,14 @@ socket.io-client@2.5.0:
     socket.io-parser "~3.3.0"
     to-array "0.1.4"
 
-socket.io-client@^4.6.1:
-  version "4.6.2"
-  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.6.2.tgz#2bfde952e74625d54e622718a7cb1d591ee62fd6"
-  integrity sha512-OwWrMbbA8wSqhBAR0yoPK6EdQLERQAYjXb3A0zLpgxfM1ZGLKoxHx8gVmCHA6pcclRX5oA/zvQf7bghAS11jRA==
+socket.io-client@^4.6.1, socket.io-client@^4.7.2:
+  version "4.7.2"
+  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.7.2.tgz#f2f13f68058bd4e40f94f2a1541f275157ff2c08"
+  integrity sha512-vtA0uD4ibrYD793SOIAwlo8cj6haOeMHrGvwPxJsxH7CeIksqJ+3Zc06RvWTIFgiSqx4A3sOnTXpfAEE2Zyz6w==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
     debug "~4.3.2"
-    engine.io-client "~6.4.0"
+    engine.io-client "~6.5.2"
     socket.io-parser "~4.2.4"
 
 socket.io-parser@~3.3.0:
@@ -4194,10 +4199,10 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
-supports-color@^9.3.1:
-  version "9.3.1"
-  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-9.3.1.tgz#34e4ad3c71c9a39dae3254ecc46c9b74e89e15a6"
-  integrity sha512-knBY82pjmnIzK3NifMo3RxEIRD9E0kIzV4BKcyTZ9+9kWgLMxd4PrsTSMoFQUabgRBbF8KOLRDCyKgNV+iK44Q==
+supports-color@^9.4.0:
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-9.4.0.tgz#17bfcf686288f531db3dea3215510621ccb55954"
+  integrity sha512-VL+lNrEoIXww1coLPOmiEmK/0sGigko5COxI09KzHc2VJXJsQ37UaQ+8quuxjDeA7+KnLGTWRyOXSLLR2Wb4jw==
 
 supports-preserve-symlinks-flag@^1.0.0:
   version "1.0.0"
@@ -4310,10 +4315,20 @@ typed-array-length@^1.0.4:
     for-each "^0.3.3"
     is-typed-array "^1.1.9"
 
-typescript@^5.0.2, typescript@^5.1.3:
+typescript@^5.0.2:
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.1.6.tgz#02f8ac202b6dad2c0dd5e0913745b47a37998274"
+  integrity sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==
+
+typescript@^5.1.3:
   version "5.1.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.1.3.tgz#8d84219244a6b40b6fb2b33cc1c062f715b9e826"
   integrity sha512-XH627E9vkeqhlZFQuL+UsyAXEnibT0kWR2FWONlr4sTjvxyJYnyefgrkyECLzM5NenmKzRAy2rR/OlYLA1HkZw==
+
+ua-parser-js@^1.0.35:
+  version "1.0.35"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-1.0.35.tgz#c4ef44343bc3db0a3cbefdf21822f1b1fc1ab011"
+  integrity sha512-fKnGuqmTBnIE+/KXSzCn4db8RTigUzw1AN0DmdU6hJovUTbYJKyqj+8Mt1c4VfRDnOVJnENmfYkIPZ946UrSAA==
 
 uint8-util@^2.1.3, uint8-util@^2.1.6, uint8-util@^2.1.9:
   version "2.1.9"
@@ -4404,7 +4419,7 @@ utp-native@^2.5.3:
     timeout-refresh "^1.0.0"
     unordered-set "^2.0.1"
 
-uuid@^8.1.0, uuid@^8.3.2:
+uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==

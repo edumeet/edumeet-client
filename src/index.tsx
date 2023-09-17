@@ -14,7 +14,6 @@ import {
 } from './store/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-// import * as serviceWorker from './serviceWorker';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { detectDevice } from 'mediasoup-client';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
@@ -59,7 +58,7 @@ const router = createBrowserRouter(
  * 
  * @returns {JSX.Element} Either the app or the unsupported browser page
  */
-const RootComponent = (): JSX.Element => {
+const RootComponent = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -95,5 +94,3 @@ root.render(
 		</Provider>
 	</React.StrictMode>
 );
-
-// serviceWorker.unregister();

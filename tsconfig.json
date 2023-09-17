@@ -22,7 +22,5 @@
 		"jsx": "react-jsx",
 		"types": [ "vite/client", "@types/wicg-file-system-access" ],
 	},
-	"include": [
-		"src/**/*"
-	]
+	"include": ["src/**/*"]
 }

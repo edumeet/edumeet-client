@@ -7,13 +7,15 @@ import {
 	webcamProducerSelector
 } from '../selectors';
 import { permissions } from '../../utils/roles';
-import { updateMic, updateWebcam } from './mediaActions';
+import { updateLiveMic, updateLiveWebcam, updatePreviewWebcam } from './mediaActions';
 import { producersActions } from '../slices/producersSlice';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
 import { setRaisedHand } from './meActions';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { mediaActions } from '../slices/mediaSlice';
 
 const logger = new Logger('listenerActions');
 
@@ -30,9 +32,24 @@ let devicesUpdatedListener: (event: DevicesUpdated) => void;
 export const startListeners = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, deviceService, managementService }
+	{ signalingService, deviceService, managementService, effectService }
 ): Promise<void> => {
 	logger.debug('startListeners()');
+
+	effectService.on('error', () => {
+		dispatch(notificationsActions.enqueueNotification({
+			message: 'Blur video background error',
+			options: { variant: 'error' }
+		}));
+		if (getState().media.previewBlurBackground) {
+			dispatch(mediaActions.setPreviewBlurBackground(false));
+			dispatch(updatePreviewWebcam());
+		}
+		if (getState().media.liveBlurBackground) {
+			dispatch(mediaActions.setLiveBlurBackground(false));
+			dispatch(updateLiveWebcam());
+		}
+	});
 
 	devicesUpdatedListener = ({
 		devices,
@@ -88,7 +105,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case 'm': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress, liveAudioInputDeviceId } = getState().media;
 
 				if (audioInProgress) return;
 
@@ -100,9 +117,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const micProducer = micProducerSelector(getState());
 
 				if (!micProducer) {
-					dispatch(updateMic({
-						start: true
-					}));
+					liveAudioInputDeviceId && dispatch(updateLiveMic());
 				} else if (!micProducer.paused) {
 					dispatch(
 						producersActions.setProducerPaused({
@@ -125,7 +140,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			}
 
 			case 'v': {
-				const videoInProgress = getState().me.videoInProgress;
+				const { videoInProgress, liveVideoDeviceId } = getState().media;
 
 				if (videoInProgress) return;
 
@@ -137,9 +152,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const webcamProducer = webcamProducerSelector(getState());
 
 				if (!webcamProducer) {
-					dispatch(updateWebcam({
-						start: true
-					}));
+					liveVideoDeviceId && dispatch(updateLiveWebcam());
 				} else {
 					dispatch(
 						producersActions.closeProducer({
@@ -230,7 +243,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			}
 
 			case ' ': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress, liveAudioInputDeviceId } = getState().media;
 
 				if (audioInProgress) return;
 
@@ -242,9 +255,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const micProducer = micProducerSelector(getState());
 
 				if (!micProducer) {
-					dispatch(updateMic({
-						start: true
-					}));
+					liveAudioInputDeviceId && dispatch(updateLiveMic());
 				} else if (micProducer.paused) {
 					dispatch(
 						producersActions.setProducerResumed({
@@ -281,7 +292,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case ' ': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress } = getState().media;
 
 				if (audioInProgress) return;
 

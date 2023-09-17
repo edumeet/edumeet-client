@@ -27,6 +27,8 @@ declare global {
 	}
 }
 
+export type TrackType = 'liveTracks' | 'previewTracks'
+
 export type MediaChange = 'pause' | 'resume' | 'close';
 
 export interface MediaCapabilities {
@@ -60,7 +62,7 @@ const changeEvent = {
 
 export declare interface MediaService {
 	// eslint-disable-next-line no-unused-vars
-	on(event: 'consumerCreated', listener: (consumer: Consumer, producerPaused: boolean) => void): this;
+	on(event: 'consumerCreated', listener: (consumer: Consumer, paused: boolean, producerPaused: boolean) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'dataConsumerCreated', listener: (dataConsumer: DataConsumer) => void): this;
 	// eslint-disable-next-line no-unused-vars
@@ -72,11 +74,15 @@ export declare interface MediaService {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'consumerResumed', listener: (consumer: Consumer) => void): this;
 	// eslint-disable-next-line no-unused-vars
+	on(event: 'consumerScore', listener: (consumerId: string, score: number) => void): this;
+	// eslint-disable-next-line no-unused-vars
 	on(event: 'producerClosed', listener: (producer: Producer) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'producerPaused', listener: (producer: Producer) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'producerResumed', listener: (producer: Producer) => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'producerScore', listener: (producerId: string, score: number) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'transcriptionStarted', listener: () => void): this;
 	// eslint-disable-next-line no-unused-vars
@@ -95,7 +101,9 @@ export class MediaService extends EventEmitter {
 	private consumers: Map<string, Consumer> = new Map();
 	private dataConsumers: Map<string, DataConsumer> = new Map();
 	private dataProducers: Map<string, DataProducer> = new Map();
-	private tracks: Map<string, MediaStreamTrack> = new Map();
+	private liveTracks: Map<string, MediaStreamTrack> = new Map();
+	private previewTracks: Map<string, MediaStreamTrack> = new Map();
+	private trackDevice: Map<string, string> = new Map(); // Used to track duplicate tracks.
 	private peerTransports: Map<string, PeerTransport> = new Map();
 	private peers: string[] = [];
 	private p2p = true;
@@ -106,6 +114,9 @@ export class MediaService extends EventEmitter {
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
 
+	public previewVolumeWatcher?: VolumeWatcher;
+	public audioContext?: AudioContext;
+
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
 
@@ -115,6 +126,10 @@ export class MediaService extends EventEmitter {
 
 	public init(): void {
 		this.handleSignaling();
+	}
+
+	public retryConnection() {
+		this.signalingService.notify({ method: 'retryConnection', data: {} });
 	}
 
 	public close(): void {
@@ -131,11 +146,16 @@ export class MediaService extends EventEmitter {
 		this.peerTransports.clear();
 		this.peers = [];
 
-		for (const track of this.tracks.values()) {
+		for (const track of this.liveTracks.values()) {
 			track.stop();
 		}
 
-		this.tracks.clear();
+		for (const track of this.previewTracks.values()) {
+			track.stop();
+		}
+
+		this.liveTracks.clear();
+		this.previewTracks.clear();
 		this.monitor?.close();
 	}
 
@@ -155,30 +175,59 @@ export class MediaService extends EventEmitter {
 		return Array.from(this.producers.values());
 	}
 
-	public getTrack(trackId: string): MediaStreamTrack | undefined {
-		return this.tracks.get(trackId);
+	public getTrack(trackId: string, trackType: TrackType): MediaStreamTrack | undefined {
+		if (trackType === 'liveTracks') return this.liveTracks.get(trackId);
+		if (trackType === 'previewTracks') return this.previewTracks.get(trackId);
+	}
+
+	#removeDuplicateTracks(kind: string, deviceId: string, trackType: TrackType) {
+		logger.debug('#removeDuplicateTracks [kind: %s, deviceId: %s, trackType: %s]', kind, deviceId, trackType);
+		for (const track of this[trackType].values()) {
+			if (this.trackDevice.get(track.id) === deviceId &&
+				track.kind === kind) {
+				logger.debug('removing duplicate track %s', track.id);
+
+				track.stop();
+				this[trackType].delete(track.id);
+			}
+		}
 	}
 
 	public getMonitor(): ClientMonitor | undefined {
 		return this.monitor;
 	}
 
-	public addTrack(track: MediaStreamTrack): void {
-		logger.debug('addTrack() [trackId:%s]', track.id);
+	public addTrack(track: MediaStreamTrack, deviceId: string, trackType: TrackType): void {
+		logger.debug('addTrack() [trackId:%s, kind: %s, deviceId: %s, trackType: %s]', track.id, track.kind, deviceId, trackType);
+		this.trackDevice.set(track.id, deviceId);
+		this.#removeDuplicateTracks(track.kind, deviceId, trackType);
 
-		this.tracks.set(track.id, track);
-
+		this[trackType].set(track.id, track);
 		track.addEventListener('ended', () => {
 			logger.debug('addTrack() | track "ended" [trackId:%s]', track.id);
 
-			this.tracks.delete(track.id);
+			this[trackType].delete(track.id);
+			this.trackDevice.delete(track.id);
 		});
 	}
 
-	public removeTrack(trackId: string | undefined): void {
+	public removeLiveTrack(trackId: string | undefined): void {
 		logger.debug('removeTrack() [trackId:%s]', trackId);
 
-		trackId && this.tracks.delete(trackId);
+		if (trackId) {
+			this.liveTracks.delete(trackId);
+			this.trackDevice.delete(trackId);
+		}
+
+	}
+	
+	public removePreviewTrack(trackId: string | undefined): void {
+		logger.debug('removePreviewTrack() [trackId:%s]', trackId);
+
+		if (trackId) {
+			this.previewTracks.delete(trackId);
+			this.trackDevice.delete(trackId);
+		}
 	}
 
 	public enableP2P(clientId: string): void {
@@ -308,9 +357,9 @@ export class MediaService extends EventEmitter {
 							id,
 							kind,
 							rtpParameters,
-							// type,
 							appData,
 							producerPaused,
+							paused
 						} = notification.data;
 
 						if (!this.recvTransport)
@@ -328,9 +377,6 @@ export class MediaService extends EventEmitter {
 						});
 
 						if (kind === 'audio') {
-							await this.signalingService.sendRequest('resumeConsumer', { consumerId: consumer.id })
-								.catch((error) => logger.warn('resumeConsumer, unable to resume server-side [consumerId:%s, error:%o]', consumer.id, error));
-
 							const { track } = consumer;
 							const harkStream = new MediaStream();
 
@@ -338,8 +384,8 @@ export class MediaService extends EventEmitter {
 
 							const consumerHark = hark(harkStream, {
 								play: false,
-								interval: 100,
-								threshold: -60, // TODO: get from state
+								interval: 50,
+								threshold: -60,
 								history: 100
 							});
 
@@ -365,9 +411,7 @@ export class MediaService extends EventEmitter {
 									{ consumerId: consumer.id, spatialLayer, temporalLayer }
 								).catch((error) => logger.warn('setConsumerPreferredLayers, unable to set layers [consumerId:%s, error:%o]', consumer.id, error));
 							});
-
 							consumer.appData.resolutionWatcher = resolutionWatcher;
-							consumer.pause();
 						}
 
 						this.consumers.set(consumer.id, consumer);
@@ -380,7 +424,7 @@ export class MediaService extends EventEmitter {
 							this.changeConsumer(consumer.id, 'close', false);
 						});
 	
-						this.emit('consumerCreated', consumer, producerPaused);
+						this.emit('consumerCreated', consumer, paused, producerPaused);
 
 						break;
 					}
@@ -493,6 +537,22 @@ export class MediaService extends EventEmitter {
 
 						break;
 					}
+
+					case 'consumerScore': {
+						const { consumerId, score: { score } } = notification.data;
+
+						this.emit('consumerScore', consumerId, score);
+						break;
+					}
+
+					case 'producerScore': {
+						const { producerId, score } = notification.data;
+						const highestScore = score.reduce((prev: {score:number}, curr: { score: number }) =>
+							(prev.score > curr.score ? prev : curr));
+
+						this.emit('producerScore', producerId, highestScore.score);
+						break;
+					}
 				}
 			} catch (error) {
 				logger.error('error on signalService "notification" event [error:%o]', error);
@@ -547,7 +607,7 @@ export class MediaService extends EventEmitter {
 		change: MediaChange,
 		local = true
 	): Promise<void> {
-		logger.debug(`${change}Consumer [consumerId:%s]`, consumerId);
+		logger.debug(`${change}Consumer [consumerId: %s, local: %s]`, consumerId, local);
 
 		const consumer = this.consumers.get(consumerId);
 
@@ -635,6 +695,7 @@ export class MediaService extends EventEmitter {
 			this.recvTransport = await this.createTransport('createRecvTransport', iceServers);
 		} catch (error) {
 			logger.error('error on starting mediasoup transports [error:%o]', error);
+			throw error;
 		}
 
 		return {
@@ -741,7 +802,7 @@ export class MediaService extends EventEmitter {
 			const producerHark = hark(harkStream, {
 				play: false,
 				interval: 100,
-				threshold: -60, // TODO: get from state
+				threshold: -60,
 				history: 100
 			});
 
@@ -874,11 +935,11 @@ export class MediaService extends EventEmitter {
 	}
 
 	public initMonitor(): void {
-		if (!edumeetConfig.observertc) {
+		logger.debug('initMonitor()');
+		if (!edumeetConfig.observertc.enabled) {
 			return;
 		}
-
-		this.monitor = createClientMonitor(edumeetConfig.observertc);
+		this.monitor = createClientMonitor(edumeetConfig.observertc.config);
 		this.monitor.collectors.addMediasoupDevice(this.mediasoup);
 		this.monitor.events.onStatsCollected((statsEntries) => {
 			logger.debug('initMonitor(): The latest stats entries [statsEntries: %o]', statsEntries);

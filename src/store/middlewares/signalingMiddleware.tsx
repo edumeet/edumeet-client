@@ -1,7 +1,11 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { IOClientConnection, Logger } from 'edumeet-common';
+import { Logger } from 'edumeet-common';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { roomServerConnectionError } from '../../components/translated/translatedComponents';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { RoomServerConnection } from '../../utils/RoomServerConnection';
+import { leaveRoom } from '../actions/roomActions';
 
 const logger = new Logger('SignalingMiddleware');
 
@@ -22,7 +26,7 @@ const logger = new Logger('SignalingMiddleware');
  * @returns {Middleware} Redux middleware.
  */
 const createSignalingMiddleware = ({
-	signalingService
+	signalingService 
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createSignalingMiddleware()');
 
@@ -38,12 +42,19 @@ const createSignalingMiddleware = ({
 					dispatch(signalingActions.connected());
 				});
 
-				signalingService.on('reconnecting', () => {
-					dispatch(signalingActions.reconnecting());
+				signalingService.on('error', (error) => {
+					dispatch(notificationsActions.enqueueNotification({
+						message: roomServerConnectionError(error.message),
+						options: { variant: 'error' }
+					}));
 				});
 
+				signalingService.once('close', () => {
+					dispatch(leaveRoom());
+				});
+				
 				const { url } = getState().signaling;
-				const socketConnection = IOClientConnection.create({ url });
+				const socketConnection = RoomServerConnection.create({ url });
 
 				signalingService.addConnection(socketConnection);
 			}

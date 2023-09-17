@@ -27,10 +27,6 @@ const createRoomMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => (action) => {
-			if (signalingActions.disconnect.match(action)) {
-				dispatch(roomActions.setState('left'));
-			}
-
 			if (signalingActions.connect.match(action)) {
 				signalingService.on('notification', (notification) => {
 					try {
@@ -62,7 +58,7 @@ const createRoomMiddleware = ({
 									dispatch(meActions.setSessionId(sessionId));
 									dispatch(webrtcActions.setIceServers(turnServers));
 									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
-									dispatch(settingsActions.setLastN(maxActiveVideos));
+									dispatch(settingsActions.setMaxActiveVideos(maxActiveVideos));
 									dispatch(roomActions.updateRoom({
 										logo: settings.logo,
 										backgroundImage: settings.background,
@@ -118,7 +114,7 @@ const createRoomMiddleware = ({
 										screenSharingSimulcast: settings.screenSharingSimulcast ?? true,
 									}));
 									dispatch(permissionsActions.setLocked(locked));
-									dispatch(settingsActions.setLastN(maxActiveVideos));
+									dispatch(settingsActions.setMaxActiveVideos(maxActiveVideos));
 								});
 
 								break;
@@ -133,13 +129,16 @@ const createRoomMiddleware = ({
 								break;
 							}
 
-							/* case 'activeSpeaker': {
-								const { peerId } = notification.data;
-								const isMe = peerId === getState().me.id;
+							case 'activeSpeaker': {
+								const { peerId, sessionId } = notification.data;
+								const { id, sessionId: mySessionId } = getState().me;
 
-								dispatch(roomActions.setActiveSpeakerId({ peerId, isMe }));
+								if (sessionId !== mySessionId) break;
+								const isMe = peerId === id;
+
+								dispatch(roomSessionsActions.setActiveSpeakerId({ sessionId, peerId, isMe }));
 								break;
-							} */
+							} 
 
 							case 'moderator:kick':
 							case 'escapeMeeting': {

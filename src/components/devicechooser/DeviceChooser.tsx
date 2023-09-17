@@ -12,7 +12,6 @@ interface DeviceChooserProps {
 	value: string;
 	// eslint-disable-next-line no-unused-vars
 	setValue: (value: string) => void;
-	name: string;
 	devicesLabel: string;
 	noDevicesLabel: string;
 	disabled: boolean;
@@ -33,7 +32,6 @@ export const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
 const DeviceChooser = ({
 	value,
 	setValue,
-	name,
 	devicesLabel,
 	noDevicesLabel,
 	disabled,
@@ -51,7 +49,6 @@ const DeviceChooser = ({
 						setValue(event.target.value);
 				}}
 				displayEmpty
-				name={name}
 				autoWidth
 				disabled={disabled}
 			>

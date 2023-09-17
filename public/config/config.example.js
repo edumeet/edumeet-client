@@ -21,9 +21,6 @@ var config = {
 	// If the server component runs on a different host than the app you can specify the host name.
 	serverHostname: '',
 
-	// Number of videos to show based on speaker detection.
-	lastN: 11,
-
 	// Don't show the participant tile if the user has no video
 	hideNonVideo: false,
 
@@ -56,12 +53,6 @@ var config = {
 
 	// Noise suppression enabled.
 	noiseSuppression: true,
-
-	// Automatically unmute speaking above noiseThreshold.
-	voiceActivatedUnmute: false,
-
-	// This is only for voiceActivatedUnmute and audio-indicator.
-	noiseThreshold: -60,
 
 	// The audio sample rate.
 	sampleRate: 48000,
@@ -97,8 +88,6 @@ var config = {
 			'autoGainControl': true,
 			'echoCancellation': true,
 			'noiseSuppression': true,
-			'voiceActivatedUnmute': false,
-			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 1,
 			'sampleSize': 16,
@@ -113,8 +102,6 @@ var config = {
 			'autoGainControl': false,
 			'echoCancellation': false,
 			'noiseSuppression': false,
-			'voiceActivatedUnmute': false,
-			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 2,
 			'sampleSize': 16,
@@ -174,7 +161,11 @@ var config = {
 	// Configuration for ObserveRTC
 	// https://github.com/ObserveRTC/client-monitor-js#configurations
 	observertc: {
-		collectingPeriodInMs: 2000,
-		statsExpirationTimeInMs: 60000,
-	}
+		enabled: true,
+		config: {
+			collectingPeriodInMs: 5000,
+			statsExpirationTimeInMs: 60000,
+		}
+	},
+	reduxLoggingEnabled: false
 };

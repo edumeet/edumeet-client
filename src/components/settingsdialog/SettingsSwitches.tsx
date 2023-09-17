@@ -69,31 +69,6 @@ export const NoiseSuppressionSwitch = (): JSX.Element => {
 	);
 };
 
-/*
-export const VoiceActivatedUnmuteSwitch = (): JSX.Element => {
-	// const dispatch = useAppDispatch();
-	const voiceActivatedUnmute =
-		useAppSelector((state) => state.settings.voiceActivatedUnmute);
-
-	return (
-		<FormControlLabel
-			control={
-				<Switch 
-					color='primary'
-					checked={ voiceActivatedUnmute }
-					
-					onChange={ (event: React.ChangeEvent<HTMLInputElement>): void => {
-						// TODO
-						dispatch(updateMic());
-						dispatch(updatePreviewMic());
-					} }
-				/>
-			}
-			label={ voiceActivatedUnmuteLabel() }
-		/>
-	);
-}; */
-
 export const OpusDtxSwitch = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const opusDtx = useAppSelector((state) => state.settings.opusDtx);

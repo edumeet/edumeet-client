@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { startListeners, stopListeners } from './store/actions/startActions';
 import {
 	useAppDispatch,
@@ -17,6 +17,7 @@ import { permissions } from './utils/roles';
 import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
+import { meActions } from './store/slices/meSlice';
 
 type AppParams = {
 	id: string;
@@ -44,6 +45,7 @@ const App = (): JSX.Element => {
 	const roomState = useAppSelector((state) => state.room.state) as RoomConnectionState;
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		dispatch(startListeners());
@@ -66,6 +68,29 @@ const App = (): JSX.Element => {
 			dispatch(sendFiles(droppedFiles));
 		}
 	};
+
+	useEffect(() => {
+		if (roomState ==='left') {
+			dispatch(roomActions.setState('new'));
+			navigate('/');
+		}
+	}, [ roomState ]);
+
+	/**
+	 * Detect WebGL-support.
+	 */
+	useEffect(() => {
+		window.addEventListener('load', () => {
+			const canvas = document.createElement('canvas');
+			const gl = canvas.getContext('webgl') 
+      || canvas.getContext('experimental-webgl');
+			// Report the result.
+
+			if (gl && gl instanceof WebGLRenderingContext) {
+				dispatch(meActions.setHasWebGLSupport(true));
+			} 
+		}, { once: true });
+	}, []);
 
 	return (
 		<SnackbarProvider action={

@@ -1,5 +1,6 @@
 import { ThemeOptions } from '@mui/material';
 import { ClientMonitorConfig } from '@observertc/client-monitor-js';
+import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
@@ -7,7 +8,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	developmentPort: 8443,
 	productionPort: 443,
 	serverHostname: undefined,
-	lastN: 11,
 	hideNonVideo: false,
 	resolution: 'medium',
 	frameRate: 30,
@@ -19,8 +19,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	autoGainControl: true,
 	echoCancellation: true,
 	noiseSuppression: true,
-	voiceActivatedUnmute: false,
-	noiseThreshold: -60,
 	sampleRate: 48000,
 	channelCount: 1,
 	sampleSize: 16,
@@ -36,8 +34,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'autoGainControl': true,
 			'echoCancellation': true,
 			'noiseSuppression': true,
-			'voiceActivatedUnmute': false,
-			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 1,
 			'sampleSize': 16,
@@ -52,8 +48,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'autoGainControl': false,
 			'echoCancellation': false,
 			'noiseSuppression': false,
-			'voiceActivatedUnmute': false,
-			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 2,
 			'sampleSize': 16,
@@ -92,9 +86,13 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
 	observertc: {
-		collectingPeriodInMs: 5000,
-		statsExpirationTimeInMs: 60000,
-	}
+		enabled: true,
+		config: {
+			collectingPeriodInMs: 5000,
+			statsExpirationTimeInMs: 60000,
+		}
+	},
+	reduxLoggingEnabled: false
 };
 
 export interface EdumeetConfig {
@@ -103,7 +101,6 @@ export interface EdumeetConfig {
 	developmentPort: number;
 	productionPort: number;
 	serverHostname?: string;
-	lastN: number;
 	hideNonVideo: boolean;
 	resolution: Resolution;
 	frameRate: number;
@@ -115,8 +112,6 @@ export interface EdumeetConfig {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
-	voiceActivatedUnmute: boolean;
-	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -131,7 +126,16 @@ export interface EdumeetConfig {
 	notificationSounds: Record<NotificationType, NotificationSound>;
 	title: string;
 	theme: ThemeOptions;
-	observertc: ClientMonitorConfig;
+	observertc: {
+		enabled: boolean,
+		config: ClientMonitorConfig;
+	},
+	reduxLoggingEnabled: boolean
+}
+
+export interface HTMLMediaElementWithSink extends HTMLMediaElement {
+	// eslint-disable-next-line no-unused-vars
+	setSinkId(deviceId: string): Promise<void>
 }
 
 export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
@@ -146,8 +150,6 @@ export interface AudioPreset {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
-	voiceActivatedUnmute: boolean;
-	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -210,4 +212,24 @@ export interface RTCStatsMetaData {
 	endpointId: string;
 	deviceId: string;
 	displayName: string;
+}
+
+export interface BlurBackgroundPipeline {
+	render: () => void;
+	cleanup: () => void;
+}
+
+export interface Dimensions {
+	width: number,
+	height: number
+}
+
+export interface BlurBackgroundPipelineOptions {
+    source: {
+        element: HTMLVideoElement,
+        dimensions: Dimensions
+    },
+    canvas: HTMLCanvasElement,
+    backend: TFLite,
+    segmentation: Dimensions
 }

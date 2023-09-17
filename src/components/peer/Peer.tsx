@@ -1,5 +1,6 @@
 import {
 	useAppSelector,
+	useIsActiveSpeaker,
 	usePeer,
 	usePeerConsumers
 } from '../../store/hooks';
@@ -11,6 +12,7 @@ import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import PeerStatsView from '../peerstatsview/PeerStatsView';
 import PeerTranscription from '../peertranscription/PeerTranscription';
+import RTPQuality from '../rtpquality/RtpQuality';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
@@ -33,16 +35,17 @@ const Peer = ({
 	} = usePeerConsumers(id);
 	const hideNonVideo = useAppSelector((state) => state.settings.hideNonVideo);
 	const peer = usePeer(id);
-	// const activeSpeaker = useAppSelector((state) => id === state.room.activeSpeakerId);
+	const isActiveSpeaker = useIsActiveSpeaker(id);
 	const showParticipant = !hideNonVideo || (hideNonVideo && webcamConsumer);
 	const showStats = useAppSelector((state) => state.ui.showStats);
 	const isMobile = useAppSelector(isMobileSelector);
+	const score = webcamConsumer?.score ?? micConsumer?.score;
 
 	return (
 		<>
 			{ showParticipant && (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={1}
 					width={style.width}
 					height={style.height}
@@ -64,6 +67,7 @@ const Peer = ({
 					</MediaControls>
 					<PeerTranscription id={id} />
 					{ micConsumer && <Volume consumer={micConsumer} /> }
+					{typeof score === 'number' && score < 10 && <RTPQuality score={score} />}
 					{ webcamConsumer && <VideoView consumer={webcamConsumer} /> }
 					{ webcamConsumer && showStats && <PeerStatsView consumerId={webcamConsumer.id}/> }
 				</VideoBox>
@@ -71,7 +75,7 @@ const Peer = ({
 			
 			{ screenConsumer && (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={2}
 					width={style.width}
 					height={style.height}
@@ -91,7 +95,7 @@ const Peer = ({
 			)}
 			{ extraVideoConsumers?.map((consumer) => (
 				<VideoBox
-					// activeSpeaker={activeSpeaker}
+					activeSpeaker={isActiveSpeaker}
 					order={3}
 					key={consumer.id}
 					width={style.width}

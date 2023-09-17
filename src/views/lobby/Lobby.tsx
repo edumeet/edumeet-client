@@ -10,15 +10,23 @@ import { setDisplayName } from '../../store/actions/meActions';
 import {
 	useAppDispatch,
 	useAppSelector,
-	usePrompt,
+	useNotifier,
 } from '../../store/hooks';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
+import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
+import { isMobileSelector } from '../../store/selectors';
+import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
+import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 
-const Lobby = (): JSX.Element => {
-	usePrompt();
+const Lobby = (): React.JSX.Element => {
+	useNotifier();
 
 	const dispatch = useAppDispatch();
 	const displayName = useAppSelector((state) => state.settings.displayName);
+	const isMobile = useAppSelector(isMobileSelector);
+	const showAudioChooser = useAppSelector((state) => state.media.previewAudioInputDeviceId && !state.media.audioMuted);
+	const showVideoChooser = useAppSelector((state) => state.media.previewVideoDeviceId && !state.media.videoMuted);
+	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
 
 	const handleDisplayNameChange = () => {
@@ -33,15 +41,18 @@ const Lobby = (): JSX.Element => {
 			content={
 				<>
 					<MediaPreview />
-					<AudioInputChooser preview />
-					<VideoInputChooser preview />
-					<TextInputField
-						label={yourNameLabel()}
-						value={localDisplayName ?? 'Guest'}
-						setValue={setLocalDisplayName}
-						startAdornment={<AccountCircle />}
-						onBlur={handleDisplayNameChange}
-					/>
+					{showAudioChooser && <AudioInputChooser /> }
+					{showVideoChooser && <VideoInputChooser /> }
+					{showVideoChooser && !isMobile && <BlurBackgroundSwitch />}
+					{canSelectAudioOutput && <AudioOutputChooser /> }
+					<ChooserDiv>
+						<TextInputField
+							label={yourNameLabel()}
+							value={localDisplayName ?? 'Guest'}
+							setValue={setLocalDisplayName}
+							startAdornment={<AccountCircle />}
+							onBlur={handleDisplayNameChange}
+						/></ChooserDiv>
 				</>
 			}
 			actions={roomLockedLabel()}

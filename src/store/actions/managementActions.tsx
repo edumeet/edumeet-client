@@ -1,5 +1,7 @@
 import { Logger } from 'edumeet-common';
 import { AppThunk } from '../store';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { mgmtSvcUnavailable } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('ManagementActions');
 
@@ -17,6 +19,13 @@ export const getTenantFromFqdn = (fqdn: string): AppThunk<Promise<string | undef
 
 		tenantId = data[0]?.tenantId;
 	} catch (error) {
+		const { message } = error as Error;
+
+		if (message === 'Failed to fetch')
+			_dispatch(notificationsActions.enqueueNotification({
+				message: mgmtSvcUnavailable(),
+				options: { variant: 'error' }
+			}));
 		logger.error('getTenantFromFqdn() [error:%o]', error);
 	}
 
