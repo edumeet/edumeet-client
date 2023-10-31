@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles';
-import { Consumer } from 'mediasoup-client/lib/Consumer';
-import { Producer } from 'mediasoup-client/lib/types';
+import type { Consumer } from 'mediasoup-client/lib/Consumer';
+import type { Producer } from 'mediasoup-client/lib/types';
 import { useContext, useEffect, useRef } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 import { StateProducer } from '../../store/slices/producersSlice';

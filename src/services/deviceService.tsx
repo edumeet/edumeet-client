@@ -15,11 +15,13 @@ export interface DevicesUpdated {
 	newDevices: MediaDeviceInfo[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface DeviceService {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'devicesUpdated', listener: (updatedDevices: DevicesUpdated) => void): this;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class DeviceService extends EventEmitter {
 	private devices: MediaDevice[] = [];
 

@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import { Resolution, ResolutionWatcher } from './resolutionWatcher';
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface ResolutionReporter {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'updateResolution', listener: () => void): this;
@@ -17,6 +18,7 @@ export declare interface ResolutionReporter {
  * @emits updateResolution - Emitted when the resolution changes.
  * @emits close - Emitted when the video element is removed from the DOM.
  */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class ResolutionReporter extends EventEmitter {
 	public resolution: Resolution = { width: 320, height: 240 };
 

@@ -5,7 +5,7 @@ import { meActions } from '../slices/meSlice';
 import { ProducerSource, producersActions } from '../slices/producersSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
-import { Producer } from 'mediasoup-client/lib/types';
+import type { Producer } from 'mediasoup-client/lib/types';
 import { roomActions } from '../slices/roomSlice';
 
 const logger = new Logger('MediaActions');
@@ -520,6 +520,8 @@ export const updateWebcam = ({
 	let webcamProducer: Producer | undefined;
 
 	try {
+		if (!mediaService.rtpCapabilities) throw new Error('RTP Capabilities are not yet ready');
+
 		await deviceService.updateMediaDevices();
 
 		const canSendWebcam = getState().me.canSendWebcam;
@@ -689,6 +691,8 @@ export const updateScreenSharing = ({
 	let screenVideoProducer: Producer | undefined;
 
 	try {
+		if (!mediaService.rtpCapabilities) throw new Error('RTP Capabilities are not yet ready');
+
 		const canShareScreen = getState().me.canShareScreen;
 
 		if (!canShareScreen) throw new Error('cannot produce screen share');
@@ -862,6 +866,8 @@ export const startExtraVideo = ({
 	let extraVideoProducer: Producer | undefined;
 
 	try {
+		if (!mediaService.rtpCapabilities) throw new Error('RTP Capabilities are not yet ready');
+
 		if (!newDeviceId) throw new Error('newDeviceId is not defined');
 
 		await deviceService.updateMediaDevices();

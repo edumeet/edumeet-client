@@ -18,7 +18,7 @@ const ErrorBoundary = (): JSX.Element => {
 	useEffect(() => {
 		dispatch(leaveRoom());
 
-		const reloadTimeout = setTimeout(() => location.reload(), 5000);
+		const reloadTimeout = setTimeout(() => window.location.reload(), 5000);
 
 		return () => clearTimeout(reloadTimeout);
 	}, []);

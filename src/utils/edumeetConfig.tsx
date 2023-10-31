@@ -41,6 +41,5 @@ declare global {
 export default {
 	...defaultEdumeetConfig,
 	...window.config,
-	theme: { ...defaultEdumeetConfig.theme, ...window.config?.theme },
-	observertc: { ...defaultEdumeetConfig.observertc, ...window.config?.observertc }
+	theme: { ...defaultEdumeetConfig.theme, ...window.config?.theme }
 };

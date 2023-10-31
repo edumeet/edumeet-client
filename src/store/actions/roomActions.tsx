@@ -27,7 +27,7 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		const encodedRoomId = encodeURIComponent(roomId);
 		const peerId = getState().me.id;
 		const token = getState().permissions.token;
-		const tenantId = await dispatch(getTenantFromFqdn(location.hostname));
+		const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
 
 		const url = getSignalingUrl(peerId, encodedRoomId, tenantId, token);
 	
@@ -54,7 +54,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	logger.debug('joinRoom()');
 
 	await mediaService.createTransports(getState().webrtc.iceServers);
-
+	
+	if (!mediaService.mediaCapabilities) throw new Error('Media capabilities not set!');
 	dispatch(meActions.setMediaCapabilities(mediaService.mediaCapabilities));
 
 	const rtpCapabilities = mediaService.rtpCapabilities;

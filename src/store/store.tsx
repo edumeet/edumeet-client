@@ -76,7 +76,7 @@ const managementService = feathers()
 	.configure(authentication());
 
 export const mediaService = new MediaService({ signalingService });
-export const fileService = new FileService({ signalingService });
+export const fileService = new FileService();
 const effectsService = new EffectsService();
 
 /**

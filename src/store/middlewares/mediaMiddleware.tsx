@@ -33,7 +33,7 @@ const createMediaMiddleware = ({
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
-	const transcriptTimeouts = new Map<string, NodeJS.Timer>();
+	const transcriptTimeouts = new Map<string, number>();
 
 	const middleware: Middleware = ({
 		dispatch, getState
@@ -75,11 +75,12 @@ const createMediaMiddleware = ({
 					const timeout = transcriptTimeouts.get(id);
 
 					transcriptTimeouts.delete(id);
-					clearTimeout(timeout);
+
+					if (timeout) clearTimeout(timeout);
 
 					dispatch(peersActions.updateTranscript({ id, peerId, transcript, done }));
 
-					const newTimeout = setTimeout(() => {
+					const newTimeout = window.setTimeout(() => {
 						dispatch(peersActions.removeTranscript({ id, peerId }));
 
 						transcriptTimeouts.delete(id);

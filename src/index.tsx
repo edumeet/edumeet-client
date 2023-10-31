@@ -1,32 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import { RawIntlProvider } from 'react-intl';
 import './index.css';
 import debug from 'debug';
-import App from './App';
-import {
-	persistor,
-	store,
-	mediaService,
-	fileService,
-	ServiceContext
-} from './store/store';
+import { persistor, store, mediaService, fileService, ServiceContext } from './store/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { detectDevice } from 'mediasoup-client';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
-import CssBaseline from '@mui/material/CssBaseline';
-import UnsupportedBrowser from './views/unsupported/UnsupportedBrowser';
-import LandingPage from './views/landingpage/LandingPage';
 import edumeetConfig from './utils/edumeetConfig';
 import { intl } from './utils/intlManager';
 import { useAppDispatch } from './store/hooks';
 import { setLocale } from './store/actions/localeActions';
 import { Logger } from 'edumeet-common';
+import { CssBaseline } from '@mui/material';
 
-import ErrorBoundary from './views/errorboundary/ErrorBoundary';
+const ErrorBoundary = lazy(() => import('./views/errorboundary/ErrorBoundary'));
+const App = lazy(() => import('./App'));
+const LandingPage = lazy(() => import('./views/landingpage/LandingPage'));
+const UnsupportedBrowser = lazy(() => import('./views/unsupported/UnsupportedBrowser'));
 
 if (import.meta.env.VITE_APP_DEBUG === '*' || import.meta.env.NODE_ENV !== 'production') {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');
@@ -35,14 +28,14 @@ if (import.meta.env.VITE_APP_DEBUG === '*' || import.meta.env.NODE_ENV !== 'prod
 const logger = new Logger('index.tsx');
 const theme = createTheme(edumeetConfig.theme);
 const device = deviceInfo();
-const unsupportedBrowser = !detectDevice() || !browserInfo.satisfies(supportedBrowsers);
+const unsupportedBrowser = !browserInfo.satisfies(supportedBrowsers);
 const webrtcUnavailable = !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.RTCPeerConnection;
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<>
-			<Route path='/' element={<LandingPage />} errorElement={<ErrorBoundary />} />
-			<Route path='/:id' element={<App />} errorElement={<ErrorBoundary />} />
+			<Route path='/' element={<Suspense><LandingPage /></Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
+			<Route path='/:id' element={<Suspense><App /></Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
 		</>
 	)
 );
@@ -63,7 +56,7 @@ const RootComponent = (): React.JSX.Element => {
 	if (unsupportedBrowser || webrtcUnavailable) {
 		logger.error('Your browser is not supported [deviceInfo:%o]', device);
 
-		return (<UnsupportedBrowser platform={device.platform} webrtcUnavailable />);
+		return (<Suspense><UnsupportedBrowser platform={device.platform} webrtcUnavailable /></Suspense>);
 	} else {
 		return (<RouterProvider router={router} />);
 	}

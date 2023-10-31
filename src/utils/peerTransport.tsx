@@ -21,6 +21,7 @@ const defaultSettings: PeerTransportSettings = {
 
 const logger = new Logger('PeerTransport');
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface PeerTransport {
 	// eslint-disable-next-line
 	on(event: 'state', listener: (state: RTCIceConnectionState) => void): this;
@@ -34,6 +35,7 @@ export declare interface PeerTransport {
 	on(event: 'candidate', listener: (candidate: RTCIceCandidate) => void): this;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class PeerTransport extends EventEmitter {
 	public id: string;
 	public polite: boolean;

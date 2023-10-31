@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
+import type { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
 import { RTCStatsOptions } from '../../utils/types';
 import { roomActions } from './roomSlice';
 

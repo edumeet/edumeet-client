@@ -157,15 +157,5 @@ var config = {
 		sideContentItemDarkColor: 'rgba(150, 150, 150, 0.4)',
 		roundedness: 10, // Rounded corners on the various elements
 	},
-
-	// Configuration for ObserveRTC
-	// https://github.com/ObserveRTC/client-monitor-js#configurations
-	observertc: {
-		enabled: true,
-		config: {
-			collectingPeriodInMs: 5000,
-			statsExpirationTimeInMs: 60000,
-		}
-	},
 	reduxLoggingEnabled: false
 };

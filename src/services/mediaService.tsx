@@ -1,19 +1,17 @@
 import EventEmitter from 'events';
-import { Device } from 'mediasoup-client';
-import { Consumer } from 'mediasoup-client/lib/Consumer';
-import { Producer, ProducerOptions } from 'mediasoup-client/lib/Producer';
-import { Transport } from 'mediasoup-client/lib/Transport';
-import { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
+import type { Device } from 'mediasoup-client';
+import type { Consumer } from 'mediasoup-client/lib/Consumer';
+import type { Producer, ProducerOptions } from 'mediasoup-client/lib/Producer';
+import type { Transport } from 'mediasoup-client/lib/Transport';
+import type { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
 import { SignalingService } from './signalingService';
 import hark from 'hark';
 import { VolumeWatcher } from '../utils/volumeWatcher';
 import { PeerTransport } from '../utils/peerTransport';
-import { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
-import { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProducer';
+import type { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
+import type { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProducer';
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
 import { Logger } from 'edumeet-common';
-import { ClientMonitor, createClientMonitor } from '@observertc/client-monitor-js';
-import edumeetConfig from '../utils/edumeetConfig';
 import { ProducerSource } from '../store/slices/producersSlice';
 
 const logger = new Logger('MediaService');
@@ -56,6 +54,7 @@ const changeEvent = {
 	producerClosed: 'close',
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface MediaService {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'consumerCreated', listener: (consumer: Consumer, paused: boolean, producerPaused: boolean) => void): this;
@@ -87,10 +86,11 @@ export declare interface MediaService {
 	on(event: 'transcript', listener: (transcription: PeerTranscript) => void): this;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class MediaService extends EventEmitter {
 	private signalingService: SignalingService;
 
-	private mediasoup: Device = new Device();
+	private mediasoup?: Device;
 	private sendTransport: Transport | undefined;
 	private recvTransport: Transport | undefined;
 	private producers: Map<string, Producer> = new Map();
@@ -101,7 +101,6 @@ export class MediaService extends EventEmitter {
 	private peerTransports: Map<string, PeerTransport> = new Map();
 	private peers: string[] = [];
 	private p2p = true;
-	private monitor?: ClientMonitor;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
@@ -110,7 +109,6 @@ export class MediaService extends EventEmitter {
 		super();
 
 		this.signalingService = signalingService;
-		this.initMonitor();
 	}
 
 	public init(): void {
@@ -136,7 +134,6 @@ export class MediaService extends EventEmitter {
 		}
 
 		this.tracks.clear();
-		this.monitor?.close();
 	}
 
 	public getConsumer(consumerId: string): Consumer | undefined {
@@ -157,10 +154,6 @@ export class MediaService extends EventEmitter {
 
 	public getTrack(trackId: string): MediaStreamTrack | undefined {
 		return this.tracks.get(trackId);
-	}
-
-	public getMonitor(): ClientMonitor | undefined {
-		return this.monitor;
 	}
 
 	public addTrack(track: MediaStreamTrack): void {
@@ -506,7 +499,9 @@ export class MediaService extends EventEmitter {
 		});
 	}
 
-	get mediaCapabilities(): MediaCapabilities {
+	get mediaCapabilities(): MediaCapabilities | undefined {
+		if (!this.mediasoup) return;
+
 		return {
 			canSendMic: this.mediasoup.canProduce('audio'),
 			canSendWebcam: this.mediasoup.canProduce('video'),
@@ -516,8 +511,8 @@ export class MediaService extends EventEmitter {
 		};
 	}
 
-	get rtpCapabilities(): RtpCapabilities {
-		return this.mediasoup.rtpCapabilities;
+	get rtpCapabilities(): RtpCapabilities | undefined {
+		return this.mediasoup?.rtpCapabilities;
 	}
 
 	private handlePeerTransport(peerTransport: PeerTransport): void {
@@ -629,6 +624,12 @@ export class MediaService extends EventEmitter {
 		sendTransport: Transport | undefined;
 		recvTransport: Transport | undefined;
 	}> {
+		if (!this.mediasoup) {
+			const Mediasoup = await import('mediasoup-client');
+
+			this.mediasoup = new Mediasoup.Device();
+		}
+
 		try {
 			if (!this.mediasoup.loaded) {
 				const { routerRtpCapabilities } = await this.signalingService.sendRequest('getRouterRtpCapabilities');
@@ -654,6 +655,12 @@ export class MediaService extends EventEmitter {
 		creator: 'createSendTransport' | 'createRecvTransport',
 		iceServers?: RTCIceServer[]
 	): Promise<Transport> {
+		if (!this.mediasoup) {
+			const Mediasoup = await import('mediasoup-client');
+
+			this.mediasoup = new Mediasoup.Device();
+		}
+
 		const {
 			id,
 			iceParameters,
@@ -866,17 +873,5 @@ export class MediaService extends EventEmitter {
 		this.speechRecognition = undefined;
 
 		this.emit('transcriptionStopped');
-	}
-
-	public initMonitor(): void {
-		logger.debug('initMonitor()');
-
-		if (!edumeetConfig.observertc.enabled) return;
-
-		this.monitor = createClientMonitor(edumeetConfig.observertc.config);
-		this.monitor.collectors.addMediasoupDevice(this.mediasoup);
-		this.monitor.events.onStatsCollected((statsEntries) => {
-			logger.debug('initMonitor(): The latest stats entries [statsEntries: %o]', statsEntries);
-		});
 	}
 }

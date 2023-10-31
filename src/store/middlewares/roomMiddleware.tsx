@@ -41,7 +41,6 @@ const createRoomMiddleware = ({
 									creationTimestamp,
 									turnServers,
 									rtcStatsOptions,
-									clientMonitorSenderConfig,
 									maxActiveVideos,
 									breakoutsEnabled,
 									chatEnabled,
@@ -81,11 +80,6 @@ const createRoomMiddleware = ({
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
-
-								if (clientMonitorSenderConfig) {
-									mediaService.getMonitor()?.setRoomId(sessionId);
-									mediaService.getMonitor()?.connect(clientMonitorSenderConfig);
-								}
 
 								break;
 							}

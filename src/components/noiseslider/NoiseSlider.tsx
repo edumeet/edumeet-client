@@ -7,7 +7,7 @@ import { settingsActions } from '../../store/slices/settingsSlice';
 import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { noiseSuppressionLabel } from '../translated/translatedComponents';
-import { Producer } from 'mediasoup-client/lib/types';
+import type { Producer } from 'mediasoup-client/lib/types';
 
 const StyledSlider = styled(Slider)(() => ({
 	'.MuiSlider-root': {
