@@ -8,13 +8,10 @@ import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { webrtcActions } from '../slices/webrtcSlice';
 import { AppThunk } from '../store';
-import { stopPreviewMic, stopPreviewWebcam, updateLiveMic, updateLiveWebcam } from './mediaActions';
+import { updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { getTenantFromFqdn } from './managementActions';
-import { mediaActions } from '../slices/mediaSlice';
-import { notificationsActions } from '../slices/notificationsSlice';
-import { errorJoiningRoomLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('RoomActions');
 
@@ -30,9 +27,7 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		const encodedRoomId = encodeURIComponent(roomId);
 		const peerId = getState().me.id;
 		const token = getState().permissions.token;
-		const tenantId = await dispatch(getTenantFromFqdn(location.hostname));
-
-		if (!tenantId) throw new Error('connect() | no tenantId found');
+		const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
 
 		const url = getSignalingUrl(peerId, encodedRoomId, tenantId, token);
 	
@@ -40,26 +35,31 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		dispatch(signalingActions.connect());
 	} catch (error) {
 		logger.error('connect() [error:"%o"]', error);
-		dispatch(notificationsActions.enqueueNotification({
-			message: errorJoiningRoomLabel(),
-			options: { variant: 'error' }
-		}));
-
 	} finally {
 		dispatch(roomActions.updateRoom({ joinInProgress: false }));
 	}
 };
 
 // This action is triggered when the server sends "roomReady" to us.
-// This means that we have joined the room but still have no media connection.
+// This means that we start our joining process which is:
+// 1. Create our Mediasoup transports
+// 2. Discover our capabilities
+// 3. Signal the server that we are ready
+// 4. Update the state
 export const joinRoom = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService /* , performanceMonitor */ }
+	{ signalingService, mediaService /* , performanceMonitor */ }
 ): Promise<void> => {
 	logger.debug('joinRoom()');
 
-	const { displayName } = getState().settings;
+	await mediaService.createTransports(getState().webrtc.iceServers);
+	
+	if (!mediaService.mediaCapabilities) throw new Error('Media capabilities not set!');
+	dispatch(meActions.setMediaCapabilities(mediaService.mediaCapabilities));
+
+	const rtpCapabilities = mediaService.rtpCapabilities;
+	const displayName = getState().settings.displayName;
 	const { sessionId, picture } = getState().me;
 
 	const {
@@ -73,7 +73,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		roomMode = 'SFU',
 	} = await signalingService.sendRequest('join', {
 		displayName,
-		picture
+		picture,
+		rtpCapabilities,
 	});
 
 	batch(() => {
@@ -86,35 +87,19 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(webrtcActions.setTracker(tracker));
 
-		const { canBlurBackground, canSelectAudioOutput } = getState().me;
-		const { videoMuted, audioMuted, previewVideoDeviceId, liveVideoDeviceId, previewAudioInputDeviceId, liveAudioInputDeviceId, previewBlurBackground, previewAudioOutputDeviceId } = getState().media;
-
-		if (canBlurBackground)
-			dispatch(mediaActions.setLiveBlurBackground(previewBlurBackground));
-		if (canSelectAudioOutput && previewAudioOutputDeviceId) {
-			dispatch(mediaActions.setLiveAudioOutputDeviceId(previewAudioOutputDeviceId));
+		if (peers.length < 10) {
+			if (!getState().me.audioMuted) dispatch(updateMic({ start: true }));
+			if (!getState().me.videoMuted) dispatch(updateWebcam({ start: true }));
 		}
-		
-		if (!audioMuted) {
-			dispatch(mediaActions.setLiveAudioInputDeviceId(previewAudioInputDeviceId ?? liveAudioInputDeviceId ?? undefined));
-		}
-		if (!videoMuted) {
-			dispatch(mediaActions.setLiveVideoDeviceId(previewVideoDeviceId ?? liveVideoDeviceId ?? undefined));
-		}
-
-		dispatch(stopPreviewMic());
-		dispatch(stopPreviewWebcam());
 	});
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
-	dispatch 
+	dispatch
 ): Promise<void> => {
 	logger.debug('leaveRoom()');
 
-	dispatch(roomActions.setState('left'));
 	dispatch(signalingActions.disconnect());
-	dispatch(meActions.resetMe());
 };
 
 export const createBreakoutRoom = (name: string): AppThunk<Promise<void>> => async (
@@ -183,10 +168,11 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 	logger.debug('joinBreakoutRoom()');
 
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
-	const audioEnabled = getState().media.liveAudioInputDeviceId && !getState().media.audioMuted;
-	const videoEnabled = getState().media.liveVideoDeviceId && !getState().media.videoMuted;
 
 	try {
+		const audioMuted = getState().me.audioMuted;
+		const videoMuted = getState().me.videoMuted;
+
 		const {
 			chatHistory,
 			fileHistory,
@@ -196,8 +182,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 			dispatch(meActions.setSessionId(sessionId));
 			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-			audioEnabled && dispatch(updateLiveMic());
-			videoEnabled && dispatch(updateLiveWebcam());
+			if (!audioMuted) dispatch(updateMic({ start: true }));
+			if (!videoMuted) dispatch(updateWebcam({ start: true }));
 		});
 	} catch (error) {
 		logger.error('joinBreakoutRoom() [error:%o]', error);

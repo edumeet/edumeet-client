@@ -40,7 +40,6 @@ const Room = (): JSX.Element => {
 
 	return (
 		<>
-			<FullscreenVideo />
 			<WindowedVideo />
 			<AudioPeers />
 			<TopBar
@@ -50,6 +49,7 @@ const Room = (): JSX.Element => {
 			/>
 			<ControlButtonsBar />
 			<MainContent />
+			<FullscreenVideo />
 			<LobbyDialog />
 			<Settings />
 			<Help />

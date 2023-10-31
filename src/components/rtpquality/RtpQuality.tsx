@@ -18,7 +18,6 @@ const RTPQualityContainer = styled('div')<RTPQualityContainerProps>(({ theme, si
 	height: theme.spacing(size),
 	top: 5,
 	right: 5,
-	zIndex: 21,
 	backgroundColor,
 	borderColor,
 	borderWidth,

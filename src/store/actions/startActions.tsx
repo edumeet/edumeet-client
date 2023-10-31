@@ -2,20 +2,21 @@ import { AppThunk } from '../store';
 import { meActions } from '../slices/meSlice';
 import { DevicesUpdated } from '../../services/deviceService';
 import {
+	activeSpeakerIdSelector,
 	makePermissionSelector,
 	micProducerSelector,
 	webcamProducerSelector
 } from '../selectors';
 import { permissions } from '../../utils/roles';
-import { updateLiveMic, updateLiveWebcam, updatePreviewWebcam } from './mediaActions';
+import { updateMic, updateWebcam } from './mediaActions';
 import { producersActions } from '../slices/producersSlice';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { Logger } from 'edumeet-common';
 import { setRaisedHand } from './meActions';
-import { notificationsActions } from '../slices/notificationsSlice';
-import { mediaActions } from '../slices/mediaSlice';
+import { VolumeWatcher } from '../../utils/volumeWatcher';
+import { roomSessionsActions } from '../slices/roomSessionsSlice';
 
 const logger = new Logger('listenerActions');
 
@@ -29,27 +30,14 @@ let deviceChangeListener: () => Promise<void>;
 // eslint-disable-next-line no-unused-vars
 let devicesUpdatedListener: (event: DevicesUpdated) => void;
 
+let speakerDetectionInterval: NodeJS.Timeout | undefined;
+
 export const startListeners = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, deviceService, managementService, effectService }
+	{ mediaService, signalingService, deviceService, managementService }
 ): Promise<void> => {
 	logger.debug('startListeners()');
-
-	effectService.on('error', () => {
-		dispatch(notificationsActions.enqueueNotification({
-			message: 'Blur video background error',
-			options: { variant: 'error' }
-		}));
-		if (getState().media.previewBlurBackground) {
-			dispatch(mediaActions.setPreviewBlurBackground(false));
-			dispatch(updatePreviewWebcam());
-		}
-		if (getState().media.liveBlurBackground) {
-			dispatch(mediaActions.setLiveBlurBackground(false));
-			dispatch(updateLiveWebcam());
-		}
-	});
 
 	devicesUpdatedListener = ({
 		devices,
@@ -84,6 +72,25 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	navigator.mediaDevices.addEventListener('devicechange', deviceChangeListener);
 
+	speakerDetectionInterval = setInterval(() => {
+		const audioConsumers = mediaService.getConsumers().filter((consumer) => consumer.kind === 'audio');
+
+		if (!audioConsumers.length) return;
+
+		const lastActiveSpeakerId = activeSpeakerIdSelector(getState());
+		const { sessionId: mySessionId } = getState().me;
+
+		const consumer = audioConsumers.reduce((a, e) => ((e.appData.volumeWatcher as VolumeWatcher).lastScaledVolume > (a.appData.volumeWatcher as VolumeWatcher).lastScaledVolume ? e : a));
+
+		if ((consumer.appData.volumeWatcher as VolumeWatcher).lastScaledVolume > 0.5) { // > 5% volume
+			const peerId = consumer.appData.peerId as string;
+
+			if (peerId && peerId !== lastActiveSpeakerId) dispatch(roomSessionsActions.setActiveSpeakerId({ sessionId: mySessionId, peerId, isMe: false }));
+		} else if (lastActiveSpeakerId) {
+			dispatch(roomSessionsActions.setActiveSpeakerId({ sessionId: mySessionId, isMe: false }));
+		}
+	}, 500);
+
 	const audioPermissionSelector = makePermissionSelector(permissions.SHARE_AUDIO);
 	const videoPermissionSelector = makePermissionSelector(permissions.SHARE_VIDEO);
 	const lockPermissionSelector = makePermissionSelector(permissions.CHANGE_ROOM_LOCK);
@@ -105,7 +112,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case 'm': {
-				const { audioInProgress, liveAudioInputDeviceId } = getState().media;
+				const audioInProgress = getState().me.audioInProgress;
 
 				if (audioInProgress) return;
 
@@ -117,13 +124,14 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const micProducer = micProducerSelector(getState());
 
 				if (!micProducer) {
-					liveAudioInputDeviceId && dispatch(updateLiveMic());
+					dispatch(updateMic({
+						start: true
+					}));
 				} else if (!micProducer.paused) {
 					dispatch(
 						producersActions.setProducerPaused({
 							producerId: micProducer.id,
 							local: true,
-							source: 'mic'
 						})
 					);
 				} else {
@@ -131,7 +139,6 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 						producersActions.setProducerResumed({
 							producerId: micProducer.id,
 							local: true,
-							source: 'mic'
 						})
 					);
 				}
@@ -140,7 +147,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			}
 
 			case 'v': {
-				const { videoInProgress, liveVideoDeviceId } = getState().media;
+				const videoInProgress = getState().me.videoInProgress;
 
 				if (videoInProgress) return;
 
@@ -152,13 +159,14 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const webcamProducer = webcamProducerSelector(getState());
 
 				if (!webcamProducer) {
-					liveVideoDeviceId && dispatch(updateLiveWebcam());
+					dispatch(updateWebcam({
+						start: true
+					}));
 				} else {
 					dispatch(
 						producersActions.closeProducer({
 							producerId: webcamProducer.id,
 							local: true,
-							source: 'webcam'
 						})
 					);
 				}
@@ -243,7 +251,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			}
 
 			case ' ': {
-				const { audioInProgress, liveAudioInputDeviceId } = getState().media;
+				const audioInProgress = getState().me.audioInProgress;
 
 				if (audioInProgress) return;
 
@@ -255,13 +263,14 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const micProducer = micProducerSelector(getState());
 
 				if (!micProducer) {
-					liveAudioInputDeviceId && dispatch(updateLiveMic());
+					dispatch(updateMic({
+						start: true
+					}));
 				} else if (micProducer.paused) {
 					dispatch(
 						producersActions.setProducerResumed({
 							producerId: micProducer.id,
 							local: true,
-							source: 'mic'
 						})
 					);
 				}
@@ -292,7 +301,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case ' ': {
-				const { audioInProgress } = getState().media;
+				const audioInProgress = getState().me.audioInProgress;
 
 				if (audioInProgress) return;
 
@@ -310,7 +319,6 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 						producersActions.setProducerPaused({
 							producerId: micProducer.id,
 							local: true,
-							source: 'mic'
 						})
 					);
 				}
@@ -350,6 +358,7 @@ export const stopListeners = (): AppThunk<Promise<void>> => async (
 	logger.debug('stopListeners()');
 
 	deviceService.removeListener('devicesUpdated', devicesUpdatedListener);
+	clearInterval(speakerDetectionInterval);
 	navigator.mediaDevices.removeEventListener('devicechange', deviceChangeListener);
 	document.removeEventListener('keydown', keydownListener);
 	document.removeEventListener('keyup', keyupListener);

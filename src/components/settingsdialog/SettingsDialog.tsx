@@ -1,17 +1,17 @@
 import { Button, Tab, Tabs } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SettingsTab, uiActions } from '../../store/slices/uiSlice';
-import { appearanceSettingsLabel, closeLabel, mediaSettingsLabel } from '../translated/translatedComponents';
+import { advancedSettingsLabel, appearanceSettingsLabel, closeLabel, mediaSettingsLabel } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import MediaSettings from './MediaSettings';
 import AppearanceSettings from './AppearanceSettings';
 import GenericDialog from '../genericdialog/GenericDialog';
-import { stopPreviewMic, stopPreviewWebcam } from '../../store/actions/mediaActions';
-import { mediaActions } from '../../store/slices/mediaSlice';
+import AdvancedSettings from './AdvancedSettings';
 
 const tabs: SettingsTab[] = [
 	'media',
 	'appearance',
+	'advanced'
 ];
 
 const SettingsDialog = (): JSX.Element => {
@@ -23,10 +23,6 @@ const SettingsDialog = (): JSX.Element => {
 		dispatch(uiActions.setUi({
 			settingsOpen: !settingsOpen
 		}));
-
-		dispatch(stopPreviewMic());
-		dispatch(stopPreviewWebcam());
-		dispatch(mediaActions.resetPreviewBlurBackground());
 	};
 
 	return (
@@ -45,9 +41,11 @@ const SettingsDialog = (): JSX.Element => {
 					>
 						<Tab label={mediaSettingsLabel()} />
 						<Tab label={appearanceSettingsLabel()} />
+						<Tab label={advancedSettingsLabel()} />
 					</Tabs>
 					{ currentSettingsTab === 'media' && <MediaSettings /> }
 					{ currentSettingsTab === 'appearance' && <AppearanceSettings /> }
+					{ currentSettingsTab === 'advanced' && <AdvancedSettings /> }
 				</>
 			}
 			actions={

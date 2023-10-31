@@ -9,7 +9,6 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 	position: 'absolute',
 	bottom: theme.spacing(1),
 	left: theme.spacing(1),
-	zIndex: 22,
 	color: 'white',
 	'& .MuiFilledInput-root': {
 		color: 'white',
@@ -23,7 +22,6 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 	position: 'absolute',
 	bottom: theme.spacing(1),
 	left: theme.spacing(1),
-	zIndex: 22,
 	color: 'white',
 }));
 

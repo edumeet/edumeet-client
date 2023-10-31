@@ -152,7 +152,6 @@ const createPeerMiddleware = ({
 										producersActions.setProducerPaused({
 											producerId: micProducer.id,
 											local: true,
-											source: 'mic'
 										})
 									);
 								}
@@ -168,7 +167,6 @@ const createPeerMiddleware = ({
 										producersActions.closeProducer({
 											producerId: webcamProducer.id,
 											local: true,
-											source: 'webcam'
 										})
 									);
 								}
@@ -184,7 +182,6 @@ const createPeerMiddleware = ({
 										producersActions.closeProducer({
 											producerId: screenProducer.id,
 											local: true,
-											source: 'screen'
 										})
 									);
 								}

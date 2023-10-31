@@ -1,8 +1,9 @@
 import { FormControlLabel, Switch } from '@mui/material';
-import { updateAudioSettings } from '../../store/actions/mediaActions';
+import { updateAudioSettings, updateVideoSettings } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	autoGainControlLabel,
+	backgroundBlurLabel,
 	echoCancellationLabel,
 	enableOpusDtxLabel,
 	enableOpusFecLabel,
@@ -105,6 +106,26 @@ export const OpusFecSwitch = (): JSX.Element => {
 				/>
 			}
 			label={ enableOpusFecLabel() }
+		/>
+	);
+};
+
+export const BlurSwitch = (): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const blurEnabled = useAppSelector((state) => state.settings.blurEnabled);
+
+	return (
+		<FormControlLabel
+			control={
+				<Switch 
+					color='primary'
+					checked={ blurEnabled }
+					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+						dispatch(updateVideoSettings({ blurEnabled: event.target.checked }));
+					}}
+				/>
+			}
+			label={ backgroundBlurLabel() }
 		/>
 	);
 };

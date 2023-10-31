@@ -6,6 +6,7 @@ export interface Resolution {
 	height: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface ResolutionWatcher {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'newResolution', listener: (resolution: Resolution) => void): this;
@@ -18,6 +19,7 @@ export declare interface ResolutionWatcher {
  * 
  * @emits newResolution - Emitted when the resolution changes.
  */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class ResolutionWatcher extends EventEmitter {
 	private resolutionReporters: ResolutionReporter[] = [];
 	private currentResolution: Resolution = { width: 320, height: 240 };

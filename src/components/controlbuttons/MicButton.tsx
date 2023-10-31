@@ -1,11 +1,10 @@
 import {
 	useAppDispatch,
 	useAppSelector,
-	usePermissionSelector
+	usePermissionSelector,
 } from '../../store/hooks';
 import { micProducerSelector } from '../../store/selectors';
 import { producersActions } from '../../store/slices/producersSlice';
-import { permissions } from '../../utils/roles';
 import { MediaState } from '../../utils/types';
 import {
 	audioUnsupportedLabel,
@@ -16,16 +15,17 @@ import {
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { updateLiveMic } from '../../store/actions/mediaActions';
+import { updateMic } from '../../store/actions/mediaActions';
+import { permissions } from '../../utils/roles';
 
 const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const hasAudioPermission = usePermissionSelector(permissions.SHARE_AUDIO);
 	const micProducer = useAppSelector(micProducerSelector);
-	const {	audioInProgress } = useAppSelector((state) => state.media);
+	const hasAudioPermission = usePermissionSelector(permissions.SHARE_AUDIO);
 
 	const {
 		canSendMic,
+		audioInProgress,
 	} = useAppSelector((state) => state.me);
 
 	let micState: MediaState, micTip;
@@ -51,14 +51,15 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				if (micState === 'unsupported') return;
 
 				if (micState === 'off') {
-					dispatch(updateLiveMic());
+					dispatch(updateMic({
+						start: true
+					}));
 				} else if (micProducer) {
 					if (micState === 'on') {
 						dispatch(
 							producersActions.setProducerPaused({
 								producerId: micProducer.id,
 								local: true,
-								source: 'mic'
 							})
 						);
 					} else if (micState === 'muted') {
@@ -66,7 +67,6 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 							producersActions.setProducerResumed({
 								producerId: micProducer.id,
 								local: true,
-								source: 'mic'
 							})
 						);
 					}

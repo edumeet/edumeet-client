@@ -106,6 +106,7 @@ const ControlButtonsBar = (): JSX.Element => {
 				transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
 			>
 				<ExtraVideo onClick={handleMoreClose} />
+				{ /* <ExtraAudio onClick={handleMoreClose} /> */ }
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }

@@ -14,7 +14,7 @@ export const login = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('login()');
 
-	const tenantId = await dispatch(getTenantFromFqdn(location.hostname));
+	const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
 
 	if (!tenantId) return logger.error('login() | no tenant found');
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Button } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
@@ -12,11 +12,9 @@ import { roomActions } from '../../store/slices/roomSlice';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
-import BlurBackgroundSwitch from '../../components/blurbackgroundswitch/BlurBackgroundSwitch';
-import { isMobileSelector } from '../../store/selectors';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
-import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
-import { createAudioContext } from '../../store/actions/mediaActions';
+import { BlurSwitch } from '../../components/settingsdialog/SettingsSwitches';
+import { meActions } from '../../store/slices/meSlice';
 
 interface JoinProps {
 	roomId: string;
@@ -26,65 +24,36 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 	useNotifier();
 	const dispatch = useAppDispatch();
 
-	const { displayName } = useAppSelector((state) => state.settings);
+	const displayName = useAppSelector((state) => state.settings.displayName);
 	const joinInProgress = useAppSelector((state) => state.room.joinInProgress);
-	const mediaLoading = useAppSelector((state) => state.media.videoInProgress || state.media.audioInProgress);
-	const isMobile = useAppSelector(isMobileSelector);
-	const deviceOs = useAppSelector((state) => state.me.browser.os);
-	const showAudioChooser = useAppSelector((state) => state.media.previewAudioInputDeviceId && !state.media.audioMuted);
-	const showVideoChooser = useAppSelector((state) => state.media.previewVideoDeviceId && !state.media.videoMuted);
-	const { canSelectAudioOutput } = useAppSelector((state) => state.me);
+	const mediaLoading = useAppSelector((state) => state.me.videoInProgress || state.me.audioInProgress);
+	const audioMuted = useAppSelector((state) => state.me.audioMuted);
+	const videoMuted = useAppSelector((state) => state.me.videoMuted);
+	
+	const url = new URL(window.location.href);
+	const headless = Boolean(url.searchParams.get('headless'));
 
-	const [ name, setName ] = useState(displayName || '');
-
-	const handleDisplayNameChange = (value: string) => {
-		setName(value.trim() ? value : value.trim());
-	};
+	const handleDisplayNameChange = (value: string) => dispatch(settingsActions.setDisplayName(value.trim() ? value : value.trim()));
 
 	const handleJoin = () => {
-		dispatch(settingsActions.setDisplayName(name));
+		dispatch(settingsActions.setDisplayName(displayName));
 		dispatch(connect(roomId));
 	};
 
 	useEffect(() => {
 		const dn = new URL(window.location.href).searchParams.get('displayName');
 
-		if (dn) {
-			dispatch(settingsActions.setDisplayName(dn));
-			setName(dn);
-		}
-	}, []);
-
-	useEffect(() => {
-		const headless = new URL(window.location.href).searchParams.get('headless');
+		if (dn) dispatch(settingsActions.setDisplayName(dn));
 
 		if (headless) {
-			const myNewURL = window.location.href.split('?')[0];
-			
-			window.history.pushState({}, '', myNewURL);
+			dispatch(meActions.setAudioMuted(true));
+			dispatch(meActions.setVideoMuted(true));
+			dispatch(roomActions.setHeadless(true));
+			dispatch(settingsActions.setHideSelfView(true));
+			dispatch(settingsActions.setMaxActiveVideos(100));
+
 			handleJoin();
 		}
-	}, []);
-
-	useEffect(() => {
-		dispatch(roomActions.updateRoom({ id: roomId }));
-	}, []);
-
-	// Used to unlock audio on ios.
-	const unlockAudio = () => {
-		dispatch(createAudioContext());
-		document.removeEventListener('touchend', unlockAudio);
-	};
-
-	// Listener for unlocking audio on ios.
-	useEffect(() => {
-		if (deviceOs === 'ios') 
-			document.body.addEventListener('touchend', unlockAudio);
-
-		return () => {
-			if (deviceOs === 'ios')
-				document.removeEventListener('touchend', unlockAudio);
-		};
 	}, []);
 
 	return (
@@ -92,15 +61,14 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 			title={ <PrecallTitle /> }
 			content={
 				<>
-					<MediaPreview />
-					{showAudioChooser && <AudioInputChooser /> }
-					{showVideoChooser && <VideoInputChooser /> }
-					{showVideoChooser && !isMobile && <BlurBackgroundSwitch />}
-					{canSelectAudioOutput && <AudioOutputChooser /> }
+					<MediaPreview startAudio={!audioMuted} startVideo={!videoMuted} stopAudio={false} stopVideo={false} />
+					<AudioInputChooser />
+					<VideoInputChooser />
+					<BlurSwitch />
 					<ChooserDiv>
 						<TextInputField
 							label={yourNameLabel()}
-							value={name}
+							value={displayName}
 							setValue={handleDisplayNameChange}
 							onEnter={handleJoin}
 							startAdornment={<AccountCircle />}
@@ -113,7 +81,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 				<Button
 					onClick={handleJoin}
 					variant='contained'
-					disabled={!name || joinInProgress || mediaLoading }
+					disabled={!displayName || joinInProgress || mediaLoading}
 					size='small'
 				>
 					{ joinLabel() }

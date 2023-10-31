@@ -12,6 +12,7 @@ interface DeviceChooserProps {
 	value: string;
 	// eslint-disable-next-line no-unused-vars
 	setValue: (value: string) => void;
+	name: string;
 	devicesLabel: string;
 	noDevicesLabel: string;
 	disabled: boolean;
@@ -21,6 +22,8 @@ interface DeviceChooserProps {
 export const ChooserDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
 	flexDirection: 'row',
+	alignItems: 'center',
+	gap: theme.spacing(1),
 	margin: theme.spacing(2, 0)
 }));
 
@@ -32,13 +35,14 @@ export const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
 const DeviceChooser = ({
 	value,
 	setValue,
+	name,
 	devicesLabel,
 	noDevicesLabel,
 	disabled,
 	devices,
 }: DeviceChooserProps): JSX.Element => {
 	return (
-		<FormControl variant="outlined" fullWidth>
+		<FormControl variant='outlined' fullWidth>
 			<StyledInputLabel>
 				{ devices.length ? devicesLabel : noDevicesLabel }
 			</StyledInputLabel>
@@ -49,6 +53,7 @@ const DeviceChooser = ({
 						setValue(event.target.value);
 				}}
 				displayEmpty
+				name={name}
 				autoWidth
 				disabled={disabled}
 			>

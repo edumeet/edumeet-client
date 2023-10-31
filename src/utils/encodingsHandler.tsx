@@ -1,4 +1,4 @@
-import { RtpCapabilities, RtpEncodingParameters } from 'mediasoup-client/lib/RtpParameters';
+import type { RtpCapabilities, RtpEncodingParameters } from 'mediasoup-client/lib/RtpParameters';
 import { Resolution, SimulcastProfile } from './types';
 
 const VIDEO_CONSTRAINS: Record<Resolution, Record<string, number>> = {

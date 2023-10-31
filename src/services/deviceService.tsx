@@ -15,11 +15,13 @@ export interface DevicesUpdated {
 	newDevices: MediaDeviceInfo[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface DeviceService {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'devicesUpdated', listener: (updatedDevices: DevicesUpdated) => void): this;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class DeviceService extends EventEmitter {
 	private devices: MediaDevice[] = [];
 
@@ -61,9 +63,13 @@ export class DeviceService extends EventEmitter {
 	}
 
 	public getDeviceId(
+		deviceId: string | undefined,
 		kind: MediaDeviceKind
 	): string | undefined {
-		const device = this.devices.find((d) => d.kind === kind);
+		let device = this.devices.find((d) => d.deviceId === deviceId);
+
+		if (!device)
+			device = this.devices.find((d) => d.kind === kind);
 
 		return device?.deviceId;
 	}

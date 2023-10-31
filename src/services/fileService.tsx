@@ -1,19 +1,13 @@
 import { Logger } from 'edumeet-common';
-import WebTorrent from 'webtorrent';
-import { SignalingService } from './signalingService';
+import type WebTorrent from 'webtorrent';
 
 const logger = new Logger('FileService');
 
 export class FileService {
-	private signalingService: SignalingService;
 	private webTorrent?: WebTorrent.Instance;
 	// private tracker = getTrackerUrl();
 
-	constructor({ signalingService }: { signalingService: SignalingService }) {
-		this.signalingService = signalingService;
-	}
-
-	public getTorrent(magnetURI: string): WebTorrent.Torrent | undefined {
+	public getTorrent(magnetURI: string) {
 		return this.webTorrent?.get(magnetURI) || undefined;
 	}
 
@@ -22,7 +16,9 @@ export class FileService {
 	): Promise<void> {
 		logger.debug('init()');
 
-		this.webTorrent = new WebTorrent({
+		const Torrent = await import('webtorrent');
+
+		this.webTorrent = new Torrent.default({
 			tracker: {
 				rtcConfig: {
 					iceServers: iceServers
