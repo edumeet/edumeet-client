@@ -20,7 +20,6 @@ const VolumeContainer = styled('div')<VolumeBarProps>(({ theme, small }) => ({
 	bottom: 0,
 	right: 2,
 	alignItems: 'center',
-	zIndex: 21
 }));
 
 const VolumeBar = styled('div')<VolumeBarProps>(({ small, volume = 0 }) => ({
@@ -41,14 +40,12 @@ interface VolumeProps {
 	small?: boolean;
 	consumer?: StateConsumer;
 	producer?: StateProducer;
-	previewVolumeWatcher?: VolumeWatcher;
 }
 
 const Volume = ({
 	small = false,
 	consumer,
 	producer,
-	previewVolumeWatcher
 }: VolumeProps): JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ volume, setVolume ] = useState<number>(0);
@@ -57,19 +54,13 @@ const Volume = ({
 		let media: Consumer | Producer | undefined;
 		let volumeWatcher: VolumeWatcher | undefined;
 
-		if (consumer) {
+		if (consumer)
 			media = mediaService.getConsumer(consumer.id);
-		}
-
-		if (producer) {
+		else if (producer)
 			media = mediaService.getProducer(producer.id);
-		}
 
 		if (media)
-			volumeWatcher = media.appData.volumeWatcher as VolumeWatcher;
-		
-		if (previewVolumeWatcher)
-			volumeWatcher = previewVolumeWatcher;
+			volumeWatcher = media.appData.volumeWatcher as VolumeWatcher | undefined;
 
 		const onVolumeChange = ({ scaledVolume }: { scaledVolume: number }): void => {
 			setVolume(scaledVolume);
@@ -80,7 +71,7 @@ const Volume = ({
 		return () => {
 			volumeWatcher?.off('volumeChange', onVolumeChange);
 		};
-	}, [ consumer, producer, previewVolumeWatcher ]);
+	}, [ consumer, producer ]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (

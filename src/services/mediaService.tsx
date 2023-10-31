@@ -11,12 +11,10 @@ import { PeerTransport } from '../utils/peerTransport';
 import { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
 import { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProducer';
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
-import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
-import traceInit from '@jitsi/rtcstats/trace-ws';
-import { RTCStatsMetaData, RTCStatsOptions } from '../utils/types';
 import { Logger } from 'edumeet-common';
 import { ClientMonitor, createClientMonitor } from '@observertc/client-monitor-js';
 import edumeetConfig from '../utils/edumeetConfig';
+import { ProducerSource } from '../store/slices/producersSlice';
 
 const logger = new Logger('MediaService');
 
@@ -26,8 +24,6 @@ declare global {
 		webkitSpeechRecognition: any;
 	}
 }
-
-export type TrackType = 'liveTracks' | 'previewTracks'
 
 export type MediaChange = 'pause' | 'resume' | 'close';
 
@@ -101,21 +97,14 @@ export class MediaService extends EventEmitter {
 	private consumers: Map<string, Consumer> = new Map();
 	private dataConsumers: Map<string, DataConsumer> = new Map();
 	private dataProducers: Map<string, DataProducer> = new Map();
-	private liveTracks: Map<string, MediaStreamTrack> = new Map();
-	private previewTracks: Map<string, MediaStreamTrack> = new Map();
-	private trackDevice: Map<string, string> = new Map(); // Used to track duplicate tracks.
+	private tracks: Map<string, MediaStreamTrack> = new Map();
 	private peerTransports: Map<string, PeerTransport> = new Map();
 	private peers: string[] = [];
 	private p2p = true;
 	private monitor?: ClientMonitor;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	private trace: any;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
-
-	public previewVolumeWatcher?: VolumeWatcher;
-	public audioContext?: AudioContext;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
@@ -126,10 +115,6 @@ export class MediaService extends EventEmitter {
 
 	public init(): void {
 		this.handleSignaling();
-	}
-
-	public retryConnection() {
-		this.signalingService.notify({ method: 'retryConnection', data: {} });
 	}
 
 	public close(): void {
@@ -146,16 +131,11 @@ export class MediaService extends EventEmitter {
 		this.peerTransports.clear();
 		this.peers = [];
 
-		for (const track of this.liveTracks.values()) {
+		for (const track of this.tracks.values()) {
 			track.stop();
 		}
 
-		for (const track of this.previewTracks.values()) {
-			track.stop();
-		}
-
-		this.liveTracks.clear();
-		this.previewTracks.clear();
+		this.tracks.clear();
 		this.monitor?.close();
 	}
 
@@ -175,59 +155,22 @@ export class MediaService extends EventEmitter {
 		return Array.from(this.producers.values());
 	}
 
-	public getTrack(trackId: string, trackType: TrackType): MediaStreamTrack | undefined {
-		if (trackType === 'liveTracks') return this.liveTracks.get(trackId);
-		if (trackType === 'previewTracks') return this.previewTracks.get(trackId);
-	}
-
-	#removeDuplicateTracks(kind: string, deviceId: string, trackType: TrackType) {
-		logger.debug('#removeDuplicateTracks [kind: %s, deviceId: %s, trackType: %s]', kind, deviceId, trackType);
-		for (const track of this[trackType].values()) {
-			if (this.trackDevice.get(track.id) === deviceId &&
-				track.kind === kind) {
-				logger.debug('removing duplicate track %s', track.id);
-
-				track.stop();
-				this[trackType].delete(track.id);
-			}
-		}
+	public getTrack(trackId: string): MediaStreamTrack | undefined {
+		return this.tracks.get(trackId);
 	}
 
 	public getMonitor(): ClientMonitor | undefined {
 		return this.monitor;
 	}
 
-	public addTrack(track: MediaStreamTrack, deviceId: string, trackType: TrackType): void {
-		logger.debug('addTrack() [trackId:%s, kind: %s, deviceId: %s, trackType: %s]', track.id, track.kind, deviceId, trackType);
-		this.trackDevice.set(track.id, deviceId);
-		this.#removeDuplicateTracks(track.kind, deviceId, trackType);
-
-		this[trackType].set(track.id, track);
-		track.addEventListener('ended', () => {
-			logger.debug('addTrack() | track "ended" [trackId:%s]', track.id);
-
-			this[trackType].delete(track.id);
-			this.trackDevice.delete(track.id);
-		});
+	public addTrack(track: MediaStreamTrack): void {
+		this.tracks.set(track.id, track);
 	}
 
-	public removeLiveTrack(trackId: string | undefined): void {
+	public removeTrack(trackId: string): void {
 		logger.debug('removeTrack() [trackId:%s]', trackId);
 
-		if (trackId) {
-			this.liveTracks.delete(trackId);
-			this.trackDevice.delete(trackId);
-		}
-
-	}
-	
-	public removePreviewTrack(trackId: string | undefined): void {
-		logger.debug('removePreviewTrack() [trackId:%s]', trackId);
-
-		if (trackId) {
-			this.previewTracks.delete(trackId);
-			this.trackDevice.delete(trackId);
-		}
+		this.tracks.delete(trackId);
 	}
 
 	public enableP2P(clientId: string): void {
@@ -364,10 +307,23 @@ export class MediaService extends EventEmitter {
 
 						if (!this.recvTransport)
 							throw new Error('Consumer can not be created without recvTransport');
-	
+
+						const source = appData.source as ProducerSource;
+
+						let streamId: string;
+
+						if (source === 'mic' || source === 'webcam') {
+							streamId = `${peerId}-main`;
+						} else if (source === 'screen' || source === 'screenaudio') {
+							streamId = `${peerId}-screen`;
+						} else {
+							streamId = `${peerId}-${kind}`;
+						}
+
 						const consumer = await this.recvTransport.consume({
 							id,
 							producerId,
+							streamId,
 							kind,
 							rtpParameters,
 							appData: {
@@ -399,7 +355,7 @@ export class MediaService extends EventEmitter {
 							resolutionWatcher.on('newResolution', async (resolution) => {
 								const { width } = resolution;
 								const spatialLayer = width >= 480 ? width >= 960 ? 2 : 1 : 0;
-								const temporalLayer = spatialLayer;
+								const temporalLayer = 2;
 
 								if (spatialLayer === lastSpatialLayer)
 									return;
@@ -411,19 +367,13 @@ export class MediaService extends EventEmitter {
 									{ consumerId: consumer.id, spatialLayer, temporalLayer }
 								).catch((error) => logger.warn('setConsumerPreferredLayers, unable to set layers [consumerId:%s, error:%o]', consumer.id, error));
 							});
+
 							consumer.appData.resolutionWatcher = resolutionWatcher;
 						}
 
 						this.consumers.set(consumer.id, consumer);
-
-						consumer.observer.once('close', () => {
-							this.consumers.delete(consumer.id);
-						});
-
-						consumer.once('transportclose', () => {
-							this.changeConsumer(consumer.id, 'close', false);
-						});
-	
+						consumer.observer.once('close', () => this.consumers.delete(consumer.id));
+						consumer.once('transportclose', () => this.changeConsumer(consumer.id, 'close', false));
 						this.emit('consumerCreated', consumer, paused, producerPaused);
 
 						break;
@@ -456,18 +406,11 @@ export class MediaService extends EventEmitter {
 						});
 
 						this.dataConsumers.set(dataConsumer.id, dataConsumer);
-
-						dataConsumer.observer.once('close', () => {
-							this.dataConsumers.delete(dataConsumer.id);
-						});
-
-						dataConsumer.once('transportclose', () => {
-							this.closeDataConsumer(dataConsumer.id, false);
-						});
+						dataConsumer.observer.once('close', () => this.dataConsumers.delete(dataConsumer.id));
+						dataConsumer.once('transportclose', () => this.closeDataConsumer(dataConsumer.id, false));
 
 						dataConsumer.on('message', (message) => {
-							if (typeof message !== 'string')
-								return;
+							if (typeof message !== 'string') return;
 
 							const { method, data } = JSON.parse(message);
 
@@ -501,6 +444,7 @@ export class MediaService extends EventEmitter {
 							changeEvent[notification.method] as MediaChange,
 							false
 						);
+
 						break;
 					}
 
@@ -522,6 +466,7 @@ export class MediaService extends EventEmitter {
 							changeEvent[notification.method] as MediaChange,
 							false
 						);
+
 						break;
 					}
 
@@ -542,15 +487,16 @@ export class MediaService extends EventEmitter {
 						const { consumerId, score: { score } } = notification.data;
 
 						this.emit('consumerScore', consumerId, score);
+
 						break;
 					}
 
 					case 'producerScore': {
 						const { producerId, score } = notification.data;
-						const highestScore = score.reduce((prev: {score:number}, curr: { score: number }) =>
-							(prev.score > curr.score ? prev : curr));
+						const highestScore = score.reduce((prev: {score:number}, curr: { score: number }) => (prev.score > curr.score ? prev : curr));
 
 						this.emit('producerScore', producerId, highestScore.score);
+
 						break;
 					}
 				}
@@ -564,8 +510,7 @@ export class MediaService extends EventEmitter {
 		return {
 			canSendMic: this.mediasoup.canProduce('audio'),
 			canSendWebcam: this.mediasoup.canProduce('video'),
-			canShareScreen: Boolean(navigator.mediaDevices.getDisplayMedia) &&
-				this.mediasoup.canProduce('video'),
+			canShareScreen: Boolean(navigator.mediaDevices.getDisplayMedia) && this.mediasoup.canProduce('video'),
 			canRecord: Boolean(MediaRecorder && window.showSaveFilePicker),
 			canTranscribe: Boolean(window.webkitSpeechRecognition),
 		};
@@ -616,8 +561,7 @@ export class MediaService extends EventEmitter {
 				.catch((error) => logger.warn(`${change}Consumer, unable to ${change} server-side [consumerId:%s, error:%o]`, consumerId, error));
 		}
 
-		if (!local)
-			this.emit(`consumer${changeEvent[change]}`, consumer);
+		if (!local) this.emit(`consumer${changeEvent[change]}`, consumer);
 
 		consumer?.[`${change}`]();
 	}
@@ -635,8 +579,7 @@ export class MediaService extends EventEmitter {
 				.catch((error) => logger.warn('closeDataConsumer, unable to close server-side [dataConsumerId:%s, error:%o]', dataConsumerId, error));
 		}
 
-		if (!local)
-			this.emit('dataConsumerClosed', dataConsumer);
+		if (!local) this.emit('dataConsumerClosed', dataConsumer);
 
 		dataConsumer?.close();
 	}
@@ -656,8 +599,10 @@ export class MediaService extends EventEmitter {
 				.catch((error) => logger.warn(`${change}Producer, unable to ${change} server-side [producerId:%s, error:%o]`, producerId, error));
 		}
 
-		if (!local || notifyAll)
-			this.emit(`producer${changeEvent[change]}`, producer);
+		if (producer?.kind === 'audio' && (change === 'close' || change === 'pause'))
+			this.stopTranscription();
+
+		if (!local || notifyAll) this.emit(`producer${changeEvent[change]}`, producer);
 
 		producer?.[`${change}`]();
 	}
@@ -695,6 +640,7 @@ export class MediaService extends EventEmitter {
 			this.recvTransport = await this.createTransport('createRecvTransport', iceServers);
 		} catch (error) {
 			logger.error('error on starting mediasoup transports [error:%o]', error);
+
 			throw error;
 		}
 
@@ -732,8 +678,7 @@ export class MediaService extends EventEmitter {
 
 		// eslint-disable-next-line no-shadow
 		transport.on('connect', ({ dtlsParameters }, callback, errback) => {
-			if (!transport)
-				return;
+			if (!transport) return;
 
 			this.signalingService.sendRequest('connectWebRtcTransport', {
 				transportId: transport.id,
@@ -744,8 +689,7 @@ export class MediaService extends EventEmitter {
 		});
 
 		transport.on('produce', async ({ kind, rtpParameters, appData }, callback, errback) => {
-			if (!transport)
-				return;
+			if (!transport) return;
 
 			this.signalingService.sendRequest('produce', {
 				transportId: transport.id,
@@ -767,8 +711,7 @@ export class MediaService extends EventEmitter {
 			callback,
 			errback
 		) => {
-			if (!transport)
-				return;
+			if (!transport) return;
 
 			this.signalingService.sendRequest('produceData', {
 				transportId: transport.id,
@@ -787,8 +730,7 @@ export class MediaService extends EventEmitter {
 	public async produce(producerOptions: ProducerOptions): Promise<Producer> {
 		logger.debug('produce() [options:%o]', producerOptions);
 
-		if (!this.sendTransport)
-			throw new Error('Producer can not be created without sendTransport');
+		if (!this.sendTransport) throw new Error('Producer can not be created without sendTransport');
 
 		const producer = await this.sendTransport.produce(producerOptions);
 
@@ -823,8 +765,7 @@ export class MediaService extends EventEmitter {
 	): Promise<DataProducer> {
 		logger.debug('produceData() [options:%o]', dataProducerOptions);
 
-		if (!this.sendTransport)
-			throw new Error('DataProducer can not be created without sendTransport');
+		if (!this.sendTransport) throw new Error('DataProducer can not be created without sendTransport');
 
 		const dataProducer = await this.sendTransport.produceData(dataProducerOptions);
 
@@ -840,10 +781,8 @@ export class MediaService extends EventEmitter {
 	}
 
 	public async startTranscription(): Promise<void> {
-		if (!window.webkitSpeechRecognition)
-			return logger.warn('startTranscription() | SpeechRecognition not supported');
-		if (this.speechRecognitionRunning)
-			return logger.warn('startTranscription() | SpeechRecognition already started');
+		if (!window.webkitSpeechRecognition) return logger.warn('startTranscription() | SpeechRecognition not supported');
+		if (this.speechRecognitionRunning) return logger.warn('startTranscription() | SpeechRecognition already started');
 
 		const dataProducer = await this.produceData({
 			ordered: false,
@@ -918,8 +857,7 @@ export class MediaService extends EventEmitter {
 	}
 
 	public stopTranscription(): void {
-		if (!this.speechRecognitionRunning)
-			return logger.warn('stopTranscription() | SpeechRecognition not started');
+		if (!this.speechRecognitionRunning) return logger.debug('stopTranscription() | SpeechRecognition not started');
 
 		this.speechRecognitionRunning = false;
 		this.speechRecognition.stop();
@@ -930,70 +868,15 @@ export class MediaService extends EventEmitter {
 		this.emit('transcriptionStopped');
 	}
 
-	private rtcStatsCloseCallback() {
-		logger.debug('rtcStatsCloseCallback()');
-	}
-
 	public initMonitor(): void {
 		logger.debug('initMonitor()');
-		if (!edumeetConfig.observertc.enabled) {
-			return;
-		}
+
+		if (!edumeetConfig.observertc.enabled) return;
+
 		this.monitor = createClientMonitor(edumeetConfig.observertc.config);
 		this.monitor.collectors.addMediasoupDevice(this.mediasoup);
 		this.monitor.events.onStatsCollected((statsEntries) => {
 			logger.debug('initMonitor(): The latest stats entries [statsEntries: %o]', statsEntries);
 		});
-		logger.debug('Monitor is initialized');
-		
-	}
-
-	public rtcStatsInit(rtcStatsOptions?: RTCStatsOptions): void {
-		if (!rtcStatsOptions)
-			return;
-
-		const {
-			url: endpoint,
-			useLegacy,
-			obfuscate = true,
-			wsPingIntervalMs: pingInterval = 30000,
-			pollIntervalMs: pollInterval,
-		} = rtcStatsOptions;
-
-		if (!endpoint) {
-			logger.warn('rtcStatsInit() | no endpoint given, not starting rtcstats');
-
-			return;
-		}
-
-		const traceOptions = {
-			endpoint,
-			meetingFqn: window.location.pathname.replace(/^\//, ''),
-			onCloseCallback: this.rtcStatsCloseCallback.bind(this),
-			useLegacy,
-			obfuscate,
-			pingInterval,
-		};
-
-		const rtcStatsInternalOptions = {
-			pollInterval,
-			useLegacy,
-		};
-
-		try {
-			this.trace = traceInit(traceOptions);
-			rtcstatsInit(this.trace, rtcStatsInternalOptions);
-			this.trace?.connect();
-		} catch (error) {
-			logger.error('rtcStatsInit() [error:%o]', error);
-		}
-	}
-
-	public rtcStatsIdentity(rtcStatsMetaData: RTCStatsMetaData): void {
-		try {
-			this.trace?.identity('identity', null, rtcStatsMetaData);
-		} catch (error) {
-			logger.error('rtcStatsIdentity() [error:%o]', error);
-		}
 	}
 }

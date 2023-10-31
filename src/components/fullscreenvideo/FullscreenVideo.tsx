@@ -13,25 +13,18 @@ const FullscreenVideo = (): JSX.Element => {
 			{ consumer && (
 				<VideoBox
 					position='absolute'
-					zIndex={100}
 					roundedCorners={false}
-					sx={{
-						paddingTop: '56px',
-						width: '100%',
-						height: 'calc(100% - 56px)',
-						backgroundColor: 'transparent',
-					}}
+					width={'100%'}
+					height={'100%'}
 				>
+					<VideoView consumer={consumer} contain roundedCorners={false} />
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'
 						verticalPlacement='center'
 					>
-						<FullscreenVideoButton
-							consumerId={consumer.id}
-						/>
+						<FullscreenVideoButton consumerId={consumer.id} />
 					</MediaControls>
-					<VideoView consumer={consumer} contain roundedCorners={false} />
 				</VideoBox>
 			)}
 		</>

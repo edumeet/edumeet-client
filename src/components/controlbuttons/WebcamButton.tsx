@@ -1,11 +1,10 @@
 import {
 	useAppDispatch,
 	useAppSelector,
-	usePermissionSelector
+	usePermissionSelector,
 } from '../../store/hooks';
 import { webcamProducerSelector } from '../../store/selectors';
 import { producersActions } from '../../store/slices/producersSlice';
-import { permissions } from '../../utils/roles';
 import { MediaState } from '../../utils/types';
 import {
 	videoUnsupportedLabel,
@@ -15,16 +14,20 @@ import {
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { stopLiveWebcam, updateLiveWebcam } from '../../store/actions/mediaActions';
+import { updateWebcam } from '../../store/actions/mediaActions';
+import { permissions } from '../../utils/roles';
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasVideoPermission = usePermissionSelector(permissions.SHARE_VIDEO);
 	const webcamProducer = useAppSelector(webcamProducerSelector);
-	const { videoInProgress } = useAppSelector((state) => state.media);
-	const {	canSendWebcam } = useAppSelector((state) => state.me);
 
-	let webcamState!: MediaState, webcamTip;
+	const {
+		canSendWebcam,
+		videoInProgress,
+	} = useAppSelector((state) => state.me);
+
+	let webcamState: MediaState, webcamTip;
 
 	if (!canSendWebcam || !hasVideoPermission) {
 		webcamState = 'unsupported';
@@ -44,18 +47,18 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 				if (webcamState === 'unsupported') return;
 
 				if (webcamState === 'off') {
-					dispatch(updateLiveWebcam());
-				}
-
-				if (webcamProducer) {
+					dispatch(updateWebcam({
+						start: true
+					}));
+				} else if (webcamProducer) {
 					dispatch(
 						producersActions.closeProducer({
 							producerId: webcamProducer.id,
 							local: true,
-							source: 'webcam'
 						})
 					);
-					dispatch(stopLiveWebcam());
+				} else {
+					// Shouldn't happen
 				}
 			}}
 			disabled={webcamState === 'unsupported' || videoInProgress}

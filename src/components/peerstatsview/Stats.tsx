@@ -43,7 +43,6 @@ const StatsDiv = styled('div')<StatsDivProps>(({
 	color: 'white',
 	alignItems: alignitems,
 	justifyContent: justifycontent,
-	zIndex: 20,
 }));
 
 interface StatsProps {

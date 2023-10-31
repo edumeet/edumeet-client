@@ -11,10 +11,7 @@ import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 const LandingPage = (): JSX.Element => {
 	const navigate = useNavigate();
 	const [ roomId, setRoomId ] = useState(randomString({ length: 8 }).toLowerCase());
-
-	const onClicked = () => {
-		navigate(`/${roomId}`);
-	};
+	const onClicked = () => navigate(`/${roomId}`);
 
 	return (
 		<StyledBackground>

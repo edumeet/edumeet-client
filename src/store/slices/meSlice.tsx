@@ -2,35 +2,33 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuid } from 'uuid';
 import { MediaCapabilities } from '../../services/mediaService';
 import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
-
-export type MediaConnectionStatus = 'connected' | 'not_connected' | 'error'
+import { roomActions } from './roomSlice';
 
 export interface MeState {
 	id: string;
 	sessionId: string;
 	browser: Omit<DeviceInfo, 'bowser'>;
+	previewWebcamTrackId?: string;
+	previewMicTrackId?: string;
 	picture?: string;
 	canSendMic: boolean;
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
 	canRecord: boolean;
 	canTranscribe: boolean;
-	canBlurBackground: boolean;
-	hasWebGLSupport: boolean,
 	canShareFiles: boolean;
-	canSelectAudioOutput: boolean
-	hasAudioContext: boolean
-	mediaConnectionStatus: MediaConnectionStatus
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
 	escapeMeeting: boolean;
-	autoMuted: boolean;
+	audioMuted: boolean;
+	videoMuted: boolean;
 	// Status flags
+	audioInProgress: boolean;
+	videoInProgress: boolean;
 	screenSharingInProgress: boolean;
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
 	escapeMeetingInProgress: boolean;
-	startMediaServiceInProgress: boolean
 }
 
 const initialState: MeState = {
@@ -43,20 +41,18 @@ const initialState: MeState = {
 	canShareFiles: false,
 	canRecord: false,
 	canTranscribe: false,
-	canBlurBackground: true,
-	hasWebGLSupport: false,
-	canSelectAudioOutput: ('sinkId' in HTMLMediaElement.prototype),
-	hasAudioContext: false,
-	mediaConnectionStatus: 'not_connected',
 	devices: [],
 	raisedHand: false,
 	escapeMeeting: false,
-	autoMuted: true,
+	audioMuted: false,
+	videoMuted: false,
+	// Status flags
+	audioInProgress: false,
+	videoInProgress: false,
 	screenSharingInProgress: false,
 	displayNameInProgress: false,
 	raisedHandInProgress: false,
 	escapeMeetingInProgress: false,
-	startMediaServiceInProgress: false
 };
 
 const meSlice = createSlice({
@@ -68,6 +64,12 @@ const meSlice = createSlice({
 		}),
 		setMe: ((state, action: PayloadAction<string>) => {
 			state.id = action.payload;
+		}),
+		setPreviewWebcamTrackId: ((state, action: PayloadAction<string | undefined>) => {
+			state.previewWebcamTrackId = action.payload;
+		}),
+		setPreviewMicTrackId: ((state, action: PayloadAction<string | undefined>) => {
+			state.previewMicTrackId = action.payload;
 		}),
 		setSessionId: ((state, action: PayloadAction<string>) => {
 			state.sessionId = action.payload;
@@ -90,22 +92,19 @@ const meSlice = createSlice({
 		setEscapeMeeting: ((state, action: PayloadAction<boolean>) => {
 			state.escapeMeeting = action.payload;
 		}),
-		setAutoMuted: ((state, action: PayloadAction<boolean>) => {
-			state.autoMuted = action.payload;
+		setAudioMuted: ((state, action: PayloadAction<boolean>) => {
+			state.audioMuted = action.payload;
 		}),
-		setCanBlurBackground: ((state, action: PayloadAction<boolean>) => {
-			state.canBlurBackground = action.payload;
+		setVideoMuted: ((state, action: PayloadAction<boolean>) => {
+			state.videoMuted = action.payload;
 		}),
-		setHasWebGLSupport: ((state, action: PayloadAction<boolean>) => {
-			state.hasWebGLSupport = action.payload;
-		}),
-		setMediaConnectionStatus: ((state, action: PayloadAction<MediaConnectionStatus>) => {
-			state.mediaConnectionStatus = action.payload;
-		}),
-		activateAudioContext: (state) => {
-			state.hasAudioContext = true;
-		},
 		// Status flags
+		setAudioInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.audioInProgress = action.payload;
+		}),
+		setVideoInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.videoInProgress = action.payload;
+		}),
 		setScreenSharingInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.screenSharingInProgress = action.payload;
 		}),
@@ -118,10 +117,14 @@ const meSlice = createSlice({
 		setDispayNameInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.displayNameInProgress = action.payload;
 		}),
-		setStartMediaServiceInProgress: ((state, action: PayloadAction<boolean>) => {
-			state.startMediaServiceInProgress = action.payload;
-		}),
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(roomActions.setState, (state, action) => {
+				if (action.payload === 'left')
+					return { ...initialState, id: uuid(), browser: state.browser, devices: state.devices };
+			});
+	}
 });
 
 export const meActions = meSlice.actions;

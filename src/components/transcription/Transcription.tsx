@@ -41,7 +41,6 @@ const TranscriptionDiv = styled('div')<TranscriptionDivProps>(({
 	}),
 	alignItems: alignitems,
 	justifyContent: justifycontent,
-	zIndex: 20,
 }));
 
 interface TranscriptionProps {

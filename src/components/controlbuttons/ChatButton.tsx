@@ -5,13 +5,14 @@ import {
 import ChatIcon from '@mui/icons-material/Chat';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { showChatLabel } from '../translated/translatedComponents';
-import { Badge } from '@mui/material';
 import { uiActions } from '../../store/slices/uiSlice';
+import PulsingBadge from '../pulsingbadge/PulsingBadge';
 
 const ChatButton = ({
 	...props
 }: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
+	const unreadMessages = useAppSelector((state) => state.ui.unreadMessages);
 	const chatOpen = useAppSelector((state) => state.ui.chatOpen);
 	const openChatTab = () => dispatch(uiActions.setUi({ chatOpen: !chatOpen }));
 
@@ -22,9 +23,9 @@ const ChatButton = ({
 			on={chatOpen}
 			{ ...props }
 		>
-			<Badge color='primary'>
+			<PulsingBadge color='primary' badgeContent={unreadMessages} key={unreadMessages}>
 				<ChatIcon />
-			</Badge>
+			</PulsingBadge>
 		</ControlButton>
 	);
 };

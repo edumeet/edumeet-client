@@ -10,10 +10,10 @@ import {
 } from '../translated/translatedComponents';
 import AddVideoIcon from '@mui/icons-material/VideoCall';
 import { MenuItemProps } from '../floatingmenu/FloatingMenu';
-import { permissions } from '../../utils/roles';
 import { MediaState } from '../../utils/types';
 import MoreActions from '../moreactions/MoreActions';
 import { uiActions } from '../../store/slices/uiSlice';
+import { permissions } from '../../utils/roles';
 
 const ExtraVideo = ({
 	onClick
@@ -22,12 +22,10 @@ const ExtraVideo = ({
 	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 
 	const {
-		canSendWebcam
+		canSendWebcam,
+		videoInProgress,
 	} = useAppSelector((state) => state.me);
-	const {
-		videoInProgress
-	} = useAppSelector((state) => state.media);
-	
+
 	let videoState: MediaState, videoTip;
 
 	if (!canSendWebcam || !hasExtraVideoPermission) {

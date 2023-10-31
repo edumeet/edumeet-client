@@ -6,7 +6,7 @@ export type RoomMode = 'P2P' | 'SFU';
 export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';
 
 export interface RoomState {
-	id?: string;
+	headless?: boolean;
 	logo?: string;
 	backgroundImage?: string;
 	joinInProgress?: boolean;
@@ -62,6 +62,9 @@ const roomSlice = createSlice({
 	reducers: {
 		updateRoom: ((state, action: PayloadAction<RoomUpdate>) => {
 			return { ...state, ...action.payload };
+		}),
+		setHeadless: ((state, action: PayloadAction<boolean>) => {
+			state.headless = action.payload;
 		}),
 		setMode: ((state, action: PayloadAction<RoomMode>) => {
 			state.roomMode = action.payload;

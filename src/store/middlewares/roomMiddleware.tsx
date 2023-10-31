@@ -27,6 +27,10 @@ const createRoomMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => (action) => {
+			if (signalingActions.disconnect.match(action)) {
+				dispatch(roomActions.setState('left'));
+			}
+
 			if (signalingActions.connect.match(action)) {
 				signalingService.on('notification', (notification) => {
 					try {

@@ -4,11 +4,10 @@ import { Box } from '@mui/material';
 
 interface VideoBoxProps {
 	position?: 'relative' | 'absolute';
-	width?: number;
-	height?: number;
+	width?: number | string;
+	height?: number | string;
 	margin?: number;
 	order?: number;
-	zIndex?: number;
 	activeSpeaker?: boolean;
 	roundedCorners?: boolean;
 	children?: ReactNode;
@@ -17,11 +16,10 @@ interface VideoBoxProps {
 
 type StyledVideoBoxProps = {
 	position?: 'relative' | 'absolute';
-	width?: number;
-	height?: number;
+	width?: number | string;
+	height?: number | string;
 	margin?: number;
 	order?: number;
-	zIndex?: number;
 	activespeaker?: number;
 	roundedcorners?: number;
 };
@@ -33,7 +31,6 @@ const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
 	width,
 	margin = 0,
 	order,
-	zIndex,
 	activespeaker,
 	roundedcorners,
 }) => ({
@@ -42,7 +39,6 @@ const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
 	height,
 	margin: theme.spacing(margin),
 	order,
-	zIndex,
 	...(activespeaker && {
 		border: theme.activeSpeakerBorder
 	}),
@@ -61,7 +57,6 @@ const VideoBox = ({
 	height,
 	margin,
 	order,
-	zIndex,
 	sx,
 	activeSpeaker,
 	children,
@@ -75,7 +70,6 @@ const VideoBox = ({
 			activespeaker={activeSpeaker ? 1 : 0}
 			order={order}
 			margin={margin}
-			zIndex={zIndex}
 			children={children}
 			roundedcorners={roundedCorners ? 1 : 0}
 			sx={sx}

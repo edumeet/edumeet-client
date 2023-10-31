@@ -1,9 +1,8 @@
 import {
 	useAppDispatch,
 	useAppSelector,
-	usePermissionSelector
+	usePermissionSelector,
 } from '../../store/hooks';
-import { permissions } from '../../utils/roles';
 import { MediaState } from '../../utils/types';
 import {
 	startVideoLabel,
@@ -12,17 +11,16 @@ import {
 import AddVideoIcon from '@mui/icons-material/VideoCall';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { uiActions } from '../../store/slices/uiSlice';
+import { permissions } from '../../utils/roles';
 
 const ExtraVideoButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 
 	const {
-		canSendWebcam
+		canSendWebcam,
+		videoInProgress,
 	} = useAppSelector((state) => state.me);
-	const {
-		videoInProgress
-	} = useAppSelector((state) => state.media);
 
 	let videoState: MediaState, videoTip;
 

@@ -1,18 +1,16 @@
 import { useAppSelector } from '../../store/hooks';
-import { micConsumerSelector } from '../../store/selectors';
+import { audioConsumerSelector } from '../../store/selectors';
 import AudioView from '../audioview/AudioView';
 
-const AudioPeers = (): React.JSX.Element => {
-	const micConsumers = useAppSelector(micConsumerSelector);
-	const deviceId = useAppSelector((state) => state.media.liveAudioOutputDeviceId);
+const AudioPeers = (): JSX.Element => {
+	const micConsumers = useAppSelector(audioConsumerSelector);
 
 	return (
 		<div>
 			{ micConsumers.map((consumer) => (
-				!consumer.localPaused && !consumer.remotePaused && !consumer.producerPaused && <AudioView
+				!consumer.localPaused && !consumer.remotePaused && <AudioView
 					key={consumer.id}
 					consumer={consumer}
-					deviceId={deviceId}
 				/>
 			)) }
 		</div>

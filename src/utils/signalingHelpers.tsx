@@ -9,14 +9,16 @@ import edumeetConfig from './edumeetConfig';
  * @param token - The token of the user.
  * @returns {string} The url of the signaling server.
  */
-export const getSignalingUrl = (peerId: string, roomId: string, tenantId: string, token: string | undefined): string => {
+export const getSignalingUrl = (peerId: string, roomId: string, tenantId: string | undefined, token: string | undefined): string => {
 	const hostname = edumeetConfig.serverHostname || window.location.hostname;
 	const port = import.meta.env.NODE_ENV !== 'production' ?
 		edumeetConfig.developmentPort : edumeetConfig.productionPort;
 
+	let tenantParam = '';
 	let tokenParam = '';
 
+	if (tenantId) tenantParam = `&tenantId=${tenantId}`;
 	if (token) tokenParam = `&token=${token}`;
 
-	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}&tenantId=${tenantId}${tokenParam}`;
+	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}${tenantParam}${tokenParam}`;
 };

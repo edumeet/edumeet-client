@@ -35,13 +35,8 @@ if (import.meta.env.VITE_APP_DEBUG === '*' || import.meta.env.NODE_ENV !== 'prod
 const logger = new Logger('index.tsx');
 const theme = createTheme(edumeetConfig.theme);
 const device = deviceInfo();
-const unsupportedBrowser = 
-	!detectDevice() ||
-	!browserInfo.satisfies(supportedBrowsers);
-const webrtcUnavailable =
-	!navigator.mediaDevices ||
-	!navigator.mediaDevices.getUserMedia ||
-	!window.RTCPeerConnection;
+const unsupportedBrowser = !detectDevice() || !browserInfo.satisfies(supportedBrowsers);
+const webrtcUnavailable = !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.RTCPeerConnection;
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -79,7 +74,7 @@ const container = document.getElementById('edumeet');
 const root = createRoot(container!);
 
 root.render(
-	<React.StrictMode>
+	<>
 		<CssBaseline />
 		<Provider store={store}>
 			<PersistGate persistor={persistor}>
@@ -92,5 +87,5 @@ root.render(
 				</ThemeProvider>
 			</PersistGate>
 		</Provider>
-	</React.StrictMode>
+	</>
 );

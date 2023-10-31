@@ -8,8 +8,8 @@ import {
 	showParticipantsLabel,
 } from '../translated/translatedComponents';
 import { peersLengthSelector } from '../../store/selectors';
-import { Badge } from '@mui/material';
 import { uiActions } from '../../store/slices/uiSlice';
+import PulsingBadge from '../pulsingbadge/PulsingBadge';
 
 const ParticipantsButton = ({
 	...props
@@ -28,9 +28,9 @@ const ParticipantsButton = ({
 			onColor='primary'
 			{ ...props }
 		>
-			<Badge color='primary' badgeContent={peersLength + 1}>
+			<PulsingBadge color='primary' badgeContent={peersLength + 1} key={peersLength}>
 				<PeopleIcon />
-			</Badge>
+			</PulsingBadge>
 		</ControlButton>
 	);
 };

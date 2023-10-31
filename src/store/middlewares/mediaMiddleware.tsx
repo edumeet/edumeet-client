@@ -3,15 +3,12 @@ import { consumersActions, StateConsumer } from '../slices/consumersSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { producersActions, ProducerSource } from '../slices/producersSlice';
-import { videoConsumersSelector } from '../selectors';
+import { resumedVideoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
+import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from 'edumeet-common';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
-import { notificationsActions } from '../slices/notificationsSlice';
-import { mediaActions } from '../slices/mediaSlice';
-import { mediaNodeConnectionError, mediaNodeConnectionSuccess, mediaNodeSvcUnavailable } from '../../components/translated/translatedComponents';
 import { meActions } from '../slices/meSlice';
-import { startMedia } from '../actions/mediaActions';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -32,11 +29,11 @@ const logger = new Logger('MediaMiddleware');
  * @returns {Middleware} Redux middleware.
  */
 const createMediaMiddleware = ({
-	mediaService, signalingService 
+	mediaService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
-	const transcriptTimeouts = new Map<string, NodeJS.Timeout>();
+	const transcriptTimeouts = new Map<string, NodeJS.Timer>();
 
 	const middleware: Middleware = ({
 		dispatch, getState
@@ -45,78 +42,21 @@ const createMediaMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => async (action) => {
-			if (roomActions.setState.match(action) && action.payload === 'left') {
-				mediaService.close();
-				mediaService.removeAllListeners();
+			if (signalingActions.connect.match(action)) {
+				mediaService.init();
 			}
 
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
-				/**
-				 * At this point we have joined the room.
-				 * We have our peers and can do everything non-media related.
-				 * We add listeners to learn about media connection.
-				 */
-				signalingService.on('notification', (notification) => {
-					if (notification.method === 'mediaReady') {
-						const { mediaConnectionStatus, startMediaServiceInProgress } = getState().me;
-
-						if (mediaConnectionStatus !== 'connected') {
-							if (mediaConnectionStatus === 'error')
-								dispatch(notificationsActions.enqueueNotification({
-									message: mediaNodeConnectionSuccess(),
-									options: { variant: 'success' }
-								}));
-							
-							dispatch(meActions.setMediaConnectionStatus('connected'));
-							!startMediaServiceInProgress && dispatch(startMedia());
-						}
-					}
-					
-					if (notification.method === 'noMediaAvailable') {
-						const { mediaConnectionStatus } = getState().me;
-
-						if (mediaConnectionStatus !== 'error')
-							dispatch(notificationsActions.enqueueNotification({
-								message: mediaNodeSvcUnavailable(),
-								options: { variant: 'error' }
-							}));
-						dispatch(meActions.setMediaConnectionStatus('error'));
-						dispatch(mediaActions.resetLiveMic());
-						dispatch(mediaActions.resetLiveWebcam());
-					}
-
-					if (notification.method === 'mediaConnectionError') {
-						dispatch(notificationsActions.enqueueNotification({
-							message: mediaNodeConnectionError(),
-							options: { variant: 'error' }
-						}));
-					}
-				});
-			}
-			
-			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'not_connected') {
-				mediaService.close();
-				mediaService.removeAllListeners();
-			}
-			
-			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'error') {
-				mediaService.close();
-				mediaService.removeAllListeners();
-			}
-
-			if (meActions.setMediaConnectionStatus.match(action) && action.payload === 'connected') {
-				/**
-				 * At this point our peer has been assigned a router.
-				 * We can start doing things related to media.
-				 */
-				mediaService.on('consumerCreated', (consumer, paused, producerPaused) => {
+				// Server has provided us with a new Consumer. The MediaService
+				// has created it for us and we need to add it to the store.
+				// MediaService will notify us of any changes to Consumer.
+				mediaService.on('consumerCreated', (consumer, producerPaused) => {
 					const stateConsumer: StateConsumer = {
 						id: consumer.id,
 						peerId: consumer.appData.peerId as string,
 						kind: consumer.kind,
 						localPaused: false,
-						remotePaused: paused,
-						producerPaused,
+						remotePaused: producerPaused,
 						source: consumer.appData.source as ProducerSource,
 					};
 
@@ -174,8 +114,8 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 
-					producer.kind === 'video' && dispatch(mediaActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(mediaActions.setAudioMuted(true));
+					producer.kind === 'video' && dispatch(meActions.setVideoMuted(true));
+					producer.kind === 'audio' && dispatch(meActions.setAudioMuted(true));
 				});
 
 				mediaService.on('producerPaused', (producer) => {
@@ -183,23 +123,28 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 					
-					producer.kind === 'video' && dispatch(mediaActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(mediaActions.setAudioMuted(true));
+					producer.kind === 'video' && dispatch(meActions.setVideoMuted(true));
+					producer.kind === 'audio' && dispatch(meActions.setAudioMuted(true));
 				});
 
 				mediaService.on('producerResumed', (producer) => {
 					dispatch(producersActions.setProducerResumed({
 						producerId: producer.id
 					}));
-
-					mediaService.on('consumerScore', (consumerId, score) => {
-						dispatch(consumersActions.setScore({ consumerId, score }));	
-					});
-				
-					mediaService.on('producerScore', (producerId, score) => {
-						dispatch(producersActions.setScore({ producerId, score }));	
-					});
 				});
+
+				mediaService.on('consumerScore', (consumerId, score) => {
+					dispatch(consumersActions.setScore({ consumerId, score }));	
+				});
+			
+				mediaService.on('producerScore', (producerId, score) => {
+					dispatch(producersActions.setScore({ producerId, score }));	
+				});
+			}
+
+			if (roomActions.setState.match(action) && action.payload === 'left') {
+				mediaService.removeAllListeners();
+				mediaService.close();
 			}
 
 			// These actions are dispatched from the UI somewhere manually (button clicks, etc)
@@ -236,11 +181,11 @@ const createMediaMiddleware = ({
 			) {
 				// Make a diff of the current state and the new state to find out
 				// which Consumers need to be paused/resumed.
-				const oldConsumersList = videoConsumersSelector(getState());
+				const oldConsumersList = resumedVideoConsumersSelector(getState());
 
 				next(action);
 
-				const newConsumersList = videoConsumersSelector(getState());
+				const newConsumersList = resumedVideoConsumersSelector(getState());
 
 				const pausedConsumersList = oldConsumersList.filter(
 					(consumer) => !newConsumersList.includes(consumer)

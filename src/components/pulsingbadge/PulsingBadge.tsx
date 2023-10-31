@@ -2,14 +2,14 @@ import { Badge, styled } from '@mui/material';
 import { memo } from 'react';
 
 export default memo(styled(Badge)(({ theme }) => ({
-	badge: {
+	'& .MuiBadge-badge': {
 		backgroundColor: theme.palette.secondary.main,
-		'&::after': {
+		'&:after': {
 			position: 'absolute',
 			width: '100%',
 			height: '100%',
 			borderRadius: '50%',
-			animation: 'ripple 1.2s infinite ease-in-out',
+			animation: 'ripple 0.8s normal ease-in-out',
 			border: `3px solid ${theme.palette.secondary.main}`,
 			content: '""'
 		}

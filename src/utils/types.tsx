@@ -1,6 +1,5 @@
 import { ThemeOptions } from '@mui/material';
 import { ClientMonitorConfig } from '@observertc/client-monitor-js';
-import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
@@ -19,6 +18,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	autoGainControl: true,
 	echoCancellation: true,
 	noiseSuppression: true,
+	noiseThreshold: -60,
 	sampleRate: 48000,
 	channelCount: 1,
 	sampleSize: 16,
@@ -34,6 +34,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'autoGainControl': true,
 			'echoCancellation': true,
 			'noiseSuppression': true,
+			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 1,
 			'sampleSize': 16,
@@ -48,6 +49,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'autoGainControl': false,
 			'echoCancellation': false,
 			'noiseSuppression': false,
+			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 2,
 			'sampleSize': 16,
@@ -112,6 +114,7 @@ export interface EdumeetConfig {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
+	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -150,6 +153,7 @@ export interface AudioPreset {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
+	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -214,22 +218,7 @@ export interface RTCStatsMetaData {
 	displayName: string;
 }
 
-export interface BlurBackgroundPipeline {
-	render: () => void;
-	cleanup: () => void;
-}
-
 export interface Dimensions {
 	width: number,
 	height: number
-}
-
-export interface BlurBackgroundPipelineOptions {
-    source: {
-        element: HTMLVideoElement,
-        dimensions: Dimensions
-    },
-    canvas: HTMLCanvasElement,
-    backend: TFLite,
-    segmentation: Dimensions
 }

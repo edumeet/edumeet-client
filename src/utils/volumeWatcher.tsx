@@ -17,9 +17,9 @@ export declare interface VolumeWatcher {
  * @emits volumeChange - Emitted when the volume changes.
  */
 export class VolumeWatcher extends EventEmitter {
-	private hark: Harker;
+	public hark: Harker;
 	private lastVolume = -100;
-	private lastScaledVolume = 0;
+	public lastScaledVolume = 0;
 
 	constructor({ hark }: { hark: Harker }) {
 		super();

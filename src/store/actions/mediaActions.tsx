@@ -1,26 +1,18 @@
-import { Logger, MediaKind } from 'edumeet-common';
-import { Producer } from 'mediasoup-client/lib/Producer';
+import { Logger } from 'edumeet-common';
 import { getEncodings, getVideoConstrains } from '../../utils/encodingsHandler';
 import { Resolution } from '../../utils/types';
 import { meActions } from '../slices/meSlice';
-import { producersActions, ProducerSource } from '../slices/producersSlice';
-import { roomActions } from '../slices/roomSlice';
+import { ProducerSource, producersActions } from '../slices/producersSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
-import { mediaActions } from '../slices/mediaSlice';
-import { BlurBackgroundNotSupportedError } from '../../utils/blurbackground/BlurBackground';
-import { notificationsActions } from '../slices/notificationsSlice';
-import { blurBackgroundNotSupported } from '../../components/translated/translatedComponents';
-import hark from 'hark';
-import { VolumeWatcher } from '../../utils/volumeWatcher';
-import { batch } from 'react-redux';
+import { Producer } from 'mediasoup-client/lib/types';
+import { roomActions } from '../slices/roomSlice';
 
 const logger = new Logger('MediaActions');
 
 interface UpdateDeviceOptions {
 	start?: boolean;
 	restart?: boolean;
-	unMute?: boolean;
 	newDeviceId?: string;
 }
 
@@ -41,83 +33,13 @@ interface AudioSettings {
 interface VideoSettings {
 	resolution?: Resolution;
 	frameRate?: number;
+	blurEnabled?: boolean;
 }
 
 interface ScreenshareSettings {
 	screenSharingResolution?: Resolution;
 	screenSharingFrameRate?: number;
 }
-
-export const createAudioContext = (): AppThunk<Promise<void>> => async (
-	dispatch, getState, { mediaService }): Promise<void> => {
-	logger.debug('createAudioContext()');
-	const deviceOs = getState().me.browser.os;
-
-	if (mediaService.audioContext || deviceOs !== 'ios') return; 
-	const ctx = new AudioContext();
-
-	try {
-		ctx.state === 'suspended' && await ctx.resume();
-	} catch (e) {
-		logger.error('createAudioContext() [%o]', e);
-	} finally {
-		mediaService.audioContext = ctx;
-		dispatch(meActions.activateAudioContext());
-	}
-};
-
-// This action is triggered when the server sends "mediaReady" to us.
-// This means we have a server side router and can start media.
-// 1. Create our Mediasoup transports
-// 2. Discover our capabilities
-// 3. Signal the server that we are ready for media
-// 4. Update the state
-export const startMedia = (): AppThunk<Promise<void>> => async (
-	dispatch, getState, { mediaService, signalingService }
-): Promise<void> => {
-	try {
-		dispatch(meActions.setStartMediaServiceInProgress(true));
-		mediaService.init();
-		const {
-			iceServers,
-			rtcStatsOptions,
-		} = getState().webrtc;
-
-		mediaService.rtcStatsInit(rtcStatsOptions);
-
-		await mediaService.createTransports(iceServers);
-
-		dispatch(meActions.setMediaCapabilities(
-			mediaService.mediaCapabilities
-		));
-		
-		const rtpCapabilities = mediaService.rtpCapabilities;
-
-		signalingService.notify({ method: 'rtpCapabilities',
-			data: {
-				rtpCapabilities,
-			} });
-		
-		const { videoMuted, audioMuted, liveVideoDeviceId, liveAudioInputDeviceId } = getState().media;
-
-		batch(() => {
-			if (!audioMuted && liveAudioInputDeviceId) {
-				dispatch(updateLiveMic());
-			}
-			if (!videoMuted && liveVideoDeviceId) {
-				dispatch(updateLiveWebcam());
-			}
-		});
-
-	} catch (error) {
-		logger.error('startMedia() [error: %o]', error);
-		mediaService.removeAllListeners();
-		mediaService.close();
-	} finally {
-		dispatch(meActions.setStartMediaServiceInProgress(false));
-	}
-
-};
 
 export const startTranscription = (): AppThunk<Promise<void>> => async (
 	dispatch,
@@ -159,31 +81,24 @@ export const stopTranscription = (): AppThunk<Promise<void>> => async (
  * @param options - Options.
  * @returns {AppThunk<Promise<void>>} Promise.
  */
-export const updatePreviewMic = (newDeviceId?: string): AppThunk<Promise<void>> => async (
+export const updatePreviewMic = ({
+	restart = false,
+	newDeviceId
+}: UpdateDeviceOptions = {
+	restart: false,
+}): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
 	{ mediaService, deviceService }
 ): Promise<void> => {
 	logger.debug('updatePreviewMic()');
 
-	dispatch(mediaActions.setAudioInProgress(true));
+	dispatch(meActions.setAudioInProgress(true));
 
-	let track: MediaStreamTrack | undefined;
-	let deviceId: string | undefined;
+	let track: MediaStreamTrack | undefined | null;
 
 	try {
 		await deviceService.updateMediaDevices();
-
-		if (newDeviceId)
-			dispatch(mediaActions.setPreviewAudioInputDeviceId(newDeviceId));
-
-		const { previewAudioInputDeviceId, previewMicTrackId } = getState().media;
-
-		if (previewMicTrackId) {
-			mediaService.getTrack(previewMicTrackId, 'previewTracks')?.stop();
-			mediaService.removePreviewTrack(previewMicTrackId);
-			dispatch(mediaActions.setPreviewMicTrackId());
-		}
 
 		const {
 			autoGainControl,
@@ -193,8 +108,24 @@ export const updatePreviewMic = (newDeviceId?: string): AppThunk<Promise<void>> 
 			channelCount,
 			sampleSize,
 		} = getState().settings;
+		const deviceId = deviceService.getDeviceId(newDeviceId, 'audioinput');
 
-		deviceId = previewAudioInputDeviceId;
+		if (!deviceId)
+			logger.warn('updatePreviewMic() no audio devices');
+
+		if (restart) {
+			const { previewMicTrackId } = getState().me;
+
+			if (previewMicTrackId) {
+				track = mediaService.getTrack(previewMicTrackId);
+
+				if (track)
+					track.stop();
+
+				dispatch(meActions.setPreviewMicTrackId());
+			}
+		}
+
 		const stream = await navigator.mediaDevices.getUserMedia({
 			audio: {
 				deviceId: { ideal: deviceId },
@@ -207,37 +138,17 @@ export const updatePreviewMic = (newDeviceId?: string): AppThunk<Promise<void>> 
 			}
 		});
 
-		if (!stream) throw new Error('Could not create MediaStream');
-		track = stream.getAudioTracks()[0];
-		deviceId = track.getSettings().deviceId;
-		if (!deviceId) throw new Error('No deviceId found');
-		
-		// We may have ended up with a different device than the one selected
-		// so we need to update the selected device in the settings just in case
-		dispatch(mediaActions.setPreviewAudioInputDeviceId(deviceId));
+		([ track ] = stream.getAudioTracks());
 
-		mediaService.addTrack(track, deviceId, 'previewTracks');
-		dispatch(mediaActions.setPreviewMicTrackId(track.id));
-		dispatch(mediaActions.setAudioMuted(false));
-
-		// Add VolumeWatcher
-		const harkStream = new MediaStream();
-
-		harkStream.addTrack(track);
-		const previewMicHark = hark(harkStream, {
-			play: false,
-			interval: 100,
-			threshold: -60,
-			history: 100
-		});
-
-		mediaService.previewVolumeWatcher = new VolumeWatcher({ hark: previewMicHark }); 
+		mediaService.addTrack(track);
+		dispatch(meActions.setPreviewMicTrackId(track.id));
 
 		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updatePreviewMic() [error:%o]', error);
 	} finally {
-		dispatch(mediaActions.setAudioInProgress(false));
+		dispatch(meActions.setAudioMuted(false));
+		dispatch(meActions.setAudioInProgress(false));
 	}
 };
 
@@ -254,22 +165,22 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('stopPreviewMic()');
 
-	dispatch(mediaActions.setAudioInProgress(true));
+	dispatch(meActions.setAudioInProgress(true));
 
-	const { previewMicTrackId } = getState().media;
+	const { previewMicTrackId } = getState().me;
 
 	if (previewMicTrackId) {
-		const track = mediaService.getTrack(previewMicTrackId, 'previewTracks');
+		const track = mediaService.getTrack(previewMicTrackId);
+		
+		dispatch(meActions.setPreviewMicTrackId());
 
-		dispatch(mediaActions.setPreviewMicTrackId());
-
-		mediaService.removePreviewTrack(track?.id);
-		track?.stop();
+		if (track) {
+			mediaService.removeTrack(track.id);
+			track.stop();
+		}
 	}
 
-	delete mediaService.previewVolumeWatcher;
-
-	dispatch(mediaActions.setAudioInProgress(false));
+	dispatch(meActions.setAudioInProgress(false));
 };
 
 /**
@@ -280,48 +191,51 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
  * @param options - Options.
  * @returns {Promise<void>} Promise.
  */
-export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void>> => async (
+export const updatePreviewWebcam = ({
+	restart = false,
+	newDeviceId
+}: UpdateDeviceOptions = {}): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ mediaService, deviceService, effectService }
+	{ mediaService, deviceService, effectsService }
 ): Promise<void> => {
-	logger.debug('updatePreviewWebcam() [newDeviceId: %s]', newDeviceId);
+	logger.debug('updatePreviewWebcam()');
 
-	dispatch(mediaActions.setVideoInProgress(true));
+	dispatch(meActions.setVideoInProgress(true));
 
-	let track: MediaStreamTrack | undefined;
-	let deviceId: string | undefined;
-	let stream: MediaStream | undefined;
+	let track: MediaStreamTrack | undefined | null;
 
 	try {
 		await deviceService.updateMediaDevices();
-
-		const { liveVideoDeviceId } = getState().media;
-
-		if (newDeviceId)
-			dispatch(mediaActions.setPreviewVideoDeviceId(newDeviceId));
-		else if (liveVideoDeviceId)
-			dispatch(mediaActions.setPreviewVideoDeviceId(liveVideoDeviceId));
-		
-		const { previewWebcamTrackId,
-			previewVideoDeviceId,
-			previewBlurBackground,
-		} = getState().media;
-
-		if (previewWebcamTrackId) {
-			mediaService.getTrack(previewWebcamTrackId, 'previewTracks')?.stop();
-			mediaService.removePreviewTrack(previewWebcamTrackId);
-			dispatch(mediaActions.setPreviewWebcamTrackId());
-		}
 
 		const {
 			aspectRatio,
 			resolution,
 			frameRate,
+			blurEnabled,
 		} = getState().settings;
 
-		deviceId = previewVideoDeviceId;
-		stream = await navigator.mediaDevices.getUserMedia({
+		const deviceId = deviceService.getDeviceId(newDeviceId, 'videoinput');
+
+		if (!deviceId)
+			logger.warn('updatePreviewWebcam() no webcam devices');
+
+		if (restart) {
+			const { previewWebcamTrackId } = getState().me;
+
+			if (previewWebcamTrackId) {
+				track = mediaService.getTrack(previewWebcamTrackId);
+
+				if (track) {
+					track.stop();
+					effectsService.stop(track.id);
+				}
+
+				dispatch(meActions.setPreviewWebcamTrackId());
+			}
+		}
+
+		const stream = await navigator.mediaDevices.getUserMedia({
 			video: {
 				deviceId: { ideal: deviceId },
 				...getVideoConstrains(resolution, aspectRatio),
@@ -329,50 +243,18 @@ export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void
 			}
 		});
 
-		if (!stream) throw new Error('Could not create MediaStream');
-		track = stream.getVideoTracks()[0];
-		deviceId = track.getSettings().deviceId;
+		([ track ] = stream.getVideoTracks());
 
-		// We may have ended up with a different device than the one selected
-		// so we need to update the selected device in the settings just in case
-		dispatch(mediaActions.setPreviewVideoDeviceId(deviceId));
+		if (blurEnabled) track = await effectsService.applyEffect(track);
 
-		let blurTrack;
+		mediaService.addTrack(track);
+		dispatch(meActions.setPreviewWebcamTrackId(track.id));
 
-		if (previewBlurBackground) {
-			try {
-				if (!deviceId) throw new Error('No deviceId found');
-				effectService.stopBlurEffect('preview');
-				({ blurTrack } = await effectService.startBlurEffect(stream, 'preview'));
-
-				mediaService.addTrack(blurTrack, deviceId, 'previewTracks');
-				dispatch(mediaActions.setPreviewWebcamTrackId(blurTrack.id));
-				dispatch(mediaActions.setVideoMuted(false));
-			} catch (e) {
-				if (e instanceof BlurBackgroundNotSupportedError) {
-					dispatch(mediaActions.setPreviewBlurBackground(false));
-					dispatch(meActions.setCanBlurBackground(false));
-					dispatch(notificationsActions.enqueueNotification({
-						message: blurBackgroundNotSupported(),
-						options: { variant: 'error' }
-					}));
-				}
-				logger.error(e);
-			}
-		}
-		
-		if (!blurTrack) { 
-			// Either blurBackground failed, or it's not enabled. Add unprocessed track.
-			if (!deviceId) throw new Error('No deviceId found');
-			mediaService.addTrack(track, deviceId, 'previewTracks');
-			dispatch(mediaActions.setPreviewWebcamTrackId(track.id));
-			dispatch(mediaActions.setVideoMuted(false));
-		}
 		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updatePreviewWebcam() [error:%o]', error);
 	} finally {
-		dispatch(mediaActions.setVideoInProgress(false));
+		dispatch(meActions.setVideoInProgress(false));
 	}
 };
 
@@ -385,22 +267,27 @@ export const updatePreviewWebcam = (newDeviceId?: string): AppThunk<Promise<void
 export const stopPreviewWebcam = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ mediaService, effectService }
+	{ mediaService, effectsService }
 ): Promise<void> => {
 	logger.debug('stopPreviewWebcam()');
-	dispatch(mediaActions.setVideoInProgress(true));
-	const { previewWebcamTrackId, previewBlurBackground } = getState().media;
+
+	dispatch(meActions.setVideoInProgress(true));
+
+	const { previewWebcamTrackId } = getState().me;
 
 	if (previewWebcamTrackId) {
-		const track = mediaService.getTrack(previewWebcamTrackId, 'previewTracks');
+		const track = mediaService.getTrack(previewWebcamTrackId);
 
-		dispatch(mediaActions.setPreviewWebcamTrackId());
-		mediaService.removePreviewTrack(track?.id);
-		track?.stop();
+		dispatch(meActions.setPreviewWebcamTrackId());
+
+		if (track) {
+			mediaService.removeTrack(track.id);
+			track.stop();
+			effectsService.stop(track.id);
+		}
 	}
 
-	previewBlurBackground && effectService.stopBlurEffect('preview');
-	dispatch(mediaActions.setVideoInProgress(false));
+	dispatch(meActions.setVideoInProgress(false));
 };
 
 /**
@@ -420,7 +307,7 @@ export const updateAudioSettings = (
 
 	dispatch(settingsActions.updateSettings(settings));
 	dispatch(stopPreviewMic());
-	await dispatch(updateLiveMic());
+	await dispatch(updateMic());
 	await dispatch(updatePreviewMic());
 };
 
@@ -432,39 +319,44 @@ export const updateAudioSettings = (
  * @param options - Options.
  * @returns {Promise<void>} Promise.
  */
-export const updateLiveMic = (newDeviceId?: string): AppThunk<Promise<void>> => async (
+export const updateMic = ({
+	start = false,
+	restart = true,
+	newDeviceId
+}: UpdateDeviceOptions = {
+	start: false,
+	restart: true,
+}): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
 	{ mediaService, deviceService }
 ): Promise<void> => {
 	logger.debug(
-		'updateLiveMic()');
+		'updateMic() [start:%s, restart:%s, newDeviceId:"%s"]',
+		start,
+		restart,
+		newDeviceId
+	);
 
-	dispatch(mediaActions.setAudioInProgress(true));
+	dispatch(meActions.setAudioInProgress(true));
 
 	let track: MediaStreamTrack | null | undefined;
 	let micProducer: Producer | undefined;
 
 	try {
-		if (getState().me.mediaConnectionStatus !== 'connected') {
-			mediaService.retryConnection();
-			throw new Error('No media connection');
-		}
-
 		await deviceService.updateMediaDevices();
 
-		const { canSendMic } = getState().me;
+		const canSendMic = getState().me.canSendMic;
 
-		if (!canSendMic)
-			throw new Error('cannot produce audio');
+		if (!canSendMic) throw new Error('cannot produce audio');
+		if (newDeviceId && !restart) throw new Error('changing device requires restart');
+		if (newDeviceId) dispatch(settingsActions.setSelectedAudioDevice(newDeviceId));
 
-		const { liveMicTrackId, liveAudioInputDeviceId } = getState().media;
+		const previewMicTrackId = getState().me.previewMicTrackId;
+		const selectedAudioDevice = getState().settings.selectedAudioDevice;
+		const deviceId = deviceService.getDeviceId(selectedAudioDevice, 'audioinput');
 
-		if (liveMicTrackId) {
-			track = mediaService.getTrack(liveMicTrackId, 'liveTracks');
-			track?.stop();
-			mediaService.removeLiveTrack(liveMicTrackId);
-		}
+		if (!deviceId) logger.warn('no audio devices');
 
 		const {
 			autoGainControl,
@@ -477,124 +369,86 @@ export const updateLiveMic = (newDeviceId?: string): AppThunk<Promise<void>> => 
 			opusDtx,
 			opusFec,
 			opusPtime,
-			opusMaxPlaybackRate,
+			opusMaxPlaybackRate
 		} = getState().settings;
 
-		micProducer =
-			mediaService.getProducers()
-				.find((producer) => producer.appData.source === 'mic');
+		micProducer = mediaService.getProducers().find((producer) => producer.appData.source === 'mic');
 
-		let muted = false;
+		if ((restart && micProducer) || start) {
+			if (micProducer) {
+				dispatch(producersActions.closeProducer({
+					producerId: micProducer.id,
+					local: true
+				}));
+			}
 
-		if (micProducer) {
-			muted = micProducer.paused;
-			dispatch(producersActions.closeProducer({
-				producerId: micProducer.id,
-				local: true
+			if (previewMicTrackId) track = mediaService.getTrack(previewMicTrackId);
+
+			if (!track) {
+				const stream = await navigator.mediaDevices.getUserMedia({
+					audio: {
+						deviceId: { ideal: deviceId },
+						sampleRate,
+						channelCount,
+						autoGainControl,
+						echoCancellation,
+						noiseSuppression,
+						sampleSize
+					}
+				});
+
+				([ track ] = stream.getAudioTracks());
+			}
+
+			if (!track) throw new Error('no mic track');
+
+			dispatch(meActions.setPreviewMicTrackId());
+
+			if (previewMicTrackId) mediaService.removeTrack(previewMicTrackId);
+
+			const { deviceId: trackDeviceId } = track.getSettings();
+
+			dispatch(settingsActions.setSelectedAudioDevice(trackDeviceId));
+
+			micProducer = await mediaService.produce({
+				track,
+				codecOptions: {
+					opusStereo: opusStereo,
+					opusFec: opusFec,
+					opusDtx: opusDtx,
+					opusMaxPlaybackRate: opusMaxPlaybackRate,
+					opusPtime: opusPtime
+				},
+				appData: { source: 'mic' }
+			});
+
+			dispatch(producersActions.addProducer({
+				id: micProducer.id,
+				kind: micProducer.kind,
+				source: micProducer.appData.source as ProducerSource,
+				paused: micProducer.paused
 			}));
-		}
+		} else if (micProducer) {
+			({ track } = micProducer);
 
-		let deviceId = newDeviceId ?? liveAudioInputDeviceId;
-			
-		const stream = await navigator.mediaDevices.getUserMedia({
-			audio: {
-				deviceId: { ideal: deviceId },
+			await track?.applyConstraints({
 				sampleRate,
 				channelCount,
 				autoGainControl,
 				echoCancellation,
 				noiseSuppression,
 				sampleSize
-			}
-		});
-
-		track = stream.getAudioTracks()[0];
-		if (!track) throw new Error('no live mic track');
-		deviceId = track.getSettings().deviceId;
-		if (!deviceId) throw new Error('No deviceId');
-
-		mediaService.addTrack(track, deviceId, 'liveTracks');
-		dispatch(mediaActions.setLiveMicTrackId(track.id));
-
-		micProducer = await mediaService.produce({
-			track,
-			codecOptions: {
-				opusStereo: opusStereo,
-				opusFec: opusFec,
-				opusDtx: opusDtx,
-				opusMaxPlaybackRate: opusMaxPlaybackRate,
-				opusPtime: opusPtime
-			},
-			appData: { source: 'mic' }
-		});
-
-		dispatch(producersActions.addProducer({
-			id: micProducer.id,
-			kind: micProducer.kind,
-			source: micProducer.appData.source as ProducerSource,
-			paused: micProducer.paused
-		}));
-
-		dispatch(mediaActions.setAudioMuted(false));
-
-		if (muted) {
-			dispatch(
-				producersActions.setProducerPaused({
-					producerId: micProducer.id,
-					local: true
-				})
-			);
-		} else {
-			dispatch(
-				producersActions.setProducerResumed({
-					producerId: micProducer.id,
-					local: true
-				})
-			);
+			});
 		}
-		track = micProducer.track;
 
-		await track?.applyConstraints({
-			sampleRate,
-			channelCount,
-			autoGainControl,
-			echoCancellation,
-			noiseSuppression,
-			sampleSize
-		});
+		dispatch(meActions.setAudioMuted(false));
 
 		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updateMic() [error:%o]', error);
 	} finally {
-		dispatch(mediaActions.setAudioInProgress(false));
+		dispatch(meActions.setAudioInProgress(false));
 	}
-};
-
-/**
- * This thunk action stops the preview video track.
- * 
- * @param options - Options.
- * @returns {void}
- */
-export const stopLiveMic = (): AppThunk<Promise<void>> => async (
-	dispatch,
-	getState,
-	{ mediaService }
-): Promise<void> => {
-	logger.debug('stopLiveWebcam()');
-	dispatch(mediaActions.setAudioInProgress(true));
-	const { liveMicTrackId } = getState().media;
-
-	if (liveMicTrackId) {
-		const track = mediaService.getTrack(liveMicTrackId, 'liveTracks');
-
-		dispatch(mediaActions.resetLiveMic());
-		mediaService.removeLiveTrack(track?.id);
-		track?.stop();
-	}
-
-	dispatch(mediaActions.setAudioInProgress(false));
 };
 
 /**
@@ -612,8 +466,25 @@ export const updateVideoSettings = (
 
 	dispatch(settingsActions.updateSettings(settings));
 	dispatch(stopPreviewWebcam());
-	await dispatch(updateLiveWebcam());
+	await dispatch(updateWebcam({ restart: true }));
 	await dispatch(updatePreviewWebcam());
+};
+
+/**
+ * This thunk action updates the video settings in the store,
+ * stops the preview video track, starts/restarts the main video
+ * track and starts/restarts the preview video track.
+ * 
+ * @param settings - Settings.
+ * @returns {Promise<void>} Promise.
+ */
+export const updateAdvancedVideoSettings = (
+	settings: VideoSettings = {}
+): AppThunk<Promise<void>> => async (dispatch): Promise<void> => {
+	logger.debug('updateVideoSettings()');
+
+	dispatch(settingsActions.updateSettings(settings));
+	await dispatch(updateWebcam({ restart: true }));
 };
 
 /**
@@ -624,145 +495,121 @@ export const updateVideoSettings = (
  * @param options - Options.
  * @returns {Promise<void>} Promise.
  */
-export const updateLiveWebcam = (newVideoDeviceId?: string): AppThunk<Promise<void>> => async (
+export const updateWebcam = ({
+	start = false,
+	restart = false,
+	newDeviceId,
+}: UpdateDeviceOptions = {
+	start: false,
+	restart: false,
+}): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ mediaService, deviceService, config, effectService }
+	{ mediaService, deviceService, effectsService, config }
 ): Promise<void> => {
-	logger.debug('updateLiveWebcam()');
-	dispatch(mediaActions.setVideoInProgress(true));
+	logger.debug(
+		'updateWebcam [start:%s, restart:%s, newDeviceId:%s]',
+		start,
+		restart,
+		newDeviceId,
+	);
+
+	dispatch(meActions.setVideoInProgress(true));
 
 	let track: MediaStreamTrack | null | undefined;
-	let webcamProducer: Producer | null | undefined;
-	let stream: MediaStream | undefined;
+	let webcamProducer: Producer | undefined;
 
 	try {
-		if (getState().me.mediaConnectionStatus !== 'connected') {
-			mediaService.retryConnection();
-			throw new Error('No media connection');
-		}
-
 		await deviceService.updateMediaDevices();
 
-		const { canSendWebcam } = getState().me;
+		const canSendWebcam = getState().me.canSendWebcam;
 
-		if (!canSendWebcam)
-			throw new Error('cannot produce video');
-
-		const {
-			liveVideoDeviceId,
-			liveBlurBackground,
-			liveWebcamTrackId,
-		} = getState().media;
-
-		if (liveWebcamTrackId) {
-			track = mediaService.getTrack(liveWebcamTrackId, 'liveTracks');
-			track?.stop();
-			mediaService.removeLiveTrack(liveWebcamTrackId);
-		}
+		if (!canSendWebcam) throw new Error('cannot produce video');
+		if (newDeviceId && !restart) throw new Error('changing device requires restart');
+		if (newDeviceId) dispatch(settingsActions.setSelectedVideoDevice(newDeviceId));
 
 		const {
 			aspectRatio,
 			resolution,
 			frameRate,
+			selectedVideoDevice,
+			blurEnabled,
 		} = getState().settings;
-
-		webcamProducer =
-			mediaService.getProducers()
-				.find((producer) => producer.appData.source === 'webcam');
-
-		if (webcamProducer) {
-			dispatch(producersActions.closeProducer({
-				producerId: webcamProducer.id,
-				local: true
-			}));
-		}
-
-		let deviceId = newVideoDeviceId ?? liveVideoDeviceId;
-
-		stream = await navigator.mediaDevices.getUserMedia({
-			video: {
-				deviceId: { ideal: deviceId },
-				...getVideoConstrains(resolution, aspectRatio),
-				frameRate
-			}
-		});
-
-		track = stream.getVideoTracks()[0];
-		if (!track) throw new Error('no live webcam track');
-		deviceId = track.getSettings().deviceId;
-		if (!deviceId) throw new Error('No deviceId');
-
-		let blurTrack: MediaStreamTrack | undefined;
-		let width: number | undefined, height: number | undefined;
-
-		if (liveBlurBackground) {
-			try {
-				effectService.stopBlurEffect('live');
-				({ blurTrack, width, height } = await effectService.startBlurEffect(stream, 'live'));
-				logger.debug(blurTrack);
-				mediaService.addTrack(blurTrack, deviceId, 'liveTracks');
-				dispatch(mediaActions.setLiveWebcamTrackId(blurTrack.id));
-			} catch (e) {
-				if (e instanceof BlurBackgroundNotSupportedError) {
-					dispatch(mediaActions.setLiveBlurBackground(false));
-					dispatch(meActions.setCanBlurBackground(false));
-				}
-				logger.error(e);
-			}
-		}
 		
-		if (!blurTrack) { 
-			// Either blurBackground failed, or it's not enabled. Add unprocessed track.
-			mediaService.addTrack(track, deviceId, 'liveTracks');
-			dispatch(mediaActions.setLiveWebcamTrackId(track.id));
-			({ width, height } = track.getSettings());
-		}
+		const deviceId = deviceService.getDeviceId(selectedVideoDevice, 'videoinput');
+		const previewWebcamTrackId = getState().me.previewWebcamTrackId;
 
-		if (config.simulcast) {
-			const encodings = getEncodings(
-				mediaService.rtpCapabilities,
-				width,
-				height
-			);
+		if (!deviceId) logger.warn('no webcam devices');
 
-			const resolutionScalings =
-				encodings.map((encoding) => encoding.scaleResolutionDownBy);
+		webcamProducer = mediaService.getProducers().find((producer) => producer.appData.source === 'webcam');
 
-			webcamProducer = await mediaService.produce({
-				track: blurTrack ?? track,
-				encodings,
-				codecOptions: {
-					videoGoogleStartBitrate: 1000
-				},
-				appData: {
-					source: 'webcam',
-					width,
-					height,
-					resolutionScalings
-				}
-			});
-		} else {
-			webcamProducer = await mediaService.produce({
-				track: blurTrack ?? track,
-				appData: {
-					source: 'webcam',
+		if ((restart && webcamProducer) || start) {
+			if (webcamProducer) {
+				dispatch(producersActions.closeProducer({
+					producerId: webcamProducer.id,
+					local: true
+				}));
+			}
+
+			if (previewWebcamTrackId) track = mediaService.getTrack(previewWebcamTrackId);
+
+			const havePreviewTrack = Boolean(track);
+
+			if (!havePreviewTrack) {
+				const stream = await navigator.mediaDevices.getUserMedia({
+					video: {
+						deviceId: { ideal: deviceId },
+						...getVideoConstrains(resolution, aspectRatio),
+						frameRate
+					}
+				});
+	
+				([ track ] = stream.getVideoTracks());
+			}
+
+			if (!track) throw new Error('no webcam track');
+
+			dispatch(meActions.setPreviewWebcamTrackId());
+
+			if (previewWebcamTrackId) mediaService.removeTrack(previewWebcamTrackId);
+
+			const { deviceId: trackDeviceId, width, height } = track.getSettings();
+
+			if (blurEnabled && !havePreviewTrack) track = await effectsService.applyEffect(track);
+
+			// User may have chosen a different device than the one initially selected
+			// so we need to update the selected device in the settings just in case
+			dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
+
+			if (config.simulcast) {
+				const encodings = getEncodings(
+					mediaService.rtpCapabilities,
 					width,
 					height
-				}
-			});
-		}
-
-		dispatch(producersActions.addProducer({
-			id: webcamProducer.id,
-			kind: webcamProducer.kind,
-			source: webcamProducer.appData.source as ProducerSource,
-			paused: webcamProducer.paused,
-		}));
-
-		dispatch(mediaActions.setVideoMuted(false));
+				);
 	
-		if (webcamProducer) {
+				webcamProducer = await mediaService.produce({
+					track,
+					encodings,
+					codecOptions: {
+						videoGoogleStartBitrate: 1000
+					},
+					appData: { source: 'webcam' }
+				});
+			} else {
+				webcamProducer = await mediaService.produce({
+					track,
+					appData: { source: 'webcam' }
+				});
+			}
+
+			dispatch(producersActions.addProducer({
+				id: webcamProducer.id,
+				kind: webcamProducer.kind,
+				source: webcamProducer.appData.source as ProducerSource,
+				paused: webcamProducer.paused,
+			}));
+		} else if (webcamProducer) {
 			({ track } = webcamProducer);
 
 			await track?.applyConstraints({
@@ -770,9 +617,7 @@ export const updateLiveWebcam = (newVideoDeviceId?: string): AppThunk<Promise<vo
 				frameRate
 			});
 
-			const extraVideoProducers =
-				mediaService.getProducers()
-					.filter((producer) => producer.appData.source === 'extravideo');
+			const extraVideoProducers = mediaService.getProducers().filter((producer) => producer.appData.source === 'extravideo');
 
 			// Also change resolution of extra video producers
 			for (const producer of extraVideoProducers) {
@@ -785,40 +630,14 @@ export const updateLiveWebcam = (newVideoDeviceId?: string): AppThunk<Promise<vo
 			}
 		}
 
+		dispatch(meActions.setVideoMuted(false));
+
 		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updateWebcam() [error:%o]', error);
 	} finally {
-		dispatch(mediaActions.setVideoInProgress(false));
+		dispatch(meActions.setVideoInProgress(false));
 	}
-};
-
-/**
- * This thunk action stops the preview video track.
- * 
- * @param options - Options.
- * @returns {void}
- */
-export const stopLiveWebcam = (): AppThunk<Promise<void>> => async (
-	dispatch,
-	getState,
-	{ mediaService, effectService }
-): Promise<void> => {
-	logger.debug('stopLiveWebcam()');
-	dispatch(mediaActions.setVideoInProgress(true));
-	const { liveWebcamTrackId, liveBlurBackground } = getState().media;
-
-	if (liveWebcamTrackId) {
-		const track = mediaService.getTrack(liveWebcamTrackId, 'liveTracks');
-
-		dispatch(mediaActions.resetLiveWebcam());
-		mediaService.removeLiveTrack(track?.id);
-		track?.stop();
-	}
-
-	liveBlurBackground && effectService.stopBlurEffect('live');
-
-	dispatch(mediaActions.setVideoInProgress(false));
 };
 
 /**
@@ -866,14 +685,13 @@ export const updateScreenSharing = ({
 
 	let audioTrack: MediaStreamTrack | null | undefined;
 	let videoTrack: MediaStreamTrack | null | undefined;
-	let screenAudioProducer: Producer | null | undefined;
-	let screenVideoProducer: Producer | null | undefined;
+	let screenAudioProducer: Producer | undefined;
+	let screenVideoProducer: Producer | undefined;
 
 	try {
 		const canShareScreen = getState().me.canShareScreen;
 
-		if (!canShareScreen)
-			throw new Error('cannot produce screen share');
+		if (!canShareScreen) throw new Error('cannot produce screen share');
 
 		const {
 			screenSharingResolution,
@@ -892,12 +710,8 @@ export const updateScreenSharing = ({
 			opusMaxPlaybackRate
 		} = getState().settings;
 
-		screenVideoProducer =
-			mediaService.getProducers()
-				.find((producer) => producer.appData.source === 'screen');
-		screenAudioProducer =
-			mediaService.getProducers()
-				.find((producer) => producer.appData.source === 'screenaudio');
+		screenVideoProducer = mediaService.getProducers().find((producer) => producer.appData.source === 'screen');
+		screenAudioProducer = mediaService.getProducers().find((producer) => producer.appData.source === 'screenaudio');
 
 		if ((restart && (screenVideoProducer || screenAudioProducer)) || start) {
 			if (screenVideoProducer) {
@@ -937,8 +751,7 @@ export const updateScreenSharing = ({
 
 			([ videoTrack ] = stream.getVideoTracks());
 
-			if (!videoTrack)
-				throw new Error('no screen track');
+			if (!videoTrack) throw new Error('no screen track');
 
 			const { width, height } = videoTrack.getSettings();
 
@@ -949,21 +762,13 @@ export const updateScreenSharing = ({
 					height,
 				);
 
-				const resolutionScalings =
-					encodings.map((encoding) => encoding.scaleResolutionDownBy);
-
 				screenVideoProducer = await mediaService.produce({
 					track: videoTrack,
 					encodings,
 					codecOptions: {
 						videoGoogleStartBitrate: 1000
 					},
-					appData: {
-						source: 'screen',
-						width,
-						height,
-						resolutionScalings
-					}
+					appData: { source: 'screen' }
 				});
 			} else {
 				screenVideoProducer = await mediaService.produce({
@@ -971,11 +776,7 @@ export const updateScreenSharing = ({
 					codecOptions: {
 						videoGoogleStartBitrate: 1000
 					},
-					appData: {
-						source: 'screen',
-						width,
-						height
-					}
+					appData: { source: 'screen' }
 				});
 			}
 
@@ -998,7 +799,7 @@ export const updateScreenSharing = ({
 						opusMaxPlaybackRate: opusMaxPlaybackRate,
 						opusPtime: opusPtime
 					},
-					appData: { source: 'mic' }
+					appData: { source: 'screenaudio' }
 				});
 
 				dispatch(producersActions.addProducer({
@@ -1055,21 +856,19 @@ export const startExtraVideo = ({
 ): Promise<void> => {
 	logger.debug('startExtraVideo [newDeviceId:%s]', newDeviceId);
 
-	dispatch(mediaActions.setVideoInProgress(true));
+	dispatch(meActions.setVideoInProgress(true));
 
 	let track: MediaStreamTrack | null | undefined;
-	let extraVideoProducer: Producer | null | undefined;
+	let extraVideoProducer: Producer | undefined;
 
 	try {
-		if (!newDeviceId)
-			throw new Error('newDeviceId is not defined');
+		if (!newDeviceId) throw new Error('newDeviceId is not defined');
 
 		await deviceService.updateMediaDevices();
 
 		const canSendWebcam = getState().me.canSendWebcam;
 
-		if (!canSendWebcam)
-			throw new Error('cannot produce video');
+		if (!canSendWebcam) throw new Error('cannot produce video');
 
 		const {
 			aspectRatio,
@@ -1077,10 +876,9 @@ export const startExtraVideo = ({
 			frameRate,
 		} = getState().settings;
 		
-		const deviceId = deviceService.getDeviceId('videoinput');
+		const deviceId = deviceService.getDeviceId(newDeviceId, 'videoinput');
 
-		if (!deviceId)
-			logger.warn('no extravideo device');
+		if (!deviceId) logger.warn('no extravideo device');
 
 		const stream = await navigator.mediaDevices.getUserMedia({
 			video: {
@@ -1096,8 +894,6 @@ export const startExtraVideo = ({
 
 		if (config.simulcast) {
 			const encodings = getEncodings(mediaService.rtpCapabilities, width, height);
-			const resolutionScalings =
-				encodings.map((encoding) => encoding.scaleResolutionDownBy);
 
 			extraVideoProducer = await mediaService.produce({
 				track,
@@ -1105,18 +901,12 @@ export const startExtraVideo = ({
 				codecOptions: {
 					videoGoogleStartBitrate: 1000
 				},
-				appData: {
-					source: 'extravideo',
-					width,
-					height,
-					resolutionScalings
-				}
+				appData: { source: 'extravideo' }
 			});
-
 		} else {
 			extraVideoProducer = await mediaService.produce({
 				track,
-				appData: { source: 'extravideo', width, height }
+				appData: { source: 'extravideo' }
 			});
 		}
 
@@ -1131,20 +921,96 @@ export const startExtraVideo = ({
 	} catch (error) {
 		logger.error('startExtraVideo() [error:%o]', error);
 	} finally {
-		dispatch(mediaActions.setVideoInProgress(false));
+		dispatch(meActions.setVideoInProgress(false));
 	}
 };
 
-/** 
+/**
+ * This thunk action starts and extra audio track.
+ * It will use the MediaService to create the Producer from it
+ * which will send it to the server.
+ * 
  * @param options - Options.
  * @returns {Promise<void>} Promise.
  */
-export const getUserMedia = (mediaKind: MediaKind): AppThunk<Promise<void>> => async (getState, dispatch, { deviceService }): Promise<void> => {
-	logger.debug('getUserMedia() [mediaKind:%s]', mediaKind);
+export const startExtraAudio = ({
+	newDeviceId
+}: UpdateDeviceOptions = {}): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService, deviceService }
+): Promise<void> => {
+	logger.debug('startExtraAudio() [newDeviceId:"%s"]', newDeviceId);
 
-	await navigator.mediaDevices.getUserMedia({
-		audio: mediaKind === 'audio',
-		video: mediaKind === 'video'
-	}).catch((e) => logger.error(e));
-	await deviceService.updateMediaDevices();
+	dispatch(meActions.setAudioInProgress(true));
+
+	let track: MediaStreamTrack | null | undefined;
+	let extraAudioProducer: Producer | undefined;
+
+	try {
+		await deviceService.updateMediaDevices();
+
+		const canSendMic = getState().me.canSendMic;
+
+		if (!canSendMic) throw new Error('cannot produce audio');
+
+		const deviceId = deviceService.getDeviceId(newDeviceId, 'audioinput');
+
+		if (!deviceId) logger.warn('no audio devices');
+
+		const {
+			autoGainControl,
+			echoCancellation,
+			noiseSuppression,
+			sampleRate,
+			channelCount,
+			sampleSize,
+			opusStereo,
+			opusDtx,
+			opusFec,
+			opusPtime,
+			opusMaxPlaybackRate
+		} = getState().settings;
+
+		const stream = await navigator.mediaDevices.getUserMedia({
+			audio: {
+				deviceId: { ideal: deviceId },
+				sampleRate,
+				channelCount,
+				autoGainControl,
+				echoCancellation,
+				noiseSuppression,
+				sampleSize
+			}
+		});
+
+		([ track ] = stream.getAudioTracks());
+
+		if (!track) throw new Error('no mic track');
+
+		extraAudioProducer = await mediaService.produce({
+			track,
+			codecOptions: {
+				opusStereo: opusStereo,
+				opusFec: opusFec,
+				opusDtx: opusDtx,
+				opusMaxPlaybackRate: opusMaxPlaybackRate,
+				opusPtime: opusPtime
+			},
+			appData: { source: 'extraaudio' }
+		});
+
+		dispatch(producersActions.addProducer({
+			id: extraAudioProducer.id,
+			kind: extraAudioProducer.kind,
+			source: extraAudioProducer.appData.source as ProducerSource,
+			paused: extraAudioProducer.paused
+		}));
+
+		await deviceService.updateMediaDevices();
+	} catch (error) {
+		logger.error('startExtraAudio() [error:%o]', error);
+	} finally {
+		dispatch(meActions.setAudioInProgress(false));
+	}
 };

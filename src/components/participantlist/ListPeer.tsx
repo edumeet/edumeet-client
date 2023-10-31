@@ -61,8 +61,8 @@ const ListPeer = ({
 	
 	const shouldShow = Boolean(isModerator || micConsumer);
 	const hasAudio = micConsumer && !micConsumer.localPaused && !micConsumer.remotePaused;
-	const hasVideo = webcamConsumer && !webcamConsumer.localPaused && !webcamConsumer.remotePaused && !webcamConsumer.producerPaused;
-	const hasScreen = screenConsumer && !screenConsumer.localPaused && !screenConsumer.remotePaused && !screenConsumer.producerPaused;
+	const hasVideo = webcamConsumer && !webcamConsumer.localPaused && !webcamConsumer.remotePaused;
+	const hasScreen = screenConsumer && !screenConsumer.localPaused && !screenConsumer.remotePaused;
 
 	return (
 		<>

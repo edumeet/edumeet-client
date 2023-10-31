@@ -10,7 +10,6 @@ import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
-import RTPQuality from '../rtpquality/RtpQuality';
 
 interface MeProps {
 	style: Record<'width' | 'height', number>
@@ -33,7 +32,6 @@ const Me = ({
 	const isActiveSpeaker = useIsActiveSpeaker(id);
 	const isMobile = useAppSelector(isMobileSelector);
 	const showStats = useAppSelector((state) => state.ui.showStats);
-	const score = webcamProducer?.score ?? micProducer?.score;
 
 	return (
 		<>
@@ -43,17 +41,12 @@ const Me = ({
 					order={1}
 					width={style.width}
 					height={style.height}
-					zIndex={0}
 				>
-					<DisplayName disabled={false} displayName={displayName} isMe />
-					{ micProducer && !isMobile && <UnmuteAlert micProducer={micProducer} /> }
+					{ webcamProducer && <VideoView mirrored={mirroredSelfView} producer={webcamProducer} /> }
 					{ micProducer && <Volume producer={micProducer} /> }
-					{typeof score === 'number' && score < 10 && <RTPQuality score={score} />}
-					{ webcamProducer && <VideoView
-						mirrored={mirroredSelfView}
-						producer={webcamProducer}
-					/> }
-					{showStats && <PeerStatsView producerId={webcamProducer?.id}/>}
+					{ showStats && <PeerStatsView producerId={webcamProducer?.id}/> }
+					{ micProducer && !isMobile && <UnmuteAlert micProducer={micProducer} /> }
+					<DisplayName disabled={false} displayName={displayName} isMe />
 				</VideoBox>
 			)}
 			{ screenProducer && (
@@ -63,7 +56,9 @@ const Me = ({
 					width={style.width}
 					height={style.height}
 				>
+					<VideoView producer={screenProducer} contain />
 					<DisplayName disabled={false} displayName={displayName} isMe />
+					{ showStats && <PeerStatsView producerId={screenProducer.id}/> }
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'
@@ -75,8 +70,6 @@ const Me = ({
 							disabledColor='default'
 						/>
 					</MediaControls>
-					<VideoView producer={screenProducer} contain />
-					{showStats && <PeerStatsView producerId={screenProducer.id}/>}
 				</VideoBox>
 			)}
 			{ extraVideoProducers.map((producer) => (
@@ -87,7 +80,9 @@ const Me = ({
 					width={style.width}
 					height={style.height}
 				>
+					<VideoView producer={producer} />
 					<DisplayName disabled={false} displayName={displayName} isMe />
+					{ showStats && <PeerStatsView producerId={producer?.id}/> }
 					<MediaControls
 						orientation='vertical'
 						horizontalPlacement='right'
@@ -100,8 +95,6 @@ const Me = ({
 							producerId={producer.id}
 						/>
 					</MediaControls>
-					{showStats && <PeerStatsView producerId={producer?.id}/>}
-					<VideoView producer={producer} />
 				</VideoBox>
 			)) }
 		</>

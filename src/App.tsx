@@ -12,12 +12,11 @@ import Lobby from './views/lobby/Lobby';
 import Room from './views/room/Room';
 import { sendFiles } from './store/actions/filesharingActions';
 import { uiActions } from './store/slices/uiSlice';
-import { roomActions, RoomConnectionState } from './store/slices/roomSlice';
+import { roomActions } from './store/slices/roomSlice';
 import { permissions } from './utils/roles';
 import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import { meActions } from './store/slices/meSlice';
 
 type AppParams = {
 	id: string;
@@ -42,7 +41,7 @@ const SnackbarCloseButton = ({
 const App = (): JSX.Element => {
 	const backgroundImage = useAppSelector((state) => state.room.backgroundImage);
 	const dispatch = useAppDispatch();
-	const roomState = useAppSelector((state) => state.room.state) as RoomConnectionState;
+	const roomState = useAppSelector((state) => state.room.state);
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
 	const navigate = useNavigate();
@@ -76,22 +75,6 @@ const App = (): JSX.Element => {
 		}
 	}, [ roomState ]);
 
-	/**
-	 * Detect WebGL-support.
-	 */
-	useEffect(() => {
-		window.addEventListener('load', () => {
-			const canvas = document.createElement('canvas');
-			const gl = canvas.getContext('webgl') 
-      || canvas.getContext('experimental-webgl');
-			// Report the result.
-
-			if (gl && gl instanceof WebGLRenderingContext) {
-				dispatch(meActions.setHasWebGLSupport(true));
-			} 
-		}, { once: true });
-	}, []);
-
 	return (
 		<SnackbarProvider action={
 			(snackbarKey: SnackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} />
@@ -101,11 +84,7 @@ const App = (): JSX.Element => {
 				onDragOver={(event) => event.preventDefault()}
 				backgroundimage={backgroundImage}
 			>
-				{
-					roomState === 'joined' ?
-						<Room /> : roomState === 'lobby' ?
-							<Lobby /> : roomState === 'new' && <Join roomId={id} />
-				}
+				{ roomState === 'joined' ? <Room /> : roomState === 'lobby' ? <Lobby /> : roomState === 'new' && <Join roomId={id} /> }
 			</StyledBackground>
 		</SnackbarProvider>
 	);

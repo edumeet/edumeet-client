@@ -1,10 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { roomSessionsActions } from './roomSessionsSlice';
 
-export type SettingsTab = 'media' | 'appearance';
+export type SettingsTab = 'media' | 'appearance' | 'advanced';
 
 export interface UiState {
 	fullScreenConsumer?: string;
 	windowConsumer?: string;
+	unreadMessages: number;
 	settingsOpen: boolean;
 	filesharingOpen: boolean;
 	extraVideoOpen: boolean;
@@ -12,6 +14,7 @@ export interface UiState {
 	aboutOpen: boolean;
 	lobbyDialogOpen: boolean;
 	extraVideoDialogOpen: boolean;
+	extraAudioDialogOpen: boolean;
 	currentSettingsTab: SettingsTab;
 	showStats: boolean;
 	chatOpen: boolean;
@@ -21,6 +24,7 @@ export interface UiState {
 type UiUpdate = Partial<Omit<UiState, 'currentSettingsTab'>>;
 
 const initialState: UiState = {
+	unreadMessages: 0,
 	showStats: false,
 	settingsOpen: false,
 	filesharingOpen: false,
@@ -29,6 +33,7 @@ const initialState: UiState = {
 	aboutOpen: false,
 	lobbyDialogOpen: false,
 	extraVideoDialogOpen: false,
+	extraAudioDialogOpen: false,
 	currentSettingsTab: 'media',
 	chatOpen: false,
 	participantListOpen: false,
@@ -39,7 +44,9 @@ const uiSlice = createSlice({
 	initialState,
 	reducers: {
 		setUi: ((state, action: PayloadAction<UiUpdate>) => {
-			return { ...state, ...action.payload };
+			const unreadMessages = action.payload.chatOpen ? 0 : state.unreadMessages;
+
+			return { ...state, ...action.payload, unreadMessages };
 		}),
 		setCurrentSettingsTab: ((
 			state,
@@ -47,7 +54,23 @@ const uiSlice = createSlice({
 		) => {
 			state.currentSettingsTab = action.payload;
 		}),
+		addToUnreadMessages: ((state) => {
+			state.unreadMessages += 1;
+		}),
+		resetUnreadMessages: ((state) => {
+			state.unreadMessages = 0;
+		}),
 	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(roomSessionsActions.addMessages, (state, action) => {
+				if (state.chatOpen) return;
+
+				const messages = action.payload.messages;
+
+				state.unreadMessages = messages.length;
+			});
+	}
 });
 
 export const uiActions = uiSlice.actions;
