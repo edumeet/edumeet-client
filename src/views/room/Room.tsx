@@ -8,7 +8,6 @@ import AudioPeers from '../../components/audiopeers/AudioPeers';
 import LobbyDialog from '../../components/lobbydialog/LobbyDialog';
 import FilesharingDialog from '../../components/filesharingdialog/FilesharingDialog';
 import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog';
-import ControlButtonsBar from '../../components/controlbuttonsbar/ControlButtonsBar';
 import Help from '../../components/helpdialog/HelpDialog';
 import MainContent from '../../components/maincontent/MainContent';
 import HelpButton from '../../components/controlbuttons/HelpButton';
@@ -47,7 +46,6 @@ const Room = (): JSX.Element => {
 				fullscreen={isFullscreen}
 				onFullscreen={handleToggleFullscreen}
 			/>
-			<ControlButtonsBar />
 			<MainContent />
 			<FullscreenVideo />
 			<LobbyDialog />

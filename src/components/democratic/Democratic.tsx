@@ -5,6 +5,7 @@ import { speakerVideoConsumersSelector, videoBoxesSelector } from '../../store/s
 import Me from '../me/Me';
 import VideoConsumer from '../videoconsumer/VideoConsumer';
 import Peers from '../peers/Peers';
+import ControlButtonsBar from '../controlbuttonsbar/ControlButtonsBar';
 
 type DemocraticDivProps = {
 	headless: number;
@@ -120,6 +121,7 @@ const Democratic = (): JSX.Element => {
 
 	return (
 		<DemocraticDiv ref={peersRef} headless={headless ? 1 : 0}>
+			<ControlButtonsBar />
 			<Me style={style} />
 			{ speakerVideoConsumers.map((consumer) => (
 				<VideoConsumer

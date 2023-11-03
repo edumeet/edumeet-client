@@ -62,6 +62,7 @@ const ControlButtonsBar = (): JSX.Element => {
 				horizontalPlacement='center'
 				verticalPlacement='bottom'
 				autoHide={ false }
+				fullsize={ false }
 			>
 				<MicButton offColor='error' toolTipLocation='bottom' />
 				<WebcamButton offColor='error' toolTipLocation='bottom' />
