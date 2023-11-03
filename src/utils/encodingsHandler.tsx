@@ -73,7 +73,8 @@ export const getEncodings = (
 	rtpCapabilities: RtpCapabilities,
 	width: number | undefined,
 	height: number | undefined,
-	screenSharing?: boolean
+	svc = false,
+	screenSharing = false
 ): RtpEncodingParameters[] => {
 	if (!width || !height)
 		throw new Error('missing width or height');
@@ -87,7 +88,7 @@ export const getEncodings = (
 	let encodings: RtpEncodingParameters[];
 	const size = (width > height ? width : height);
 
-	if (firstVideoCodec.mimeType.toLowerCase() === 'video/vp9')
+	if (svc)
 		encodings = screenSharing ? VIDEO_SVC_ENCODINGS : VIDEO_KSVC_ENCODINGS;
 	else
 		encodings = chooseEncodings(SIMULCAST_PROFILES, size);

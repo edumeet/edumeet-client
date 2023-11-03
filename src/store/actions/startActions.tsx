@@ -100,11 +100,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		const source = target as HTMLElement;
 
-		if (
-			[ 'input', 'textarea', 'div' ]
-				.includes(source?.tagName?.toLowerCase())
-		)
-			return;
+		if ([ 'input', 'textarea', 'div' ].includes(source?.tagName?.toLowerCase())) return;
 
 		if (ctrlKey || altKey || shiftKey || metaKey) return;
 

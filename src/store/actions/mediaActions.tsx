@@ -597,12 +597,12 @@ export const updateWebcam = ({
 						videoGoogleStartBitrate: 1000
 					},
 					appData: { source: 'webcam' }
-				});
+				}, 'video/h264');
 			} else {
 				webcamProducer = await mediaService.produce({
 					track,
 					appData: { source: 'webcam' }
-				});
+				}, 'video/h264');
 			}
 
 			dispatch(producersActions.addProducer({
@@ -764,6 +764,8 @@ export const updateScreenSharing = ({
 					mediaService.rtpCapabilities,
 					width,
 					height,
+					false,
+					true
 				);
 
 				screenVideoProducer = await mediaService.produce({
@@ -773,7 +775,7 @@ export const updateScreenSharing = ({
 						videoGoogleStartBitrate: 1000
 					},
 					appData: { source: 'screen' }
-				});
+				}, 'video/h264');
 			} else {
 				screenVideoProducer = await mediaService.produce({
 					track: videoTrack,
@@ -781,7 +783,7 @@ export const updateScreenSharing = ({
 						videoGoogleStartBitrate: 1000
 					},
 					appData: { source: 'screen' }
-				});
+				}, 'video/h264');
 			}
 
 			dispatch(producersActions.addProducer({
@@ -908,12 +910,12 @@ export const startExtraVideo = ({
 					videoGoogleStartBitrate: 1000
 				},
 				appData: { source: 'extravideo' }
-			});
+			}, 'video/h264');
 		} else {
 			extraVideoProducer = await mediaService.produce({
 				track,
 				appData: { source: 'extravideo' }
-			});
+			}, 'video/h264');
 		}
 
 		dispatch(producersActions.addProducer({

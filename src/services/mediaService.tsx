@@ -23,6 +23,8 @@ declare global {
 	}
 }
 
+export type ProducerCodec = 'video/vp8' | 'video/vp9' | 'video/h264' | 'audio/opus';
+
 export type MediaChange = 'pause' | 'resume' | 'close';
 
 export interface MediaCapabilities {
@@ -734,12 +736,15 @@ export class MediaService extends EventEmitter {
 		return transport;
 	}
 
-	public async produce(producerOptions: ProducerOptions): Promise<Producer> {
+	public async produce(producerOptions: ProducerOptions, codec?: ProducerCodec): Promise<Producer> {
 		logger.debug('produce() [options:%o]', producerOptions);
 
 		if (!this.sendTransport) throw new Error('Producer can not be created without sendTransport');
 
-		const producer = await this.sendTransport.produce(producerOptions);
+		const producer = await this.sendTransport.produce({
+			...producerOptions,
+			codec: this.mediasoup?.rtpCapabilities.codecs?.find((c) => c.mimeType.toLowerCase() === codec)
+		});
 
 		const { kind, track } = producer;
 
