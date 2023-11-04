@@ -1,4 +1,4 @@
-# Edumeet client
+# ![eduMEET](/public/images/logo.edumeet.svg) Edumeet client
 
 This is the client service for the Edumeet project.
 
