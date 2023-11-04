@@ -1,8 +1,4 @@
 {
-  "configDocumentation.title": "Edumeet konfiguráció",
-  "configError.bodyText": "Hibás Edumeet konfiguráció :",
-  "configError.link": "Az Edumeet konfiguráció dokumentáció megtekintése",
-  "configError.title": "Konfigurációs hiba",
   "device.activateAudio": "Hang aktiválása",
   "device.audioUnsupported": "A hang nem támogatott",
   "device.muteAudio": "Hang némítása",
