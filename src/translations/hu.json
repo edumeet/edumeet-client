@@ -268,5 +268,14 @@
   "settings.backgroundBlur": "Háttér elmosás",
   "settings.blurBackgroundNotSupported": "A háttér elmosás nem támogatott",
   "settings.enableBlurBackground": "Háttér elmosás engedélyezése",
-  "settings.tryToLoadAudioDevices": "Audioeszközök betöltése"
+  "settings.tryToLoadAudioDevices": "Audioeszközök betöltése",
+  "room.errorJoiningRoom": null,
+  "device.shareScreen": null,
+  "filesharing.downloadError": null,
+  "settings.lastN": null,
+  "settings.confirmOnExit": null,
+  "svc.mgmtUnavailable": null,
+  "svc.mediaNodeUnavailable": null,
+  "svc.mediaConnectionNodeError": null,
+  "svc.mediaConnectionNodeSuccess": null
 }
