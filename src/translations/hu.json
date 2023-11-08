@@ -272,7 +272,7 @@
   "room.errorJoiningRoom": null,
   "device.shareScreen": null,
   "filesharing.downloadError": null,
-  "settings.lastN": null,
+  "settings.lastN": "Látható résztvevők",
   "settings.confirmOnExit": null,
   "svc.mgmtUnavailable": null,
   "svc.mediaNodeUnavailable": null,
