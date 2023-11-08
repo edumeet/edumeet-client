@@ -268,5 +268,14 @@
   "unsupportedBrowser.titlewebrtcUnavailable": "Funksjonalitet som kreves er ikke tilgjengelig i denne nettleseren",
   "settings.tryToLoadAudioDevices": null,
   "settings.enableBlurBackground": null,
-  "settings.blurBackgroundNotSupported": null
+  "settings.blurBackgroundNotSupported": null,
+  "room.errorJoiningRoom": null,
+  "device.shareScreen": null,
+  "filesharing.downloadError": null,
+  "settings.lastN": null,
+  "settings.confirmOnExit": null,
+  "svc.mgmtUnavailable": null,
+  "svc.mediaNodeUnavailable": null,
+  "svc.mediaConnectionNodeError": null,
+  "svc.mediaConnectionNodeSuccess": null
 }

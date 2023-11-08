@@ -27,11 +27,6 @@ export const ChooserDiv = styled('div')(({ theme }) => ({
 	margin: theme.spacing(2, 0)
 }));
 
-export const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
-	padding: theme.spacing(0, 0.5),
-	backgroundColor: 'white',
-}));
-
 const DeviceChooser = ({
 	value,
 	setValue,
@@ -41,12 +36,17 @@ const DeviceChooser = ({
 	disabled,
 	devices,
 }: DeviceChooserProps): JSX.Element => {
+	const label = devices.length ? devicesLabel : noDevicesLabel;
+	const labelId = new Date().getUTCMilliseconds();
+	
 	return (
 		<FormControl variant='outlined' fullWidth>
-			<StyledInputLabel>
-				{ devices.length ? devicesLabel : noDevicesLabel }
-			</StyledInputLabel>
+			<InputLabel id={`device-simple-select-helper-label-${labelId}`}>
+				{ label }
+			</InputLabel>
 			<Select
+				labelId={`device-simple-select-helper-label-${labelId}`}
+				label={label}
 				value={devices.length ? (value || '') : ''}
 				onChange={(event) => {
 					if (event.target.value)

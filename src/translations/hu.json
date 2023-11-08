@@ -207,7 +207,7 @@
   "settings.notificationSounds": "Értesítések hangjelzéssel",
   "settings.opusDtx": "Engedélyezze az Opus szakaszos átvitelt (DTX)",
   "settings.opusFec": "Engedélyezze az Opus továbbítási hibajavítást (FEC)",
-  "settings.opusPtime": "Válassza ki az Opus időkeret méretét",
+  "settings.opusPtime": "Válaszd ki az Opus időkeret méretét",
   "settings.permanentTopBar": "Állandó felső sáv",
   "settings.recordingsPreferredMimeType": "Válaszd ki felvételhez használandó média típust",
   "settings.resolution": "Válaszd ki a videoeszközöd felbontását",
@@ -268,5 +268,14 @@
   "settings.backgroundBlur": "Háttér elmosás",
   "settings.blurBackgroundNotSupported": "A háttér elmosás nem támogatott",
   "settings.enableBlurBackground": "Háttér elmosás engedélyezése",
-  "settings.tryToLoadAudioDevices": "Audioeszközök betöltése"
+  "settings.tryToLoadAudioDevices": "Audioeszközök betöltése",
+  "room.errorJoiningRoom": null,
+  "device.shareScreen": null,
+  "filesharing.downloadError": null,
+  "settings.lastN": "Látható résztvevők",
+  "settings.confirmOnExit": null,
+  "svc.mgmtUnavailable": null,
+  "svc.mediaNodeUnavailable": null,
+  "svc.mediaConnectionNodeError": null,
+  "svc.mediaConnectionNodeSuccess": null
 }
