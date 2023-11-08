@@ -59,7 +59,7 @@ const GenericDialog = ({
 			<StyledDialogTitle>
 				{ title }
 			</StyledDialogTitle>
-			<StyledDialogContent>
+			<StyledDialogContent style={{ paddingTop: 10 }}>
 				{ content }
 			</StyledDialogContent>
 			<StyledDialogActions>
