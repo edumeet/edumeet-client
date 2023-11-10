@@ -5,33 +5,39 @@ const logger = new Logger('FileService');
 
 export class FileService {
 	private webTorrent?: WebTorrent.Instance;
-	// private tracker = getTrackerUrl();
+	public tracker?: string;
+	public iceServers: RTCIceServer[] = [];
+	private initialized = false;
 
 	public getTorrent(magnetURI: string) {
 		return this.webTorrent?.get(magnetURI) || undefined;
 	}
 
-	public async init(
-		iceServers?: RTCIceServer[]
-	): Promise<void> {
+	private async init(): Promise<void> {
+		if (this.initialized) return;
+
 		logger.debug('init()');
+
+		this.initialized = true;
 
 		const Torrent = await import('webtorrent');
 
 		this.webTorrent = new Torrent.default({
 			tracker: {
 				rtcConfig: {
-					iceServers: iceServers
+					iceServers: this.iceServers,
 				}
 			},
 		});
 	}
 
 	public async sendFiles(files: FileList): Promise<string> {
+		await this.init();
+
 		return new Promise((resolve) => {
 			this.webTorrent?.seed(
 				files,
-				{ /* TODO: announceList: [ [ this.tracker ] ] */ },
+				this.tracker ? { announceList: [ [ this.tracker ] ] } : undefined,
 				(newTorrent) => resolve(newTorrent.magnetURI)
 			);
 		});

@@ -93,6 +93,7 @@ export class MediaService extends EventEmitter {
 	private signalingService: SignalingService;
 
 	private mediasoup?: Device;
+	public iceServers: RTCIceServer[] = [];
 	private sendTransport: Transport | undefined;
 	private recvTransport: Transport | undefined;
 	private producers: Map<string, Producer> = new Map();
@@ -620,11 +621,9 @@ export class MediaService extends EventEmitter {
 		dataProducer?.close();
 	}
 
-	public async createTransports(
-		iceServers?: RTCIceServer[]
-	): Promise<{
-		sendTransport: Transport | undefined;
-		recvTransport: Transport | undefined;
+	public async createTransports(): Promise<{
+		sendTransport?: Transport;
+		recvTransport?: Transport;
 	}> {
 		if (!this.mediasoup) {
 			const Mediasoup = await import('mediasoup-client');
@@ -634,13 +633,15 @@ export class MediaService extends EventEmitter {
 
 		try {
 			if (!this.mediasoup.loaded) {
-				const { routerRtpCapabilities } = await this.signalingService.sendRequest('getRouterRtpCapabilities');
+				const { routerRtpCapabilities, iceServers } = await this.signalingService.sendRequest('getRouterRtpCapabilities');
+
+				this.iceServers = iceServers;
 	
 				await this.mediasoup.load({ routerRtpCapabilities });
 			}
 
-			this.sendTransport = await this.createTransport('createSendTransport', iceServers);
-			this.recvTransport = await this.createTransport('createRecvTransport', iceServers);
+			this.sendTransport = await this.createTransport('createSendTransport');
+			this.recvTransport = await this.createTransport('createRecvTransport');
 		} catch (error) {
 			logger.error('error on starting mediasoup transports [error:%o]', error);
 
@@ -654,8 +655,7 @@ export class MediaService extends EventEmitter {
 	}
 
 	private async createTransport(
-		creator: 'createSendTransport' | 'createRecvTransport',
-		iceServers?: RTCIceServer[]
+		creator: 'createSendTransport' | 'createRecvTransport'
 	): Promise<Transport> {
 		if (!this.mediasoup) {
 			const Mediasoup = await import('mediasoup-client');
@@ -682,7 +682,7 @@ export class MediaService extends EventEmitter {
 			iceCandidates,
 			dtlsParameters,
 			sctpParameters,
-			iceServers
+			iceServers: this.iceServers,
 		});
 
 		// eslint-disable-next-line no-shadow

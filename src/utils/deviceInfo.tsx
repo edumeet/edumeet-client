@@ -11,15 +11,12 @@ export interface DeviceInfo {
 }
 
 export const supportedBrowsers = {
-	'windows': {
-		'internet explorer': '>12',
-		'microsoft edge': '>18',
-	},
 	'safari': '>12',
 	'firefox': '>=60',
 	'chrome': '>=74',
 	'chromium': '>=74',
 	'opera': '>=62',
+	'edge': '>=79',
 	'samsung internet for android': '>=11.1.1.52',
 };
 
@@ -34,7 +31,7 @@ export const deviceInfo = (): DeviceInfo => {
 		flag = 'safari';
 	else if (browserInfo.satisfies({ opera: '>=0' }))
 		flag = 'opera';
-	else if (browserInfo.satisfies({ 'microsoft edge': '>=0' }))
+	else if (browserInfo.satisfies({ edge: '>=0' }))
 		flag = 'edge';
 	else
 		flag = 'unknown';
