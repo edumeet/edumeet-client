@@ -22,9 +22,10 @@ const VideoConsumer = ({
 	consumer,
 	style
 }: VideoConsumerProps): JSX.Element => {
-	const { peerId } = consumer;
+	const { peerId, source } = consumer;
 	const { micConsumer } = usePeerConsumers(peerId);
 	const peer = usePeer(peerId);
+	const contain = source === 'screen';
 
 	const isMobile = useAppSelector(isMobileSelector);
 	const activeSpeaker = useAppSelector(activeSpeakerIdSelector) === peerId;
@@ -37,7 +38,7 @@ const VideoConsumer = ({
 			width={style.width}
 			height={style.height}
 		>
-			<VideoView consumer={consumer} />
+			<VideoView consumer={consumer} contain={contain} />
 			{ micConsumer && <Volume consumer={micConsumer} /> }
 			{ !headless &&
 				<>
