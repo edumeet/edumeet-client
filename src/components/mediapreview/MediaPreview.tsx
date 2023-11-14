@@ -1,26 +1,44 @@
+import { useEffect } from 'react';
 import { useTheme } from '@mui/material';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import MicPreviewButton from '../controlbuttons/MicPreviewButton';
 import WebcamPreviewButton from '../controlbuttons/WebcamPreviewButton';
 import MediaControls from '../mediacontrols/MediaControls';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
-import { useContext } from 'react';
-import { ServiceContext } from '../../store/store';
-import Volume from '../volume/Volume';
+import { stopPreviewMic, stopPreviewWebcam, updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
 
 interface MediaPreviewProps {
 	withControls?: boolean;
+	startAudio?: boolean;
+	startVideo?: boolean;
+	stopAudio?: boolean;
+	stopVideo?: boolean;
 }
 
 const MediaPreview = ({
 	withControls = true,
+	startAudio = true,
+	startVideo = true,
+	stopAudio = true,
+	stopVideo = true,
 }: MediaPreviewProps): JSX.Element => {
+	const dispatch = useAppDispatch();
 	const theme = useTheme();
-	const { mediaService } = useContext(ServiceContext);
-	const { previewWebcamTrackId } = useAppSelector((state) => state.media);
+	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
-	const previewVolumeWatcher = mediaService.previewVolumeWatcher;
+	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);
+	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
+
+	useEffect(() => {
+		if (startAudio) dispatch(updatePreviewMic({ restart: true, newDeviceId: audioDevice }));
+		if (startVideo) dispatch(updatePreviewWebcam({ restart: true, newDeviceId: videoDevice }));
+
+		return (): void => {
+			if (stopAudio) dispatch(stopPreviewMic());
+			if (stopVideo) dispatch(stopPreviewWebcam());
+		};
+	}, []);
 
 	return (
 		<>
@@ -49,11 +67,9 @@ const MediaPreview = ({
 					</MediaControls>
 				)}
 				{ previewWebcamTrackId && <VideoView
-					preview
 					mirrored
 					trackId={previewWebcamTrackId}
 				/> }
-				{previewVolumeWatcher && <Volume previewVolumeWatcher={previewVolumeWatcher} />}
 			</VideoBox>
 		</>
 	);

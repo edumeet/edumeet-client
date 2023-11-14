@@ -12,6 +12,7 @@ interface DeviceChooserProps {
 	value: string;
 	// eslint-disable-next-line no-unused-vars
 	setValue: (value: string) => void;
+	name: string;
 	devicesLabel: string;
 	noDevicesLabel: string;
 	disabled: boolean;
@@ -21,34 +22,38 @@ interface DeviceChooserProps {
 export const ChooserDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
 	flexDirection: 'row',
+	alignItems: 'center',
+	gap: theme.spacing(1),
 	margin: theme.spacing(2, 0)
-}));
-
-export const StyledInputLabel = styled(InputLabel)(({ theme }) => ({
-	padding: theme.spacing(0, 0.5),
-	backgroundColor: 'white',
 }));
 
 const DeviceChooser = ({
 	value,
 	setValue,
+	name,
 	devicesLabel,
 	noDevicesLabel,
 	disabled,
 	devices,
 }: DeviceChooserProps): JSX.Element => {
+	const label = devices.length ? devicesLabel : noDevicesLabel;
+	const labelId = new Date().getUTCMilliseconds();
+	
 	return (
-		<FormControl variant="outlined" fullWidth>
-			<StyledInputLabel>
-				{ devices.length ? devicesLabel : noDevicesLabel }
-			</StyledInputLabel>
+		<FormControl variant='outlined' fullWidth>
+			<InputLabel id={`device-simple-select-helper-label-${labelId}`}>
+				{ label }
+			</InputLabel>
 			<Select
+				labelId={`device-simple-select-helper-label-${labelId}`}
+				label={label}
 				value={devices.length ? (value || '') : ''}
 				onChange={(event) => {
 					if (event.target.value)
 						setValue(event.target.value);
 				}}
 				displayEmpty
+				name={name}
 				autoWidth
 				disabled={disabled}
 			>

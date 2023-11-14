@@ -6,12 +6,11 @@ import {
 	SelectChangeEvent
 } from '@mui/material';
 import {
+	updateAdvancedVideoSettings,
 	updateAudioSettings,
 	updateScreenshareSettings,
-	updateVideoSettings
 } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { settingsActions } from '../../store/slices/settingsSlice';
 import { Resolution } from '../../utils/types';
 import {
 	selectAudioChannelCountLabel,
@@ -23,6 +22,7 @@ import {
 	selectScreenSharingFrameRateLabel,
 	selectWebcamFrameRateLabel
 } from '../translated/translatedComponents';
+import { settingsActions } from '../../store/slices/settingsSlice';
 
 interface ResolutionSelectorProps {
 	resolutions: Array<{ value: Resolution, label: () => string }>
@@ -35,7 +35,7 @@ export const ResolutionSelector = ({
 	const resolution = useAppSelector((state) => state.settings.resolution);
 
 	const handleResolutionChange = (event: SelectChangeEvent<string>): void => {
-		dispatch(updateVideoSettings({
+		dispatch(updateAdvancedVideoSettings({
 			resolution: event.target.value as Resolution
 		}));
 	};
@@ -80,7 +80,7 @@ export const FrameRateSelector = ({
 
 	const handleFrameRateChange = (event: SelectChangeEvent<string>): void => {
 		if (device === 'webcam') {
-			dispatch(updateVideoSettings({
+			dispatch(updateAdvancedVideoSettings({
 				frameRate: parseInt(event.target.value)
 			}));
 		} else {

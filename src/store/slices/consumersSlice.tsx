@@ -10,9 +10,8 @@ export interface StateConsumer {
 	audioGain?: number;
 	localPaused: boolean;
 	remotePaused: boolean;
-	producerPaused: boolean;
 	source: ProducerSource;
-	score?: number
+	score?: number;
 }
 
 type ConsumersState = StateConsumer[];
@@ -69,14 +68,14 @@ const consumersSlice = createSlice({
 					consumer.remotePaused = false;
 			}
 		}),
-		setScore: ((state, action: PayloadAction<{ consumerId: string, score: number}>) => {
-			const { consumerId, score } = action.payload; 
-			const consumer = state.find((c) => c.id === consumerId);
+		setScore: ((
+			state,
+			action: PayloadAction<{ consumerId: string, score: number }>
+		) => {
+			const consumer = state.find((c) => c.id === action.payload.consumerId);
 
-			if (consumer) {
-				consumer.score = score;
-			}
-		})
+			if (consumer) consumer.score = action.payload.score;
+		}),
 	},
 	extraReducers: (builder) => {
 		builder

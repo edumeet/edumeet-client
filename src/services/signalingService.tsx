@@ -4,6 +4,7 @@ import { SocketMessage } from '../utils/types';
 import { RoomServerConnection } from '../utils/RoomServerConnection';
 
 /* eslint-disable no-unused-vars */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface SignalingService {
 	on(event: 'connected', listener: () => void): this;
 	on(event: 'error', listener: (error: Error) => void): this;
@@ -15,6 +16,7 @@ export declare interface SignalingService {
 
 const logger = new Logger('SignalingService');
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class SignalingService extends EventEmitter {
 	public closed = false;
 	public connections = List<RoomServerConnection>();

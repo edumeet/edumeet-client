@@ -538,6 +538,11 @@ export const selectAudioOutputDeviceLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Select audio output device'
 });
 
+export const audioDeviceLabel = (): string => intl.formatMessage({
+	id: 'settings.audio',
+	defaultMessage: 'Audio input device'
+});
+
 export const noAudioInputDevicesLabel = (): string => intl.formatMessage({
 	id: 'settings.cantSelectAudioInput',
 	defaultMessage: 'Unable to select audio input device'
@@ -641,6 +646,16 @@ export const enableOpusFecLabel = (): string => intl.formatMessage({
 export const selectOpusPtimeLabel = (): string => intl.formatMessage({
 	id: 'settings.opusPtime',
 	defaultMessage: 'Select the Opus frame size'
+});
+
+export const setLastNLabel = (): string => intl.formatMessage({
+	id: 'settings.lastN',
+	defaultMessage: 'Visible participants'
+});
+
+export const backgroundBlurLabel = (): string => intl.formatMessage({
+	id: 'settings.backgroundBlur',
+	defaultMessage: 'Background blur'
 });
 
 export const videoSettingsLabel = (): string => intl.formatMessage({

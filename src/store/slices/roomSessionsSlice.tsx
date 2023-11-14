@@ -59,7 +59,7 @@ const roomSessionsSlice = createSlice({
 		}),
 		setActiveSpeakerId: ((
 			state,
-			action: PayloadAction<{ sessionId: string, peerId: string, isMe: boolean}>
+			action: PayloadAction<{ sessionId: string, peerId?: string, isMe: boolean}>
 		) => {
 			const { peerId, isMe } = action.payload;
 

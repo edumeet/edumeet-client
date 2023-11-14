@@ -1,11 +1,15 @@
 import { Button, styled } from '@mui/material';
-import { useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { ChatMessage } from '../../utils/types';
 import ScrollingList from '../scrollinglist/ScrollingList';
 import { chatScrollToBottomLabel } from '../translated/translatedComponents';
-import Message, { MessageFormat } from './Message';
+// import Message, { MessageFormat } from './Message';
 import { chatMessagesSelector } from '../../store/selectors';
+import { lazy } from 'react';
+import type { MessageFormat } from './Message';
+
+const Message = lazy(() => import('./Message'));
 
 const ScrollToBottom = styled(Button)(({ theme }) => ({
 	marginLeft: theme.spacing(4),
@@ -20,7 +24,7 @@ const ChatHistory = (): JSX.Element => {
 	const meId = useAppSelector((state) => state.me.id);
 
 	return (
-		<>
+		<Suspense>
 			<ScrollingList
 				ref={chatHistoryRef}
 				onScroll={(isAtBottom: boolean) => {
@@ -62,7 +66,7 @@ const ChatHistory = (): JSX.Element => {
 					{ chatScrollToBottomLabel() }
 				</ScrollToBottom>
 			}
-		</>
+		</Suspense>
 	);
 };
 

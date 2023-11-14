@@ -13,6 +13,7 @@ import {
 	enableNotificationSoundsLabel,
 	enableVerticallyStackedSidePanels,
 } from '../translated/translatedComponents';
+import LastNSlider from '../lastnslider/LastNSlider';
 
 const AppearanceSettings = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -37,6 +38,7 @@ const AppearanceSettings = (): JSX.Element => {
 		<>
 			<FormGroup>
 				<LanguageSelector />
+				<LastNSlider />
 				<FormControlLabel
 					control={
 						<Switch

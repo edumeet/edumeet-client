@@ -11,7 +11,7 @@ import GenericDialog from '../genericdialog/GenericDialog';
 const ExtraVideoDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const extraVideoDialogOpen = useAppSelector((state) => state.ui.extraVideoDialogOpen);
-	const videoInProgress = useAppSelector((state) => state.media.videoInProgress);
+	const videoInProgress = useAppSelector((state) => state.me.videoInProgress);
 	const [ deviceId, setDeviceId ] = useState<string | undefined>();
 
 	const handleCloseExtraVideoDialog = (): void => {

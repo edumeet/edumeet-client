@@ -23,6 +23,7 @@ const maxActiveVideosSelector: Selector<number> = (state) => state.settings.maxA
 const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNonVideo;
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
+const headlessSelector: Selector<boolean | undefined> = (state) => state.room.headless;
 
 export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
 
@@ -120,6 +121,16 @@ export const spotlightPeersSelector = createSelector(
 			.slice(0, maxActiveVideos)
 			.sort((a, b) => String(a).localeCompare(String(b)));
 	}
+);
+
+/**
+ * Returns the active speaker for the roomSession that I am in.
+ * 
+ * @returns {string | undefined} the peerId.
+ */
+export const activeSpeakerIdSelector = createSelector(
+	currentRoomSessionSelector,
+	(roomSession) => roomSession.activeSpeakerId
 );
 
 /**
@@ -363,60 +374,14 @@ export const windowedConsumersSelector = createSelector(
 );
 
 /**
- * Returns the number of visible video tiles in the Democratic view.
- * This is the sum of screen, webcam and extra video tiles, both producers
- * and consumers.
+ * Returns the list of audio state consumers of all peers.
  * 
- * @returns {number} the number of visible video tiles.
- * @see screenProducerSelector
- * @see extraVideoProducersSelector
- * @see spotlightPeersSelector
- * @see spotlightWebcamConsumerSelector
- * @see spotlightScreenConsumerSelector
- * @see spotlightExtraVideoConsumerSelector
- * @see Democratic.tsx
+ * @returns {StateConsumer[]} the list of audio state consumers.
  */
-export const videoBoxesSelector = createSelector(
-	screenProducerSelector,
-	extraVideoProducersSelector,
-	spotlightPeersSelector,
-	hideNonVideoSelector,
-	hideSelfViewSelector,
-	spotlightWebcamConsumerSelector,
-	spotlightScreenConsumerSelector,
-	spotlightExtraVideoConsumerSelector,
-	(
-		screenProducer,
-		extraVideoProducers,
-		spotlightPeers,
-		hideNonVideo,
-		hideSelfView,
-		webcamConsumers,
-		screenConsumers,
-		extraVideoConsumers
-	) => {
-		let videoBoxes = hideSelfView ? 0 : 1; // Maybe add a box for Me view
-
-		// Add our own screen share, if it exists
-		if (screenProducer)
-			videoBoxes++;
-
-		// Add any extra video producers we might have
-		videoBoxes += extraVideoProducers.length;
-
-		if (hideNonVideo) {
-			// If we're hiding non-video, we need to add only the boxes with actual video
-			videoBoxes += webcamConsumers.length;
-		} else {
-			// If we're not hiding non-video, we need to add all the boxes
-			videoBoxes += spotlightPeers.length;
-		}
-
-		// Add all the screen sharing and extra video boxes of the peers in spotlight
-		videoBoxes += screenConsumers.length + extraVideoConsumers.length;
-
-		return videoBoxes;
-	});
+export const audioConsumerSelector = createSelector(
+	consumersSelect,
+	(consumers) => consumers.filter((c) => c.kind === 'audio')
+);
 
 /**
  * Returns the state consumers of the visible video tiles in the Democratic view.
@@ -428,7 +393,7 @@ export const videoBoxesSelector = createSelector(
  * @see spotlightExtraVideoConsumerSelector
  * @see Democratic.tsx
  */
-export const videoConsumersSelector = createSelector(
+export const resumedVideoConsumersSelector = createSelector(
 	spotlightWebcamConsumerSelector,
 	spotlightScreenConsumerSelector,
 	spotlightExtraVideoConsumerSelector,
@@ -460,6 +425,154 @@ export const videoConsumersSelector = createSelector(
 		return consumers;
 	}
 );
+
+/**
+ * Returns the list of peerIds that are currently selected or
+ * speaking. Cropped to lastN if enabled.
+ * 
+ * @returns {string[]} the list of peerIds.
+*/ 
+export const speakerPeersSelector = createSelector(
+	maxActiveVideosSelector,
+	sessionIdSpotlightsSelector,
+	(maxActiveVideos, speakers) => speakers.slice(0, maxActiveVideos)
+);
+
+/**
+ * Returns the list of webcam state consumers of the peers that are
+ * currently selected or speaking.
+ * 
+ * @returns {StateConsumer[]} the list of webcam state consumers.
+ * @see speakerPeersSelector
+ */
+export const speakerWebcamConsumerSelector = createSelector(
+	speakerPeersSelector,
+	consumersSelect,
+	(speakers, consumers) => consumers.filter((c) => c.kind === 'video' && c.source === 'webcam' && speakers.includes(c.peerId))
+);
+
+/**
+ * Returns the list of screen state consumers of the peers that are
+ * currently selected or speaking.
+ * 
+ * @returns {StateConsumer[]} the list of screen state consumers.
+ * @see speakerPeersSelector
+ */
+export const speakerScreenConsumerSelector = createSelector(
+	speakerPeersSelector,
+	consumersSelect,
+	(speakers, consumers) => consumers.filter((c) => c.kind === 'video' && c.source === 'screen' && speakers.includes(c.peerId))
+);
+
+/**
+ * Returns the list of extra video state consumers of the peers that are
+ * currently selected or speaking.
+ * 
+ * @returns {StateConsumer[]} the list of extra video state consumers.
+ * @see speakerPeersSelector
+ */
+export const speakerExtraVideoConsumerSelector = createSelector(
+	speakerPeersSelector,
+	consumersSelect,
+	(speakers, consumers) => consumers.filter((c) => c.source === 'extravideo' && speakers.includes(c.peerId))
+);
+
+/**
+ * Returns the state consumers of the visible video tiles in the Democratic view.
+ * This is the list of screen, webcam and extra video tiles, consumers only.
+ * 
+ * @returns {StateConsumer[]} the list of state consumers.
+ * @see speakerWebcamConsumerSelector
+ * @see speakerScreenConsumerSelector
+ * @see speakerExtraVideoConsumerSelector
+ * @see Democratic.tsx
+ */
+export const speakerVideoConsumersSelector = createSelector(
+	speakerWebcamConsumerSelector,
+	speakerScreenConsumerSelector,
+	speakerExtraVideoConsumerSelector,
+	(
+		webcamConsumers,
+		screenConsumers,
+		extraVideoConsumers,
+	) => ([
+		...webcamConsumers,
+		...screenConsumers,
+		...extraVideoConsumers,
+	])
+);
+
+/**
+ * Returns the list of peers without a webcam consumer.
+ * 
+ * @returns {Peer[]} the list of peerIds.
+ */
+export const audioOnlySessionPeersSelector = createSelector(
+	sessionIdPeersSelector,
+	resumedVideoConsumersSelector,
+	(peers, consumers) => peers.filter((peer) => !consumers.some((c) => c.peerId === peer.id))
+);
+
+/** Returns true if the current active speaker is an audio only peer.
+ * 
+ * @returns {boolean} true if the current speaker is an audio only peer.
+ */
+export const activeSpeakerIsAudioOnlySelector = createSelector(
+	audioOnlySessionPeersSelector,
+	activeSpeakerIdSelector,
+	(audioOnlyPeers, activeSpeakerId) => audioOnlyPeers.some((peer) => peer.id === activeSpeakerId)
+);
+
+/**
+ * Returns the number of visible video tiles in the Democratic view.
+ * This is the sum of screen, webcam and extra video tiles, both producers
+ * and consumers.
+ * 
+ * @returns {number} the number of visible video tiles.
+ * @see screenProducerSelector
+ * @see extraVideoProducersSelector
+ * @see spotlightPeersSelector
+ * @see spotlightWebcamConsumerSelector
+ * @see spotlightScreenConsumerSelector
+ * @see spotlightExtraVideoConsumerSelector
+ * @see Democratic.tsx
+ */
+export const videoBoxesSelector = createSelector(
+	screenProducerSelector,
+	extraVideoProducersSelector,
+	hideSelfViewSelector,
+	spotlightWebcamConsumerSelector,
+	spotlightScreenConsumerSelector,
+	spotlightExtraVideoConsumerSelector,
+	audioOnlySessionPeersSelector,
+	hideNonVideoSelector,
+	headlessSelector,
+	(
+		screenProducer,
+		extraVideoProducers,
+		hideSelfView,
+		webcamConsumers,
+		screenConsumers,
+		extraVideoConsumers,
+		audioOnlyPeers,
+		hideNonVideo,
+		headless,
+	) => {
+		let videoBoxes = hideSelfView ? 0 : 1; // Maybe add a box for Me view
+
+		// Add our own screen share, if it exists
+		if (screenProducer) videoBoxes++;
+
+		// Add our own video
+		videoBoxes += extraVideoProducers.length;
+
+		// Add everyone else's video
+		videoBoxes += webcamConsumers.length + screenConsumers.length + extraVideoConsumers.length;
+
+		if (audioOnlyPeers.length > 0 && !hideNonVideo && !headless) videoBoxes++; // Add the audio only box
+
+		return videoBoxes;
+	});
 
 /**
  * Returns the set of mic/webcam/screen/extravideo producers that are
@@ -573,7 +686,7 @@ export const makeIsActiveSpeakerSelector = (id: string): Selector<boolean> => {
 		(sessionId, roomSessions) => {
 			return roomSessions[sessionId].activeSpeakerId === id;
 		}
-
-	); 
+	);
 };
+
 export const makePermissionSelector = (permission: Permission): Selector<boolean> => createSelector(mePermissionsSelect, (p) => p.includes(permission));

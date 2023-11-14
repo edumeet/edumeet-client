@@ -12,6 +12,8 @@ export interface SettingsState {
 	verticalDivide: boolean;
 	dynamicWidth: boolean;
 	aspectRatio: number;
+	selectedAudioDevice?: string;
+	selectedVideoDevice?: string;
 	resolution: Resolution;
 	frameRate: number;
 	screenSharingResolution: Resolution;
@@ -22,6 +24,7 @@ export interface SettingsState {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
+	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -32,6 +35,7 @@ export interface SettingsState {
 	opusMaxPlaybackRate: number;
 	notificationSounds: boolean;
 	locale?: string;
+	blurEnabled?: boolean;
 }
 
 type SettingsUpdate = Partial<SettingsState>;
@@ -55,6 +59,7 @@ const initialState: SettingsState = {
 	autoGainControl: edumeetConfig.autoGainControl,
 	echoCancellation: edumeetConfig.echoCancellation,
 	noiseSuppression: edumeetConfig.noiseSuppression,
+	noiseThreshold: edumeetConfig.noiseThreshold,
 	sampleRate: edumeetConfig.sampleRate,
 	channelCount: edumeetConfig.channelCount,
 	sampleSize: edumeetConfig.sampleSize,
@@ -65,6 +70,7 @@ const initialState: SettingsState = {
 	opusMaxPlaybackRate: edumeetConfig.opusMaxPlaybackRate,
 	notificationSounds: true,
 	locale: detect(),
+	blurEnabled: false,
 };
 
 const settingsSlice = createSlice({
@@ -98,6 +104,12 @@ const settingsSlice = createSlice({
 		setAspectRatio: ((state, action: PayloadAction<number>) => {
 			state.aspectRatio = action.payload;
 		}),
+		setSelectedAudioDevice: ((state, action: PayloadAction<string | undefined>) => {
+			state.selectedAudioDevice = action.payload;
+		}),
+		setSelectedVideoDevice: ((state, action: PayloadAction<string | undefined>) => {
+			state.selectedVideoDevice = action.payload;
+		}),
 		setResolution: ((state, action: PayloadAction<Resolution>) => {
 			state.resolution = action.payload;
 		}),
@@ -124,6 +136,9 @@ const settingsSlice = createSlice({
 		}),
 		setNoiseSuppression: ((state, action: PayloadAction<boolean>) => {
 			state.noiseSuppression = action.payload;
+		}),
+		setNoiseThreshold: ((state, action: PayloadAction<number>) => {
+			state.noiseThreshold = action.payload;
 		}),
 		setSampleRate: ((state, action: PayloadAction<number>) => {
 			state.sampleRate = action.payload;
@@ -154,6 +169,9 @@ const settingsSlice = createSlice({
 		}),
 		setLocale: ((state, action: PayloadAction<string>) => {
 			state.locale = action.payload;
+		}),
+		setBlurEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.blurEnabled = action.payload;
 		}),
 	},
 });

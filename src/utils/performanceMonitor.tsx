@@ -1,6 +1,6 @@
 import { Logger } from 'edumeet-common';
 import EventEmitter from 'events';
-import { Transport } from 'mediasoup-client/lib/Transport';
+import type { Transport } from 'mediasoup-client/lib/Transport';
 
 const logger = new Logger('PerformanceMonitor');
 const SAMPLE_WINDOW = 8;
@@ -26,11 +26,13 @@ export interface PerformanceResult {
 	performance: 'verygood' | 'good' | 'bad' | 'verybad';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface PerformanceMonitor {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'performance', listener: (performance: PerformanceResult) => void): this;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class PerformanceMonitor extends EventEmitter {
 	private monitorTimeout: ReturnType<typeof setTimeout> | null = null;
 

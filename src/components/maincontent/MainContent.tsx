@@ -7,14 +7,18 @@ import Chat from '../chat/Chat';
 import { useAppSelector } from '../../store/hooks';
 import { isMobileSelector } from '../../store/selectors';
 
-const WrapperContainer = styled(Box)(({ theme }) => ({
+type WrapperContainerProps = {
+	headless: number;
+};
+
+const WrapperContainer = styled(Box)<WrapperContainerProps>(({ theme, headless }) => ({
 	width: 'calc(100% - 8px)',
-	height: 'calc(100% - 52px)',
+	height: headless ? 'calc(100% - 8px)' : 'calc(100% - 52px)',
 	display: 'flex',
 	marginLeft: theme.spacing(0.5),
 	marginRight: theme.spacing(0.5),
 	marginBottom: theme.spacing(0.5),
-	marginTop: 48,
+	marginTop: headless ? theme.spacing(0.5) : 48,
 	gap: theme.spacing(0.5),
 }));
 
@@ -97,11 +101,12 @@ const MainContent = (): JSX.Element => {
 	const bothOpen = chatOpen && participantListOpen;
 	const verticalDivide = useAppSelector((state) => state.settings.verticalDivide);
 	const dynamicWidth = useAppSelector((state) => state.settings.dynamicWidth);
+	const headless = useAppSelector((state) => state.room.headless);
 
 	const height = (chatOpen && participantListOpen) && verticalDivide ? '50%' : '100%';
 
 	return (
-		<WrapperContainer>
+		<WrapperContainer headless={headless ? 1 : 0}>
 			<Democratic />
 			{ !isMobile && eitherOpen &&
 				<SideContent

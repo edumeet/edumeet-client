@@ -9,7 +9,7 @@ export interface StateProducer {
 	score?: number;
 }
 
-export type ProducerSource = 'mic' | 'webcam' | 'screen' | 'extravideo';
+export type ProducerSource = 'mic' | 'webcam' | 'screen' | 'screenaudio' | 'extravideo' | 'extraaudio';
 
 type ProducersState = StateProducer[];
 
@@ -27,7 +27,6 @@ const producersSlice = createSlice({
 			action: PayloadAction<{
 				producerId: string,
 				local?: boolean,
-				source?: ProducerSource,
 			}>
 		) => {
 			return state.filter((producer) => producer.id !== action.payload.producerId);
@@ -37,7 +36,6 @@ const producersSlice = createSlice({
 			action: PayloadAction<{
 				producerId: string,
 				local?: boolean,
-				source?: ProducerSource,
 			}>
 		) => {
 			const { producerId } = action.payload;
@@ -51,7 +49,6 @@ const producersSlice = createSlice({
 			action: PayloadAction<{
 				producerId: string,
 				local?: boolean,
-				source?: ProducerSource,
 			}>
 		) => {
 			const { producerId } = action.payload;
@@ -61,12 +58,9 @@ const producersSlice = createSlice({
 				producer.paused = false;
 		}),
 		setScore: ((state, action: PayloadAction<{ producerId: string, score: number}>) => {
-			const { producerId, score } = action.payload; 
-			const producer = state.find((c) => c.id === producerId);
+			const producer = state.find((c) => c.id === action.payload.producerId);
 
-			if (producer) {
-				producer.score = score;
-			}
+			if (producer) producer.score = action.payload.score;
 		})
 	},
 	extraReducers: (builder) => {

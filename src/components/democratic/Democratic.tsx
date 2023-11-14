@@ -1,16 +1,23 @@
 import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
-import { spotlightPeersSelector, videoBoxesSelector } from '../../store/selectors';
+import { speakerVideoConsumersSelector, videoBoxesSelector } from '../../store/selectors';
 import Me from '../me/Me';
-import Peer from '../peer/Peer';
+import VideoConsumer from '../videoconsumer/VideoConsumer';
+import Peers from '../peers/Peers';
+import ControlButtonsBar from '../controlbuttonsbar/ControlButtonsBar';
 
-const DemocraticDiv = styled('div')(({
-	theme
+type DemocraticDivProps = {
+	headless: number;
+};
+
+const DemocraticDiv = styled('div')<DemocraticDivProps>(({
+	theme,
+	headless,
 }) => ({
 	width: '100%',
-	height: 'calc(100% - 64px)',
-	marginBottom: 64,
+	height: headless ? 'calc(100% - 8px)' : 'calc(100% - 64px)',
+	marginBottom: headless ? 0 : 64,
 	display: 'flex',
 	flexDirection: 'row',
 	gap: theme.spacing(1),
@@ -30,8 +37,9 @@ const Democratic = (): JSX.Element => {
 	const chatOpen = useAppSelector((state) => state.ui.chatOpen);
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 	const boxes = useAppSelector(videoBoxesSelector);
-	const spotlightPeers = useAppSelector(spotlightPeersSelector);
+	const speakerVideoConsumers = useAppSelector(speakerVideoConsumersSelector);
 	const currentSession = useAppSelector((state) => state.me.sessionId);
+	const headless = useAppSelector((state) => state.room.headless);
 	const [ windowSize, setWindowSize ] = useState(0);
 	const [ dimensions, setDimensions ] = useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
@@ -112,15 +120,17 @@ const Democratic = (): JSX.Element => {
 	};
 
 	return (
-		<DemocraticDiv ref={peersRef}>
+		<DemocraticDiv ref={peersRef} headless={headless ? 1 : 0}>
+			<ControlButtonsBar />
 			<Me style={style} />
-			{ spotlightPeers.map((peerId) => (
-				<Peer
-					key={peerId}
-					id={peerId}
+			{ speakerVideoConsumers.map((consumer) => (
+				<VideoConsumer
+					key={consumer.id}
+					consumer={consumer}
 					style={style}
 				/>
 			))}
+			<Peers style={style} />
 		</DemocraticDiv>
 	);
 };

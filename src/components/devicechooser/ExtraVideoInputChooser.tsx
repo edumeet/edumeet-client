@@ -6,6 +6,7 @@ import {
 import {
 	noVideoDevicesLabel,
 	selectVideoDeviceLabel,
+	videoDeviceLabel
 } from '../translated/translatedComponents';
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 
@@ -17,8 +18,9 @@ interface VideoInputChooserProps {
 const ExtraVideoInputChooser = ({
 	onDeviceChange,
 }: VideoInputChooserProps): JSX.Element => {
-	const { videoInProgress, liveVideoDeviceId } = useAppSelector((state) => state.media);
-	const videoDevices = useDeviceSelector('videoinput', liveVideoDeviceId);
+	const selectedVideoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
+	const videoDevices = useDeviceSelector('videoinput', selectedVideoDevice);
+	const videoInProgress = useAppSelector((state) => state.me.videoInProgress);
 	const [ videoDevice, setVideoDevice ] = useState<string>('');
 
 	const handleDeviceChange = (deviceId: string): void => {
@@ -31,6 +33,7 @@ const ExtraVideoInputChooser = ({
 			<DeviceChooser
 				value={videoDevice}
 				setValue={handleDeviceChange}
+				name={videoDeviceLabel()}
 				devicesLabel={selectVideoDeviceLabel()}
 				noDevicesLabel={noVideoDevicesLabel()}
 				disabled={videoDevices.length === 0 || videoInProgress}

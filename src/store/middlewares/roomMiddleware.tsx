@@ -27,6 +27,10 @@ const createRoomMiddleware = ({
 		getState: () => RootState
 	}) =>
 		(next) => (action) => {
+			if (signalingActions.disconnect.match(action)) {
+				dispatch(roomActions.setState('left'));
+			}
+
 			if (signalingActions.connect.match(action)) {
 				signalingService.on('notification', (notification) => {
 					try {
@@ -37,7 +41,6 @@ const createRoomMiddleware = ({
 									creationTimestamp,
 									turnServers,
 									rtcStatsOptions,
-									clientMonitorSenderConfig,
 									maxActiveVideos,
 									breakoutsEnabled,
 									chatEnabled,
@@ -77,11 +80,6 @@ const createRoomMiddleware = ({
 									dispatch(roomActions.setState('joined'));
 									dispatch(joinRoom());
 								});
-
-								if (clientMonitorSenderConfig) {
-									mediaService.getMonitor()?.setRoomId(sessionId);
-									mediaService.getMonitor()?.connect(clientMonitorSenderConfig);
-								}
 
 								break;
 							}

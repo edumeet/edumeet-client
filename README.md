@@ -1,4 +1,4 @@
-# Edumeet client
+# ![eduMEET](/public/images/logo.edumeet.svg) Edumeet client
 
 This is the client service for the Edumeet project.
 
@@ -76,6 +76,5 @@ can be found here: [config.example.js](public/config/config.example.js).
 | buttonControlBar | If true, the media control buttons will be shown in separate control bar, not in the ME container. | `"boolean"` | ``false`` |
 | logo | If not null, it shows the logo loaded from the specified URL, otherwise it shows the title. | `"url"` | ``"images/logo.edumeet.svg"`` |
 | title | The title to show if the logo is not specified. | `"string"` | ``"edumeet"`` |
-| observertc | ObserveRTC configuration | `"object"` |  ``{ "enabled": true, "config": { "collectingPeriodInMs": 5000, "statsExpirationTimeInMs": 60000, }}`` |
 
 ---

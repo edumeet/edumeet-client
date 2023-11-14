@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import { Harker } from 'hark';
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface VolumeWatcher {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'volumeChange', listener: (
@@ -16,10 +17,11 @@ export declare interface VolumeWatcher {
  * 
  * @emits volumeChange - Emitted when the volume changes.
  */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class VolumeWatcher extends EventEmitter {
-	private hark: Harker;
+	public hark: Harker;
 	private lastVolume = -100;
-	private lastScaledVolume = 0;
+	public lastScaledVolume = 0;
 
 	constructor({ hark }: { hark: Harker }) {
 		super();

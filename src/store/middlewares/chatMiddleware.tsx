@@ -1,8 +1,9 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { Logger } from 'edumeet-common';
 import { signalingActions } from '../slices/signalingSlice';
-import { AppDispatch, MiddlewareOptions } from '../store';
+import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { uiActions } from '../slices/uiSlice';
 
 const logger = new Logger('ChatMiddleware');
 
@@ -12,9 +13,10 @@ const createChatMiddleware = ({
 	logger.debug('createChatMiddleware()');
 
 	const middleware: Middleware = ({
-		dispatch
+		dispatch, getState
 	}: {
 		dispatch: AppDispatch,
+		getState: () => RootState
 	}) =>
 		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
@@ -38,6 +40,15 @@ const createChatMiddleware = ({
 						logger.error('error on signalService "notification" event [error:%o]', error);
 					}
 				});
+			}
+
+			if (
+				roomSessionsActions.addMessage.match(action) &&
+				action.payload.peerId !== getState().me.id &&
+				action.payload.sessionId === getState().me.sessionId &&
+				!getState().ui.chatOpen
+			) {
+				dispatch(uiActions.addToUnreadMessages());
 			}
 
 			return next(action);

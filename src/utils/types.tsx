@@ -1,6 +1,4 @@
 import { ThemeOptions } from '@mui/material';
-import { ClientMonitorConfig } from '@observertc/client-monitor-js';
-import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
@@ -19,6 +17,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	autoGainControl: true,
 	echoCancellation: true,
 	noiseSuppression: true,
+	noiseThreshold: -60,
 	sampleRate: 48000,
 	channelCount: 1,
 	sampleSize: 16,
@@ -34,6 +33,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'autoGainControl': true,
 			'echoCancellation': true,
 			'noiseSuppression': true,
+			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 1,
 			'sampleSize': 16,
@@ -48,6 +48,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'autoGainControl': false,
 			'echoCancellation': false,
 			'noiseSuppression': false,
+			'noiseThreshold': -60,
 			'sampleRate': 48000,
 			'channelCount': 2,
 			'sampleSize': 16,
@@ -85,13 +86,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContentItemDarkColor: 'rgba(150, 150, 150, 0.4)',
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
-	observertc: {
-		enabled: true,
-		config: {
-			collectingPeriodInMs: 5000,
-			statsExpirationTimeInMs: 60000,
-		}
-	},
 	reduxLoggingEnabled: false
 };
 
@@ -112,6 +106,7 @@ export interface EdumeetConfig {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
+	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -126,11 +121,7 @@ export interface EdumeetConfig {
 	notificationSounds: Record<NotificationType, NotificationSound>;
 	title: string;
 	theme: ThemeOptions;
-	observertc: {
-		enabled: boolean,
-		config: ClientMonitorConfig;
-	},
-	reduxLoggingEnabled: boolean
+	reduxLoggingEnabled: boolean;
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
@@ -150,6 +141,7 @@ export interface AudioPreset {
 	autoGainControl: boolean;
 	echoCancellation: boolean;
 	noiseSuppression: boolean;
+	noiseThreshold: number;
 	sampleRate: number;
 	channelCount: number;
 	sampleSize: number;
@@ -214,22 +206,7 @@ export interface RTCStatsMetaData {
 	displayName: string;
 }
 
-export interface BlurBackgroundPipeline {
-	render: () => void;
-	cleanup: () => void;
-}
-
 export interface Dimensions {
 	width: number,
 	height: number
-}
-
-export interface BlurBackgroundPipelineOptions {
-    source: {
-        element: HTMLVideoElement,
-        dimensions: Dimensions
-    },
-    canvas: HTMLCanvasElement,
-    backend: TFLite,
-    segmentation: Dimensions
 }
