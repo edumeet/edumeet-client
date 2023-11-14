@@ -16,6 +16,7 @@ import ExtraVideo from '../menuitems/ExtraVideo';
 import Transcription from '../menuitems/Transcription';
 import Filesharing from '../menuitems/Filesharing';
 import Recording from '../menuitems/Recording';
+import Drawing from '../menuitems/Drawing';
 import MoreButton from '../controlbuttons/MoreButton';
 
 interface ContainerProps {
@@ -111,6 +112,7 @@ const ControlButtonsBar = (): JSX.Element => {
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
+				<Drawing onClick={handleMoreClose} />
 			</FloatingMenu>
 		</>
 	);
