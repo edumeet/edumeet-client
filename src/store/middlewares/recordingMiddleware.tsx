@@ -74,8 +74,10 @@ const createRecordingMiddleware = ({
 				if (!MediaRecorder || !window.showSaveFilePicker)
 					return logger.error('Recording is not supported');
 
+				const roomName = new URL(getState().signaling.url).searchParams.get('roomId');
+
 				const opts:SaveFilePickerOptions = {
-					suggestedName: 'roomname.mp4',
+					suggestedName: `${roomName}.mp4`,
 					types: [
 						{
 							description: 'LocalRecording',
