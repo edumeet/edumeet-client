@@ -9,6 +9,8 @@ import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
+import PeerStatsView from '../rtpquality/PeerStatsView';
+import QualityIndicator from '../rtpquality/QualityIndicator';
 
 interface MeProps {
 	style: Record<'width' | 'height', number>
@@ -30,6 +32,7 @@ const Me = ({
 	const id = useAppSelector((state) => state.me.id);
 	const isActiveSpeaker = useIsActiveSpeaker(id);
 	const isMobile = useAppSelector(isMobileSelector);
+	const showStats = useAppSelector((state) => state.ui.showStats);
 
 	return (
 		<>
@@ -41,9 +44,11 @@ const Me = ({
 					height={style.height}
 				>
 					{ webcamProducer && <VideoView mirrored={mirroredSelfView} producer={webcamProducer} /> }
+					{ webcamProducer && showStats && !isMobile && <PeerStatsView producerId={webcamProducer.id} /> }
 					{ micProducer && <Volume producer={micProducer} /> }
 					{ micProducer && !isMobile && <UnmuteAlert micProducer={micProducer} /> }
 					<DisplayName disabled={false} displayName={displayName} isMe />
+					<QualityIndicator />
 				</VideoBox>
 			)}
 			{ screenProducer && (
@@ -54,6 +59,7 @@ const Me = ({
 					height={style.height}
 				>
 					<VideoView producer={screenProducer} contain />
+					<PeerStatsView producerId={screenProducer.id} />
 					<DisplayName disabled={false} displayName={displayName} isMe />
 					<MediaControls
 						orientation='vertical'

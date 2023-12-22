@@ -9,6 +9,8 @@ import FullscreenVideoButton from '../controlbuttons/FullscreenVideoButton';
 import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
+import PeerStatsView from '../rtpquality/PeerStatsView';
+import QualityIndicator from '../rtpquality/QualityIndicator';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
@@ -30,6 +32,7 @@ const VideoConsumer = ({
 	const isMobile = useAppSelector(isMobileSelector);
 	const activeSpeaker = useAppSelector(activeSpeakerIdSelector) === peerId;
 	const headless = useAppSelector((state) => state.room.headless);
+	const showStats = useAppSelector((state) => state.ui.showStats);
 
 	return (
 		<VideoBox
@@ -51,6 +54,8 @@ const VideoConsumer = ({
 						<FullscreenVideoButton consumerId={consumer.id} toolTipLocation='bottom' />
 						{ !isMobile && <WindowedVideoButton consumerId={consumer.id} toolTipLocation='bottom' /> }
 					</MediaControls>
+					{ !isMobile && showStats && <PeerStatsView consumerId={consumer.id} /> }
+					<QualityIndicator />
 				</>
 			}
 		</VideoBox>

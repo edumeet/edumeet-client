@@ -13,6 +13,7 @@ import type { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/Dat
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
 import { Logger } from 'edumeet-common';
 import { ProducerSource } from '../store/slices/producersSlice';
+import { ClientMonitor } from '@observertc/client-monitor-js';
 
 const logger = new Logger('MediaService');
 
@@ -108,7 +109,10 @@ export class MediaService extends EventEmitter {
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
 
-	constructor({ signalingService }: { signalingService: SignalingService }) {
+	constructor(
+		{ signalingService }: { signalingService: SignalingService },
+		public readonly monitor?: ClientMonitor,		
+	) {
 		super();
 
 		this.signalingService = signalingService;
@@ -638,6 +642,8 @@ export class MediaService extends EventEmitter {
 				this.iceServers = iceServers;
 	
 				await this.mediasoup.load({ routerRtpCapabilities });
+				
+				this.monitor?.collectors.addMediasoupDevice(this.mediasoup);
 			}
 
 			this.sendTransport = await this.createTransport('createSendTransport');
