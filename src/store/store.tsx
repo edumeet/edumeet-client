@@ -32,7 +32,6 @@ import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
 import consumersSlice from './slices/consumersSlice';
 import signalingSlice from './slices/signalingSlice';
-import webrtcSlice from './slices/webrtcSlice';
 import permissionsSlice from './slices/permissionsSlice';
 import lobbyPeersSlice from './slices/lobbyPeersSlice';
 import settingsSlice from './slices/settingsSlice';
@@ -113,7 +112,6 @@ const reducer = combineReducers({
 	settings: settingsSlice.reducer,
 	signaling: signalingSlice.reducer,
 	ui: uiSlice.reducer,
-	webrtc: webrtcSlice.reducer,
 	recording: recordingSlice.reducer,
 });
 
