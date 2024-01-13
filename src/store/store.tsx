@@ -50,6 +50,7 @@ import { Application, feathers } from '@feathersjs/feathers/lib';
 import rest from '@feathersjs/rest-client';
 import authentication from '@feathersjs/authentication-client';
 import { EffectsService } from '../services/effectsService';
+import { createClientMonitor } from '@observertc/client-monitor-js';
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
@@ -67,14 +68,14 @@ const persistConfig = {
 	stateReconciler: autoMergeLevel2,
 	whitelist: [ 'settings' ]
 };
-
+const monitor = edumeetConfig.clientMontitor ? createClientMonitor(edumeetConfig.clientMontitor) : undefined;
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
 const managementService = feathers()
 	.configure(rest(edumeetConfig.managementUrl).fetch(window.fetch.bind(window)))
 	.configure(authentication());
 
-export const mediaService = new MediaService({ signalingService });
+export const mediaService = new MediaService({ signalingService }, monitor);
 export const fileService = new FileService();
 const effectsService = new EffectsService();
 

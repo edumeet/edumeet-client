@@ -1,4 +1,5 @@
 import { ThemeOptions } from '@mui/material';
+import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
@@ -86,7 +87,11 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContentItemDarkColor: 'rgba(150, 150, 150, 0.4)',
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
-	reduxLoggingEnabled: false
+	reduxLoggingEnabled: false,
+	clientMontitor: {
+		tickingTimeInMs: 1000,
+		collectingPeriodInMs: 2000,
+	}
 };
 
 export interface EdumeetConfig {
@@ -122,6 +127,7 @@ export interface EdumeetConfig {
 	title: string;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
+	clientMontitor: ClientMonitorConfig;
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {

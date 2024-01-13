@@ -14,6 +14,7 @@
 		"@feathersjs/rest-client": "^5.0.11",
 		"@mui/icons-material": "^5.14.16",
 		"@mui/material": "^5.14.16",
+		"@observertc/client-monitor-js": "^3.3.0",
 		"@reduxjs/toolkit": "^1.9.7",
 		"@tensorflow-models/body-pix": "^2.2.1",
 		"@tensorflow/tfjs": "^4.12.0",
