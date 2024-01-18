@@ -6,8 +6,7 @@ import { peersActions } from '../slices/peersSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { webrtcActions } from '../slices/webrtcSlice';
-import { AppThunk } from '../store';
+import { AppThunk, fileService } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
@@ -53,9 +52,10 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('joinRoom()');
 
-	await mediaService.createTransports(getState().webrtc.iceServers);
-	
+	await mediaService.createTransports();
+
 	if (!mediaService.mediaCapabilities) throw new Error('Media capabilities not set!');
+
 	dispatch(meActions.setMediaCapabilities(mediaService.mediaCapabilities));
 
 	const rtpCapabilities = mediaService.rtpCapabilities;
@@ -77,6 +77,9 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		rtpCapabilities,
 	});
 
+	fileService.tracker = tracker;
+	fileService.iceServers = mediaService.iceServers;
+
 	batch(() => {
 		dispatch(roomActions.setMode(roomMode));
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
@@ -85,7 +88,6 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-		dispatch(webrtcActions.setTracker(tracker));
 
 		if (peers.length < 10) {
 			if (!getState().me.audioMuted) dispatch(updateMic({ start: true }));

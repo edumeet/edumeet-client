@@ -2,7 +2,6 @@ import { Middleware } from '@reduxjs/toolkit';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
-import { webrtcActions } from '../slices/webrtcSlice';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
@@ -39,8 +38,6 @@ const createRoomMiddleware = ({
 								const {
 									sessionId,
 									creationTimestamp,
-									turnServers,
-									rtcStatsOptions,
 									maxActiveVideos,
 									breakoutsEnabled,
 									chatEnabled,
@@ -59,8 +56,6 @@ const createRoomMiddleware = ({
 										...initialRoomSession,
 									}));
 									dispatch(meActions.setSessionId(sessionId));
-									dispatch(webrtcActions.setIceServers(turnServers));
-									dispatch(webrtcActions.setRTCStatsOptions(rtcStatsOptions));
 									dispatch(settingsActions.setMaxActiveVideos(maxActiveVideos));
 									dispatch(roomActions.updateRoom({
 										logo: settings.logo,
