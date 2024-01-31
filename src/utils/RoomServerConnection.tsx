@@ -33,7 +33,7 @@ export class RoomServerConnection extends EventEmitter {
 	
 		const socket = io(url, {
 			transports: [ 'websocket', 'polling' ],
-			rejectUnauthorized: false,
+			rejectUnauthorized: true,
 			closeOnBeforeunload: false,
 			reconnection: false
 		});
