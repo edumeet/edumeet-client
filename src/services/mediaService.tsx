@@ -13,6 +13,7 @@ import type { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/Dat
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
 import { Logger } from 'edumeet-common';
 import { ProducerSource } from '../store/slices/producersSlice';
+import { safePromise } from '../utils/safePromise';
 
 const logger = new Logger('MediaService');
 
@@ -31,6 +32,9 @@ export interface MediaCapabilities {
 	canSendMic: boolean;
 	canSendWebcam: boolean;
 	canShareScreen: boolean;
+}
+
+export interface LocalCapabilities {
 	canRecord: boolean;
 	canTranscribe: boolean;
 }
@@ -104,18 +108,52 @@ export class MediaService extends EventEmitter {
 	private peerTransports: Map<string, PeerTransport> = new Map();
 	private peers: string[] = [];
 	private p2p = true;
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
+	
+	// eslint-disable-next-line no-unused-vars
+	public rejectMediaReady!: (error: Error) => void;
+	public resolveMediaReady!: () => void;
+	public mediaReady!: ReturnType<typeof safePromise>;
+
+	// eslint-disable-next-line no-unused-vars
+	public rejectTransportsReady!: (error: Error) => void;
+	public resolveTransportsReady!: () => void;
+	public transportsReady!: ReturnType<typeof safePromise>;
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
 
 		this.signalingService = signalingService;
+
+		this.reset();
 	}
 
 	public init(): void {
 		this.handleSignaling();
+	}
+
+	private reset(): void {
+		this.mediasoup = undefined;
+		this.iceServers = [];
+
+		this.rejectMediaReady?.(new Error('MediaService has been reset'));
+
+		this.mediaReady = safePromise(new Promise<void>((resolve, reject) => {
+			this.resolveMediaReady = resolve;
+			this.rejectMediaReady = reject;
+		}));
+
+		this.rejectTransportsReady?.(new Error('MediaService has been reset'));
+
+		this.transportsReady = safePromise(new Promise<void>((resolve, reject) => {
+			this.resolveTransportsReady = resolve;
+			this.rejectTransportsReady = reject;
+		}));
+
+		this.createTransports().catch((error) => logger.error('error on creating transports [error:%o]', error));
 	}
 
 	public close(): void {
@@ -241,6 +279,34 @@ export class MediaService extends EventEmitter {
 	}
 
 	private handleSignaling(): void {
+		this.signalingService.on('request', async (request, respond, reject) => {
+			try {
+				switch (request.method) {
+					case 'mediaConfiguration': {
+						const { routerRtpCapabilities, iceServers } = request.data;
+
+						this.iceServers = iceServers;
+
+						const { rtpCapabilities, sctpCapabilities } = await this.receiveRouterRtpCapabilities(routerRtpCapabilities);
+
+						respond({ rtpCapabilities, sctpCapabilities });
+
+						this.resolveMediaReady();
+
+						break;
+					}
+
+					default: {
+						reject(`unknown method "${request.method}"`);
+					}
+				}
+			} catch (error) {
+				logger.error('error on signalService "request" event [error:%o]', error);
+
+				reject(error);
+			}
+		});
+
 		this.signalingService.on('notification', async (notification) => {
 			try {
 				switch (notification.method) {
@@ -495,6 +561,32 @@ export class MediaService extends EventEmitter {
 
 						break;
 					}
+
+					case 'transportClosed': {
+						const { transportId } = notification.data;
+
+						if (this.sendTransport?.id === transportId) {
+							this.sendTransport?.close();
+							this.sendTransport = undefined;
+						} else if (this.recvTransport?.id === transportId) {
+							this.recvTransport?.close();
+							this.recvTransport = undefined;
+						}
+
+						break;
+					}
+
+					case 'lostMediaServer': {
+						this.reset();
+
+						break;
+					}
+
+					case 'noMediaServer': {
+						logger.error('no media server available');
+
+						break;
+					}
 				}
 			} catch (error) {
 				logger.error('error on signalService "notification" event [error:%o]', error);
@@ -509,6 +601,11 @@ export class MediaService extends EventEmitter {
 			canSendMic: this.mediasoup.canProduce('audio'),
 			canSendWebcam: this.mediasoup.canProduce('video'),
 			canShareScreen: Boolean(navigator.mediaDevices.getDisplayMedia) && this.mediasoup.canProduce('video'),
+		};
+	}
+
+	get localCapabilities(): LocalCapabilities {
+		return {
 			canRecord: Boolean(MediaRecorder && window.showSaveFilePicker),
 			canTranscribe: Boolean(window.webkitSpeechRecognition),
 		};
@@ -621,47 +718,33 @@ export class MediaService extends EventEmitter {
 		dataProducer?.close();
 	}
 
-	public async createTransports(): Promise<{
-		sendTransport?: Transport;
-		recvTransport?: Transport;
-	}> {
+	private async receiveRouterRtpCapabilities(routerRtpCapabilities: RtpCapabilities): Promise<Device> {
+		logger.debug('receiveRouterRtpCapabilities()');
+
 		if (!this.mediasoup) {
-			const Mediasoup = await import('mediasoup-client');
+			const MediaSoup = await import('mediasoup-client');
 
-			this.mediasoup = new Mediasoup.Device();
+			this.mediasoup = new MediaSoup.Device();
 		}
 
-		try {
-			if (!this.mediasoup.loaded) {
-				const { routerRtpCapabilities, iceServers } = await this.signalingService.sendRequest('getRouterRtpCapabilities');
+		if (!this.mediasoup.loaded) await this.mediasoup.load({ routerRtpCapabilities });
 
-				this.iceServers = iceServers;
-	
-				await this.mediasoup.load({ routerRtpCapabilities });
-			}
+		return this.mediasoup;
+	}
 
-			this.sendTransport = await this.createTransport('createSendTransport');
-			this.recvTransport = await this.createTransport('createRecvTransport');
-		} catch (error) {
-			logger.error('error on starting mediasoup transports [error:%o]', error);
+	public async createTransports(): Promise<void> {
+		await this.mediaReady;
+		
+		this.sendTransport = await this.createTransport('createSendTransport');
+		this.recvTransport = await this.createTransport('createRecvTransport');
 
-			throw error;
-		}
-
-		return {
-			sendTransport: this.sendTransport,
-			recvTransport: this.recvTransport,
-		};
+		this.resolveTransportsReady();
 	}
 
 	private async createTransport(
 		creator: 'createSendTransport' | 'createRecvTransport'
 	): Promise<Transport> {
-		if (!this.mediasoup) {
-			const Mediasoup = await import('mediasoup-client');
-
-			this.mediasoup = new Mediasoup.Device();
-		}
+		if (!this.mediasoup) throw new Error('mediasoup not initialized');
 
 		const {
 			id,
@@ -738,6 +821,8 @@ export class MediaService extends EventEmitter {
 
 	public async produce(producerOptions: ProducerOptions, codec?: ProducerCodec): Promise<Producer> {
 		logger.debug('produce() [options:%o]', producerOptions);
+
+		await this.transportsReady;
 
 		if (!this.sendTransport) throw new Error('Producer can not be created without sendTransport');
 

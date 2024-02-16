@@ -1,4 +1,4 @@
-import type { RtpCapabilities, RtpEncodingParameters } from 'mediasoup-client/lib/RtpParameters';
+import type { RtpEncodingParameters } from 'mediasoup-client/lib/RtpParameters';
 import { Resolution, SimulcastProfile } from './types';
 
 const VIDEO_CONSTRAINS: Record<Resolution, Record<string, number>> = {
@@ -70,7 +70,6 @@ const VIDEO_SVC_ENCODINGS: RtpEncodingParameters[] =
  * @returns {RtpEncodingParameters[]} The video RTP parameters.
  */
 export const getEncodings = (
-	rtpCapabilities: RtpCapabilities,
 	width: number | undefined,
 	height: number | undefined,
 	svc = false,
@@ -78,12 +77,6 @@ export const getEncodings = (
 ): RtpEncodingParameters[] => {
 	if (!width || !height)
 		throw new Error('missing width or height');
-
-	const firstVideoCodec =
-		rtpCapabilities.codecs?.find((c) => c.kind === 'video');
-
-	if (!firstVideoCodec)
-		throw new Error('No video codecs');
 
 	let encodings: RtpEncodingParameters[];
 	const size = (width > height ? width : height);

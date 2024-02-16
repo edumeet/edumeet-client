@@ -520,8 +520,6 @@ export const updateWebcam = ({
 	let webcamProducer: Producer | undefined;
 
 	try {
-		if (!mediaService.rtpCapabilities) throw new Error('RTP Capabilities are not yet ready');
-
 		await deviceService.updateMediaDevices();
 
 		const canSendWebcam = getState().me.canSendWebcam;
@@ -585,7 +583,6 @@ export const updateWebcam = ({
 
 			if (config.simulcast) {
 				const encodings = getEncodings(
-					mediaService.rtpCapabilities,
 					width,
 					height
 				);
@@ -691,8 +688,6 @@ export const updateScreenSharing = ({
 	let screenVideoProducer: Producer | undefined;
 
 	try {
-		if (!mediaService.rtpCapabilities) throw new Error('RTP Capabilities are not yet ready');
-
 		const canShareScreen = getState().me.canShareScreen;
 
 		if (!canShareScreen) throw new Error('cannot produce screen share');
@@ -761,7 +756,6 @@ export const updateScreenSharing = ({
 
 			if (config.simulcastSharing) {
 				const encodings = getEncodings(
-					mediaService.rtpCapabilities,
 					width,
 					height,
 					false,
@@ -868,8 +862,6 @@ export const startExtraVideo = ({
 	let extraVideoProducer: Producer | undefined;
 
 	try {
-		if (!mediaService.rtpCapabilities) throw new Error('RTP Capabilities are not yet ready');
-
 		if (!newDeviceId) throw new Error('newDeviceId is not defined');
 
 		await deviceService.updateMediaDevices();
@@ -901,7 +893,7 @@ export const startExtraVideo = ({
 		const { width, height } = track.getSettings();
 
 		if (config.simulcast) {
-			const encodings = getEncodings(mediaService.rtpCapabilities, width, height);
+			const encodings = getEncodings(width, height);
 
 			extraVideoProducer = await mediaService.produce({
 				track,

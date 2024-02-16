@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuid } from 'uuid';
-import { MediaCapabilities } from '../../services/mediaService';
+import { LocalCapabilities, MediaCapabilities } from '../../services/mediaService';
 import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 import { roomActions } from './roomSlice';
 
@@ -80,6 +80,12 @@ const meSlice = createSlice({
 		setMediaCapabilities: ((
 			state,
 			action: PayloadAction<MediaCapabilities>
+		) => {
+			return { ...state, ...action.payload };
+		}),
+		setLocalCapabilities: ((
+			state,
+			action: PayloadAction<LocalCapabilities>
 		) => {
 			return { ...state, ...action.payload };
 		}),

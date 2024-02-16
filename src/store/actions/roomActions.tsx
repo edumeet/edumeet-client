@@ -52,13 +52,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('joinRoom()');
 
-	await mediaService.createTransports();
+	dispatch(meActions.setLocalCapabilities(mediaService.localCapabilities));
 
-	if (!mediaService.mediaCapabilities) throw new Error('Media capabilities not set!');
-
-	dispatch(meActions.setMediaCapabilities(mediaService.mediaCapabilities));
-
-	const rtpCapabilities = mediaService.rtpCapabilities;
 	const displayName = getState().settings.displayName;
 	const { sessionId, picture } = getState().me;
 
@@ -74,7 +69,6 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	} = await signalingService.sendRequest('join', {
 		displayName,
 		picture,
-		rtpCapabilities,
 	});
 
 	fileService.tracker = tracker;
