@@ -9,6 +9,9 @@ import { signalingActions } from '../slices/signalingSlice';
 import { Logger } from 'edumeet-common';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { meActions } from '../slices/meSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { batch } from 'react-redux';
+import { updateMic, updateWebcam } from '../actions/mediaActions';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -115,8 +118,15 @@ const createMediaMiddleware = ({
 						producerId: producer.id
 					}));
 
-					producer.kind === 'video' && dispatch(meActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(meActions.setAudioMuted(true));
+					if (producer.kind === 'video' && !producer.paused) {
+						dispatch(meActions.setLostVideo(true));
+						dispatch(meActions.setVideoMuted(true));
+					}
+
+					if (producer.kind === 'audio' && !producer.paused) {
+						dispatch(meActions.setLostAudio(true));
+						dispatch(meActions.setAudioMuted(true));
+					}
 				});
 
 				mediaService.on('producerPaused', (producer) => {
@@ -140,6 +150,25 @@ const createMediaMiddleware = ({
 			
 				mediaService.on('producerScore', (producerId, score) => {
 					dispatch(producersActions.setScore({ producerId, score }));	
+				});
+
+				mediaService.on('lostMediaServer', () => {
+					batch(() => {
+						dispatch(notificationsActions.enqueueNotification({
+							message: 'Lost connection to media server, reconnecting...',
+							options: { variant: 'error' }
+						}));
+
+						if (getState().me.lostAudio) {
+							dispatch(meActions.setLostAudio(false));
+							dispatch(updateMic({ start: true }));
+						}
+
+						if (getState().me.lostVideo) {
+							dispatch(meActions.setLostVideo(false));
+							dispatch(updateWebcam({ start: true }));
+						}
+					});
 				});
 			}
 

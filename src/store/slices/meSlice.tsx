@@ -22,6 +22,8 @@ export interface MeState {
 	escapeMeeting: boolean;
 	audioMuted: boolean;
 	videoMuted: boolean;
+	lostAudio: boolean;
+	lostVideo: boolean;
 	// Status flags
 	audioInProgress: boolean;
 	videoInProgress: boolean;
@@ -46,6 +48,8 @@ const initialState: MeState = {
 	escapeMeeting: false,
 	audioMuted: false,
 	videoMuted: false,
+	lostAudio: false,
+	lostVideo: false,
 	// Status flags
 	audioInProgress: false,
 	videoInProgress: false,
@@ -103,6 +107,12 @@ const meSlice = createSlice({
 		}),
 		setVideoMuted: ((state, action: PayloadAction<boolean>) => {
 			state.videoMuted = action.payload;
+		}),
+		setLostAudio: ((state, action: PayloadAction<boolean>) => {
+			state.lostAudio = action.payload;
+		}),
+		setLostVideo: ((state, action: PayloadAction<boolean>) => {
+			state.lostVideo = action.payload;
 		}),
 		// Status flags
 		setAudioInProgress: ((state, action: PayloadAction<boolean>) => {

@@ -90,6 +90,8 @@ export declare interface MediaService {
 	on(event: 'transcriptionStopped', listener: () => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'transcript', listener: (transcription: PeerTranscript) => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'lostMediaServer', listener: () => void): this;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -578,6 +580,7 @@ export class MediaService extends EventEmitter {
 
 					case 'lostMediaServer': {
 						this.reset();
+						this.emit('lostMediaServer');
 
 						break;
 					}
