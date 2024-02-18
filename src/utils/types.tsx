@@ -1,4 +1,5 @@
 import { ThemeOptions } from '@mui/material';
+import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
@@ -209,4 +210,29 @@ export interface RTCStatsMetaData {
 export interface Dimensions {
 	width: number,
 	height: number
+}
+
+export interface BlurBackgroundPipeline {
+	render: () => void;
+	cleanup: () => void;
+}
+
+export interface Dimensions {
+	width: number,
+	height: number
+}
+
+export interface BlurBackgroundPipelineOptions {
+    source: {
+        element: HTMLVideoElement,
+        dimensions: Dimensions
+    },
+    canvas: HTMLCanvasElement,
+    backend: TFLite,
+    segmentation: Dimensions
+}
+
+export interface EffectsTrack {
+	outputTrack: MediaStreamTrack,
+	stop: () => void
 }

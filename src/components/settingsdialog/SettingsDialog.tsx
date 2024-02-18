@@ -18,6 +18,7 @@ const SettingsDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const settingsOpen = useAppSelector((state) => state.ui.settingsOpen);
 	const currentSettingsTab = useAppSelector((state) => state.ui.currentSettingsTab);
+	const closeButtonDisabled = useAppSelector((state) => state.me.videoInProgress || state.me.audioInProgress);
 
 	const handleCloseSettings = (): void => {
 		dispatch(uiActions.setUi({
@@ -54,6 +55,7 @@ const SettingsDialog = (): JSX.Element => {
 					onClick={handleCloseSettings}
 					startIcon={<CloseIcon />}
 					size='small'
+					disabled={closeButtonDisabled}
 				>
 					{ closeLabel()}
 				</Button>

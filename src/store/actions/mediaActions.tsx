@@ -545,6 +545,7 @@ export const updateWebcam = ({
 
 		if ((restart && webcamProducer) || start) {
 			if (webcamProducer) {
+				effectsService.stop(webcamProducer.track?.id);
 				dispatch(producersActions.closeProducer({
 					producerId: webcamProducer.id,
 					local: true

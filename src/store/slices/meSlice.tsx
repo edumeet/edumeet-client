@@ -24,6 +24,7 @@ export interface MeState {
 	videoMuted: boolean;
 	lostAudio: boolean;
 	lostVideo: boolean;
+	webGLSupport: boolean;
 	// Status flags
 	audioInProgress: boolean;
 	videoInProgress: boolean;
@@ -50,6 +51,7 @@ const initialState: MeState = {
 	videoMuted: false,
 	lostAudio: false,
 	lostVideo: false,
+	webGLSupport: false,
 	// Status flags
 	audioInProgress: false,
 	videoInProgress: false,
@@ -113,6 +115,9 @@ const meSlice = createSlice({
 		}),
 		setLostVideo: ((state, action: PayloadAction<boolean>) => {
 			state.lostVideo = action.payload;
+		}),
+		setWebGLSupport: ((state, action: PayloadAction<boolean>) => {
+			state.webGLSupport = action.payload;
 		}),
 		// Status flags
 		setAudioInProgress: ((state, action: PayloadAction<boolean>) => {
