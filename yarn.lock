@@ -961,6 +961,13 @@
   dependencies:
     "@types/ms" "*"
 
+"@types/debug@^4.1.12":
+  version "4.1.12"
+  resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.12.tgz#a155f21690871953410df4b6b6f53187f0500917"
+  integrity sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==
+  dependencies:
+    "@types/ms" "*"
+
 "@types/dompurify@^3.0.4":
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/@types/dompurify/-/dompurify-3.0.4.tgz#8a6369dec2dd0c397d01751adf3364be035b40d8"
@@ -2666,12 +2673,13 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
-h264-profile-level-id@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/h264-profile-level-id/-/h264-profile-level-id-1.0.1.tgz#92033c190766c846e57c6a97e4c1d922943a9cce"
-  integrity sha512-D3Rln/jKNjKDW5ZTJTK3niSoOGE+pFqPvRHHVgQN3G7umcn/zWGPUo8Q8VpDj16x3hKz++zVviRNRmXu5cpN+Q==
+h264-profile-level-id@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/h264-profile-level-id/-/h264-profile-level-id-2.0.0.tgz#b7ea45badbac8f5dbb9583d34b06db09764f2535"
+  integrity sha512-X4CLryVbVA0CtjTExS4G5U1gb2Z4wa32AF8ukVmFuLdw2JRq2aHisor7SY5SYTUUrUSqq0KdPIO18sql6IWIQw==
   dependencies:
-    debug "^4.1.1"
+    "@types/debug" "^4.1.12"
+    debug "^4.3.4"
 
 hark@^1.2.3:
   version "1.2.3"
@@ -3348,21 +3356,21 @@ marked@^9.1.4:
   resolved "https://registry.yarnpkg.com/marked/-/marked-9.1.4.tgz#68d50848f1b1e264b8fa031946b4b0c3352827e9"
   integrity sha512-Mq83CCaClhXqhf8sLQ57c1unNelHEuFadK36ga+GeXR4FeT/5ssaC5PaCRVqMA74VYorzYRqdAaxxteIanh3Kw==
 
-mediasoup-client@^3.6.103:
-  version "3.6.103"
-  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.6.103.tgz#0aae9e75b6fcc4cdfd73e5e9c94bd6d5300bb85c"
-  integrity sha512-njbRpcdlqYaJwAE92pWV9uJxMg5aA3YFetCdwXY0l285pA/tDr7hSM22cczAHLx50C1DODL8/uBVqq+fDMMEmw==
+mediasoup-client@^3.7.3:
+  version "3.7.3"
+  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.7.3.tgz#b65d6084e92d88118097323f4c9c79c81b74f5ed"
+  integrity sha512-LjGoLqK0FfO0TOlQ/6I1Ato2TMj7CiIN/ifpZlmL6od1pdv4IfvUHizJBomqhr4qJW5m7oZwZaW36ituXD6D/Q==
   dependencies:
-    "@types/debug" "^4.1.10"
+    "@types/debug" "^4.1.12"
     awaitqueue "^3.0.2"
     debug "^4.3.4"
     events "^3.3.0"
     fake-mediastreamtrack "^1.2.0"
-    h264-profile-level-id "^1.0.1"
+    h264-profile-level-id "^2.0.0"
     queue-microtask "^1.2.3"
-    sdp-transform "^2.14.1"
+    sdp-transform "^2.14.2"
     supports-color "^9.4.0"
-    ua-parser-js "^1.0.36"
+    ua-parser-js "^1.0.37"
 
 memory-chunk-store@^1.3.5:
   version "1.3.5"
@@ -4059,10 +4067,10 @@ scheduler@^0.23.0:
   dependencies:
     loose-envify "^1.1.0"
 
-sdp-transform@^2.14.1:
-  version "2.14.1"
-  resolved "https://registry.yarnpkg.com/sdp-transform/-/sdp-transform-2.14.1.tgz#2bb443583d478dee217df4caa284c46b870d5827"
-  integrity sha512-RjZyX3nVwJyCuTo5tGPx+PZWkDMCg7oOLpSlhjDdZfwUoNqG1mM8nyj31IGHyaPWXhjbP7cdK3qZ2bmkJ1GzRw==
+sdp-transform@^2.14.2:
+  version "2.14.2"
+  resolved "https://registry.yarnpkg.com/sdp-transform/-/sdp-transform-2.14.2.tgz#d2cee6a1f7abe44e6332ac6cbb94e8600f32d813"
+  integrity sha512-icY6jVao7MfKCieyo1AyxFYm1baiM+fA00qW/KrNNVlkxHAd34riEKuEkUe4bBb3gJwLJZM+xT60Yj1QL8rHiA==
 
 semver@^6.3.1:
   version "6.3.1"
@@ -4504,7 +4512,7 @@ typescript@^5.0.2, typescript@^5.2.2:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.2.2.tgz#5ebb5e5a5b75f085f22bc3f8460fba308310fa78"
   integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
 
-ua-parser-js@^1.0.36:
+ua-parser-js@^1.0.37:
   version "1.0.37"
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-1.0.37.tgz#b5dc7b163a5c1f0c510b08446aed4da92c46373f"
   integrity sha512-bhTyI94tZofjo+Dn8SN6Zv8nBDvyXTymAdM3LDI/0IboIUwTu1rEhW7v2TfiVsoYWgkQ4kOVqnI8APUFbIQIFQ==

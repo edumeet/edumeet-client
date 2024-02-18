@@ -24,7 +24,7 @@
 		"fscreen": "^1.2.0",
 		"hark": "^1.2.3",
 		"marked": "^9.1.4",
-		"mediasoup-client": "^3.6.103",
+		"mediasoup-client": "^3.7.3",
 		"notistack": "^3.0.1",
 		"random-string": "^0.2.0",
 		"react": "^18.2.0",
