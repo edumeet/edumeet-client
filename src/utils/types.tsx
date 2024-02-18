@@ -210,3 +210,8 @@ export interface Dimensions {
 	width: number,
 	height: number
 }
+
+export interface HTMLMediaElementWithSink extends HTMLMediaElement {
+	// eslint-disable-next-line no-unused-vars
+	setSinkId(deviceId: string): Promise<void>
+}

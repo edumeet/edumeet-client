@@ -27,6 +27,12 @@ const headlessSelector: Selector<boolean | undefined> = (state) => state.room.he
 
 export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
 
+export const canSelectAudioOutput: Selector<boolean> = (state) => {
+	const { name, version } = state.me.browser;
+
+	return name === 'chrome' && Number.parseInt(version) >= 110 && 'setSinkId' in HTMLAudioElement.prototype;
+};
+
 /**
  * Returns the peers as an array.
  * 
