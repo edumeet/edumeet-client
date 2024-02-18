@@ -9,7 +9,7 @@ import {
 import { meProducersSelector } from '../../store/selectors';
 import {
 	applyLabel,
-	audioDeviceLabel,
+	audioInputDeviceLabel,
 	noAudioInputDevicesLabel,
 	selectAudioInputDeviceLabel
 } from '../translated/translatedComponents';
@@ -54,7 +54,7 @@ const AudioInputChooser = ({
 					<DeviceChooser
 						value={selectedAudioDevice ?? ''}
 						setValue={handleDeviceChange}
-						name={audioDeviceLabel()}
+						name={audioInputDeviceLabel()}
 						devicesLabel={selectAudioInputDeviceLabel()}
 						noDevicesLabel={noAudioInputDevicesLabel()}
 						disabled={audioDevices.length < 2 || audioInProgress}

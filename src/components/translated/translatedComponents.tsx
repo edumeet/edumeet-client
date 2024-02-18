@@ -513,15 +513,20 @@ export const advancedSettingsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Advanced'
 });
 
-// export const audioInputDeviceLabel = (): string => intl.formatMessage({
-// 	id: 'settings.audioInput',
-// 	defaultMessage: 'Audio input device'
-// });
+export const audioInputDeviceLabel = (): string => intl.formatMessage({
+	id: 'settings.audioInput',
+	defaultMessage: 'Audio input device'
+});
 
-// export const audioOutputDeviceLabel = (): string => intl.formatMessage({
-// 	id: 'settings.audioOutput',
-// 	defaultMessage: 'Audio output device'
-// });
+export const audioOutputDeviceLabel = (): string => intl.formatMessage({
+	id: 'settings.audioOutput',
+	defaultMessage: 'Audio output device'
+});
+
+export const testAudioOutputLabel = (): string => intl.formatMessage({
+	id: 'settings.testAudioOutput',
+	defaultMessage: 'Test Audio output'
+});
 
 export const tryToLoadAudioDevices = (): string => intl.formatMessage({
 	id: 'settings.tryToLoadAudioDevices',
@@ -536,11 +541,6 @@ export const selectAudioInputDeviceLabel = (): string => intl.formatMessage({
 export const selectAudioOutputDeviceLabel = (): string => intl.formatMessage({
 	id: 'settings.selectAudioOutput',
 	defaultMessage: 'Select audio output device'
-});
-
-export const audioDeviceLabel = (): string => intl.formatMessage({
-	id: 'settings.audio',
-	defaultMessage: 'Audio input device'
 });
 
 export const noAudioInputDevicesLabel = (): string => intl.formatMessage({

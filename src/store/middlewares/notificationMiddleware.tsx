@@ -4,13 +4,16 @@ import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { peersActions } from '../slices/peersSlice';
 import { MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { HTMLMediaElementWithSink } from '../../utils/types';
+import { settingsActions } from '../slices/settingsSlice';
 
 interface SoundAlert {
-	[type: string]: {
-		audio: HTMLAudioElement;
-		debounce: number;
-		last?: number;
-	};
+  [type: string]: {
+    audio: HTMLMediaElementWithSink;
+    debounce: number;
+    last?: number;
+  };
 }
 
 const logger = new Logger('NotificationMiddleware');
@@ -21,18 +24,18 @@ const createNotificationMiddleware = ({
 	logger.debug('createNotificationMiddleware()');
 
 	const soundAlerts: SoundAlert = {
-		'default': {
-			audio: new Audio('/sounds/notify.mp3'),
-			debounce: 0
-		}
+		default: {
+			audio: new Audio('/sounds/notify.mp3') as HTMLMediaElementWithSink,
+			debounce: 0,
+		},
 	};
 
-	const playNotificationSounds = async (type: string) => {
+	const playNotificationSounds = async (type: string, ignoreDebounce = false) => {
 		const soundAlert = soundAlerts[type] ?? soundAlerts['default'];
 
 		const now = Date.now();
 
-		if (soundAlert?.last && (now - soundAlert.last) < soundAlert.debounce)
+		if (!ignoreDebounce && soundAlert?.last && (now - soundAlert.last) < soundAlert.debounce)
 			return;
 
 		soundAlert.last = now;
@@ -46,11 +49,17 @@ const createNotificationMiddleware = ({
 	for (const [ k, v ] of Object.entries(config.notificationSounds)) {
 		if (v?.play) {
 			soundAlerts[k] = {
-				audio: new Audio(v.play),
-				debounce: v.debounce ?? 0
+				audio: new Audio(v.play) as HTMLMediaElementWithSink,
+				debounce: v.debounce ?? 0,
 			};
 		}
 	}
+
+	const attachAudioOutput = (deviceId: string) => {
+		Object.values(soundAlerts).forEach((alert) => {
+			alert.audio.setSinkId(deviceId).catch((e) => logger.error(e));
+		});
+	};
 
 	const middleware: Middleware = ({
 		getState
@@ -88,6 +97,17 @@ const createNotificationMiddleware = ({
 				// New peer
 				if (peersActions.addPeer.match(action)) {
 					await playNotificationSounds('newPeer');
+				}
+
+				if (
+					settingsActions.setSelectedAudioOutputDevice.match(action) &&
+          action.payload
+				) {
+					attachAudioOutput(action.payload);
+				}
+
+				if (notificationsActions.playTestSound.match(action)) {
+					await playNotificationSounds('default', true);
 				}
 			}
 

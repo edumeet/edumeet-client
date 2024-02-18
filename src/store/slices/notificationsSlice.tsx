@@ -28,7 +28,8 @@ const notificationsSlice = createSlice({
 		}),
 		removeNotification: ((state, action: PayloadAction<SnackbarKey>) => {
 			return state.filter((notification) => notification.key !== action.payload);
-		})
+		}),
+		playTestSound: () => {}
 	},
 	extraReducers: (builder) => {
 		builder
