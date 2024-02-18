@@ -14,6 +14,7 @@ interface MediaPreviewProps {
 	startVideo?: boolean;
 	stopAudio?: boolean;
 	stopVideo?: boolean;
+	updateSelection?: boolean;
 }
 
 const MediaPreview = ({
@@ -22,6 +23,7 @@ const MediaPreview = ({
 	startVideo = true,
 	stopAudio = true,
 	stopVideo = true,
+	updateSelection = false
 }: MediaPreviewProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
@@ -31,8 +33,8 @@ const MediaPreview = ({
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
 
 	useEffect(() => {
-		if (startAudio) dispatch(updatePreviewMic({ restart: true, newDeviceId: audioDevice }));
-		if (startVideo) dispatch(updatePreviewWebcam({ restart: true, newDeviceId: videoDevice }));
+		if (startAudio) dispatch(updatePreviewMic({ restart: true, newDeviceId: audioDevice, updateSelection }));
+		if (startVideo) dispatch(updatePreviewWebcam({ restart: true, newDeviceId: videoDevice, updateSelection }));
 
 		return (): void => {
 			if (stopAudio) dispatch(stopPreviewMic());

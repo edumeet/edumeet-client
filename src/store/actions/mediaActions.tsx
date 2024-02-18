@@ -14,6 +14,7 @@ interface UpdateDeviceOptions {
 	start?: boolean;
 	restart?: boolean;
 	newDeviceId?: string;
+	updateSelection?: boolean;
 }
 
 interface AudioSettings {
@@ -83,9 +84,11 @@ export const stopTranscription = (): AppThunk<Promise<void>> => async (
  */
 export const updatePreviewMic = ({
 	restart = false,
-	newDeviceId
+	newDeviceId,
+	updateSelection = false
 }: UpdateDeviceOptions = {
 	restart: false,
+	updateSelection: false
 }): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
@@ -98,8 +101,6 @@ export const updatePreviewMic = ({
 	let track: MediaStreamTrack | undefined | null;
 
 	try {
-		await deviceService.updateMediaDevices();
-
 		const {
 			autoGainControl,
 			echoCancellation,
@@ -140,10 +141,18 @@ export const updatePreviewMic = ({
 
 		([ track ] = stream.getAudioTracks());
 
-		mediaService.addTrack(track);
-		dispatch(meActions.setPreviewMicTrackId(track.id));
+		if (!track) throw new Error('no mic track');
 
 		await deviceService.updateMediaDevices();
+
+		if (updateSelection) {
+			const { deviceId: trackDeviceId } = track.getSettings();
+
+			dispatch(settingsActions.setSelectedAudioDevice(trackDeviceId));
+		}
+
+		mediaService.addTrack(track);
+		dispatch(meActions.setPreviewMicTrackId(track.id));
 	} catch (error) {
 		logger.error('updatePreviewMic() [error:%o]', error);
 	} finally {
@@ -193,8 +202,12 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
  */
 export const updatePreviewWebcam = ({
 	restart = false,
-	newDeviceId
-}: UpdateDeviceOptions = {}): AppThunk<Promise<void>> => async (
+	newDeviceId,
+	updateSelection = false
+}: UpdateDeviceOptions = {
+	restart: false,
+	updateSelection: false
+}): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
 	{ mediaService, deviceService, effectsService }
@@ -206,8 +219,6 @@ export const updatePreviewWebcam = ({
 	let track: MediaStreamTrack | undefined | null;
 
 	try {
-		await deviceService.updateMediaDevices();
-
 		const {
 			aspectRatio,
 			resolution,
@@ -245,12 +256,20 @@ export const updatePreviewWebcam = ({
 
 		([ track ] = stream.getVideoTracks());
 
+		if (!track) throw new Error('no webcam track');
+
 		if (blurEnabled) track = await effectsService.applyEffect(track);
+
+		await deviceService.updateMediaDevices();
+
+		if (updateSelection) {
+			const { deviceId: trackDeviceId } = track.getSettings();
+
+			dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
+		}
 
 		mediaService.addTrack(track);
 		dispatch(meActions.setPreviewWebcamTrackId(track.id));
-
-		await deviceService.updateMediaDevices();
 	} catch (error) {
 		logger.error('updatePreviewWebcam() [error:%o]', error);
 	} finally {
@@ -344,8 +363,6 @@ export const updateMic = ({
 	let micProducer: Producer | undefined;
 
 	try {
-		await deviceService.updateMediaDevices();
-
 		const canSendMic = getState().me.canSendMic;
 
 		if (!canSendMic) throw new Error('cannot produce audio');
@@ -520,8 +537,6 @@ export const updateWebcam = ({
 	let webcamProducer: Producer | undefined;
 
 	try {
-		await deviceService.updateMediaDevices();
-
 		const canSendWebcam = getState().me.canSendWebcam;
 
 		if (!canSendWebcam) throw new Error('cannot produce video');
@@ -865,8 +880,6 @@ export const startExtraVideo = ({
 	try {
 		if (!newDeviceId) throw new Error('newDeviceId is not defined');
 
-		await deviceService.updateMediaDevices();
-
 		const canSendWebcam = getState().me.canSendWebcam;
 
 		if (!canSendWebcam) throw new Error('cannot produce video');
@@ -949,8 +962,6 @@ export const startExtraAudio = ({
 	let extraAudioProducer: Producer | undefined;
 
 	try {
-		await deviceService.updateMediaDevices();
-
 		const canSendMic = getState().me.canSendMic;
 
 		if (!canSendMic) throw new Error('cannot produce audio');

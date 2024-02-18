@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { updatePreviewWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
@@ -46,6 +46,10 @@ const VideoInputChooser = ({
 
 		dispatch(updatePreviewWebcam({ restart: true, newDeviceId: selectedVideoDevice }));
 	};
+
+	useEffect(() => {
+		if (!withConfirm) setSelectedVideoDevice(videoDevice);
+	}, [ videoDevice ]);
 
 	return (
 		<>

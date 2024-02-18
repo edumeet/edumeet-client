@@ -65,7 +65,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 			title={ <PrecallTitle /> }
 			content={
 				<>
-					<MediaPreview startAudio={!audioMuted} startVideo={!videoMuted} stopAudio={false} stopVideo={false} />
+					<MediaPreview startAudio={!audioMuted} startVideo={!videoMuted} stopAudio={false} stopVideo={false} updateSelection />
 					<AudioInputChooser />
 					{showAudioOutputChooser && <AudioOutputChooser /> }
 					<VideoInputChooser />

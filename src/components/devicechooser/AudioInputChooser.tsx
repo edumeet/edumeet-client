@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
@@ -46,6 +46,10 @@ const AudioInputChooser = ({
 
 		dispatch(updatePreviewMic({ restart: true, newDeviceId: selectedAudioDevice }));
 	};
+
+	useEffect(() => {
+		if (!withConfirm) setSelectedAudioDevice(audioDevice);
+	}, [ audioDevice ]);
 
 	return (
 		<>
