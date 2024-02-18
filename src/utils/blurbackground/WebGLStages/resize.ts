@@ -1,4 +1,4 @@
-import { TFLite } from '../../BlurTrack';
+import { TFLite } from '../../../services/effectsService';
 import {
 	compileShader,
 	createPiplelineStageProgram,
