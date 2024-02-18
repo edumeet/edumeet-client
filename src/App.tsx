@@ -17,6 +17,7 @@ import { permissions } from './utils/roles';
 import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
+import { meActions } from './store/slices/meSlice';
 
 type AppParams = {
 	id: string;
@@ -74,6 +75,20 @@ const App = (): JSX.Element => {
 			navigate('/');
 		}
 	}, [ roomState ]);
+			
+	/**
+	 * Detect WebGL-support.
+	 */
+	useEffect(() => {
+		const canvas = document.createElement('canvas');
+		const gl = canvas.getContext('webgl') 
+      || canvas.getContext('experimental-webgl');
+			// Report the result.
+
+		if (gl && gl instanceof WebGLRenderingContext) {
+			dispatch(meActions.setWebGLSupport(true));
+		} 
+	}, []);
 
 	return (
 		<SnackbarProvider action={

@@ -113,6 +113,7 @@ export const OpusFecSwitch = (): JSX.Element => {
 export const BlurSwitch = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const blurEnabled = useAppSelector((state) => state.settings.blurEnabled);
+	const blurSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
 
 	return (
 		<FormControlLabel
@@ -123,6 +124,7 @@ export const BlurSwitch = (): JSX.Element => {
 					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
 						dispatch(updateVideoSettings({ blurEnabled: event.target.checked }));
 					}}
+					disabled={blurSwitchDisabled}
 				/>
 			}
 			label={ backgroundBlurLabel() }
