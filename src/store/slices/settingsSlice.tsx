@@ -13,6 +13,7 @@ export interface SettingsState {
 	dynamicWidth: boolean;
 	aspectRatio: number;
 	selectedAudioDevice?: string;
+	selectedAudioOutputDevice?: string;
 	selectedVideoDevice?: string;
 	resolution: Resolution;
 	frameRate: number;
@@ -106,6 +107,9 @@ const settingsSlice = createSlice({
 		}),
 		setSelectedAudioDevice: ((state, action: PayloadAction<string | undefined>) => {
 			state.selectedAudioDevice = action.payload;
+		}),
+		setSelectedAudioOutputDevice: ((state, action: PayloadAction<string | undefined>) => {
+			state.selectedAudioOutputDevice = action.payload;
 		}),
 		setSelectedVideoDevice: ((state, action: PayloadAction<string | undefined>) => {
 			state.selectedVideoDevice = action.payload;

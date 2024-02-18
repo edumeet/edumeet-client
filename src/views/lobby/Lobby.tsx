@@ -14,6 +14,9 @@ import {
 } from '../../store/hooks';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
+import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
+import { canSelectAudioOutput } from '../../store/selectors';
+import TestAudioOutputButton from '../../components/audiooutputtest/AudioOutputTest';
 
 const Lobby = (): React.JSX.Element => {
 	useNotifier();
@@ -21,6 +24,7 @@ const Lobby = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
+	const showAudioOutputChooser = useAppSelector(canSelectAudioOutput);
 
 	const handleDisplayNameChange = () => {
 		dispatch(setDisplayName(
@@ -35,6 +39,8 @@ const Lobby = (): React.JSX.Element => {
 				<>
 					<MediaPreview />
 					<AudioInputChooser />
+					{showAudioOutputChooser && <AudioOutputChooser /> }
+					<TestAudioOutputButton />
 					<VideoInputChooser />
 					<ChooserDiv>
 						<TextInputField

@@ -15,6 +15,9 @@ import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import { BlurSwitch } from '../../components/settingsdialog/SettingsSwitches';
 import { meActions } from '../../store/slices/meSlice';
+import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
+import { canSelectAudioOutput } from '../../store/selectors';
+import TestAudioOutputButton from '../../components/audiooutputtest/AudioOutputTest';
 
 interface JoinProps {
 	roomId: string;
@@ -29,6 +32,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 	const mediaLoading = useAppSelector((state) => state.me.videoInProgress || state.me.audioInProgress);
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 	const videoMuted = useAppSelector((state) => state.me.videoMuted);
+	const showAudioOutputChooser = useAppSelector(canSelectAudioOutput);
 	
 	const url = new URL(window.location.href);
 	const headless = Boolean(url.searchParams.get('headless'));
@@ -63,7 +67,9 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 				<>
 					<MediaPreview startAudio={!audioMuted} startVideo={!videoMuted} stopAudio={false} stopVideo={false} />
 					<AudioInputChooser />
+					{showAudioOutputChooser && <AudioOutputChooser /> }
 					<VideoInputChooser />
+					<TestAudioOutputButton />
 					<BlurSwitch />
 					<ChooserDiv>
 						<TextInputField
