@@ -21,6 +21,9 @@ var config = {
 	// If the server component runs on a different host than the app you can specify the host name.
 	serverHostname: '',
 
+	// Join dialog defaults to ask for media, this can be disabled by setting this to false.
+	askForMediaOnJoin: true,
+
 	// Don't show the participant tile if the user has no video
 	hideNonVideo: false,
 

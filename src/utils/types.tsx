@@ -7,6 +7,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	developmentPort: 8443,
 	productionPort: 443,
 	serverHostname: undefined,
+	askForMediaOnJoin: true,
 	hideNonVideo: false,
 	resolution: 'medium',
 	frameRate: 30,
@@ -96,6 +97,7 @@ export interface EdumeetConfig {
 	developmentPort: number;
 	productionPort: number;
 	serverHostname?: string;
+	askForMediaOnJoin: boolean;
 	hideNonVideo: boolean;
 	resolution: Resolution;
 	frameRate: number;
@@ -133,7 +135,8 @@ export interface HTMLMediaElementWithSink extends HTMLMediaElement {
 export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
 
 export interface SimulcastProfile {
-	scaleResolutionDownBy: number;
+	scaleResolutionDownBy?: number;
+	scalabilityMode?: string;
 	maxBitrate: number;
 }
 

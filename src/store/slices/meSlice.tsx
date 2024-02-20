@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { LocalCapabilities, MediaCapabilities } from '../../services/mediaService';
 import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 import { roomActions } from './roomSlice';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 export interface MeState {
 	id: string;
@@ -47,8 +48,8 @@ const initialState: MeState = {
 	devices: [],
 	raisedHand: false,
 	escapeMeeting: false,
-	audioMuted: false,
-	videoMuted: false,
+	audioMuted: edumeetConfig.askForMediaOnJoin ? false : true,
+	videoMuted: edumeetConfig.askForMediaOnJoin ? false : true,
 	lostAudio: false,
 	lostVideo: false,
 	webGLSupport: false,
