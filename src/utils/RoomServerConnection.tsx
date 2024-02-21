@@ -26,7 +26,7 @@ interface ServerClientEvents {
 const logger = new Logger('RoomServerConnection');
 
 export class RoomServerConnection extends EventEmitter {
-	public id: string;
+	public id: string|undefined;
 
 	public static create({ url }: { url: string}): RoomServerConnection {
 		logger.debug('create() [url:%s]', url);
