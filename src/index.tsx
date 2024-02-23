@@ -21,7 +21,7 @@ const App = lazy(() => import('./App'));
 const LandingPage = lazy(() => import('./views/landingpage/LandingPage'));
 const UnsupportedBrowser = lazy(() => import('./views/unsupported/UnsupportedBrowser'));
 
-if (import.meta.env.VITE_APP_DEBUG === '*' || import.meta.env.NODE_ENV !== 'production') {
+if (import.meta.env.VITE_APP_DEBUG === '*' || !import.meta.env.PROD) {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');
 }
 
