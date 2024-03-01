@@ -1,9 +1,10 @@
 import { Chip, styled, TextField } from '@mui/material';
-import { ChangeEvent, FocusEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { setDisplayName } from '../../store/actions/meActions';
 import { useAppDispatch } from '../../store/hooks';
 import StateIndicators from '../stateindicators/StateIndicators';
 import { meLabel } from '../translated/translatedComponents';
+import MeStateIndicators from '../stateindicators/MeStateIndicators';
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
 	position: 'absolute',
@@ -13,9 +14,13 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 	'& .MuiFilledInput-root': {
 		color: 'white',
 	},
-	'& .MuiOutlinedInput-root': {
-		color: 'white',
+	'& .MuiInputBase-input': {
+		marginTop: 0,
+		marginBottom: 0,
+		paddingTop: 0,
+		paddingBottom: 0,
 	},
+
 }));
 
 const StyledChip = styled(Chip)(({ theme }) => ({
@@ -61,9 +66,9 @@ const DisplayName = ({
 				margin='dense'
 				variant='filled'
 				size='small'
-				onFocus={(event: FocusEvent<HTMLInputElement>) => event.target.select()}
-				onChange={(event: ChangeEvent<HTMLInputElement>) => setValue(event.target.value)}
-				onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+				onFocus={(event) => event.target.select()}
+				onChange={(event) => setValue(event.target.value)}
+				onKeyDown={(event) => {
 					if (event.key === 'Enter')
 						handleFinished();
 				}}
@@ -77,7 +82,7 @@ const DisplayName = ({
 				variant='filled'
 				size='small'
 				onClick={() => !disabled && setIsEditing(true)}
-				avatar={ peerId ? <StateIndicators peerId={peerId} /> : undefined }
+				avatar={ peerId ? <StateIndicators peerId={peerId} /> : <MeStateIndicators /> }
 			/>
 	);
 };
