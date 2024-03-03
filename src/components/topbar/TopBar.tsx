@@ -1,8 +1,8 @@
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import { AppBar, Chip, Toolbar, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { useAppSelector, usePermissionSelector } from '../../store/hooks';
-import { isMobileSelector, lobbyPeersLengthSelector, roomSessionCreationTimestampSelector } from '../../store/selectors';
+import { lobbyPeersLengthSelector, roomSessionCreationTimestampSelector } from '../../store/selectors';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { permissions } from '../../utils/roles';
 import LobbyButton from '../controlbuttons/LobbyButton';
@@ -11,7 +11,6 @@ import FullscreenButton from '../controlbuttons/FullscreenButton';
 import LoginButton from '../controlbuttons/LoginButton';
 import SettingsButton from '../controlbuttons/SettingsButton';
 import LeaveButton from '../textbuttons/LeaveButton';
-import AccessTime from '@mui/icons-material/AccessTime';
 import { formatDuration } from '../../utils/formatDuration';
 import LogoutButton from '../controlbuttons/LogoutButton';
 
@@ -20,6 +19,11 @@ interface TopBarProps {
 	fullscreen: boolean;
 	onFullscreen: () => void;
 }
+
+const StyledChip = styled(Chip)({
+	color: 'white',
+	backgroundColor: 'rgba(128, 128, 128, 0.5)',
+});
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
 	backgroundColor: theme.appBarColor,
@@ -50,22 +54,21 @@ const LogoImg = styled('img')(({ theme }) => ({
 interface TopBarDivProps {
 	gap?: number;
 	grow?: number;
-	margin?: number;
+	marginRight?: number;
+	marginLeft?: number;
 }
 
-const TopBarDiv = styled('div')<TopBarDivProps>(({ theme, gap = 0, grow = 0, margin = 0 }) => ({
+const TopBarDiv = styled('div')<TopBarDivProps>(({ theme, gap = 0, grow = 0, marginRight = 0, marginLeft = 0 }) => ({
 	display: 'flex',
-	marginRight: theme.spacing(margin),
+	marginRight: theme.spacing(marginRight),
+	marginLeft: theme.spacing(marginLeft),
 	gap: theme.spacing(gap),
 	flexGrow: grow,
 	alignItems: 'center',
+	justifyContent: 'center'
 }));
 
-const TopBar = ({
-	fullscreenEnabled,
-	fullscreen,
-	onFullscreen
-}: TopBarProps): React.JSX.Element => {
+const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): React.JSX.Element => {
 	const logo = useAppSelector((state) => state.room.logo);
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
@@ -73,7 +76,6 @@ const TopBar = ({
 	const lobbyPeersLength = useAppSelector(lobbyPeersLengthSelector);
 	const roomCreationTimestamp = useAppSelector(roomSessionCreationTimestampSelector);
 	const [ meetingDuration, setMeetingDuration ] = useState<number>(0);
-	const isMoile = useAppSelector(isMobileSelector);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	useEffect(() => {
@@ -98,26 +100,25 @@ const TopBar = ({
 	return (
 		<StyledAppBar position='fixed'>
 			<Toolbar variant='dense'>
-				{ logo ?
-					<LogoImg alt='Logo' src={ logo }/>
-					:
-					<Typography variant='h6' noWrap color='inherit'>
-						{ edumeetConfig.title }
-					</Typography>
-				}
-				<TopBarDiv gap={1}>
-					{ !isMoile && <AccessTime /> }
-					<Typography>{ formatDuration(meetingDuration) }</Typography>
+				<TopBarDiv marginLeft={1}>
+					{ logo ?
+						<LogoImg alt='Logo' src={ logo }/>
+						:
+						<Typography variant='h6' noWrap color='inherit'>
+							{ edumeetConfig.title }
+						</Typography>
+					}
 				</TopBarDiv>
 				<TopBarDiv grow={1} />
-				<TopBarDiv margin={2}>
+				<TopBarDiv marginRight={1}>
 					{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
 					<SettingsButton type='iconbutton' />
 					{ canLock && <LockButton type='iconbutton' /> }
 					{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
-					{ loginEnabled && (
-						loggedIn ? <LogoutButton type='iconbutton' /> : <LoginButton type='iconbutton' />
-					)}
+					{ loginEnabled && (loggedIn ? <LogoutButton type='iconbutton' /> : <LoginButton type='iconbutton' />) }
+				</TopBarDiv>
+				<TopBarDiv marginRight={2}>
+					<StyledChip size='small' label={ formatDuration(meetingDuration) } />
 				</TopBarDiv>
 				<LeaveButton />
 			</Toolbar>
