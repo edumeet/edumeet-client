@@ -30,7 +30,7 @@ const StyledIcons = styled(Box)(({ theme }) => ({
 
 const PeerDiv = styled(Paper)(({ theme }) => ({
 	display: 'flex',
-	padding: theme.spacing(0.5),
+	padding: theme.spacing(0.25),
 	marginTop: theme.spacing(0.5),
 	alignItems: 'center',
 	backgroundColor: theme.sideContentItemColor,
@@ -44,8 +44,8 @@ const PeerInfoDiv = styled(Box)(({ theme }) => ({
 
 const PeerAvatar = styled('img')({
 	borderRadius: '50%',
-	height: '2rem',
-	width: '2rem',
+	height: '1.5rem',
+	width: '1.5rem',
 	objectFit: 'cover',
 	alignSelf: 'center',
 });
@@ -81,7 +81,6 @@ const ListPeer = ({
 				}
 				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
 				<StyledIcons>
-					{ /* hasMedia && <StyledChip disabled label={<MediaIcons />} variant='outlined' size='small' /> */ }
 					{ hasScreen && /* <StyledChip disabled label={ */ <ScreenShareIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
 					{ hasVideo && /* <StyledChip disabled label={ */ <WebcamIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
 					{ hasAudio && /* <StyledChip disabled label={ */ <MicUnMutedIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }

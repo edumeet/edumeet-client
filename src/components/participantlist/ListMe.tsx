@@ -25,7 +25,7 @@ const StyledTextField = styled(TextField)(() => ({
 
 const MeDiv = styled(Paper)(({ theme }) => ({
 	display: 'flex',
-	padding: theme.spacing(0.5),
+	padding: theme.spacing(0.25),
 	marginTop: theme.spacing(0.5),
 	backgroundColor: theme.sideContentItemColor,
 }));
@@ -39,8 +39,8 @@ const MeInfoDiv = styled(Box)(({ theme }) => ({
 
 const MeAvatar = styled('img')({
 	borderRadius: '50%',
-	height: '2rem',
-	width: '2rem',
+	height: '1.5rem',
+	width: '1.5rem',
 	objectFit: 'cover',
 	alignSelf: 'center',
 });
