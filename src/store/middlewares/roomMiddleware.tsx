@@ -58,8 +58,6 @@ const createRoomMiddleware = ({
 									dispatch(meActions.setSessionId(sessionId));
 									dispatch(settingsActions.setMaxActiveVideos(maxActiveVideos));
 									dispatch(roomActions.updateRoom({
-										logo: settings.logo,
-										backgroundImage: settings.background,
 										breakoutsEnabled,
 										chatEnabled,
 										filesharingEnabled,
