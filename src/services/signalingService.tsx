@@ -86,12 +86,12 @@ export class SignalingService extends EventEmitter {
 	}
 
 	@skipIfClosed
-	public notify(notification: SocketMessage): void {
-		logger.debug('notify() [method: %s]', notification.method);
+	public notify(method: string, data: unknown = {}): void {
+		logger.debug('notify() [method: %s]', method);
 
 		for (const connection of this.connections.items) {
 			try {
-				return connection.notify(notification);
+				return connection.notify({ method, data } as SocketMessage);
 			} catch (error) {
 				logger.error('notify() [error: %o]', error);
 			}

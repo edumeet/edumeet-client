@@ -33,6 +33,12 @@ export interface MeState {
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
 	escapeMeetingInProgress: boolean;
+	micEnabled: boolean;
+	webcamEnabled: boolean;
+	screenEnabled: boolean;
+	screenAudioEnabled: boolean;
+	extraVideoEnabled: boolean;
+	extraAudioEnabled: boolean;
 }
 
 const initialState: MeState = {
@@ -60,6 +66,12 @@ const initialState: MeState = {
 	displayNameInProgress: false,
 	raisedHandInProgress: false,
 	escapeMeetingInProgress: false,
+	micEnabled: false,
+	webcamEnabled: false,
+	screenEnabled: false,
+	screenAudioEnabled: false,
+	extraVideoEnabled: false,
+	extraAudioEnabled: false,
 };
 
 const meSlice = createSlice({
@@ -138,6 +150,24 @@ const meSlice = createSlice({
 		}),
 		setDispayNameInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.displayNameInProgress = action.payload;
+		}),
+		setMicEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.micEnabled = action.payload;
+		}),
+		setWebcamEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.webcamEnabled = action.payload;
+		}),
+		setScreenEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.screenEnabled = action.payload;
+		}),
+		setScreenAudioEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.screenAudioEnabled = action.payload;
+		}),
+		setExtraVideoEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.extraVideoEnabled = action.payload;
+		}),
+		setExtraAudioEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.extraAudioEnabled = action.payload;
 		}),
 	},
 	extraReducers: (builder) => {

@@ -1,7 +1,7 @@
 import { Box, IconButton, Paper, styled } from '@mui/material';
 import { Peer } from '../../store/slices/peersSlice';
 import PanIcon from '@mui/icons-material/BackHand';
-import { useAppDispatch, usePeerConsumers } from '../../store/hooks';
+import { useAppDispatch, useAppSelector, usePeerConsumers } from '../../store/hooks';
 import { lowerPeerHand } from '../../store/actions/peerActions';
 import Volume from '../volume/Volume';
 import { useState } from 'react';
@@ -10,6 +10,7 @@ import ScreenShareIcon from '@mui/icons-material/ScreenShareOutlined';
 import MicUnMutedIcon from '@mui/icons-material/MicNoneOutlined';
 import WebcamIcon from '@mui/icons-material/VideocamOutlined';
 import MoreButton from '../controlbuttons/MoreButton';
+import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
 
 interface ListPeerProps {
 	peer: Peer;
@@ -28,12 +29,16 @@ const StyledIcons = styled(Box)(({ theme }) => ({
 	backgroundColor: theme.sideContentItemDarkColor,
 }));
 
-const PeerDiv = styled(Paper)(({ theme }) => ({
+interface PeerDivProps {
+	selected: number;
+}
+
+const PeerDiv = styled(Paper)<PeerDivProps>(({ selected, theme }) => ({
 	display: 'flex',
 	padding: theme.spacing(0.25),
 	marginTop: theme.spacing(0.5),
 	alignItems: 'center',
-	backgroundColor: theme.sideContentItemColor,
+	backgroundColor: selected ? theme.sideContentItemDarkColor : theme.sideContentItemColor,
 }));
 
 const PeerInfoDiv = styled(Box)(({ theme }) => ({
@@ -50,14 +55,13 @@ const PeerAvatar = styled('img')({
 	alignSelf: 'center',
 });
 
-const ListPeer = ({
-	peer,
-	isModerator
-}: ListPeerProps): JSX.Element => {
+const ListPeer = ({ peer, isModerator }: ListPeerProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const { micConsumer, webcamConsumer, screenConsumer } = usePeerConsumers(peer.id);
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
 	const handleMenuClose = () => setMoreAnchorEl(null);
+
+	const isSelected = useAppSelector((state) => state.roomSessions[peer.sessionId].selectedPeers.includes(peer.id));
 	
 	const shouldShow = Boolean(isModerator || micConsumer);
 	const hasAudio = micConsumer && !micConsumer.localPaused && !micConsumer.remotePaused;
@@ -66,7 +70,10 @@ const ListPeer = ({
 
 	return (
 		<>
-			<PeerDiv>
+			<PeerDiv selected={isSelected ? 1 : 0} onClick={() => {
+				if (isSelected) dispatch(roomSessionsActions.deselectPeer({ sessionId: peer.sessionId, peerId: peer.id }));
+				else dispatch(roomSessionsActions.selectPeer({ sessionId: peer.sessionId, peerId: peer.id }));
+			}}>
 				<PeerAvatar src={peer.picture ?? '/images/buddy.svg'} />
 				{ peer.raisedHand &&
 					<IconButton

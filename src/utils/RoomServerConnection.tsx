@@ -26,7 +26,7 @@ interface ServerClientEvents {
 const logger = new Logger('RoomServerConnection');
 
 export class RoomServerConnection extends EventEmitter {
-	public id: string|undefined;
+	public id?: string;
 
 	public static create({ url }: { url: string}): RoomServerConnection {
 		logger.debug('create() [url:%s]', url);
@@ -114,12 +114,15 @@ export class RoomServerConnection extends EventEmitter {
 		this.socket.on('connect', () => {
 			logger.debug('handleSocket() connected');
 
-			this.emit('connect');
+			if (this.socket.recovered) {
+				this.emit('reconnected');
+			} else {
+				this.emit('connect');
+			}
 		});
 
 		this.socket.once('disconnect', () => {
 			logger.debug('socket disconnected');
-			this.close();
 		});
 
 		this.socket.on('notification', (notification) => {

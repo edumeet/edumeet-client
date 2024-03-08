@@ -35,37 +35,36 @@ const createSignalingMiddleware = ({
 	}: {
 		dispatch: AppDispatch,
 		getState: () => RootState
-	}) =>
-		(next) => (action) => {
-			if (signalingActions.connect.match(action)) {
-				signalingService.on('connected', () => {
-					dispatch(signalingActions.connected());
-				});
+	}) => (next) => (action) => {
+		if (signalingActions.connect.match(action)) {
+			signalingService.on('connected', () => {
+				dispatch(signalingActions.connected());
+			});
 
-				signalingService.on('error', (error) => {
-					dispatch(notificationsActions.enqueueNotification({
-						message: roomServerConnectionError(error.message),
-						options: { variant: 'error' }
-					}));
-				});
+			signalingService.on('error', (error) => {
+				dispatch(notificationsActions.enqueueNotification({
+					message: roomServerConnectionError(error.message),
+					options: { variant: 'error' }
+				}));
+			});
 
-				signalingService.once('close', () => {
-					dispatch(leaveRoom());
-				});
+			signalingService.once('close', () => {
+				dispatch(leaveRoom());
+			});
 				
-				const { url } = getState().signaling;
-				const socketConnection = RoomServerConnection.create({ url });
+			const { url } = getState().signaling;
+			const socketConnection = RoomServerConnection.create({ url });
 
-				signalingService.addConnection(socketConnection);
-			}
+			signalingService.addConnection(socketConnection);
+		}
 
-			if (signalingActions.disconnect.match(action)) {
-				signalingService.removeAllListeners();
-				signalingService.disconnect();
-			}
+		if (signalingActions.disconnect.match(action)) {
+			signalingService.removeAllListeners();
+			signalingService.disconnect();
+		}
 
-			return next(action);
-		};
+		return next(action);
+	};
 
 	return middleware;
 };

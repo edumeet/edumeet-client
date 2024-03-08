@@ -16,7 +16,7 @@ const createPermissionsMiddleware = ({
 	}: {
 		dispatch: AppDispatch,
 	}) =>
-		(next) => async (action) => {
+		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
 				signalingService.on('notification', (notification) => {
 					try {

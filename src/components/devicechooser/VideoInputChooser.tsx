@@ -6,7 +6,6 @@ import {
 	useAppSelector,
 	useDeviceSelector
 } from '../../store/hooks';
-import { meProducersSelector } from '../../store/selectors';
 import {
 	applyLabel,
 	noVideoDevicesLabel,
@@ -15,6 +14,7 @@ import {
 } from '../translated/translatedComponents';
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
+import { meActions } from '../../store/slices/meSlice';
 
 interface VideoInputChooserProps {
 	withConfirm?: boolean;
@@ -24,7 +24,7 @@ const VideoInputChooser = ({
 	withConfirm
 }: VideoInputChooserProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const { webcamProducer } = useAppSelector(meProducersSelector);
+	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
 	const videoDevices = useDeviceSelector('videoinput');
 	const videoInProgress = useAppSelector((state) => state.me.videoInProgress);
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
@@ -36,15 +36,19 @@ const VideoInputChooser = ({
 
 			if (!withConfirm) dispatch(settingsActions.setSelectedVideoDevice(deviceId));
 
-			dispatch(updatePreviewWebcam({ restart: true, newDeviceId: deviceId }));
+			dispatch(updatePreviewWebcam({ start: true, newDeviceId: deviceId }));
 		}
 	};
 
-	const handleConfirm = (): void => {
-		if (webcamProducer) dispatch(updateWebcam({ restart: true, newDeviceId: selectedVideoDevice }));
-		else dispatch(settingsActions.setSelectedVideoDevice(selectedVideoDevice));
+	const handleConfirm = async () => {
+		if (webcamEnabled) {
+			dispatch(meActions.setWebcamEnabled(false));
+			await dispatch(updateWebcam({ replace: true, newDeviceId: selectedVideoDevice }));
+		} else {
+			dispatch(settingsActions.setSelectedVideoDevice(selectedVideoDevice));
+		}
 
-		dispatch(updatePreviewWebcam({ restart: true, newDeviceId: selectedVideoDevice }));
+		await dispatch(updatePreviewWebcam({ start: true, newDeviceId: selectedVideoDevice }));
 	};
 
 	useEffect(() => {

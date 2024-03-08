@@ -186,6 +186,8 @@ export interface SocketMessage {
 	data?: any; // TODO: define inbound notification data
 }
 
+export type ProducerSource = 'mic' | 'webcam' | 'screen' | 'screenaudio' | 'extravideo' | 'extraaudio';
+
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';
 
 export type ButtonSize = 'small' | 'medium' | 'large';

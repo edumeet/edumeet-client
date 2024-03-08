@@ -3601,6 +3601,19 @@ optionator@^0.9.3:
     prelude-ls "^1.2.1"
     type-check "^0.4.0"
 
+ortc-p2p@havfo/ortc-p2p#0.1.1:
+  version "0.1.0"
+  resolved "https://codeload.github.com/havfo/ortc-p2p/tar.gz/f4282b9dce457707622df7fdc0df6cd1d9a687de"
+  dependencies:
+    awaitqueue "^3.0.2"
+    debug "^4.3.4"
+    events "^3.3.0"
+    h264-profile-level-id "^2.0.0"
+    sdp-transform "^2.14.2"
+    typescript "^5.2.2"
+    ua-parser-js "^1.0.37"
+    uuid "^9.0.1"
+
 p-limit@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-3.1.0.tgz#e1daccbe78d0d1388ca18c64fea38e3e57e3706b"

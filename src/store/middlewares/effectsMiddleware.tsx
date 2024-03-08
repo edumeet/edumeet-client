@@ -15,7 +15,7 @@ const createEffectsMiddleware = ({
 	logger.debug('createEffectsMiddleware()');
 
 	const middleware: Middleware = () =>
-		(next) => async (action) => {
+		(next) => (action) => {
 			if (meActions.setWebGLSupport.match(action)) {
 				effectsService.webGLSupport = true;
 			}

@@ -1,15 +1,9 @@
 import { AppThunk } from '../store';
 import { meActions } from '../slices/meSlice';
 import { DevicesUpdated } from '../../services/deviceService';
-import {
-	activeSpeakerIdSelector,
-	makePermissionSelector,
-	micProducerSelector,
-	webcamProducerSelector
-} from '../selectors';
+import { activeSpeakerIdSelector, makePermissionSelector } from '../selectors';
 import { permissions } from '../../utils/roles';
-import { updateMic, updateWebcam } from './mediaActions';
-import { producersActions } from '../slices/producersSlice';
+import { stopMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { permissionsActions } from '../slices/permissionsSlice';
@@ -117,26 +111,10 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 				if (!hasAudioPermission || !canSendMic) return;
 
-				const micProducer = micProducerSelector(getState());
-
-				if (!micProducer) {
-					dispatch(updateMic({
-						start: true
-					}));
-				} else if (!micProducer.paused) {
-					dispatch(
-						producersActions.setProducerPaused({
-							producerId: micProducer.id,
-							local: true,
-						})
-					);
+				if (getState().me.micEnabled) {
+					dispatch(stopMic());
 				} else {
-					dispatch(
-						producersActions.setProducerResumed({
-							producerId: micProducer.id,
-							local: true,
-						})
-					);
+					dispatch(updateMic());
 				}
 
 				break;
@@ -152,19 +130,10 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 				if (!hasVideoPermission || !canSendWebcam) return;
 
-				const webcamProducer = webcamProducerSelector(getState());
-
-				if (!webcamProducer) {
-					dispatch(updateWebcam({
-						start: true
-					}));
+				if (getState().me.webcamEnabled) {
+					dispatch(stopWebcam());
 				} else {
-					dispatch(
-						producersActions.closeProducer({
-							producerId: webcamProducer.id,
-							local: true,
-						})
-					);
+					dispatch(updateWebcam());
 				}
 
 				break;
@@ -246,33 +215,26 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				break;
 			}
 
-			case ' ': {
-				const audioInProgress = getState().me.audioInProgress;
-
-				if (audioInProgress) return;
-
-				const hasAudioPermission = audioPermissionSelector(getState());
-				const canSendMic = getState().me.canSendMic;
-
-				if (!canSendMic || !hasAudioPermission) return;
-
-				const micProducer = micProducerSelector(getState());
-
-				if (!micProducer) {
-					dispatch(updateMic({
-						start: true
-					}));
-				} else if (micProducer.paused) {
-					dispatch(
-						producersActions.setProducerResumed({
-							producerId: micProducer.id,
-							local: true,
-						})
-					);
-				}
-
-				break;
-			}
+			// case ' ': {
+			// 	const audioInProgress = getState().me.audioInProgress;
+			//
+			// 	if (audioInProgress) return;
+			//
+			// 	const hasAudioPermission = audioPermissionSelector(getState());
+			// 	const canSendMic = getState().me.canSendMic;
+			//
+			// 	if (!canSendMic || !hasAudioPermission) return;
+			//
+			// 	const micProducer = getState().producers.mic;
+			//
+			// 	if (!micProducer) {
+			// 		dispatch(updateMic({ start: true }));
+			// 	} else if (micProducer.paused) {
+			// 		dispatch(producersActions.setProducerResumed({ source: 'mic', local: true }));
+			// 	}
+			//
+			// 	break;
+			// }
 
 			default: {
 				break;
@@ -296,30 +258,25 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 		logger.debug('[keyup:%s]', key);
 
 		switch (key) {
-			case ' ': {
-				const audioInProgress = getState().me.audioInProgress;
-
-				if (audioInProgress) return;
-
-				const hasAudioPermission = audioPermissionSelector(getState());
-				const canSendMic = getState().me.canSendMic;
-
-				if (!canSendMic || !hasAudioPermission) return;
-
-				const micProducer = micProducerSelector(getState());
-
-				if (!micProducer) return;
-
-				if (!micProducer.paused) {
-					dispatch(
-						producersActions.setProducerPaused({
-							producerId: micProducer.id,
-							local: true,
-						})
-					);
-				}
-				break;
-			}
+			// case ' ': {
+			// 	const audioInProgress = getState().me.audioInProgress;
+			//
+			// 	if (audioInProgress) return;
+			//
+			// 	const hasAudioPermission = audioPermissionSelector(getState());
+			// 	const canSendMic = getState().me.canSendMic;
+			//
+			// 	if (!canSendMic || !hasAudioPermission) return;
+			//
+			// 	const micProducer = getState().producers.mic;
+			//
+			// 	if (!micProducer) return;
+			//
+			// 	if (!micProducer.paused) {
+			// 		dispatch(producersActions.setProducerPaused({ source: 'mic', local: true }));
+			// 	}
+			// 	break;
+			// }
 
 			default: {
 				break;

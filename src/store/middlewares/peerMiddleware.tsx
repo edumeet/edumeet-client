@@ -4,23 +4,22 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { peersActions } from '../slices/peersSlice';
 import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { setRaisedHand } from '../actions/meActions';
-import { micProducerSelector, screenProducerSelector, webcamProducerSelector } from '../selectors';
-import { producersActions } from '../slices/producersSlice';
 import { Logger } from 'edumeet-common';
+import { startExtraVideo, stopMic, stopScreenSharing, stopWebcam, updateMic, updateScreenSharing, updateWebcam } from '../actions/mediaActions';
 
 const logger = new Logger('PeerMiddleware');
 
 const createPeerMiddleware = ({
 	signalingService,
-	mediaService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createPeerMiddleware()');
 
 	const middleware: Middleware = ({
-		dispatch, getState
+		getState,
+		dispatch
 	}: {
+		getState: () => RootState;
 		dispatch: AppDispatch,
-		getState: () => RootState
 	}) =>
 		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
@@ -47,6 +46,11 @@ const createPeerMiddleware = ({
 									transcripts: [],
 								}));
 
+								if (getState().me.micEnabled) dispatch(updateMic({ enable: false }));
+								if (getState().me.webcamEnabled) dispatch(updateWebcam({ enable: false }));
+								if (getState().me.screenEnabled) dispatch(updateScreenSharing({ enable: false }));
+								if (getState().me.extraVideoEnabled) dispatch(startExtraVideo({ enable: false }));
+
 								break;
 							}
 
@@ -54,6 +58,11 @@ const createPeerMiddleware = ({
 								const { peerId } = notification.data;
 
 								dispatch(peersActions.removePeer({ id: peerId }));
+
+								if (getState().me.micEnabled) dispatch(updateMic({ enable: false }));
+								if (getState().me.webcamEnabled) dispatch(updateWebcam({ enable: false }));
+								if (getState().me.screenEnabled) dispatch(updateScreenSharing({ enable: false }));
+								if (getState().me.extraVideoEnabled) dispatch(startExtraVideo({ enable: false }));
 
 								break;
 							}
@@ -134,7 +143,7 @@ const createPeerMiddleware = ({
 										displayName,
 										picture,
 									}));
-		
+								
 								break;
 							}
 
@@ -145,47 +154,20 @@ const createPeerMiddleware = ({
 							}
 
 							case 'moderator:mute': {
-								const micProducer = micProducerSelector(getState());
-
-								if (micProducer && !micProducer.paused) {
-									dispatch(
-										producersActions.setProducerPaused({
-											producerId: micProducer.id,
-											local: true,
-										})
-									);
-								}
-
+								dispatch(stopMic());
+								
 								break;
 							}
 
 							case 'moderator:stopVideo': {
-								const webcamProducer = webcamProducerSelector(getState());
-
-								if (webcamProducer) {
-									dispatch(
-										producersActions.closeProducer({
-											producerId: webcamProducer.id,
-											local: true,
-										})
-									);
-								}
-
+								dispatch(stopWebcam());
+								
 								break;
 							}
 
 							case 'moderator:stopScreenSharing': {
-								const screenProducer = screenProducerSelector(getState());
-
-								if (screenProducer) {
-									dispatch(
-										producersActions.closeProducer({
-											producerId: screenProducer.id,
-											local: true,
-										})
-									);
-								}
-
+								dispatch(stopScreenSharing());
+								
 								break;
 							}
 						}
@@ -193,29 +175,6 @@ const createPeerMiddleware = ({
 						logger.error('error on signalService "notification" event [error:%o]', error);
 					}
 				});
-			}
-
-			if (peersActions.addPeers.match(action)) {
-				const clientId = getState().me.id;
-
-				for (const peer of action.payload) {
-					const { id } = peer;
-
-					mediaService.addPeer(id, clientId);
-				}
-			}
-
-			if (peersActions.addPeer.match(action)) {
-				const { id } = action.payload;
-				const clientId = getState().me.id;
-
-				mediaService.addPeer(id, clientId);
-			}
-
-			if (peersActions.removePeer.match(action)) {
-				const { id } = action.payload;
-
-				mediaService.removePeer(id);
 			}
 
 			return next(action);

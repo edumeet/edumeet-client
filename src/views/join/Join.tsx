@@ -13,7 +13,7 @@ import { settingsActions } from '../../store/slices/settingsSlice';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
-import { BlurSwitch } from '../../components/settingsdialog/SettingsSwitches';
+import { JoinBlurSwitch } from '../../components/settingsdialog/SettingsSwitches';
 import { meActions } from '../../store/slices/meSlice';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 import { canSelectAudioOutput } from '../../store/selectors';
@@ -70,7 +70,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 					{showAudioOutputChooser && <AudioOutputChooser /> }
 					<VideoInputChooser />
 					<TestAudioOutputButton />
-					<BlurSwitch />
+					<JoinBlurSwitch />
 					<ChooserDiv>
 						<TextInputField
 							label={yourNameLabel()}

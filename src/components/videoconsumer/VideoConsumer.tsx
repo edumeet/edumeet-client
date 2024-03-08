@@ -18,10 +18,7 @@ interface VideoConsumerProps {
 	style: Record<'width' | 'height', number>
 }
 
-const VideoConsumer = ({
-	consumer,
-	style
-}: VideoConsumerProps): JSX.Element => {
+const VideoConsumer = ({ consumer, style }: VideoConsumerProps): JSX.Element => {
 	const { peerId, source } = consumer;
 	const { micConsumer } = usePeerConsumers(peerId);
 	const peer = usePeer(peerId);

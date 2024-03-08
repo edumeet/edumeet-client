@@ -25,7 +25,6 @@ import createRoomMiddleware from './middlewares/roomMiddleware';
 import createFilesharingMiddleware from './middlewares/filesharingMiddleware';
 import createPeerMiddleware from './middlewares/peerMiddleware';
 import createPermissionsMiddleware from './middlewares/permissionsMiddleware';
-import createRecordingMiddleware from './middlewares/recordingMiddleware';
 import createChatMiddleware from './middlewares/chatMiddleware';
 import createNotificationMiddleware from './middlewares/notificationMiddleware';
 import roomSlice from './slices/roomSlice';
@@ -36,7 +35,6 @@ import permissionsSlice from './slices/permissionsSlice';
 import lobbyPeersSlice from './slices/lobbyPeersSlice';
 import settingsSlice from './slices/settingsSlice';
 import peersSlice from './slices/peersSlice';
-import producersSlice from './slices/producersSlice';
 import notificationsSlice from './slices/notificationsSlice';
 import uiSlice from './slices/uiSlice';
 import { EdumeetConfig } from '../utils/types';
@@ -51,6 +49,17 @@ import rest from '@feathersjs/rest-client';
 import authentication from '@feathersjs/authentication-client';
 import { EffectsService } from '../services/effectsService';
 import createEffectsMiddleware from './middlewares/effectsMiddleware';
+
+declare global {
+	interface Window {
+		mediaService: MediaService;
+		signalingService: SignalingService;
+		deviceService: DeviceService;
+		fileService: FileService;
+		managementService: Application;
+		effectsService: EffectsService;
+	}
+}
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
@@ -107,7 +116,6 @@ const reducer = combineReducers({
 	me: meSlice.reducer,
 	peers: peersSlice.reducer,
 	permissions: permissionsSlice.reducer,
-	producers: producersSlice.reducer,
 	room: roomSlice.reducer,
 	roomSessions: roomSessionsSlice.reducer,
 	settings: settingsSlice.reducer,
@@ -137,7 +145,6 @@ export const store = configureStore({
 			createPermissionsMiddleware(middlewareOptions),
 			createRoomMiddleware(middlewareOptions),
 			createNotificationMiddleware(middlewareOptions),
-			createRecordingMiddleware(middlewareOptions),
 			createEffectsMiddleware(middlewareOptions),
 			...(edumeetConfig.reduxLoggingEnabled ? [ createLogger({
 				duration: true,
@@ -156,3 +163,10 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 	MiddlewareOptions,
 	Action<string>
 >;
+
+window.mediaService = mediaService;
+window.signalingService = signalingService;
+window.deviceService = deviceService;
+window.fileService = fileService;
+window.managementService = managementService;
+window.effectsService = effectsService;

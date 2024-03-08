@@ -112,6 +112,7 @@ const Democratic = (): JSX.Element => {
 		participantListOpen,
 		verticalDivide,
 		currentSession,
+		speakerVideoConsumers
 	]);
 
 	const style = {

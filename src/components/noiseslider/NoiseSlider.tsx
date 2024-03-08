@@ -2,12 +2,12 @@ import { Slider, styled, Typography } from '@mui/material';
 import { Harker } from 'hark';
 import { SyntheticEvent, useContext, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { meProducersSelector } from '../../store/selectors';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { noiseSuppressionLabel } from '../translated/translatedComponents';
 import type { Producer } from 'mediasoup-client/lib/types';
+import type { Producer as PeerProducer } from 'ortc-p2p/src/types';
 
 const StyledSlider = styled(Slider)(() => ({
 	'.MuiSlider-root': {
@@ -36,18 +36,18 @@ const StyledSlider = styled(Slider)(() => ({
 
 const NoiseSlider = (): JSX.Element => {
 	const dispatch = useAppDispatch();
+	const micEnabled = useAppSelector((state) => state.me.micEnabled);
 	const noiseThreshold = useAppSelector((state) => state.settings.noiseThreshold);
 	const { mediaService } = useContext(ServiceContext);
-	const { micProducer } = useAppSelector(meProducersSelector);
 	const [ volumeLevel, setVolume ] = useState<number>(0);
 	const [ sliderValue, setSliderValue ] = useState<number>(noiseThreshold);
 
 	useEffect(() => {
-		let producer: Producer | undefined;
+		let producer: Producer | PeerProducer | undefined;
 		let volumeWatcher: VolumeWatcher | undefined;
 
-		if (micProducer)
-			producer = mediaService.getProducer(micProducer.id);
+		if (micEnabled)
+			producer = mediaService.producers['mic'];
 
 		if (producer)
 			volumeWatcher = producer.appData.volumeWatcher as VolumeWatcher | undefined;
@@ -72,11 +72,11 @@ const NoiseSlider = (): JSX.Element => {
 		value: number | number[]
 	): void => {
 		if (sliderValue !== noiseThreshold) {
-			let producer: Producer | undefined;
+			let producer: Producer | PeerProducer | undefined;
 			let hark: Harker | undefined;
 	
-			if (micProducer)
-				producer = mediaService.getProducer(micProducer.id);
+			if (micEnabled)
+				producer = mediaService.producers['mic'];
 	
 			if (producer)
 				hark = (producer.appData.volumeWatcher as VolumeWatcher | undefined)?.hark;

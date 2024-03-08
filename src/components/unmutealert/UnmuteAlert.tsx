@@ -1,14 +1,10 @@
 import { Alert, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useContext, useEffect, useState } from 'react';
-import { StateProducer } from '../../store/slices/producersSlice';
 import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { mutedPTTLabel } from '../translated/translatedComponents';
-
-interface UnmuteAlertProps {
-	micProducer: StateProducer;
-}
+import { useAppSelector } from '../../store/hooks';
 
 const StyledAlert = styled(Alert)(() => ({
 	position: 'absolute',
@@ -29,14 +25,13 @@ const StyledAlert = styled(Alert)(() => ({
 	}
 }));
 
-const UnmuteAlert = ({
-	micProducer
-}: UnmuteAlertProps): JSX.Element => {
+const UnmuteAlert = (): JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ speaking, setSpeaking ] = useState(false);
+	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 
 	useEffect(() => {
-		const producer = mediaService.getProducer(micProducer.id);
+		const producer = mediaService.producers['mic'];
 		let volumeWatcher: VolumeWatcher | undefined;
 
 		if (producer)
@@ -57,7 +52,7 @@ const UnmuteAlert = ({
 		<StyledAlert
 			variant='filled'
 			severity='warning'
-			className={ micProducer?.paused && speaking ? 'enabled' : '' }
+			className={ audioMuted && speaking ? 'enabled' : '' }
 		>
 			<Typography>{ mutedPTTLabel() }</Typography>
 		</StyledAlert>

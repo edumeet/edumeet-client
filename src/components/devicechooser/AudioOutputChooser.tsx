@@ -15,8 +15,7 @@ const AudioOutputChooser = (): JSX.Element => {
 	const audioOutputDevice = useAppSelector(
 		(state) => state.settings.selectedAudioOutputDevice
 	);
-	const [ selectedDevice, setSelectedDevice ] =
-    useState(audioOutputDevice);
+	const [ selectedDevice, setSelectedDevice ] = useState(audioOutputDevice);
 
 	const handleDeviceChange = (deviceId: string): void => {
 		if (deviceId) {

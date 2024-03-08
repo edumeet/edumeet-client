@@ -6,7 +6,6 @@ import {
 	useAppSelector,
 	useDeviceSelector
 } from '../../store/hooks';
-import { meProducersSelector } from '../../store/selectors';
 import {
 	applyLabel,
 	audioInputDeviceLabel,
@@ -15,6 +14,7 @@ import {
 } from '../translated/translatedComponents';
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
+import { meActions } from '../../store/slices/meSlice';
 
 interface AudioInputChooserProps {
 	withConfirm?: boolean;
@@ -24,7 +24,7 @@ const AudioInputChooser = ({
 	withConfirm
 }: AudioInputChooserProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const { micProducer } = useAppSelector(meProducersSelector);
+	const micEnabled = useAppSelector((state) => state.me.micEnabled);
 	const audioDevices = useDeviceSelector('audioinput');
 	const audioInProgress = useAppSelector((state) => state.me.audioInProgress);
 	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);
@@ -36,15 +36,19 @@ const AudioInputChooser = ({
 
 			if (!withConfirm) dispatch(settingsActions.setSelectedAudioDevice(deviceId));
 
-			dispatch(updatePreviewMic({ restart: true, newDeviceId: deviceId }));
+			dispatch(updatePreviewMic({ start: true, newDeviceId: deviceId }));
 		}
 	};
 
 	const handleConfirm = (): void => {
-		if (micProducer) dispatch(updateMic({ restart: true, newDeviceId: selectedAudioDevice }));
-		else dispatch(settingsActions.setSelectedAudioDevice(selectedAudioDevice));
+		if (micEnabled) {
+			dispatch(meActions.setMicEnabled(false));
+			dispatch(updateMic({ replace: true, newDeviceId: selectedAudioDevice }));
+		} else {
+			dispatch(settingsActions.setSelectedAudioDevice(selectedAudioDevice));
+		}
 
-		dispatch(updatePreviewMic({ restart: true, newDeviceId: selectedAudioDevice }));
+		dispatch(updatePreviewMic({ start: true, newDeviceId: selectedAudioDevice }));
 	};
 
 	useEffect(() => {

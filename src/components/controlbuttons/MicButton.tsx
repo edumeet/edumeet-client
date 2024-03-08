@@ -3,45 +3,40 @@ import {
 	useAppSelector,
 	usePermissionSelector,
 } from '../../store/hooks';
-import { micProducerSelector } from '../../store/selectors';
-import { producersActions } from '../../store/slices/producersSlice';
 import { MediaState } from '../../utils/types';
 import {
-	audioUnsupportedLabel,
 	activateAudioLabel,
+	audioUnsupportedLabel,
 	muteAudioLabel,
 	unmuteAudioLabel
 } from '../translated/translatedComponents';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { updateMic } from '../../store/actions/mediaActions';
+import { pauseMic, resumeMic, updateMic } from '../../store/actions/mediaActions';
 import { permissions } from '../../utils/roles';
 
 const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const micProducer = useAppSelector(micProducerSelector);
+	const micEnabled = useAppSelector((state) => state.me.micEnabled);
+	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 	const hasAudioPermission = usePermissionSelector(permissions.SHARE_AUDIO);
-
-	const {
-		canSendMic,
-		audioInProgress,
-	} = useAppSelector((state) => state.me);
+	const { canSendMic, audioInProgress } = useAppSelector((state) => state.me);
 
 	let micState: MediaState, micTip;
 
 	if (!canSendMic || !hasAudioPermission) {
 		micState = 'unsupported';
 		micTip = audioUnsupportedLabel();
-	} else if (!micProducer) {
-		micState = 'off';
-		micTip = activateAudioLabel();
-	} else if (!micProducer.paused) {
+	} else if (micEnabled && !audioMuted) {
 		micState = 'on';
 		micTip = muteAudioLabel();
-	} else {
+	} else if (micEnabled && audioMuted) {
 		micState = 'muted';
 		micTip = unmuteAudioLabel();
+	} else {
+		micState = 'off';
+		micTip = activateAudioLabel();
 	}
 
 	return (
@@ -51,27 +46,11 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				if (micState === 'unsupported') return;
 
 				if (micState === 'off') {
-					dispatch(updateMic({
-						start: true
-					}));
-				} else if (micProducer) {
-					if (micState === 'on') {
-						dispatch(
-							producersActions.setProducerPaused({
-								producerId: micProducer.id,
-								local: true,
-							})
-						);
-					} else if (micState === 'muted') {
-						dispatch(
-							producersActions.setProducerResumed({
-								producerId: micProducer.id,
-								local: true,
-							})
-						);
-					}
+					dispatch(updateMic());
+				} else if (micState === 'muted') {
+					dispatch(resumeMic());
 				} else {
-					// Shouldn't happen
+					dispatch(pauseMic());
 				}
 			}}
 			disabled={micState === 'unsupported' || audioInProgress}

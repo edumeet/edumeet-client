@@ -227,6 +227,7 @@
 	"settings.showAdvancedAudio": "Advanced audio settings",
 	"settings.showAdvancedVideo": "Advanced video settings",
 	"settings.showNotifications": "Show notifications",
+	"settings.testAudioOutput": "Test audio output",
 	"settings.verticallyStackedSidePanels": "Vertically stacked side panels",
 	"settings.webcamFrameRate": "Select your webcam frame rate",
 	"settings.enableBlurBackground": "Enable blur background effect",

@@ -33,8 +33,8 @@ const MediaPreview = ({
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
 
 	useEffect(() => {
-		if (startAudio) dispatch(updatePreviewMic({ restart: true, newDeviceId: audioDevice, updateSelection }));
-		if (startVideo) dispatch(updatePreviewWebcam({ restart: true, newDeviceId: videoDevice, updateSelection }));
+		if (startAudio) dispatch(updatePreviewMic({ start: true, newDeviceId: audioDevice, updateSelection }));
+		if (startVideo) dispatch(updatePreviewWebcam({ start: true, newDeviceId: videoDevice, updateSelection }));
 
 		return (): void => {
 			if (stopAudio) dispatch(stopPreviewMic());
@@ -68,10 +68,7 @@ const MediaPreview = ({
 						/>
 					</MediaControls>
 				)}
-				{ previewWebcamTrackId && <VideoView
-					mirrored
-					trackId={previewWebcamTrackId}
-				/> }
+				{ previewWebcamTrackId && <VideoView mirrored previewTrack /> }
 			</VideoBox>
 		</>
 	);

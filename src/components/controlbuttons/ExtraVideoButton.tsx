@@ -6,27 +6,30 @@ import {
 import { MediaState } from '../../utils/types';
 import {
 	startVideoLabel,
+	stopVideoLabel,
 	videoUnsupportedLabel,
 } from '../translated/translatedComponents';
 import AddVideoIcon from '@mui/icons-material/VideoCall';
+import StopVideoIcon from '@mui/icons-material/Cancel';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { uiActions } from '../../store/slices/uiSlice';
 import { permissions } from '../../utils/roles';
+import { stopExtraVideo } from '../../store/actions/mediaActions';
 
 const ExtraVideoButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
-
-	const {
-		canSendWebcam,
-		videoInProgress,
-	} = useAppSelector((state) => state.me);
+	const extraVideoEnabled = useAppSelector((state) => state.me.extraVideoEnabled);
+	const { canSendWebcam, videoInProgress } = useAppSelector((state) => state.me);
 
 	let videoState: MediaState, videoTip;
 
 	if (!canSendWebcam || !hasExtraVideoPermission) {
 		videoState = 'unsupported';
 		videoTip = videoUnsupportedLabel();
+	} else if (extraVideoEnabled) {
+		videoState = 'on';
+		videoTip = stopVideoLabel();
 	} else {
 		videoState = 'off';
 		videoTip = startVideoLabel();
@@ -41,13 +44,14 @@ const ExtraVideoButton = (props: ControlButtonProps): JSX.Element => {
 				if (videoState === 'off') {
 					dispatch(uiActions.setUi({ extraVideoDialogOpen: true }));
 				} else {
-					// Shouldn't happen
+					dispatch(stopExtraVideo());
 				}
 			}}
 			disabled={videoState === 'unsupported' || videoInProgress}
+			on={videoState === 'on'}
 			{ ...props }
 		>
-			<AddVideoIcon />
+			{ videoState === 'on' ? <StopVideoIcon /> : <AddVideoIcon />}
 		</ControlButton>
 	);
 };

@@ -3,8 +3,6 @@ import {
 	useAppSelector,
 	usePermissionSelector
 } from '../../store/hooks';
-import { screenProducerSelector } from '../../store/selectors';
-import { producersActions } from '../../store/slices/producersSlice';
 import { permissions } from '../../utils/roles';
 import { MediaState } from '../../utils/types';
 import {
@@ -15,24 +13,20 @@ import {
 import ScreenIcon from '@mui/icons-material/ScreenShare';
 import StopScreenIcon from '@mui/icons-material/StopScreenShare';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { updateScreenSharing } from '../../store/actions/mediaActions';
+import { stopScreenSharing, updateScreenSharing } from '../../store/actions/mediaActions';
 
 const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasScreenPermission = usePermissionSelector(permissions.SHARE_SCREEN);
-	const screenProducer = useAppSelector(screenProducerSelector);
-
-	const {
-		canShareScreen,
-		screenSharingInProgress
-	} = useAppSelector((state) => state.me);
+	const screenEnabled = useAppSelector((state) => state.me.screenEnabled);
+	const { canShareScreen, screenSharingInProgress } = useAppSelector((state) => state.me);
 
 	let screenState: MediaState, screenTip;
 
 	if (!canShareScreen || !hasScreenPermission) {
 		screenState = 'unsupported';
 		screenTip = screenSharingUnsupportedLabel();
-	} else if (screenProducer) {
+	} else if (screenEnabled) {
 		screenState = 'on';
 		screenTip = stopScreenSharingLabel();
 	} else {
@@ -47,18 +41,9 @@ const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
 				if (screenState === 'unsupported') return;
 
 				if (screenState === 'off') {
-					dispatch(updateScreenSharing({
-						start: true
-					}));
-				} else if (screenProducer) {
-					dispatch(
-						producersActions.closeProducer({
-							producerId: screenProducer.id,
-							local: true
-						})
-					);
+					dispatch(updateScreenSharing());
 				} else {
-					// Shouldn't happen
+					dispatch(stopScreenSharing());
 				}
 			}}
 			disabled={screenState === 'unsupported' || screenSharingInProgress}

@@ -9,11 +9,11 @@ import { HTMLMediaElementWithSink } from '../../utils/types';
 import { settingsActions } from '../slices/settingsSlice';
 
 interface SoundAlert {
-  [type: string]: {
-    audio: HTMLMediaElementWithSink;
-    debounce: number;
-    last?: number;
-  };
+	[type: string]: {
+		audio: HTMLMediaElementWithSink;
+		debounce: number;
+		last?: number;
+	};
 }
 
 const logger = new Logger('NotificationMiddleware');
@@ -30,7 +30,7 @@ const createNotificationMiddleware = ({
 		},
 	};
 
-	const playNotificationSounds = async (type: string, ignoreDebounce = false) => {
+	const playNotificationSounds = (type: string, ignoreDebounce = false) => {
 		const soundAlert = soundAlerts[type] ?? soundAlerts['default'];
 
 		const now = Date.now();
@@ -40,9 +40,7 @@ const createNotificationMiddleware = ({
 
 		soundAlert.last = now;
 
-		await soundAlert.audio.play().catch((error) => {
-			logger.error('soundAlert.play() [error:"%o"]', error);
-		});
+		soundAlert.audio.play().catch((error) => logger.error('soundAlert.play() [error:"%o"]', error));
 	};
 
 	// Load notification alerts sounds and make them available
@@ -65,54 +63,50 @@ const createNotificationMiddleware = ({
 		getState
 	}: {
 		getState: () => RootState
-	}) =>
-		(next) => async (action) => {
-			// Reproduce notification alerts
-			if (getState().settings.notificationSounds) {
-				// Raised hand
-				if (peersActions.updatePeer.match(action)) {
-					const { raisedHand } = action.payload;
+	}) => (next) => (action) => {
+		// Reproduce notification alerts
+		if (getState().settings.notificationSounds) {
+			// Raised hand
+			if (peersActions.updatePeer.match(action)) {
+				const { raisedHand } = action.payload;
 
-					if (raisedHand) await playNotificationSounds('raisedHand');
-				}
-
-				// Chat message
-				if (
-					roomSessionsActions.addMessage.match(action) &&
-					action.payload.peerId !== getState().me.id
-				) {
-					await playNotificationSounds('chatMessage');
-				}
-
-				// Parked peer
-				if (lobbyPeersActions.addPeer.match(action)) {
-					await playNotificationSounds('parkedPeer');
-				}
-
-				// Send file
-				if (roomSessionsActions.addFile.match(action)) {
-					await playNotificationSounds('sendFile');
-				}
-
-				// New peer
-				if (peersActions.addPeer.match(action)) {
-					await playNotificationSounds('newPeer');
-				}
-
-				if (
-					settingsActions.setSelectedAudioOutputDevice.match(action) &&
-          action.payload
-				) {
-					attachAudioOutput(action.payload);
-				}
-
-				if (notificationsActions.playTestSound.match(action)) {
-					await playNotificationSounds('default', true);
-				}
+				if (raisedHand) playNotificationSounds('raisedHand');
 			}
 
-			return next(action);
-		};
+			// Chat message
+			if (
+				roomSessionsActions.addMessage.match(action) &&
+					action.payload.peerId !== getState().me.id
+			) {
+				playNotificationSounds('chatMessage');
+			}
+
+			// Parked peer
+			if (lobbyPeersActions.addPeer.match(action)) {
+				playNotificationSounds('parkedPeer');
+			}
+
+			// Send file
+			if (roomSessionsActions.addFile.match(action)) {
+				playNotificationSounds('sendFile');
+			}
+
+			// New peer
+			if (peersActions.addPeer.match(action)) {
+				playNotificationSounds('newPeer');
+			}
+
+			if (settingsActions.setSelectedAudioOutputDevice.match(action) && action.payload) {
+				attachAudioOutput(action.payload);
+			}
+
+			if (notificationsActions.playTestSound.match(action)) {
+				playNotificationSounds('default', true);
+			}
+		}
+
+		return next(action);
+	};
 
 	return middleware;
 };
