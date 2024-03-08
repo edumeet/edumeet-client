@@ -56,7 +56,7 @@ const Volume = ({
 		if (consumer)
 			media = mediaService.getConsumer(consumer.id);
 		else
-			media = mediaService.micProducer;
+			media = mediaService.producers['mic'];
 
 		if (media)
 			volumeWatcher = media.appData.volumeWatcher as VolumeWatcher | undefined;

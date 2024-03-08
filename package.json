@@ -72,6 +72,8 @@
 		"@types/react-dom": "^18.2.14",
 		"@types/react-redux": "^7.1.28",
 		"@types/redux-logger": "^3.0.11",
+		"@types/sdp-transform": "^2.4.9",
+		"@types/ua-parser-js": "^0.7.39",
 		"@types/uuid": "^9.0.6",
 		"@types/webtorrent": "^0.109.5",
 		"@types/wicg-file-system-access": "^2023.10.2",
