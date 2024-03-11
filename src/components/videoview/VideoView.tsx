@@ -61,12 +61,12 @@ const VideoView = ({
 
 	useEffect(() => {
 		let media: Consumer | PeerConsumer | undefined;
-		let track: MediaStreamTrack | undefined;
+		let track: MediaStreamTrack | null = null;
 
 		if (previewTrack)
 			track = mediaService.previewWebcamTrack;
 		else if (source)
-			track = mediaService.tracks[source];
+			track = mediaService.mediaSenders[source].track;
 		else if (consumer)
 			media = mediaService.getConsumer(consumer.id);
 

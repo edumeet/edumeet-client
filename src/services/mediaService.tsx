@@ -2,10 +2,8 @@ import EventEmitter from 'events';
 import type { Device } from 'mediasoup-client';
 import { Device as PeerDevice } from 'ortc-p2p/src/Device';
 import type { Consumer as PeerConsumer } from 'ortc-p2p/src/Consumer';
-import type { Producer as PeerProducer } from 'ortc-p2p/src/Producer';
 import type { Transport as PeerTransport } from 'ortc-p2p/src/Transport';
 import type { Consumer } from 'mediasoup-client/lib/Consumer';
-import type { Producer, ProducerOptions } from 'mediasoup-client/lib/Producer';
 import type { Transport } from 'mediasoup-client/lib/Transport';
 import type { RtpCapabilities } from 'mediasoup-client/lib/RtpParameters';
 import { SignalingService } from './signalingService';
@@ -17,6 +15,7 @@ import { ResolutionWatcher } from '../utils/resolutionWatcher';
 import { Logger } from 'edumeet-common';
 import { safePromise } from '../utils/safePromise';
 import { ProducerSource } from '../utils/types';
+import { MediaSender } from '../utils/mediaSender';
 
 const logger = new Logger('MediaService');
 
@@ -48,14 +47,9 @@ export interface PeerTranscript {
 	done: boolean;
 }
 
-type Producers = {
+type MediaSenders = {
 	// eslint-disable-next-line no-unused-vars
-	[key in ProducerSource]?: Producer;
-};
-
-type ProducersTracks = {
-	// eslint-disable-next-line no-unused-vars
-	[key in ProducerSource]?: MediaStreamTrack;
+	[key in ProducerSource]: MediaSender;
 };
 
 export type Transcript = Omit<PeerTranscript, 'peerId'>;
@@ -92,13 +86,7 @@ export declare interface MediaService {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'consumerScore', listener: (consumerId: string, score: number) => void): this;
 	// eslint-disable-next-line no-unused-vars
-	on(event: 'producerClosed', listener: (producer: Producer) => void): this;
-	// eslint-disable-next-line no-unused-vars
-	on(event: 'producerPaused', listener: (producer: Producer) => void): this;
-	// eslint-disable-next-line no-unused-vars
-	on(event: 'producerResumed', listener: (producer: Producer) => void): this;
-	// eslint-disable-next-line no-unused-vars
-	on(event: 'producerScore', listener: (producerId: string, score: number) => void): this;
+	on(event: 'mediaClosed', listener: (source: ProducerSource) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'transcriptionStarted', listener: () => void): this;
 	// eslint-disable-next-line no-unused-vars
@@ -113,29 +101,19 @@ export declare interface MediaService {
 export class MediaService extends EventEmitter {
 	private signalingService: SignalingService;
 
-	private mediasoup?: Device;
+	public mediasoup?: Device;
 	public iceServers: RTCIceServer[] = [];
-	private sendTransport: Transport | undefined;
-	private recvTransport: Transport | undefined;
+	public sendTransport: Transport | undefined;
+	public recvTransport: Transport | undefined;
 	private consumers: Map<string, Consumer | PeerConsumer> = new Map();
 	private consumerCreationState: Map<string, { paused: boolean; closed: boolean; }> = new Map();
 	private dataConsumers: Map<string, DataConsumer> = new Map();
 	private dataProducers: Map<string, DataProducer> = new Map();
 
-	public previewMicTrack?: MediaStreamTrack;
-	public previewWebcamTrack?: MediaStreamTrack;
+	public previewMicTrack: MediaStreamTrack | null = null;
+	public previewWebcamTrack: MediaStreamTrack | null = null;
 
-	public producers: Producers = {};
-	public peerProducers: Record<ProducerSource, Map<string, PeerProducer>> = {
-		mic: new Map(),
-		webcam: new Map(),
-		screen: new Map(),
-		screenaudio: new Map(),
-		extravideo: new Map(),
-		extraaudio: new Map(),
-	};
-
-	public tracks: ProducersTracks = {};
+	public mediaSenders: MediaSenders;
 
 	private peerDevices: Map<string, PeerDevice> = new Map(); // PeerId -> P2PDevice
 	private peerSendTransports: Map<string, Promise<PeerTransport>> = new Map(); // PeerId -> P2PTransport
@@ -159,6 +137,15 @@ export class MediaService extends EventEmitter {
 		super();
 
 		this.signalingService = signalingService;
+
+		this.mediaSenders = {
+			mic: new MediaSender(this, this.signalingService, 'mic').on('closed', () => this.emit('mediaClosed', 'mic')),
+			webcam: new MediaSender(this, this.signalingService, 'webcam').on('closed', () => this.emit('mediaClosed', 'webcam')),
+			screen: new MediaSender(this, this.signalingService, 'screen').on('closed', () => this.emit('mediaClosed', 'screen')),
+			screenaudio: new MediaSender(this, this.signalingService, 'screenaudio').on('closed', () => this.emit('mediaClosed', 'screenaudio')),
+			extravideo: new MediaSender(this, this.signalingService, 'extravideo').on('closed', () => this.emit('mediaClosed', 'extravideo')),
+			extraaudio: new MediaSender(this, this.signalingService, 'extraaudio').on('closed', () => this.emit('mediaClosed', 'extraaudio')),
+		};
 
 		this.reset();
 	}
@@ -194,6 +181,27 @@ export class MediaService extends EventEmitter {
 		// This will close all consumers and producers.
 		this.sendTransport?.close();
 		this.recvTransport?.close();
+	}
+
+	public setP2PMode(p2pMode: boolean): void {
+		logger.debug('setP2PMode() [p2pMode:%s]', p2pMode);
+
+		for (const mediaSender of Object.values(this.mediaSenders)) {
+			if (p2pMode) mediaSender.startP2P();
+			else mediaSender.stopP2P();
+		}
+	}
+
+	public addPeerId(peerId: string): void {
+		for (const mediaSender of Object.values(this.mediaSenders)) {
+			mediaSender.addPeerId(peerId);
+		}
+	}
+
+	public removePeerId(peerId: string): void {
+		for (const mediaSender of Object.values(this.mediaSenders)) {
+			mediaSender.removePeerId(peerId);
+		}
 	}
 
 	public getConsumer(consumerId: string): Consumer | PeerConsumer | undefined {
@@ -264,40 +272,28 @@ export class MediaService extends EventEmitter {
 
 					case 'peerConnect': {
 						const { peerId, dtlsParameters, iceParameters, direction } = notification.data;
+						const transport = await this.getPeerTransport(peerId, direction === 'send' ? 'recv' : 'send');
 
-						if (direction === 'recv') {
-							const p2pSendTransport = await this.getPeerSendTransport(peerId);
-
-							await p2pSendTransport.connect({ dtlsParameters, iceParameters });
-						} else {
-							const p2pRecvTransport = await this.getPeerRecvTransport(peerId);
-
-							await p2pRecvTransport.connect({ dtlsParameters, iceParameters });
-						}
+						await transport.connect({ dtlsParameters, iceParameters });
 
 						break;
 					}
 
 					case 'candidate': {
 						const { peerId, candidate, direction } = notification.data;
+						const transport = await this.getPeerTransport(peerId, direction === 'send' ? 'recv' : 'send');
 
-						if (direction === 'recv') {
-							const p2pSendTransport = await this.getPeerSendTransport(peerId);
-
-							await p2pSendTransport.addIceCandidate({ candidate });
-						} else {
-							const p2pRecvTransport = await this.getPeerRecvTransport(peerId);
-
-							await p2pRecvTransport.addIceCandidate({ candidate });
-						}
-
+						await transport.addIceCandidate({ candidate });
+						
 						break;
 					}
 
 					case 'peerProduce': {
 						const { peerId, id, kind, rtpParameters, appData } = notification.data;
 
-						const peerTransport = await this.getPeerRecvTransport(peerId);
+						this.consumerCreationState.set(id, { paused: false, closed: false });
+
+						const peerTransport = await this.getPeerTransport(peerId, 'recv');
 
 						const peerConsumer = await peerTransport.consume({
 							id,
@@ -309,6 +305,23 @@ export class MediaService extends EventEmitter {
 								peerConsumer: true,
 							},
 						});
+
+						const {
+							paused: consumerPaused,
+							closed,
+						} = this.consumerCreationState.get(id) || {
+							paused: false,
+							closed: false,
+						};
+
+						peerConsumer.appData.producerPaused = consumerPaused;
+
+						if (closed) {
+							this.consumerCreationState.delete(id);
+							peerConsumer.close();
+
+							return;
+						}
 
 						if (kind === 'audio') {
 							const { track } = peerConsumer;
@@ -333,6 +346,8 @@ export class MediaService extends EventEmitter {
 
 						this.emit('consumerCreated', peerConsumer, false, false, true);
 
+						this.consumerCreationState.delete(id);
+
 						break;
 					}
 
@@ -340,6 +355,22 @@ export class MediaService extends EventEmitter {
 					case 'peerPauseProducer':
 					case 'peerResumeProducer': {
 						const { producerId } = notification.data;
+
+						const consumer = this.consumers.get(producerId);
+
+						if (!consumer) {
+							const consumerCreationState = this.consumerCreationState.get(producerId);
+
+							if (consumerCreationState) {
+								if (notification.method === 'peerCloseProducer') consumerCreationState.closed = true;
+								if (notification.method === 'peerPauseProducer') consumerCreationState.paused = true;
+								if (notification.method === 'peerResumeProducer') consumerCreationState.paused = false;
+
+								return;
+							}
+
+							throw new Error('consumer not found');
+						}
 
 						this.changeConsumer(producerId, changeEvent[notification.method] as MediaChange, false);
 
@@ -393,13 +424,19 @@ export class MediaService extends EventEmitter {
 							appData: {
 								...appData,
 								peerId,
+								producerPaused,
 							},
 						});
 
 						const {
 							paused: consumerPaused,
 							closed,
-						} = this.consumerCreationState.get(id) || {} as { paused: boolean; closed: boolean };
+						} = this.consumerCreationState.get(id) || {
+							paused: producerPaused,
+							closed: false,
+						};
+
+						consumer.appData.producerPaused = consumerPaused;
 
 						if (closed) {
 							this.consumerCreationState.delete(id);
@@ -447,6 +484,9 @@ export class MediaService extends EventEmitter {
 						this.consumers.set(consumer.id, consumer);
 						consumer.observer.once('close', () => this.consumers.delete(consumer.id));
 						consumer.once('transportclose', () => this.changeConsumer(consumer.id, 'close', false));
+
+						if (paused) this.changeConsumer(consumer.id, 'resume', true);
+
 						this.emit('consumerCreated', consumer, paused, consumerPaused, false);
 
 						this.consumerCreationState.delete(id);
@@ -522,6 +562,7 @@ export class MediaService extends EventEmitter {
 							if (consumerCreationState) {
 								if (notification.method === 'consumerClosed') consumerCreationState.closed = true;
 								if (notification.method === 'consumerPaused') consumerCreationState.paused = true;
+								if (notification.method === 'consumerResumed') consumerCreationState.paused = false;
 
 								return;
 							}
@@ -538,27 +579,6 @@ export class MediaService extends EventEmitter {
 						const { dataConsumerId } = notification.data;
 
 						this.closeDataConsumer(dataConsumerId, false);
-
-						break;
-					}
-
-					case 'producerClosed': {
-						const { producerId } = notification.data;
-
-						this.closeProducer(producerId, false);
-
-						break;
-					}
-
-					case 'newProducerLayer': {
-						const { producerId, spatialLayer } = notification.data;
-
-						const producer = Object.values(this.producers).find((p) => p.id === producerId);
-
-						if (!producer)
-							throw new Error('producer not found');
-
-						producer.setMaxSpatialLayer(spatialLayer);
 
 						break;
 					}
@@ -630,17 +650,25 @@ export class MediaService extends EventEmitter {
 
 		const consumer = this.consumers.get(consumerId);
 
-		if (local && consumer) {
+		if (!consumer) return logger.warn('consumer not found');
+
+		if (local) {
 			if (consumer.appData.peerConsumer) {
 				this.signalingService.notify(`${change}PeerConsumer`, { consumerId: consumer.id });
 			} else {
 				this.signalingService.notify(`${change}Consumer`, { consumerId: consumer.id });
 			}
+		} else if (!local) {
+			this.emit(`consumer${changeEvent[change]}`, consumer);
 		}
 
-		if (!local) this.emit(`consumer${changeEvent[change]}`, consumer);
-
-		consumer?.[`${change}`]();
+		if (change === 'close') {
+			consumer?.[`${change}`]();
+		} else if (local) {
+			consumer?.[`${change}`]();
+		} else {
+			consumer.appData.producerPaused = change === 'pause';
+		}
 	}
 
 	public closeDataConsumer(dataConsumerId: string, local = true): void {
@@ -655,23 +683,6 @@ export class MediaService extends EventEmitter {
 		if (!local) this.emit('dataConsumerClosed', dataConsumer);
 
 		dataConsumer?.close();
-	}
-
-	public closeProducer(source: ProducerSource, local = true, notifyAll = false): void {
-		logger.debug('closeProducer() [source:%s]', source);
-
-		const producer = this.producers[source];
-	
-		if ((local || notifyAll) && producer) {
-			this.signalingService.notify('closeProducer', { producerId: producer.id });
-		}
-
-		if (producer?.kind === 'audio')
-			this.stopTranscription();
-
-		if (!local || notifyAll) this.emit('producerClosed', producer);
-
-		producer?.close();
 	}
 
 	public closeDataProducer(dataProducerId: string, local = true): void {
@@ -785,92 +796,7 @@ export class MediaService extends EventEmitter {
 		return transport;
 	}
 
-	public async produce(source: ProducerSource, producerOptions: ProducerOptions, codec?: ProducerCodec): Promise<Producer> {
-		logger.debug('produce() [options:%o]', producerOptions);
-
-		await this.transportsReady;
-
-		if (!this.sendTransport) throw new Error('Producer can not be created without sendTransport');
-
-		const producer = await this.sendTransport.produce({
-			...producerOptions,
-			codec: this.mediasoup?.rtpCapabilities.codecs?.find((c) => c.mimeType.toLowerCase() === codec)
-		});
-
-		const { kind, track } = producer;
-
-		if (kind === 'audio' && track) {
-			const harkStream = new MediaStream();
-
-			harkStream.addTrack(track.clone());
-
-			const producerHark = hark(harkStream, {
-				play: false,
-				interval: 100,
-				threshold: -60,
-				history: 100
-			});
-
-			producer.appData.hark = producerHark;
-			producer.appData.volumeWatcher = new VolumeWatcher({ hark: producerHark });
-		}
-
-		this.producers[source] = producer;
-
-		producer.observer.once('close', () => delete this.producers[source]);
-		producer.observer.on('pause', () => this.signalingService.notify('pauseProducer', { producerId: producer.id }));
-		producer.observer.on('resume', () => this.signalingService.notify('resumeProducer', { producerId: producer.id }));
-		producer.once('transportclose', () => this.closeProducer(source, false));
-		producer.once('trackended', () => this.closeProducer(source, true, true));
-
-		return producer;
-	}
-
-	public async produceData(dataProducerOptions: DataProducerOptions): Promise<DataProducer> {
-		logger.debug('produceData() [options:%o]', dataProducerOptions);
-
-		if (!this.sendTransport) throw new Error('DataProducer can not be created without sendTransport');
-
-		const dataProducer = await this.sendTransport.produceData(dataProducerOptions);
-
-		this.dataProducers.set(dataProducer.id, dataProducer);
-
-		dataProducer.observer.once('close', () => this.dataProducers.delete(dataProducer.id));
-		dataProducer.once('transportclose', () => this.closeDataProducer(dataProducer.id, false));
-
-		return dataProducer;
-	}
-
-	public async peerProduce(peerId: string, source: ProducerSource, producerOptions: ProducerOptions, codec?: ProducerCodec): Promise<PeerProducer> {
-		logger.debug('p2pProduce() [peerId:%s, options:%o]', peerId, producerOptions);
-
-		const peerDevice = this.getPeerDevice(peerId);
-		const transport = await this.getPeerSendTransport(peerId);
-		
-		const producer = await transport.produce({
-			...producerOptions,
-			codec: peerDevice.rtpCapabilities.codecs?.find((c) => c.mimeType.toLowerCase() === codec)
-		});
-
-		producer.appData.peerProducer = true;
-		producer.appData.peerId = peerId;
-
-		this.peerProducers[source].set(peerId, producer);
-		
-		producer.observer.once('close', () => {
-			this.signalingService.notify('peerCloseProducer', { producerId: producer.id, peerId });
-
-			this.peerProducers[source].delete(peerId);
-		});
-
-		producer.observer.on('pause', () => this.signalingService.notify('peerPauseProducer', { producerId: producer.id, peerId }));
-		producer.observer.on('resume', () => this.signalingService.notify('peerResumeProducer', { producerId: producer.id, peerId }));
-		producer.once('trackended', () => producer.close());
-
-		return producer;
-	}
-
-	private getPeerDevice(peerId: string): PeerDevice {
+	public getPeerDevice(peerId: string): PeerDevice {
 		let p2pDevice = this.peerDevices.get(peerId);
 
 		if (!p2pDevice) {
@@ -888,25 +814,31 @@ export class MediaService extends EventEmitter {
 		return p2pDevice;
 	}
 
-	private async getPeerRecvTransport(peerId: string): Promise<PeerTransport> {
-		let p2pRecvTransport = this.peerRecvTransports.get(peerId);
+	public async getPeerTransport(peerId: string, direction: 'recv' | 'send'): Promise<PeerTransport> {
+		const map = direction === 'recv' ? this.peerRecvTransports : this.peerSendTransports;
 
-		if (!p2pRecvTransport) {
-			p2pRecvTransport = (async () => {
+		let peerTransport = map.get(peerId);
+
+		if (!peerTransport) {
+			peerTransport = (async () => {
 				const p2pDevice = this.getPeerDevice(peerId);
 
 				await p2pDevice.ready;
 				await this.mediaReady;
 
-				const transport = p2pDevice.createRecvTransport({
-					iceServers: this.iceServers,
-				});
+				let transport;
+
+				if (direction === 'recv') {
+					transport = p2pDevice.createRecvTransport({ iceServers: this.iceServers });
+				} else {
+					transport = p2pDevice.createSendTransport({ iceServers: this.iceServers });
+				}
 
 				transport.on('icecandidate', (candidate) => {
 					this.signalingService.notify('candidate', {
 						peerId,
 						candidate,
-						direction: 'recv',
+						direction,
 					});
 				});
 
@@ -915,49 +847,7 @@ export class MediaService extends EventEmitter {
 						peerId,
 						dtlsParameters,
 						iceParameters,
-						direction: 'recv'
-					})
-						.then(callback)
-						.catch(errback);
-				});
-
-				return transport;
-			})();
-
-			this.peerRecvTransports.set(peerId, p2pRecvTransport);
-		}
-
-		return p2pRecvTransport;
-	}
-
-	private async getPeerSendTransport(peerId: string): Promise<PeerTransport> {
-		let p2pSendTransport = this.peerSendTransports.get(peerId);
-
-		if (!p2pSendTransport) {
-			p2pSendTransport = (async () => {
-				const p2pDevice = this.getPeerDevice(peerId);
-
-				await p2pDevice.ready;
-				await this.mediaReady;
-
-				const transport = p2pDevice.createSendTransport({
-					iceServers: this.iceServers,
-				});
-				
-				transport.on('icecandidate', (candidate) => {
-					this.signalingService.notify('candidate', {
-						peerId,
-						candidate,
-						direction: 'send',
-					});
-				});
-
-				transport.on('connect', ({ dtlsParameters, iceParameters }, callback, errback) => {
-					this.signalingService.sendRequest('peerConnect', {
-						peerId,
-						dtlsParameters,
-						iceParameters,
-						direction: 'send'
+						direction
 					})
 						.then(callback)
 						.catch(errback);
@@ -976,10 +866,23 @@ export class MediaService extends EventEmitter {
 				return transport;
 			})();
 
-			this.peerSendTransports.set(peerId, p2pSendTransport);
+			map.set(peerId, peerTransport);
 		}
 
-		return p2pSendTransport;
+		return peerTransport;
+	}
+
+	public async produceData(options: DataProducerOptions): Promise<DataProducer> {
+		await this.transportsReady;
+
+		if (!this.sendTransport) throw new Error('Send transport not ready');
+
+		const dataProducer = await this.sendTransport.produceData(options);
+
+		this.dataProducers.set(dataProducer.id, dataProducer);
+		dataProducer.observer.once('close', () => this.dataProducers.delete(dataProducer.id));
+
+		return dataProducer;
 	}
 
 	public async startTranscription(): Promise<void> {

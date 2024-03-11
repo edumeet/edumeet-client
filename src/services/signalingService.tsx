@@ -22,6 +22,12 @@ export class SignalingService extends EventEmitter {
 	public connections = List<RoomServerConnection>();
 	private connected = false;
 
+	constructor() {
+		super();
+
+		this.setMaxListeners(Infinity);
+	}
+
 	@skipIfClosed
 	public close(): void {
 		logger.debug('close()');

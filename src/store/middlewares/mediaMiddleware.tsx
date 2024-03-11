@@ -108,15 +108,17 @@ const createMediaMiddleware = ({
 					dispatch(consumersActions.setConsumerResumed({ consumerId: consumer.id, local: false }));
 				});
 
-				mediaService.on('producerClosed', (producer) => {
-					if (producer.appData.source === 'webcam' && !producer.paused) {
+				mediaService.on('mediaClosed', (source) => {
+					if (source === 'webcam') {
 						dispatch(meActions.setLostVideo(true));
 						dispatch(meActions.setVideoMuted(true));
+						dispatch(meActions.setWebcamEnabled(false));
 					}
 
-					if (producer.appData.source === 'mic' && !producer.paused) {
+					if (source === 'mic') {
 						dispatch(meActions.setLostAudio(true));
 						dispatch(meActions.setAudioMuted(true));
+						dispatch(meActions.setMicEnabled(false));
 					}
 				});
 			

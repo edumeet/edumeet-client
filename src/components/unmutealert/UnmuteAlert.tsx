@@ -2,7 +2,6 @@ import { Alert, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useContext, useEffect, useState } from 'react';
 import { ServiceContext } from '../../store/store';
-import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { mutedPTTLabel } from '../translated/translatedComponents';
 import { useAppSelector } from '../../store/hooks';
 
@@ -31,11 +30,7 @@ const UnmuteAlert = (): JSX.Element => {
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 
 	useEffect(() => {
-		const producer = mediaService.producers['mic'];
-		let volumeWatcher: VolumeWatcher | undefined;
-
-		if (producer)
-			volumeWatcher = producer.appData.volumeWatcher as VolumeWatcher;
+		const volumeWatcher = mediaService.mediaSenders['mic'].volumeWatcher;
 
 		const onVolumeChange = ({ scaledVolume }: { scaledVolume: number }): void => {
 			setSpeaking(Boolean(scaledVolume));

@@ -43,9 +43,30 @@ export const peersArraySelector = createSelector(
 	(peers) => Object.values(peers)
 );
 
-export const p2pModeSelector = createSelector(
+/**
+ * Returns the number of peers excluding the client.
+ * 
+ * @returns {number} the number of peers.
+ */
+export const peersLengthSelector = createSelector(
 	peersArraySelector,
-	(peers) => peers.length < 2
+	(peers) => peers.length
+);
+
+export const roomSessionsArraySelector = createSelector(
+	roomSessionsSelect,
+	(roomSessions) => Object.values(roomSessions)
+);
+
+export const roomSessionsLengthSelector = createSelector(
+	roomSessionsArraySelector,
+	(roomSessions) => roomSessions.length
+);
+
+export const p2pModeSelector = createSelector(
+	roomSessionsLengthSelector,
+	peersLengthSelector,
+	(sessions, peers) => sessions === 1 && peers < 2
 );
 
 /**
@@ -290,16 +311,6 @@ export const chatMessagesSelector = createSelector(
 export const roomSessionCreationTimestampSelector = createSelector(
 	currentRoomSessionSelector,
 	(roomSession) => roomSession.creationTimestamp
-);
-
-/**
- * Returns the number of peers excluding the client.
- * 
- * @returns {number} the number of peers.
- */
-export const peersLengthSelector = createSelector(
-	peersArraySelector,
-	(peers) => peers.length
 );
 
 /**

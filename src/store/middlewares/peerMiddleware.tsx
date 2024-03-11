@@ -5,12 +5,15 @@ import { peersActions } from '../slices/peersSlice';
 import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { setRaisedHand } from '../actions/meActions';
 import { Logger } from 'edumeet-common';
-import { startExtraVideo, stopMic, stopScreenSharing, stopWebcam, updateMic, updateScreenSharing, updateWebcam } from '../actions/mediaActions';
+import { stopMic, stopScreenSharing, stopWebcam } from '../actions/mediaActions';
+import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { p2pModeSelector } from '../selectors';
 
 const logger = new Logger('PeerMiddleware');
 
 const createPeerMiddleware = ({
 	signalingService,
+	mediaService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createPeerMiddleware()');
 
@@ -46,11 +49,6 @@ const createPeerMiddleware = ({
 									transcripts: [],
 								}));
 
-								if (getState().me.micEnabled) dispatch(updateMic({ enable: false }));
-								if (getState().me.webcamEnabled) dispatch(updateWebcam({ enable: false }));
-								if (getState().me.screenEnabled) dispatch(updateScreenSharing({ enable: false }));
-								if (getState().me.extraVideoEnabled) dispatch(startExtraVideo({ enable: false }));
-
 								break;
 							}
 
@@ -58,11 +56,6 @@ const createPeerMiddleware = ({
 								const { peerId } = notification.data;
 
 								dispatch(peersActions.removePeer({ id: peerId }));
-
-								if (getState().me.micEnabled) dispatch(updateMic({ enable: false }));
-								if (getState().me.webcamEnabled) dispatch(updateWebcam({ enable: false }));
-								if (getState().me.screenEnabled) dispatch(updateScreenSharing({ enable: false }));
-								if (getState().me.extraVideoEnabled) dispatch(startExtraVideo({ enable: false }));
 
 								break;
 							}
@@ -175,6 +168,40 @@ const createPeerMiddleware = ({
 						logger.error('error on signalService "notification" event [error:%o]', error);
 					}
 				});
+			}
+
+			if (peersActions.addPeer.match(action)) {
+				mediaService.addPeerId(action.payload.id);
+			}
+
+			if (peersActions.addPeers.match(action)) {
+				action.payload.forEach((peer) => {
+					mediaService.addPeerId(peer.id);
+				});
+			}
+
+			if (peersActions.removePeer.match(action)) {
+				mediaService.removePeerId(action.payload.id);
+			}
+			
+			if (
+				peersActions.addPeer.match(action) ||
+				peersActions.addPeers.match(action) ||
+				peersActions.removePeer.match(action) ||
+				roomSessionsActions.addRoomSession.match(action) ||
+				roomSessionsActions.removeRoomSession.match(action)
+			) {
+				const oldP2pMode = p2pModeSelector(getState());
+
+				next(action);
+
+				const p2pMode = p2pModeSelector(getState());
+
+				if (oldP2pMode !== p2pMode) {
+					mediaService.setP2PMode(p2pMode);
+				}
+
+				return;
 			}
 
 			return next(action);

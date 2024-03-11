@@ -5,7 +5,6 @@ import { meActions } from '../slices/meSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
-import { p2pModeSelector, peersArraySelector } from '../selectors';
 
 const logger = new Logger('MediaActions');
 
@@ -119,7 +118,7 @@ export const updatePreviewMic = ({
 
 			if (previewMicTrackId) {
 				mediaService.previewMicTrack?.stop();
-				mediaService.previewMicTrack = undefined;
+				mediaService.previewMicTrack = null;
 
 				dispatch(meActions.setPreviewMicTrackId());
 			}
@@ -179,7 +178,7 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 		dispatch(meActions.setPreviewMicTrackId());
 
 		mediaService.previewMicTrack?.stop();
-		mediaService.previewMicTrack = undefined;
+		mediaService.previewMicTrack = null;
 	}
 
 	dispatch(meActions.setAudioInProgress(false));
@@ -227,7 +226,7 @@ export const updatePreviewWebcam = ({
 		if (start && mediaService.previewWebcamTrack) {
 			mediaService.previewWebcamTrack.stop();
 			effectsService.stop(mediaService.previewWebcamTrack.id);
-			mediaService.previewWebcamTrack = undefined;
+			mediaService.previewWebcamTrack = null;
 			dispatch(meActions.setPreviewWebcamTrackId());
 		}
 
@@ -287,7 +286,7 @@ export const stopPreviewWebcam = (): AppThunk<Promise<void>> => async (
 		if (track) {
 			track.stop();
 			effectsService.stop(track.id);
-			mediaService.previewWebcamTrack = undefined;
+			mediaService.previewWebcamTrack = null;
 		}
 	}
 
@@ -342,7 +341,7 @@ export const updateMic = ({
 
 	dispatch(meActions.setAudioInProgress(true));
 
-	let track: MediaStreamTrack | undefined;
+	let track: MediaStreamTrack | null = null;
 
 	try {
 		const canSendMic = getState().me.canSendMic;
@@ -371,7 +370,7 @@ export const updateMic = ({
 		} = getState().settings;
 
 		if (start) {
-			if (!replace) track = mediaService.tracks['mic'];
+			if (!replace) track = mediaService.mediaSenders['mic'].track;
 			else track = mediaService.previewMicTrack;
 
 			if (!track) {
@@ -389,23 +388,23 @@ export const updateMic = ({
 
 				([ track ] = stream.getAudioTracks());
 
-				replace = true;
+				replace = mediaService.mediaSenders['mic'].running;
 			}
 
 			if (!track) throw new Error('no mic track');
 
 			dispatch(meActions.setPreviewMicTrackId());
 
-			mediaService.previewMicTrack = undefined;
+			mediaService.previewMicTrack = null;
 
 			const { deviceId: trackDeviceId } = track.getSettings();
 
 			dispatch(settingsActions.setSelectedAudioDevice(trackDeviceId));
 
-			if (mediaService.producers['mic'] && replace) {
-				await mediaService.producers['mic'].replaceTrack({ track });
-			} else if (!mediaService.producers['mic']) {
-				mediaService.producers['mic'] = await mediaService.produce('mic', {
+			if (replace) {
+				await mediaService.mediaSenders['mic'].replaceTrack(track);
+			} else if (!mediaService.mediaSenders['mic'].running) {
+				await mediaService.mediaSenders['mic'].start({
 					track,
 					stopTracks: false,
 					disableTrackOnPause: false,
@@ -420,43 +419,8 @@ export const updateMic = ({
 					appData: { source: 'mic' }
 				});
 			}
-
-			if (replace) {
-				for (const micPeerProducer of mediaService.peerProducers['mic'].values()) {
-					await micPeerProducer.replaceTrack({ track });
-				}
-			}
-
-			if (!p2pModeSelector(getState())) {
-				if (!getState().me.audioMuted) mediaService.producers['mic']?.resume();
-
-				for (const peerProducer of mediaService.peerProducers['mic'].values()) {
-					peerProducer.close();
-				}
-			} else {
-				for (const peer of peersArraySelector(getState())) {
-					if (!mediaService.peerProducers['mic'].has(peer.id)) {
-						const producer = await mediaService.peerProduce(peer.id, 'mic', {
-							track,
-							stopTracks: false,
-							disableTrackOnPause: false,
-							zeroRtpOnPause: true,
-							appData: { source: 'mic' }
-						});
-
-						if (getState().me.audioMuted) producer.pause();
-					}
-				}
-
-				mediaService.producers['mic']?.pause();
-			}
-
-			if (replace) {
-				mediaService.tracks['mic']?.stop();
-				mediaService.tracks['mic'] = track;
-			}
 		} else {
-			await mediaService.tracks['mic']?.applyConstraints({
+			await mediaService.mediaSenders['mic'].track?.applyConstraints({
 				sampleRate,
 				channelCount,
 				autoGainControl,
@@ -484,17 +448,10 @@ export const stopMic = (): AppThunk<void> => (
 ) => {
 	logger.debug('stopMic()');
 
-	mediaService.closeProducer('mic', true);
-
-	for (const peerProducer of mediaService.peerProducers['mic'].values()) {
-		peerProducer.close();
-	}
+	mediaService.mediaSenders['mic'].stop();
 
 	dispatch(meActions.setMicEnabled(false));
 	dispatch(meActions.setAudioMuted(true));
-
-	mediaService.tracks['mic']?.stop();
-	mediaService.tracks['mic'] = undefined;
 };
 
 export const pauseMic = (): AppThunk<void> => (
@@ -504,11 +461,7 @@ export const pauseMic = (): AppThunk<void> => (
 ) => {
 	logger.debug('pauseMic()');
 
-	mediaService.producers['mic']?.pause();
-
-	for (const peerProducer of mediaService.peerProducers['mic'].values()) {
-		peerProducer.pause();
-	}
+	mediaService.mediaSenders['mic'].pause();
 
 	dispatch(meActions.setAudioMuted(true));
 };
@@ -520,13 +473,7 @@ export const resumeMic = (): AppThunk<void> => (
 ) => {
 	logger.debug('resumeMic()');
 
-	if (!p2pModeSelector(getState())) {
-		mediaService.producers['mic']?.resume();
-	} else {
-		for (const peerProducer of mediaService.peerProducers['mic'].values()) {
-			peerProducer.resume();
-		}
-	}
+	mediaService.mediaSenders['mic'].resume();
 
 	dispatch(meActions.setAudioMuted(false));
 };
@@ -580,7 +527,7 @@ export const updateWebcam = ({
 
 	dispatch(meActions.setVideoInProgress(true));
 
-	let track: MediaStreamTrack | undefined;
+	let track: MediaStreamTrack | null = null;
 
 	try {
 		const canSendWebcam = getState().me.canSendWebcam;
@@ -602,7 +549,7 @@ export const updateWebcam = ({
 		if (!deviceId) logger.warn('no webcam devices');
 
 		if (start) {
-			if (!replace) track = mediaService.tracks['webcam'];
+			if (!replace) track = mediaService.mediaSenders['webcam'].track;
 			else track = mediaService.previewWebcamTrack;
 
 			if (!track) {
@@ -616,14 +563,14 @@ export const updateWebcam = ({
 	
 				([ track ] = stream.getVideoTracks());
 
-				replace = true;
+				replace = mediaService.mediaSenders['webcam'].running;
 			}
 
 			if (!track) throw new Error('no webcam track');
 
 			dispatch(meActions.setPreviewWebcamTrackId());
 
-			mediaService.previewWebcamTrack = undefined;
+			mediaService.previewWebcamTrack = null;
 
 			const { deviceId: trackDeviceId, width, height } = track.getSettings();
 
@@ -633,13 +580,16 @@ export const updateWebcam = ({
 			// so we need to update the selected device in the settings just in case
 			dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
 
-			if (mediaService.producers['webcam'] && replace) {
-				await mediaService.producers['webcam'].replaceTrack({ track });
-			} else if (!mediaService.producers['webcam']) {
+			if (replace) {
+				if (mediaService.mediaSenders['webcam'].track)
+					effectsService.stop(mediaService.mediaSenders['webcam'].track.id);
+
+				await mediaService.mediaSenders['webcam'].replaceTrack(track);
+			} else if (!mediaService.mediaSenders['webcam'].running) {
 				if (config.simulcast) {
 					const encodings = getEncodings(width, height);
 	
-					await mediaService.produce('webcam', {
+					await mediaService.mediaSenders['webcam'].start({
 						track,
 						stopTracks: false,
 						disableTrackOnPause: false,
@@ -651,7 +601,7 @@ export const updateWebcam = ({
 						appData: { source: 'webcam' }
 					}, 'video/h264');
 				} else {
-					await mediaService.produce('webcam', {
+					await mediaService.mediaSenders['webcam'].start({
 						track,
 						stopTracks: false,
 						disableTrackOnPause: false,
@@ -660,48 +610,13 @@ export const updateWebcam = ({
 					}, 'video/h264');
 				}
 			}
-
-			if (replace) {
-				for (const webcamPeerProducer of mediaService.peerProducers['webcam'].values()) {
-					await webcamPeerProducer.replaceTrack({ track });
-				}
-			}
-
-			if (!p2pModeSelector(getState())) {
-				mediaService.producers['webcam']?.resume();
-
-				for (const peerProducer of mediaService.peerProducers['webcam'].values()) {
-					peerProducer.close();
-				}
-			} else {
-				for (const peer of peersArraySelector(getState())) {
-					if (!mediaService.peerProducers['webcam'].has(peer.id)) {
-						await mediaService.peerProduce(peer.id, 'webcam', {
-							track,
-							stopTracks: false,
-							disableTrackOnPause: false,
-							zeroRtpOnPause: true,
-							appData: { source: 'webcam' }
-						});
-					}
-				}
-
-				mediaService.producers['webcam']?.pause();
-			}
-
-			if (replace && mediaService.tracks['webcam']) {
-				effectsService.stop(mediaService.tracks['webcam'].id);
-				mediaService.tracks['webcam'].stop();
-			}
-
-			mediaService.tracks['webcam'] = track;
 		} else {
-			await mediaService.tracks['webcam']?.applyConstraints({
+			await mediaService.mediaSenders['webcam'].track?.applyConstraints({
 				...getVideoConstrains(resolution, aspectRatio),
 				frameRate
 			});
 
-			await mediaService.tracks['extravideo']?.applyConstraints({
+			await mediaService.mediaSenders['extravideo'].track?.applyConstraints({
 				...getVideoConstrains(resolution, aspectRatio),
 				frameRate
 			});
@@ -725,19 +640,12 @@ export const stopWebcam = (): AppThunk<void> => (
 ): void => {
 	logger.debug('stopWebcam()');
 
-	mediaService.closeProducer('webcam', true);
+	if (mediaService.mediaSenders['webcam'].track)
+		effectsService.stop(mediaService.mediaSenders['webcam'].track.id);
 
-	for (const peerProducer of mediaService.peerProducers['webcam'].values()) {
-		peerProducer.close();
-	}
+	mediaService.mediaSenders['webcam'].stop();
 
 	dispatch(meActions.setWebcamEnabled(false));
-
-	if (mediaService.tracks['webcam']) {
-		effectsService.stop(mediaService.tracks['webcam'].id);
-		mediaService.tracks['webcam'].stop();
-		mediaService.tracks['webcam'] = undefined;
-	}
 };
 
 /**
@@ -787,8 +695,8 @@ export const updateScreenSharing = ({
 
 	dispatch(meActions.setScreenSharingInProgress(true));
 
-	let audioTrack: MediaStreamTrack | undefined;
-	let videoTrack: MediaStreamTrack | undefined;
+	let audioTrack: MediaStreamTrack | null = null;
+	let videoTrack: MediaStreamTrack | null = null;
 	let stream: MediaStream | undefined;
 
 	try {
@@ -814,7 +722,7 @@ export const updateScreenSharing = ({
 		} = getState().settings;
 
 		if (start) {
-			if (!replace) videoTrack = mediaService.tracks['screen'];
+			if (!replace) videoTrack = mediaService.mediaSenders['screen'].track;
 
 			if (!videoTrack) {
 				const SCREENSHARE_CONSTRAINTS = {
@@ -840,20 +748,20 @@ export const updateScreenSharing = ({
 
 				([ videoTrack ] = stream.getVideoTracks());
 
-				replace = true;
+				replace = mediaService.mediaSenders['screen'].running;
 			}
 
 			if (!videoTrack) throw new Error('no screen track');
 
 			const { width, height } = videoTrack.getSettings();
 
-			if (mediaService.producers['screen'] && replace) {
-				await mediaService.producers['screen'].replaceTrack({ track: videoTrack });
-			} else if (!mediaService.producers['screen']) {
+			if (replace) {
+				await mediaService.mediaSenders['screen'].replaceTrack(videoTrack);
+			} else if (!mediaService.mediaSenders['screen'].running) {
 				if (config.simulcastSharing) {
 					const encodings = getEncodings(width, height, false, true);
 
-					await mediaService.produce('screen', {
+					await mediaService.mediaSenders['screen'].start({
 						track: videoTrack,
 						stopTracks: false,
 						disableTrackOnPause: false,
@@ -865,7 +773,7 @@ export const updateScreenSharing = ({
 						appData: { source: 'screen' }
 					}, 'video/h264');
 				} else {
-					await mediaService.produce('screen', {
+					await mediaService.mediaSenders['screen'].start({
 						track: videoTrack,
 						stopTracks: false,
 						disableTrackOnPause: false,
@@ -878,54 +786,21 @@ export const updateScreenSharing = ({
 				}
 			}
 
-			if (replace) {
-				for (const screenPeerProducer of mediaService.peerProducers['screen'].values()) {
-					await screenPeerProducer.replaceTrack({ track: videoTrack });
-				}
-			}
-
-			if (!p2pModeSelector(getState())) {
-				mediaService.producers['screen']?.resume();
-
-				for (const peerProducer of mediaService.peerProducers['screen'].values()) {
-					peerProducer.close();
-				}
-			} else {
-				for (const peer of peersArraySelector(getState())) {
-					if (!mediaService.peerProducers['screen'].has(peer.id)) {
-						await mediaService.peerProduce(peer.id, 'screen', {
-							track: videoTrack,
-							stopTracks: false,
-							disableTrackOnPause: false,
-							zeroRtpOnPause: true,
-							appData: { source: 'screen' }
-						});
-					}
-				}
-
-				mediaService.producers['screen']?.pause();
-			}
-
-			if (replace) {
-				mediaService.tracks['screen']?.stop();
-				mediaService.tracks['screen'] = videoTrack;
-			}
-
 			if (enable) dispatch(meActions.setScreenEnabled(true));
 
-			if (!replace) audioTrack = mediaService.tracks['screenaudio'];
+			if (!replace) audioTrack = mediaService.mediaSenders['screenaudio'].track;
 
 			if (!audioTrack && stream) {
 				([ audioTrack ] = stream.getAudioTracks());
 
-				replace = true;
+				replace = mediaService.mediaSenders['screenaudio'].running;
 			}
 
 			if (audioTrack) {
-				if (mediaService.producers['screenaudio'] && replace) {
-					await mediaService.producers['screenaudio'].replaceTrack({ track: audioTrack });
-				} else if (!mediaService.producers['screenaudio']) {
-					await mediaService.produce('screenaudio', {
+				if (replace) {
+					await mediaService.mediaSenders['screenaudio'].replaceTrack(audioTrack);
+				} else if (!mediaService.mediaSenders['screenaudio'].running) {
+					await mediaService.mediaSenders['screenaudio'].start({
 						track: audioTrack,
 						stopTracks: false,
 						disableTrackOnPause: false,
@@ -941,48 +816,15 @@ export const updateScreenSharing = ({
 					});
 				}
 
-				if (replace) {
-					for (const screenAudioPeerProducer of mediaService.peerProducers['screenaudio'].values()) {
-						await screenAudioPeerProducer.replaceTrack({ track: audioTrack });
-					}
-				}
-
-				if (!p2pModeSelector(getState())) {
-					mediaService.producers['screenaudio']?.resume();
-
-					for (const peerProducer of mediaService.peerProducers['screenaudio'].values()) {
-						peerProducer.close();
-					}
-				} else {
-					for (const peer of peersArraySelector(getState())) {
-						if (!mediaService.peerProducers['screenaudio'].has(peer.id)) {
-							await mediaService.peerProduce(peer.id, 'screenaudio', {
-								track: audioTrack,
-								stopTracks: false,
-								disableTrackOnPause: false,
-								zeroRtpOnPause: true,
-								appData: { source: 'screenaudio' }
-							});
-						}
-					}
-
-					mediaService.producers['screenaudio']?.pause();
-				}
-
-				if (replace) {
-					mediaService.tracks['screenaudio']?.stop();
-					mediaService.tracks['screenaudio'] = audioTrack;
-				}
-
 				if (enable) dispatch(meActions.setScreenAudioEnabled(true));
 			}
 		} else {
-			await mediaService.tracks['screen']?.applyConstraints({
+			await mediaService.mediaSenders['screen'].track?.applyConstraints({
 				...getVideoConstrains(screenSharingResolution, aspectRatio),
 				frameRate: screenSharingFrameRate
 			});
 
-			await mediaService.tracks['screenaudio']?.applyConstraints({
+			await mediaService.mediaSenders['screenaudio'].track?.applyConstraints({
 				sampleRate,
 				channelCount,
 				autoGainControl,
@@ -1005,24 +847,9 @@ export const stopScreenSharing = (): AppThunk<void> => (
 ) => {
 	logger.debug('stopScreenSharing()');
 
-	mediaService.closeProducer('screen', true);
-
-	for (const peerProducer of mediaService.peerProducers['screen'].values()) {
-		peerProducer.close();
-	}
-
-	mediaService.closeProducer('screenaudio', true);
-
-	for (const peerProducer of mediaService.peerProducers['screenaudio'].values()) {
-		peerProducer.close();
-	}
+	mediaService.mediaSenders['screen'].stop();
 
 	dispatch(meActions.setScreenEnabled(false));
-
-	mediaService.tracks['screen']?.stop();
-	mediaService.tracks['screen'] = undefined;
-	mediaService.tracks['screenaudio']?.stop();
-	mediaService.tracks['screenaudio'] = undefined;
 };
 
 /**
@@ -1051,7 +878,7 @@ export const startExtraVideo = ({
 
 	dispatch(meActions.setVideoInProgress(true));
 
-	let track: MediaStreamTrack | undefined;
+	let track: MediaStreamTrack | null = null;
 
 	try {
 		const canSendWebcam = getState().me.canSendWebcam;
@@ -1070,7 +897,7 @@ export const startExtraVideo = ({
 		if (!deviceId) logger.warn('no extravideo device');
 
 		if (start) {
-			if (!replace) track = mediaService.tracks['extravideo'];
+			if (!replace) track = mediaService.mediaSenders['extravideo'].track;
 
 			if (!track) {
 				const stream = await navigator.mediaDevices.getUserMedia({
@@ -1083,7 +910,7 @@ export const startExtraVideo = ({
 
 				([ track ] = stream.getVideoTracks());
 
-				replace = true;
+				replace = mediaService.mediaSenders['extravideo'].running;
 			}
 
 			if (!track) throw new Error('no webcam track');
@@ -1092,13 +919,16 @@ export const startExtraVideo = ({
 
 			if (blurEnabled && replace) track = await effectsService.applyEffect(track);
 
-			if (mediaService.producers['extravideo'] && replace) {
-				await mediaService.producers['extravideo'].replaceTrack({ track });
-			} else if (!mediaService.producers['extravideo']) {
+			if (replace) {
+				if (mediaService.mediaSenders['extravideo'].track)
+					effectsService.stop(mediaService.mediaSenders['extravideo'].track.id);
+
+				await mediaService.mediaSenders['extravideo'].replaceTrack(track);
+			} else if (!mediaService.mediaSenders['extravideo'].running) {
 				if (config.simulcast) {
 					const encodings = getEncodings(width, height);
 
-					await mediaService.produce('extravideo', {
+					await mediaService.mediaSenders['extravideo'].start({
 						track,
 						stopTracks: false,
 						disableTrackOnPause: false,
@@ -1110,7 +940,7 @@ export const startExtraVideo = ({
 						appData: { source: 'extravideo' }
 					}, 'video/h264');
 				} else {
-					await mediaService.produce('extravideo', {
+					await mediaService.mediaSenders['extravideo'].start({
 						track,
 						stopTracks: false,
 						disableTrackOnPause: false,
@@ -1119,43 +949,8 @@ export const startExtraVideo = ({
 					}, 'video/h264');
 				}
 			}
-
-			if (replace) {
-				for (const extraVideoPeerProducer of mediaService.peerProducers['extravideo'].values()) {
-					await extraVideoPeerProducer.replaceTrack({ track });
-				}
-			}
-		
-			if (!p2pModeSelector(getState())) {
-				mediaService.producers['extravideo']?.resume();
-
-				for (const peerProducer of mediaService.peerProducers['extravideo'].values()) {
-					peerProducer.close();
-				}
-			} else {
-				for (const peer of peersArraySelector(getState())) {
-					if (!mediaService.peerProducers['extravideo'].has(peer.id)) {
-						await mediaService.peerProduce(peer.id, 'extravideo', {
-							track,
-							stopTracks: false,
-							disableTrackOnPause: false,
-							zeroRtpOnPause: true,
-							appData: { source: 'extravideo' }
-						});
-					}
-				}
-
-				mediaService.producers['extravideo']?.pause();
-			}
-
-			if (replace && mediaService.tracks['extravideo']) {
-				effectsService.stop(mediaService.tracks['extravideo']?.id);
-				mediaService.tracks['extravideo']?.stop();
-			}
-
-			mediaService.tracks['extravideo'] = track;
 		} else {
-			await mediaService.tracks['extravideo']?.applyConstraints({
+			await mediaService.mediaSenders['extravideo'].track?.applyConstraints({
 				...getVideoConstrains(resolution, aspectRatio),
 				frameRate
 			});
@@ -1176,14 +971,7 @@ export const stopExtraVideo = (): AppThunk<void> => (
 ) => {
 	logger.debug('stopExtraVideo()');
 
-	mediaService.closeProducer('extravideo', true);
-
-	for (const peerProducer of mediaService.peerProducers['extravideo'].values()) {
-		peerProducer.close();
-	}
+	mediaService.mediaSenders['extravideo'].stop();
 
 	dispatch(meActions.setExtraVideoEnabled(false));
-
-	mediaService.tracks['extravideo']?.stop();
-	mediaService.tracks['extravideo'] = undefined;
 };

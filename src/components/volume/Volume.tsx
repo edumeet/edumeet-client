@@ -1,11 +1,9 @@
 import { styled } from '@mui/material';
 import type { Consumer } from 'mediasoup-client/lib/Consumer';
-import type { Producer } from 'mediasoup-client/lib/Producer';
 import { useContext, useEffect, useState } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
-import type { Producer as PeerProducer } from 'ortc-p2p/src/types';
 import type { Consumer as PeerConsumer } from 'ortc-p2p/src/types';
 
 type VolumeBarProps = {
@@ -50,13 +48,13 @@ const Volume = ({
 	const [ volume, setVolume ] = useState<number>(0);
 
 	useEffect(() => {
-		let media: Consumer | PeerConsumer | Producer | PeerProducer | undefined;
+		let media: Consumer | PeerConsumer | undefined;
 		let volumeWatcher: VolumeWatcher | undefined;
 
 		if (consumer)
 			media = mediaService.getConsumer(consumer.id);
 		else
-			media = mediaService.producers['mic'];
+			volumeWatcher = mediaService.mediaSenders['mic'].volumeWatcher;
 
 		if (media)
 			volumeWatcher = media.appData.volumeWatcher as VolumeWatcher | undefined;
