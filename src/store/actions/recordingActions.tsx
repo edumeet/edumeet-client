@@ -83,15 +83,15 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 		audioDestination = audioContext.createMediaStreamDestination();
 		audioContext.createGain().connect(audioDestination);
 
-		if (mediaService.tracks['mic']) {
+		if (mediaService.mediaSenders['mic'].track) {
 			audioContext.createMediaStreamSource(
-				new MediaStream([ mediaService.tracks['mic'] ])
+				new MediaStream([ mediaService.mediaSenders['mic'].track ])
 			).connect(audioDestination);
 		}
 
-		if (mediaService.tracks['screenaudio']) {
+		if (mediaService.mediaSenders['screenaudio'].track) {
 			audioContext.createMediaStreamSource(
-				new MediaStream([ mediaService.tracks['screenaudio'] ])
+				new MediaStream([ mediaService.mediaSenders['screenaudio'].track ])
 			).connect(audioDestination);
 		}
 
