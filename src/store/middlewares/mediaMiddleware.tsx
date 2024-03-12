@@ -112,14 +112,20 @@ const createMediaMiddleware = ({
 					logger.debug('mediaClosed() [source:%s]', source);
 
 					if (source === 'webcam') {
-						dispatch(meActions.setLostVideo(true));
-						dispatch(meActions.setVideoMuted(true));
+						if (!mediaService.mediaSenders['webcam'].paused) {
+							dispatch(meActions.setLostVideo(true));
+							dispatch(meActions.setVideoMuted(true));
+						}
+
 						dispatch(meActions.setWebcamEnabled(false));
 					}
 
 					if (source === 'mic') {
-						dispatch(meActions.setLostAudio(true));
-						dispatch(meActions.setAudioMuted(true));
+						if (!mediaService.mediaSenders['mic'].paused) {
+							dispatch(meActions.setLostAudio(true));
+							dispatch(meActions.setAudioMuted(true));
+						}
+
 						dispatch(meActions.setMicEnabled(false));
 					}
 
