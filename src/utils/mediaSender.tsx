@@ -111,7 +111,7 @@ export class MediaSender extends EventEmitter {
 		this.maybeAddHark();
 	}
 
-	public stop(local = true): void {
+	public stop(local = true, notifyServer = false): void {
 		logger.debug('stop() [local:%s, source:%s]', local, this.source);
 
 		if (!this.running) return;
@@ -119,12 +119,12 @@ export class MediaSender extends EventEmitter {
 		this.running = false;
 
 		if (this.producer) {
-			this.producer.appData.remoteClosed = !local;
+			this.producer.appData.remoteClosed = !local && !notifyServer;
 			this.producer.close();
 		}
 
 		for (const producer of this.peerProducers.values()) {
-			producer.appData.remoteClosed = !local;
+			producer.appData.remoteClosed = !local && !notifyServer;
 			producer.close();
 		}
 
@@ -320,7 +320,6 @@ export class MediaSender extends EventEmitter {
 
 		producer.observer.on('pause', pauseListener);
 		producer.observer.on('resume', resumeListener);
-		producer.once('trackended', () => producer.close());
 
 		return producer;
 	}
@@ -368,7 +367,6 @@ export class MediaSender extends EventEmitter {
 		
 				producer.observer.on('pause', pauseListener);
 				producer.observer.on('resume', resumeListener);
-				producer.once('trackended', () => producer.close());
 
 				this.peerProducingPromises.delete(peerId);
 
@@ -383,7 +381,7 @@ export class MediaSender extends EventEmitter {
 
 	private handleTrack(): void {
 		this.track?.addEventListener('ended', () => {
-			this.stop(false);
+			this.stop(false, true);
 		}, { once: true });
 	}
 }
