@@ -189,7 +189,8 @@ const createPeerMiddleware = ({
 				peersActions.addPeers.match(action) ||
 				peersActions.removePeer.match(action) ||
 				roomSessionsActions.addRoomSession.match(action) ||
-				roomSessionsActions.removeRoomSession.match(action)
+				roomSessionsActions.removeRoomSession.match(action) ||
+				roomSessionsActions.addRoomSessions.match(action)
 			) {
 				const oldP2pMode = p2pModeSelector(getState());
 
