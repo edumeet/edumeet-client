@@ -142,6 +142,8 @@ export class MediaSender extends EventEmitter {
 		this.codec = undefined;
 
 		if (!local) this.emit('closed');
+
+		this.paused = false;
 	}
 
 	public addPeerId(peerId: string): void {
