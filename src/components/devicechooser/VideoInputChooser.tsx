@@ -36,19 +36,19 @@ const VideoInputChooser = ({
 
 			if (!withConfirm) dispatch(settingsActions.setSelectedVideoDevice(deviceId));
 
-			dispatch(updatePreviewWebcam({ start: true, newDeviceId: deviceId }));
+			dispatch(updatePreviewWebcam({ newDeviceId: deviceId }));
 		}
 	};
 
 	const handleConfirm = async () => {
 		if (webcamEnabled) {
 			dispatch(meActions.setWebcamEnabled(false));
-			await dispatch(updateWebcam({ replace: true, newDeviceId: selectedVideoDevice }));
+			await dispatch(updateWebcam({ newDeviceId: selectedVideoDevice }));
 		} else {
 			dispatch(settingsActions.setSelectedVideoDevice(selectedVideoDevice));
 		}
 
-		await dispatch(updatePreviewWebcam({ start: true, newDeviceId: selectedVideoDevice }));
+		await dispatch(updatePreviewWebcam({ newDeviceId: selectedVideoDevice }));
 	};
 
 	useEffect(() => {

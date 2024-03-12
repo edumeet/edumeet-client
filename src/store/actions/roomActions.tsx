@@ -82,8 +82,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 	});
 
-	if (!getState().me.audioMuted) dispatch(updateMic({ start: true }));
-	if (!getState().me.videoMuted) dispatch(updateWebcam({ start: true }));
+	if (!getState().me.audioMuted) dispatch(updateMic());
+	if (!getState().me.videoMuted) dispatch(updateWebcam());
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
@@ -176,8 +176,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		});
 
-		if (!audioMuted) dispatch(updateMic({ start: true }));
-		if (!videoMuted) dispatch(updateWebcam({ start: true }));
+		if (!audioMuted) dispatch(updateMic());
+		if (!videoMuted) dispatch(updateWebcam());
 	} catch (error) {
 		logger.error('joinBreakoutRoom() [error:%o]', error);
 	} finally {

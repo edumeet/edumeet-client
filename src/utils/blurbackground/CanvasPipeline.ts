@@ -5,6 +5,7 @@ const logger = new Logger('canvasPipeline');
 
 export const createCanvasPipeline = ({ source, canvas, backend, segmentation }: BlurBackgroundPipelineOptions): BlurBackgroundPipeline => {
 	logger.debug('createCanvasPipeline() [input: %o, segmentation: %o] ', source.dimensions, segmentation);
+
 	const segMaskCanvas = document.createElement('canvas');
 	const segMaskCtx = segMaskCanvas.getContext('2d', { willReadFrequently: true });
 	const segMask = new ImageData(segmentation.width, segmentation.height);
@@ -28,6 +29,7 @@ export const createCanvasPipeline = ({ source, canvas, backend, segmentation }: 
 	const doResize = () => {
 		if (!segMask) throw new Error('No segmentation mask');
 		if (!segMaskCtx) throw new Error('No segmentation mask context');
+		
 		segMaskCtx.drawImage(
 			source.element,
 			0,
@@ -39,14 +41,16 @@ export const createCanvasPipeline = ({ source, canvas, backend, segmentation }: 
 			segmentation.width,
 			segmentation.height
 		);
-	
+
 		const imageData = segMaskCtx.getImageData(
 			0,
 			0,
 			segmentation.width,
-			segmentation.height);
-	
+			segmentation.height
+		);
+
 		if (!backend || !inputMemoryOffset) throw new Error('No ML backend');
+	
 		for (let i = 0; i < segPixelCount; i++) {
 			backend.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255;
 			backend.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255;
@@ -57,15 +61,19 @@ export const createCanvasPipeline = ({ source, canvas, backend, segmentation }: 
 	const doInference = () => {
 		if (!backend) throw new Error('No ML backend');
 		if (!outputMemoryOffset) throw new Error('No output memory offset');
+	
 		backend._runInference();
 
 		if (!segMask) throw new Error('No segmentation mask');
+	
 		for (let i = 0; i < segPixelCount; i++) {
 			const person = backend.HEAPF32[outputMemoryOffset + i];
 
 			segMask.data[(i * 4) + 3] = 255 * person;
 		}
+	
 		if (!segMaskCtx) throw new Error('No segmentation mask context');
+	
 		segMaskCtx.putImageData(segMask, 0, 0);
 	};
 
@@ -100,6 +108,6 @@ export const createCanvasPipeline = ({ source, canvas, backend, segmentation }: 
 	const cleanup = () => {
 		// Not needed
 	};
-	
+
 	return { render, cleanup };
 };

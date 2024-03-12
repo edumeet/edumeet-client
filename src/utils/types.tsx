@@ -237,11 +237,6 @@ export interface BlurBackgroundPipelineOptions {
     segmentation: Dimensions
 }
 
-export interface EffectsTrack {
-	outputTrack: MediaStreamTrack,
-	stop: () => void
-}
-
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
 	// eslint-disable-next-line no-unused-vars
 	setSinkId(deviceId: string): Promise<void>

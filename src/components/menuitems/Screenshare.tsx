@@ -46,9 +46,7 @@ const Screenshare = ({
 				if (screenState === 'unsupported') return;
 
 				if (screenState === 'off') {
-					dispatch(updateScreenSharing({
-						start: true
-					}));
+					dispatch(updateScreenSharing());
 				} else {
 					// Shouldn't happen
 				}

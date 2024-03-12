@@ -1,9 +1,7 @@
 import { FormControlLabel, Switch } from '@mui/material';
 import {
-	stopPreviewWebcam,
 	updateVideoSettings,
 	updateAudioSettings,
-	updatePreviewWebcam,
 } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
@@ -14,7 +12,6 @@ import {
 	enableOpusFecLabel,
 	noiseSuppressionLabel
 } from '../translated/translatedComponents';
-import { settingsActions } from '../../store/slices/settingsSlice';
 
 export const EchoCancellationSwitch = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -129,30 +126,6 @@ export const BlurSwitch = (): JSX.Element => {
 					checked={ blurEnabled }
 					onChange={(event): void => {
 						dispatch(updateVideoSettings({ blurEnabled: event.target.checked }));
-					}}
-					disabled={blurSwitchDisabled}
-				/>
-			}
-			label={ backgroundBlurLabel() }
-		/>
-	);
-};
-
-export const JoinBlurSwitch = (): JSX.Element => {
-	const dispatch = useAppDispatch();
-	const blurEnabled = useAppSelector((state) => state.settings.blurEnabled);
-	const blurSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
-
-	return (
-		<FormControlLabel
-			control={
-				<Switch
-					color='primary'
-					checked={ blurEnabled }
-					onChange={(event): void => {
-						dispatch(settingsActions.updateSettings({ blurEnabled: event.target.checked }));
-						dispatch(stopPreviewWebcam());
-						dispatch(updatePreviewWebcam());
 					}}
 					disabled={blurSwitchDisabled}
 				/>

@@ -3,7 +3,7 @@
  * Copyright 2018 Google LLC
  * License: Apache 2.0
  * https://github.com/google-coral/tflite/blob/master/LICENSE
- * 
+ *
  * Model: MediaPipe Selfie Segmentation
  * Copyright 2021 Google LLC
  * License: Apache 2.0
@@ -13,7 +13,6 @@
 import EventEmitter from 'events';
 import { Logger, timeoutPromise } from 'edumeet-common';
 import { BlurBackgroundNotSupportedError, BlurTrack } from '../utils/blurbackground/BlurTrack';
-import { EffectsTrack } from '../utils/types';
 
 const logger = new Logger('EffectsService');
 
@@ -21,24 +20,24 @@ declare function createTFLiteModule(): Promise<TFLite>
 declare function createTFLiteSIMDModule(): Promise<TFLite>
 
 export interface TFLite {
-  _getModelBufferMemoryOffset(): number
-  _getInputMemoryOffset(): number
-  _getInputHeight(): number
-  _getInputWidth(): number
-  _getInputChannelCount(): number
-  _getOutputMemoryOffset(): number
-  _getOutputHeight(): number
-  _getOutputWidth(): number
-  _getOutputChannelCount(): number
-  // eslint-disable-next-line no-unused-vars
-  _loadModel(bufferSize: number): number
-  _runInference(): number
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  HEAPU8: any
-  HEAPF32: any
-  /* eslint-enable @typescript-eslint/no-explicit-any */
+	_getModelBufferMemoryOffset(): number
+	_getInputMemoryOffset(): number
+	_getInputHeight(): number
+	_getInputWidth(): number
+	_getInputChannelCount(): number
+	_getOutputMemoryOffset(): number
+	_getOutputHeight(): number
+	_getOutputWidth(): number
+	_getOutputChannelCount(): number
+	// eslint-disable-next-line no-unused-vars
+	_loadModel(bufferSize: number): number
+	_runInference(): number
+	/* eslint-disable @typescript-eslint/no-explicit-any */
+	HEAPU8: any
+	HEAPF32: any
+	/* eslint-enable @typescript-eslint/no-explicit-any */
 }
-	
+
 export const modelConfig = {
 	path: '/model/selfie_segmenter_landscape.tflite',
 	width: 256,
@@ -49,7 +48,7 @@ export const modelConfig = {
  * A service that handles tensorflow and mediapipe effects on the video stream, and RNNoise on the audio stream.
  */
 export class EffectsService extends EventEmitter {
-	private effectTracks = new Map<string, EffectsTrack>();
+	public effectTracks = new Map<string, BlurTrack>();
 	private model?: ArrayBuffer;
 	public webGLSupport = false;
 
@@ -70,18 +69,15 @@ export class EffectsService extends EventEmitter {
 	}
 
 	public stop(trackId?: string): void {
+		if (!trackId) return;
+
 		logger.debug('stop() [trackId %s]', trackId);
-		if (trackId) {
-			const track = this.effectTracks.get(trackId);
+	
+		const track = this.effectTracks.get(trackId);
 
-			if (track) {
-				track.stop();
-				this.effectTracks.delete(trackId);
-			}
-		} else {
-			this.effectTracks.forEach((track) => track.stop());
-
-			this.effectTracks.clear();
+		if (track) {
+			track.stop();
+			this.effectTracks.delete(trackId);
 		}
 	}
 
@@ -104,14 +100,14 @@ export class EffectsService extends EventEmitter {
 				if (!MLBackend) throw new Error('No ML Backend');
 			} catch (error) {
 				logger.error(error);
-			} 
+			}
 		}
 
 		if (!MLBackend) {
 			throw new BlurBackgroundNotSupportedError('Could not create ML Backend');
 		}
 
-		return MLBackend;	
+		return MLBackend;
 	}
 
 	private async createModel() {

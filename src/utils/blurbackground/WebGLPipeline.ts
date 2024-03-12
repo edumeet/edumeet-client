@@ -1,8 +1,8 @@
 /**
  * Implementation from Volcomix virtual background demo.
  * With minor refactoring.
- * 
- * Copyright: Sébastien Jalliffier Verne  
+ *
+ * Copyright: Sébastien Jalliffier Verne
  * License: Apache 2.0
  * https://github.com/Volcomix/virtual-background#webgl-2
  */
@@ -24,17 +24,17 @@ export const webglConfig = {
 
 export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: BlurBackgroundPipelineOptions): BlurBackgroundPipeline => {
 	const worker = new WebGLWorker();
-  
+
 	const gl = canvas.getContext('webgl2');
 
 	if (!gl) throw new Error('No WebGL context');
-  
+
 	const vertexShader = compileShader(gl, gl.VERTEX_SHADER, shaderSources.mainVertex);
-  
+
 	const vertexArray = gl.createVertexArray();
 
 	gl.bindVertexArray(vertexArray);
-  
+
 	const positionBuffer = gl.createBuffer();
 
 	if (!positionBuffer) throw new Error('No positionBuffer');
@@ -45,7 +45,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		new Float32Array([ -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0 ]),
 		gl.STATIC_DRAW
 	);
-  
+
 	const texCoordBuffer = gl.createBuffer();
 
 	if (!texCoordBuffer) throw new Error('no texCoordBuffer');
@@ -56,7 +56,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		new Float32Array([ 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0 ]),
 		gl.STATIC_DRAW
 	);
-  
+
 	const inputFrameTexture = gl.createTexture();
 
 	gl.bindTexture(gl.TEXTURE_2D, inputFrameTexture);
@@ -64,7 +64,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  
+
 	const segmentationTexture = createTexture(
 		gl,
 		gl.RGBA8,
@@ -81,7 +81,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 	);
 
 	if (!personMaskTexture) throw new Error('No personMaskTexture');
-  
+
 	const resizingStage = buildResizingStage(
 		worker,
 		gl,
@@ -91,6 +91,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		segmentation,
 		backend
 	);
+
 	const loadSegmentationStage = buildLoadSegmentationStage(
 		gl,
 		vertexShader,
@@ -98,7 +99,9 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		texCoordBuffer,
 		segmentation,
 		backend,
-		segmentationTexture);
+		segmentationTexture
+	);
+
 	const jointBilateralFilterStage = buildJointBilateralFilterStage(
 		gl,
 		vertexShader,
@@ -109,6 +112,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		personMaskTexture,
 		canvas
 	);
+
 	const backgroundStage = buildBackgroundBlurStage(
 		gl,
 		vertexShader,
@@ -117,12 +121,13 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		personMaskTexture,
 		canvas
 	);
-  
+
 	async function render() {
 		if (!gl) throw new Error('No rendering context');
+
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, inputFrameTexture);
-  
+
 		gl.texImage2D(
 			gl.TEXTURE_2D,
 			0,
@@ -131,26 +136,27 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 			gl.UNSIGNED_BYTE,
 			source.element
 		);
-  
+
 		gl.bindVertexArray(vertexArray);
-  
+
 		await resizingStage.render();
-  
+
 		backend._runInference();
-  
+
 		loadSegmentationStage.render();
 		jointBilateralFilterStage.render();
 		backgroundStage.render();
 	}
-  
+
 	function cleanup() {
 		if (!gl) throw new Error('No rendering context');
+
 		backgroundStage.cleanUp();
 		jointBilateralFilterStage.cleanUp();
 		loadSegmentationStage.cleanUp();
 		resizingStage.cleanUp();
 		worker.close();
-  
+
 		gl.deleteTexture(personMaskTexture);
 		gl.deleteTexture(segmentationTexture);
 		gl.deleteTexture(inputFrameTexture);
@@ -159,6 +165,6 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		gl.deleteVertexArray(vertexArray);
 		gl.deleteShader(vertexShader);
 	}
-  
+
 	return { render, cleanup };
 };

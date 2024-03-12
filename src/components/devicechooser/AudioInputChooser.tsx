@@ -36,19 +36,19 @@ const AudioInputChooser = ({
 
 			if (!withConfirm) dispatch(settingsActions.setSelectedAudioDevice(deviceId));
 
-			dispatch(updatePreviewMic({ start: true, newDeviceId: deviceId }));
+			dispatch(updatePreviewMic({ newDeviceId: deviceId }));
 		}
 	};
 
 	const handleConfirm = (): void => {
 		if (micEnabled) {
 			dispatch(meActions.setMicEnabled(false));
-			dispatch(updateMic({ replace: true, newDeviceId: selectedAudioDevice }));
+			dispatch(updateMic({ newDeviceId: selectedAudioDevice }));
 		} else {
 			dispatch(settingsActions.setSelectedAudioDevice(selectedAudioDevice));
 		}
 
-		dispatch(updatePreviewMic({ start: true, newDeviceId: selectedAudioDevice }));
+		dispatch(updatePreviewMic({ newDeviceId: selectedAudioDevice }));
 	};
 
 	useEffect(() => {

@@ -131,12 +131,12 @@ const createMediaMiddleware = ({
 
 						if (getState().me.lostAudio) {
 							dispatch(meActions.setLostAudio(false));
-							dispatch(updateMic({ start: true }));
+							dispatch(updateMic());
 						}
 
 						if (getState().me.lostVideo) {
 							dispatch(meActions.setLostVideo(false));
-							dispatch(updateWebcam({ start: true }));
+							dispatch(updateWebcam());
 						}
 					});
 				});
