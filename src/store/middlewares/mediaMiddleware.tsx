@@ -109,6 +109,8 @@ const createMediaMiddleware = ({
 				});
 
 				mediaService.on('mediaClosed', (source) => {
+					logger.debug('mediaClosed() [source:%s]', source);
+
 					if (source === 'webcam') {
 						dispatch(meActions.setLostVideo(true));
 						dispatch(meActions.setVideoMuted(true));
@@ -119,6 +121,22 @@ const createMediaMiddleware = ({
 						dispatch(meActions.setLostAudio(true));
 						dispatch(meActions.setAudioMuted(true));
 						dispatch(meActions.setMicEnabled(false));
+					}
+
+					if (source === 'screen') {
+						dispatch(meActions.setScreenEnabled(false));
+					}
+
+					if (source === 'screenaudio') {
+						dispatch(meActions.setScreenAudioEnabled(false));
+					}
+
+					if (source === 'extravideo') {
+						dispatch(meActions.setExtraVideoEnabled(false));
+					}
+
+					if (source === 'extraaudio') {
+						dispatch(meActions.setExtraAudioEnabled(false));
 					}
 				});
 			

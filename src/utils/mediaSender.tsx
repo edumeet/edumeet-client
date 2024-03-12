@@ -26,7 +26,6 @@ export class MediaSender extends EventEmitter {
 	public running = false;
 	public paused = false;
 
-	public track: MediaStreamTrack | null = null;
 	private producerOptions: ProducerOptions = {};
 	private codec?: ProducerCodec;
 	public producer?: Producer;
@@ -52,6 +51,10 @@ export class MediaSender extends EventEmitter {
 		this.p2pProduce = p2pProduce;
 
 		this.handleSignaling();
+	}
+
+	get track(): MediaStreamTrack | null {
+		return this.producerOptions.track ?? null;
 	}
 
 	private handleSignaling(): void {
@@ -87,6 +90,7 @@ export class MediaSender extends EventEmitter {
 		this.running = true;
 		this.producerOptions = producerOptions;
 		this.codec = codec;
+		this.handleTrack();
 
 		const promises: Promise<Producer | PeerProducer>[] = [ this.sfuProduce() ];
 
@@ -103,8 +107,6 @@ export class MediaSender extends EventEmitter {
 		} else if (this.p2pProduce) {
 			sfuResult.value.pause();
 		}
-
-		this.track = producerOptions.track ?? null;
 
 		this.maybeAddHark();
 	}
@@ -136,7 +138,6 @@ export class MediaSender extends EventEmitter {
 		}
 
 		this.track?.stop();
-		this.track = null;
 		this.producerOptions = {};
 		this.codec = undefined;
 
@@ -269,9 +270,8 @@ export class MediaSender extends EventEmitter {
 
 		const oldTrack = this.track;
 
-		this.track = track;
 		this.producerOptions.track = track;
-
+		this.handleTrack();
 		this.maybeAddHark();
 		
 		await this.producer?.replaceTrack({ track });
@@ -379,5 +379,11 @@ export class MediaSender extends EventEmitter {
 		}
 
 		return peerProducingPromise;
+	}
+
+	private handleTrack(): void {
+		this.track?.addEventListener('ended', () => {
+			this.stop(false);
+		}, { once: true });
 	}
 }
