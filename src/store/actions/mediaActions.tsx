@@ -827,7 +827,9 @@ export const stopScreenSharing = (): AppThunk<void> => (
 	logger.debug('stopScreenSharing()');
 
 	mediaService.mediaSenders['screen'].stop();
+	mediaService.mediaSenders['screenaudio'].stop();
 	dispatch(meActions.setScreenEnabled(false));
+	dispatch(meActions.setScreenAudioEnabled(false));
 };
 
 /**
