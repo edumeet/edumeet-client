@@ -1,27 +1,31 @@
 import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
-import { spotlightWebcamConsumerSelector, videoBoxesSelector } from '../../store/selectors';
-import Me from '../me/Me';
+import { selectedVideoBoxesSelector, selectedVideoConsumersSelector } from '../../store/selectors';
 import VideoConsumer from '../videoconsumer/VideoConsumer';
-import Peers from '../peers/Peers';
 import { Box } from '@mui/material';
+import VideoBox from '../videobox/VideoBox';
+import VideoView from '../videoview/VideoView';
+import DisplayName from '../displayname/DisplayName';
+import MediaControls from '../mediacontrols/MediaControls';
+import ScreenshareButton from '../controlbuttons/ScreenshareButton';
+import ExtraVideoButton from '../controlbuttons/ExtraVideoButton';
 
-type DemocraticDivProps = {
+type SpotlightsDivProps = {
 	headless: number;
 	horizontal: number;
-	spotlights: number;
+	videos: number;
 };
 
-const DemocraticDiv = styled(Box)<DemocraticDivProps>(({
+const SpotlightsDiv = styled(Box)<SpotlightsDivProps>(({
 	theme,
 	headless,
 	horizontal,
-	spotlights,
+	videos,
 }) => ({
-	width: horizontal ? '25%' : '100%',
-	height: headless ? `calc(${horizontal || !spotlights ? '100' : '25'}% - 8px)` : `calc(${horizontal || !spotlights ? '100' : '25'}% - 64px)`,
-	marginBottom: headless ? 0 : 64,
+	width: horizontal ? '75%' : '100%',
+	height: headless || (!horizontal && videos) ? `calc(${horizontal || !videos ? '100' : '75'}% - 8px)` : `calc(${horizontal || !videos ? '100' : '75'}% - 64px)`,
+	marginBottom: headless || !horizontal ? 0 : 64,
 	display: 'flex',
 	flexDirection: 'row',
 	gap: theme.spacing(1),
@@ -32,17 +36,17 @@ const DemocraticDiv = styled(Box)<DemocraticDivProps>(({
 	alignContent: 'center',
 }));
 
-type DemocraticProps = {
+type SpotlightsProps = {
 	windowSize: number;
 	horizontal: boolean;
-	spotlights: boolean;
+	videos: boolean;
 };
 
-const Democratic = ({
+const Spotlights = ({
 	windowSize,
 	horizontal,
-	spotlights,
-}: DemocraticProps): JSX.Element => {
+	videos,
+}: SpotlightsProps): JSX.Element => {
 	const theme = useTheme();
 	const peersRef = useRef<HTMLDivElement>(null);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
@@ -50,10 +54,13 @@ const Democratic = ({
 	const verticalDivide = useAppSelector((state) => state.settings.verticalDivide);
 	const chatOpen = useAppSelector((state) => state.ui.chatOpen);
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
-	const boxes = useAppSelector(videoBoxesSelector);
-	const webcamConsumers = useAppSelector(spotlightWebcamConsumerSelector);
+	const boxes = useAppSelector(selectedVideoBoxesSelector);
+	const videoConsumers = useAppSelector(selectedVideoConsumersSelector);
 	const currentSession = useAppSelector((state) => state.me.sessionId);
 	const headless = useAppSelector((state) => state.room.headless);
+	const screenEnabled = useAppSelector((state) => state.me.screenEnabled);
+	const extraVideoEnabled = useAppSelector((state) => state.me.extraVideoEnabled);
+	const displayName = useAppSelector((state) => state.settings.displayName);
 	const [ dimensions, setDimensions ] = useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
 	const updateDimensions = (): void => {
@@ -108,9 +115,9 @@ const Democratic = ({
 		participantListOpen,
 		verticalDivide,
 		currentSession,
-		webcamConsumers,
+		videoConsumers,
 		horizontal,
-		spotlights
+		videos
 	]);
 
 	const style = {
@@ -119,18 +126,59 @@ const Democratic = ({
 	};
 
 	return (
-		<DemocraticDiv ref={peersRef} headless={headless ? 1 : 0} horizontal={horizontal ? 1 : 0} spotlights={spotlights ? 1 : 0}>
-			<Me style={style} />
-			{ webcamConsumers.map((consumer) => (
+		<SpotlightsDiv ref={peersRef} headless={headless ? 1 : 0} horizontal={horizontal ? 1 : 0} videos={videos ? 1 : 0}>
+			{ !hideSelfView && screenEnabled && (
+				<VideoBox
+					order={2}
+					width={style.width}
+					height={style.height}
+				>
+					<VideoView source='screen' contain />
+					<DisplayName disabled={false} displayName={displayName} isMe />
+					<MediaControls
+						orientation='vertical'
+						horizontalPlacement='right'
+						verticalPlacement='center'
+					>
+						<ScreenshareButton
+							onColor='default'
+							offColor='error'
+							disabledColor='default'
+						/>
+					</MediaControls>
+				</VideoBox>
+			)}
+			{ !hideSelfView && extraVideoEnabled &&
+				<VideoBox
+					order={3}
+					width={style.width}
+					height={style.height}
+				>
+					<VideoView source='extravideo' />
+					<DisplayName disabled={false} displayName={displayName} isMe />
+					<MediaControls
+						orientation='vertical'
+						horizontalPlacement='right'
+						verticalPlacement='center'
+					>
+						<ExtraVideoButton
+							onColor='default'
+							offColor='error'
+							disabledColor='default'
+						/>
+					</MediaControls>
+				</VideoBox>
+			}
+
+			{ videoConsumers.map((consumer) => (
 				<VideoConsumer
 					key={consumer.id}
 					consumer={consumer}
 					style={style}
 				/>
 			))}
-			<Peers style={style} />
-		</DemocraticDiv>
+		</SpotlightsDiv>
 	);
 };
 
-export default Democratic;
+export default Spotlights;
