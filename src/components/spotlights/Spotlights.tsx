@@ -23,8 +23,8 @@ const SpotlightsDiv = styled(Box)<SpotlightsDivProps>(({
 	horizontal,
 	videos,
 }) => ({
-	width: horizontal ? '75%' : '100%',
-	height: headless || (!horizontal && videos) ? `calc(${horizontal || !videos ? '100' : '75'}% - 8px)` : `calc(${horizontal || !videos ? '100' : '75'}% - 64px)`,
+	width: '100%',
+	height: headless || (!horizontal && videos) ? 'calc(100% - 8px)' : 'calc(100% - 64px)',
 	marginBottom: headless || !horizontal ? 0 : 64,
 	display: 'flex',
 	flexDirection: 'row',

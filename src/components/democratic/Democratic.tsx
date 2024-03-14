@@ -19,8 +19,8 @@ const DemocraticDiv = styled(Box)<DemocraticDivProps>(({
 	horizontal,
 	spotlights,
 }) => ({
-	width: horizontal ? '25%' : '100%',
-	height: headless ? `calc(${horizontal || !spotlights ? '100' : '25'}% - 8px)` : `calc(${horizontal || !spotlights ? '100' : '25'}% - 64px)`,
+	width: horizontal ? '25rem' : '100%',
+	height: headless ? `calc(${horizontal || !spotlights ? '100%' : '25rem'} - 8px)` : `calc(${horizontal || !spotlights ? '100%' : '25rem'} - 64px)`,
 	marginBottom: headless ? 0 : 64,
 	display: 'flex',
 	flexDirection: 'row',

@@ -41,60 +41,19 @@ const MainContainer = styled(Box)<MainContainerProps>(({ theme, horizontal }) =>
 
 interface SideContentProps {
 	verticaldivide?: number;
-	dynamicwidth?: number;
 	bothopen?: number;
 }
 
 const SideContent = styled(Box)<SideContentProps>(({
 	theme,
 	verticaldivide,
-	dynamicwidth,
 	bothopen,
 }) => ({
 	height: '100%',
 	display: 'flex',
 	flexDirection: verticaldivide ? 'column' : 'row',
 	gap: theme.spacing(0.5),
-	...(dynamicwidth && {
-		width: '40vw',
-		[theme.breakpoints.down('xl')]: {
-			width: '50vw'
-		},
-		[theme.breakpoints.down('lg')]: {
-			width: '60vw'
-		},
-		[theme.breakpoints.down('md')]: {
-			width: '70vw'
-		},
-		[theme.breakpoints.down('sm')]: {
-			width: '80vw'
-		},
-		...(!verticaldivide && {
-			...(bothopen ? {
-				width: '60vw',
-				[theme.breakpoints.down('xl')]: {
-					width: '70vw'
-				},
-				[theme.breakpoints.down('lg')]: {
-					width: '80vw'
-				},
-				[theme.breakpoints.down('md')]: {
-					width: '90vw'
-				},
-			} : {
-				width: '30vw',
-				[theme.breakpoints.down('xl')]: {
-					width: '40vw'
-				},
-				[theme.breakpoints.down('lg')]: {
-					width: '50vw'
-				},
-				[theme.breakpoints.down('md')]: {
-					width: '60vw'
-				},
-			}),
-		})
-	}),
+	width: bothopen && !verticaldivide ? '60rem' : '30rem',
 }));
 
 interface SideContainerProps {
@@ -123,7 +82,6 @@ const MainContent = (): JSX.Element => {
 	const eitherOpen = chatOpen || participantListOpen;
 	const bothOpen = chatOpen && participantListOpen;
 	const verticalDivide = useAppSelector((state) => state.settings.verticalDivide);
-	const dynamicWidth = useAppSelector((state) => state.settings.dynamicWidth);
 	const headless = useAppSelector((state) => state.room.headless);
 	const spotlightsVisible = useAppSelector(selectedVideoBoxesSelector) > 0;
 	const videosVisible = useAppSelector(videoBoxesSelector) > 0;
@@ -165,7 +123,6 @@ const MainContent = (): JSX.Element => {
 			{ !isMobile && eitherOpen &&
 				<SideContent
 					verticaldivide={verticalDivide ? 1 : 0}
-					dynamicwidth={dynamicWidth ? 1 : 0}
 					bothopen={bothOpen ? 1 : 0}
 				>
 					{ participantListOpen && <SideContainer height={height} width='100%'><ParticipantList /></SideContainer> }
