@@ -609,7 +609,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 					encodings,
 					codecOptions: { videoGoogleStartBitrate: 1000 },
 					appData: { source: 'webcam' }
-				}, 'video/h264');
+				});
 			} else {
 				await mediaService.mediaSenders['webcam'].start({
 					track,
@@ -617,7 +617,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 					disableTrackOnPause: false,
 					zeroRtpOnPause: true,
 					appData: { source: 'webcam' }
-				}, 'video/h264');
+				});
 			}
 		} else {
 			await mediaService.mediaSenders['webcam'].track?.applyConstraints({
@@ -761,7 +761,7 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 						videoGoogleStartBitrate: 1000
 					},
 					appData: { source: 'screen' }
-				}, 'video/h264');
+				});
 			} else {
 				await mediaService.mediaSenders['screen'].start({
 					track: videoTrack,
@@ -772,7 +772,7 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 						videoGoogleStartBitrate: 1000
 					},
 					appData: { source: 'screen' }
-				}, 'video/h264');
+				});
 			}
 
 			dispatch(meActions.setScreenEnabled(true));
@@ -903,7 +903,7 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 					encodings,
 					codecOptions: { videoGoogleStartBitrate: 1000 },
 					appData: { source: 'extravideo' }
-				}, 'video/h264');
+				});
 			} else {
 				await mediaService.mediaSenders['extravideo'].start({
 					track,
@@ -911,7 +911,7 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 					disableTrackOnPause: false,
 					zeroRtpOnPause: true,
 					appData: { source: 'extravideo' }
-				}, 'video/h264');
+				});
 			}
 		} else {
 			await mediaService.mediaSenders['extravideo'].track?.applyConstraints({
