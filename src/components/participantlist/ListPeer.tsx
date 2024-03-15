@@ -92,7 +92,7 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): JSX.Element => {
 					{ hasVideo && /* <StyledChip disabled label={ */ <WebcamIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
 					{ hasAudio && /* <StyledChip disabled label={ */ <MicUnMutedIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
 				</StyledIcons>
-				<Volume consumer={micConsumer} small />
+				{ micConsumer && <Volume consumer={micConsumer} small /> }
 				<MoreButton onClick={(event) => setMoreAnchorEl(event.currentTarget)} type='iconbutton' size='small' />
 			</PeerDiv>
 			{ shouldShow && <PeerMenu anchorEl={moreAnchorEl} peerId={peer.id} onClick={handleMenuClose} /> }
