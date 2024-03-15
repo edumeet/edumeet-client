@@ -31,13 +31,20 @@ const device = deviceInfo();
 const unsupportedBrowser = !browserInfo.satisfies(supportedBrowsers);
 const webrtcUnavailable = !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.RTCPeerConnection;
 
+// Detect the base url we are hosted on
+const basename = window.location.pathname.split('/')
+	.slice(0, -1)
+	.join('/');
+
+logger.debug('Starting app [baseUrl:%s]', basename);
+
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<>
 			<Route path='/' element={<Suspense><LandingPage /></Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
 			<Route path='/:id' element={<Suspense><App /></Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
 		</>
-	)
+	), { basename }
 );
 
 /**
