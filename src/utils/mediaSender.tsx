@@ -276,14 +276,14 @@ export class MediaSender extends EventEmitter {
 		this.handleTrack();
 		this.maybeAddHark();
 		
-		await this.producer?.replaceTrack({ track });
+		await this.producer?.replaceTrack({ track: this.track?.clone() ?? null });
 
 		for (const producer of this.peerProducers.values()) {
-			await producer.replaceTrack({ track });
+			await producer.replaceTrack({ track: this.track?.clone() ?? null });
 		}
 
 		for (const producerPromise of this.peerProducingPromises.values()) {
-			await producerPromise.then((producer) => producer.replaceTrack({ track: this.track }));
+			await producerPromise.then((producer) => producer.replaceTrack({ track: this.track?.clone() ?? null }));
 		}
 
 		oldTrack?.stop();
@@ -296,8 +296,13 @@ export class MediaSender extends EventEmitter {
 
 		if (!this.mediaService.sendTransport) throw new Error('Send transport not ready');
 
-		const producer = await this.mediaService.sendTransport.produce({
+		const producerOptions = {
 			...this.producerOptions,
+			track: this.track?.clone()
+		};
+
+		const producer = await this.mediaService.sendTransport.produce({
+			...producerOptions,
 			codec: this.mediaService.mediasoup?.rtpCapabilities.codecs?.find((c) => c.mimeType.toLowerCase() === this.codec)
 		});
 
@@ -335,9 +340,14 @@ export class MediaSender extends EventEmitter {
 			peerProducingPromise = (async () => {
 				const peerDevice = this.mediaService.getPeerDevice(peerId);
 				const transport = await this.mediaService.getPeerTransport(peerId, 'send');
+
+				const producerOptions = {
+					...this.producerOptions,
+					track: this.track?.clone()
+				};
 		
 				const producer = await transport.produce({
-					...this.producerOptions,
+					...producerOptions,
 					codec: peerDevice.rtpCapabilities.codecs?.find((c) => c.mimeType.toLowerCase() === this.codec)
 				});
 
@@ -369,6 +379,8 @@ export class MediaSender extends EventEmitter {
 		
 				producer.observer.on('pause', pauseListener);
 				producer.observer.on('resume', resumeListener);
+
+				if (this.paused) producer.pause();
 
 				this.peerProducingPromises.delete(peerId);
 

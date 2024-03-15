@@ -428,9 +428,6 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 			} else {
 				await mediaService.mediaSenders['mic'].start({
 					track,
-					stopTracks: false,
-					disableTrackOnPause: false,
-					zeroRtpOnPause: true,
 					codecOptions: {
 						opusStereo: opusStereo,
 						opusFec: opusFec,
@@ -603,9 +600,6 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 	
 				await mediaService.mediaSenders['webcam'].start({
 					track,
-					stopTracks: false,
-					disableTrackOnPause: false,
-					zeroRtpOnPause: true,
 					encodings,
 					codecOptions: { videoGoogleStartBitrate: 1000 },
 					appData: { source: 'webcam' }
@@ -613,9 +607,6 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 			} else {
 				await mediaService.mediaSenders['webcam'].start({
 					track,
-					stopTracks: false,
-					disableTrackOnPause: false,
-					zeroRtpOnPause: true,
 					appData: { source: 'webcam' }
 				});
 			}
@@ -753,9 +744,6 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 
 				await mediaService.mediaSenders['screen'].start({
 					track: videoTrack,
-					stopTracks: false,
-					disableTrackOnPause: false,
-					zeroRtpOnPause: true,
 					encodings,
 					codecOptions: {
 						videoGoogleStartBitrate: 1000
@@ -765,9 +753,6 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 			} else {
 				await mediaService.mediaSenders['screen'].start({
 					track: videoTrack,
-					stopTracks: false,
-					disableTrackOnPause: false,
-					zeroRtpOnPause: true,
 					codecOptions: {
 						videoGoogleStartBitrate: 1000
 					},
@@ -782,9 +767,6 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 			if (audioTrack) {
 				await mediaService.mediaSenders['screenaudio'].start({
 					track: audioTrack,
-					stopTracks: false,
-					disableTrackOnPause: false,
-					zeroRtpOnPause: true,
 					codecOptions: {
 						opusStereo: opusStereo,
 						opusFec: opusFec,
@@ -897,9 +879,6 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 
 				await mediaService.mediaSenders['extravideo'].start({
 					track,
-					stopTracks: false,
-					disableTrackOnPause: false,
-					zeroRtpOnPause: true,
 					encodings,
 					codecOptions: { videoGoogleStartBitrate: 1000 },
 					appData: { source: 'extravideo' }
@@ -907,9 +886,6 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 			} else {
 				await mediaService.mediaSenders['extravideo'].start({
 					track,
-					stopTracks: false,
-					disableTrackOnPause: false,
-					zeroRtpOnPause: true,
 					appData: { source: 'extravideo' }
 				});
 			}
