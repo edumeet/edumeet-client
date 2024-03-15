@@ -222,15 +222,13 @@ const createMediaMiddleware = ({
 
 				pausedConsumersList.forEach(({ id: consumerId, peerId }) => {
 					if (peerId !== removedPeerId && consumerId !== removedConsumerId) {
-						mediaService.changeConsumer(consumerId, 'pause');
-						dispatch(consumersActions.setConsumerPaused({ consumerId }));
+						dispatch(consumersActions.setConsumerPaused({ consumerId, local: true }));
 					}
 				});
 
 				resumedConsumersList.forEach(({ id: consumerId, peerId }) => {
 					if (peerId !== removedPeerId && consumerId !== removedConsumerId) {
-						mediaService.changeConsumer(consumerId, 'resume');
-						dispatch(consumersActions.setConsumerResumed({ consumerId }));
+						dispatch(consumersActions.setConsumerResumed({ consumerId, local: true }));
 					}
 				});
 
