@@ -244,6 +244,14 @@ export class MediaService extends EventEmitter {
 		this.signalingService.on('notification', async (notification) => {
 			try {
 				switch (notification.method) {
+					case 'turnCredentials': {
+						const { iceServers } = notification.data;
+
+						this.iceServers = iceServers;
+
+						break;
+					}
+
 					case 'peerClosed': {
 						const { peerId } = notification.data;
 
