@@ -11,22 +11,20 @@ import {
 	stopRecordingLabel
 } from '../translated/translatedComponents';
 import { permissions } from '../../utils/roles';
-import { recordingActions } from '../../store/slices/recordingSlice';
+import { startRecording, stopRecording } from '../../store/actions/recordingActions';
 
 const RecordButton = (
 	props
 : ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasRecordingPermission = usePermissionSelector(permissions.LOCAL_RECORD_ROOM);
-	const recording = useAppSelector((state) => state.recording.recording);
+	const recording = useAppSelector((state) => state.room.recording);
 
 	return (
 		<ControlButton
 			toolTip={recording ? stopRecordingLabel() : startRecordingLabel() }
 			onClick={() => {
-				recording ?
-					dispatch(recordingActions.stop()) :
-					dispatch(recordingActions.start());
+				recording ? dispatch(stopRecording()) : dispatch(startRecording());
 			}}
 			disabled={!hasRecordingPermission}
 			{ ...props }

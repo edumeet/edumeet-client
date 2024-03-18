@@ -12,6 +12,7 @@ export interface RoomState {
 	joinInProgress?: boolean;
 	updateBreakoutInProgress?: boolean;
 	transitBreakoutRoomInProgress?: boolean;
+	recording?: boolean;
 	lockInProgress?: boolean;
 	localeInProgress?: boolean;
 	muteAllInProgress?: boolean;
@@ -44,6 +45,7 @@ const initialState: RoomState = {
 	backgroundImage: edumeetConfig.theme.backgroundImage,
 	roomMode: 'P2P',
 	state: 'new',
+	recording: false,
 	breakoutsEnabled: true,
 	chatEnabled: true,
 	filesharingEnabled: true,

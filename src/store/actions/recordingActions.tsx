@@ -1,6 +1,6 @@
 import { Logger } from 'edumeet-common';
 import { AppThunk } from '../store';
-import { recordingActions } from '../slices/recordingSlice';
+import { roomActions } from '../slices/roomSlice';
 
 const logger = new Logger('RecordingActions');
 
@@ -27,29 +27,6 @@ let audioContext: AudioContext;
 let audioDestination: MediaStreamAudioDestinationNode;
 let mimeType: string;
 
-const stopRecorder = async () => {
-	logger.debug('stopRecorder()');
-
-	try {
-		recorder?.stop();
-		screenStream?.getTracks().forEach((track) => track.stop());
-		recorderStream?.getTracks().forEach((track) => track.stop());
-		audioContext?.close();
-		audioDestination?.disconnect();
-
-		// Give some time for last recording chunks to come through
-		setTimeout(async () => {
-			try {
-				await writableStream?.close();
-			} catch (error) {
-				logger.error('stopRecorder() [error:%o]', error);
-			}
-		}, RECORDING_SLICE_SIZE);
-	} catch (error) {
-		logger.error('stopRecorder() [error:%o]', error);
-	}
-};
-
 export const startRecording = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
@@ -59,19 +36,15 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 
 	logger.debug('recordingActions.start [mimeType:%s]', mimeType);
 
-	if (!MediaRecorder || !window.showSaveFilePicker)
-		return logger.error('Recording is not supported');
+	if (!MediaRecorder) return logger.error('Recording is not supported');
+
+	const { showSaveFilePicker } = await import('native-file-system-adapter');
 
 	const roomName = new URL(getState().signaling.url).searchParams.get('roomId');
 
-	const opts:SaveFilePickerOptions = {
+	const opts: SaveFilePickerOptions = {
 		suggestedName: `${roomName}.mp4`,
-		types: [
-			{
-				description: 'LocalRecording',
-				accept: { 'video/mp4': [ '.mp4' ] },
-			},
-		],
+		types: [ { description: 'LocalRecording', accept: { 'video/mp4': [ '.mp4' ] } } ],
 	};
 
 	const saveFileHandle = await showSaveFilePicker(opts);
@@ -95,32 +68,46 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 			).connect(audioDestination);
 		}
 
-		const audioConsumers = mediaService.getConsumers()
-			.filter((consumer) => consumer.appData.source === 'mic');
-
-		for (const consumer of audioConsumers) {
-			if (consumer.track) {
+		mediaService.mediaSenders['mic'].on('started', () => {
+			if (mediaService.mediaSenders['mic'].track) {
 				audioContext.createMediaStreamSource(
-					new MediaStream([ consumer.track ])
+					new MediaStream([ mediaService.mediaSenders['mic'].track ])
 				).connect(audioDestination);
 			}
-		}
+		});
+
+		mediaService.mediaSenders['screenaudio'].on('started', () => {
+			if (mediaService.mediaSenders['screenaudio'].track) {
+				audioContext.createMediaStreamSource(
+					new MediaStream([ mediaService.mediaSenders['screenaudio'].track ])
+				).connect(audioDestination);
+			}
+		});
 
 		mediaService.on('consumerCreated', (consumer) => {
-			if (consumer.appData.source === 'mic' && consumer.track) {
+			if (consumer.kind === 'audio') {
+				logger.debug('consumer.transportclose event');
+
 				audioContext.createMediaStreamSource(
 					new MediaStream([ consumer.track ])
 				).connect(audioDestination);
 			}
 		});
 
-		const [ mixedAudioTrack ] = audioDestination.stream.getTracks();
+		const audioConsumers = mediaService.getConsumers().filter((consumer) => consumer.kind === 'audio');
 
-		screenStream = await navigator.mediaDevices.getDisplayMedia(
-			RECORDING_CONSTRAINTS
-		);
+		for (const consumer of audioConsumers) {
+			logger.debug('audioConsumer [consumer:%o]', consumer);
+
+			audioContext.createMediaStreamSource(
+				new MediaStream([ consumer.track ])
+			).connect(audioDestination);
+		}
+
+		screenStream = await navigator.mediaDevices.getDisplayMedia(RECORDING_CONSTRAINTS);
 
 		const [ screenVideotrack ] = screenStream.getVideoTracks();
+		const [ mixedAudioTrack ] = audioDestination.stream.getTracks();
 
 		screenVideotrack.addEventListener('ended', () => {
 			logger.debug('screenVideotrack ended event');
@@ -151,7 +138,7 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 
 		recorder.start(RECORDING_SLICE_SIZE);
 
-		dispatch(recordingActions.start());
+		dispatch(roomActions.updateRoom({ recording: true }));
 	} catch (error) {
 		logger.error('recordingActions.start [error:%o]', error);
 	}
@@ -160,7 +147,24 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 export const stopRecording = (): AppThunk<Promise<void>> => async (dispatch) => {
 	logger.debug('stopRecording()');
 
-	await stopRecorder();
+	try {
+		recorder?.stop();
+		screenStream?.getTracks().forEach((track) => track.stop());
+		recorderStream?.getTracks().forEach((track) => track.stop());
+		audioContext?.close();
+		audioDestination?.disconnect();
 
-	dispatch(recordingActions.stop());
+		// Give some time for last recording chunks to come through
+		setTimeout(async () => {
+			try {
+				await writableStream?.close();
+			} catch (error) {
+				logger.error('stopRecorder() [error:%o]', error);
+			}
+		}, RECORDING_SLICE_SIZE);
+	} catch (error) {
+		logger.error('stopRecorder() [error:%o]', error);
+	}
+
+	dispatch(roomActions.updateRoom({ recording: false }));
 };

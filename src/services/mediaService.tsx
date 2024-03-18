@@ -16,6 +16,7 @@ import { Logger } from 'edumeet-common';
 import { safePromise } from '../utils/safePromise';
 import { ProducerSource } from '../utils/types';
 import { MediaSender } from '../utils/mediaSender';
+import type { ClientMonitor } from '@observertc/client-monitor-js';
 
 const logger = new Logger('MediaService');
 
@@ -132,6 +133,18 @@ export class MediaService extends EventEmitter {
 	public rejectTransportsReady!: (error: Error) => void;
 	public resolveTransportsReady!: () => void;
 	public transportsReady!: ReturnType<typeof safePromise>;
+
+	public monitor: Promise<ClientMonitor> = (async () => {
+		const { createClientMonitor } = await import('@observertc/client-monitor-js');
+
+		const monitor = createClientMonitor({ collectingPeriodInMs: 5000 });
+
+		monitor.on('stats-collected', (stats) => {
+			logger.debug('stats-collected [stats:%o]', stats);
+		});
+
+		return monitor;
+	})();
 
 	constructor({ signalingService }: { signalingService: SignalingService }) {
 		super();
@@ -644,7 +657,7 @@ export class MediaService extends EventEmitter {
 
 	get localCapabilities(): LocalCapabilities {
 		return {
-			canRecord: Boolean(MediaRecorder && window.showSaveFilePicker),
+			canRecord: Boolean(MediaRecorder),
 			canTranscribe: Boolean(window.webkitSpeechRecognition),
 		};
 	}
@@ -712,6 +725,10 @@ export class MediaService extends EventEmitter {
 			const MediaSoup = await import('mediasoup-client');
 
 			this.mediasoup = new MediaSoup.Device();
+
+			const monitor = await this.monitor;
+
+			monitor.collectors.addMediasoupDevice(this.mediasoup);
 		}
 
 		if (!this.mediasoup.loaded) await this.mediasoup.load({ routerRtpCapabilities });
@@ -841,6 +858,10 @@ export class MediaService extends EventEmitter {
 				} else {
 					transport = p2pDevice.createSendTransport({ iceServers: this.iceServers });
 				}
+
+				const monitor = await this.monitor;
+
+				monitor.collectors.addRTCPeerConnection(transport.handler.pc);
 
 				transport.on('icecandidate', (candidate) => {
 					this.signalingService.notify('candidate', {

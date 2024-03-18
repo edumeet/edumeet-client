@@ -14,6 +14,10 @@ const logger = new Logger('MediaSender');
 export declare interface MediaSender {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'closed', listener: () => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'started', listener: () => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'stopped', listener: () => void): this;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -39,7 +43,6 @@ export class MediaSender extends EventEmitter {
 		mediaService: MediaService,
 		signalingService: SignalingService,
 		source: ProducerSource,
-		p2pProduce = false
 	) {
 		super();
 	
@@ -48,7 +51,6 @@ export class MediaSender extends EventEmitter {
 		this.mediaService = mediaService;
 		this.signalingService = signalingService;
 		this.source = source;
-		this.p2pProduce = p2pProduce;
 
 		this.handleSignaling();
 	}
@@ -108,6 +110,7 @@ export class MediaSender extends EventEmitter {
 			sfuResult.value.pause();
 		}
 
+		this.emit('started');
 		this.maybeAddHark();
 	}
 
@@ -142,6 +145,7 @@ export class MediaSender extends EventEmitter {
 		this.codec = undefined;
 
 		if (!local) this.emit('closed');
+		this.emit('stopped');
 
 		this.paused = false;
 	}

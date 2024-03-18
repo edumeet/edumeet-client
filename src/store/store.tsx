@@ -42,7 +42,6 @@ import edumeetConfig from '../utils/edumeetConfig';
 import { createContext } from 'react';
 import { DeviceService } from '../services/deviceService';
 import { FileService } from '../services/fileService';
-import recordingSlice from './slices/recordingSlice';
 import roomSessionsSlice from './slices/roomSessionsSlice';
 import { Application, feathers } from '@feathersjs/feathers/lib';
 import rest from '@feathersjs/rest-client';
@@ -121,7 +120,6 @@ const reducer = combineReducers({
 	settings: settingsSlice.reducer,
 	signaling: signalingSlice.reducer,
 	ui: uiSlice.reducer,
-	recording: recordingSlice.reducer,
 });
 
 const pReducer = persistReducer<RootState>(persistConfig, reducer);
