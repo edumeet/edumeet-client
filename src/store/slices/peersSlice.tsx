@@ -17,6 +17,7 @@ export interface Peer {
 	raisedHandInProgress?: boolean;
 	raisedHand?: boolean;
 	raisedHandTimestamp?: number;
+	recording?: boolean;
 	transcripts?: Transcript[];
 }
 
@@ -61,7 +62,8 @@ const peersSlice = createSlice({
 					kickInProgress,
 					raisedHandInProgress,
 					raisedHand,
-					raisedHandTimestamp
+					raisedHandTimestamp,
+					recording,
 				} = action.payload;
 
 				if (displayName)
@@ -88,6 +90,8 @@ const peersSlice = createSlice({
 					peer.raisedHand = raisedHand;
 				if (raisedHandTimestamp !== undefined)
 					peer.raisedHandTimestamp = raisedHandTimestamp;
+				if (recording !== undefined)
+					peer.recording = recording;
 			}
 		}),
 		updateTranscript: ((state, action: PayloadAction<PeerTranscript>) => {

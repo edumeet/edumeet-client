@@ -30,7 +30,7 @@ let mimeType: string;
 export const startRecording = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ mediaService }
+	{ mediaService, signalingService }
 ) => {
 	mimeType = getState().settings.preferredRecorderMimeType;
 
@@ -118,6 +118,8 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 		recorderStream = new MediaStream([ mixedAudioTrack, screenVideotrack ]);
 		recorder = new MediaRecorder(recorderStream, { mimeType });
 
+		signalingService.notify('recording', { recording: true });
+
 		recorder.addEventListener('error', (event) => {
 			logger.error('recording.error', event);
 
@@ -144,8 +146,14 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 	}
 };
 
-export const stopRecording = (): AppThunk<Promise<void>> => async (dispatch) => {
+export const stopRecording = (): AppThunk<void> => (
+	dispatch,
+	_getState,
+	{ signalingService }
+) => {
 	logger.debug('stopRecording()');
+
+	signalingService.notify('recording', { recording: false });
 
 	try {
 		recorder?.stop();
@@ -153,17 +161,9 @@ export const stopRecording = (): AppThunk<Promise<void>> => async (dispatch) => 
 		recorderStream?.getTracks().forEach((track) => track.stop());
 		audioContext?.close();
 		audioDestination?.disconnect();
-
-		// Give some time for last recording chunks to come through
-		setTimeout(async () => {
-			try {
-				await writableStream?.close();
-			} catch (error) {
-				logger.error('stopRecorder() [error:%o]', error);
-			}
-		}, RECORDING_SLICE_SIZE);
+		writableStream?.close();
 	} catch (error) {
-		logger.error('stopRecorder() [error:%o]', error);
+		logger.error('stopRecording() [error:%o]', error);
 	}
 
 	dispatch(roomActions.updateRoom({ recording: false }));

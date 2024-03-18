@@ -2,7 +2,7 @@ import { AppBar, Chip, Toolbar, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { useAppSelector, usePermissionSelector } from '../../store/hooks';
-import { lobbyPeersLengthSelector, roomSessionCreationTimestampSelector } from '../../store/selectors';
+import { lobbyPeersLengthSelector, roomSessionCreationTimestampSelector, someoneIsRecordingSelector } from '../../store/selectors';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { permissions } from '../../utils/roles';
 import LobbyButton from '../controlbuttons/LobbyButton';
@@ -13,6 +13,7 @@ import SettingsButton from '../controlbuttons/SettingsButton';
 import LeaveButton from '../textbuttons/LeaveButton';
 import { formatDuration } from '../../utils/formatDuration';
 import LogoutButton from '../controlbuttons/LogoutButton';
+import RecordIcon from '../recordicon/RecordIcon';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -77,6 +78,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 	const roomCreationTimestamp = useAppSelector(roomSessionCreationTimestampSelector);
 	const [ meetingDuration, setMeetingDuration ] = useState<number>(0);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	const someoneIsRecording = useAppSelector(someoneIsRecordingSelector);
 
 	useEffect(() => {
 		if (roomCreationTimestamp) {
@@ -111,6 +113,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 				</TopBarDiv>
 				<TopBarDiv grow={1} />
 				<TopBarDiv marginRight={1}>
+					{ someoneIsRecording && <RecordIcon color='error' /> }
 					{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
 					<SettingsButton type='iconbutton' />
 					{ canLock && <LockButton type='iconbutton' /> }

@@ -11,6 +11,7 @@ import MicUnMutedIcon from '@mui/icons-material/MicNoneOutlined';
 import WebcamIcon from '@mui/icons-material/VideocamOutlined';
 import MoreButton from '../controlbuttons/MoreButton';
 import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
+import RecordIcon from '../recordicon/RecordIcon';
 
 interface ListPeerProps {
 	peer: Peer;
@@ -75,6 +76,7 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): JSX.Element => {
 				else dispatch(roomSessionsActions.selectPeer({ sessionId: peer.sessionId, peerId: peer.id }));
 			}}>
 				<PeerAvatar src={peer.picture ?? '/images/buddy.svg'} />
+				{ peer.recording && <RecordIcon color='error' /> }
 				{ peer.raisedHand &&
 					<IconButton
 						disabled={!isModerator || peer.raisedHandInProgress}

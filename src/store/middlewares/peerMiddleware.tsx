@@ -36,7 +36,8 @@ const createPeerMiddleware = ({
 									displayName,
 									picture,
 									raisedHand,
-									raisedHandTimestamp
+									raisedHandTimestamp,
+									recording,
 								} = notification.data;
 
 								dispatch(peersActions.addPeer({
@@ -46,6 +47,7 @@ const createPeerMiddleware = ({
 									picture,
 									raisedHand,
 									raisedHandTimestamp,
+									recording,
 									transcripts: [],
 								}));
 
@@ -70,13 +72,15 @@ const createPeerMiddleware = ({
 
 							case 'changeDisplayName':
 							case 'changePicture':
+							case 'recording':
 							case 'raisedHand': {
 								const {
 									peerId,
 									displayName,
 									picture,
 									raisedHand,
-									raisedHandTimestamp
+									raisedHandTimestamp,
+									recording,
 								} = notification.data;
 
 								dispatch(
@@ -85,7 +89,8 @@ const createPeerMiddleware = ({
 										displayName,
 										picture,
 										raisedHand,
-										raisedHandTimestamp
+										raisedHandTimestamp,
+										recording,
 									})
 								);
 
