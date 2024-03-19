@@ -1,6 +1,6 @@
-import { Logger } from 'edumeet-common';
 import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('RecordingActions');
 
@@ -42,12 +42,10 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 
 	const roomName = new URL(getState().signaling.url).searchParams.get('roomId');
 
-	const opts: SaveFilePickerOptions = {
+	const saveFileHandle = await showSaveFilePicker({
 		suggestedName: `${roomName}.mp4`,
 		types: [ { description: 'LocalRecording', accept: { 'video/mp4': [ '.mp4' ] } } ],
-	};
-
-	const saveFileHandle = await showSaveFilePicker(opts);
+	});
 
 	writableStream = await saveFileHandle.createWritable();
 

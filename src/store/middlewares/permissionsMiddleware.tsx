@@ -2,7 +2,7 @@ import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions } from '../store';
 import { permissionsActions } from '../slices/permissionsSlice';
-import { Logger } from 'edumeet-common';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('PermissionsMiddleware');
 

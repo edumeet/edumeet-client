@@ -1,8 +1,8 @@
-import { Logger } from 'edumeet-common';
 import { createCanvasPipeline } from './CanvasPipeline';
 import { BlurBackgroundPipeline, BlurBackgroundPipelineOptions } from '../types';
 import { createWebGLPipeline } from './WebGLPipeline';
 import { TFLite, modelConfig } from '../../services/effectsService';
+import { Logger } from '../Logger';
 
 const logger = new Logger('BlurTrack');
 

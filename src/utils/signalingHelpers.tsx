@@ -21,3 +21,12 @@ export const getSignalingUrl = (peerId: string, roomId: string, tenantId: string
 
 	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}${tenantParam}${tokenParam}`;
 };
+
+export class SocketTimeoutError extends Error {
+	constructor(message: string) {
+		super(message);
+
+		this.name = 'SocketTimeoutError';
+		this.stack = (new Error(message)).stack;
+	}
+}

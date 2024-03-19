@@ -138,6 +138,12 @@ export const sessionIdSpotlightsSelector = createSelector(
 	(roomSession) => roomSession.spotlights
 );
 
+export const sessionIdSpotlightedConsumerSelector = createSelector(
+	currentRoomSessionSelector,
+	consumersSelect,
+	(roomSession, consumers) => consumers.filter((c) => roomSession.spotlights.includes(c.id))
+);
+
 const consumerSelectedPeerIdsSelector = createSelector(
 	consumersSelect,
 	(consumers) => consumers.filter((c) => c.source === 'screen' || c.source === 'extravideo').map((c) => c.peerId)

@@ -2,8 +2,8 @@ import { permissionsActions } from '../slices/permissionsSlice';
 import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
-import { Logger } from 'edumeet-common';
 import { getTenantFromFqdn } from './managementActions';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('LoginActions');
 
@@ -28,7 +28,7 @@ export const logout = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('logout()');
 
-	await managementService.authentication.removeAccessToken();
+	await (await managementService).authentication.removeAccessToken();
 
 	dispatch(permissionsActions.setToken());
 	dispatch(permissionsActions.setLoggedIn(false));

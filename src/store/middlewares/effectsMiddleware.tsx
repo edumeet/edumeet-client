@@ -1,7 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { MiddlewareOptions } from '../store';
-import { Logger } from 'edumeet-common';
 import { meActions } from '../slices/meSlice';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('EffectsMiddleware');
 

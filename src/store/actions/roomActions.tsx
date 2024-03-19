@@ -1,4 +1,3 @@
-import { Logger } from 'edumeet-common';
 import { batch } from 'react-redux';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { meActions } from '../slices/meSlice';
@@ -11,6 +10,7 @@ import { updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { getTenantFromFqdn } from './managementActions';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('RoomActions');
 

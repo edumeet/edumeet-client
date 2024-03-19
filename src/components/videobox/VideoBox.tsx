@@ -40,7 +40,7 @@ const StyledVideoBox = styled(Box)<StyledVideoBoxProps>(({
 	margin: theme.spacing(margin),
 	order,
 	...(activespeaker && {
-		border: theme.activeSpeakerBorder
+		outline: theme.activeSpeakerBorder
 	}),
 	boxShadow: theme.shadows[10],
 	backgroundColor: theme.videoBackroundColor,

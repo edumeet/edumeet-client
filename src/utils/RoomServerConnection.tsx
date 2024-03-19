@@ -1,6 +1,8 @@
-import { Logger, SocketMessage, SocketTimeoutError, skipIfClosed } from 'edumeet-common';
 import EventEmitter from 'events';
-import { io, Socket } from 'socket.io-client';
+import { SocketMessage } from './types';
+import { Logger } from './Logger';
+import { SocketTimeoutError } from './signalingHelpers';
+import type { Socket } from 'socket.io-client';
 
 interface ClientServerEvents {
 	/* eslint-disable no-unused-vars */
@@ -28,9 +30,11 @@ const logger = new Logger('RoomServerConnection');
 export class RoomServerConnection extends EventEmitter {
 	public id?: string;
 
-	public static create({ url }: { url: string}): RoomServerConnection {
+	public static async create({ url }: { url: string}): Promise<RoomServerConnection> {
 		logger.debug('create() [url:%s]', url);
 	
+		const { io } = await import('socket.io-client');
+
 		const socket = io(url, {
 			transports: [ 'websocket', 'polling' ],
 			rejectUnauthorized: true,
@@ -54,7 +58,6 @@ export class RoomServerConnection extends EventEmitter {
 		this.handleSocket();
 	}
 
-	@skipIfClosed
 	public close(): void {
 		logger.debug('close() [id: %s]', this.id);
 
@@ -69,14 +72,12 @@ export class RoomServerConnection extends EventEmitter {
 		this.emit('close');
 	}
 
-	@skipIfClosed
 	public notify(notification: SocketMessage): void {
 		logger.debug('notification() [notification: %o]', notification);
 
 		this.socket.emit('notification', notification);
 	}
 
-	@skipIfClosed
 	private sendRequestOnWire(socketMessage: SocketMessage): Promise<unknown> {
 		return new Promise((resolve, reject) => {
 			if (!this.socket) {
@@ -91,7 +92,6 @@ export class RoomServerConnection extends EventEmitter {
 		});
 	}
 
-	@skipIfClosed
 	public async request(request: SocketMessage): Promise<unknown> {
 		logger.debug('sendRequest() [request: %o]', request);
 

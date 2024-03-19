@@ -6,10 +6,10 @@ import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
 import { permissionsActions } from '../slices/permissionsSlice';
-import { Logger } from 'edumeet-common';
 import { meActions } from '../slices/meSlice';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { settingsActions } from '../slices/settingsSlice';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('RoomMiddleware');
 

@@ -5,13 +5,13 @@ import { roomActions } from '../slices/roomSlice';
 import { resumedVideoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { Logger } from 'edumeet-common';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { meActions } from '../slices/meSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { batch } from 'react-redux';
 import { updateMic, updateWebcam } from '../actions/mediaActions';
 import { ProducerSource } from '../../utils/types';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('MediaMiddleware');
 

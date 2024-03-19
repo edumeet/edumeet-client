@@ -1,8 +1,8 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { Logger } from 'edumeet-common';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('FilesharingMiddleware');
 

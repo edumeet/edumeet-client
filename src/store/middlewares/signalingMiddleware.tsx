@@ -1,11 +1,11 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { Logger } from 'edumeet-common';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomServerConnectionError } from '../../components/translated/translatedComponents';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { RoomServerConnection } from '../../utils/RoomServerConnection';
 import { leaveRoom } from '../actions/roomActions';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('SignalingMiddleware');
 
@@ -53,9 +53,12 @@ const createSignalingMiddleware = ({
 			});
 				
 			const { url } = getState().signaling;
-			const socketConnection = RoomServerConnection.create({ url });
 
-			signalingService.addConnection(socketConnection);
+			(async () => {
+				const socketConnection = await RoomServerConnection.create({ url });
+
+				signalingService.addConnection(socketConnection);
+			})();
 		}
 
 		if (signalingActions.disconnect.match(action)) {

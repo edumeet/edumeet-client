@@ -11,8 +11,9 @@
  */
 
 import EventEmitter from 'events';
-import { Logger, timeoutPromise } from 'edumeet-common';
-import { BlurBackgroundNotSupportedError, BlurTrack } from '../utils/blurbackground/BlurTrack';
+import type { BlurTrack } from '../utils/blurbackground/BlurTrack';
+import { Logger } from '../utils/Logger';
+import { timeoutPromise } from '../utils/timeoutPromise';
 
 const logger = new Logger('EffectsService');
 
@@ -44,6 +45,8 @@ export const modelConfig = {
 	height: 144
 };
 
+let BlurredTrack: typeof BlurTrack;
+
 /**
  * A service that handles tensorflow and mediapipe effects on the video stream, and RNNoise on the audio stream.
  */
@@ -61,7 +64,9 @@ export class EffectsService extends EventEmitter {
 
 		if (!this.model) this.model = await this.createModel();
 
-		const effectTrack = new BlurTrack(MLBackend, this.model, track, this.webGLSupport);
+		if (!BlurredTrack) ({ BlurTrack: BlurredTrack } = await import('../utils/blurbackground/BlurTrack'));
+
+		const effectTrack = new BlurredTrack(MLBackend, this.model, track, this.webGLSupport);
 
 		this.effectTracks.set(effectTrack.outputTrack.id, effectTrack);
 
@@ -104,7 +109,7 @@ export class EffectsService extends EventEmitter {
 		}
 
 		if (!MLBackend) {
-			throw new BlurBackgroundNotSupportedError('Could not create ML Backend');
+			throw new Error('Could not create ML Backend');
 		}
 
 		return MLBackend;
@@ -113,7 +118,7 @@ export class EffectsService extends EventEmitter {
 	private async createModel() {
 		const response = await fetch(modelConfig.path);
 
-		if (!response.ok) throw new BlurBackgroundNotSupportedError('Could not load model');
+		if (!response.ok) throw new Error('Could not load model');
 
 		return await response.arrayBuffer();
 	}

@@ -1,10 +1,10 @@
-import { Logger } from 'edumeet-common';
 import { getEncodings, getVideoConstrains } from '../../utils/encodingsHandler';
 import { Resolution } from '../../utils/types';
 import { meActions } from '../slices/meSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('MediaActions');
 

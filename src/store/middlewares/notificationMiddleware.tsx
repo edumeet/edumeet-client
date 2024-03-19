@@ -1,5 +1,4 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { Logger } from 'edumeet-common';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { peersActions } from '../slices/peersSlice';
 import { MiddlewareOptions, RootState } from '../store';
@@ -7,6 +6,7 @@ import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { HTMLMediaElementWithSink } from '../../utils/types';
 import { settingsActions } from '../slices/settingsSlice';
+import { Logger } from '../../utils/Logger';
 
 interface SoundAlert {
 	[type: string]: {

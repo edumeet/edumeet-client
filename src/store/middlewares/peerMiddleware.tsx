@@ -4,10 +4,10 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { peersActions } from '../slices/peersSlice';
 import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { setRaisedHand } from '../actions/meActions';
-import { Logger } from 'edumeet-common';
 import { stopMic, stopScreenSharing, stopWebcam } from '../actions/mediaActions';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { p2pModeSelector } from '../selectors';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('PeerMiddleware');
 

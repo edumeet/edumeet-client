@@ -7,10 +7,10 @@ import { stopMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { permissionsActions } from '../slices/permissionsSlice';
-import { Logger } from 'edumeet-common';
 import { setRaisedHand } from './meActions';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('listenerActions');
 
@@ -290,7 +290,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 		if (data.type === 'edumeet-login') {
 			const { data: token } = data;
 
-			await managementService.authentication.setAccessToken(token);
+			await (await managementService).authentication.setAccessToken(token);
 
 			dispatch(permissionsActions.setToken(token));
 			dispatch(permissionsActions.setLoggedIn(true));

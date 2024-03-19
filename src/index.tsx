@@ -13,8 +13,8 @@ import edumeetConfig from './utils/edumeetConfig';
 import { intl } from './utils/intlManager';
 import { useAppDispatch } from './store/hooks';
 import { setLocale } from './store/actions/localeActions';
-import { Logger } from 'edumeet-common';
 import { CssBaseline } from '@mui/material';
+import { Logger } from './utils/Logger';
 
 const ErrorBoundary = lazy(() => import('./views/errorboundary/ErrorBoundary'));
 const App = lazy(() => import('./App'));

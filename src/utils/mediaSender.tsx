@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-import { Logger } from 'edumeet-common';
 import { MediaService, ProducerCodec } from '../services/mediaService';
 import { ProducerSource } from './types';
 import { Producer, ProducerOptions } from 'mediasoup-client/lib/types';
@@ -7,6 +6,7 @@ import type { Producer as PeerProducer } from 'ortc-p2p/src/Producer';
 import { SignalingService } from '../services/signalingService';
 import { VolumeWatcher } from './volumeWatcher';
 import hark from 'hark';
+import { Logger } from './Logger';
 
 const logger = new Logger('MediaSender');
 

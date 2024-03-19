@@ -12,11 +12,11 @@ import { VolumeWatcher } from '../utils/volumeWatcher';
 import type { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
 import type { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProducer';
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
-import { Logger } from 'edumeet-common';
 import { safePromise } from '../utils/safePromise';
 import { ProducerSource } from '../utils/types';
 import { MediaSender } from '../utils/mediaSender';
 import type { ClientMonitor } from '@observertc/client-monitor-js';
+import { Logger } from '../utils/Logger';
 
 const logger = new Logger('MediaService');
 

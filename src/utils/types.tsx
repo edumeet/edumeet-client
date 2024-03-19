@@ -186,6 +186,20 @@ export interface SocketMessage {
 	data?: any; // TODO: define inbound notification data
 }
 
+export type InboundNotification = (
+	// eslint-disable-next-line no-unused-vars
+	notification: SocketMessage
+) => void;
+
+export type InboundRequest = (
+	// eslint-disable-next-line no-unused-vars
+	request: SocketMessage,
+	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
+	respond: (response: any) => void,
+	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
+	reject: (error: any) => void
+) => void;
+
 export type ProducerSource = 'mic' | 'webcam' | 'screen' | 'screenaudio' | 'extravideo' | 'extraaudio';
 
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';

@@ -43,9 +43,7 @@ import { createContext } from 'react';
 import { DeviceService } from '../services/deviceService';
 import { FileService } from '../services/fileService';
 import roomSessionsSlice from './slices/roomSessionsSlice';
-import { Application, feathers } from '@feathersjs/feathers/lib';
-import rest from '@feathersjs/rest-client';
-import authentication from '@feathersjs/authentication-client';
+import type { Application } from '@feathersjs/feathers/lib';
 import { EffectsService } from '../services/effectsService';
 import createEffectsMiddleware from './middlewares/effectsMiddleware';
 
@@ -55,7 +53,7 @@ declare global {
 		signalingService: SignalingService;
 		deviceService: DeviceService;
 		fileService: FileService;
-		managementService: Application;
+		managementService: Promise<Application>;
 		effectsService: EffectsService;
 	}
 }
@@ -66,7 +64,7 @@ export interface MiddlewareOptions {
 	fileService: FileService;
 	deviceService: DeviceService;
 	signalingService: SignalingService;
-	managementService: Application;
+	managementService: Promise<Application>;
 	config: EdumeetConfig;
 }
 
@@ -79,9 +77,15 @@ const persistConfig = {
 
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
-const managementService = feathers()
-	.configure(rest(edumeetConfig.managementUrl).fetch(window.fetch.bind(window)))
-	.configure(authentication());
+const managementService = (async () => {
+	const { feathers } = await import('@feathersjs/feathers/lib');
+	const { default: rest } = await import('@feathersjs/rest-client');
+	const { default: authentication } = await import('@feathersjs/authentication-client');
+
+	return feathers()
+		.configure(rest(edumeetConfig.managementUrl).fetch(window.fetch.bind(window)))
+		.configure(authentication());
+})() as Promise<Application>;
 
 export const mediaService = new MediaService({ signalingService });
 export const fileService = new FileService();

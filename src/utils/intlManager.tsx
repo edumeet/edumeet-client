@@ -1,5 +1,4 @@
 import { createIntl, createIntlCache } from 'react-intl';
-import enLocale from '../translations/en.json';
 
 export interface ILocale {
 	name: string;
@@ -126,7 +125,6 @@ const cache = createIntlCache();
 
 export let intl = createIntl({
 	locale: 'en-US',
-	messages: enLocale
 }, cache);
 
 /**

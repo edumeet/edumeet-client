@@ -1,4 +1,4 @@
-import { Logger } from 'edumeet-common';
+import { Logger } from '../Logger';
 import { BlurBackgroundPipeline, BlurBackgroundPipelineOptions } from '../types';
 
 const logger = new Logger('canvasPipeline');
