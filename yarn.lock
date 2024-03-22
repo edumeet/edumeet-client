@@ -220,6 +220,11 @@
     "@babel/helper-validator-identifier" "^7.22.20"
     to-fast-properties "^2.0.0"
 
+"@bufbuild/protobuf@^1.2.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@bufbuild/protobuf/-/protobuf-1.8.0.tgz#1c8651ea34adb8019b483e09de02aeeb1cd57d79"
+  integrity sha512-qR9FwI8QKIveDnUYutvfzbC21UZJJryYrLuZGjeZ/VGz+vXelUkK+xgkOHsvPEdYEdxtgUUq4313N8QtOehJ1Q==
+
 "@emotion/babel-plugin@^11.11.0":
   version "11.11.0"
   resolved "https://registry.yarnpkg.com/@emotion/babel-plugin/-/babel-plugin-11.11.0.tgz#c2d872b6a7767a9d176d007f5b31f7d504bb5d6c"
@@ -836,6 +841,13 @@
     bowser "^2.11.0"
     events "^3.3.0"
     uuid "^8.3.2"
+
+"@observertc/samples-encoder@^2.2.12":
+  version "2.2.12"
+  resolved "https://registry.yarnpkg.com/@observertc/samples-encoder/-/samples-encoder-2.2.12.tgz#85345d1ba386cf300b1ba766f201dbab6a878670"
+  integrity sha512-m0L+MZKSTzFT0+nfgro3mAwzioBw+4rDFyZgsRVWZ8MD9jInnXVneRegUlUQCrYIw0O0lWsLR7/UGo9Fj/GJaw==
+  dependencies:
+    "@bufbuild/protobuf" "^1.2.0"
 
 "@popperjs/core@^2.11.8":
   version "2.11.8"

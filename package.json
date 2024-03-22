@@ -15,6 +15,7 @@
 		"@mui/icons-material": "^5.14.16",
 		"@mui/material": "^5.14.16",
 		"@observertc/client-monitor-js": "^3.5.0",
+		"@observertc/samples-encoder": "^2.2.12",
 		"@reduxjs/toolkit": "^1.9.7",
 		"awaitqueue": "^3.0.2",
 		"bowser": "^2.11.0",

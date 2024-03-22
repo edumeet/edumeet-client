@@ -99,7 +99,7 @@ export class MediaSender extends EventEmitter {
 		if (this.p2pProduce) {
 			promises.push(...this.peerIds.map((peerId) => this.peerProduce(peerId)));
 		}
-
+		
 		const [ sfuResult ] = await Promise.allSettled(promises);
 
 		if (sfuResult.status === 'rejected') {

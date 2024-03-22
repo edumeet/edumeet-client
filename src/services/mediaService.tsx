@@ -136,11 +136,18 @@ export class MediaService extends EventEmitter {
 
 	public monitor: Promise<ClientMonitor> = (async () => {
 		const { createClientMonitor } = await import('@observertc/client-monitor-js');
+		const { ClientSampleEncoder, schemaVersion } = await import('@observertc/samples-encoder');
 
+		const sampleEncoder = new ClientSampleEncoder();
 		const monitor = createClientMonitor({ collectingPeriodInMs: 5000 });
 
-		monitor.on('stats-collected', (stats) => {
-			logger.debug('stats-collected [stats:%o]', stats);
+		monitor.on('sample-created', ({ clientSample }) => {
+			const encodedSample = sampleEncoder.encodeToBase64(clientSample);
+
+			this.signalingService.notify('clientSample', {
+				schemaVersion,
+				encodedSample,
+			});
 		});
 
 		return monitor;
@@ -588,7 +595,7 @@ export class MediaService extends EventEmitter {
 								return;
 							}
 
-							throw new Error('consumer not found');
+							return;
 						}
 	
 						this.changeConsumer(consumerId, changeEvent[notification.method] as MediaChange, false);
