@@ -11,6 +11,7 @@ import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsS
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { getTenantFromFqdn } from './managementActions';
 import { Logger } from '../../utils/Logger';
+import { countdownTimerActions } from '../slices/countdownTimerSlice';
 
 const logger = new Logger('RoomActions');
 
@@ -62,6 +63,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		tracker,
 		chatHistory,
 		fileHistory,
+		countdownTimer,
 		breakoutRooms,
 		locked,
 		lobbyPeers,
@@ -80,6 +82,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+		dispatch(countdownTimerActions.setCountdownTimer(countdownTimer));
+
 	});
 
 	if (!getState().me.audioMuted) dispatch(updateMic());

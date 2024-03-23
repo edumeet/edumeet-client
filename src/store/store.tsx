@@ -27,8 +27,10 @@ import createPeerMiddleware from './middlewares/peerMiddleware';
 import createPermissionsMiddleware from './middlewares/permissionsMiddleware';
 import createChatMiddleware from './middlewares/chatMiddleware';
 import createNotificationMiddleware from './middlewares/notificationMiddleware';
+import createCountdownTimerMiddleware from './middlewares/countdownTimerMiddleware';
 import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
+import countdownTimerSlice from './slices/countdownTimerSlice';
 import consumersSlice from './slices/consumersSlice';
 import signalingSlice from './slices/signalingSlice';
 import permissionsSlice from './slices/permissionsSlice';
@@ -124,6 +126,7 @@ const reducer = combineReducers({
 	settings: settingsSlice.reducer,
 	signaling: signalingSlice.reducer,
 	ui: uiSlice.reducer,
+	countdownTimer: countdownTimerSlice.reducer,
 });
 
 const pReducer = persistReducer<RootState>(persistConfig, reducer);
@@ -148,6 +151,7 @@ export const store = configureStore({
 			createRoomMiddleware(middlewareOptions),
 			createNotificationMiddleware(middlewareOptions),
 			createEffectsMiddleware(middlewareOptions),
+			createCountdownTimerMiddleware(middlewareOptions),
 			...(edumeetConfig.reduxLoggingEnabled ? [ createLogger({
 				duration: true,
 				timestamp: false,

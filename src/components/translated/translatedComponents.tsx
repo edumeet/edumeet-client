@@ -767,3 +767,8 @@ export const roomServerConnectionError = (message: string): string => intl.forma
 	id: 'svc.roomServerConnectionError',
 	defaultMessage: `Room-server: ${message}`
 });
+
+export const countdownTimerActionsLabel = (): string => intl.formatMessage({
+	id: 'countdownTimer.actions',
+	defaultMessage: 'Countdown timer actions'
+});
