@@ -14,6 +14,7 @@ import LeaveButton from '../textbuttons/LeaveButton';
 import { formatDuration } from '../../utils/formatDuration';
 import LogoutButton from '../controlbuttons/LogoutButton';
 import RecordIcon from '../recordicon/RecordIcon';
+import CountdownTimerChip from '../countdowntimer/CountdownTimerChip';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -115,6 +116,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 				<TopBarDiv marginRight={1}>
 					{ someoneIsRecording && <RecordIcon color='error' /> }
 					{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
+					<CountdownTimerChip />
 					<SettingsButton type='iconbutton' />
 					{ canLock && <LockButton type='iconbutton' /> }
 					{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
