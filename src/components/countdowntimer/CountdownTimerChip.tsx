@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 // import { intl } from '../../utils/intlManager';
 import * as countdownTimerActions from '../../store/actions/countdownTimerActions';
 import { useTheme } from '@mui/material/styles';
+import AvTimerIcon from '@mui/icons-material/AvTimer';
 
 // const Div = styled('div')(({ theme }) => ({
 // 	padding: theme.spacing(1),
@@ -24,14 +25,12 @@ const CountdownTimerChip = () : JSX.Element => {
 			{ isEnabled &&
 			<Chip
 				sx={{
-					padding: theme.spacing(0),
-					display: 'flex',
-					flexWrap: 'wrap',
-					marginRight: theme.spacing(0),
-					marginTop: theme.spacing(0.5)
+					color: 'white',
+					backgroundColor: 'rgba(128, 128, 128, 0.5)',
 				}}
 				label={left}
-				color='error'
+				size='small'
+				icon={<AvTimerIcon color='white'/>}
 			/>
 			}
 		</>

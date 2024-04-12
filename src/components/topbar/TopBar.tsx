@@ -116,14 +116,16 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 				<TopBarDiv marginRight={1}>
 					{ someoneIsRecording && <RecordIcon color='error' /> }
 					{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
-					<CountdownTimerChip />
 					<SettingsButton type='iconbutton' />
 					{ canLock && <LockButton type='iconbutton' /> }
 					{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 					{ loginEnabled && (loggedIn ? <LogoutButton type='iconbutton' /> : <LoginButton type='iconbutton' />) }
 				</TopBarDiv>
-				<TopBarDiv marginRight={2}>
+				<TopBarDiv marginRight={1}>
 					<StyledChip size='small' label={ formatDuration(meetingDuration) } />
+				</TopBarDiv>
+				<TopBarDiv marginRight={2}>
+					<CountdownTimerChip />
 				</TopBarDiv>
 				<LeaveButton />
 			</Toolbar>
