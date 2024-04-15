@@ -5,47 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 // import { intl } from '../../utils/intlManager';
 import * as countdownTimerActions from '../../store/actions/countdownTimerActions';
 import { countdownTimerActions as countdownTimerSlices } from '../../store/slices/countdownTimerSlice';
-
 import moment from 'moment';
-
-// const styles = (theme) =>
-// 	({
-// 		root:
-// 	{
-// 		padding: theme.spacing(1),
-// 		display: 'flex',
-// 		flexWrap: 'wrap',
-// 		marginRight: -theme.spacing(1),
-// 		marginTop: -theme.spacing(1)
-// 	},
-// 		container:
-// 	{
-// 		marginTop: theme.spacing(1),
-// 		marginRight: theme.spacing(2),
-// 		flexGrow: '1',
-// 		justifyContent: 'space-between'
-// 	},
-// 		textfield:
-// 	{
-// 		marginTop: theme.spacing(1),
-// 		marginRight: theme.spacing(1),
-// 		flexGrow: '1'
-// 	},
-// 		button:
-// 	{
-// 		marginTop: theme.spacing(1),
-// 		marginRight: theme.spacing(1),
-// 		flexGrow: '1'
-// 	}
-
-// 	});
-
-interface CountdownTimerProps {
-	isEnabled: boolean;
-	isRunning: boolean;
-	left: string;
-	// classes: any;
-}
 
 const Div = styled('div')(({ theme }) => ({
 	padding: theme.spacing(1),
@@ -84,8 +44,6 @@ const CountdownTimer = () : JSX.Element => {
 	let _countdownTimerRef: NodeJS.Timeout;
 
 	useEffect(() => {
-		// eslint-disable-next-line no-console
-		console.log(isRunning, left);
 		
 		if (isRunning === true) {
 
@@ -105,9 +63,6 @@ const CountdownTimer = () : JSX.Element => {
 					}
 
 				}, 1000);
-
-				// eslint-disable-next-line no-console
-				console.log(_countdownTimerRef);
 			} 
  
 			return () => {
@@ -115,26 +70,16 @@ const CountdownTimer = () : JSX.Element => {
 			};
 		}
 	}, [ isRunning, left ]);
-	// }, [ isRunning, left ]);
 
 	return (
-		<Div 
-			// className={classes.root}
-		>
-			<Grid
-				sx={{
-					// marginTop: theme.spacing(1),
-					// marginRight: theme.spacing(2),
-					flexGrow: '1',
-					justifyContent: 'space-between'
-				}}
-				// className={classes.container}
-				container
-				wrap='nowrap'
-				alignItems='center'
-			>
+		<Div>
+			<Grid 
+				sx={{ flexGrow: '1', justifyContent: 'space-between' }} 
+				container wrap='nowrap' 
+				alignItems='center' >
+
+				{/* TextField  set time */}
 				<Grid item xs={8}>
-					{/* TextField  set time */}
 					<TextField fullWidth
 						// aria-label={intl.formatMessage({
 						// 	id: 'set.countdown',
@@ -142,12 +87,7 @@ const CountdownTimer = () : JSX.Element => {
 						// })}
 						inputRef={inputRef}
 						autoFocus
-						sx={{
-							// marginTop: theme.spacing(1),
-							// marginRight: theme.spacing(1),
-							flexGrow: '1'
-						}}
-						// className={classes.textfield}
+						sx={{ flexGrow: '1' }}
 						variant='outlined'
 						label='timer (hh:mm:ss)'
 						disabled={!isEnabled || (isRunning && left !== '00:00:00')}
@@ -173,17 +113,15 @@ const CountdownTimer = () : JSX.Element => {
 							}
 						}}
 					/>
-					{/* /TextField  set time */}
 				</Grid>
 
+				{/* Button reset time */}
 				<Grid item xs={1}>
-					{/* Button reset time */}
 					<IconButton
 						// aria-label={intl.formatMessage({
 						// 	id: 'start.countdown',
 						// 	defaultMessage: 'Start'
 						// })}
-						// className={classes.button}
 						sx={{
 							// marginTop: theme.spacing(1),
 							// marginRight: theme.spacing(1),
@@ -191,13 +129,7 @@ const CountdownTimer = () : JSX.Element => {
 						}}
 						color='error'
 						size='small'
-						disabled={
-							!isEnabled ||
-							(
-								isRunning ||
-								left === '00:00:00'
-							)
-						}
+						disabled={ !isEnabled || (isRunning || left === '00:00:00') }
 						onClick={() => {
 							dispatch(countdownTimerActions.setCountdownTimer('00:00:00'));
 							handleFocus();
@@ -205,23 +137,17 @@ const CountdownTimer = () : JSX.Element => {
 					>
 						<HighlightOffIcon />
 					</IconButton>
-					{/* /Button reset */}
 				</Grid>
 
+				{/* Button start/stop countdown */}
 				{!isRunning ?
 					<Grid item xs={1}>
-						{/* Button start countdown */}
 						<IconButton
 							// aria-label={intl.formatMessage({
 							// 	id: 'start.countdown',
 							// 	defaultMessage: 'Start'
 							// })}
-							// className={classes.button}
-							sx={{
-								// marginTop: theme.spacing(1),
-								// marginRight: theme.spacing(1),
-								flexGrow: '1'
-							}}
+							sx={{ flexGrow: '1' }}
 							color='error'
 							size='small'
 							disabled={!isEnabled || left === '00:00:00'}
@@ -231,23 +157,16 @@ const CountdownTimer = () : JSX.Element => {
 						>
 							<PlayArrowIcon />
 						</IconButton>
-						{/* /Button start countdown */}
 					</Grid>
 					:
 					<Grid item xs={1}>
-						{/* Button stop countdown */}
 						<IconButton 
 							// fullWidth
 							// aria-label={intl.formatMessage({
 							// 	id: 'stop.countdown',
 							// 	defaultMessage: 'Stop countdown'
 							// })}
-							// className={classes.button}
-							sx={{
-								// marginTop: theme.spacing(1),
-								// marginRight: theme.spacing(1),
-								flexGrow: '1'
-							}}
+							sx={{ flexGrow: '1' }}
 							color='error'
 							size='small'
 							disabled={!isEnabled || left === '00:00:00'}
@@ -258,16 +177,14 @@ const CountdownTimer = () : JSX.Element => {
 						>
 							<PauseIcon />
 						</IconButton>
-						{/* /Button stop countdown */}
 					</Grid>
 				}
+
+				{/* Switch toggle show/hide */}
 				<Grid item xs={1}>
-					{/* Switch toggle show/hide */}
 					<Switch
 						// className={classes.button}
 						sx={{
-							// marginTop: theme.spacing(1),
-							// marginRight: theme.spacing(1),
 							flexGrow: '1'
 						}}
 						checked={isEnabled}
@@ -285,31 +202,10 @@ const CountdownTimer = () : JSX.Element => {
 						color='error'
 						size='small'
 					/>
-					{/* /Switch toggle show/hide */}
 				</Grid>
 			</Grid>
 		</Div>
 	);
 };
 
-// const mapStateToProps = (state) => ({
-// 	isEnabled: state.room.countdownTimer.isEnabled,
-// 	isRunning: state.room.countdownTimer.isRunning,
-// 	left: state.room.countdownTimer.left
-// });
-
-// export default withRoomContext(connect(
-// 	mapStateToProps,
-// 	null,
-// 	null,
-// 	{
-// 		areStatesEqual: (next, prev) => {
-// 			return (
-// 				prev.isEnabled === next.room.countdownTimer.isEnabled,
-// 				prev.isRunning === next.room.countdownTimer.isRunning,
-// 				prev.left === next.room.countdownTimer.left
-// 			);
-// 		}
-// 	}
-// )(withStyles(styles)(CountdownTimer)));
 export default CountdownTimer;
