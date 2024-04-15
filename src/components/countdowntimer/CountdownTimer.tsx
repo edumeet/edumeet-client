@@ -2,10 +2,14 @@ import React, { useEffect, useRef } from 'react';
 import { IconButton, Grid, Switch, TextField, styled } from '@mui/material';
 import { HighlightOff as HighlightOffIcon, Pause as PauseIcon, PlayArrow as PlayArrowIcon } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-// import { intl } from '../../utils/intlManager';
+import { intl } from '../../utils/intlManager';
 import * as countdownTimerActions from '../../store/actions/countdownTimerActions';
 import { countdownTimerActions as countdownTimerSlices } from '../../store/slices/countdownTimerSlice';
 import moment from 'moment';
+import { 
+	countdownTimerStartLabel, countdownTimerStopLabel, countdownTimerPauseLabel, 
+	countdownTimerEnableLabel, countdownTimerDisableLabel, countdownTimerSetLabel } 
+	from '../translated/translatedComponents';
 
 const Div = styled('div')(({ theme }) => ({
 	padding: theme.spacing(1),
@@ -47,7 +51,7 @@ const CountdownTimer = () : JSX.Element => {
 		
 		if (isRunning === true) {
 
-			if (_countdownTimerRef === undefined) 			{
+			if (_countdownTimerRef === undefined) {
 				_countdownTimerRef = setInterval(() => {
 					let leftUnix = moment(`1000-01-01 ${left}`).unix();
 					const endUnix = moment('1000-01-01 00:00:00').unix();
@@ -81,10 +85,7 @@ const CountdownTimer = () : JSX.Element => {
 				{/* TextField  set time */}
 				<Grid item xs={8}>
 					<TextField fullWidth
-						// aria-label={intl.formatMessage({
-						// 	id: 'set.countdown',
-						// 	defaultMessage: 'Set timer'
-						// })}
+						aria-label={countdownTimerSetLabel()}
 						inputRef={inputRef}
 						autoFocus
 						sx={{ flexGrow: '1' }}
@@ -94,12 +95,8 @@ const CountdownTimer = () : JSX.Element => {
 						type='time'
 						value={left}
 						size='small'
-						InputLabelProps={{
-							shrink: true
-						}}
-						inputProps={{
-							step: '1'
-						}}
+						InputLabelProps={{ shrink: true }}
+						inputProps={{ step: '1' }}
 						onChange={(e) => {
 							dispatch(countdownTimerActions.setCountdownTimer(e.target.value));
 							handleFocus();
@@ -118,15 +115,8 @@ const CountdownTimer = () : JSX.Element => {
 				{/* Button reset time */}
 				<Grid item xs={1}>
 					<IconButton
-						// aria-label={intl.formatMessage({
-						// 	id: 'start.countdown',
-						// 	defaultMessage: 'Start'
-						// })}
-						sx={{
-							// marginTop: theme.spacing(1),
-							// marginRight: theme.spacing(1),
-							flexGrow: '1'
-						}}
+						aria-label={countdownTimerStartLabel()}
+						sx={{ flexGrow: '1' }}
 						color='error'
 						size='small'
 						disabled={ !isEnabled || (isRunning || left === '00:00:00') }
@@ -140,60 +130,39 @@ const CountdownTimer = () : JSX.Element => {
 				</Grid>
 
 				{/* Button start/stop countdown */}
-				{!isRunning ?
-					<Grid item xs={1}>
-						<IconButton
-							// aria-label={intl.formatMessage({
-							// 	id: 'start.countdown',
-							// 	defaultMessage: 'Start'
-							// })}
-							sx={{ flexGrow: '1' }}
-							color='error'
-							size='small'
-							disabled={!isEnabled || left === '00:00:00'}
-							onClick={() => {
+				<Grid item xs={1}>
+					<IconButton
+						aria-label={ !isRunning ? 
+							countdownTimerStartLabel() : 
+							countdownTimerStopLabel()
+						}
+						sx={{ flexGrow: '1' }}
+						color='error'
+						size='small'
+						disabled={!isEnabled || left === '00:00:00'}
+						onClick={() => {
+							if (!isRunning) {
 								dispatch(countdownTimerActions.startCountdownTimer());
-							}}
-						>
-							<PlayArrowIcon />
-						</IconButton>
-					</Grid>
-					:
-					<Grid item xs={1}>
-						<IconButton 
-							// fullWidth
-							// aria-label={intl.formatMessage({
-							// 	id: 'stop.countdown',
-							// 	defaultMessage: 'Stop countdown'
-							// })}
-							sx={{ flexGrow: '1' }}
-							color='error'
-							size='small'
-							disabled={!isEnabled || left === '00:00:00'}
-							onClick={() => {
+							} else {
 								dispatch(countdownTimerActions.stopCountdownTimer());
 								handleFocus();
-							}}
-						>
-							<PauseIcon />
-						</IconButton>
-					</Grid>
-				}
+							}
+						}}
+					>
+						{!isRunning ? <PlayArrowIcon /> : <PauseIcon /> }
+					</IconButton>
+				</Grid>
 
 				{/* Switch toggle show/hide */}
 				<Grid item xs={1}>
 					<Switch
-						// className={classes.button}
-						sx={{
-							flexGrow: '1'
-						}}
+						sx={{ flexGrow: '1' }}
 						checked={isEnabled}
 						disabled={isRunning}
 						onChange={() => {
-							dispatch(
-								isEnabled ? 
-									countdownTimerActions.disableCountdownTimer()
-									: countdownTimerActions.enableCountdownTimer()
+							dispatch(isEnabled ? 
+								countdownTimerActions.disableCountdownTimer() : 
+								countdownTimerActions.enableCountdownTimer()
 							);
 							// dispatch(countdownTimerActions.toggleCountdownTimer(!isEnabled));
 							handleFocus();
