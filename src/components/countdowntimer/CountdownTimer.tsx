@@ -4,7 +4,7 @@ import { HighlightOff as HighlightOffIcon, Pause as PauseIcon, PlayArrow as Play
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import * as countdownTimerActions from '../../store/actions/countdownTimerActions';
 import { 
-	countdownTimerStartLabel, countdownTimerStopLabel, countdownTimerPauseLabel, 
+	countdownTimerStartLabel, countdownTimerStopLabel, 
 	countdownTimerEnableLabel, countdownTimerDisableLabel, countdownTimerSetLabel } 
 	from '../translated/translatedComponents';
 
@@ -48,7 +48,7 @@ const CountdownTimer = () : JSX.Element => {
 				container wrap='nowrap' 
 				alignItems='center' >
 
-				{/*  Set */}
+				{/*  set */}
 				<Grid item xs={8}>
 					<TextField fullWidth
 						aria-label={countdownTimerSetLabel()}
@@ -65,7 +65,6 @@ const CountdownTimer = () : JSX.Element => {
 						inputProps={{ step: '1' }}
 						onChange={(e) => {
 							dispatch(countdownTimerActions.setCountdownTimer(e.target.value));
-							handleFocus();
 						}}
 						onKeyDown={(e) => {
 							if (left !== '00:00:00') {
@@ -78,7 +77,7 @@ const CountdownTimer = () : JSX.Element => {
 					/>
 				</Grid>
 
-				{/* Reset */}
+				{/* reset */}
 				<Grid item xs={1}>
 					<IconButton
 						aria-label={countdownTimerStartLabel()}
@@ -88,14 +87,13 @@ const CountdownTimer = () : JSX.Element => {
 						disabled={ !isEnabled || (isRunning || left === '00:00:00') }
 						onClick={() => {
 							dispatch(countdownTimerActions.setCountdownTimer('00:00:00'));
-							handleFocus();
 						}}
 					>
 						<HighlightOffIcon />
 					</IconButton>
 				</Grid>
 
-				{/* Start/stop */}
+				{/* start/stop */}
 				<Grid item xs={1}>
 					<IconButton
 						aria-label={ !isRunning ? 
@@ -122,6 +120,10 @@ const CountdownTimer = () : JSX.Element => {
 				{/*  enable/disable */}
 				<Grid item xs={1}>
 					<Switch
+						aria-label={ !isRunning ? 
+							countdownTimerDisableLabel() : 
+							countdownTimerEnableLabel()
+						}
 						sx={{ flexGrow: '1' }}
 						checked={isEnabled}
 						disabled={isRunning}
@@ -130,9 +132,7 @@ const CountdownTimer = () : JSX.Element => {
 								countdownTimerActions.disableCountdownTimer() : 
 								countdownTimerActions.enableCountdownTimer()
 							);
-							handleFocus();
 						}}
-						name='checkedB'
 						color='error'
 						size='small'
 					/>
