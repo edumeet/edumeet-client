@@ -22,9 +22,6 @@ const countdownTimerSlice = createSlice({
 		disableCountdownTimer: ((state) => {
 			state.isEnabled = false;
 		}),
-		// toggleCountdownTimer: ((state, action: PayloadAction<any>) => {
-		// 	state.isEnabled = action.payload;
-		// }),
 		setCountdownTimer: ((state, action: PayloadAction<any>) => {
 			state.left = action.payload.left;
 			// state.isRunning = action.payload.isRunning;
