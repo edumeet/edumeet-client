@@ -277,5 +277,8 @@
   "svc.mgmtUnavailable": "Usługa zarządzania niedostępna",
   "svc.mediaNodeUnavailable": "Usługa węzła mediów niedostępna",
   "svc.mediaConnectionNodeError": "Usługa węzła mediów: błąd połączenia",
-  "svc.mediaConnectionNodeSuccess": "Usługa węzła mediów: połączono"
+  "svc.mediaConnectionNodeSuccess": "Usługa węzła mediów: połączono",
+  "tooltip.coundowntimer.start": "Start",
+  "tooltip.coundowntimer.stop": "Stop",
+  "tooltip.coundowntimer.pause": "Pause"
 }

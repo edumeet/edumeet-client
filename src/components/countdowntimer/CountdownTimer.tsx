@@ -47,6 +47,7 @@ const CountdownTimer = () : JSX.Element => {
 
 	let _countdownTimerRef: NodeJS.Timeout;
 
+	/* 
 	useEffect(() => {
 		
 		if (isRunning === true) {
@@ -74,6 +75,7 @@ const CountdownTimer = () : JSX.Element => {
 			};
 		}
 	}, [ isRunning, left ]);
+ */
 
 	return (
 		<Div>

@@ -11,7 +11,11 @@ import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog
 import Help from '../../components/helpdialog/HelpDialog';
 import MainContent from '../../components/maincontent/MainContent';
 import HelpButton from '../../components/controlbuttons/HelpButton';
-import { useNotifier } from '../../store/hooks';
+import { useNotifier, useAppSelector, useAppDispatch } from '../../store/hooks';
+import moment from 'moment';
+
+import * as countdownTimerActions from '../../store/actions/countdownTimerActions';
+import { countdownTimerActions as countdownTimerSlices } from '../../store/slices/countdownTimerSlice';
 
 const Room = (): JSX.Element => {
 	useNotifier();
@@ -36,6 +40,46 @@ const Room = (): JSX.Element => {
 	};
 
 	const handleFullscreenChange = () => setFullscreen(fscreen.fullscreenElement !== null);
+
+	// -------------------------------------------------------------------------
+	const left = useAppSelector((state) => state.countdownTimer.left);
+	const isRunning = useAppSelector((state) => state.countdownTimer.isRunning);
+	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+
+		// let _countdownTimerRef: NodeJS.Timeout | undefined = undefined;
+		let _countdownTimerRef: NodeJS.Timeout | null = null;
+				
+		if (isRunning && !_countdownTimerRef) {
+
+			_countdownTimerRef = setInterval(() => {
+				let leftUnix = moment(`1000-01-01 ${left}`).unix();
+				const endUnix = moment('1000-01-01 00:00:00').unix();
+
+				leftUnix--;
+
+				const leftString = moment.unix(leftUnix).format('HH:mm:ss');
+
+				dispatch(countdownTimerSlices.setCountdownTimer({ left: leftString }));
+
+				if (leftUnix === endUnix) {
+					dispatch(countdownTimerActions.stopCountdownTimer());
+				}
+
+			}, 1000);
+		} else if (_countdownTimerRef) clearInterval(_countdownTimerRef);
+
+		return (): void => {
+			if (_countdownTimerRef) {
+				clearInterval(_countdownTimerRef);
+				_countdownTimerRef = null;
+			}
+		};
+
+	}, [ isRunning, left, dispatch ]);
+
+	// -------------------------------------------------------------------------
 
 	return (
 		<>
