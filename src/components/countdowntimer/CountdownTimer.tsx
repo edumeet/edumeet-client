@@ -1,26 +1,22 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { IconButton, Grid, Switch, TextField, styled } from '@mui/material';
 import { HighlightOff as HighlightOffIcon, Pause as PauseIcon, PlayArrow as PlayArrowIcon } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { intl } from '../../utils/intlManager';
 import * as countdownTimerActions from '../../store/actions/countdownTimerActions';
-import { countdownTimerActions as countdownTimerSlices } from '../../store/slices/countdownTimerSlice';
-import moment from 'moment';
 import { 
 	countdownTimerStartLabel, countdownTimerStopLabel, countdownTimerPauseLabel, 
 	countdownTimerEnableLabel, countdownTimerDisableLabel, countdownTimerSetLabel } 
 	from '../translated/translatedComponents';
 
-const Div = styled('div')(({ theme }) => ({
-	padding: theme.spacing(1),
+const CountdownTimerDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
-	flexWrap: 'wrap',
 	marginRight: theme.spacing(1),
-	marginTop: theme.spacing(1)
+	marginTop: theme.spacing(1),
+	flexDirection: 'column',
+	gap: theme.spacing(1),
 }));
 
 const CountdownTimer = () : JSX.Element => {
-	// const intl = useIntl();
 	const dispatch = useAppDispatch();
 	const isEnabled = useAppSelector((state) => state.countdownTimer.isEnabled);
 	const isRunning = useAppSelector((state) => state.countdownTimer.isRunning);
@@ -45,46 +41,14 @@ const CountdownTimer = () : JSX.Element => {
 		};
 	};
 
-	// let _countdownTimerRef: NodeJS.Timeout;
-
-	/* 
-	useEffect(() => {
-		
-		if (isRunning === true) {
-
-			if (_countdownTimerRef === undefined) {
-				_countdownTimerRef = setInterval(() => {
-					let leftUnix = moment(`1000-01-01 ${left}`).unix();
-					const endUnix = moment('1000-01-01 00:00:00').unix();
-
-					leftUnix--;
-
-					const leftString = moment.unix(leftUnix).format('HH:mm:ss');
-
-					dispatch(countdownTimerSlices.setCountdownTimer({ left: leftString }));
-
-					if (leftUnix === endUnix) {
-						dispatch(countdownTimerActions.stopCountdownTimer());
-					}
-
-				}, 1000);
-			} 
- 
-			return () => {
-				clearInterval(_countdownTimerRef);
-			};
-		}
-	}, [ isRunning, left ]);
- */
-
 	return (
-		<Div>
+		<CountdownTimerDiv>
 			<Grid 
 				sx={{ flexGrow: '1', justifyContent: 'space-between' }} 
 				container wrap='nowrap' 
 				alignItems='center' >
 
-				{/* TextField  set time */}
+				{/*  Set */}
 				<Grid item xs={8}>
 					<TextField fullWidth
 						aria-label={countdownTimerSetLabel()}
@@ -114,7 +78,7 @@ const CountdownTimer = () : JSX.Element => {
 					/>
 				</Grid>
 
-				{/* Button reset time */}
+				{/* Reset */}
 				<Grid item xs={1}>
 					<IconButton
 						aria-label={countdownTimerStartLabel()}
@@ -131,7 +95,7 @@ const CountdownTimer = () : JSX.Element => {
 					</IconButton>
 				</Grid>
 
-				{/* Button start/stop countdown */}
+				{/* Start/stop */}
 				<Grid item xs={1}>
 					<IconButton
 						aria-label={ !isRunning ? 
@@ -155,7 +119,7 @@ const CountdownTimer = () : JSX.Element => {
 					</IconButton>
 				</Grid>
 
-				{/* Switch toggle show/hide */}
+				{/*  enable/disable */}
 				<Grid item xs={1}>
 					<Switch
 						sx={{ flexGrow: '1' }}
@@ -166,7 +130,6 @@ const CountdownTimer = () : JSX.Element => {
 								countdownTimerActions.disableCountdownTimer() : 
 								countdownTimerActions.enableCountdownTimer()
 							);
-							// dispatch(countdownTimerActions.toggleCountdownTimer(!isEnabled));
 							handleFocus();
 						}}
 						name='checkedB'
@@ -175,7 +138,7 @@ const CountdownTimer = () : JSX.Element => {
 					/>
 				</Grid>
 			</Grid>
-		</Div>
+		</CountdownTimerDiv>
 	);
 };
 
