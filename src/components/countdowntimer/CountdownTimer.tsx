@@ -45,7 +45,7 @@ const CountdownTimer = () : JSX.Element => {
 		};
 	};
 
-	let _countdownTimerRef: NodeJS.Timeout;
+	// let _countdownTimerRef: NodeJS.Timeout;
 
 	/* 
 	useEffect(() => {
