@@ -84,6 +84,11 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(countdownTimerActions.setCountdownTimer(countdownTimer));
 
+		dispatch(countdownTimer.isRunning ? 
+			countdownTimerActions.startCountdownTimer() : 
+			countdownTimerActions.stopCountdownTimer()
+		);
+
 	});
 
 	if (!getState().me.audioMuted) dispatch(updateMic());

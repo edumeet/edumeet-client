@@ -772,3 +772,33 @@ export const countdownTimerActionsLabel = (): string => intl.formatMessage({
 	id: 'countdownTimer.actions',
 	defaultMessage: 'Countdown timer actions'
 });
+
+export const countdownTimerStartLabel = (): string => intl.formatMessage({
+	id: 'countdownTimer.start',
+	defaultMessage: 'Start'
+});
+
+export const countdownTimerStopLabel = (): string => intl.formatMessage({
+	id: 'countdownTimer.stop',
+	defaultMessage: 'Stop'
+});
+
+export const countdownTimerPauseLabel = (): string => intl.formatMessage({
+	id: 'countdownTimer.pause',
+	defaultMessage: 'Pause'
+});
+
+export const countdownTimerEnableLabel = (): string => intl.formatMessage({
+	id: 'countdownTimer.enable',
+	defaultMessage: 'Enable'
+});
+
+export const countdownTimerDisableLabel = (): string => intl.formatMessage({
+	id: 'countdownTimer.disable',
+	defaultMessage: 'Enable'
+});
+
+export const countdownTimerSetLabel = (): string => intl.formatMessage({
+	id: 'countdownTimer.set',
+	defaultMessage: 'Set'
+});
