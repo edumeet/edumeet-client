@@ -67,10 +67,10 @@ const CountdownTimer = () : JSX.Element => {
 							dispatch(countdownTimerActions.setCountdownTimer(e.target.value));
 							handleFocus();
 						}}
-						onKeyPress={(e) => {
+						onKeyDown={(e) => {
 							if (left !== '00:00:00') {
 								if (e.key === 'Enter') {
-									countdownTimerActions.startCountdownTimer();
+									dispatch(countdownTimerActions.startCountdownTimer());
 									e.preventDefault();
 								}
 							}
