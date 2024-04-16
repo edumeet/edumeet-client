@@ -768,9 +768,9 @@ export const roomServerConnectionError = (message: string): string => intl.forma
 	defaultMessage: `Room-server: ${message}`
 });
 
-export const countdownTimerActionsLabel = (): string => intl.formatMessage({
-	id: 'countdownTimer.actions',
-	defaultMessage: 'Countdown timer actions'
+export const countdownTimerLabel = (): string => intl.formatMessage({
+	id: 'countdownTimer',
+	defaultMessage: 'Countdown timer'
 });
 
 export const countdownTimerStartLabel = (): string => intl.formatMessage({

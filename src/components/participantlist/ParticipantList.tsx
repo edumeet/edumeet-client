@@ -9,7 +9,7 @@ import { permissions } from '../../utils/roles';
 import {
 	breakoutRoomsLabel,
 	participantsLabel,
-	countdownTimerActionsLabel
+	countdownTimerLabel
 } from '../translated/translatedComponents';
 import ListMe from './ListMe';
 import ListModerator from './ListModerator';
@@ -39,13 +39,13 @@ const ParticipantList = (): JSX.Element => {
 
 	return (
 		<ParticipantListDiv>
+			{ isModerator && <ListModerator /> }
 			<>
 				<ListHeader>
-					{countdownTimerActionsLabel()}
+					{countdownTimerLabel()}
 				</ListHeader>
 				<CountdownTimer />
 			</>
-			{ isModerator && <ListModerator /> }
 			{ (breakoutsEnabled && (rooms.length > 0 || canCreateRooms)) &&
 				<>
 					<ListHeader>

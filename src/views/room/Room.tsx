@@ -41,7 +41,6 @@ const Room = (): JSX.Element => {
 
 	const handleFullscreenChange = () => setFullscreen(fscreen.fullscreenElement !== null);
 
-	// -------------------------------------------------------------------------
 	const left = useAppSelector((state) => state.countdownTimer.left);
 	const isRunning = useAppSelector((state) => state.countdownTimer.isRunning);
 	const dispatch = useAppDispatch();
@@ -78,8 +77,6 @@ const Room = (): JSX.Element => {
 		};
 
 	}, [ isRunning, left, dispatch ]);
-
-	// -------------------------------------------------------------------------
 
 	return (
 		<>
