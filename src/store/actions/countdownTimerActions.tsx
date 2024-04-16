@@ -47,25 +47,6 @@ AppThunk<Promise<void>> => async (
 	}
 };
 
-// export const toggleCountdownTimer = (isEnabled : boolean): 
-// AppThunk<Promise<void>> => async (
-// 	dispatch,
-// 	getState,
-// 	{ signalingService }
-// ): Promise<void> => {
-// 	logger.debug('moderator:toggleCountdownTimer()');
-
-// 	try {
-// 		await signalingService.sendRequest('moderator:toggleCountdownTimer', { isEnabled: isEnabled });
-
-// 		// const peerId = getState().me.id;
-
-// 		dispatch(countdownTimerActions.toggleCountdownTimer(isEnabled));
-// 	} catch (error) {
-// 		logger.error('moderator:toggleCountdownTimer() [error:"%o"]', error);
-// 	}
-// };
-
 export const setCountdownTimer = (left : string): 
 AppThunk<Promise<void>> => async (
 	dispatch,

@@ -95,23 +95,6 @@ const createCountdownTimerMiddleware = ({
 								break;
 							}
 
-							// case 'moderator:toggleCountdownTimer': {
-							// 	const { isEnabled } = notification.data;
- 
-							// 	dispatch(countdownTimerActions.toggleCountdownTimer(isEnabled));
-
-							// 	// store.dispatch(requestActions.notify(
-							// 	// 	{
-							// 	// 		type : 'info',
-							// 	// 		text : intl.formatMessage({
-							// 	// 			id             : 'xxx',
-							// 	// 			defaultMessage : 'Countdown timer is updated'
-							// 	// 		})
-							// 	// 	}));
-
-							// 	break;
-							// }
-
 							case 'moderator:settedCountdownTimer': {
 		
 								const { left, isRunning } = notification.data;
