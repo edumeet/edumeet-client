@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CountdownTimerState {
-	isEnabled: boolean,
-	left: string,
-	isRunning: boolean
+	isEnabled: boolean;
+	left: string;
+	isRunning: boolean;
 }
 
 const initialState : CountdownTimerState = {
