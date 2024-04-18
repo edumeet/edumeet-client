@@ -19,7 +19,6 @@ const PrecallTitle = (): React.JSX.Element => {
 			alignItems='center'
 		>
 			<Grid item>
-				<Typography variant='h5'>Edumeet</Typography>
 				{ logo ?
 					<img alt='Logo' src={logo} /> :
 					<Typography variant='h5'> {edumeetConfig.title} </Typography>
