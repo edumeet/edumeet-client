@@ -24,7 +24,6 @@ const countdownTimerSlice = createSlice({
 		}),
 		setCountdownTimer: ((state, action: PayloadAction<any>) => {
 			state.left = action.payload.left;
-			// state.isRunning = action.payload.isRunning;
 		}),
 		startCountdownTimer: ((state) => {
 			state.isRunning = true;
