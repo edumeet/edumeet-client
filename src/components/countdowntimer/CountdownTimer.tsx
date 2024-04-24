@@ -7,6 +7,7 @@ import {
 	countdownTimerStartLabel, countdownTimerStopLabel, 
 	countdownTimerEnableLabel, countdownTimerDisableLabel, countdownTimerSetLabel } 
 	from '../translated/translatedComponents';
+import { isMobileSelector } from '../../store/selectors';
 
 const CountdownTimerDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
@@ -17,6 +18,7 @@ const CountdownTimerDiv = styled('div')(({ theme }) => ({
 }));
 
 const CountdownTimer = () : JSX.Element => {
+	const isMobile = useAppSelector(isMobileSelector);
 	const dispatch = useAppDispatch();
 	const isEnabled = useAppSelector((state) => state.countdownTimer.isEnabled);
 	const isStarted = useAppSelector((state) => state.countdownTimer.isStarted);
@@ -53,7 +55,7 @@ const CountdownTimer = () : JSX.Element => {
 					<TextField fullWidth
 						aria-label={countdownTimerSetLabel()}
 						inputRef={inputRef}
-						autoFocus
+						autoFocus={!isMobile}
 						sx={{ flexGrow: '1' }}
 						variant='outlined'
 						label='timer (hh:mm:ss)'
