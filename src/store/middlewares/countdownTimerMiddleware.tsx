@@ -25,14 +25,14 @@ const createCountdownTimerMiddleware = ({
 					try {
 						switch (notification.method) {
 							
-							case 'moderator:enableCountdownTimer': {
+							case 'moderator:enabledCountdownTimer': {
  
 								dispatch(countdownTimerActions.enableCountdownTimer());
 
 								break;
 							}
 
-							case 'moderator:disableCountdownTimer': {
+							case 'moderator:disabledCountdownTimer': {
  
 								dispatch(countdownTimerActions.disableCountdownTimer());
 
@@ -52,12 +52,12 @@ const createCountdownTimerMiddleware = ({
 								break;
 							}
 
-							case 'moderator:settedCountdownTimer': {
+							case 'moderator:setCountdownTimer': {
 		
-								const { left, isRunning } = notification.data;
+								const { left, isStarted } = notification.data;
 		
 								dispatch(countdownTimerActions.setCountdownTimer(
-									{ left, isRunning }));
+									{ left, isStarted }));
 		
 								break;
 							}

@@ -42,7 +42,7 @@ const Room = (): JSX.Element => {
 	const handleFullscreenChange = () => setFullscreen(fscreen.fullscreenElement !== null);
 
 	const left = useAppSelector((state) => state.countdownTimer.left);
-	const isRunning = useAppSelector((state) => state.countdownTimer.isRunning);
+	const isStarted = useAppSelector((state) => state.countdownTimer.isStarted);
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -50,7 +50,7 @@ const Room = (): JSX.Element => {
 		// let _countdownTimerRef: NodeJS.Timeout | undefined = undefined;
 		let _countdownTimerRef: NodeJS.Timeout | null = null;
 				
-		if (isRunning && !_countdownTimerRef) {
+		if (isStarted && !_countdownTimerRef) {
 
 			_countdownTimerRef = setInterval(() => {
 				let leftUnix = moment(`1000-01-01 ${left}`).unix();
@@ -76,7 +76,7 @@ const Room = (): JSX.Element => {
 			}
 		};
 
-	}, [ isRunning, left, dispatch ]);
+	}, [ isStarted, left, dispatch ]);
 
 	return (
 		<>

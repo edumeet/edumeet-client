@@ -84,7 +84,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(countdownTimerActions.setCountdownTimer(countdownTimer));
 
-		dispatch(countdownTimer.isRunning ? 
+		dispatch(countdownTimer.isStarted ? 
 			countdownTimerActions.startCountdownTimer() : 
 			countdownTimerActions.stopCountdownTimer()
 		);

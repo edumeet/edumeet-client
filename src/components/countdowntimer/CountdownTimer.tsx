@@ -19,7 +19,7 @@ const CountdownTimerDiv = styled('div')(({ theme }) => ({
 const CountdownTimer = () : JSX.Element => {
 	const dispatch = useAppDispatch();
 	const isEnabled = useAppSelector((state) => state.countdownTimer.isEnabled);
-	const isRunning = useAppSelector((state) => state.countdownTimer.isRunning);
+	const isStarted = useAppSelector((state) => state.countdownTimer.isStarted);
 	const left = useAppSelector((state) => state.countdownTimer.left);
 
 	const inputRef = useRef<HTMLDivElement>(null);
@@ -57,7 +57,7 @@ const CountdownTimer = () : JSX.Element => {
 						sx={{ flexGrow: '1' }}
 						variant='outlined'
 						label='timer (hh:mm:ss)'
-						disabled={!isEnabled || (isRunning && left !== '00:00:00')}
+						disabled={!isEnabled || (isStarted && left !== '00:00:00')}
 						type='time'
 						value={left}
 						size='small'
@@ -84,7 +84,7 @@ const CountdownTimer = () : JSX.Element => {
 						sx={{ flexGrow: '1' }}
 						color='error'
 						size='small'
-						disabled={ !isEnabled || (isRunning || left === '00:00:00') }
+						disabled={ !isEnabled || (isStarted || left === '00:00:00') }
 						onClick={() => {
 							dispatch(countdownTimerActions.setCountdownTimer('00:00:00'));
 						}}
@@ -96,7 +96,7 @@ const CountdownTimer = () : JSX.Element => {
 				{/* start/stop */}
 				<Grid item xs={1}>
 					<IconButton
-						aria-label={ !isRunning ? 
+						aria-label={ !isStarted ? 
 							countdownTimerStartLabel() : 
 							countdownTimerStopLabel()
 						}
@@ -105,7 +105,7 @@ const CountdownTimer = () : JSX.Element => {
 						size='small'
 						disabled={!isEnabled || left === '00:00:00'}
 						onClick={() => {
-							if (!isRunning) {
+							if (!isStarted) {
 								dispatch(countdownTimerActions.startCountdownTimer());
 							} else {
 								dispatch(countdownTimerActions.stopCountdownTimer());
@@ -113,20 +113,20 @@ const CountdownTimer = () : JSX.Element => {
 							}
 						}}
 					>
-						{!isRunning ? <PlayArrowIcon /> : <PauseIcon /> }
+						{!isStarted ? <PlayArrowIcon /> : <PauseIcon /> }
 					</IconButton>
 				</Grid>
 
 				{/*  enable/disable */}
 				<Grid item xs={1}>
 					<Switch
-						aria-label={ !isRunning ? 
+						aria-label={ !isStarted ? 
 							countdownTimerDisableLabel() : 
 							countdownTimerEnableLabel()
 						}
 						sx={{ flexGrow: '1' }}
 						checked={isEnabled}
-						disabled={isRunning}
+						disabled={isStarted}
 						onChange={() => {
 							dispatch(isEnabled ? 
 								countdownTimerActions.disableCountdownTimer() : 
