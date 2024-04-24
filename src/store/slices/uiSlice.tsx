@@ -36,7 +36,7 @@ const initialState: UiState = {
 	extraAudioDialogOpen: false,
 	currentSettingsTab: 'media',
 	chatOpen: false,
-	participantListOpen: false,
+	participantListOpen: true,
 };
 
 const uiSlice = createSlice({
