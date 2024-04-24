@@ -47,14 +47,10 @@ const Room = (): JSX.Element => {
 
 	useEffect(() => {
 
-		// let _countdownTimerRef: NodeJS.Timeout | undefined = undefined;
-		let _countdownTimerRef: NodeJS.Timeout | null = null;
-				
-		if (isStarted && !_countdownTimerRef) {
+		if (isStarted) {
 
-			_countdownTimerRef = setInterval(() => {
+			const _countdownTimerRef = setInterval(() => {
 				let leftUnix = moment(`1000-01-01 ${left}`).unix();
-				const endUnix = moment('1000-01-01 00:00:00').unix();
 
 				leftUnix--;
 
@@ -62,19 +58,10 @@ const Room = (): JSX.Element => {
 
 				dispatch(countdownTimerSlices.setCountdownTimer({ left: leftString }));
 
-				if (leftUnix === endUnix) {
-					dispatch(countdownTimerActions.stopCountdownTimer());
-				}
-
 			}, 1000);
-		} else if (_countdownTimerRef) clearInterval(_countdownTimerRef);
-
-		return (): void => {
-			if (_countdownTimerRef) {
-				clearInterval(_countdownTimerRef);
-				_countdownTimerRef = null;
-			}
-		};
+			
+			return () => { clearInterval(_countdownTimerRef); };
+		}
 
 	}, [ isStarted, left, dispatch ]);
 
