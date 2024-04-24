@@ -20,6 +20,8 @@
 	},
 	"ignorePatterns": ["**/config.js", "vite.config.ts", "src/vite-env.d.ts"],
 	"rules": {
+		"@typescript-eslint/no-unused-vars": ["warn", { "vars": "all", "args": "after-used" }],
+		"@typescript-eslint/no-explicit-any": "warn",
 		"array-bracket-spacing": [ 2, "always", {
 			"objectsInArrays": true,
 			"arraysInArrays": true
