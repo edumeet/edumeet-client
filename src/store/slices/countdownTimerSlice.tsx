@@ -34,7 +34,7 @@ const countdownTimerSlice = createSlice({
 			state.timeLeft = action.payload.timeLeft;
 		}),
 		setCountdownTimerTimeInit: ((state, action: PayloadAction<any>) => {
-			state.timeInit = action.payload.timeLeft;
+			state.timeInit = action.payload.timeInit;
 		}),
 	}
 });
