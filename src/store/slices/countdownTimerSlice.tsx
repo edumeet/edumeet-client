@@ -3,14 +3,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface CountdownTimerState {
 	isEnabled: boolean;
 	isStarted: boolean;
-	timeInit: string;
+	timeSet: string;
 	timeLeft: string;
 }
 
 const initialState : CountdownTimerState = {
 	isEnabled: true,
 	isStarted: false,
-	timeInit: '00:00:00',
+	timeSet: '00:00:00',
 	timeLeft: '00:00:00',
 };
 
@@ -33,8 +33,8 @@ const countdownTimerSlice = createSlice({
 		setCountdownTimer: ((state, action: PayloadAction<any>) => {
 			state.timeLeft = action.payload.timeLeft;
 		}),
-		setCountdownTimerTimeInit: ((state, action: PayloadAction<any>) => {
-			state.timeInit = action.payload.timeInit;
+		setCountdownTimerTimeSet: ((state, action: PayloadAction<any>) => {
+			state.timeSet = action.payload.timeSet;
 		}),
 	}
 });
