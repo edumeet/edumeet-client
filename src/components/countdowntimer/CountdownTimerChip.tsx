@@ -26,7 +26,7 @@ const CountdownTimerChip = (): JSX.Element => {
 			indicatorColor = '#FFA500';
 			break;
 		case percentage < 20:
-			indicatorColor = 'red';
+			indicatorColor = '#FF0000';
 			break;
 		default:
 			indicatorColor = backgroundColor;
