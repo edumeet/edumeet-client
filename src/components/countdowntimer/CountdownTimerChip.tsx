@@ -1,13 +1,19 @@
 import React from 'react';
 import { Chip } from '@mui/material';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { uiActions } from '../../store/slices/uiSlice';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
 import moment from 'moment';
 
 const CountdownTimerChip = (): JSX.Element => {
+	const dispatch = useAppDispatch();
 	const isEnabled = useAppSelector((state) => state.countdownTimer.isEnabled);
 	const timeLeft = useAppSelector((state) => state.countdownTimer.timeLeft);
 	const timeSet = useAppSelector((state) => state.countdownTimer.timeSet);
+
+	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
+
+	const openUsersTab = () => dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
 
 	const totalTime = moment.duration(timeSet);
 	const leftTime = moment.duration(timeLeft);
@@ -45,6 +51,8 @@ const CountdownTimerChip = (): JSX.Element => {
 					label={timeLeft}
 					size="small"
 					icon={<AvTimerIcon style={{ color: 'white' }} />}
+					onClick={() => openUsersTab()}
+					// on={participantListOpen}
 				/>
 			)}
 		</>
