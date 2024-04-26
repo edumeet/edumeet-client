@@ -15,11 +15,9 @@ const CountdownTimerChip = (): JSX.Element => {
 
 	const openUsersTab = () => dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
 
-	const totalTime = moment.duration(timeSet);
-	const leftTime = moment.duration(timeLeft);
-	const totalSeconds = totalTime.asSeconds();
-	const leftSeconds = leftTime.asSeconds();
-	const percentage = parseFloat(((leftSeconds / totalSeconds) * 100).toFixed(2));
+	const timeSetSeconds = moment.duration(timeSet).asSeconds();
+	const timeLeftSeconds = moment.duration(timeLeft).asSeconds();
+	const percentage = parseFloat(((timeLeftSeconds / timeSetSeconds) * 100).toFixed(2));
 
 	let indicatorColor: string;
 	const backgroundColor: string = 'rgba(128, 128, 128, 0.5)'; // Declare the 'backgroundColor' variable here
