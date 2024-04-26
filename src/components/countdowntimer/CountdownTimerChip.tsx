@@ -43,7 +43,6 @@ const CountdownTimerChip = (): JSX.Element => {
 					size="small"
 					icon={<AvTimerIcon style={{ color: 'white' }} />}
 					onClick={() => openUsersTab()}
-					// on={participantListOpen}
 				/>
 			)}
 		</>
