@@ -17,12 +17,12 @@ const CountdownTimerChip = (): JSX.Element => {
 
 	const totalTime = moment.duration(timeSet);
 	const leftTime = moment.duration(timeLeft);
-
 	const totalSeconds = totalTime.asSeconds();
 	const leftSeconds = leftTime.asSeconds();
 	const percentage = parseFloat(((leftSeconds / totalSeconds) * 100).toFixed(2));
+
 	let indicatorColor: string;
-	const backgroundColor = 'rgba(128, 128, 128, 0.5)'; // Declare the 'backgroundColor' variable here
+	const backgroundColor: string = 'rgba(128, 128, 128, 0.5)'; // Declare the 'backgroundColor' variable here
 
 	switch (true) {
 		case percentage <= 100 && percentage >= 50:
