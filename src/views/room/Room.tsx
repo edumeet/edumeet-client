@@ -14,7 +14,6 @@ import HelpButton from '../../components/controlbuttons/HelpButton';
 import { useNotifier, useAppSelector, useAppDispatch } from '../../store/hooks';
 import moment from 'moment';
 
-import * as countdownTimerActions from '../../store/actions/countdownTimerActions';
 import { countdownTimerActions as countdownTimerSlices } from '../../store/slices/countdownTimerSlice';
 
 const Room = (): JSX.Element => {
