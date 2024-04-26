@@ -23,17 +23,10 @@ const CountdownTimerChip = (): JSX.Element => {
 	const backgroundColor: string = 'rgba(128, 128, 128, 0.5)'; // Declare the 'backgroundColor' variable here
 
 	switch (true) {
-		case percentage <= 100 && percentage >= 50:
-			indicatorColor = '#2E7A27';
-			break;
-		case percentage < 50 && percentage >= 20:
-			indicatorColor = '#FFA500';
-			break;
-		case percentage < 20:
-			indicatorColor = '#FF0000';
-			break;
-		default:
-			indicatorColor = backgroundColor;
+		case percentage <= 100 && percentage >= 50: indicatorColor = '#2E7A27'; break;
+		case percentage < 	50 && percentage >= 20: indicatorColor = '#FFA500'; break;
+		case percentage < 	20: 					indicatorColor = '#FF0000'; break;
+		default: indicatorColor = backgroundColor;
 	}
 
 	return (
