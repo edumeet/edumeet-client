@@ -61,6 +61,8 @@ const createRoomMiddleware = ({
 									filesharingEnabled,
 									raiseHandEnabled,
 									localRecordingEnabled,
+									logo: settings.logo,
+									backgroundImage: settings.background,
 									videoCodec: settings.videoCodec ?? 'vp8',
 									simulcast: settings.simulcast ?? true,
 									audioCodec: settings.audioCodec ?? 'opus',
