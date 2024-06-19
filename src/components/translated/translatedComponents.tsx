@@ -774,7 +774,7 @@ export const startDrawingLabel = (): string => intl.formatMessage({
 });
 
 export const stopDrawingLabel = (): string => intl.formatMessage({
-	id: 'room.stoptDrawing',
+	id: 'room.stopDrawing',
 	defaultMessage: 'Stop drawing'
 });
 
