@@ -54,10 +54,10 @@ const createCountdownTimerMiddleware = ({
 
 							case 'moderator:hasSetCountdownTimer': {
 		
-								const { timeLeft, timeSet, isStarted } = notification.data;
+								const { remainingTime, timeSet, isStarted } = notification.data;
 		
 								dispatch(countdownTimerActions.setCountdownTimer(
-									{ timeLeft, isStarted }));
+									{ remainingTime, isStarted }));
 
 								dispatch(countdownTimerActions.setCountdownTimerTimeSet(
 									{ timeSet, isStarted }));
@@ -67,10 +67,10 @@ const createCountdownTimerMiddleware = ({
 
 							case 'moderator:updatedCountdownTimer': {
 		
-								const { timeLeft, isStarted } = notification.data;
+								const { remainingTime, isStarted } = notification.data;
 		
 								dispatch(countdownTimerActions.setCountdownTimer(
-									{ timeLeft, isStarted }));
+									{ remainingTime, isStarted }));
 		
 								break;
 							}

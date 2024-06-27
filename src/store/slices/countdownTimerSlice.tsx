@@ -4,14 +4,14 @@ interface CountdownTimerState {
 	isEnabled: boolean;
 	isStarted: boolean;
 	timeSet: string;
-	timeLeft: string;
+	remainingTime: string;
 }
 
 const initialState : CountdownTimerState = {
 	isEnabled: true,
 	isStarted: false,
 	timeSet: '00:00:00',
-	timeLeft: '00:00:00',
+	remainingTime: '00:00:00',
 };
 
 const countdownTimerSlice = createSlice({
@@ -31,7 +31,7 @@ const countdownTimerSlice = createSlice({
 			state.isStarted = false;
 		}),
 		setCountdownTimer: ((state, action: PayloadAction<any>) => {
-			state.timeLeft = action.payload.timeLeft;
+			state.remainingTime = action.payload.remainingTime;
 		}),
 		setCountdownTimerTimeSet: ((state, action: PayloadAction<any>) => {
 			state.timeSet = action.payload.timeSet;

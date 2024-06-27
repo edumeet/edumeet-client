@@ -22,7 +22,7 @@ const CountdownTimer = () : JSX.Element => {
 	const dispatch = useAppDispatch();
 	const isEnabled = useAppSelector((state) => state.countdownTimer.isEnabled);
 	const isStarted = useAppSelector((state) => state.countdownTimer.isStarted);
-	const timeLeft = useAppSelector((state) => state.countdownTimer.timeLeft);
+	const remainingTime = useAppSelector((state) => state.countdownTimer.remainingTime);
 
 	const inputRef = useRef<HTMLDivElement>(null);
 
@@ -59,9 +59,9 @@ const CountdownTimer = () : JSX.Element => {
 						sx={{ flexGrow: '1' }}
 						variant='outlined'
 						label='timer (hh:mm:ss)'
-						disabled={!isEnabled || (isStarted && timeLeft !== '00:00:00')}
+						disabled={!isEnabled || (isStarted && remainingTime !== '00:00:00')}
 						type='time'
-						value={timeLeft}
+						value={remainingTime}
 						size='small'
 						InputLabelProps={{ shrink: true }}
 						inputProps={{ step: '1' }}
@@ -69,7 +69,7 @@ const CountdownTimer = () : JSX.Element => {
 							dispatch(countdownTimerActions.setCountdownTimer(e.target.value));
 						}}
 						onKeyDown={(e) => {
-							if (timeLeft !== '00:00:00') {
+							if (remainingTime !== '00:00:00') {
 								if (e.key === 'Enter') {
 									dispatch(countdownTimerActions.startCountdownTimer());
 									e.preventDefault();
@@ -86,7 +86,7 @@ const CountdownTimer = () : JSX.Element => {
 						sx={{ flexGrow: '1' }}
 						color='error'
 						size='small'
-						disabled={ !isEnabled || (isStarted || timeLeft === '00:00:00') }
+						disabled={ !isEnabled || (isStarted || remainingTime === '00:00:00') }
 						onClick={() => {
 							dispatch(countdownTimerActions.setCountdownTimer('00:00:00'));
 						}}
@@ -105,7 +105,7 @@ const CountdownTimer = () : JSX.Element => {
 						sx={{ flexGrow: '1' }}
 						color='error'
 						size='small'
-						disabled={!isEnabled || timeLeft === '00:00:00'}
+						disabled={!isEnabled || remainingTime === '00:00:00'}
 						onClick={() => {
 							if (!isStarted) {
 								dispatch(countdownTimerActions.startCountdownTimer());

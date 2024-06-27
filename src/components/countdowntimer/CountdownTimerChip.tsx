@@ -8,7 +8,7 @@ import moment from 'moment';
 const CountdownTimerChip = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const isEnabled = useAppSelector((state) => state.countdownTimer.isEnabled);
-	const timeLeft = useAppSelector((state) => state.countdownTimer.timeLeft);
+	const remainingTime = useAppSelector((state) => state.countdownTimer.remainingTime);
 	const timeSet = useAppSelector((state) => state.countdownTimer.timeSet);
 
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
@@ -16,7 +16,7 @@ const CountdownTimerChip = (): JSX.Element => {
 	const openUsersTab = () => dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
 
 	const secondsSet = moment.duration(timeSet).asSeconds();
-	const secondsLeft = moment.duration(timeLeft).asSeconds();
+	const secondsLeft = moment.duration(remainingTime).asSeconds();
 	const percentage = parseFloat(((secondsLeft / secondsSet) * 100).toFixed(2));
 
 	let indicatorColor: string;
@@ -39,7 +39,7 @@ const CountdownTimerChip = (): JSX.Element => {
 						background: `linear-gradient(to right, ${indicatorColor} ${percentage}%, ${backgroundColor} ${percentage}%)`,
 						animation: `${percentage}% blink-animation 1s infinite`,
 					}}
-					label={timeLeft}
+					label={remainingTime}
 					size="small"
 					icon={<AvTimerIcon style={{ color: 'white' }} />}
 					onClick={() => openUsersTab()}
