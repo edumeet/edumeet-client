@@ -9,13 +9,13 @@ const CountdownTimerChip = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const isEnabled = useAppSelector((state) => state.countdownTimer.isEnabled);
 	const remainingTime = useAppSelector((state) => state.countdownTimer.remainingTime);
-	const timeSet = useAppSelector((state) => state.countdownTimer.timeSet);
+	const initialTime = useAppSelector((state) => state.countdownTimer.initialTime);
 
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 
 	const openUsersTab = () => dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
 
-	const secondsSet = moment.duration(timeSet).asSeconds();
+	const secondsSet = moment.duration(initialTime).asSeconds();
 	const secondsLeft = moment.duration(remainingTime).asSeconds();
 	const percentage = parseFloat(((secondsLeft / secondsSet) * 100).toFixed(2));
 

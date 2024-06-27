@@ -92,7 +92,7 @@ AppThunk<Promise<void>> => async (
 
 		dispatch(countdownTimerActions.setCountdownTimer({ remainingTime, isStarted: false }));
 
-		dispatch(countdownTimerActions.setCountdownTimerTimeSet({ timeSet: remainingTime, isStarted: false }));
+		dispatch(countdownTimerActions.setCountdownTimerInitialTime({ initialTime: remainingTime, isStarted: false }));
 
 	} catch (error) {
 		logger.error('setCountdownTimer() [error:"%o"]', error);
