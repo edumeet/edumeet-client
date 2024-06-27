@@ -52,7 +52,7 @@ const createCountdownTimerMiddleware = ({
 								break;
 							}
 
-							case 'moderator:setCountdownTimer': {
+							case 'moderator:hasSetCountdownTimer': {
 		
 								const { timeLeft, timeSet, isStarted } = notification.data;
 		
