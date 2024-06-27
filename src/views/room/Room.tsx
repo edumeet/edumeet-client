@@ -55,7 +55,7 @@ const Room = (): JSX.Element => {
 
 				const remainingTimeString = moment.unix(remainingTimeUnix).format('HH:mm:ss');
 
-				dispatch(countdownTimerSlices.setCountdownTimer({ remainingTime: remainingTimeString }));
+				dispatch(countdownTimerSlices.setCountdownTimerRemainingTime(remainingTimeString));
 
 			}, 1000);
 			

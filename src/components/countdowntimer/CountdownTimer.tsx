@@ -66,7 +66,7 @@ const CountdownTimer = () : JSX.Element => {
 						InputLabelProps={{ shrink: true }}
 						inputProps={{ step: '1' }}
 						onChange={(e) => {
-							dispatch(countdownTimerActions.setCountdownTimer(e.target.value));
+							dispatch(countdownTimerActions.setCountdownTimerInitialTime(e.target.value));
 						}}
 						onKeyDown={(e) => {
 							if (remainingTime !== '00:00:00') {
@@ -88,7 +88,7 @@ const CountdownTimer = () : JSX.Element => {
 						size='small'
 						disabled={ !isEnabled || (isStarted || remainingTime === '00:00:00') }
 						onClick={() => {
-							dispatch(countdownTimerActions.setCountdownTimer('00:00:00'));
+							dispatch(countdownTimerActions.setCountdownTimerInitialTime('00:00:00'));
 						}}
 					>
 						<HighlightOffIcon />

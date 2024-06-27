@@ -52,25 +52,20 @@ const createCountdownTimerMiddleware = ({
 								break;
 							}
 
-							case 'moderator:hasSetCountdownTimer': {
+							case 'moderator:settedCountdownTimerInitialTime': {
 		
-								const { remainingTime, initialTime, isStarted } = notification.data;
+								const time = notification.data;
 		
-								dispatch(countdownTimerActions.setCountdownTimer(
-									{ remainingTime, isStarted }));
-
-								dispatch(countdownTimerActions.setCountdownTimerInitialTime(
-									{ initialTime, isStarted }));
-		
+								dispatch(countdownTimerActions.setCountdownTimerInitialTime(time));
+								
 								break;
 							}
 
-							case 'moderator:updatedCountdownTimer': {
+							case 'moderator:settedCountdownTimerRemainingTime': {
 		
-								const { remainingTime, isStarted } = notification.data;
+								const time = notification.data;
 		
-								dispatch(countdownTimerActions.setCountdownTimer(
-									{ remainingTime, isStarted }));
+								dispatch(countdownTimerActions.setCountdownTimerRemainingTime(time));
 		
 								break;
 							}

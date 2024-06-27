@@ -30,11 +30,21 @@ const countdownTimerSlice = createSlice({
 		stopCountdownTimer: ((state) => {
 			state.isStarted = false;
 		}),
-		setCountdownTimer: ((state, action: PayloadAction<any>) => {
-			state.remainingTime = action.payload.remainingTime;
+		setCountdownTimerRemainingTime: ((state, action: PayloadAction<any>) => {
+			
+			const time = action.payload;
+
+			state.remainingTime = time;
 		}),
 		setCountdownTimerInitialTime: ((state, action: PayloadAction<any>) => {
+
+			const time = action.payload;
+			
+			state.initialTime = time;
+		}),
+		joinCountdownTimer: ((state, action: PayloadAction<any>) => {
 			state.initialTime = action.payload.initialTime;
+			state.remainingTime = action.payload.remainingTime;
 		}),
 	}
 });

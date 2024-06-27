@@ -79,20 +79,21 @@ AppThunk<Promise<void>> => async (
 	}
 };
 
-export const setCountdownTimer = (remainingTime : string): 
+export const setCountdownTimerInitialTime = (time : string): 
 AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
 	{ signalingService }
 ): Promise<void> => {
-	logger.debug('setCountdownTimer() [remainingTime:"%s"]', remainingTime);
+	logger.debug('setCountdownTimerInitialTime() [time:"%s"]', time);
 
 	try {
-		await signalingService.sendRequest('moderator:setCountdownTimer', { remainingTime });
+		
+		signalingService.sendRequest('moderator:setCountdownTimerInitialTime', time);
 
-		dispatch(countdownTimerActions.setCountdownTimer({ remainingTime, isStarted: false }));
-
-		dispatch(countdownTimerActions.setCountdownTimerInitialTime({ initialTime: remainingTime, isStarted: false }));
+		dispatch(countdownTimerActions.setCountdownTimerRemainingTime(time));
+		
+		dispatch(countdownTimerActions.setCountdownTimerInitialTime(time));
 
 	} catch (error) {
 		logger.error('setCountdownTimer() [error:"%o"]', error);
