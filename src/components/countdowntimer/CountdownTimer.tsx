@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { IconButton, Grid, Switch, TextField, styled } from '@mui/material';
 import { HighlightOff as HighlightOffIcon, Pause as PauseIcon, PlayArrow as PlayArrowIcon } from '@mui/icons-material';
+import moment from 'moment';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import * as countdownTimerActions from '../../store/actions/countdownTimerActions';
 import { 
@@ -58,7 +59,7 @@ const CountdownTimer = () : JSX.Element => {
 						autoFocus={!isMobile}
 						sx={{ flexGrow: '1' }}
 						variant='outlined'
-						label='timer (hh:mm:ss)'
+						label={(isMobile) ? 'timer (HH:mm)' : 'timer (HH:mm:ss)'}
 						disabled={!isEnabled || (isStarted && remainingTime !== '00:00:00')}
 						type='time'
 						value={remainingTime}
@@ -66,7 +67,11 @@ const CountdownTimer = () : JSX.Element => {
 						InputLabelProps={{ shrink: true }}
 						inputProps={{ step: '1' }}
 						onChange={(e) => {
-							dispatch(countdownTimerActions.setCountdownTimerInitialTime(e.target.value));
+							const time = (isMobile && moment(e.target.value, 'HH:mm', true).isValid())
+								? moment(`${e.target.value}:00`, 'HH:mm:ss').format('HH:mm:ss')
+								: moment(`${e.target.value}`, 'HH:mm:ss').format('HH:mm:ss');
+							
+							dispatch(countdownTimerActions.setCountdownTimerInitialTime(time));
 						}}
 						onKeyDown={(e) => {
 							if (remainingTime !== '00:00:00') {
