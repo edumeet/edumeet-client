@@ -39,13 +39,14 @@ const ParticipantList = (): JSX.Element => {
 
 	return (
 		<ParticipantListDiv>
-			{ isModerator && <ListModerator /> }
-			<>
+			{ isModerator && <>
+				<ListModerator />
 				<ListHeader>
 					{countdownTimerLabel()}
 				</ListHeader>
 				<CountdownTimer />
 			</>
+			}
 			{ (breakoutsEnabled && (rooms.length > 0 || canCreateRooms)) &&
 				<>
 					<ListHeader>
