@@ -69,6 +69,16 @@ const createCountdownTimerMiddleware = ({
 		
 								break;
 							}
+								
+							case 'moderator:finishedCountdownTimer': {
+		
+								const isStarted = notification.data.isStarted;
+								const remainingTime = notification.data.remainingTime;
+								
+								dispatch(countdownTimerActions.finishCountdownTimer({ isStarted, remainingTime }));
+		
+								break;
+							}
 						}
 					} catch (error) {
 						logger.error('error on signalService "notification" event [error:%o]', error);
