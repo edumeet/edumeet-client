@@ -4,6 +4,8 @@ import { Logger } from '../../utils/Logger';
 import { countdownTimerActions } from '../slices/countdownTimerSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { countdownTimerFinishedLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('ChatMiddleware');
 
@@ -76,6 +78,11 @@ const createCountdownTimerMiddleware = ({
 								const remainingTime = notification.data.remainingTime;
 								
 								dispatch(countdownTimerActions.finishCountdownTimer({ isStarted, remainingTime }));
+
+								dispatch(notificationsActions.enqueueNotification({
+									message: countdownTimerFinishedLabel(),
+									options: { variant: 'info' }
+								}));
 		
 								break;
 							}

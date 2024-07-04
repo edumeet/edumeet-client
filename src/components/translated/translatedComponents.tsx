@@ -802,3 +802,8 @@ export const countdownTimerSetLabel = (): string => intl.formatMessage({
 	id: 'countdownTimer.set',
 	defaultMessage: 'Set'
 });
+
+export const countdownTimerFinishedLabel = (): string => intl.formatMessage({
+	id: 'countdownTimer.finished',
+	defaultMessage: 'Time is up!'
+});

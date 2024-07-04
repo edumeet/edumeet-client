@@ -280,5 +280,6 @@
   "svc.mediaConnectionNodeSuccess": "Usługa węzła mediów: połączono",
   "tooltip.coundowntimer.start": "Start",
   "tooltip.coundowntimer.stop": "Stop",
-  "tooltip.coundowntimer.pause": "Pause"
+  "tooltip.coundowntimer.pause": "Pause",
+  "countdownTimer.finished": "Czas minął!"
 }

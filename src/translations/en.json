@@ -278,5 +278,6 @@
 	"svc.mgmtUnavailable": "Management service: Unavailable",
 	"svc.mediaNodeUnavailable": "Media-node service: Unavailable",
 	"svc.mediaConnectionNodeError": "Media-node service: Connection error",
-	"svc.mediaConnectionNodeSuccess": "Media-Node service: Got connection"
+	"svc.mediaConnectionNodeSuccess": "Media-Node service: Got connection",
+	"countdownTimer.finished": "Time is up!"
 }
