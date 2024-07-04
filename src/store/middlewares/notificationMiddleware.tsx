@@ -3,7 +3,7 @@ import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { peersActions } from '../slices/peersSlice';
 import { MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
-import { countdownTimerActions } from '../slices/countdownTimerSlice';
+import { roomActions } from '../slices/roomSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { HTMLMediaElementWithSink } from '../../utils/types';
 import { settingsActions } from '../slices/settingsSlice';
@@ -98,7 +98,7 @@ const createNotificationMiddleware = ({
 			}
 
 			// Finished countdownTimer
-			if (countdownTimerActions.finishCountdownTimer.match(action)) {
+			if (roomActions.finishCountdownTimer.match(action)) {
 				playNotificationSounds('finishedCountdownTimer');
 			}
 

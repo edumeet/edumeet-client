@@ -14,7 +14,7 @@ import HelpButton from '../../components/controlbuttons/HelpButton';
 import { useNotifier, useAppSelector, useAppDispatch } from '../../store/hooks';
 import moment from 'moment';
 
-import { countdownTimerActions as countdownTimerSlices } from '../../store/slices/countdownTimerSlice';
+import { roomActions as roomSlices } from '../../store/slices/roomSlice';
 
 const Room = (): JSX.Element => {
 	useNotifier();
@@ -40,8 +40,8 @@ const Room = (): JSX.Element => {
 
 	const handleFullscreenChange = () => setFullscreen(fscreen.fullscreenElement !== null);
 
-	const remainingTime = useAppSelector((state) => state.countdownTimer.remainingTime);
-	const isStarted = useAppSelector((state) => state.countdownTimer.isStarted);
+	const remainingTime = useAppSelector((state) => state.room.countdownTimer.remainingTime);
+	const isStarted = useAppSelector((state) => state.room.countdownTimer.isStarted);
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -55,7 +55,7 @@ const Room = (): JSX.Element => {
 
 				const remainingTimeString = moment.unix(remainingTimeUnix).format('HH:mm:ss');
 
-				dispatch(countdownTimerSlices.setCountdownTimerRemainingTime(remainingTimeString));
+				dispatch(roomSlices.setCountdownTimerRemainingTime(remainingTimeString));
 
 			}, 1000);
 			

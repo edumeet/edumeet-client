@@ -1,5 +1,5 @@
 import { Logger } from '../../utils/Logger';
-import { countdownTimerActions } from '../slices/countdownTimerSlice';
+import { roomActions } from '../slices/roomSlice';
 import { AppThunk } from '../store';
 
 const logger = new Logger('CountdownTimerActions');
@@ -22,7 +22,7 @@ AppThunk<Promise<void>> => async (
 	try {
 		await signalingService.sendRequest('moderator:enableCountdownTimer');
 
-		dispatch(countdownTimerActions.enableCountdownTimer());
+		dispatch(roomActions.enableCountdownTimer());
 	} catch (error) {
 		logger.error('moderator:enableCountdownTimer() [error:"%o"]', error);
 	}
@@ -41,7 +41,7 @@ AppThunk<Promise<void>> => async (
 
 		// const peerId = getState().me.id;
 
-		dispatch(countdownTimerActions.disableCountdownTimer());
+		dispatch(roomActions.disableCountdownTimer());
 	} catch (error) {
 		logger.error('moderator:disableCountdownTimer() [error:"%o"]', error);
 	}
@@ -91,9 +91,9 @@ AppThunk<Promise<void>> => async (
 		
 		signalingService.sendRequest('moderator:setCountdownTimerInitialTime', time);
 
-		dispatch(countdownTimerActions.setCountdownTimerRemainingTime(time));
+		dispatch(roomActions.setCountdownTimerRemainingTime(time));
 		
-		dispatch(countdownTimerActions.setCountdownTimerInitialTime(time));
+		dispatch(roomActions.setCountdownTimerInitialTime(time));
 
 	} catch (error) {
 		logger.error('setCountdownTimer() [error:"%o"]', error);

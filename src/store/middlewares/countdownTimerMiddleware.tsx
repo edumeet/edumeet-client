@@ -1,7 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { Logger } from '../../utils/Logger';
 
-import { countdownTimerActions } from '../slices/countdownTimerSlice';
+import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { notificationsActions } from '../slices/notificationsSlice';
@@ -29,27 +29,27 @@ const createCountdownTimerMiddleware = ({
 							
 							case 'moderator:enabledCountdownTimer': {
  
-								dispatch(countdownTimerActions.enableCountdownTimer());
+								dispatch(roomActions.enableCountdownTimer());
 
 								break;
 							}
 
 							case 'moderator:disabledCountdownTimer': {
  
-								dispatch(countdownTimerActions.disableCountdownTimer());
+								dispatch(roomActions.disableCountdownTimer());
 
 								break;
 							}
 							case 'moderator:startedCountdownTimer': {
  
-								dispatch(countdownTimerActions.startCountdownTimer());
+								dispatch(roomActions.startCountdownTimer());
 
 								break;
 							}
 
 							case 'moderator:stoppedCountdownTimer': {
  
-								dispatch(countdownTimerActions.stopCountdownTimer());
+								dispatch(roomActions.stopCountdownTimer());
 
 								break;
 							}
@@ -58,7 +58,7 @@ const createCountdownTimerMiddleware = ({
 		
 								const time = notification.data;
 		
-								dispatch(countdownTimerActions.setCountdownTimerInitialTime(time));
+								dispatch(roomActions.setCountdownTimerInitialTime(time));
 								
 								break;
 							}
@@ -67,7 +67,7 @@ const createCountdownTimerMiddleware = ({
 		
 								const time = notification.data;
 		
-								dispatch(countdownTimerActions.setCountdownTimerRemainingTime(time));
+								dispatch(roomActions.setCountdownTimerRemainingTime(time));
 		
 								break;
 							}
@@ -77,7 +77,7 @@ const createCountdownTimerMiddleware = ({
 								const isStarted = notification.data.isStarted;
 								const remainingTime = notification.data.remainingTime;
 								
-								dispatch(countdownTimerActions.finishCountdownTimer({ isStarted, remainingTime }));
+								dispatch(roomActions.finishCountdownTimer({ isStarted, remainingTime }));
 
 								dispatch(notificationsActions.enqueueNotification({
 									message: countdownTimerFinishedLabel(),

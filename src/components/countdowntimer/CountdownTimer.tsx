@@ -21,9 +21,9 @@ const CountdownTimerDiv = styled('div')(({ theme }) => ({
 const CountdownTimer = () : JSX.Element => {
 	const isMobile = useAppSelector(isMobileSelector);
 	const dispatch = useAppDispatch();
-	const isEnabled = useAppSelector((state) => state.countdownTimer.isEnabled);
-	const isStarted = useAppSelector((state) => state.countdownTimer.isStarted);
-	const remainingTime = useAppSelector((state) => state.countdownTimer.remainingTime);
+	const isEnabled = useAppSelector((state) => state.room.countdownTimer.isEnabled);
+	const isStarted = useAppSelector((state) => state.room.countdownTimer.isStarted);
+	const remainingTime = useAppSelector((state) => state.room.countdownTimer.remainingTime);
 
 	const inputRef = useRef<HTMLDivElement>(null);
 

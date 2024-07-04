@@ -7,9 +7,9 @@ import moment from 'moment';
 
 const CountdownTimerChip = (): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const isEnabled = useAppSelector((state) => state.countdownTimer.isEnabled);
-	const remainingTime = useAppSelector((state) => state.countdownTimer.remainingTime);
-	const initialTime = useAppSelector((state) => state.countdownTimer.initialTime);
+	const isEnabled = useAppSelector((state) => state.room.countdownTimer.isEnabled);
+	const remainingTime = useAppSelector((state) => state.room.countdownTimer.remainingTime);
+	const initialTime = useAppSelector((state) => state.room.countdownTimer.initialTime);
 
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 

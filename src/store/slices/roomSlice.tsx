@@ -5,6 +5,13 @@ export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left';
 export type RoomMode = 'P2P' | 'SFU';
 export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';
 
+interface CountdownTimerState {
+	isEnabled: boolean;
+	isStarted: boolean;
+	initialTime: string;
+	remainingTime: string;
+}
+
 export interface RoomState {
 	headless?: boolean;
 	logo?: string;
@@ -36,9 +43,10 @@ export interface RoomState {
 	audioCodec?: string;
 	screenSharingCodec?: VideoCodec;
 	screenSharingSimulcast?: boolean;
+	countdownTimer: CountdownTimerState;
 }
 
-type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
+type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'countdownTimer'>;
 
 const initialState: RoomState = {
 	logo: edumeetConfig.theme.logo,
@@ -56,6 +64,12 @@ const initialState: RoomState = {
 	audioCodec: 'opus',
 	screenSharingCodec: 'vp8',
 	screenSharingSimulcast: edumeetConfig.simulcastSharing,
+	countdownTimer: {
+		isEnabled: true,
+		isStarted: false,
+		initialTime: '00:00:00',
+		remainingTime: '00:00:00',
+	},
 };
 
 const roomSlice = createSlice({
@@ -76,6 +90,39 @@ const roomSlice = createSlice({
 			action: PayloadAction<RoomConnectionState>
 		) => {
 			state.state = action.payload;
+		}),
+		enableCountdownTimer: ((state) => {
+			state.countdownTimer.isEnabled = true;
+		}),
+		disableCountdownTimer: ((state) => {
+			state.countdownTimer.isEnabled = false;
+		}),
+		startCountdownTimer: ((state) => {
+			state.countdownTimer.isStarted = true;
+		}),
+		stopCountdownTimer: ((state) => {
+			state.countdownTimer.isStarted = false;
+		}),
+		setCountdownTimerRemainingTime: ((state, action: PayloadAction<any>) => {
+			
+			const time = action.payload;
+
+			state.countdownTimer.remainingTime = time;
+		}),
+		setCountdownTimerInitialTime: ((state, action: PayloadAction<any>) => {
+
+			const time = action.payload;
+			
+			state.countdownTimer.initialTime = time;
+		}),
+		finishCountdownTimer: ((state, action: PayloadAction<any>) => {
+
+			state.countdownTimer.isStarted = action.payload.isStarted;
+			state.countdownTimer.remainingTime = action.payload.remainingTime;
+		}),
+		joinCountdownTimer: ((state, action: PayloadAction<any>) => {
+			state.countdownTimer.initialTime = action.payload.initialTime;
+			state.countdownTimer.remainingTime = action.payload.remainingTime;
 		}),
 	}
 });
