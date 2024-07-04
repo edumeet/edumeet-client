@@ -783,11 +783,6 @@ export const countdownTimerStopLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Stop'
 });
 
-export const countdownTimerPauseLabel = (): string => intl.formatMessage({
-	id: 'countdownTimer.pause',
-	defaultMessage: 'Pause'
-});
-
 export const countdownTimerEnableLabel = (): string => intl.formatMessage({
 	id: 'countdownTimer.enable',
 	defaultMessage: 'Enable'
