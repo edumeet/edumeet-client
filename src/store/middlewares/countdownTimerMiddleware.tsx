@@ -15,7 +15,7 @@ const createCountdownTimerMiddleware = ({
 	logger.debug('createChatMiddleware()');
 
 	const middleware: Middleware = ({
-		dispatch, getState
+		dispatch
 	}: {
 		dispatch: AppDispatch,
 		getState: () => RootState
