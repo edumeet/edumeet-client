@@ -281,5 +281,11 @@
   "tooltip.coundowntimer.start": "Start",
   "tooltip.coundowntimer.stop": "Stop",
   "tooltip.coundowntimer.pause": "Pause",
-  "countdownTimer.finished": "Czas minął!"
+  "label.countdownTimer.title": "Timer",
+	"label.countdownTimer.enable": "Włącz",
+	"label.countdownTimer.disable": "Wyłącz",
+	"label.countdownTimer.start": "Start",
+	"label.countdownTimer.stop": "Stop",
+	"label.countdownTimer.set": "Ustaw",
+	"label.countdownTimer.finished": "Czas minął!"
 }

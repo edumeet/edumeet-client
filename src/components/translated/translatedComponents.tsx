@@ -768,37 +768,37 @@ export const roomServerConnectionError = (message: string): string => intl.forma
 	defaultMessage: `Room-server: ${message}`
 });
 
-export const countdownTimerLabel = (): string => intl.formatMessage({
-	id: 'countdownTimer',
+export const countdownTimerTitleLabel = (): string => intl.formatMessage({
+	id: 'label.countdownTimer.title',
 	defaultMessage: 'Countdown timer'
 });
 
 export const countdownTimerStartLabel = (): string => intl.formatMessage({
-	id: 'countdownTimer.start',
+	id: 'label.countdownTimer.start',
 	defaultMessage: 'Start'
 });
 
 export const countdownTimerStopLabel = (): string => intl.formatMessage({
-	id: 'countdownTimer.stop',
+	id: 'label.countdownTimer.stop',
 	defaultMessage: 'Stop'
 });
 
 export const countdownTimerEnableLabel = (): string => intl.formatMessage({
-	id: 'countdownTimer.enable',
+	id: 'label.countdownTimer.enable',
 	defaultMessage: 'Enable'
 });
 
 export const countdownTimerDisableLabel = (): string => intl.formatMessage({
-	id: 'countdownTimer.disable',
-	defaultMessage: 'Enable'
+	id: 'label.countdownTimer.disable',
+	defaultMessage: 'Disable'
 });
 
 export const countdownTimerSetLabel = (): string => intl.formatMessage({
-	id: 'countdownTimer.set',
+	id: 'label.countdownTimer.set',
 	defaultMessage: 'Set'
 });
 
 export const countdownTimerFinishedLabel = (): string => intl.formatMessage({
-	id: 'countdownTimer.finished',
+	id: 'label.countdownTimer.finished',
 	defaultMessage: 'Time is up!'
 });
