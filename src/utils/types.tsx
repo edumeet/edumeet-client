@@ -69,6 +69,9 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		'raisedHand': {
 			'play': '/sounds/notify-hand.mp3'
 		},
+		'finishedCountdownTimer': {
+			'play': '/sounds/notify-countdowntimer.mp3'
+		},
 		'default': {
 			'debounce': 5000,
 			'play': '/sounds/notify.mp3'
@@ -156,7 +159,7 @@ export interface AudioPreset {
 	opusMaxPlaybackRate: number;
 }
 
-export type NotificationType = 'default' | 'chatMessage' | 'raisedHand';
+export type NotificationType = 'default' | 'chatMessage' | 'raisedHand' | 'finishedCountdownTimer';
 
 export interface NotificationSound {
 	play: string;

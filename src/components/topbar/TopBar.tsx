@@ -14,6 +14,7 @@ import LeaveButton from '../textbuttons/LeaveButton';
 import { formatDuration } from '../../utils/formatDuration';
 import LogoutButton from '../controlbuttons/LogoutButton';
 import RecordIcon from '../recordicon/RecordIcon';
+import CountdownTimerChip from '../countdowntimer/CountdownTimerChip';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -120,8 +121,11 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 					{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 					{ loginEnabled && (loggedIn ? <LogoutButton type='iconbutton' /> : <LoginButton type='iconbutton' />) }
 				</TopBarDiv>
-				<TopBarDiv marginRight={2}>
+				<TopBarDiv marginRight={1}>
 					<StyledChip size='small' label={ formatDuration(meetingDuration) } />
+				</TopBarDiv>
+				<TopBarDiv marginRight={2}>
+					<CountdownTimerChip />
 				</TopBarDiv>
 				<LeaveButton />
 			</Toolbar>

@@ -3,6 +3,7 @@ import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { peersActions } from '../slices/peersSlice';
 import { MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { roomActions } from '../slices/roomSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { HTMLMediaElementWithSink } from '../../utils/types';
 import { settingsActions } from '../slices/settingsSlice';
@@ -94,6 +95,11 @@ const createNotificationMiddleware = ({
 			// New peer
 			if (peersActions.addPeer.match(action)) {
 				playNotificationSounds('newPeer');
+			}
+
+			// Finished countdownTimer
+			if (roomActions.finishCountdownTimer.match(action)) {
+				playNotificationSounds('finishedCountdownTimer');
 			}
 
 			if (settingsActions.setSelectedAudioOutputDevice.match(action) && action.payload) {
