@@ -103,24 +103,24 @@ const roomSlice = createSlice({
 		stopCountdownTimer: ((state) => {
 			state.countdownTimer.isStarted = false;
 		}),
-		setCountdownTimerRemainingTime: ((state, action: PayloadAction<any>) => {
+		setCountdownTimerRemainingTime: ((state, action: PayloadAction<any>) => { // eslint-disable-line @typescript-eslint/no-explicit-any
 			
 			const time = action.payload;
 
 			state.countdownTimer.remainingTime = time;
 		}),
-		setCountdownTimerInitialTime: ((state, action: PayloadAction<any>) => {
+		setCountdownTimerInitialTime: ((state, action: PayloadAction<any>) => { // eslint-disable-line @typescript-eslint/no-explicit-any
 
 			const time = action.payload;
 			
 			state.countdownTimer.initialTime = time;
 		}),
-		finishCountdownTimer: ((state, action: PayloadAction<any>) => {
+		finishCountdownTimer: ((state, action: PayloadAction<any>) => { // eslint-disable-line @typescript-eslint/no-explicit-any
 
 			state.countdownTimer.isStarted = action.payload.isStarted;
 			state.countdownTimer.remainingTime = action.payload.remainingTime;
 		}),
-		joinCountdownTimer: ((state, action: PayloadAction<any>) => {
+		joinCountdownTimer: ((state, action: PayloadAction<any>) => { // eslint-disable-line @typescript-eslint/no-explicit-any
 			state.countdownTimer.initialTime = action.payload.initialTime;
 			state.countdownTimer.remainingTime = action.payload.remainingTime;
 		}),
