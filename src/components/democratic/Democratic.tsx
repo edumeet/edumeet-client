@@ -2,10 +2,11 @@ import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { spotlightWebcamConsumerSelector, videoBoxesSelector } from '../../store/selectors';
-import Me from '../me/Me';
+// import Me from '../me/Me';
 import VideoConsumer from '../videoconsumer/VideoConsumer';
 import Peers from '../peers/Peers';
 import { Box } from '@mui/material';
+import DrawingBoard from '../drawing/DrawingBoard';
 
 type DemocraticDivProps = {
 	headless: number;
@@ -120,7 +121,7 @@ const Democratic = ({
 
 	return (
 		<DemocraticDiv ref={peersRef} headless={headless ? 1 : 0} horizontal={horizontal ? 1 : 0} spotlights={spotlights ? 1 : 0}>
-			<Me style={style} />
+			{/* <Me style={style} /> */}
 			{ webcamConsumers.map((consumer) => (
 				<VideoConsumer
 					key={consumer.id}
@@ -129,6 +130,7 @@ const Democratic = ({
 				/>
 			))}
 			<Peers style={style} />
+			<DrawingBoard/>
 		</DemocraticDiv>
 	);
 };
