@@ -66,6 +66,7 @@
 	"devDependencies": {
 		"@types/debug": "^4.1.10",
 		"@types/dompurify": "^3.0.4",
+		"@types/fabric": "^5.3.7",
 		"@types/file-saver": "^2.0.6",
 		"@types/fscreen": "^1.0.3",
 		"@types/hark": "^1.2.4",
