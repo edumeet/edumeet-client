@@ -12,6 +12,7 @@ const DrawingBoard: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
 	const [ mode, setMode ] = useState<fabric.PencilBrush | null>(null); // eslint-disable-line
+	const historyRedo: fabric.Object[] = [];
 	
 	const palleteColors = [ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
 	const [ palletteColor, setPalletteColor ] = useState<string>('black');
@@ -103,6 +104,7 @@ const DrawingBoard: React.FC = () => {
 			const history = canvas.getObjects();
 			
 			if (history) {
+				historyRedo.push(history[history.length - 1]);
 				canvas.remove(history[history.length - 1]);
 				canvas.renderAll();
 			}
@@ -111,11 +113,10 @@ const DrawingBoard: React.FC = () => {
 	
 	const handleRedo = () => {
 		if (canvas) {
-			const history = canvas.getObjects();
-			const lastRemovedObject = history[history.length - 1];
+			const last = historyRedo.pop();
 			
-			if (lastRemovedObject) {
-				canvas.add(lastRemovedObject);
+			if (last) {
+				canvas.add(last);
 				canvas.renderAll();
 			}
 		}
