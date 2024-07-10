@@ -15,8 +15,8 @@ const DrawingBoard: React.FC = () => {
 	const [ mode, setMode ] = useState<fabric.PencilBrush | null>(null); // eslint-disable-line
 	const historyRedo: fabric.Object[] = [];
 	
-	const palleteColors = [ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
-	const [ palletteColor, setPalletteColor ] = useState<string>('black');
+	const paletteColors = [ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
+	const [ paletteColor, setPaletteColor ] = useState<string>('black');
 	const boardWidth = 800;
 	const boardHeight = 500;
 	const canvasWidth = 800;
@@ -45,10 +45,10 @@ const DrawingBoard: React.FC = () => {
 
 	}, []);
 
-	useEffect(() => { handleUsePencil(); }, [ canvas, palletteColor ]);
+	useEffect(() => { handleUsePencil(); }, [ canvas, paletteColor ]);
 
-	const handleUsePalletteColor = (selectedColor: string) => {
-		setPalletteColor(selectedColor);
+	const handleUsePaletteColor = (selectedColor: string) => {
+		setPaletteColor(selectedColor);
 	};
 
 	const handleUsePencil = () => {
@@ -56,8 +56,8 @@ const DrawingBoard: React.FC = () => {
 			canvas.isDrawingMode = true;
 			canvas.selection = false;
 			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="${palletteColor}"><circle cx="${cursorSize}" cy="${cursorSize}" r="${cursorSize}"/></svg>') 5 5, auto`;
-			canvas.freeDrawingBrush.color = palletteColor;
+			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="${paletteColor}"><circle cx="${cursorSize}" cy="${cursorSize}" r="${cursorSize}"/></svg>') 5 5, auto`;
+			canvas.freeDrawingBrush.color = paletteColor;
 			canvas.freeDrawingBrush.width = cursorSize;
 			canvas.freeDrawingBrush.strokeLineCap = 'round';
 		}
@@ -88,7 +88,7 @@ const DrawingBoard: React.FC = () => {
 				const text = new fabric.IText('', {
 					left: pointer.x,
 					top: pointer.y,
-					fill: palletteColor,
+					fill: paletteColor,
 					fontSize: 20,
 					fontFamily: 'Arial',
 				});
@@ -177,15 +177,15 @@ const DrawingBoard: React.FC = () => {
 						container
 						alignItems='center'
 					>
-						{/* Tools: Pallette */}
+						{/* Tools: Palette */}
 						<Grid item>
-							{palleteColors.map((value) => (
+							{paletteColors.map((value) => (
 								<IconButton
 									key={value}
 									aria-label={`Use ${value} color`}
 									title={value}
-									onClick={() => handleUsePalletteColor(value)}
-									style={{ border: palletteColor === value ? '2px solid gray' : '2px solid lightgray' }}
+									onClick={() => handleUsePaletteColor(value)}
+									style={{ border: paletteColor === value ? '2px solid gray' : '2px solid lightgray' }}
 								>
 									<CircleIcon
 										style={{ color: value }}
