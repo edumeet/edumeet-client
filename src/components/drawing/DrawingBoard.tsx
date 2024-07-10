@@ -6,13 +6,13 @@ import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
-import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
+import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 
 const DrawingBoard: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
-	const [ mode, setMode ] = useState<fabric.PencilBrush | null>(null); // eslint-disable-line
+	const [mode, setMode] = useState<fabric.PencilBrush | null>(null); // eslint-disable-line
 	const historyRedo: fabric.Object[] = [];
 	
 	const paletteColors = [ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
@@ -129,7 +129,7 @@ const DrawingBoard: React.FC = () => {
 			canvas.backgroundColor = backgroundColor;
 		}
 	};
-	
+
 	return (
 		<Grid
 			container
@@ -176,7 +176,7 @@ const DrawingBoard: React.FC = () => {
 					<Grid
 						container
 						alignItems='center'
-						justifyContent='space-around'
+						// justifyContent='space-around'
 					>
 						{/* Tools: Palette */}
 						<Grid item>
@@ -234,13 +234,7 @@ const DrawingBoard: React.FC = () => {
 							>
 								<RedoIcon/>
 							</IconButton>
-							<IconButton
-								aria-label="Erase All"
-								onClick={handleEraseAll}
-								title="Erase All"
-							>
-								<DeleteIcon />
-							</IconButton>
+							<ErasingAllConfirmationButton handleEraseAll={handleEraseAll} />
 						</Grid>
 					</Grid>
 				</Grid>
