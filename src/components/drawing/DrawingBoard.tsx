@@ -176,7 +176,7 @@ const DrawingBoard: React.FC = () => {
 					<Grid
 						container
 						alignItems='center'
-						// justifyContent='space-around'
+						justifyContent='space-around'
 					>
 						{/* Tools: Palette */}
 						<Grid item>
