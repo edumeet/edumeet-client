@@ -176,6 +176,7 @@ const DrawingBoard: React.FC = () => {
 					<Grid
 						container
 						alignItems='center'
+						justifyContent='space-around'
 					>
 						{/* Tools: Palette */}
 						<Grid item>
@@ -193,7 +194,7 @@ const DrawingBoard: React.FC = () => {
 								</IconButton>
 							))}
 						</Grid>
-						{/* Tools: Rest */}
+						{/* Tools: Basic */}
 						<Grid item>
 							<IconButton
 								aria-label="Use Pencil"
@@ -216,6 +217,9 @@ const DrawingBoard: React.FC = () => {
 							>
 								<AbcIcon />
 							</IconButton>
+						</Grid>
+						{/* Tools: Undo, Redo, Erase All */}
+						<Grid item>
 							<IconButton
 								aria-label="Undo"
 								onClick={handleUndo}
