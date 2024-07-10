@@ -1,12 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { fabric } from 'fabric';
-import { Button, Grid, IconButton } from '@mui/material';
+import { Grid, IconButton } from '@mui/material';
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CircleIcon from '@mui/icons-material/Circle';
 
 const DrawingBoard: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,9 +20,9 @@ const DrawingBoard: React.FC = () => {
 	const boardWidth = 800;
 	const boardHeight = 500;
 	const canvasWidth = 800;
-	const canvasHeight = 450;
-	const toolbarHeight = 50;
-	const toolbarWidth = 532;
+	const canvasHeight = 440;
+	const toolbarHeight = 60;
+	const toolbarWidth = 750;
 
 	const cursorSize = 5;
 	const backgroundColor = 'lightgray';
@@ -179,34 +180,17 @@ const DrawingBoard: React.FC = () => {
 						{/* Tools: Pallette */}
 						<Grid item>
 							{palleteColors.map((value) => (
-								<div
-									style={{
-										border: value === palletteColor ? '1px solid gray' : '1px solid lightgray',
-										borderRadius: '50%',
-										margin: 0.5,
-										display: 'inline-block',
-									}}
+								<IconButton
+									key={value}
+									aria-label={`Use ${value} color`}
+									title={value}
+									onClick={() => handleUsePalletteColor(value)}
+									style={{ border: palletteColor === value ? '2px solid gray' : '2px solid lightgray' }}
 								>
-									<Button
-										key={value}
-										sx={{
-											minWidth: 10,
-											minHeight: 10,
-											padding: 1,
-											margin: 1,
-											borderRadius: '50%',
-											backgroundColor: value,
-											opacity: value === palletteColor ? 1 : 0.5,
-											'&:hover': {
-												backgroundColor: value,
-												opacity: 1,
-											},
-										}}
-										variant='contained'
-										onClick={() => handleUsePalletteColor(value)}
-										title={value}
+									<CircleIcon
+										style={{ color: value }}
 									/>
-								</div>
+								</IconButton>
 							))}
 						</Grid>
 						{/* Tools: Rest */}
