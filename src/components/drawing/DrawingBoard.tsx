@@ -217,7 +217,9 @@ const DrawingBoard: React.FC = () => {
 								title="Use Pencil"
 								style={{ border: currentTool === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
 							>
-								<DrawIcon />
+								<DrawIcon
+									style={{ color: currentTool === 'brush' ? paletteColor : 'inherit' }}
+								/>
 							</IconButton>
 							<IconButton
 								aria-label="Use Eraser Tool"
@@ -234,7 +236,9 @@ const DrawingBoard: React.FC = () => {
 								title="Use Text Tool"
 								style={{ border: currentTool === 'text' ? '2px solid gray' : '2px solid lightgray' }}
 							>
-								<AbcIcon />
+								<AbcIcon
+									style={{ color: currentTool === 'text' ? paletteColor : 'inherit' }}
+								/>
 							</IconButton>
 						</Grid>
 						{/* Tools: Undo, Redo, Erase All */}
