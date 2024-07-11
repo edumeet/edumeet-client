@@ -1,13 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { fabric } from 'fabric';
-import { Grid, IconButton } from '@mui/material';
+import { Grid, IconButton, MenuItem, Select } from '@mui/material'; // eslint-disable-line
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
-import CircleIcon from '@mui/icons-material/Circle';
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
+import DrawingColorsPallete from './DrawingColorsPallete';
 
 const DrawingBoard: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -18,7 +18,9 @@ const DrawingBoard: React.FC = () => {
 	const historyRedo: fabric.Object[] = [];
 	
 	const paletteColors = [ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
+	const paletteColorMenuType = 'menu2'; // row | menu | menu2
 	const [ paletteColor, setPaletteColor ] = useState<string>('black');
+	
 	const boardWidth = 800;
 	const boardHeight = 500;
 	const canvasWidth = 800;
@@ -193,23 +195,6 @@ const DrawingBoard: React.FC = () => {
 						alignItems='center'
 						justifyContent='space-around'
 					>
-						{/* Tools: Palette */}
-						<Grid item>
-							{paletteColors.map((value) => (
-								<IconButton
-									key={value}
-									aria-label={`Use ${value} color`}
-									title={value}
-									onClick={() => handleUsePaletteColor(value)}
-									style={{ border: paletteColor === value ? '2px solid gray' : '2px solid lightgray' }}
-									size='small'
-								>
-									<CircleIcon
-										style={{ color: value }}
-									/>
-								</IconButton>
-							))}
-						</Grid>
 						{/* Tools: Basic */}
 						<Grid item>
 							<IconButton
@@ -234,6 +219,9 @@ const DrawingBoard: React.FC = () => {
 									style={{ color: currentTool === 'text' ? paletteColor : 'inherit' }}
 								/>
 							</IconButton>
+							{/* Palette Color Menu */}
+							<DrawingColorsPallete type={paletteColorMenuType} paletteColors={paletteColors} paletteColor={paletteColor} handleUsePaletteColor={handleUsePaletteColor} />
+							{/* Tools: Eraser */}
 							<IconButton
 								aria-label="Use Eraser Tool"
 								onClick={handleUseEraserTool}
@@ -244,7 +232,6 @@ const DrawingBoard: React.FC = () => {
 								<AutoFixNormalIcon />
 							</IconButton>
 						</Grid>
-						{/* Tools: Undo, Redo, Erase All */}
 						<Grid item>
 							<IconButton
 								aria-label="Undo"
