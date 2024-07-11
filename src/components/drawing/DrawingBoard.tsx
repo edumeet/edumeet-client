@@ -37,21 +37,26 @@ const DrawingBoard: React.FC = () => {
 				backgroundColor: backgroundColor,
 				isDrawingMode: true
 			}));
-
+			
 			return () => {
 				if (canvas) {
 					canvas.dispose();
 				}
 			};
+			
 		}
 
 	}, []);
 
-	useEffect(() => { handleUsePencil(); }, [ canvas, paletteColor ]);
+	useEffect(() => {
+		if (currentTool === 'brush')
+			handleUsePencil();
+		else if (currentTool === 'text')
+			handleUseTextTool();
+	}, [ canvas, paletteColor ]);
 
 	const handleUsePaletteColor = (selectedColor: string) => {
 		setPaletteColor(selectedColor);
-		setCurrentTool('brush');
 	};
 
 	const handleUsePencil = () => {
