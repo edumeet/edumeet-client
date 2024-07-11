@@ -12,6 +12,8 @@ import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 const DrawingBoard: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
+	const [ currentTool, setCurrentTool ] = useState<string>('brush');
+	
 	const [mode, setMode] = useState<fabric.PencilBrush | null>(null); // eslint-disable-line
 	const historyRedo: fabric.Object[] = [];
 	
@@ -49,6 +51,7 @@ const DrawingBoard: React.FC = () => {
 
 	const handleUsePaletteColor = (selectedColor: string) => {
 		setPaletteColor(selectedColor);
+		setCurrentTool('brush');
 	};
 
 	const handleUsePencil = () => {
@@ -60,6 +63,8 @@ const DrawingBoard: React.FC = () => {
 			canvas.freeDrawingBrush.color = paletteColor;
 			canvas.freeDrawingBrush.width = cursorSize;
 			canvas.freeDrawingBrush.strokeLineCap = 'round';
+
+			setCurrentTool('brush');
 		}
 	};
 
@@ -73,6 +78,8 @@ const DrawingBoard: React.FC = () => {
 			canvas.freeDrawingBrush.color = backgroundColor;
 			canvas.freeDrawingBrush.width = cursorSize;
 			canvas.freeDrawingBrush.strokeLineCap = 'round';			
+
+			setCurrentTool('eraser');
 		}
 	};
 	
@@ -96,7 +103,10 @@ const DrawingBoard: React.FC = () => {
 				canvas.add(text);
 				canvas.setActiveObject(text);
 				text.enterEditing();
+				
 			});
+
+			setCurrentTool('text');
 		}
 	};
 	
@@ -200,6 +210,7 @@ const DrawingBoard: React.FC = () => {
 								aria-label="Use Pencil"
 								onClick={handleUsePencil}
 								title="Use Pencil"
+								style={{ border: currentTool === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
 							>
 								<DrawIcon />
 							</IconButton>
@@ -207,6 +218,8 @@ const DrawingBoard: React.FC = () => {
 								aria-label="Use Eraser Tool"
 								onClick={handleUseEraserTool}
 								title="Use Eraser Tool"
+								style={{ border: currentTool === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
+
 							>
 								<AutoFixNormalIcon />
 							</IconButton>
@@ -214,6 +227,7 @@ const DrawingBoard: React.FC = () => {
 								aria-label="Use Text Tool"
 								onClick={handleUseTextTool}
 								title="Use Text Tool"
+								style={{ border: currentTool === 'text' ? '2px solid gray' : '2px solid lightgray' }}
 							>
 								<AbcIcon />
 							</IconButton>
