@@ -224,15 +224,6 @@ const DrawingBoard: React.FC = () => {
 								/>
 							</IconButton>
 							<IconButton
-								aria-label="Use Eraser Tool"
-								onClick={handleUseEraserTool}
-								title="Use Eraser Tool"
-								style={{ border: currentTool === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
-								size='small'
-							>
-								<AutoFixNormalIcon />
-							</IconButton>
-							<IconButton
 								aria-label="Use Text Tool"
 								onClick={handleUseTextTool}
 								title="Use Text Tool"
@@ -242,6 +233,15 @@ const DrawingBoard: React.FC = () => {
 								<AbcIcon
 									style={{ color: currentTool === 'text' ? paletteColor : 'inherit' }}
 								/>
+							</IconButton>
+							<IconButton
+								aria-label="Use Eraser Tool"
+								onClick={handleUseEraserTool}
+								title="Use Eraser Tool"
+								style={{ border: currentTool === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
+								size='small'
+							>
+								<AutoFixNormalIcon />
 							</IconButton>
 						</Grid>
 						{/* Tools: Undo, Redo, Erase All */}
