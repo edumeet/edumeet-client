@@ -18,7 +18,7 @@ const DrawingBoard: React.FC = () => {
 	const historyRedo: fabric.Object[] = [];
 	
 	const paletteColors = [ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
-	const paletteColorMenuType = 'menu2'; // row | menu | menu2
+	const paletteColorMenuType = 'Menu'; // Row, Menu, Menu2
 	const [ paletteColor, setPaletteColor ] = useState<string>('black');
 	
 	const boardWidth = 800;
