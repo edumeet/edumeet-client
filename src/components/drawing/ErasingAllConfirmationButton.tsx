@@ -38,7 +38,11 @@ const ErasingAllConfirmationButton: React.FC<ErasingAllConfirmationButtonProps> 
 
 	return (
 		<div style={{ display: 'inline-block' }}>
-			<IconButton onClick={handleConfirm} aria-describedby={id}>
+			<IconButton
+				aria-describedby={id}
+				onClick={handleConfirm}
+				size='small'
+			>
 				<DeleteIcon />
 			</IconButton>
 			<Popover

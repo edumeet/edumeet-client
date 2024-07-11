@@ -202,6 +202,7 @@ const DrawingBoard: React.FC = () => {
 									title={value}
 									onClick={() => handleUsePaletteColor(value)}
 									style={{ border: paletteColor === value ? '2px solid gray' : '2px solid lightgray' }}
+									size='small'
 								>
 									<CircleIcon
 										style={{ color: value }}
@@ -216,6 +217,7 @@ const DrawingBoard: React.FC = () => {
 								onClick={handleUsePencil}
 								title="Use Pencil"
 								style={{ border: currentTool === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
+								size='small'
 							>
 								<DrawIcon
 									style={{ color: currentTool === 'brush' ? paletteColor : 'inherit' }}
@@ -226,7 +228,7 @@ const DrawingBoard: React.FC = () => {
 								onClick={handleUseEraserTool}
 								title="Use Eraser Tool"
 								style={{ border: currentTool === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
-
+								size='small'
 							>
 								<AutoFixNormalIcon />
 							</IconButton>
@@ -235,6 +237,7 @@ const DrawingBoard: React.FC = () => {
 								onClick={handleUseTextTool}
 								title="Use Text Tool"
 								style={{ border: currentTool === 'text' ? '2px solid gray' : '2px solid lightgray' }}
+								size='small'
 							>
 								<AbcIcon
 									style={{ color: currentTool === 'text' ? paletteColor : 'inherit' }}
@@ -247,6 +250,7 @@ const DrawingBoard: React.FC = () => {
 								aria-label="Undo"
 								onClick={handleUndo}
 								title="Undo"
+								size='small'
 							>
 								<UndoIcon/>
 							</IconButton>
@@ -254,6 +258,7 @@ const DrawingBoard: React.FC = () => {
 								aria-label="Redo"
 								onClick={handleRedo}
 								title="Redo"
+								size='small'
 							>
 								<RedoIcon/>
 							</IconButton>
