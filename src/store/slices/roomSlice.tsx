@@ -36,7 +36,7 @@ export interface RoomState {
 	audioCodec?: string;
 	screenSharingCodec?: VideoCodec;
 	screenSharingSimulcast?: boolean;
-	inDrawingMode?: boolean;
+	drawingEnabled?: boolean;
 }
 
 type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
@@ -57,7 +57,7 @@ const initialState: RoomState = {
 	audioCodec: 'opus',
 	screenSharingCodec: 'vp8',
 	screenSharingSimulcast: edumeetConfig.simulcastSharing,
-	inDrawingMode: true
+	drawingEnabled: true
 };
 
 const roomSlice = createSlice({
@@ -78,13 +78,7 @@ const roomSlice = createSlice({
 			action: PayloadAction<RoomConnectionState>
 		) => {
 			state.state = action.payload;
-		}),
-		toggleDrawingMode: ((state, action: PayloadAction<{ started: boolean }>) => {
-			
-			const { started } = action.payload;
-
-			state.inDrawingMode = (started ? true : false);
-		}),
+		})
 	}
 });
 
