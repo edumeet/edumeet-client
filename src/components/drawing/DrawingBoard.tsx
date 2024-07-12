@@ -243,9 +243,6 @@ const DrawingBoard: React.FC = () => {
 									style={{ color: currentTool === 'text' ? paletteColor : 'inherit' }}
 								/>
 							</IconButton>
-							{/* Palette Color Menu */}
-							<DrawingColorsPallete type={paletteColorMenuType} paletteColors={paletteColors} paletteColor={paletteColor} handleUsePaletteColor={handleUsePaletteColor} />
-							{/* Tools: Eraser */}
 							<IconButton
 								aria-label="Use Eraser Tool"
 								onClick={handleUseEraserTool}
@@ -255,6 +252,10 @@ const DrawingBoard: React.FC = () => {
 							>
 								<AutoFixNormalIcon />
 							</IconButton>
+							{/* Palette Color Menu */}
+							&nbsp;&nbsp;&nbsp;&nbsp;  {/* temporary */}
+							<DrawingColorsPallete type={paletteColorMenuType} paletteColors={paletteColors} paletteColor={paletteColor} handleUsePaletteColor={handleUsePaletteColor} />
+							{/* Tools: Eraser */}
 						</Grid>
 						<Grid item>
 							<IconButton
