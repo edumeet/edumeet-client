@@ -23,12 +23,12 @@ const DrawingBoard: React.FC = () => {
 	const paletteColorMenuType = 'Row'; // Row, Menu, Menu2
 	const [ paletteColor, setPaletteColor ] = useState<string>('black');
 	
-	const boardWidth = 800;
-	const boardHeight = 500;
-	const canvasWidth = 800;
-	const canvasHeight = 440;
+	const boardWidth = 1200;
+	const boardHeight = 800;
+	const canvasWidth = 1200;
+	const canvasHeight = 740;
 	const toolbarHeight = 60;
-	const toolbarWidth = 750;
+	const toolbarWidth = 740;
 
 	const cursorSize = 5;
 	const backgroundColor = 'lightgray';
