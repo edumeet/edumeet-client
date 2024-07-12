@@ -20,7 +20,7 @@ const DrawingBoard: React.FC = () => {
 	// const [ historyRedoCount, setHistoryRedoCount ] = useState<number>(999);
 	
 	const paletteColors = [ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
-	const paletteColorMenuType = 'Menu'; // Row, Menu, Menu2
+	const paletteColorMenuType = 'Row'; // Row, Menu, Menu2
 	const [ paletteColor, setPaletteColor ] = useState<string>('black');
 	
 	const boardWidth = 800;
