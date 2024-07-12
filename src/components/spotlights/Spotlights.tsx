@@ -10,6 +10,7 @@ import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
 import ExtraVideoButton from '../controlbuttons/ExtraVideoButton';
+import DrawingBoard from '../drawing/DrawingBoard';
 
 type SpotlightsDivProps = {
 	headless: number;
@@ -60,6 +61,9 @@ const Spotlights = ({
 	const headless = useAppSelector((state) => state.room.headless);
 	const screenEnabled = useAppSelector((state) => state.me.screenEnabled);
 	const extraVideoEnabled = useAppSelector((state) => state.me.extraVideoEnabled);
+	const drawingEnabled = useAppSelector((state) => state.room.drawingEnabled);
+	const drawingOpen = useAppSelector((state) => state.ui.drawingOpen);
+
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const [ dimensions, setDimensions ] = useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
@@ -147,6 +151,9 @@ const Spotlights = ({
 						/>
 					</MediaControls>
 				</VideoBox>
+			)}
+			{!hideSelfView && drawingEnabled && drawingOpen && (
+				<DrawingBoard />
 			)}
 			{ !hideSelfView && extraVideoEnabled &&
 				<VideoBox
