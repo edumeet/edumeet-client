@@ -16,6 +16,8 @@ const DrawingBoard: React.FC = () => {
 	
 	const [mode, setMode] = useState<fabric.PencilBrush | null>(null); // eslint-disable-line
 	const historyRedo: fabric.Object[] = [];
+	// const [ historyUndoCount, setHistoryUndoCount ] = useState<number>(999); 
+	// const [ historyRedoCount, setHistoryRedoCount ] = useState<number>(999);
 	
 	const paletteColors = [ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
 	const paletteColorMenuType = 'Menu'; // Row, Menu, Menu2
@@ -33,12 +35,34 @@ const DrawingBoard: React.FC = () => {
 
 	useEffect(() => {
 		if (canvasRef.current) {
-			setCanvas(new fabric.Canvas(canvasRef.current, {
+			const newCanvas = new fabric.Canvas(canvasRef.current, {
 				width: canvasWidth,
 				height: canvasHeight,
 				backgroundColor: backgroundColor,
 				isDrawingMode: true
-			}));
+			});
+			
+			// Event listener for object addition
+			/*
+			newCanvas.on('object:added', () => {
+				setHistoryUndoCount(newCanvas.getObjects().length);
+				setHistoryRedoCount(historyRedoCount + 1);
+			});
+
+			// Event listener for object modifications
+			newCanvas.on('object:modified', () => {
+				setHistoryUndoCount(newCanvas.getObjects().length);
+			});
+
+			// Event listener for object removal
+			newCanvas.on('object:removed', () => {
+				setHistoryUndoCount(newCanvas.getObjects().length);
+
+				setHistoryRedoCount(historyRedoCount + 1);
+			});
+			*/
+
+			setCanvas(newCanvas);
 			
 			return () => {
 				if (canvas) {
@@ -239,7 +263,8 @@ const DrawingBoard: React.FC = () => {
 								title="Undo"
 								size='small'
 							>
-								<UndoIcon/>
+								<UndoIcon />
+								{/* {historyUndoCount} */}
 							</IconButton>
 							<IconButton
 								aria-label="Redo"
@@ -247,7 +272,8 @@ const DrawingBoard: React.FC = () => {
 								title="Redo"
 								size='small'
 							>
-								<RedoIcon/>
+								<RedoIcon />
+								{/* {historyRedoCount} */}
 							</IconButton>
 							<ErasingAllConfirmationButton handleEraseAll={handleEraseAll} />
 						</Grid>
