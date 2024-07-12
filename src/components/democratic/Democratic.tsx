@@ -7,6 +7,7 @@ import VideoConsumer from '../videoconsumer/VideoConsumer';
 import Peers from '../peers/Peers';
 import { Box } from '@mui/material';
 import DrawingBoard from '../drawing/DrawingBoard';
+import Me from '../me/Me';
 
 type DemocraticDivProps = {
 	headless: number;
@@ -119,9 +120,12 @@ const Democratic = ({
 		height: dimensions.peerHeight
 	};
 
+	const drawingOpen = useAppSelector((state) => state.ui.drawingOpen);
+
 	return (
 		<DemocraticDiv ref={peersRef} headless={headless ? 1 : 0} horizontal={horizontal ? 1 : 0} spotlights={spotlights ? 1 : 0}>
 			{/* <Me style={style} /> */}
+			{drawingOpen ? <DrawingBoard /> : <Me style={style}/>}
 			{ webcamConsumers.map((consumer) => (
 				<VideoConsumer
 					key={consumer.id}
@@ -130,7 +134,6 @@ const Democratic = ({
 				/>
 			))}
 			<Peers style={style} />
-			<DrawingBoard/>
 		</DemocraticDiv>
 	);
 };

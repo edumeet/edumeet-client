@@ -2,7 +2,6 @@ import { MenuItem } from '@mui/material';
 import {
 	useAppDispatch,
 	useAppSelector,
-	usePermissionSelector,
 } from '../../store/hooks';
 import {
 	startDrawingLabel,
@@ -10,53 +9,37 @@ import {
 	// removeDrawingsLabel
 } from '../translated/translatedComponents';
 import { MenuItemProps } from '../floatingmenu/FloatingMenu';
-import { MediaState } from '../../utils/types';
 import MoreActions from '../moreactions/MoreActions';
-import { uiActions } from '../../store/slices/uiSlice';
-import { permissions } from '../../utils/roles';
+import { uiActions } from '../../store/slices/uiSlice'; // eslint-disable-line
+import { permissions } from '../../utils/roles'; // eslint-disable-line
 import DrawingIcon from '@mui/icons-material/Edit';
 // import RemoveDrawingIcon from '@mui/icons-material/Backspace';
 
 const Drawing = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
-	const dispatch = useAppDispatch();
-	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
-
-	const {
-		canSendWebcam,
-		videoInProgress,
-	} = useAppSelector((state) => state.me);
-
-	let videoState: MediaState, videoTip;
-
-	if (!canSendWebcam || !hasExtraVideoPermission) {
-		videoState = 'unsupported';
-		videoTip = stopDrawingLabel();
-	} else {
-		videoState = 'off';
-		videoTip = startDrawingLabel();
-	}
+	const dispatch = useAppDispatch(); // eslint-disable-line
+	// const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
+	// const locked = useAppSelector((state) => state.permissions.locked);
+	// const locked = useAppSelector((state) => state.permissions.locked);
+	const drawingOpen = useAppSelector((state) => state.ui.drawingOpen);
+	const drawingLabel = drawingOpen ? stopDrawingLabel() : startDrawingLabel();
 
 	return (
+
 		<MenuItem
-			aria-label={videoTip}
-			disabled={videoState === 'unsupported' || videoInProgress}
+			aria-label={drawingLabel}
+			// disabled={!hasExtraVideoPermission}
 			onClick={() => {
 				onClick();
 
-				if (videoState === 'unsupported') return;
-
-				if (videoState === 'off') {
-					dispatch(uiActions.setUi({ extraVideoDialogOpen: true }));
-				} else {
-					// Shouldn't happen
-				}
+				// drawingOpen ? dispatch(unlock()) : dispatch(lock());
+				dispatch(uiActions.setUi({ drawingOpen: !drawingOpen }));
 			}}
 		>
-			<DrawingIcon />
+			{ <DrawingIcon /> }
 			<MoreActions>
-				{ videoTip }
+				{ drawingLabel }
 			</MoreActions>
 		</MenuItem>
 	);
