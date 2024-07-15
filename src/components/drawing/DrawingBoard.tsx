@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { fabric } from 'fabric';
-import { Grid, IconButton, MenuItem, Select } from '@mui/material'; // eslint-disable-line
+import { Box, Grid, IconButton, MenuItem, Select } from '@mui/material'; // eslint-disable-line
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
@@ -12,35 +12,55 @@ import DrawingColorsPallete from './DrawingColorsPallete';
 const DrawingBoard: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
+	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
+	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
+	const [ canvasBgColor, setCanvasBgColor ] = useState<string>('lightgray'); // eslint-disable-line	
 	const [ currentTool, setCurrentTool ] = useState<string>('brush');
-	
-	const [mode, setMode] = useState<fabric.PencilBrush | null>(null); // eslint-disable-line
-	const historyRedo: fabric.Object[] = [];
-	// const [ historyUndoCount, setHistoryUndoCount ] = useState<number>(999); 
-	// const [ historyRedoCount, setHistoryRedoCount ] = useState<number>(999);
 	
 	const paletteColors = [ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
 	const paletteColorMenuType = 'Row'; // Row, Menu, Menu2
 	const [ paletteColor, setPaletteColor ] = useState<string>('black');
 	
-	const boardWidth = 1200;
-	const boardHeight = 800;
-	const canvasWidth = 1200;
-	const canvasHeight = 740;
-	const toolbarHeight = 60;
-	const toolbarWidth = 740;
-
+	const historyRedo: fabric.Object[] = [];
+	// const [ historyUndoCount, setHistoryUndoCount ] = useState<number>(999); 
+	// const [ historyRedoCount, setHistoryRedoCount ] = useState<number>(999);
+	
+	const toolbarWidth = 740; // eslint-disable-line
 	const cursorSize = 5;
-	const backgroundColor = 'lightgray';
 
 	useEffect(() => {
 		if (canvasRef.current) {
 			const newCanvas = new fabric.Canvas(canvasRef.current, {
-				width: canvasWidth,
-				height: canvasHeight,
-				backgroundColor: backgroundColor,
+				backgroundColor: canvasBgColor,
 				isDrawingMode: true
 			});
+
+			const resizeCanvas = () => {
+		
+				const windowInnerWidth = window.innerWidth;
+				const calculatedHeight = (windowInnerWidth / 16 * 9);
+				const scaleFactor = Math.min(windowInnerWidth / 1920, window.innerHeight / 1080);
+
+				newCanvas.setWidth(windowInnerWidth);
+				newCanvas.setHeight(calculatedHeight);
+				newCanvas.setZoom(scaleFactor);
+				newCanvas.renderAll();
+				
+				setCanvasWidth(windowInnerWidth);
+				setCanvasHeight(calculatedHeight);
+		
+				// newCanvas.setWidth(originalWidth * scaleFactor);
+				// newCanvas.setHeight(originalHeight * scaleFactor);
+				// newCanvas.setZoom(scaleFactor);
+				
+				// setCanvasFactor(scaleFactor);
+				// setCanvasWidth(`${originalWidth * scaleFactor}px`);
+				// setCanvasHeight(`${originalHeight * scaleFactor}px`);
+				newCanvas.renderAll();
+			};
+
+			resizeCanvas();
+			window.addEventListener('resize', resizeCanvas);
 			
 			// Event listener for object addition
 			/*
@@ -67,6 +87,7 @@ const DrawingBoard: React.FC = () => {
 			return () => {
 				if (canvas) {
 					canvas.dispose();
+					window.removeEventListener('resize', resizeCanvas);
 				}
 			};
 			
@@ -106,7 +127,7 @@ const DrawingBoard: React.FC = () => {
 			canvas.selection = false;
 			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
 			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="transparent" stroke="black" stroke-width="1"><circle cx="${cursorSize}" cy="${cursorSize}" r="${cursorSize}"/></svg>') 5 5, auto`;
-			canvas.freeDrawingBrush.color = backgroundColor;
+			canvas.freeDrawingBrush.color = canvasBgColor;
 			canvas.freeDrawingBrush.width = cursorSize;
 			canvas.freeDrawingBrush.strokeLineCap = 'round';			
 
@@ -167,36 +188,27 @@ const DrawingBoard: React.FC = () => {
 	const handleEraseAll = () => {
 		if (canvas) {
 			canvas.clear();
-			canvas.backgroundColor = backgroundColor;
+			canvas.backgroundColor = canvasBgColor;
 		}
 	};
 
 	return (
-		<Grid
-			container
-			sx={{
-				width: boardWidth,
-				height: boardHeight,
-			}}
-		>
-			{/* Canvas */}
-			<Grid
-				item
-				sx={{
-					width: canvasWidth,
-					height: canvasHeight
-				}}
-			>
-				<canvas ref={canvasRef} />
+		<Grid container>
+			{/* Main */}
+			<Grid item>
+				{/* Canvas */}
+				<Box
+					ref={canvasRef}
+					component="canvas"
+				/>
 			</Grid>
 
-			{/* Tools Container */}
-			<Grid
-				item
+			{/* Menu */}
+			<Grid item
+				xs={12}
 				sx={{
+					borderTop: '1px solid gray',
 					backgroundColor: 'lightgray',
-					width: boardWidth,
-					border: '1px solid gray',
 				}}
 			>
 				{/* Tools */}
@@ -206,13 +218,11 @@ const DrawingBoard: React.FC = () => {
 					margin={1}
 					sx={{
 						padding: '5px 5px',
-						height: toolbarHeight,
 						border: '1px solid gray',
 						borderRadius: '30px',
 						backgroundColor: 'lightgray',
-						width: toolbarWidth,
-						
 					}}
+					xs={12}
 				>
 					<Grid
 						container
@@ -253,8 +263,12 @@ const DrawingBoard: React.FC = () => {
 								<AutoFixNormalIcon />
 							</IconButton>
 							{/* Palette Color Menu */}
-							&nbsp;&nbsp;&nbsp;&nbsp;  {/* temporary */}
-							<DrawingColorsPallete type={paletteColorMenuType} paletteColors={paletteColors} paletteColor={paletteColor} handleUsePaletteColor={handleUsePaletteColor} />
+							<DrawingColorsPallete
+								type={paletteColorMenuType}
+								paletteColors={paletteColors}
+								paletteColor={paletteColor}
+								handleUsePaletteColor={handleUsePaletteColor}
+							/>
 							{/* Tools: Eraser */}
 						</Grid>
 						<Grid item>
