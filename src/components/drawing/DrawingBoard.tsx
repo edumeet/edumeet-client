@@ -43,14 +43,12 @@ const DrawingBoard: React.FC = () => {
 				newCanvas.setWidth(windowInnerWidth);
 				newCanvas.setHeight(calculatedHeight);
 				newCanvas.setZoom(scaleFactor);
-				newCanvas.renderAll();
 				
 				setCanvasWidth(windowInnerWidth);
 				setCanvasHeight(calculatedHeight);
 		
 				// newCanvas.setWidth(originalWidth * scaleFactor);
 				// newCanvas.setHeight(originalHeight * scaleFactor);
-				// newCanvas.setZoom(scaleFactor);
 				
 				// setCanvasFactor(scaleFactor);
 				// setCanvasWidth(`${originalWidth * scaleFactor}px`);
