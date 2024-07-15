@@ -199,12 +199,13 @@ const DrawingBoard: React.FC = () => {
 			</Grid>
 
 			{/* Menu */}
-			<Grid item
+			<Grid container item
 				xs={12}
 				sx={{
 					borderTop: '1px solid gray',
 					backgroundColor: 'lightgray',
 				}}
+				justifyContent='center'
 			>
 				{/* Tools */}
 				<Grid
@@ -217,7 +218,8 @@ const DrawingBoard: React.FC = () => {
 						borderRadius: '30px',
 						backgroundColor: 'lightgray',
 					}}
-					justifyContent='space-around'
+					justifyContent='space-between'
+					xs={6}
 				>
 					{/* Tools: Basic */}
 					<Grid item>
