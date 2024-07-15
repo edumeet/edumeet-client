@@ -20,7 +20,7 @@ const DrawingBoard: React.FC = () => {
 	const [ colorsMenu, ] = useState<string>([ 'Row', 'Menu1', 'Menu2' ][0]);
 	const [ colors, ] = useState<string[]>([ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ]);
 	const [ color, setColor ] = useState<string>(colors[0]);
-	const [ bgColors, ] = useState<string[]>([ 'lightgray', 'black' ]);
+	const [ bgColors, ] = useState<string[]>([ 'lightgray', 'white', 'black' ]);
 	const [ bgColor, ] = useState<string>(bgColors[0]);
 	
 	const historyRedo: fabric.Object[] = [];
