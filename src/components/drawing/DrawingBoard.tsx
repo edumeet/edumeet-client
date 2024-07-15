@@ -112,6 +112,7 @@ const DrawingBoard: React.FC = () => {
 			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="${color}"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
 			canvas.isDrawingMode = true;
 			canvas.selection = false;
+			canvas.off('mouse:down');
 
 			setMode('brush');
 		}
@@ -126,6 +127,7 @@ const DrawingBoard: React.FC = () => {
 			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="transparent" stroke="black" stroke-width="1"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
 			canvas.isDrawingMode = true;
 			canvas.selection = false;
+			canvas.off('mouse:down');
 
 			setMode('eraser');
 		}
