@@ -20,7 +20,7 @@ const DrawingBoard: React.FC = () => {
 	const [ mode, setMode ] = useState<string>([ 'brush', 'text', 'eraser' ][0]);
 	const [ size, ] = useState<number>(5);
 	const [ colorsMenu, ] = useState<string>([ 'Row', 'Menu1', 'Menu2' ][0]);
-	const [ colors, ] = useState<string[]>([ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ]);
+	const [ colors, ] = useState<string[]>([ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ]);
 	const [ color, setColor ] = useState<string>(colors[0]);
 	const [ bgColors, ] = useState<string[]>([ 'lightgray', 'white', 'black' ]);
 	const [ bgColor, ] = useState<string>(bgColors[0]);
