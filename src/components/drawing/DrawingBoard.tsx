@@ -14,24 +14,23 @@ const DrawingBoard: React.FC = () => {
 	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
 	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
 	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
-	const [ canvasBgColor, setCanvasBgColor ] = useState<string>('lightgray'); // eslint-disable-line	
-	const [ currentTool, setCurrentTool ] = useState<string>('brush');
 	
-	const paletteColors = [ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
-	const paletteColorMenuType = 'Row'; // Row, Menu, Menu2
-	const [ paletteColor, setPaletteColor ] = useState<string>('black');
+	const [ mode, setMode ] = useState<string>([ 'brush', 'text', 'eraser' ][0]);
+	const [ size, ] = useState<number>(5);
+	const [ colorsMenu, ] = useState<string>([ 'Row', 'Menu1', 'Menu2' ][0]);
+	const [ colors, ] = useState<string[]>([ 'black', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ]);
+	const [ color, setColor ] = useState<string>(colors[0]);
+	const [ bgColors, ] = useState<string[]>([ 'lightgray', 'black' ]);
+	const [ bgColor, ] = useState<string>(bgColors[0]);
 	
 	const historyRedo: fabric.Object[] = [];
 	// const [ historyUndoCount, setHistoryUndoCount ] = useState<number>(999); 
 	// const [ historyRedoCount, setHistoryRedoCount ] = useState<number>(999);
 	
-	const toolbarWidth = 740; // eslint-disable-line
-	const cursorSize = 5;
-
 	useEffect(() => {
 		if (canvasRef.current) {
 			const newCanvas = new fabric.Canvas(canvasRef.current, {
-				backgroundColor: canvasBgColor,
+				backgroundColor: bgColor,
 				isDrawingMode: true
 			});
 
@@ -96,14 +95,14 @@ const DrawingBoard: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		if (currentTool === 'brush')
+		if (mode === 'brush')
 			handleUsePencil();
-		else if (currentTool === 'text')
+		else if (mode === 'text')
 			handleUseTextTool();
-	}, [ canvas, paletteColor ]);
+	}, [ canvas, color ]);
 
 	const handleUsePaletteColor = (selectedColor: string) => {
-		setPaletteColor(selectedColor);
+		setColor(selectedColor);
 	};
 
 	const handleUsePencil = () => {
@@ -111,12 +110,12 @@ const DrawingBoard: React.FC = () => {
 			canvas.isDrawingMode = true;
 			canvas.selection = false;
 			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="${paletteColor}"><circle cx="${cursorSize}" cy="${cursorSize}" r="${cursorSize}"/></svg>') 5 5, auto`;
-			canvas.freeDrawingBrush.color = paletteColor;
-			canvas.freeDrawingBrush.width = cursorSize;
+			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="${color}"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
+			canvas.freeDrawingBrush.color = color;
+			canvas.freeDrawingBrush.width = size;
 			canvas.freeDrawingBrush.strokeLineCap = 'round';
 
-			setCurrentTool('brush');
+			setMode('brush');
 		}
 	};
 
@@ -126,12 +125,12 @@ const DrawingBoard: React.FC = () => {
 			canvas.isDrawingMode = true;
 			canvas.selection = false;
 			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="transparent" stroke="black" stroke-width="1"><circle cx="${cursorSize}" cy="${cursorSize}" r="${cursorSize}"/></svg>') 5 5, auto`;
-			canvas.freeDrawingBrush.color = canvasBgColor;
-			canvas.freeDrawingBrush.width = cursorSize;
+			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="transparent" stroke="black" stroke-width="1"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
+			canvas.freeDrawingBrush.color = bgColor;
+			canvas.freeDrawingBrush.width = size;
 			canvas.freeDrawingBrush.strokeLineCap = 'round';			
 
-			setCurrentTool('eraser');
+			setMode('eraser');
 		}
 	};
 	
@@ -147,7 +146,7 @@ const DrawingBoard: React.FC = () => {
 				const text = new fabric.IText('', {
 					left: pointer.x,
 					top: pointer.y,
-					fill: paletteColor,
+					fill: color,
 					fontSize: 20,
 					fontFamily: 'Arial',
 				});
@@ -158,7 +157,7 @@ const DrawingBoard: React.FC = () => {
 				
 			});
 
-			setCurrentTool('text');
+			setMode('text');
 		}
 	};
 	
@@ -188,7 +187,7 @@ const DrawingBoard: React.FC = () => {
 	const handleEraseAll = () => {
 		if (canvas) {
 			canvas.clear();
-			canvas.backgroundColor = canvasBgColor;
+			canvas.backgroundColor = bgColor;
 		}
 	};
 
@@ -230,38 +229,38 @@ const DrawingBoard: React.FC = () => {
 							aria-label="Use Pencil"
 							onClick={handleUsePencil}
 							title="Use Pencil"
-							style={{ border: currentTool === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
+							style={{ border: mode === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
 							<DrawIcon
-								style={{ color: currentTool === 'brush' ? paletteColor : 'inherit' }}
+								style={{ color: mode === 'brush' ? color : 'inherit' }}
 							/>
 						</IconButton>
 						<IconButton
 							aria-label="Use Text Tool"
 							onClick={handleUseTextTool}
 							title="Use Text Tool"
-							style={{ border: currentTool === 'text' ? '2px solid gray' : '2px solid lightgray' }}
+							style={{ border: mode === 'text' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
 							<AbcIcon
-								style={{ color: currentTool === 'text' ? paletteColor : 'inherit' }}
+								style={{ color: mode === 'text' ? color : 'inherit' }}
 							/>
 						</IconButton>
 						<IconButton
 							aria-label="Use Eraser Tool"
 							onClick={handleUseEraserTool}
 							title="Use Eraser Tool"
-							style={{ border: currentTool === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
+							style={{ border: mode === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
 							<AutoFixNormalIcon />
 						</IconButton>
 						{/* Palette Color Menu */}
 						<DrawingColorsPallete
-							type={paletteColorMenuType}
-							paletteColors={paletteColors}
-							paletteColor={paletteColor}
+							type={colorsMenu}
+							paletteColors={colors}
+							paletteColor={color}
 							handleUsePaletteColor={handleUsePaletteColor}
 						/>
 						{/* Tools: Eraser */}
@@ -288,7 +287,6 @@ const DrawingBoard: React.FC = () => {
 						<ErasingAllConfirmationButton handleEraseAll={handleEraseAll} />
 					</Grid>
 				</Grid>
-			
 			</Grid>
 		</Grid>
 	);
