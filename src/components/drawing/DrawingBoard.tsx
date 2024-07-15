@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useAppSelector } from '../../store/hooks';
 import { fabric } from 'fabric';
 import { Box, Grid, IconButton, MenuItem, Select } from '@mui/material'; // eslint-disable-line
 import DrawIcon from '@mui/icons-material/Draw';
@@ -13,7 +14,8 @@ const DrawingBoard: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
 	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
-	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
+	const [canvasHeight, setCanvasHeight] = useState<number>(); // eslint-disable-line
+	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 	
 	const [ mode, setMode ] = useState<string>([ 'brush', 'text', 'eraser' ][0]);
 	const [ size, ] = useState<number>(5);
@@ -37,7 +39,7 @@ const DrawingBoard: React.FC = () => {
 			const resizeCanvas = () => {
 		
 				const windowInnerWidth = window.innerWidth;
-				const calculatedHeight = (windowInnerWidth / 16 * 9);
+				const calculatedHeight = windowInnerWidth / aspectRatio;
 				const scaleFactor = Math.min(windowInnerWidth / 1920, window.innerHeight / 1080);
 
 				newCanvas.setWidth(windowInnerWidth);
