@@ -222,78 +222,73 @@ const DrawingBoard: React.FC = () => {
 						borderRadius: '30px',
 						backgroundColor: 'lightgray',
 					}}
-					xs={12}
+					justifyContent='space-around'
 				>
-					<Grid
-						container
-						alignItems='center'
-						justifyContent='space-around'
-					>
-						{/* Tools: Basic */}
-						<Grid item>
-							<IconButton
-								aria-label="Use Pencil"
-								onClick={handleUsePencil}
-								title="Use Pencil"
-								style={{ border: currentTool === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
-								size='small'
-							>
-								<DrawIcon
-									style={{ color: currentTool === 'brush' ? paletteColor : 'inherit' }}
-								/>
-							</IconButton>
-							<IconButton
-								aria-label="Use Text Tool"
-								onClick={handleUseTextTool}
-								title="Use Text Tool"
-								style={{ border: currentTool === 'text' ? '2px solid gray' : '2px solid lightgray' }}
-								size='small'
-							>
-								<AbcIcon
-									style={{ color: currentTool === 'text' ? paletteColor : 'inherit' }}
-								/>
-							</IconButton>
-							<IconButton
-								aria-label="Use Eraser Tool"
-								onClick={handleUseEraserTool}
-								title="Use Eraser Tool"
-								style={{ border: currentTool === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
-								size='small'
-							>
-								<AutoFixNormalIcon />
-							</IconButton>
-							{/* Palette Color Menu */}
-							<DrawingColorsPallete
-								type={paletteColorMenuType}
-								paletteColors={paletteColors}
-								paletteColor={paletteColor}
-								handleUsePaletteColor={handleUsePaletteColor}
+					{/* Tools: Basic */}
+					<Grid item>
+						<IconButton
+							aria-label="Use Pencil"
+							onClick={handleUsePencil}
+							title="Use Pencil"
+							style={{ border: currentTool === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
+							size='small'
+						>
+							<DrawIcon
+								style={{ color: currentTool === 'brush' ? paletteColor : 'inherit' }}
 							/>
-							{/* Tools: Eraser */}
-						</Grid>
-						<Grid item>
-							<IconButton
-								aria-label="Undo"
-								onClick={handleUndo}
-								title="Undo"
-								size='small'
-							>
-								<UndoIcon />
-								{/* {historyUndoCount} */}
-							</IconButton>
-							<IconButton
-								aria-label="Redo"
-								onClick={handleRedo}
-								title="Redo"
-								size='small'
-							>
-								<RedoIcon />
-								{/* {historyRedoCount} */}
-							</IconButton>
-							<ErasingAllConfirmationButton handleEraseAll={handleEraseAll} />
-						</Grid>
+						</IconButton>
+						<IconButton
+							aria-label="Use Text Tool"
+							onClick={handleUseTextTool}
+							title="Use Text Tool"
+							style={{ border: currentTool === 'text' ? '2px solid gray' : '2px solid lightgray' }}
+							size='small'
+						>
+							<AbcIcon
+								style={{ color: currentTool === 'text' ? paletteColor : 'inherit' }}
+							/>
+						</IconButton>
+						<IconButton
+							aria-label="Use Eraser Tool"
+							onClick={handleUseEraserTool}
+							title="Use Eraser Tool"
+							style={{ border: currentTool === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
+							size='small'
+						>
+							<AutoFixNormalIcon />
+						</IconButton>
+						{/* Palette Color Menu */}
+						<DrawingColorsPallete
+							type={paletteColorMenuType}
+							paletteColors={paletteColors}
+							paletteColor={paletteColor}
+							handleUsePaletteColor={handleUsePaletteColor}
+						/>
+						{/* Tools: Eraser */}
+					</Grid>
+					<Grid item>
+						<IconButton
+							aria-label="Undo"
+							onClick={handleUndo}
+							title="Undo"
+							size='small'
+						>
+							<UndoIcon />
+							{/* {historyUndoCount} */}
+						</IconButton>
+						<IconButton
+							aria-label="Redo"
+							onClick={handleRedo}
+							title="Redo"
+							size='small'
+						>
+							<RedoIcon />
+							{/* {historyRedoCount} */}
+						</IconButton>
+						<ErasingAllConfirmationButton handleEraseAll={handleEraseAll} />
 					</Grid>
 				</Grid>
+			
 			</Grid>
 		</Grid>
 	);
