@@ -107,13 +107,13 @@ const DrawingBoard: React.FC = () => {
 
 	const handleUsePencil = () => {
 		if (canvas) {
-			canvas.isDrawingMode = true;
-			canvas.selection = false;
 			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="${color}"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
 			canvas.freeDrawingBrush.color = color;
 			canvas.freeDrawingBrush.width = size;
 			canvas.freeDrawingBrush.strokeLineCap = 'round';
+			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="${color}"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
+			canvas.isDrawingMode = true;
+			canvas.selection = false;
 
 			setMode('brush');
 		}
@@ -121,14 +121,13 @@ const DrawingBoard: React.FC = () => {
 
 	const handleUseEraserTool = () => {
 		if (canvas) {
-
-			canvas.isDrawingMode = true;
-			canvas.selection = false;
 			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="transparent" stroke="black" stroke-width="1"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
 			canvas.freeDrawingBrush.color = bgColor;
 			canvas.freeDrawingBrush.width = size;
 			canvas.freeDrawingBrush.strokeLineCap = 'round';			
+			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="transparent" stroke="black" stroke-width="1"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
+			canvas.isDrawingMode = true;
+			canvas.selection = false;
 
 			setMode('eraser');
 		}
@@ -196,10 +195,7 @@ const DrawingBoard: React.FC = () => {
 			{/* Main */}
 			<Grid item>
 				{/* Canvas */}
-				<Box
-					ref={canvasRef}
-					component="canvas"
-				/>
+				<Box ref={canvasRef} component="canvas" />
 			</Grid>
 
 			{/* Menu */}
