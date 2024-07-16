@@ -40,21 +40,15 @@ const DrawingBoard: React.FC = () => {
 				const windowInnerWidth = window.innerWidth;
 				const calculatedHeight = windowInnerWidth / aspectRatio;
 				const scaleFactor = Math.min(windowInnerWidth / 1920, window.innerHeight / 1080);
-
-				newCanvas.setWidth(windowInnerWidth);
-				newCanvas.setHeight(calculatedHeight);
+				
+				newCanvas.setWidth(windowInnerWidth); // (originalWidth * scaleFactor);
+				newCanvas.setHeight(calculatedHeight); // (originalHeight * scaleFactor);
 				newCanvas.setZoom(scaleFactor);
-				
-				setCanvasWidth(windowInnerWidth);
-				setCanvasHeight(calculatedHeight);
-		
-				// newCanvas.setWidth(originalWidth * scaleFactor);
-				// newCanvas.setHeight(originalHeight * scaleFactor);
-				
-				// setCanvasFactor(scaleFactor);
-				// setCanvasWidth(`${originalWidth * scaleFactor}px`);
-				// setCanvasHeight(`${originalHeight * scaleFactor}px`);
 				newCanvas.renderAll();
+				
+				setCanvasWidth(windowInnerWidth); // (originalWidth * scaleFactor)
+				setCanvasHeight(calculatedHeight); // (originalHeight * scaleFactor)
+		
 			};
 
 			resizeCanvas();
