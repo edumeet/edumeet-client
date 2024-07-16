@@ -25,9 +25,8 @@ const DrawingBoard: React.FC = () => {
 	const [ bgColors, ] = useState<string[]>([ 'lightgray', 'white', 'black' ]);
 	const [ bgColor, ] = useState<string>(bgColors[0]);
 	
-	const historyRedo: fabric.Object[] = [];
-	// const [ historyUndoCount, setHistoryUndoCount ] = useState<number>(999); 
-	// const [ historyRedoCount, setHistoryRedoCount ] = useState<number>(999);
+	const [ historyRedo, setHistoryRedo ] = useState<fabric.Object[]>([]);
+	const historyActionRef = useRef<string | null>(null);
 	
 	useEffect(() => {
 		if (canvasRef.current) {
@@ -61,25 +60,23 @@ const DrawingBoard: React.FC = () => {
 			resizeCanvas();
 			window.addEventListener('resize', resizeCanvas);
 			
-			// Event listener for object addition
-			/*
 			newCanvas.on('object:added', () => {
-				setHistoryUndoCount(newCanvas.getObjects().length);
-				setHistoryRedoCount(historyRedoCount + 1);
+				switch (historyActionRef.current) {
+					case null:
+						setHistoryRedo([]);
+						historyActionRef.current = null;
+
+						break;
+					case 'redo':
+						historyActionRef.current = null;
+						break;
+					default:
+						break;
+				}
 			});
 
-			// Event listener for object modifications
-			newCanvas.on('object:modified', () => {
-				setHistoryUndoCount(newCanvas.getObjects().length);
-			});
-
-			// Event listener for object removal
-			newCanvas.on('object:removed', () => {
-				setHistoryUndoCount(newCanvas.getObjects().length);
-
-				setHistoryRedoCount(historyRedoCount + 1);
-			});
-			*/
+			newCanvas.on('object:modified', () => { });
+			newCanvas.on('object:removed', () => { });
 
 			setCanvas(newCanvas);
 			
@@ -167,7 +164,7 @@ const DrawingBoard: React.FC = () => {
 			const history = canvas.getObjects();
 			
 			if (history) {
-				historyRedo.push(history[history.length - 1]);
+				setHistoryRedo((prevItems) => [ ...prevItems, history[history.length - 1] ]);
 				canvas.remove(history[history.length - 1]);
 				canvas.renderAll();
 			}
@@ -176,12 +173,14 @@ const DrawingBoard: React.FC = () => {
 	
 	const handleRedo = () => {
 		if (canvas) {
-			const last = historyRedo.pop();
 			
-			if (last) {
-				canvas.add(last);
-				canvas.renderAll();
-			}
+			historyActionRef.current = 'redo';
+
+			setHistoryRedo((prevItems) => prevItems.slice(0, prevItems.length - 1));
+			
+			canvas.add(historyRedo[historyRedo.length - 1]);
+			canvas.renderAll();
+
 		}
 	};
 	
@@ -273,7 +272,7 @@ const DrawingBoard: React.FC = () => {
 							size='small'
 						>
 							<UndoIcon />
-							{/* {historyUndoCount} */}
+							{canvas ? canvas.getObjects().length : 0}
 						</IconButton>
 						<IconButton
 							aria-label="Redo"
@@ -282,8 +281,9 @@ const DrawingBoard: React.FC = () => {
 							size='small'
 						>
 							<RedoIcon />
-							{/* {historyRedoCount} */}
+							{canvas ? historyRedo.length : 0}
 						</IconButton>
+						{/* {historyAction} */}
 						<ErasingAllConfirmationButton handleEraseAll={handleEraseAll} />
 					</Grid>
 				</Grid>
