@@ -272,7 +272,7 @@ const DrawingBoard: React.FC = () => {
 							size='small'
 						>
 							<UndoIcon />
-							{canvas ? canvas.getObjects().length : 0}
+							<sub>{canvas ? canvas.getObjects().length : 0}</sub>
 						</IconButton>
 						<IconButton
 							aria-label="Redo"
@@ -281,7 +281,7 @@ const DrawingBoard: React.FC = () => {
 							size='small'
 						>
 							<RedoIcon />
-							{canvas ? historyRedo.length : 0}
+							<sub>{canvas ? historyRedo.length : 0}</sub>
 						</IconButton>
 						{/* {historyAction} */}
 						<ErasingAllConfirmationButton handleEraseAll={handleEraseAll} />
