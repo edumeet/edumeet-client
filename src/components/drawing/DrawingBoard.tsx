@@ -14,7 +14,7 @@ const DrawingBoard: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
 	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
-	const [canvasHeight, setCanvasHeight] = useState<number>(); // eslint-disable-line
+	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 	
 	const [ mode, setMode ] = useState<string>([ 'brush', 'text', 'eraser' ][0]);
