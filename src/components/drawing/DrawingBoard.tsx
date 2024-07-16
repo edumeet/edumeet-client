@@ -188,6 +188,9 @@ const DrawingBoard: React.FC = () => {
 		if (canvas) {
 			canvas.clear();
 			canvas.backgroundColor = bgColor;
+
+			if (canvas.getObjects().length === 0)
+				setHistoryRedo([]);
 		}
 	};
 
