@@ -270,6 +270,7 @@ const DrawingBoard: React.FC = () => {
 							onClick={handleUndo}
 							title="Undo"
 							size='small'
+							disabled={canvas ? canvas.getObjects().length === 0 : true}
 						>
 							<UndoIcon />
 							<sub>{canvas ? canvas.getObjects().length : 0}</sub>
@@ -279,6 +280,7 @@ const DrawingBoard: React.FC = () => {
 							onClick={handleRedo}
 							title="Redo"
 							size='small'
+							disabled={historyRedo.length === 0}
 						>
 							<RedoIcon />
 							<sub>{canvas ? historyRedo.length : 0}</sub>
