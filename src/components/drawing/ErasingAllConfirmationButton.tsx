@@ -4,11 +4,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 type ErasingAllConfirmationButtonProps = {
 	handleEraseAll: () => void;
+	disabled: boolean;
 };
 
 const ErasingAllConfirmationButton: React.FC<ErasingAllConfirmationButtonProps> = (props) => {
 
-	const { handleEraseAll } = props;
+	const { handleEraseAll, disabled } = props;
 
 	const [ anchorEl, setAnchorEl ] = useState<HTMLButtonElement | null>(null);
 	const [ confirmed, setConfirmed ] = useState<boolean>(false);
@@ -42,6 +43,7 @@ const ErasingAllConfirmationButton: React.FC<ErasingAllConfirmationButtonProps> 
 				aria-describedby={id}
 				onClick={handleConfirm}
 				size='small'
+				disabled={disabled}
 			>
 				<DeleteIcon />
 			</IconButton>

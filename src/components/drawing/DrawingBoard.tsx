@@ -283,7 +283,8 @@ const DrawingBoard: React.FC = () => {
 							<sub>{canvas ? historyRedo.length : 0}</sub>
 						</IconButton>
 						{/* {historyAction} */}
-						<ErasingAllConfirmationButton handleEraseAll={handleEraseAll} />
+						<ErasingAllConfirmationButton handleEraseAll={handleEraseAll} disabled={ canvas ? canvas.getObjects().length === 0 : true } />
+						
 					</Grid>
 				</Grid>
 			</Grid>
