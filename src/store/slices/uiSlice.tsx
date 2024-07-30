@@ -38,7 +38,7 @@ const initialState: UiState = {
 	currentSettingsTab: 'media',
 	chatOpen: false,
 	participantListOpen: false,
-	drawingOpen: false
+	drawingOpen: true
 };
 
 const uiSlice = createSlice({
