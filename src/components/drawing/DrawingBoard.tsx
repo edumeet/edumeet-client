@@ -1,16 +1,25 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { roomActions } from '../../store/slices/roomSlice';
+
 import { fabric } from 'fabric';
 import { Box, Grid, IconButton, MenuItem, Select } from '@mui/material'; // eslint-disable-line
+
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import FiberManualRecordOutlinedIcon from '@mui/icons-material/FiberManualRecordOutlined';
+
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 import DrawingColorsPallete from './DrawingColorsPallete';
 
 const DrawingBoard: React.FC = () => {
+	const dispatch = useAppDispatch();
+	const enabled = useAppSelector((state) => state.room.drawing.enabled);
+
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
 	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
@@ -188,6 +197,16 @@ const DrawingBoard: React.FC = () => {
 		}
 	};
 
+	const handleEnableDisable = () => {
+		if (canvas) {
+			if (enabled)
+				dispatch(roomActions.disableDrawing());
+			else
+				dispatch(roomActions.enableDrawing());
+			// alert(enabled.toString()); // eslint-disable-line
+		}
+	};
+
 	return (
 		<Grid container>
 			{/* Main */}
@@ -288,6 +307,14 @@ const DrawingBoard: React.FC = () => {
 					</Grid>
 				</Grid>
 			</Grid>
+			<IconButton
+				aria-label="Enable/Disable"
+				onClick={handleEnableDisable}
+				title="Enable/Disable"
+				size='small'
+			>
+				{enabled ? <FiberManualRecordOutlinedIcon /> : <FiberManualRecordIcon />}
+			</IconButton>
 		</Grid>
 	);
 };

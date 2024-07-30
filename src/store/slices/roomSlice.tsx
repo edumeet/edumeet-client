@@ -5,6 +5,13 @@ export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left';
 export type RoomMode = 'P2P' | 'SFU';
 export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';
 
+interface Drawing {
+	canvas: fabric.Canvas|null,
+	historyUndo: fabric.Object[]
+	historyRedo: fabric.Object[]
+	enabled: boolean
+}
+
 export interface RoomState {
 	headless?: boolean;
 	logo?: string;
@@ -37,9 +44,10 @@ export interface RoomState {
 	screenSharingCodec?: VideoCodec;
 	screenSharingSimulcast?: boolean;
 	drawingEnabled?: boolean;
+	drawing: Drawing;
 }
 
-type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
+type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'drawingBoard'>;
 
 const initialState: RoomState = {
 	logo: edumeetConfig.theme.logo,
@@ -57,7 +65,14 @@ const initialState: RoomState = {
 	audioCodec: 'opus',
 	screenSharingCodec: 'vp8',
 	screenSharingSimulcast: edumeetConfig.simulcastSharing,
-	drawingEnabled: true
+	drawingEnabled: true,
+	drawing: {
+		canvas: null,
+		historyUndo: [],
+		historyRedo: [],
+		enabled: false
+	}
+
 };
 
 const roomSlice = createSlice({
@@ -78,7 +93,13 @@ const roomSlice = createSlice({
 			action: PayloadAction<RoomConnectionState>
 		) => {
 			state.state = action.payload;
-		})
+		}),
+		enableDrawing: ((state) => {
+			state.drawing.enabled = true;
+		}),
+		disableDrawing: ((state) => {
+			state.drawing.enabled = false;
+		}),
 	}
 });
 
