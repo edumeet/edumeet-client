@@ -277,5 +277,6 @@
   "svc.mgmtUnavailable": null,
   "svc.mediaNodeUnavailable": null,
   "svc.mediaConnectionNodeError": null,
-  "svc.mediaConnectionNodeSuccess": null
+  "svc.mediaConnectionNodeSuccess": null,
+  "settings.testAudioOutput": "Audio kimenet teszt"
 }
