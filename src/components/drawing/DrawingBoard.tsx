@@ -85,9 +85,7 @@ const DrawingBoard: React.FC = () => {
 					window.removeEventListener('resize', resizeCanvas);
 				}
 			};
-			
 		}
-
 	}, []);
 
 	useEffect(() => {
