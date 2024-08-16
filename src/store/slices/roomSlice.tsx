@@ -10,6 +10,7 @@ interface Drawing {
 	historyUndo: fabric.Object[]
 	historyRedo: fabric.Object[]
 	mode: string,
+	size: number,
 	colors: string[],
 	color: string,
 	colorsMenu: string,
@@ -79,6 +80,7 @@ const initialState: RoomState = {
 		historyUndo: [],
 		historyRedo: [],
 		mode: [ 'brush', 'text', 'eraser' ][0],
+		size: 5,
 		colorsMenu: [ 'Row', 'Menu', 'Menu2' ][0],
 		colors: colors,
 		color: colors[0],

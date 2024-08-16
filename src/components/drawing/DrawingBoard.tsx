@@ -24,7 +24,7 @@ const DrawingBoard: React.FC = () => {
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 	
 	const mode = useAppSelector((state) => state.room.drawing.mode);
-	const [ size, ] = useState<number>(5);
+	const size = useAppSelector((state) => state.room.drawing.size);
 	const colorsMenu = useAppSelector((state) => state.room.drawing.colorsMenu);
 	const colors = useAppSelector((state) => state.room.drawing.colors);
 	const color = useAppSelector((state) => state.room.drawing.color);
