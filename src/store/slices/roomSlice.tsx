@@ -10,7 +10,7 @@ interface Drawing {
 	historyUndo: fabric.Object[]
 	historyRedo: fabric.Object[]
 	enabled: boolean,
-	mode: string | null,
+	mode: string,
 	colors: string[],
 	color: string,
 	colorsMenu: string,
