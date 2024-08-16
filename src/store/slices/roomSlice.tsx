@@ -10,7 +10,12 @@ interface Drawing {
 	historyUndo: fabric.Object[]
 	historyRedo: fabric.Object[]
 	enabled: boolean,
-	mode: string|null
+	mode: string | null,
+	colors: string[],
+	color: string,
+	colorsMenu: string,
+	bgColors: string[],
+	bgColor: string
 }
 
 export interface RoomState {
@@ -50,6 +55,9 @@ export interface RoomState {
 
 type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'drawingBoard'>;
 
+const colors = [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
+const bgColors = [ 'lightgray', 'white', 'black' ];
+
 const initialState: RoomState = {
 	logo: edumeetConfig.theme.logo,
 	backgroundImage: edumeetConfig.theme.backgroundImage,
@@ -72,8 +80,12 @@ const initialState: RoomState = {
 		historyUndo: [],
 		historyRedo: [],
 		enabled: false,
-		mode: [ 'brush', 'text', 'eraser' ][0]
-
+		mode: [ 'brush', 'text', 'eraser' ][0],
+		colorsMenu: [ 'Row', 'Menu', 'Menu2' ][0],
+		colors: colors,
+		color: colors[0],
+		bgColors: bgColors,
+		bgColor: bgColors[0]
 	}
 
 };
@@ -106,6 +118,13 @@ const roomSlice = createSlice({
 		setDrawingMode: ((state, action: PayloadAction<string|null>) => {
 			state.drawing.mode = action.payload;
 		}),
+		setDrawingColorsMenu: ((state, action: PayloadAction<string>) => {
+			state.drawing.colorsMenu = action.payload;
+		}),
+		setDrawingColor: ((state, action: PayloadAction<string>) => {
+			state.drawing.color = action.payload;
+		}),
+		
 	}
 });
 
