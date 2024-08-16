@@ -26,7 +26,6 @@ const DrawingBoard: React.FC = () => {
 	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 	
-	// const [ mode, setMode ] = useState<string>([ 'brush', 'text', 'eraser' ][0]);
 	const mode = useAppSelector((state) => state.room.drawing.mode);
 	const [ size, ] = useState<number>(5);
 	const colorsMenu = useAppSelector((state) => state.room.drawing.colorsMenu);
