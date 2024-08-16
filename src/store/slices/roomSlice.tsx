@@ -9,7 +9,6 @@ interface Drawing {
 	canvas: fabric.Canvas|null,
 	historyUndo: fabric.Object[]
 	historyRedo: fabric.Object[]
-	enabled: boolean,
 	mode: string,
 	colors: string[],
 	color: string,
@@ -79,7 +78,6 @@ const initialState: RoomState = {
 		canvas: null,
 		historyUndo: [],
 		historyRedo: [],
-		enabled: false,
 		mode: [ 'brush', 'text', 'eraser' ][0],
 		colorsMenu: [ 'Row', 'Menu', 'Menu2' ][0],
 		colors: colors,
@@ -108,12 +106,6 @@ const roomSlice = createSlice({
 			action: PayloadAction<RoomConnectionState>
 		) => {
 			state.state = action.payload;
-		}),
-		enableDrawing: ((state) => {
-			state.drawing.enabled = true;
-		}),
-		disableDrawing: ((state) => {
-			state.drawing.enabled = false;
 		}),
 		setDrawingMode: ((state, action: PayloadAction<string>) => {
 			state.drawing.mode = action.payload;

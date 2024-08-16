@@ -10,15 +10,12 @@ import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import FiberManualRecordOutlinedIcon from '@mui/icons-material/FiberManualRecordOutlined';
 
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 import DrawingColorsPallete from './DrawingColorsPallete';
 
 const DrawingBoard: React.FC = () => {
 	const dispatch = useAppDispatch();
-	const enabled = useAppSelector((state) => state.room.drawing.enabled);
 	
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
@@ -208,16 +205,6 @@ const DrawingBoard: React.FC = () => {
 		}
 	};
 
-	const handleEnableDisable = () => {
-		if (canvas) {
-			if (enabled)
-				dispatch(roomActions.disableDrawing());
-			else
-				dispatch(roomActions.enableDrawing());
-			// alert(enabled.toString()); // eslint-disable-line
-		}
-	};
-
 	return (
 		<Grid container>
 			{/* Main */}
@@ -318,14 +305,6 @@ const DrawingBoard: React.FC = () => {
 					</Grid>
 				</Grid>
 			</Grid>
-			<IconButton
-				aria-label="Enable/Disable"
-				onClick={handleEnableDisable}
-				title="Enable/Disable"
-				size='small'
-			>
-				{enabled ? <FiberManualRecordOutlinedIcon /> : <FiberManualRecordIcon />}
-			</IconButton>
 		</Grid>
 	);
 };
