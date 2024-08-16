@@ -115,7 +115,7 @@ const roomSlice = createSlice({
 		disableDrawing: ((state) => {
 			state.drawing.enabled = false;
 		}),
-		setDrawingMode: ((state, action: PayloadAction<string|null>) => {
+		setDrawingMode: ((state, action: PayloadAction<string>) => {
 			state.drawing.mode = action.payload;
 		}),
 		setDrawingColorsMenu: ((state, action: PayloadAction<string>) => {
