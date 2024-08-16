@@ -9,7 +9,8 @@ interface Drawing {
 	canvas: fabric.Canvas|null,
 	historyUndo: fabric.Object[]
 	historyRedo: fabric.Object[]
-	enabled: boolean
+	enabled: boolean,
+	mode: string|null
 }
 
 export interface RoomState {
@@ -70,7 +71,9 @@ const initialState: RoomState = {
 		canvas: null,
 		historyUndo: [],
 		historyRedo: [],
-		enabled: false
+		enabled: false,
+		mode: [ 'brush', 'text', 'eraser' ][0]
+
 	}
 
 };
@@ -99,6 +102,9 @@ const roomSlice = createSlice({
 		}),
 		disableDrawing: ((state) => {
 			state.drawing.enabled = false;
+		}),
+		setDrawingMode: ((state, action: PayloadAction<string|null>) => {
+			state.drawing.mode = action.payload;
 		}),
 	}
 });

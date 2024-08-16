@@ -19,14 +19,15 @@ import DrawingColorsPallete from './DrawingColorsPallete';
 const DrawingBoard: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const enabled = useAppSelector((state) => state.room.drawing.enabled);
-
+	
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
 	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
 	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 	
-	const [ mode, setMode ] = useState<string>([ 'brush', 'text', 'eraser' ][0]);
+	// const [ mode, setMode ] = useState<string>([ 'brush', 'text', 'eraser' ][0]);
+	const mode = useAppSelector((state) => state.room.drawing.mode);
 	const [ size, ] = useState<number>(5);
 	const [ colorsMenu, ] = useState<string>([ 'Row', 'Menu', 'Menu2' ][0]);
 	const [ colors, ] = useState<string[]>([ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ]);
@@ -105,6 +106,13 @@ const DrawingBoard: React.FC = () => {
 		setColor(selectedColor);
 	};
 
+	const handleSetMode = (value:string|null) => {
+		if (canvas) {
+			dispatch(roomActions.setDrawingMode(value));
+		}
+	};
+
+
 	const handleUsePencil = () => {
 		if (canvas) {
 			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
@@ -116,7 +124,7 @@ const DrawingBoard: React.FC = () => {
 			canvas.selection = false;
 			canvas.off('mouse:down');
 
-			setMode('brush');
+			handleSetMode('brush');
 		}
 	};
 
@@ -131,7 +139,7 @@ const DrawingBoard: React.FC = () => {
 			canvas.selection = false;
 			canvas.off('mouse:down');
 
-			setMode('eraser');
+			handleSetMode('eraser');
 		}
 	};
 	
@@ -158,7 +166,7 @@ const DrawingBoard: React.FC = () => {
 				
 			});
 
-			setMode('text');
+			handleSetMode('text');
 		}
 	};
 	
