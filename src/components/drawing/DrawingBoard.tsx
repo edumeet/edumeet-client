@@ -86,9 +86,6 @@ const DrawingBoard: React.FC = () => {
 								setHistory(prevState.getObjects());
 								historyActionRef.current = null;
 								break;
-							
-							default:
-								break;
 						}
 					});
 
@@ -128,12 +125,6 @@ const DrawingBoard: React.FC = () => {
 	useEffect(() => {
 		console.log(`History: ${JSON.stringify(history, null, 2)}`); // eslint-disable-line
 	}, [ history ]);
-
-	// useEffect(() => {
-	// 	if (canvas) {
-	// 		setHistory(canvas.getObjects());
-	// 	}
-	// }, [ canvas, color ]);
 
 	const handleUsePaletteColor = (selectedColor: string) => {
 		handleSetColor(selectedColor);
@@ -339,7 +330,6 @@ const DrawingBoard: React.FC = () => {
 							paletteColor={color}
 							handleUsePaletteColor={handleUsePaletteColor}
 						/>
-						{/* Tools: Eraser */}
 					</Grid>
 					<Grid item>
 						<IconButton
