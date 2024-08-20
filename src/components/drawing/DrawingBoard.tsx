@@ -18,7 +18,7 @@ const DrawingBoard: React.FC = () => {
 	const dispatch = useAppDispatch();
 	
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const [ canvas, setCanvas ] = useState<fabric.Canvas | null>(null);
+	const [ canvas, setCanvas ] = useState<fabric.Canvas>();
 	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
 	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
@@ -30,6 +30,7 @@ const DrawingBoard: React.FC = () => {
 	const color = useAppSelector((state) => state.room.drawing.color);
 	const bgColor = useAppSelector((state) => state.room.drawing.bgColor);
 	
+	const [ history, setHistory ] = useState<fabric.Object[]>([]);
 	const [ historyRedo, setHistoryRedo ] = useState<fabric.Object[]>([]);
 	const historyActionRef = useRef<string | null>(null);
 	
@@ -40,16 +41,25 @@ const DrawingBoard: React.FC = () => {
 				isDrawingMode: true
 			});
 
+			setCanvas(newCanvas);
+
 			const resizeCanvas = () => {
 		
 				const windowInnerWidth = window.innerWidth;
 				const calculatedHeight = windowInnerWidth / aspectRatio;
 				const scaleFactor = Math.min(windowInnerWidth / 1920, window.innerHeight / 1080);
 				
-				newCanvas.setWidth(windowInnerWidth); // (originalWidth * scaleFactor);
-				newCanvas.setHeight(calculatedHeight); // (originalHeight * scaleFactor);
-				newCanvas.setZoom(scaleFactor);
-				newCanvas.renderAll();
+				setCanvas((prevState) => {
+
+					if (prevState) {
+						prevState.setWidth(windowInnerWidth); // (originalWidth * scaleFactor);
+						prevState.setHeight(calculatedHeight); // (originalHeight * scaleFactor);
+						prevState.setZoom(scaleFactor);
+						prevState.renderAll();
+					}
+
+					return prevState;
+				});
 				
 				setCanvasWidth(windowInnerWidth); // (originalWidth * scaleFactor)
 				setCanvasHeight(calculatedHeight); // (originalHeight * scaleFactor)
@@ -57,34 +67,53 @@ const DrawingBoard: React.FC = () => {
 			};
 
 			resizeCanvas();
+			
 			window.addEventListener('resize', resizeCanvas);
 			
-			newCanvas.on('object:added', () => {
-				switch (historyActionRef.current) {
-					case null:
-						setHistoryRedo([]);
-						historyActionRef.current = null;
+			setCanvas((prevState) => {
 
-						break;
-					case 'redo':
-						historyActionRef.current = null;
-						break;
-					default:
-						break;
+				if (prevState) {
+				
+					prevState.on('object:added', () => {
+						switch (historyActionRef.current) {
+							case null:
+								setHistory(prevState.getObjects());
+								setHistoryRedo([]);
+								historyActionRef.current = null;
+								break;
+							
+							case 'redo':
+								setHistory(prevState.getObjects());
+								historyActionRef.current = null;
+								break;
+							
+							default:
+								break;
+						}
+					});
+
+					prevState.on('object:modified', () => { 
+						setHistory(prevState.getObjects());
+					});
+
+					prevState.on('object:removed', () => { 
+						setHistory(prevState.getObjects());
+		
+					});
 				}
+
+				return prevState;
+
 			});
 
-			newCanvas.on('object:modified', () => { });
-			newCanvas.on('object:removed', () => { });
+			// return () => {
+			// 	setCanvas((prevState) => { 
 
-			setCanvas(newCanvas);
-			
-			return () => {
-				if (canvas) {
-					canvas.dispose();
-					window.removeEventListener('resize', resizeCanvas);
-				}
-			};
+			// 		prevState.dispose();
+			// 		window.removeEventListener('resize', resizeCanvas);
+			// 	});
+					
+			// };
 		}
 	}, []);
 
@@ -93,7 +122,18 @@ const DrawingBoard: React.FC = () => {
 			handleUsePencil();
 		else if (mode === 'text')
 			handleUseTextTool();
+
 	}, [ canvas, color ]);
+	
+	useEffect(() => {
+		console.log(`History: ${JSON.stringify(history, null, 2)}`); // eslint-disable-line
+	}, [ history ]);
+
+	// useEffect(() => {
+	// 	if (canvas) {
+	// 		setHistory(canvas.getObjects());
+	// 	}
+	// }, [ canvas, color ]);
 
 	const handleUsePaletteColor = (selectedColor: string) => {
 		handleSetColor(selectedColor);
@@ -112,95 +152,120 @@ const DrawingBoard: React.FC = () => {
 	};
 
 	const handleUsePencil = () => {
-		if (canvas) {
-			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-			canvas.freeDrawingBrush.color = color;
-			canvas.freeDrawingBrush.width = size;
-			canvas.freeDrawingBrush.strokeLineCap = 'round';
-			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="${color}"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
-			canvas.isDrawingMode = true;
-			canvas.selection = false;
-			canvas.off('mouse:down');
 
-			handleSetMode('brush');
-		}
+		setCanvas((prevState) => {
+			if (prevState) {
+				prevState.freeDrawingBrush = new fabric.PencilBrush(prevState);
+				prevState.freeDrawingBrush.color = color;
+				prevState.freeDrawingBrush.width = size;
+				prevState.freeDrawingBrush.strokeLineCap = 'round';
+				prevState.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="${color}"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
+				prevState.isDrawingMode = true;
+				prevState.selection = false;
+				prevState.off('mouse:down');
+			}
+			
+			console.log(JSON.stringify(history, null, 2)); // eslint-disable-line
+
+			return prevState;
+		});
+
+		handleSetMode('brush');
 	};
 
 	const handleUseEraserTool = () => {
-		if (canvas) {
-			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-			canvas.freeDrawingBrush.color = bgColor;
-			canvas.freeDrawingBrush.width = size;
-			canvas.freeDrawingBrush.strokeLineCap = 'round';			
-			canvas.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="transparent" stroke="black" stroke-width="1"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
-			canvas.isDrawingMode = true;
-			canvas.selection = false;
-			canvas.off('mouse:down');
 
-			handleSetMode('eraser');
-		}
+		setCanvas((prevState) => {
+			if (prevState) {
+				prevState.freeDrawingBrush = new fabric.PencilBrush(prevState);
+				prevState.freeDrawingBrush.color = bgColor;
+				prevState.freeDrawingBrush.width = size;
+				prevState.freeDrawingBrush.strokeLineCap = 'round';			
+				prevState.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="transparent" stroke="black" stroke-width="1"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
+				prevState.isDrawingMode = true;
+				prevState.selection = false;
+				prevState.off('mouse:down');
+			}
+			
+			return prevState;
+		});
+
+		handleSetMode('eraser');
 	};
 	
 	const handleUseTextTool = () => {
-		if (canvas) {
-			canvas.isDrawingMode = false;
-			canvas.selection = false;
-			canvas.forEachObject((obj) => {
-				obj.selectable = false;
-			});
-			canvas.on('mouse:down', (event) => {
-				const pointer = canvas.getPointer(event.e);
-				const text = new fabric.IText('', {
-					left: pointer.x,
-					top: pointer.y,
-					fill: color,
-					fontSize: 20,
-					fontFamily: 'Arial',
+		
+		setCanvas((prevState) => {
+			if (prevState) {
+				prevState.isDrawingMode = false;
+				prevState.selection = false;
+				prevState.forEachObject((obj) => {
+					obj.selectable = false;
+				});
+				prevState.on('mouse:down', (event) => {
+					const pointer = prevState.getPointer(event.e);
+					const text = new fabric.IText('', {
+						left: pointer.x,
+						top: pointer.y,
+						fill: color,
+						fontSize: 20,
+						fontFamily: 'Arial',
+					});
+
+					prevState.add(text);
+					prevState.setActiveObject(text);
+					text.enterEditing();
+				
 				});
 
-				canvas.add(text);
-				canvas.setActiveObject(text);
-				text.enterEditing();
-				
-			});
-
-			handleSetMode('text');
-		}
+				handleSetMode('text');
+			}
+			
+			return prevState;
+		});
 	};
 	
 	const handleUndo = () => {
-		if (canvas) {
-			const history = canvas.getObjects();
-			
-			if (history) {
+		setCanvas((prevState) => {
+			if (prevState) {
 				setHistoryRedo((prevItems) => [ ...prevItems, history[history.length - 1] ]);
-				canvas.remove(history[history.length - 1]);
-				canvas.renderAll();
+				prevState.remove(history[history.length - 1]);
+				prevState.renderAll();
 			}
-		}
+			
+			return prevState;
+		});
 	};
 	
 	const handleRedo = () => {
-		if (canvas) {
+		setCanvas((prevState) => {
+			if (prevState) {
 			
-			historyActionRef.current = 'redo';
+				historyActionRef.current = 'redo';
 
-			setHistoryRedo((prevItems) => prevItems.slice(0, prevItems.length - 1));
+				setHistoryRedo((prevItems) => prevItems.slice(0, prevItems.length - 1));
 			
-			canvas.add(historyRedo[historyRedo.length - 1]);
-			canvas.renderAll();
+				prevState.add(historyRedo[historyRedo.length - 1]);
+				prevState.renderAll();
 
-		}
+			}
+			
+			return prevState;
+		});
 	};
 	
 	const handleEraseAll = () => {
-		if (canvas) {
-			canvas.clear();
-			canvas.backgroundColor = bgColor;
+		setCanvas((prevState) => {
+			if (prevState) {
+				prevState.clear();
+				prevState.backgroundColor = bgColor;
 
-			if (canvas.getObjects().length === 0)
-				setHistoryRedo([]);
-		}
+				if (prevState.getObjects().length === 0)
+					setHistoryRedo([]);
+			}
+			
+			return prevState;
+		});
 	};
 
 	return (
