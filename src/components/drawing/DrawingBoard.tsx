@@ -130,13 +130,13 @@ const DrawingBoard: React.FC = () => {
 		handleSetColor(selectedColor);
 	};
 
-	const handleSetMode = (value:string) => {
+	const handleSetMode = (value: string) => {
 		if (canvas) {
 			dispatch(roomActions.setDrawingMode(value));
 		}
 	};
 
-	const handleSetColor = (value:string) => {
+	const handleSetColor = (value: string) => {
 		if (canvas) {
 			dispatch(roomActions.setDrawingColor(value));
 		}
