@@ -123,7 +123,7 @@ const DrawingBoard: React.FC = () => {
 	}, [ canvas, color ]);
 	
 	useEffect(() => {
-		console.log(`History: ${JSON.stringify(history, null, 2)}`); // eslint-disable-line
+		handleSetHistory(history);
 	}, [ history ]);
 
 	const handleUsePaletteColor = (selectedColor: string) => {
@@ -139,6 +139,12 @@ const DrawingBoard: React.FC = () => {
 	const handleSetColor = (value:string) => {
 		if (canvas) {
 			dispatch(roomActions.setDrawingColor(value));
+		}
+	};
+
+	const handleSetHistory = (value: fabric.Object[]) => {
+		if (canvas) {
+			dispatch(roomActions.setDrawingHistory(value));
 		}
 	};
 
