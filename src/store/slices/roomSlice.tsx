@@ -54,7 +54,7 @@ export interface RoomState {
 	drawing: Drawing;
 }
 
-type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'drawingBoard'>;
+type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
 
 const colors = [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
 const bgColors = [ 'lightgray', 'white', 'black' ];
