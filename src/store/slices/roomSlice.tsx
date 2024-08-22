@@ -1,13 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
-import { Draft } from 'immer';
 
 export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left';
 export type RoomMode = 'P2P' | 'SFU';
 export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';
 
 interface Drawing {
-	history: fabric.Object[]
+	history: string
 	historyUndo: fabric.Object[]
 	historyRedo: fabric.Object[]
 	mode: string,
@@ -77,7 +76,7 @@ const initialState: RoomState = {
 	screenSharingSimulcast: edumeetConfig.simulcastSharing,
 	drawingEnabled: true,
 	drawing: {
-		history: [],
+		history: '',
 		historyUndo: [],
 		historyRedo: [],
 		mode: [ 'brush', 'text', 'eraser' ][0],
@@ -119,8 +118,8 @@ const roomSlice = createSlice({
 		setDrawingColor: ((state, action: PayloadAction<string>) => {
 			state.drawing.color = action.payload;
 		}),
-		setDrawingHistory: ((state, action: PayloadAction<object[]|[]>) => {
-			state.drawing.history = action.payload as Draft<fabric.Object>[];
+		setDrawingHistory: ((state, action: PayloadAction<string>) => {
+			state.drawing.history = action.payload;
 		}),
 		
 	}

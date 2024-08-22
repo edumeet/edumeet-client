@@ -122,7 +122,7 @@ const DrawingBoard: React.FC = () => {
 	
 	const handleSetHistory = (value: fabric.Object[]) => {
 		if (canvas) {
-			dispatch(roomActions.setDrawingHistory(value));
+			dispatch(roomActions.setDrawingHistory(JSON.stringify(value)));
 		}
 	};
 
