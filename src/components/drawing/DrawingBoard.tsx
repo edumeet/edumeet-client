@@ -25,6 +25,7 @@ const DrawingBoard: React.FC = () => {
 	
 	const mode = useAppSelector((state) => state.room.drawing.mode);
 	const size = useAppSelector((state) => state.room.drawing.size);
+	const zoom = useAppSelector((state) => state.room.drawing.zoom);
 	const colorsMenu = useAppSelector((state) => state.room.drawing.colorsMenu);
 	const colors = useAppSelector((state) => state.room.drawing.colors);
 	const color = useAppSelector((state) => state.room.drawing.color);
@@ -75,7 +76,7 @@ const DrawingBoard: React.FC = () => {
 				const windowInnerWidth = window.innerWidth;
 				const calculatedHeight = windowInnerWidth / aspectRatio;
 				const scaleFactor = Math.min(windowInnerWidth / 1920, window.innerHeight / 1080);
-				
+
 				setCanvas((prevState) => {
 
 					if (prevState) {
@@ -90,6 +91,7 @@ const DrawingBoard: React.FC = () => {
 				
 				setCanvasWidth(windowInnerWidth); // (originalWidth * scaleFactor)
 				setCanvasHeight(calculatedHeight); // (originalHeight * scaleFactor)
+				handleSetZoom(scaleFactor);
 		
 			};
 
@@ -114,7 +116,7 @@ const DrawingBoard: React.FC = () => {
 			case 'text': handleUseTextTool(); break;
 		}
 
-	}, [ canvas, color ]);
+	}, [ canvas, color, size, zoom ]);
 	
 	useEffect(() => {
 		handleSetHistory(history);
@@ -142,15 +144,37 @@ const DrawingBoard: React.FC = () => {
 		}
 	};
 
+	const handleSetZoom = (value: number) => {
+		dispatch(roomActions.setDrawingZoom(value));
+	};
+
 	const handleUsePencil = () => {
 
+		const border = 1;
+		const len = size * zoom;
+		const pos = (size / 2) * zoom;
+
+		const cursor = `\
+		url('data:image/svg+xml;utf8,\
+		<svg\
+			xmlns="http://www.w3.org/2000/svg"\
+			width="${len}"\
+			height="${len}"\
+			fill="transparent"\
+			stroke="${color}"\
+			stroke-width="${border}"\
+		>\
+			<circle cx="${pos}" cy="${pos}" r="${(pos) - border}"/>\
+		</svg>'\
+		) ${pos} ${pos}, auto`;
+	
 		setCanvas((prevState) => {
 			if (prevState) {
 				prevState.freeDrawingBrush = new fabric.PencilBrush(prevState);
 				prevState.freeDrawingBrush.color = color;
 				prevState.freeDrawingBrush.width = size;
 				prevState.freeDrawingBrush.strokeLineCap = 'round';
-				prevState.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="${color}"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
+				prevState.freeDrawingCursor = cursor;
 				prevState.isDrawingMode = true;
 				prevState.selection = false;
 				prevState.off('mouse:down');
@@ -164,13 +188,28 @@ const DrawingBoard: React.FC = () => {
 
 	const handleUseEraserTool = () => {
 
+		const svgBorder = 1;
+
+		const cursor = `\
+		url('data:image/svg+xml;utf8, \
+		<svg \
+			xmlns="http://www.w3.org/2000/svg" \
+			width="${size * 2}" \
+			height="${size * 2}" \
+			fill="transparent" \
+			stroke="${color}" \
+			stroke-width="${svgBorder}"> \
+			<circle cx="${size}" cy="${size}" r="${size - svgBorder}"/> \
+		</svg>'\
+		) ${size} ${size}, auto`;
+
 		setCanvas((prevState) => {
 			if (prevState) {
 				prevState.freeDrawingBrush = new fabric.PencilBrush(prevState);
 				prevState.freeDrawingBrush.color = bgColor;
 				prevState.freeDrawingBrush.width = size;
 				prevState.freeDrawingBrush.strokeLineCap = 'round';			
-				prevState.freeDrawingCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="transparent" stroke="black" stroke-width="1"><circle cx="${size}" cy="${size}" r="${size}"/></svg>') 5 5, auto`;
+				prevState.freeDrawingCursor = cursor;
 				prevState.isDrawingMode = true;
 				prevState.selection = false;
 				prevState.off('mouse:down');
@@ -197,7 +236,7 @@ const DrawingBoard: React.FC = () => {
 						left: pointer.x,
 						top: pointer.y,
 						fill: color,
-						fontSize: 20,
+						fontSize: 100,
 						fontFamily: 'Arial',
 					});
 

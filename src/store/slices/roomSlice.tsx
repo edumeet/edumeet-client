@@ -11,6 +11,7 @@ interface Drawing {
 	historyRedo: fabric.Object[]
 	mode: string,
 	size: number,
+	zoom: number,
 	colors: string[],
 	color: string,
 	colorsMenu: string,
@@ -80,7 +81,8 @@ const initialState: RoomState = {
 		historyUndo: [],
 		historyRedo: [],
 		mode: [ 'brush', 'text', 'eraser' ][0],
-		size: 5,
+		size: 20,
+		zoom: 1,
 		colorsMenu: [ 'Row', 'Menu', 'Menu2' ][0],
 		colors: colors,
 		color: colors[0],
@@ -120,6 +122,9 @@ const roomSlice = createSlice({
 		}),
 		setDrawingHistory: ((state, action: PayloadAction<string>) => {
 			state.drawing.history = action.payload;
+		}),
+		setDrawingZoom: ((state, action: PayloadAction<number>) => {
+			state.drawing.zoom = action.payload;
 		}),
 		
 	}
