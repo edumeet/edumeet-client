@@ -36,12 +36,39 @@ const DrawingBoard: React.FC = () => {
 	
 	useEffect(() => {
 		if (canvasRef.current) {
-			const newCanvas = new fabric.Canvas(canvasRef.current, {
+			setCanvas(new fabric.Canvas(canvasRef.current, {
 				backgroundColor: bgColor,
 				isDrawingMode: true
-			});
+			}));
 
-			setCanvas(newCanvas);
+			setCanvas((prevState) => {
+				if (prevState) {
+					prevState.on('object:added', () => {
+						switch (historyActionRef.current) {
+							case null:
+								setHistory(prevState.getObjects());
+								setHistoryRedo([]);
+								historyActionRef.current = null;
+								break;
+							
+							case 'redo':
+								setHistory(prevState.getObjects());
+								historyActionRef.current = null;
+								break;
+						}
+					});
+					prevState.on('object:modified', () => { 
+						setHistory(prevState.getObjects());
+					});
+					prevState.on('object:removed', () => { 
+						setHistory(prevState.getObjects());
+		
+					});
+				}
+
+				return prevState;
+
+			});
 
 			const resizeCanvas = () => {
 		
@@ -69,39 +96,6 @@ const DrawingBoard: React.FC = () => {
 			resizeCanvas();
 			
 			window.addEventListener('resize', resizeCanvas);
-			
-			setCanvas((prevState) => {
-
-				if (prevState) {
-				
-					prevState.on('object:added', () => {
-						switch (historyActionRef.current) {
-							case null:
-								setHistory(prevState.getObjects());
-								setHistoryRedo([]);
-								historyActionRef.current = null;
-								break;
-							
-							case 'redo':
-								setHistory(prevState.getObjects());
-								historyActionRef.current = null;
-								break;
-						}
-					});
-
-					prevState.on('object:modified', () => { 
-						setHistory(prevState.getObjects());
-					});
-
-					prevState.on('object:removed', () => { 
-						setHistory(prevState.getObjects());
-		
-					});
-				}
-
-				return prevState;
-
-			});
 
 			// return () => {
 			// 	setCanvas((prevState) => { 
