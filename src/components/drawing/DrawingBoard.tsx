@@ -109,16 +109,22 @@ const DrawingBoard: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		if (mode === 'brush')
-			handleUsePencil();
-		else if (mode === 'text')
-			handleUseTextTool();
+		switch (mode) {
+			case 'brush': handleUsePencil(); break;
+			case 'text': handleUseTextTool(); break;
+		}
 
 	}, [ canvas, color ]);
 	
 	useEffect(() => {
 		handleSetHistory(history);
 	}, [ history ]);
+	
+	const handleSetHistory = (value: fabric.Object[]) => {
+		if (canvas) {
+			dispatch(roomActions.setDrawingHistory(value));
+		}
+	};
 
 	const handleUsePaletteColor = (selectedColor: string) => {
 		handleSetColor(selectedColor);
@@ -133,12 +139,6 @@ const DrawingBoard: React.FC = () => {
 	const handleSetColor = (value: string) => {
 		if (canvas) {
 			dispatch(roomActions.setDrawingColor(value));
-		}
-	};
-
-	const handleSetHistory = (value: fabric.Object[]) => {
-		if (canvas) {
-			dispatch(roomActions.setDrawingHistory(value));
 		}
 	};
 
