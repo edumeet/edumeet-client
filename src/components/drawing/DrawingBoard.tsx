@@ -155,8 +155,6 @@ const DrawingBoard: React.FC = () => {
 				prevState.selection = false;
 				prevState.off('mouse:down');
 			}
-			
-			console.log(JSON.stringify(history, null, 2)); // eslint-disable-line
 
 			return prevState;
 		});
