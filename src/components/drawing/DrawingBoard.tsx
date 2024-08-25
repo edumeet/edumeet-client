@@ -149,6 +149,8 @@ const DrawingBoard: React.FC = () => {
 		dispatch(roomActions.setDrawingZoom(value));
 	};
 
+	/* handle tools */
+
 	const handleUsePencil = () => {
 
 		const border = 1;
@@ -258,6 +260,8 @@ const DrawingBoard: React.FC = () => {
 			return prevState;
 		});
 	};
+	
+	/* handle history */
 	
 	const handleUndo = () => {
 		setCanvas((prevState) => {
