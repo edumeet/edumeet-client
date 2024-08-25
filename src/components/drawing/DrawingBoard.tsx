@@ -25,6 +25,7 @@ const DrawingBoard: React.FC = () => {
 	
 	const mode = useAppSelector((state) => state.room.drawing.mode);
 	const size = useAppSelector((state) => state.room.drawing.size);
+	const eraserSize = useAppSelector((state) => state.room.drawing.eraserSize);
 	const zoom = useAppSelector((state) => state.room.drawing.zoom);
 	const colorsMenu = useAppSelector((state) => state.room.drawing.colorsMenu);
 	const colors = useAppSelector((state) => state.room.drawing.colors);
@@ -116,7 +117,7 @@ const DrawingBoard: React.FC = () => {
 			case 'text': handleUseTextTool(); break;
 		}
 
-	}, [ canvas, color, size, zoom ]);
+	}, [ canvas, color, size, eraserSize, zoom ]);
 	
 	useEffect(() => {
 		handleSetHistory(history);
@@ -188,26 +189,31 @@ const DrawingBoard: React.FC = () => {
 
 	const handleUseEraserTool = () => {
 
-		const svgBorder = 1;
+		const border = 1;
+		const len = eraserSize * zoom;
+		const pos = (eraserSize / 2) * zoom;
+		const strokeColor = 'black';
 
 		const cursor = `\
-		url('data:image/svg+xml;utf8, \
-		<svg \
-			xmlns="http://www.w3.org/2000/svg" \
-			width="${size * 2}" \
-			height="${size * 2}" \
-			fill="transparent" \
-			stroke="${color}" \
-			stroke-width="${svgBorder}"> \
-			<circle cx="${size}" cy="${size}" r="${size - svgBorder}"/> \
+		url('data:image/svg+xml;utf8,\
+		<svg\
+			xmlns="http://www.w3.org/2000/svg"\
+			width="${len}"\
+			height="${len}"\
+			fill="transparent"\
+			stroke="${strokeColor}"\
+			stroke-width="${border}"\
+			stroke-dasharray="5" \
+		>\
+			<circle cx="${pos}" cy="${pos}" r="${(pos) - border}"/>\
 		</svg>'\
-		) ${size} ${size}, auto`;
+		) ${pos} ${pos}, auto`;
 
 		setCanvas((prevState) => {
 			if (prevState) {
 				prevState.freeDrawingBrush = new fabric.PencilBrush(prevState);
 				prevState.freeDrawingBrush.color = bgColor;
-				prevState.freeDrawingBrush.width = size;
+				prevState.freeDrawingBrush.width = eraserSize;
 				prevState.freeDrawingBrush.strokeLineCap = 'round';			
 				prevState.freeDrawingCursor = cursor;
 				prevState.isDrawingMode = true;

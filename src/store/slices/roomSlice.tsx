@@ -11,6 +11,7 @@ interface Drawing {
 	historyRedo: fabric.Object[]
 	mode: string,
 	size: number,
+	eraserSize: number,
 	zoom: number,
 	colors: string[],
 	color: string,
@@ -82,6 +83,7 @@ const initialState: RoomState = {
 		historyRedo: [],
 		mode: [ 'brush', 'text', 'eraser' ][0],
 		size: 20,
+		eraserSize: 60,
 		zoom: 1,
 		colorsMenu: [ 'Row', 'Menu', 'Menu2' ][0],
 		colors: colors,
