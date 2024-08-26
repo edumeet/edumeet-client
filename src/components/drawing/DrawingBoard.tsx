@@ -25,11 +25,14 @@ const DrawingBoard: React.FC = () => {
 	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
 	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
+	const zoom = useAppSelector((state) => state.room.drawing.zoom);
 	
 	const mode = useAppSelector((state) => state.room.drawing.mode);
+	
+	const sizeRef = useRef<NodeJS.Timeout | null>(null);
 	const size = useAppSelector((state) => state.room.drawing.size);
 	const eraserSize = useAppSelector((state) => state.room.drawing.eraserSize);
-	const zoom = useAppSelector((state) => state.room.drawing.zoom);
+
 	const colorsMenu = useAppSelector((state) => state.room.drawing.colorsMenu);
 	const colors = useAppSelector((state) => state.room.drawing.colors);
 	const color = useAppSelector((state) => state.room.drawing.color);
@@ -38,8 +41,6 @@ const DrawingBoard: React.FC = () => {
 	const [ history, setHistory ] = useState<fabric.Object[]>([]);
 	const [ historyRedo, setHistoryRedo ] = useState<fabric.Object[]>([]);
 	const historyActionRef = useRef<string | null>(null);
-
-	const sizeRef = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		return () => {
