@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { roomActions } from '../../store/slices/roomSlice';
 
 import { fabric } from 'fabric';
-import { Box, Grid, IconButton, MenuItem, Select, Typography } from '@mui/material'; // eslint-disable-line
+import { Box, Divider, Grid, IconButton, MenuItem, Select, Typography } from '@mui/material'; // eslint-disable-line
 
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
@@ -435,6 +435,9 @@ const DrawingBoard: React.FC = () => {
 						>
 							<AutoFixNormalIcon />
 						</IconButton>
+
+						<Divider orientation="vertical" />
+
 						<IconButton
 							aria-label="Increase Size"
 							onClick={handleIncreaseSize}
@@ -458,6 +461,8 @@ const DrawingBoard: React.FC = () => {
 						>
 							<RemoveCircleOutlineIcon />
 						</IconButton>
+
+						<Divider orientation="vertical" />
 						
 						{/* Palette Color Menu */}
 						<DrawingColorsPallete
@@ -476,6 +481,8 @@ const DrawingBoard: React.FC = () => {
 						wrap='nowrap'
 
 					>
+						<Divider orientation="vertical" />
+
 						<IconButton
 							aria-label="Undo"
 							onClick={handleUndo}
