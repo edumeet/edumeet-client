@@ -2,12 +2,12 @@ import IconButton from '@mui/material/IconButton';
 import CircleIcon from '@mui/icons-material/Circle';
 import { Popover, Box, Grid } from '@mui/material';
 import { useState } from 'react';
-import { Drawing } from '../../../store/slices/roomSlice';
+import { RoomState } from '../../../store/slices/roomSlice';
 
 interface Props {
-	paletteColors: Drawing['colors'];
-	paletteColor: Drawing['color'];
-	handleUsePaletteColor: (selectedColor: Drawing['color']) => void; // eslint-disable-line
+	paletteColors: RoomState['drawing']['colors'];
+	paletteColor: RoomState['drawing']['color'];
+	handleUsePaletteColor: (selectedColor: RoomState['drawing']['color']) => void; // eslint-disable-line
 }
 
 const Menu: React.FC<Props> = (props) => {

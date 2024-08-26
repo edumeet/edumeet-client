@@ -15,7 +15,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 import DrawingColorsPallete from './DrawingColorsPallete';
-import { Drawing } from '../../store/slices/roomSlice';
+import { RoomState } from '../../store/slices/roomSlice';
 
 const DrawingBoard: React.FC = () => {
 	const dispatch = useAppDispatch();
@@ -140,7 +140,7 @@ const DrawingBoard: React.FC = () => {
 
 	/* handle tools */
 
-	const handleSetMode = (value: Drawing['mode']) => {
+	const handleSetMode = (value: RoomState['drawing']['mode']) => {
 		dispatch(roomActions.setDrawingMode(value));
 	};
 
@@ -308,7 +308,7 @@ const DrawingBoard: React.FC = () => {
 		}
 	};
 
-	const handleUsePaletteColor = (selectedColor: Drawing['color']) => {
+	const handleUsePaletteColor = (selectedColor: RoomState['drawing']['color']) => {
 		dispatch(roomActions.setDrawingColor(selectedColor));
 
 	};

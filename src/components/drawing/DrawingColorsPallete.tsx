@@ -2,13 +2,13 @@ import React from 'react';
 import Row from './drawingpalettes/Row';
 import Menu from './drawingpalettes/Menu';
 import Menu2 from './drawingpalettes/Menu2';
-import { Drawing } from '../../store/slices/roomSlice';
+import { RoomState } from '../../store/slices/roomSlice';
 
 interface Props {
 	type: string;
-	paletteColors: Drawing['colors'];
-	paletteColor: Drawing['color'];
-	handleUsePaletteColor: (selectedColor: Drawing['color']) => void; // eslint-disable-line
+	paletteColors: RoomState['drawing']['colors'];
+	paletteColor: RoomState['drawing']['color'];
+	handleUsePaletteColor: (selectedColor: RoomState['drawing']['color']) => void; // eslint-disable-line
 }
 
 const DrawingColorsPallete: React.FC<Props> = (props) => {

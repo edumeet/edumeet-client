@@ -5,23 +5,6 @@ export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left';
 export type RoomMode = 'P2P' | 'SFU';
 export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';
 
-export interface Drawing {
-	history: string
-	historyUndo: fabric.Object[]
-	historyRedo: fabric.Object[]
-	modes: [ 'brush', 'text', 'eraser' ],
-	mode: Drawing['modes'][number],
-	size: number,
-	eraserSize: number,
-	zoom: number,
-	colorsMenus: [ 'Row', 'Menu', 'Menu2' ],
-	colorsMenu: Drawing['colorsMenus'][number],
-	colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
-	color: Drawing['colors'][number],
-	bgColors: ['lightgray', 'white', 'black'],
-	bgColor: Drawing['bgColors'][number]
-}
-
 export interface RoomState {
 	headless?: boolean;
 	logo?: string;
@@ -54,7 +37,22 @@ export interface RoomState {
 	screenSharingCodec?: VideoCodec;
 	screenSharingSimulcast?: boolean;
 	drawingEnabled?: boolean;
-	drawing: Drawing;
+	drawing: {
+		history: string
+		historyUndo: fabric.Object[]
+		historyRedo: fabric.Object[]
+		modes: [ 'brush', 'text', 'eraser' ],
+		mode: RoomState['drawing']['modes'][number],
+		size: number,
+		eraserSize: number,
+		zoom: number,
+		colorsMenus: [ 'Row', 'Menu', 'Menu2' ],
+		colorsMenu: RoomState['drawing']['colorsMenus'][number],
+		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
+		color: RoomState['drawing']['colors'][number],
+		bgColors: ['lightgray', 'white', 'black'],
+		bgColor: RoomState['drawing']['bgColors'][number]
+	}
 }
 
 type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
@@ -114,13 +112,13 @@ const roomSlice = createSlice({
 		) => {
 			state.state = action.payload;
 		}),
-		setDrawingMode: ((state, action: PayloadAction<Drawing['mode']>) => {
+		setDrawingMode: ((state, action: PayloadAction<RoomState['drawing']['mode']>) => {
 			state.drawing.mode = action.payload;
 		}),
-		setDrawingColorsMenu: ((state, action: PayloadAction<Drawing['colorsMenu']>) => {
+		setDrawingColorsMenu: ((state, action: PayloadAction<RoomState['drawing']['colorsMenu']>) => {
 			state.drawing.colorsMenu = action.payload;
 		}),
-		setDrawingColor: ((state, action: PayloadAction<Drawing['color']>) => {
+		setDrawingColor: ((state, action: PayloadAction<RoomState['drawing']['color']>) => {
 			state.drawing.color = action.payload;
 		}),
 		setDrawingHistory: ((state, action: PayloadAction<string>) => {
