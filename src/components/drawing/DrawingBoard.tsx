@@ -269,7 +269,7 @@ const DrawingBoard: React.FC = () => {
 					sizeRef.current = setTimeout(() => {
 						sizeRef.current = setInterval(() => {
 							dispatch(roomActions.setDrawingIncreaseSize());
-						}, 120);
+						}, 100);
 					}, 400);
 				}
 				break;
@@ -294,7 +294,7 @@ const DrawingBoard: React.FC = () => {
 					sizeRef.current = setTimeout(() => {
 						sizeRef.current = setInterval(() => {
 							dispatch(roomActions.setDrawingDecreaseSize());
-						}, 120);
+						}, 100);
 					}, 400);
 				}
 				break;
