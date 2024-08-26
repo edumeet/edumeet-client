@@ -128,15 +128,12 @@ const DrawingBoard: React.FC = () => {
 	};
 
 	const handleUsePaletteColor = (selectedColor: string) => {
-		handleSetColor(selectedColor);
+		dispatch(roomActions.setDrawingColor(selectedColor));
+
 	};
 
 	const handleSetMode = (value: string) => {
 		dispatch(roomActions.setDrawingMode(value));
-	};
-
-	const handleSetColor = (value: string) => {
-		dispatch(roomActions.setDrawingColor(value));
 	};
 
 	const handleSetZoom = (value: number) => {
