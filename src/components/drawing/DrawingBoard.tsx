@@ -124,10 +124,7 @@ const DrawingBoard: React.FC = () => {
 		handleSetHistory(history);
 	}, [ history ]);
 
-	const handleUsePaletteColor = (selectedColor: Drawing['color']) => {
-		dispatch(roomActions.setDrawingColor(selectedColor));
-
-	};
+	/* handle tools */
 
 	const handleSetMode = (value: string) => {
 		dispatch(roomActions.setDrawingMode(value));
@@ -136,8 +133,6 @@ const DrawingBoard: React.FC = () => {
 	const handleSetZoom = (value: number) => {
 		dispatch(roomActions.setDrawingZoom(value));
 	};
-
-	/* handle tools */
 
 	const handleUsePencil = () => {
 
@@ -175,6 +170,38 @@ const DrawingBoard: React.FC = () => {
 		});
 
 		handleSetMode('brush');
+	};
+	
+	const handleUseTextTool = () => {
+		
+		setCanvas((prevState) => {
+			if (prevState) {
+				prevState.isDrawingMode = false;
+				prevState.selection = false;
+				prevState.forEachObject((obj) => {
+					obj.selectable = false;
+				});
+				prevState.on('mouse:down', (event) => {
+					const pointer = prevState.getPointer(event.e);
+					const text = new fabric.IText('', {
+						left: pointer.x,
+						top: pointer.y,
+						fill: color,
+						fontSize: 100,
+						fontFamily: 'Arial',
+					});
+
+					prevState.add(text);
+					prevState.setActiveObject(text);
+					text.enterEditing();
+				
+				});
+
+				handleSetMode('text');
+			}
+			
+			return prevState;
+		});
 	};
 
 	const handleUseEraserTool = () => {
@@ -216,37 +243,10 @@ const DrawingBoard: React.FC = () => {
 
 		handleSetMode('eraser');
 	};
-	
-	const handleUseTextTool = () => {
-		
-		setCanvas((prevState) => {
-			if (prevState) {
-				prevState.isDrawingMode = false;
-				prevState.selection = false;
-				prevState.forEachObject((obj) => {
-					obj.selectable = false;
-				});
-				prevState.on('mouse:down', (event) => {
-					const pointer = prevState.getPointer(event.e);
-					const text = new fabric.IText('', {
-						left: pointer.x,
-						top: pointer.y,
-						fill: color,
-						fontSize: 100,
-						fontFamily: 'Arial',
-					});
 
-					prevState.add(text);
-					prevState.setActiveObject(text);
-					text.enterEditing();
-				
-				});
+	const handleUsePaletteColor = (selectedColor: Drawing['color']) => {
+		dispatch(roomActions.setDrawingColor(selectedColor));
 
-				handleSetMode('text');
-			}
-			
-			return prevState;
-		});
 	};
 	
 	/* handle history */
