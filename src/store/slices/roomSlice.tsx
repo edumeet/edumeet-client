@@ -13,8 +13,8 @@ interface Drawing {
 	size: number,
 	eraserSize: number,
 	zoom: number,
-	colors: string[],
-	color: string,
+	colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
+	color: Drawing['colors'][number],
 	colorsMenu: string,
 	bgColors: string[],
 	bgColor: string
@@ -57,7 +57,6 @@ export interface RoomState {
 
 type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
 
-const colors = [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ];
 const bgColors = [ 'lightgray', 'white', 'black' ];
 
 const initialState: RoomState = {
@@ -86,8 +85,8 @@ const initialState: RoomState = {
 		eraserSize: 60,
 		zoom: 1,
 		colorsMenu: [ 'Row', 'Menu', 'Menu2' ][0],
-		colors: colors,
-		color: colors[0],
+		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
+		color: 'red',
 		bgColors: bgColors,
 		bgColor: bgColors[0]
 	}
