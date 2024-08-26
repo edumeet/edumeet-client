@@ -10,7 +10,7 @@ interface Props {
 	handleUsePaletteColor: (selectedColor: string) => void;
 }
 
-const ColorPicker: React.FC<Props> = (props) => {
+const DrawingColorsPallete: React.FC<Props> = (props) => {
   
 	const { type, paletteColors, paletteColor, handleUsePaletteColor } = props; // eslint-disable-line
 
@@ -23,4 +23,4 @@ const ColorPicker: React.FC<Props> = (props) => {
 	return Component && <Component type={type} paletteColors={paletteColors} paletteColor={paletteColor} handleUsePaletteColor={handleUsePaletteColor} />;
 };
 
-export default ColorPicker;
+export default DrawingColorsPallete;
