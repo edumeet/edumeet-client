@@ -2,18 +2,18 @@ import IconButton from '@mui/material/IconButton';
 import CircleIcon from '@mui/icons-material/Circle';
 import { Popover, Box, Grid } from '@mui/material';
 import { useState } from 'react';
+import { Drawing } from '../../../store/slices/roomSlice';
 
 interface Props {
-	type: string;
-	paletteColors: string[];
-	paletteColor: string;
-	handleUsePaletteColor: (selectedColor: string) => void;
+	paletteColors: Drawing['colors'];
+	paletteColor: Drawing['color'];
+	handleUsePaletteColor: (selectedColor: Drawing['color']) => void; // eslint-disable-line
 }
 
 const Menu: React.FC<Props> = (props) => {
   
-	const { type, paletteColors, paletteColor, handleUsePaletteColor } = props; // eslint-disable-line
-
+	const { paletteColors, paletteColor, handleUsePaletteColor } = props;
+	
 	const [ anchorEl, setAnchorEl ] = useState<HTMLButtonElement | null>(null);
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

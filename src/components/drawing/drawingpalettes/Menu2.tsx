@@ -1,21 +1,21 @@
 import CircleIcon from '@mui/icons-material/Circle';
 import { Select, MenuItem } from '@mui/material';
+import { Drawing } from '../../../store/slices/roomSlice';
 
 interface Props {
-	type: string;
-	paletteColors: string[];
-	paletteColor: string;
-	handleUsePaletteColor: (selectedColor: string) => void;
+	paletteColors: Drawing['colors'];
+	paletteColor: Drawing['color'];
+	handleUsePaletteColor: (selectedColor: Drawing['color']) => void; // eslint-disable-line
 }
 
 const Menu2: React.FC<Props> = (props) => {
   
-	const { type, paletteColors, paletteColor, handleUsePaletteColor } = props; // eslint-disable-line
+	const { paletteColors, paletteColor, handleUsePaletteColor } = props;
 
 	return <>
 		<Select
 			value={paletteColor}
-			onChange={(event) => handleUsePaletteColor(event.target.value as string)}
+			onChange={(event) => handleUsePaletteColor(event.target.value as Drawing['color'])}
 			style={{ border: '2px solid lightgray' }}
 			size='small'
 		>

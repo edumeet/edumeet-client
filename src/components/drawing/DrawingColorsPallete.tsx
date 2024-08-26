@@ -2,31 +2,21 @@ import React from 'react';
 import Row from './drawingpalettes/Row';
 import Menu from './drawingpalettes/Menu';
 import Menu2 from './drawingpalettes/Menu2';
+import { Drawing } from '../../store/slices/roomSlice';
 
 interface Props {
 	type: string;
-	paletteColors: string[];
-	paletteColor: string;
-	handleUsePaletteColor: (selectedColor: string) => void;
+	paletteColors: Drawing['colors'];
+	paletteColor: Drawing['color'];
+	handleUsePaletteColor: (selectedColor: Drawing['color']) => void; // eslint-disable-line
 }
 
 const DrawingColorsPallete: React.FC<Props> = (props) => {
   
-	const { type, paletteColors, paletteColor, handleUsePaletteColor } = props; // eslint-disable-line
+	const Component = { Row, Menu, Menu2 }[props.type] || null;
 
-	const Component = {
-		'Row': Row,
-		'Menu': Menu,
-		'Menu2': Menu2
-	}[type] || null;
- 
-	return Component && 
-	<Component
-		type={type}
-		paletteColors={paletteColors}
-		paletteColor={paletteColor}
-		handleUsePaletteColor={handleUsePaletteColor}
-	/>;
+	return Component ? <Component {...props} /> : null;
+
 };
 
 export default DrawingColorsPallete;

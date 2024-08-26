@@ -13,6 +13,7 @@ import RedoIcon from '@mui/icons-material/Redo';
 
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 import DrawingColorsPallete from './DrawingColorsPallete';
+import { Drawing } from '../../store/slices/roomSlice';
 
 const DrawingBoard: React.FC = () => {
 	const dispatch = useAppDispatch();
@@ -122,7 +123,7 @@ const DrawingBoard: React.FC = () => {
 	useEffect(() => {
 		handleSetHistory(history);
 	}, [ history ]);
-	
+
 	const handleUsePaletteColor = (selectedColor: Drawing['color']) => {
 		dispatch(roomActions.setDrawingColor(selectedColor));
 
@@ -361,6 +362,7 @@ const DrawingBoard: React.FC = () => {
 						>
 							<AutoFixNormalIcon />
 						</IconButton>
+						
 						{/* Palette Color Menu */}
 						<DrawingColorsPallete
 							type={colorsMenu}

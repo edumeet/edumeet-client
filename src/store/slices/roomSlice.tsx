@@ -118,7 +118,7 @@ const roomSlice = createSlice({
 		setDrawingColorsMenu: ((state, action: PayloadAction<string>) => {
 			state.drawing.colorsMenu = action.payload;
 		}),
-		setDrawingColor: ((state, action: PayloadAction<string>) => {
+		setDrawingColor: ((state, action: PayloadAction<Drawing['color']>) => {
 			state.drawing.color = action.payload;
 		}),
 		setDrawingHistory: ((state, action: PayloadAction<string>) => {
