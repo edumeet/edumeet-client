@@ -129,6 +129,12 @@ const roomSlice = createSlice({
 		setDrawingZoom: ((state, action: PayloadAction<number>) => {
 			state.drawing.zoom = action.payload;
 		}),
+		setDrawingIncreaseSize: ((state) => {
+			state.drawing.size += 1;
+		}),
+		setDrawingDecreaseSize: ((state) => {
+			state.drawing.size -= 1;
+		}),
 		
 	}
 });

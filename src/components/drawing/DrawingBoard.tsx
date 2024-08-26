@@ -3,13 +3,15 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { roomActions } from '../../store/slices/roomSlice';
 
 import { fabric } from 'fabric';
-import { Box, Grid, IconButton, MenuItem, Select } from '@mui/material'; // eslint-disable-line
+import { Box, Grid, IconButton, MenuItem, Select, Typography } from '@mui/material'; // eslint-disable-line
 
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 import DrawingColorsPallete from './DrawingColorsPallete';
@@ -244,6 +246,16 @@ const DrawingBoard: React.FC = () => {
 		handleSetMode('eraser');
 	};
 
+	const handleIncreaseSize = () => {
+		dispatch(roomActions.setDrawingIncreaseSize());
+
+	};
+
+	const handleDecreaseSize = () => {
+		dispatch(roomActions.setDrawingDecreaseSize());
+
+	};
+
 	const handleUsePaletteColor = (selectedColor: Drawing['color']) => {
 		dispatch(roomActions.setDrawingColor(selectedColor));
 
@@ -337,7 +349,7 @@ const DrawingBoard: React.FC = () => {
 						container
 						gap={0.5}
 						// xs={10}
-						justifyContent={'flex-start'}
+						justifyContent={'center'}
 						wrap='nowrap'
 					>
 						<IconButton
@@ -370,6 +382,27 @@ const DrawingBoard: React.FC = () => {
 							size='small'
 						>
 							<AutoFixNormalIcon />
+						</IconButton>
+						<IconButton
+							aria-label="Increase Size"
+							onClick={handleIncreaseSize}
+							title="Increase Size"
+							size='small'
+						>
+							<AddCircleOutlineIcon
+								style={{ color: mode === 'brush' ? color : 'inherit' }}
+							/>
+						</IconButton>
+						<Typography variant='caption' paddingY={1.1}>{size}</Typography>
+						<IconButton
+							aria-label="Decrease Size"
+							onClick={handleDecreaseSize}
+							title="Decrease Size"
+							size='small'
+						>
+							<RemoveCircleOutlineIcon
+								style={{ color: mode === 'brush' ? color : 'inherit' }}
+							/>
 						</IconButton>
 						
 						{/* Palette Color Menu */}
