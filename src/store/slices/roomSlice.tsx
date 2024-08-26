@@ -86,7 +86,7 @@ const initialState: RoomState = {
 		zoom: 1,
 		colorsMenu: [ 'Row', 'Menu', 'Menu2' ][0],
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
-		color: 'red',
+		color: 'black',
 		bgColors: bgColors,
 		bgColor: bgColors[0]
 	}
