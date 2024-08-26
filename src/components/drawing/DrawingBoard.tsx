@@ -123,11 +123,7 @@ const DrawingBoard: React.FC = () => {
 		handleSetHistory(history);
 	}, [ history ]);
 	
-	const handleSetHistory = (value: fabric.Object[]) => {
-		dispatch(roomActions.setDrawingHistory(JSON.stringify(value)));
-	};
-
-	const handleUsePaletteColor = (selectedColor: string) => {
+	const handleUsePaletteColor = (selectedColor: Drawing['color']) => {
 		dispatch(roomActions.setDrawingColor(selectedColor));
 
 	};
@@ -253,6 +249,10 @@ const DrawingBoard: React.FC = () => {
 	};
 	
 	/* handle history */
+
+	const handleSetHistory = (value: fabric.Object[]) => {
+		dispatch(roomActions.setDrawingHistory(JSON.stringify(value)));
+	};
 	
 	const handleUndo = () => {
 		setCanvas((prevState) => {
