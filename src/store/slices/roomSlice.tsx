@@ -5,7 +5,7 @@ export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left';
 export type RoomMode = 'P2P' | 'SFU';
 export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';
 
-interface Drawing {
+export interface Drawing {
 	history: string
 	historyUndo: fabric.Object[]
 	historyRedo: fabric.Object[]
@@ -13,9 +13,9 @@ interface Drawing {
 	size: number,
 	eraserSize: number,
 	zoom: number,
+	colorsMenu: string,
 	colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
 	color: Drawing['colors'][number],
-	colorsMenu: string,
 	bgColors: string[],
 	bgColor: string
 }
