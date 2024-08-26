@@ -124,9 +124,7 @@ const DrawingBoard: React.FC = () => {
 	}, [ history ]);
 	
 	const handleSetHistory = (value: fabric.Object[]) => {
-		if (canvas) {
-			dispatch(roomActions.setDrawingHistory(JSON.stringify(value)));
-		}
+		dispatch(roomActions.setDrawingHistory(JSON.stringify(value)));
 	};
 
 	const handleUsePaletteColor = (selectedColor: string) => {
@@ -134,15 +132,11 @@ const DrawingBoard: React.FC = () => {
 	};
 
 	const handleSetMode = (value: string) => {
-		if (canvas) {
-			dispatch(roomActions.setDrawingMode(value));
-		}
+		dispatch(roomActions.setDrawingMode(value));
 	};
 
 	const handleSetColor = (value: string) => {
-		if (canvas) {
-			dispatch(roomActions.setDrawingColor(value));
-		}
+		dispatch(roomActions.setDrawingColor(value));
 	};
 
 	const handleSetZoom = (value: number) => {
