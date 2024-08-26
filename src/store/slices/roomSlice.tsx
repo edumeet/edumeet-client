@@ -9,7 +9,8 @@ export interface Drawing {
 	history: string
 	historyUndo: fabric.Object[]
 	historyRedo: fabric.Object[]
-	mode: string,
+	modes: [ 'brush', 'text', 'eraser' ],
+	mode: Drawing['modes'][number],
 	size: number,
 	eraserSize: number,
 	zoom: number,
@@ -80,7 +81,8 @@ const initialState: RoomState = {
 		history: '',
 		historyUndo: [],
 		historyRedo: [],
-		mode: [ 'brush', 'text', 'eraser' ][0],
+		modes: [ 'brush', 'text', 'eraser' ],
+		mode: 'brush',
 		size: 20,
 		eraserSize: 60,
 		zoom: 1,
@@ -112,7 +114,7 @@ const roomSlice = createSlice({
 		) => {
 			state.state = action.payload;
 		}),
-		setDrawingMode: ((state, action: PayloadAction<string>) => {
+		setDrawingMode: ((state, action: PayloadAction<Drawing['mode']>) => {
 			state.drawing.mode = action.payload;
 		}),
 		setDrawingColorsMenu: ((state, action: PayloadAction<string>) => {

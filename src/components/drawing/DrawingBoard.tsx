@@ -126,7 +126,7 @@ const DrawingBoard: React.FC = () => {
 
 	/* handle tools */
 
-	const handleSetMode = (value: string) => {
+	const handleSetMode = (value: Drawing['mode']) => {
 		dispatch(roomActions.setDrawingMode(value));
 	};
 
