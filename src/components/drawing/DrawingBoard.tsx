@@ -38,7 +38,18 @@ const DrawingBoard: React.FC = () => {
 	const [ history, setHistory ] = useState<fabric.Object[]>([]);
 	const [ historyRedo, setHistoryRedo ] = useState<fabric.Object[]>([]);
 	const historyActionRef = useRef<string | null>(null);
-	
+
+	const sizeRef = useRef<NodeJS.Timeout | null>(null);
+
+	useEffect(() => {
+		return () => {
+			if (sizeRef.current) {
+				clearInterval(sizeRef.current);
+				sizeRef.current = null;
+			}
+		};
+	}, []);
+
 	useEffect(() => {
 		if (canvasRef.current) {
 			setCanvas(new fabric.Canvas(canvasRef.current, {
@@ -246,14 +257,54 @@ const DrawingBoard: React.FC = () => {
 		handleSetMode('eraser');
 	};
 
-	const handleIncreaseSize = () => {
-		dispatch(roomActions.setDrawingIncreaseSize());
+	const handleIncreaseSize = (e: React.MouseEvent<HTMLButtonElement>) => {
 
+		switch (e.type) {
+			case 'click':
+				dispatch(roomActions.setDrawingIncreaseSize());
+				break;
+			case 'mousedown':
+				if (!sizeRef.current) {
+					sizeRef.current = setTimeout(() => {
+						sizeRef.current = setInterval(() => {
+							dispatch(roomActions.setDrawingIncreaseSize());
+						}, 120);
+					}, 400);
+				}
+				break;
+			case 'mouseup':
+			case 'mouseleave':
+				if (sizeRef.current) {
+					clearInterval(sizeRef.current);
+					sizeRef.current = null;
+				}
+				break;
+		}
 	};
 
-	const handleDecreaseSize = () => {
-		dispatch(roomActions.setDrawingDecreaseSize());
+	const handleDecreaseSize = (e: React.MouseEvent<HTMLButtonElement>) => {
 
+		switch (e.type) {
+			case 'click':
+				dispatch(roomActions.setDrawingDecreaseSize());
+				break;
+			case 'mousedown':
+				if (!sizeRef.current) {
+					sizeRef.current = setTimeout(() => {
+						sizeRef.current = setInterval(() => {
+							dispatch(roomActions.setDrawingDecreaseSize());
+						}, 120);
+					}, 400);
+				}
+				break;
+			case 'mouseup':
+			case 'mouseleave':
+				if (sizeRef.current) {
+					clearInterval(sizeRef.current);
+					sizeRef.current = null;
+				}
+				break;
+		}
 	};
 
 	const handleUsePaletteColor = (selectedColor: Drawing['color']) => {
@@ -386,6 +437,9 @@ const DrawingBoard: React.FC = () => {
 						<IconButton
 							aria-label="Increase Size"
 							onClick={handleIncreaseSize}
+							onMouseDown={handleIncreaseSize}
+							onMouseUp={handleIncreaseSize}
+							onMouseLeave={handleIncreaseSize}
 							title="Increase Size"
 							size='small'
 						>
@@ -397,6 +451,9 @@ const DrawingBoard: React.FC = () => {
 						<IconButton
 							aria-label="Decrease Size"
 							onClick={handleDecreaseSize}
+							onMouseDown={handleDecreaseSize}
+							onMouseUp={handleIncreaseSize}
+							onMouseLeave={handleIncreaseSize}
 							title="Decrease Size"
 							size='small'
 						>
