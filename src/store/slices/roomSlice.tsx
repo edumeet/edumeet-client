@@ -14,7 +14,8 @@ export interface Drawing {
 	size: number,
 	eraserSize: number,
 	zoom: number,
-	colorsMenu: string,
+	colorsMenus: [ 'Row', 'Menu', 'Menu2' ],
+	colorsMenu: Drawing['colorsMenus'][number],
 	colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
 	color: Drawing['colors'][number],
 	bgColors: string[],
@@ -86,7 +87,8 @@ const initialState: RoomState = {
 		size: 20,
 		eraserSize: 60,
 		zoom: 1,
-		colorsMenu: [ 'Row', 'Menu', 'Menu2' ][0],
+		colorsMenus: [ 'Row', 'Menu', 'Menu2' ],
+		colorsMenu: 'Row',
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
 		color: 'black',
 		bgColors: bgColors,
@@ -117,7 +119,7 @@ const roomSlice = createSlice({
 		setDrawingMode: ((state, action: PayloadAction<Drawing['mode']>) => {
 			state.drawing.mode = action.payload;
 		}),
-		setDrawingColorsMenu: ((state, action: PayloadAction<string>) => {
+		setDrawingColorsMenu: ((state, action: PayloadAction<Drawing['colorsMenu']>) => {
 			state.drawing.colorsMenu = action.payload;
 		}),
 		setDrawingColor: ((state, action: PayloadAction<Drawing['color']>) => {
