@@ -443,9 +443,7 @@ const DrawingBoard: React.FC = () => {
 							title="Increase Size"
 							size='small'
 						>
-							<AddCircleOutlineIcon
-								style={{ color: mode === 'brush' ? color : 'inherit' }}
-							/>
+							<AddCircleOutlineIcon />
 						</IconButton>
 						<Typography variant='caption' paddingY={1.1}>{size}</Typography>
 						<IconButton
@@ -457,9 +455,7 @@ const DrawingBoard: React.FC = () => {
 							title="Decrease Size"
 							size='small'
 						>
-							<RemoveCircleOutlineIcon
-								style={{ color: mode === 'brush' ? color : 'inherit' }}
-							/>
+							<RemoveCircleOutlineIcon />
 						</IconButton>
 						
 						{/* Palette Color Menu */}
