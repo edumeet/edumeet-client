@@ -20,7 +20,13 @@ const DrawingColorsPallete: React.FC<Props> = (props) => {
 		'Menu2': Menu2
 	}[type] || null;
  
-	return Component && <Component type={type} paletteColors={paletteColors} paletteColor={paletteColor} handleUsePaletteColor={handleUsePaletteColor} />;
+	return Component && 
+	<Component
+		type={type}
+		paletteColors={paletteColors}
+		paletteColor={paletteColor}
+		handleUsePaletteColor={handleUsePaletteColor}
+	/>;
 };
 
 export default DrawingColorsPallete;
