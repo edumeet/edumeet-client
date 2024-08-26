@@ -18,8 +18,8 @@ export interface Drawing {
 	colorsMenu: Drawing['colorsMenus'][number],
 	colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
 	color: Drawing['colors'][number],
-	bgColors: string[],
-	bgColor: string
+	bgColors: ['lightgray', 'white', 'black'],
+	bgColor: Drawing['bgColors'][number]
 }
 
 export interface RoomState {
@@ -59,8 +59,6 @@ export interface RoomState {
 
 type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
 
-const bgColors = [ 'lightgray', 'white', 'black' ];
-
 const initialState: RoomState = {
 	logo: edumeetConfig.theme.logo,
 	backgroundImage: edumeetConfig.theme.backgroundImage,
@@ -91,8 +89,8 @@ const initialState: RoomState = {
 		colorsMenu: 'Row',
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
 		color: 'black',
-		bgColors: bgColors,
-		bgColor: bgColors[0]
+		bgColors: [ 'lightgray', 'white', 'black' ],
+		bgColor: 'lightgray'
 	}
 
 };
