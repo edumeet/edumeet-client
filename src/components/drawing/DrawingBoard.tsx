@@ -314,6 +314,9 @@ const DrawingBoard: React.FC = () => {
 					backgroundColor: 'lightgray',
 				}}
 				justifyContent='center'
+				direction='row'
+				wrap='nowrap'
+
 			>
 				{/* Tools */}
 				<Grid
@@ -324,13 +327,19 @@ const DrawingBoard: React.FC = () => {
 						padding: '5px 5px',
 						border: '1px solid gray',
 						borderRadius: '30px',
-						backgroundColor: 'lightgray',
 					}}
-					justifyContent='space-between'
-					xs={6}
+					xs={8}
+					wrap='nowrap'
 				>
 					{/* Tools: Basic */}
-					<Grid item>
+					<Grid
+						item
+						container
+						gap={0.5}
+						// xs={10}
+						justifyContent={'flex-start'}
+						wrap='nowrap'
+					>
 						<IconButton
 							aria-label="Use Pencil"
 							onClick={handleUsePencil}
@@ -371,7 +380,15 @@ const DrawingBoard: React.FC = () => {
 							handleUsePaletteColor={handleUsePaletteColor}
 						/>
 					</Grid>
-					<Grid item>
+					<Grid
+						item
+						container
+						gap={0.5}
+						// xs={2}
+						justifyContent={'flex-end'}
+						wrap='nowrap'
+
+					>
 						<IconButton
 							aria-label="Undo"
 							onClick={handleUndo}
@@ -380,7 +397,7 @@ const DrawingBoard: React.FC = () => {
 							disabled={history.length === 0}
 						>
 							<UndoIcon />
-							<sub>{history.length}</sub>
+							{/* <sub>{history.length}</sub> */}
 						</IconButton>
 						<IconButton
 							aria-label="Redo"
@@ -390,7 +407,7 @@ const DrawingBoard: React.FC = () => {
 							disabled={historyRedo.length === 0}
 						>
 							<RedoIcon />
-							<sub>{historyRedo.length}</sub>
+							{/* <sub>{historyRedo.length}</sub> */}
 						</IconButton>
 						{/* {historyAction} */}
 						<ErasingAllConfirmationButton
