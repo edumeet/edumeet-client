@@ -30,8 +30,10 @@ const DrawingBoard: React.FC = () => {
 	const mode = useAppSelector((state) => state.room.drawing.mode);
 	
 	const sizeRef = useRef<NodeJS.Timeout | null>(null);
-	const size = useAppSelector((state) => state.room.drawing.size);
+	const brushSize = useAppSelector((state) => state.room.drawing.brushSize);
 	const eraserSize = useAppSelector((state) => state.room.drawing.eraserSize);
+	const textSize = useAppSelector((state) => state.room.drawing.textSize);
+	const [ sizeLabel, setSizeLabel ] = useState<number>();
 
 	const colorsMenu = useAppSelector((state) => state.room.drawing.colorsMenu);
 	const colors = useAppSelector((state) => state.room.drawing.colors);
@@ -128,11 +130,23 @@ const DrawingBoard: React.FC = () => {
 
 	useEffect(() => {
 		switch (mode) {
-			case 'brush': handleUsePencil(); break;
-			case 'text': handleUseTextTool(); break;
+			case 'brush':
+				handleUsePencil();
+				setSizeLabel(brushSize);
+				break;
+			case
+				'text':
+				handleUseTextTool();
+				setSizeLabel(textSize);
+
+				break;
+			case 'eraser':
+				handleUseEraserTool();
+				setSizeLabel(eraserSize);
+				break;
 		}
 
-	}, [ canvas, color, size, eraserSize, zoom ]);
+	}, [ canvas, mode, color, brushSize, textSize, eraserSize, zoom ]);
 	
 	useEffect(() => {
 		handleSetHistory(history);
@@ -151,8 +165,8 @@ const DrawingBoard: React.FC = () => {
 	const handleUsePencil = () => {
 
 		const border = 1;
-		const len = size * zoom;
-		const pos = (size / 2) * zoom;
+		const len = brushSize * zoom;
+		const pos = (brushSize / 2) * zoom;
 
 		const cursor = `\
 		url('data:image/svg+xml;utf8,\
@@ -172,7 +186,7 @@ const DrawingBoard: React.FC = () => {
 			if (prevState) {
 				prevState.freeDrawingBrush = new fabric.PencilBrush(prevState);
 				prevState.freeDrawingBrush.color = color;
-				prevState.freeDrawingBrush.width = size;
+				prevState.freeDrawingBrush.width = brushSize;
 				prevState.freeDrawingBrush.strokeLineCap = 'round';
 				prevState.freeDrawingCursor = cursor;
 				prevState.isDrawingMode = true;
@@ -262,13 +276,36 @@ const DrawingBoard: React.FC = () => {
 
 		switch (e.type) {
 			case 'click':
-				dispatch(roomActions.setDrawingIncreaseSize());
+
+				switch (mode) {
+					case 'brush':
+						dispatch(roomActions.setDrawingBrushSizeInc());
+						break;
+					case 'text':
+						dispatch(roomActions.setDrawingTexSizetInc());
+						break;
+					case 'eraser':
+						dispatch(roomActions.setDrawingEraserSizeInc());
+						break;
+				}				
 				break;
 			case 'mousedown':
 				if (!sizeRef.current) {
 					sizeRef.current = setTimeout(() => {
 						sizeRef.current = setInterval(() => {
-							dispatch(roomActions.setDrawingIncreaseSize());
+
+							switch (mode) {
+								case 'brush':
+									dispatch(roomActions.setDrawingBrushSizeInc());
+									break;
+								case 'text':
+									dispatch(roomActions.setDrawingTexSizetInc());
+									break;
+								case 'eraser':
+									dispatch(roomActions.setDrawingEraserSizeInc());
+									break;
+							}			
+
 						}, 100);
 					}, 400);
 				}
@@ -287,13 +324,37 @@ const DrawingBoard: React.FC = () => {
 
 		switch (e.type) {
 			case 'click':
-				dispatch(roomActions.setDrawingDecreaseSize());
+
+				switch (mode) {
+					case 'brush':
+						dispatch(roomActions.setDrawingBrushSizeDec());
+						break;
+					case 'text':
+						dispatch(roomActions.setDrawingTextSizeDec());
+						break;
+					case 'eraser':
+						dispatch(roomActions.setDrawingEraserSizeDec());
+						break;
+				}				
+				
 				break;
 			case 'mousedown':
 				if (!sizeRef.current) {
 					sizeRef.current = setTimeout(() => {
 						sizeRef.current = setInterval(() => {
-							dispatch(roomActions.setDrawingDecreaseSize());
+
+							switch (mode) {
+								case 'brush':
+									dispatch(roomActions.setDrawingBrushSizeDec());
+									break;
+								case 'text':
+									dispatch(roomActions.setDrawingTextSizeDec());
+									break;
+								case 'eraser':
+									dispatch(roomActions.setDrawingEraserSizeDec());
+									break;
+							}	
+								
 						}, 100);
 					}, 400);
 				}
@@ -449,7 +510,9 @@ const DrawingBoard: React.FC = () => {
 						>
 							<AddCircleOutlineIcon />
 						</IconButton>
-						<Typography variant='caption' paddingY={1.1}>{size}</Typography>
+
+						<Typography variant='caption' paddingY={1.1}>{sizeLabel}</Typography>
+						
 						<IconButton
 							aria-label="Decrease Size"
 							onClick={handleDecreaseSize}

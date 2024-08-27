@@ -41,11 +41,12 @@ export interface RoomState {
 		history: string
 		historyUndo: fabric.Object[]
 		historyRedo: fabric.Object[]
+		zoom: number,
 		modes: [ 'brush', 'text', 'eraser' ],
 		mode: RoomState['drawing']['modes'][number],
-		size: number,
+		brushSize: number,
+		textSize: number,
 		eraserSize: number,
-		zoom: number,
 		colorsMenus: [ 'Row', 'Menu', 'Menu2' ],
 		colorsMenu: RoomState['drawing']['colorsMenus'][number],
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
@@ -80,7 +81,8 @@ const initialState: RoomState = {
 		historyRedo: [],
 		modes: [ 'brush', 'text', 'eraser' ],
 		mode: 'brush',
-		size: 20,
+		brushSize: 20,
+		textSize: 30,
 		eraserSize: 60,
 		zoom: 1,
 		colorsMenus: [ 'Row', 'Menu', 'Menu2' ],
@@ -127,11 +129,23 @@ const roomSlice = createSlice({
 		setDrawingZoom: ((state, action: PayloadAction<number>) => {
 			state.drawing.zoom = action.payload;
 		}),
-		setDrawingIncreaseSize: ((state) => {
-			state.drawing.size += 1;
+		setDrawingBrushSizeInc: ((state) => {
+			state.drawing.brushSize += 1;
 		}),
-		setDrawingDecreaseSize: ((state) => {
-			state.drawing.size -= 1;
+		setDrawingBrushSizeDec: ((state) => {
+			state.drawing.brushSize -= 1;
+		}),
+		setDrawingTexSizetInc: ((state) => {
+			state.drawing.textSize += 1;
+		}),
+		setDrawingTextSizeDec: ((state) => {
+			state.drawing.textSize -= 1;
+		}),
+		setDrawingEraserSizeInc: ((state) => {
+			state.drawing.eraserSize += 1;
+		}),
+		setDrawingEraserSizeDec: ((state) => {
+			state.drawing.eraserSize -= 1;
 		}),
 		
 	}
