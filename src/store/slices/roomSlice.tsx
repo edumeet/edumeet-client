@@ -42,8 +42,8 @@ export interface RoomState {
 		historyUndo: fabric.Object[]
 		historyRedo: fabric.Object[]
 		zoom: number,
-		modes: [ 'brush', 'text', 'eraser' ],
-		mode: RoomState['drawing']['modes'][number],
+		tools: [ 'brush', 'text', 'eraser' ],
+		tool: RoomState['drawing']['tools'][number],
 		brushSize: number,
 		textSize: number,
 		eraserSize: number,
@@ -79,8 +79,8 @@ const initialState: RoomState = {
 		history: '',
 		historyUndo: [],
 		historyRedo: [],
-		modes: [ 'brush', 'text', 'eraser' ],
-		mode: 'brush',
+		tools: [ 'brush', 'text', 'eraser' ],
+		tool: 'brush',
 		brushSize: 20,
 		textSize: 30,
 		eraserSize: 60,
@@ -114,8 +114,8 @@ const roomSlice = createSlice({
 		) => {
 			state.state = action.payload;
 		}),
-		setDrawingMode: ((state, action: PayloadAction<RoomState['drawing']['mode']>) => {
-			state.drawing.mode = action.payload;
+		setDrawingTool: ((state, action: PayloadAction<RoomState['drawing']['tool']>) => {
+			state.drawing.tool = action.payload;
 		}),
 		setDrawingColorsMenu: ((state, action: PayloadAction<RoomState['drawing']['colorsMenu']>) => {
 			state.drawing.colorsMenu = action.payload;

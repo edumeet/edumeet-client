@@ -27,7 +27,7 @@ const DrawingBoard: React.FC = () => {
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 	const zoom = useAppSelector((state) => state.room.drawing.zoom);
 	
-	const mode = useAppSelector((state) => state.room.drawing.mode);
+	const tool = useAppSelector((state) => state.room.drawing.tool);
 	
 	const sizeRef = useRef<NodeJS.Timeout | null>(null);
 	const brushSize = useAppSelector((state) => state.room.drawing.brushSize);
@@ -129,7 +129,7 @@ const DrawingBoard: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		switch (mode) {
+		switch (tool) {
 			case 'brush':
 				handleUsePencil();
 				setSizeLabel(brushSize);
@@ -146,7 +146,7 @@ const DrawingBoard: React.FC = () => {
 				break;
 		}
 
-	}, [ canvas, mode, color, brushSize, textSize, eraserSize, zoom ]);
+	}, [ canvas, tool, color, brushSize, textSize, eraserSize, zoom ]);
 	
 	useEffect(() => {
 		handleSetHistory(history);
@@ -154,8 +154,8 @@ const DrawingBoard: React.FC = () => {
 
 	/* handle tools */
 
-	const handleSetMode = (value: RoomState['drawing']['mode']) => {
-		dispatch(roomActions.setDrawingMode(value));
+	const handleSetTool = (value: RoomState['drawing']['tool']) => {
+		dispatch(roomActions.setDrawingTool(value));
 	};
 
 	const handleSetZoom = (value: number) => {
@@ -197,7 +197,7 @@ const DrawingBoard: React.FC = () => {
 			return prevState;
 		});
 
-		handleSetMode('brush');
+		handleSetTool('brush');
 	};
 	
 	const handleUseTextTool = () => {
@@ -225,7 +225,7 @@ const DrawingBoard: React.FC = () => {
 				
 				});
 
-				handleSetMode('text');
+				handleSetTool('text');
 			}
 			
 			return prevState;
@@ -269,7 +269,7 @@ const DrawingBoard: React.FC = () => {
 			return prevState;
 		});
 
-		handleSetMode('eraser');
+		handleSetTool('eraser');
 	};
 
 	const handleIncreaseSize = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -277,7 +277,7 @@ const DrawingBoard: React.FC = () => {
 		switch (e.type) {
 			case 'click':
 
-				switch (mode) {
+				switch (tool) {
 					case 'brush':
 						dispatch(roomActions.setDrawingBrushSizeInc());
 						break;
@@ -294,7 +294,7 @@ const DrawingBoard: React.FC = () => {
 					sizeRef.current = setTimeout(() => {
 						sizeRef.current = setInterval(() => {
 
-							switch (mode) {
+							switch (tool) {
 								case 'brush':
 									dispatch(roomActions.setDrawingBrushSizeInc());
 									break;
@@ -325,7 +325,7 @@ const DrawingBoard: React.FC = () => {
 		switch (e.type) {
 			case 'click':
 
-				switch (mode) {
+				switch (tool) {
 					case 'brush':
 						dispatch(roomActions.setDrawingBrushSizeDec());
 						break;
@@ -343,7 +343,7 @@ const DrawingBoard: React.FC = () => {
 					sizeRef.current = setTimeout(() => {
 						sizeRef.current = setInterval(() => {
 
-							switch (mode) {
+							switch (tool) {
 								case 'brush':
 									dispatch(roomActions.setDrawingBrushSizeDec());
 									break;
@@ -469,29 +469,29 @@ const DrawingBoard: React.FC = () => {
 							aria-label="Use Pencil"
 							onClick={handleUsePencil}
 							title="Use Pencil"
-							style={{ border: mode === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
+							style={{ border: tool === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
 							<DrawIcon
-								style={{ color: mode === 'brush' ? color : 'inherit' }}
+								style={{ color: tool === 'brush' ? color : 'inherit' }}
 							/>
 						</IconButton>
 						<IconButton
 							aria-label="Use Text Tool"
 							onClick={handleUseTextTool}
 							title="Use Text Tool"
-							style={{ border: mode === 'text' ? '2px solid gray' : '2px solid lightgray' }}
+							style={{ border: tool === 'text' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
 							<AbcIcon
-								style={{ color: mode === 'text' ? color : 'inherit' }}
+								style={{ color: tool === 'text' ? color : 'inherit' }}
 							/>
 						</IconButton>
 						<IconButton
 							aria-label="Use Eraser Tool"
 							onClick={handleUseEraserTool}
 							title="Use Eraser Tool"
-							style={{ border: mode === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
+							style={{ border: tool === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
 							<AutoFixNormalIcon />
