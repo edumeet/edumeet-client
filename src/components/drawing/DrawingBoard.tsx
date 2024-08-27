@@ -215,7 +215,7 @@ const DrawingBoard: React.FC = () => {
 						left: pointer.x,
 						top: pointer.y,
 						fill: color,
-						fontSize: 100,
+						fontSize: textSize,
 						fontFamily: 'Arial',
 					});
 
