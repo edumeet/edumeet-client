@@ -306,8 +306,8 @@ const DrawingBoard: React.FC = () => {
 									break;
 							}			
 
-						}, 100);
-					}, 400);
+						}, 20);
+					}, 600);
 				}
 				break;
 			case 'mouseup':
@@ -355,8 +355,8 @@ const DrawingBoard: React.FC = () => {
 									break;
 							}	
 								
-						}, 100);
-					}, 400);
+						}, 20);
+					}, 600);
 				}
 				break;
 			case 'mouseup':
