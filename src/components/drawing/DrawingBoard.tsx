@@ -30,7 +30,7 @@ const DrawingBoard: React.FC = () => {
 	const tool = useAppSelector((state) => state.room.drawing.tool);
 	
 	const sizeRef = useRef<NodeJS.Timeout | null>(null);
-	const brushSize = useAppSelector((state) => state.room.drawing.brushSize);
+	const pencilBrushSize = useAppSelector((state) => state.room.drawing.pencilBrushSize);
 	const eraserSize = useAppSelector((state) => state.room.drawing.eraserSize);
 	const textSize = useAppSelector((state) => state.room.drawing.textSize);
 	const [ sizeLabel, setSizeLabel ] = useState<number>();
@@ -131,8 +131,8 @@ const DrawingBoard: React.FC = () => {
 	useEffect(() => {
 		switch (tool) {
 			case 'brush':
-				handleUsePencil();
-				setSizeLabel(brushSize);
+				handleUsePencilBrush();
+				setSizeLabel(pencilBrushSize);
 				break;
 			case
 				'text':
@@ -146,7 +146,7 @@ const DrawingBoard: React.FC = () => {
 				break;
 		}
 
-	}, [ canvas, tool, color, brushSize, textSize, eraserSize, zoom ]);
+	}, [ canvas, tool, color, pencilBrushSize, textSize, eraserSize, zoom ]);
 	
 	useEffect(() => {
 		handleSetHistory(history);
@@ -162,11 +162,11 @@ const DrawingBoard: React.FC = () => {
 		dispatch(roomActions.setDrawingZoom(value));
 	};
 
-	const handleUsePencil = () => {
+	const handleUsePencilBrush = () => {
 
 		const border = 1;
-		const len = brushSize * zoom;
-		const pos = (brushSize / 2) * zoom;
+		const len = pencilBrushSize * zoom;
+		const pos = (pencilBrushSize / 2) * zoom;
 
 		const cursor = `\
 		url('data:image/svg+xml;utf8,\
@@ -186,7 +186,7 @@ const DrawingBoard: React.FC = () => {
 			if (prevState) {
 				prevState.freeDrawingBrush = new fabric.PencilBrush(prevState);
 				prevState.freeDrawingBrush.color = color;
-				prevState.freeDrawingBrush.width = brushSize;
+				prevState.freeDrawingBrush.width = pencilBrushSize;
 				prevState.freeDrawingBrush.strokeLineCap = 'round';
 				prevState.freeDrawingCursor = cursor;
 				prevState.isDrawingMode = true;
@@ -279,7 +279,7 @@ const DrawingBoard: React.FC = () => {
 
 				switch (tool) {
 					case 'brush':
-						dispatch(roomActions.setDrawingBrushSizeInc());
+						dispatch(roomActions.setDrawingPencilBrushSizeInc());
 						break;
 					case 'text':
 						dispatch(roomActions.setDrawingTexSizetInc());
@@ -296,7 +296,7 @@ const DrawingBoard: React.FC = () => {
 
 							switch (tool) {
 								case 'brush':
-									dispatch(roomActions.setDrawingBrushSizeInc());
+									dispatch(roomActions.setDrawingPencilBrushSizeInc());
 									break;
 								case 'text':
 									dispatch(roomActions.setDrawingTexSizetInc());
@@ -327,7 +327,7 @@ const DrawingBoard: React.FC = () => {
 
 				switch (tool) {
 					case 'brush':
-						dispatch(roomActions.setDrawingBrushSizeDec());
+						dispatch(roomActions.setDrawingPencilBrushSizeDec());
 						break;
 					case 'text':
 						dispatch(roomActions.setDrawingTextSizeDec());
@@ -345,7 +345,7 @@ const DrawingBoard: React.FC = () => {
 
 							switch (tool) {
 								case 'brush':
-									dispatch(roomActions.setDrawingBrushSizeDec());
+									dispatch(roomActions.setDrawingPencilBrushSizeDec());
 									break;
 								case 'text':
 									dispatch(roomActions.setDrawingTextSizeDec());
@@ -466,9 +466,9 @@ const DrawingBoard: React.FC = () => {
 						wrap='nowrap'
 					>
 						<IconButton
-							aria-label="Use Pencil"
-							onClick={handleUsePencil}
-							title="Use Pencil"
+							aria-label="Use Pencil Brush Tool"
+							onClick={handleUsePencilBrush}
+							title="Use Pencil Brush Tool"
 							style={{ border: tool === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>

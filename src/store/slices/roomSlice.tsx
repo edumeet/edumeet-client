@@ -44,7 +44,7 @@ export interface RoomState {
 		zoom: number,
 		tools: [ 'brush', 'text', 'eraser' ],
 		tool: RoomState['drawing']['tools'][number],
-		brushSize: number,
+		pencilBrushSize: number,
 		textSize: number,
 		eraserSize: number,
 		colorsMenus: [ 'Row', 'Menu' ],
@@ -81,7 +81,7 @@ const initialState: RoomState = {
 		historyRedo: [],
 		tools: [ 'brush', 'text', 'eraser' ],
 		tool: 'brush',
-		brushSize: 20,
+		pencilBrushSize: 20,
 		textSize: 30,
 		eraserSize: 60,
 		zoom: 1,
@@ -129,11 +129,11 @@ const roomSlice = createSlice({
 		setDrawingZoom: ((state, action: PayloadAction<number>) => {
 			state.drawing.zoom = action.payload;
 		}),
-		setDrawingBrushSizeInc: ((state) => {
-			state.drawing.brushSize += 1;
+		setDrawingPencilBrushSizeInc: ((state) => {
+			state.drawing.pencilBrushSize += 1;
 		}),
-		setDrawingBrushSizeDec: ((state) => {
-			state.drawing.brushSize -= 1;
+		setDrawingPencilBrushSizeDec: ((state) => {
+			state.drawing.pencilBrushSize -= 1;
 		}),
 		setDrawingTexSizetInc: ((state) => {
 			state.drawing.textSize += 1;
