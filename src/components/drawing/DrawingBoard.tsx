@@ -46,25 +46,8 @@ const DrawingBoard: React.FC = () => {
 
 	const theme = useTheme();     
 	const curr = useMediaQuery(theme.breakpoints.between('xs', 'md'));
-	
-	// set colors menu type depending on the screen size
-	useEffect(() => {
-		if (curr) {
-			dispatch(roomActions.setDrawingColorsMenu('Menu'));
-		} else {
-			dispatch(roomActions.setDrawingColorsMenu('Row'));
-		}
-	}, [ curr ]);
 
-	useEffect(() => {
-		return () => {
-			if (sizeRef.current) {
-				clearInterval(sizeRef.current);
-				sizeRef.current = null;
-			}
-		};
-	}, []);
-
+	/* create canvas object */
 	useEffect(() => {
 		if (canvasRef.current) {
 			setCanvas(new fabric.Canvas(canvasRef.current, {
@@ -140,6 +123,7 @@ const DrawingBoard: React.FC = () => {
 		}
 	}, []);
 
+	/* choosing tool */
 	useEffect(() => {
 		switch (tool) {
 			case 'brush':
@@ -160,18 +144,37 @@ const DrawingBoard: React.FC = () => {
 
 	}, [ canvas, tool, color, pencilBrushSize, textSize, eraserSize, zoom ]);
 	
+	/* clear holding size button */
+	useEffect(() => {
+		return () => {
+			if (sizeRef.current) {
+				clearInterval(sizeRef.current);
+				sizeRef.current = null;
+			}
+		};
+	}, []);
+    
+	// set colors menu type depending on the screen size
+	useEffect(() => {
+		if (curr) {
+			dispatch(roomActions.setDrawingColorsMenu('Menu'));
+		} else {
+			dispatch(roomActions.setDrawingColorsMenu('Row'));
+		}
+	}, [ curr ]);
+
+	/* updating history */
 	useEffect(() => {
 		handleSetHistory(history);
 	}, [ history ]);
 
-	/* handle tools */
-
-	const handleSetTool = (value: RoomState['drawing']['tool']) => {
-		dispatch(roomActions.setDrawingTool(value));
-	};
-
+	/* handling functions */
 	const handleSetZoom = (value: number) => {
 		dispatch(roomActions.setDrawingZoom(value));
+	};
+    
+	const handleSetTool = (value: RoomState['drawing']['tool']) => {
+		dispatch(roomActions.setDrawingTool(value));
 	};
 
 	const handleUsePencilBrush = () => {
