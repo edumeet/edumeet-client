@@ -4,7 +4,7 @@ import Menu from './drawingpalettes/Menu';
 import { RoomState } from '../../store/slices/roomSlice';
 
 interface Props {
-	type: string;
+	type: RoomState['drawing']['colorsMenu'];
 	paletteColors: RoomState['drawing']['colors'];
 	paletteColor: RoomState['drawing']['color'];
 	handleUsePaletteColor: (selectedColor: RoomState['drawing']['color']) => void; // eslint-disable-line
