@@ -287,7 +287,7 @@ const DrawingBoard: React.FC = () => {
 		handleSetTool('eraser');
 	};
 
-	const handleIncreaseSize = (e: React.MouseEvent<HTMLButtonElement>) => {
+	const handleIncSize = (e: React.MouseEvent<HTMLButtonElement>) => {
 
 		switch (e.type) {
 			case 'click':
@@ -335,7 +335,7 @@ const DrawingBoard: React.FC = () => {
 		}
 	};
 
-	const handleDecreaseSize = (e: React.MouseEvent<HTMLButtonElement>) => {
+	const handleDecSize = (e: React.MouseEvent<HTMLButtonElement>) => {
 
 		switch (e.type) {
 			case 'click':
@@ -522,10 +522,10 @@ const DrawingBoard: React.FC = () => {
 					>
 						<IconButton
 							aria-label="Increase Size"
-							onClick={handleIncreaseSize}
-							onMouseDown={handleIncreaseSize}
-							onMouseUp={handleIncreaseSize}
-							onMouseLeave={handleIncreaseSize}
+							onClick={handleIncSize}
+							onMouseDown={handleIncSize}
+							onMouseUp={handleIncSize}
+							onMouseLeave={handleIncSize}
 							title="Increase Size"
 							size='small'
 						>
@@ -544,10 +544,10 @@ const DrawingBoard: React.FC = () => {
 						
 						<IconButton
 							aria-label="Decrease Size"
-							onClick={handleDecreaseSize}
-							onMouseDown={handleDecreaseSize}
-							onMouseUp={handleIncreaseSize}
-							onMouseLeave={handleIncreaseSize}
+							onClick={handleDecSize}
+							onMouseDown={handleDecSize}
+							onMouseUp={handleIncSize}
+							onMouseLeave={handleIncSize}
 							title="Decrease Size"
 							size='small'
 						>
