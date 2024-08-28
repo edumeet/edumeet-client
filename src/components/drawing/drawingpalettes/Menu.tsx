@@ -1,6 +1,6 @@
 import IconButton from '@mui/material/IconButton';
 import CircleIcon from '@mui/icons-material/Circle';
-import { Popover, Box, Grid } from '@mui/material';
+import { Popover, Grid } from '@mui/material';
 import { useState } from 'react';
 import { RoomState } from '../../../store/slices/roomSlice';
 
@@ -32,7 +32,6 @@ const Menu: React.FC<Props> = (props) => {
 			style={{ color: paletteColor, borderRadius: '50%' }}
 			size='small'
 		>
-			{/* <CircleIcon style={{ color: color }} /> */}
 			<CircleIcon />
 		</IconButton>
 		<Popover
@@ -40,32 +39,47 @@ const Menu: React.FC<Props> = (props) => {
 			anchorEl={anchorEl}
 			onClose={handleClose}
 			anchorOrigin={{
+				horizontal: 'center',
 				vertical: 'top',
-				horizontal: 'left',
 			}}
 			transformOrigin={{
-				vertical: 'top',
-				horizontal: 'right',
+				horizontal: 'center',
+				vertical: 'bottom',
+			}}
+			elevation={0}
+			slotProps={{
+				paper: {
+					style: { backgroundColor: 'transparent' },
+				},
 			}}
 		>
-			<Box p={2}>
-				<Grid container spacing={1}>
-					{paletteColors.map((color) => (
-						<Grid item key={color}>
-							<IconButton
-								style={{ color: color, borderRadius: '50%' }}
-								onClick={() => {
-									handleClose();
-									handleUsePaletteColor(color);
-								}}
-								size='small'
-							>
-								<CircleIcon style={{ color: color, borderRadius: '50%' }} />
-							</IconButton>
-						</Grid>
-					))}
-				</Grid>
-			</Box>
+			
+			<Grid
+				container
+				spacing={0}
+				direction={'column'}
+				border={0}
+			>
+					
+				{paletteColors.map((color) => (
+					<Grid
+						item
+						key={color}
+					>
+						{color !== paletteColor &&
+						<IconButton
+							onClick={() => {
+								handleClose();
+								handleUsePaletteColor(color);
+							}}
+							size='small'
+						>
+							<CircleIcon style={{ color: color, borderRadius: '50%' }} />
+						</IconButton>
+						}
+					</Grid>
+				))}
+			</Grid>
 		</Popover>
 	</>;
 
