@@ -129,7 +129,7 @@ const DrawingBoard: React.FC = () => {
 		}
 	}, []);
 
-	/* choosing tool */
+	/* tools */
 	useEffect(() => {
 		switch (tool) {
 			case 'pencilBrush':
@@ -150,7 +150,7 @@ const DrawingBoard: React.FC = () => {
 
 	}, [ canvas, tool, color, pencilBrushSize, textSize, eraserSize, zoom ]);
 	
-	/* clear holding size button */
+	/* size  */
 	useEffect(() => {
 		return () => {
 			if (sizeRef.current) {
@@ -160,7 +160,7 @@ const DrawingBoard: React.FC = () => {
 		};
 	}, []);
     
-	// set colors menu type depending on the screen size
+	/* colors menu */
 	useEffect(() => {
 		if (isColorMenuRow) {
 			dispatch(roomActions.setDrawingColorsMenu('Menu'));
@@ -169,7 +169,7 @@ const DrawingBoard: React.FC = () => {
 		}
 	}, [ isColorMenuRow ]);
 
-	/* updating history */
+	/* history */
 	useEffect(() => {
 		handleSetHistory(history);
 	}, [ history ]);
