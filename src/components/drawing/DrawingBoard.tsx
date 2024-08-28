@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { roomActions } from '../../store/slices/roomSlice';
 
 import { fabric } from 'fabric';
-import { Box, Divider, Grid, IconButton, MenuItem, Select, Typography } from '@mui/material'; // eslint-disable-line
+import { Box, Divider, Grid, IconButton, MenuItem, Select, Typography, useMediaQuery, useTheme } from '@mui/material'; // eslint-disable-line
 
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
@@ -43,6 +43,18 @@ const DrawingBoard: React.FC = () => {
 	const [ history, setHistory ] = useState<fabric.Object[]>([]);
 	const [ historyRedo, setHistoryRedo ] = useState<fabric.Object[]>([]);
 	const historyActionRef = useRef<string | null>(null);
+
+	const theme = useTheme();     
+	const curr = useMediaQuery(theme.breakpoints.between('xs', 'md'));
+	
+	// set colors menu type depending on the screen size
+	useEffect(() => {
+		if (curr) {
+			dispatch(roomActions.setDrawingColorsMenu('Menu'));
+		} else {
+			dispatch(roomActions.setDrawingColorsMenu('Row'));
+		}
+	}, [ curr ]);
 
 	useEffect(() => {
 		return () => {
