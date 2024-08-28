@@ -19,7 +19,11 @@ import { RoomState } from '../../store/slices/roomSlice';
 
 const DrawingBoard: React.FC = () => {
 	const dispatch = useAppDispatch();
+    
+	// theme
+	const theme = useTheme();     
 	
+	// canvas
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas>();
 	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
@@ -27,25 +31,27 @@ const DrawingBoard: React.FC = () => {
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 	const zoom = useAppSelector((state) => state.room.drawing.zoom);
 	
+	// tools
 	const tool = useAppSelector((state) => state.room.drawing.tool);
 	
+	// size
 	const sizeRef = useRef<NodeJS.Timeout | null>(null);
 	const pencilBrushSize = useAppSelector((state) => state.room.drawing.pencilBrushSize);
 	const eraserSize = useAppSelector((state) => state.room.drawing.eraserSize);
 	const textSize = useAppSelector((state) => state.room.drawing.textSize);
 	const [ sizeLabel, setSizeLabel ] = useState<number>();
 
+	// colors
+	const isColorMenuRow = useMediaQuery(theme.breakpoints.between('xs', 'md'));
 	const colorsMenu = useAppSelector((state) => state.room.drawing.colorsMenu);
 	const colors = useAppSelector((state) => state.room.drawing.colors);
 	const color = useAppSelector((state) => state.room.drawing.color);
 	const bgColor = useAppSelector((state) => state.room.drawing.bgColor);
 	
+	// history
 	const [ history, setHistory ] = useState<fabric.Object[]>([]);
 	const [ historyRedo, setHistoryRedo ] = useState<fabric.Object[]>([]);
 	const historyActionRef = useRef<string | null>(null);
-
-	const theme = useTheme();     
-	const curr = useMediaQuery(theme.breakpoints.between('xs', 'md'));
 
 	/* create canvas object */
 	useEffect(() => {
@@ -156,12 +162,12 @@ const DrawingBoard: React.FC = () => {
     
 	// set colors menu type depending on the screen size
 	useEffect(() => {
-		if (curr) {
+		if (isColorMenuRow) {
 			dispatch(roomActions.setDrawingColorsMenu('Menu'));
 		} else {
 			dispatch(roomActions.setDrawingColorsMenu('Row'));
 		}
-	}, [ curr ]);
+	}, [ isColorMenuRow ]);
 
 	/* updating history */
 	useEffect(() => {
