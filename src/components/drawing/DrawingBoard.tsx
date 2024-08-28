@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { roomActions } from '../../store/slices/roomSlice';
 
 import { fabric } from 'fabric';
-import { Box, Divider, Grid, IconButton, MenuItem, Select, Typography, useMediaQuery, useTheme } from '@mui/material'; // eslint-disable-line
+import { Box, Divider, Grid, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
