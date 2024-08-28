@@ -1,6 +1,6 @@
 import React from 'react';
-import Row from './drawingpalettes/Row';
-import Menu from './drawingpalettes/Menu';
+import Row from './colorsMenus/Row';
+import Menu from './colorsMenus/Menu';
 import { RoomState } from '../../store/slices/roomSlice';
 
 interface Props {
