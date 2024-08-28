@@ -1,7 +1,6 @@
 import React from 'react';
 import Row from './drawingpalettes/Row';
 import Menu from './drawingpalettes/Menu';
-import Menu2 from './drawingpalettes/Menu2';
 import { RoomState } from '../../store/slices/roomSlice';
 
 interface Props {
@@ -13,7 +12,7 @@ interface Props {
 
 const DrawingColorsPallete: React.FC<Props> = (props) => {
   
-	const Component = { Row, Menu, Menu2 }[props.type] || null;
+	const Component = { Row, Menu }[props.type] || null;
 
 	return Component ? <Component {...props} /> : null;
 
