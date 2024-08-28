@@ -10,7 +10,7 @@ interface Props {
 	handleUsePaletteColor: (selectedColor: RoomState['drawing']['color']) => void; // eslint-disable-line
 }
 
-const DrawingColorsPallete: React.FC<Props> = (props) => {
+const DrawingColorsPalette: React.FC<Props> = (props) => {
   
 	const Component = { Row, Menu }[props.type] || null;
 
@@ -18,4 +18,4 @@ const DrawingColorsPallete: React.FC<Props> = (props) => {
 
 };
 
-export default DrawingColorsPallete;
+export default DrawingColorsPalette;

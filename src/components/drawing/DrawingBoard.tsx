@@ -14,7 +14,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
-import DrawingColorsPallete from './DrawingColorsPallete';
+import DrawingColorsPalette from './DrawingColorsPalette';
 import { RoomState } from '../../store/slices/roomSlice';
 
 const DrawingBoard: React.FC = () => {
@@ -567,7 +567,7 @@ const DrawingBoard: React.FC = () => {
 						container
 						xs='auto'
 					>							
-						<DrawingColorsPallete
+						<DrawingColorsPalette
 							type={colorsMenu}
 							paletteColors={colors}
 							paletteColor={color}
