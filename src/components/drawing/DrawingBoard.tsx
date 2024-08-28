@@ -425,15 +425,15 @@ const DrawingBoard: React.FC = () => {
 
 	return (
 		<Grid container>
-			{/* Main */}
+
+			{/* Canvas */}
 			<Grid item>
-				{/* Canvas */}
 				<Box ref={canvasRef} component="canvas" />
 			</Grid>
 
 			{/* Menu */}
 			<Grid container item
-				xs={12}
+				// xs={12}
 				sx={{
 					borderTop: '1px solid gray',
 					backgroundColor: 'lightgray',
@@ -443,26 +443,26 @@ const DrawingBoard: React.FC = () => {
 				wrap='nowrap'
 
 			>
-				{/* Tools */}
+				{/* Toolbar */}
 				<Grid
 					item
-					container
+					container	
 					margin={1}
-					sx={{
-						padding: '5px 5px',
-						border: '1px solid gray',
-						borderRadius: '30px',
-					}}
-					xs={8}
+					border={1}
+					borderColor={'gray'}
+					borderRadius={6}
+					padding={0.6}
 					wrap='nowrap'
+					gap={0.5}
+					xs='auto'
 				>
-					{/* Tools: Basic */}
+					
+					{/* Draw */} <Divider orientation="vertical" sx={{ display: 'none' }} />
+
 					<Grid
 						item
 						container
-						gap={0.5}
-						// xs={10}
-						justifyContent={'center'}
+						xs='auto'
 						wrap='nowrap'
 					>
 						<IconButton
@@ -496,9 +496,15 @@ const DrawingBoard: React.FC = () => {
 						>
 							<AutoFixNormalIcon />
 						</IconButton>
+					</Grid>
 
-						<Divider orientation="vertical" />
+					{ /* Size */ } <Divider orientation="vertical" />
 
+					<Grid
+						item
+						container
+						xs='auto'
+					>
 						<IconButton
 							aria-label="Increase Size"
 							onClick={handleIncreaseSize}
@@ -512,7 +518,7 @@ const DrawingBoard: React.FC = () => {
 						</IconButton>
 
 						<Typography variant='caption' paddingY={1.1}>{sizeLabel}</Typography>
-						
+							
 						<IconButton
 							aria-label="Decrease Size"
 							onClick={handleDecreaseSize}
@@ -524,10 +530,15 @@ const DrawingBoard: React.FC = () => {
 						>
 							<RemoveCircleOutlineIcon />
 						</IconButton>
+					</Grid>
 
-						<Divider orientation="vertical" />
-						
-						{/* Palette Color Menu */}
+					{/* Color */} <Divider orientation="vertical" />
+
+					<Grid
+						item
+						container
+						xs='auto'
+					>							
 						<DrawingColorsPallete
 							type={colorsMenu}
 							paletteColors={colors}
@@ -535,17 +546,17 @@ const DrawingBoard: React.FC = () => {
 							handleUsePaletteColor={handleUsePaletteColor}
 						/>
 					</Grid>
+
+					{/* History */} <Divider orientation="vertical" />
+
 					<Grid
 						item
 						container
-						gap={0.5}
-						// xs={2}
+						xs='auto'
 						justifyContent={'flex-end'}
 						wrap='nowrap'
 
 					>
-						<Divider orientation="vertical" />
-
 						<IconButton
 							aria-label="Undo"
 							onClick={handleUndo}
