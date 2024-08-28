@@ -126,7 +126,7 @@ const DrawingBoard: React.FC = () => {
 	/* choosing tool */
 	useEffect(() => {
 		switch (tool) {
-			case 'brush':
+			case 'pencilBrush':
 				handleUsePencilBrush();
 				setSizeLabel(pencilBrushSize);
 				break;
@@ -212,7 +212,7 @@ const DrawingBoard: React.FC = () => {
 			return prevState;
 		});
 
-		handleSetTool('brush');
+		handleSetTool('pencilBrush');
 	};
 	
 	const handleUseTextTool = () => {
@@ -293,7 +293,7 @@ const DrawingBoard: React.FC = () => {
 			case 'click':
 
 				switch (tool) {
-					case 'brush':
+					case 'pencilBrush':
 						dispatch(roomActions.setDrawingPencilBrushSizeInc());
 						break;
 					case 'text':
@@ -310,7 +310,7 @@ const DrawingBoard: React.FC = () => {
 						sizeRef.current = setInterval(() => {
 
 							switch (tool) {
-								case 'brush':
+								case 'pencilBrush':
 									dispatch(roomActions.setDrawingPencilBrushSizeInc());
 									break;
 								case 'text':
@@ -341,7 +341,7 @@ const DrawingBoard: React.FC = () => {
 			case 'click':
 
 				switch (tool) {
-					case 'brush':
+					case 'pencilBrush':
 						dispatch(roomActions.setDrawingPencilBrushSizeDec());
 						break;
 					case 'text':
@@ -359,7 +359,7 @@ const DrawingBoard: React.FC = () => {
 						sizeRef.current = setInterval(() => {
 
 							switch (tool) {
-								case 'brush':
+								case 'pencilBrush':
 									dispatch(roomActions.setDrawingPencilBrushSizeDec());
 									break;
 								case 'text':
@@ -484,11 +484,11 @@ const DrawingBoard: React.FC = () => {
 							aria-label="Use Pencil Brush Tool"
 							onClick={handleUsePencilBrush}
 							title="Use Pencil Brush Tool"
-							style={{ border: tool === 'brush' ? '2px solid gray' : '2px solid lightgray' }}
+							style={{ border: tool === 'pencilBrush' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
 							<DrawIcon
-								style={{ color: tool === 'brush' ? color : 'inherit' }}
+								style={{ color: tool === 'pencilBrush' ? color : 'inherit' }}
 							/>
 						</IconButton>
 						<IconButton
