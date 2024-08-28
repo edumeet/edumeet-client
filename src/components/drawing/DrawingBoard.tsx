@@ -14,7 +14,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
-import DrawingColorsPalette from './DrawingColorsPalette';
+import DrawingColors from './DrawingColors';
 import { RoomState } from '../../store/slices/roomSlice';
 
 const DrawingBoard: React.FC = () => {
@@ -42,7 +42,7 @@ const DrawingBoard: React.FC = () => {
 	const [ sizeLabel, setSizeLabel ] = useState<number>();
 
 	// colors
-	const isColorMenuRow = useMediaQuery(theme.breakpoints.between('xs', 'md'));
+	const isColorsMenuRow = useMediaQuery(theme.breakpoints.between('xs', 'md'));
 	const colorsMenu = useAppSelector((state) => state.room.drawing.colorsMenu);
 	const colors = useAppSelector((state) => state.room.drawing.colors);
 	const color = useAppSelector((state) => state.room.drawing.color);
@@ -161,12 +161,12 @@ const DrawingBoard: React.FC = () => {
     
 	/* colors menu */
 	useEffect(() => {
-		if (isColorMenuRow) {
+		if (isColorsMenuRow) {
 			dispatch(roomActions.setDrawingColorsMenu('Menu'));
 		} else {
 			dispatch(roomActions.setDrawingColorsMenu('Row'));
 		}
-	}, [ isColorMenuRow ]);
+	}, [ isColorsMenuRow ]);
 
 	/* history */
 	useEffect(() => {
@@ -389,7 +389,7 @@ const DrawingBoard: React.FC = () => {
 		}
 	};
 
-	const handleUsePaletteColor = (selectedColor: RoomState['drawing']['color']) => {
+	const handleUseColor = (selectedColor: RoomState['drawing']['color']) => {
 		dispatch(roomActions.setDrawingColor(selectedColor));
 
 	};
@@ -567,11 +567,11 @@ const DrawingBoard: React.FC = () => {
 						container
 						xs='auto'
 					>							
-						<DrawingColorsPalette
+						<DrawingColors
 							type={colorsMenu}
-							paletteColors={colors}
-							paletteColor={color}
-							handleUsePaletteColor={handleUsePaletteColor}
+							colors={colors}
+							color={color}
+							handleUseColor={handleUseColor}
 						/>
 					</Grid>
 

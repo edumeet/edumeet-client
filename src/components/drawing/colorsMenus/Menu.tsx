@@ -5,14 +5,14 @@ import { useState } from 'react';
 import { RoomState } from '../../../store/slices/roomSlice';
 
 interface Props {
-	paletteColors: RoomState['drawing']['colors'];
-	paletteColor: RoomState['drawing']['color'];
-	handleUsePaletteColor: (selectedColor: RoomState['drawing']['color']) => void; // eslint-disable-line
+	colors: RoomState['drawing']['colors'];
+	color: RoomState['drawing']['color'];
+	handleUseColor: (selectedColor: RoomState['drawing']['color']) => void; // eslint-disable-line
 }
 
 const Menu: React.FC<Props> = (props) => {
   
-	const { paletteColors, paletteColor, handleUsePaletteColor } = props;
+	const { colors, color, handleUseColor } = props;
 	
 	const [ anchorEl, setAnchorEl ] = useState<HTMLButtonElement | null>(null);
 
@@ -29,7 +29,7 @@ const Menu: React.FC<Props> = (props) => {
 	return <>
 		<IconButton
 			onClick={handleClick}
-			style={{ color: paletteColor, borderRadius: '50%' }}
+			style={{ color: color, borderRadius: '50%' }}
 			size='small'
 		>
 			<CircleIcon />
@@ -61,20 +61,20 @@ const Menu: React.FC<Props> = (props) => {
 				border={0}
 			>
 					
-				{paletteColors.map((color) => (
+				{colors.map((value) => (
 					<Grid
 						item
-						key={color}
+						key={value}
 					>
-						{color !== paletteColor &&
+						{value !== color &&
 						<IconButton
 							onClick={() => {
 								handleClose();
-								handleUsePaletteColor(color);
+								handleUseColor(value);
 							}}
 							size='small'
 						>
-							<CircleIcon style={{ color: color, borderRadius: '50%' }} />
+							<CircleIcon style={{ color: value, borderRadius: '50%' }} />
 						</IconButton>
 						}
 					</Grid>
