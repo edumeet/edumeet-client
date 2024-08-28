@@ -37,6 +37,7 @@ const DrawingBoard: React.FC = () => {
 	// size
 	const sizeRef = useRef<NodeJS.Timeout | null>(null);
 	const pencilBrushSize = useAppSelector((state) => state.room.drawing.pencilBrushSize);
+	const pencilBrushRange = [ 0, 999 ]; // eslint-disable-line
 	const eraserSize = useAppSelector((state) => state.room.drawing.eraserSize);
 	const textSize = useAppSelector((state) => state.room.drawing.textSize);
 	const [ sizeLabel, setSizeLabel ] = useState<number>();
@@ -292,101 +293,79 @@ const DrawingBoard: React.FC = () => {
 		handleSetTool('eraser');
 	};
 
-	const handleIncSize = (e: React.MouseEvent<HTMLButtonElement>) => {
-
-		switch (e.type) {
-			case 'click':
-
-				switch (tool) {
-					case 'pencilBrush':
-						dispatch(roomActions.setDrawingPencilBrushSizeInc());
+	const handleChangeSize = (e: React.MouseEvent<HTMLButtonElement>, operation: 'inc'|'dec') => {
+        
+		switch (tool) {
+            
+			case 'pencilBrush':
+                
+				switch (e.type) {
+					case 'click': dispatch(roomActions.setDrawingPencilBrushSize(operation)); break;
+					case 'mousedown':
+                        
+						if (!sizeRef.current) {
+							sizeRef.current = setTimeout(() => {
+								sizeRef.current = setInterval(() => {
+									
+									dispatch(roomActions.setDrawingPencilBrushSize(operation));
+        
+								}, 20);
+							}, 600);
+						}
+                        
 						break;
-					case 'text':
-						dispatch(roomActions.setDrawingTexSizetInc());
-						break;
-					case 'eraser':
-						dispatch(roomActions.setDrawingEraserSizeInc());
-						break;
-				}				
-				break;
-			case 'mousedown':
-				if (!sizeRef.current) {
-					sizeRef.current = setTimeout(() => {
-						sizeRef.current = setInterval(() => {
-
-							switch (tool) {
-								case 'pencilBrush':
-									dispatch(roomActions.setDrawingPencilBrushSizeInc());
-									break;
-								case 'text':
-									dispatch(roomActions.setDrawingTexSizetInc());
-									break;
-								case 'eraser':
-									dispatch(roomActions.setDrawingEraserSizeInc());
-									break;
-							}			
-
-						}, 20);
-					}, 600);
 				}
+
 				break;
-			case 'mouseup':
-			case 'mouseleave':
-				if (sizeRef.current) {
-					clearInterval(sizeRef.current);
-					sizeRef.current = null;
+            
+			case 'text':
+                
+				switch (e.type) {
+					case 'click': dispatch(roomActions.setDrawingTexSize(operation)); break;
+					case 'mousedown':
+						if (!sizeRef.current) {
+							sizeRef.current = setTimeout(() => {
+								sizeRef.current = setInterval(() => {
+                                
+									dispatch(roomActions.setDrawingTexSize(operation));
+    
+								}, 20);
+							}, 600);
+						}
+						
+						break;
 				}
-				break;
-		}
-	};
-
-	const handleDecSize = (e: React.MouseEvent<HTMLButtonElement>) => {
-
-		switch (e.type) {
-			case 'click':
-
-				switch (tool) {
-					case 'pencilBrush':
-						dispatch(roomActions.setDrawingPencilBrushSizeDec());
-						break;
-					case 'text':
-						dispatch(roomActions.setDrawingTextSizeDec());
-						break;
-					case 'eraser':
-						dispatch(roomActions.setDrawingEraserSizeDec());
-						break;
-				}				
 				
 				break;
-			case 'mousedown':
-				if (!sizeRef.current) {
-					sizeRef.current = setTimeout(() => {
-						sizeRef.current = setInterval(() => {
-
-							switch (tool) {
-								case 'pencilBrush':
-									dispatch(roomActions.setDrawingPencilBrushSizeDec());
-									break;
-								case 'text':
-									dispatch(roomActions.setDrawingTextSizeDec());
-									break;
-								case 'eraser':
-									dispatch(roomActions.setDrawingEraserSizeDec());
-									break;
-							}	
-								
-						}, 20);
-					}, 600);
+            
+			case 'eraser':
+                
+				switch (e.type) {
+					case 'click': dispatch(roomActions.setDrawingEraserSize(operation)); break;
+					case 'mousedown':
+						if (!sizeRef.current) {
+							sizeRef.current = setTimeout(() => {
+								sizeRef.current = setInterval(() => {
+                                    
+									dispatch(roomActions.setDrawingEraserSize(operation));
+                                    
+								}, 20);
+							}, 600);
+						}
+						break;
+					case 'mouseup':
 				}
-				break;
-			case 'mouseup':
-			case 'mouseleave':
-				if (sizeRef.current) {
-					clearInterval(sizeRef.current);
-					sizeRef.current = null;
-				}
+				
 				break;
 		}
+
+		if (e.type === 'mouseleave' || e.type === 'mouseup') {
+			if (sizeRef.current) {
+				clearInterval(sizeRef.current);
+				sizeRef.current = null;
+			}
+                    
+		}				
 	};
 
 	const handleUseColor = (selectedColor: RoomState['drawing']['color']) => {
@@ -527,10 +506,10 @@ const DrawingBoard: React.FC = () => {
 					>
 						<IconButton
 							aria-label="Increase Size"
-							onClick={handleIncSize}
-							onMouseDown={handleIncSize}
-							onMouseUp={handleIncSize}
-							onMouseLeave={handleIncSize}
+							onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
+							onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
+							onMouseUp={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
+							onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
 							title="Increase Size"
 							size='small'
 						>
@@ -549,10 +528,10 @@ const DrawingBoard: React.FC = () => {
 						
 						<IconButton
 							aria-label="Decrease Size"
-							onClick={handleDecSize}
-							onMouseDown={handleDecSize}
-							onMouseUp={handleIncSize}
-							onMouseLeave={handleIncSize}
+							onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
+							onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
+							onMouseUp={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
+							onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
 							title="Decrease Size"
 							size='small'
 						>

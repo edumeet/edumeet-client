@@ -129,25 +129,23 @@ const roomSlice = createSlice({
 		setDrawingZoom: ((state, action: PayloadAction<number>) => {
 			state.drawing.zoom = action.payload;
 		}),
-		setDrawingPencilBrushSizeInc: ((state) => {
-			state.drawing.pencilBrushSize += 1;
+		setDrawingPencilBrushSize: ((state, action: PayloadAction<'inc'|'dec'>) => {
+			action.payload === 'inc' ?
+				state.drawing.pencilBrushSize += 1:
+				state.drawing.pencilBrushSize -= 1;
 		}),
-		setDrawingPencilBrushSizeDec: ((state) => {
-			state.drawing.pencilBrushSize -= 1;
+	
+		setDrawingTexSize: ((state, action: PayloadAction<'inc'|'dec'>) => {
+			action.payload === 'inc' ?
+				state.drawing.textSize += 1:
+				state.drawing.textSize -= 1;
 		}),
-		setDrawingTexSizetInc: ((state) => {
-			state.drawing.textSize += 1;
-		}),
-		setDrawingTextSizeDec: ((state) => {
-			state.drawing.textSize -= 1;
-		}),
-		setDrawingEraserSizeInc: ((state) => {
-			state.drawing.eraserSize += 1;
-		}),
-		setDrawingEraserSizeDec: ((state) => {
-			state.drawing.eraserSize -= 1;
-		}),
-		
+	
+		setDrawingEraserSize: ((state, action: PayloadAction<'inc'|'dec'>) => {
+			action.payload === 'inc' ?
+				state.drawing.eraserSize += 1:
+				state.drawing.eraserSize -= 1;
+		}),	
 	}
 });
 
