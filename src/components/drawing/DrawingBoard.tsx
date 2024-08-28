@@ -117,15 +117,14 @@ const DrawingBoard: React.FC = () => {
 			resizeCanvas();
 			
 			window.addEventListener('resize', resizeCanvas);
+            
+			return () => {
+			
+				window.removeEventListener('resize', resizeCanvas);
+			
+				// prevState.dispose();
 
-			// return () => {
-			// 	setCanvas((prevState) => { 
-
-			// 		prevState.dispose();
-			// 		window.removeEventListener('resize', resizeCanvas);
-			// 	});
-					
-			// };
+			};
 		}
 	}, []);
 
