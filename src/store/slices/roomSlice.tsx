@@ -39,7 +39,7 @@ export interface RoomState {
 	drawingEnabled?: boolean;
 	drawing: {
 		zoom: number,
-		tools: [ 'brush', 'text', 'eraser' ],
+		tools: [ 'pencilBrush', 'text', 'eraser' ],
 		tool: RoomState['drawing']['tools'][number],
 		pencilBrushSize: number,
 		textSize: number,
@@ -76,8 +76,8 @@ const initialState: RoomState = {
 	screenSharingSimulcast: edumeetConfig.simulcastSharing,
 	drawingEnabled: true,
 	drawing: {
-		tools: [ 'brush', 'text', 'eraser' ],
-		tool: 'brush',
+		tools: [ 'pencilBrush', 'text', 'eraser' ],
+		tool: 'pencilBrush',
 		pencilBrushSize: 20,
 		textSize: 30,
 		eraserSize: 60,
