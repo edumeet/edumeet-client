@@ -517,8 +517,16 @@ const DrawingBoard: React.FC = () => {
 							<AddCircleOutlineIcon />
 						</IconButton>
 
-						<Typography variant='caption' paddingY={1.1}>{sizeLabel}</Typography>
-							
+						<Typography 
+							variant="caption" 
+							width={20}
+							display="flex" 
+							alignItems="center" 
+							justifyContent="center"
+						>
+							{sizeLabel}
+						</Typography>
+						
 						<IconButton
 							aria-label="Decrease Size"
 							onClick={handleDecreaseSize}
