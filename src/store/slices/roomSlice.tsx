@@ -38,9 +38,6 @@ export interface RoomState {
 	screenSharingSimulcast?: boolean;
 	drawingEnabled?: boolean;
 	drawing: {
-		history: string
-		historyUndo: fabric.Object[]
-		historyRedo: fabric.Object[]
 		zoom: number,
 		tools: [ 'brush', 'text', 'eraser' ],
 		tool: RoomState['drawing']['tools'][number],
@@ -53,6 +50,9 @@ export interface RoomState {
 		color: RoomState['drawing']['colors'][number],
 		bgColors: ['lightgray', 'white', 'black'],
 		bgColor: RoomState['drawing']['bgColors'][number]
+		history: string
+		historyUndo: fabric.Object[]
+		historyRedo: fabric.Object[]
 	}
 }
 
@@ -76,9 +76,6 @@ const initialState: RoomState = {
 	screenSharingSimulcast: edumeetConfig.simulcastSharing,
 	drawingEnabled: true,
 	drawing: {
-		history: '',
-		historyUndo: [],
-		historyRedo: [],
 		tools: [ 'brush', 'text', 'eraser' ],
 		tool: 'brush',
 		pencilBrushSize: 20,
@@ -90,7 +87,10 @@ const initialState: RoomState = {
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
 		color: 'black',
 		bgColors: [ 'lightgray', 'white', 'black' ],
-		bgColor: 'lightgray'
+		bgColor: 'lightgray',
+		history: '',
+		historyUndo: [],
+		historyRedo: [],
 	}
 
 };
