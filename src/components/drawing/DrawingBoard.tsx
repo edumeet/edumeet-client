@@ -14,7 +14,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
-import DrawingColors from './DrawingColors';
+import ColorsPicker from './ColorsPicker';
 import { RoomState } from '../../store/slices/roomSlice';
 
 const DrawingBoard: React.FC = () => {
@@ -47,8 +47,8 @@ const DrawingBoard: React.FC = () => {
 	const [ sizeLabel, setSizeLabel ] = useState<number>();
 
 	// colors
-	const isColorsMenuRow = useMediaQuery(theme.breakpoints.between('xs', 'md'));
-	const colorsMenu = useAppSelector((state) => state.room.drawing.colorsMenu);
+	const isColorsPickerPopover = useMediaQuery(theme.breakpoints.between('xs', 'md'));
+	const colorsPicker = useAppSelector((state) => state.room.drawing.colorsPicker);
 	const colors = useAppSelector((state) => state.room.drawing.colors);
 	const color = useAppSelector((state) => state.room.drawing.color);
 	const bgColor = useAppSelector((state) => state.room.drawing.bgColor);
@@ -164,14 +164,14 @@ const DrawingBoard: React.FC = () => {
 		};
 	}, []);
     
-	/* colors menu */
+	/* colors picker */
 	useEffect(() => {
-		if (isColorsMenuRow) {
-			dispatch(roomActions.setDrawingColorsMenu('Menu'));
+		if (isColorsPickerPopover) {
+			dispatch(roomActions.setDrawingColorsPicker('Popover'));
 		} else {
-			dispatch(roomActions.setDrawingColorsMenu('Row'));
+			dispatch(roomActions.setDrawingColorsPicker('Row'));
 		}
-	}, [ isColorsMenuRow ]);
+	}, [ isColorsPickerPopover ]);
 
 	/* history */
 	useEffect(() => {
@@ -561,8 +561,8 @@ const DrawingBoard: React.FC = () => {
 						container
 						xs='auto'
 					>							
-						<DrawingColors
-							type={colorsMenu}
+						<ColorsPicker
+							colorsPicker={colorsPicker}
 							colors={colors}
 							color={color}
 							handleUseColor={handleUseColor}

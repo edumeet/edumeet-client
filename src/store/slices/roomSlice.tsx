@@ -47,8 +47,8 @@ export interface RoomState {
 		textSizeRange: { min: number, max: number },
 		eraserSize: number,
 		eraserSizeRange: { min: number, max: number },
-		colorsMenus: [ 'Row', 'Menu' ],
-		colorsMenu: RoomState['drawing']['colorsMenus'][number],
+		colorsPickers: [ 'Row', 'Popover' ],
+		colorsPicker: RoomState['drawing']['colorsPickers'][number],
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
 		color: RoomState['drawing']['colors'][number],
 		bgColors: ['lightgray', 'white', 'black'],
@@ -88,8 +88,8 @@ const initialState: RoomState = {
 		eraserSize: 60,
 		eraserSizeRange: { min: 1, max: 100 },
 		zoom: 10,
-		colorsMenus: [ 'Row', 'Menu' ],
-		colorsMenu: 'Menu',
+		colorsPickers: [ 'Row', 'Popover' ],
+		colorsPicker: 'Popover',
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
 		color: 'black',
 		bgColors: [ 'lightgray', 'white', 'black' ],
@@ -123,8 +123,8 @@ const roomSlice = createSlice({
 		setDrawingTool: ((state, action: PayloadAction<RoomState['drawing']['tool']>) => {
 			state.drawing.tool = action.payload;
 		}),
-		setDrawingColorsMenu: ((state, action: PayloadAction<RoomState['drawing']['colorsMenu']>) => {
-			state.drawing.colorsMenu = action.payload;
+		setDrawingColorsPicker: ((state, action: PayloadAction<RoomState['drawing']['colorsPicker']>) => {
+			state.drawing.colorsPicker = action.payload;
 		}),
 		setDrawingColor: ((state, action: PayloadAction<RoomState['drawing']['color']>) => {
 			state.drawing.color = action.payload;
