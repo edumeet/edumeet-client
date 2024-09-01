@@ -42,8 +42,11 @@ export interface RoomState {
 		tools: [ 'pencilBrush', 'text', 'eraser' ],
 		tool: RoomState['drawing']['tools'][number],
 		pencilBrushSize: number,
+		pencilBrushSizeRange: { min: number, max: number },
 		textSize: number,
+		textSizeRange: { min: number, max: number },
 		eraserSize: number,
+		eraserSizeRange: { min: number, max: number },
 		colorsMenus: [ 'Row', 'Menu' ],
 		colorsMenu: RoomState['drawing']['colorsMenus'][number],
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
@@ -79,9 +82,12 @@ const initialState: RoomState = {
 		tools: [ 'pencilBrush', 'text', 'eraser' ],
 		tool: 'pencilBrush',
 		pencilBrushSize: 20,
+		pencilBrushSizeRange: { min: 1, max: 100 },
 		textSize: 30,
+		textSizeRange: { min: 1, max: 100 },
 		eraserSize: 60,
-		zoom: 1,
+		eraserSizeRange: { min: 1, max: 100 },
+		zoom: 10,
 		colorsMenus: [ 'Row', 'Menu' ],
 		colorsMenu: 'Menu',
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
@@ -129,24 +135,35 @@ const roomSlice = createSlice({
 		setDrawingZoom: ((state, action: PayloadAction<number>) => {
 			state.drawing.zoom = action.payload;
 		}),
-		setDrawingPencilBrushSize: ((state, action: PayloadAction<'inc'|'dec'>) => {
-			action.payload === 'inc' ?
-				state.drawing.pencilBrushSize += 1:
-				state.drawing.pencilBrushSize -= 1;
-		}),
-	
-		setDrawingTextSize: ((state, action: PayloadAction<'inc' | 'dec'>) => {
+		setDrawingPencilBrushSize: ((state, action: PayloadAction<{ operation: 'inc' | 'dec'}>) => {
 			
-			action.payload === 'inc' ?
-				state.drawing.textSize += 1:
-				state.drawing.textSize -= 1;
+			const operation = action.payload.operation;
+			const { min, max } = state.drawing.pencilBrushSizeRange;
+			const curr = state.drawing.pencilBrushSize;
+
+			(operation === 'inc' && curr < max) && state.drawing.pencilBrushSize++;
+			(operation === 'dec' && curr > min) && state.drawing.pencilBrushSize--;
 		}),
 	
-		setDrawingEraserSize: ((state, action: PayloadAction<'inc'|'dec'>) => {
-			action.payload === 'inc' ?
-				state.drawing.eraserSize += 1:
-				state.drawing.eraserSize -= 1;
-		}),	
+		setDrawingTextSize: ((state, action: PayloadAction<{ operation: 'inc' | 'dec'}>) => {
+			
+			const operation = action.payload.operation;
+			const { min, max } = state.drawing.textSizeRange;
+			const curr = state.drawing.textSize;
+
+			(operation === 'inc' && curr < max) && state.drawing.textSize++;
+			(operation === 'dec' && curr > min) && state.drawing.textSize--;
+		}),
+	
+		setDrawingEraserSize: ((state, action: PayloadAction<{ operation: 'inc' | 'dec'}>) => {
+			
+			const operation = action.payload.operation;
+			const { min, max } = state.drawing.eraserSizeRange;
+			const curr = state.drawing.eraserSize;
+
+			(operation === 'inc' && curr < max) && state.drawing.eraserSize++;
+			(operation === 'dec' && curr > min) && state.drawing.eraserSize--;
+		}),
 	}
 });
 
