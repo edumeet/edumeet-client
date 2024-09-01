@@ -135,7 +135,8 @@ const roomSlice = createSlice({
 				state.drawing.pencilBrushSize -= 1;
 		}),
 	
-		setDrawingTexSize: ((state, action: PayloadAction<'inc'|'dec'>) => {
+		setDrawingTextSize: ((state, action: PayloadAction<'inc' | 'dec'>) => {
+			
 			action.payload === 'inc' ?
 				state.drawing.textSize += 1:
 				state.drawing.textSize -= 1;

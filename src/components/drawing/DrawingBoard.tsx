@@ -321,13 +321,13 @@ const DrawingBoard: React.FC = () => {
 			case 'text':
                 
 				switch (e.type) {
-					case 'click': dispatch(roomActions.setDrawingTexSize(operation)); break;
+					case 'click': dispatch(roomActions.setDrawingTextSize(operation)); break;
 					case 'mousedown':
 						if (!sizeRef.current) {
 							sizeRef.current = setTimeout(() => {
 								sizeRef.current = setInterval(() => {
                                 
-									dispatch(roomActions.setDrawingTexSize(operation));
+									dispatch(roomActions.setDrawingTextSize(operation));
     
 								}, 20);
 							}, 600);
