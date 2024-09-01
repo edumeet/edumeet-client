@@ -15,6 +15,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 import ColorsPicker from './ColorsPicker';
+import BgColorsPicker from './BgColorsPicker';
 import { RoomState } from '../../store/slices/roomSlice';
 
 const DrawingBoard: React.FC = () => {
@@ -51,6 +52,7 @@ const DrawingBoard: React.FC = () => {
 	const colorsPicker = useAppSelector((state) => state.room.drawing.colorsPicker);
 	const colors = useAppSelector((state) => state.room.drawing.colors);
 	const color = useAppSelector((state) => state.room.drawing.color);
+	const bgColors = useAppSelector((state) => state.room.drawing.bgColors);
 	const bgColor = useAppSelector((state) => state.room.drawing.bgColor);
 	
 	// history
@@ -150,7 +152,10 @@ const DrawingBoard: React.FC = () => {
 				handleUseEraserTool();
 				setSizeLabel(eraserSize);
 				break;
+			
 		}
+		
+		handleUseBgColor(bgColor);
 
 	}, [ canvas, tool, color, pencilBrushSize, textSize, eraserSize, zoom ]);
 	
@@ -164,7 +169,7 @@ const DrawingBoard: React.FC = () => {
 		};
 	}, []);
     
-	/* colors picker */
+	/* colors  */
 	useEffect(() => {
 		if (isColorsPickerPopover) {
 			dispatch(roomActions.setDrawingColorsPicker('Popover'));
@@ -172,6 +177,13 @@ const DrawingBoard: React.FC = () => {
 			dispatch(roomActions.setDrawingColorsPicker('Row'));
 		}
 	}, [ isColorsPickerPopover ]);
+	
+	useEffect(() => {
+		
+		handleUseBgColor(bgColor);
+		handleUseEraserTool();
+
+	}, [ bgColor ]);
 
 	/* history */
 	useEffect(() => {
@@ -376,6 +388,20 @@ const DrawingBoard: React.FC = () => {
 		dispatch(roomActions.setDrawingColor(selectedColor));
 
 	};
+
+	const handleUseBgColor = (selectedColor: RoomState['drawing']['bgColor']) => {
+		dispatch(roomActions.setDrawingBgColor(selectedColor));
+
+		setCanvas((prevState) => {
+			if (prevState) {
+				prevState.backgroundColor = bgColor;
+				prevState.renderAll();
+			}
+			
+			return prevState;
+		});
+
+	};
 	
 	/* handle history */
 
@@ -553,9 +579,8 @@ const DrawingBoard: React.FC = () => {
 						</IconButton>
 					</Grid>
 
-					{/* Color */} <Divider orientation="vertical" />
+					{/* Colors */} <Divider orientation="vertical" />
 
-					{/* Colors */}
 					<Grid
 						item
 						container
@@ -566,6 +591,20 @@ const DrawingBoard: React.FC = () => {
 							colors={colors}
 							color={color}
 							handleUseColor={handleUseColor}
+						/>
+					</Grid>
+
+					{/* BgColors */} <Divider orientation="vertical" />
+
+					<Grid
+						item
+						container
+						xs='auto'
+					>							
+						<BgColorsPicker
+							bgColors={bgColors}
+							bgColor={bgColor}
+							handleUseBgColor={handleUseBgColor}
 						/>
 					</Grid>
 

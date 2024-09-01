@@ -51,7 +51,7 @@ export interface RoomState {
 		colorsPicker: RoomState['drawing']['colorsPickers'][number],
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
 		color: RoomState['drawing']['colors'][number],
-		bgColors: ['lightgray', 'white', 'black'],
+		bgColors: ['gray', 'white', 'black'],
 		bgColor: RoomState['drawing']['bgColors'][number]
 		history: string
 		historyUndo: fabric.Object[]
@@ -92,8 +92,8 @@ const initialState: RoomState = {
 		colorsPicker: 'Popover',
 		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
 		color: 'black',
-		bgColors: [ 'lightgray', 'white', 'black' ],
-		bgColor: 'lightgray',
+		bgColors: [ 'gray', 'white', 'black' ],
+		bgColor: 'gray',
 		history: '',
 		historyUndo: [],
 		historyRedo: [],
@@ -128,6 +128,9 @@ const roomSlice = createSlice({
 		}),
 		setDrawingColor: ((state, action: PayloadAction<RoomState['drawing']['color']>) => {
 			state.drawing.color = action.payload;
+		}),
+		setDrawingBgColor: ((state, action: PayloadAction<RoomState['drawing']['bgColor']>) => {
+			state.drawing.bgColor = action.payload;
 		}),
 		setDrawingHistory: ((state, action: PayloadAction<string>) => {
 			state.drawing.history = action.payload;
