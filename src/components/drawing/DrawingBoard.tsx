@@ -468,6 +468,7 @@ const DrawingBoard: React.FC = () => {
 						xs='auto'
 						wrap='nowrap'
 					>
+						{/* PencilBrush */}
 						<IconButton
 							aria-label="Use Pencil Brush Tool"
 							onClick={handleUsePencilBrush}
@@ -479,6 +480,8 @@ const DrawingBoard: React.FC = () => {
 								style={{ color: tool === 'pencilBrush' ? color : 'inherit' }}
 							/>
 						</IconButton>
+
+						{/* Text */}
 						<IconButton
 							aria-label="Use Text Tool"
 							onClick={handleUseTextTool}
@@ -490,6 +493,8 @@ const DrawingBoard: React.FC = () => {
 								style={{ color: tool === 'text' ? color : 'inherit' }}
 							/>
 						</IconButton>
+
+						{/* Eraser */}
 						<IconButton
 							aria-label="Use Eraser Tool"
 							onClick={handleUseEraserTool}
@@ -508,6 +513,7 @@ const DrawingBoard: React.FC = () => {
 						container
 						xs='auto'
 					>
+						{/* Increase Size */}
 						<IconButton
 							aria-label="Increase Size"
 							onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
@@ -521,6 +527,7 @@ const DrawingBoard: React.FC = () => {
 							<AddCircleOutlineIcon />
 						</IconButton>
 
+						{/* Size Label */}
 						<Typography 
 							variant="caption" 
 							width={20}
@@ -531,6 +538,7 @@ const DrawingBoard: React.FC = () => {
 							{sizeLabel}
 						</Typography>
 						
+						{/* Decrease Size */}
 						<IconButton
 							aria-label="Decrease Size"
 							onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
@@ -547,6 +555,7 @@ const DrawingBoard: React.FC = () => {
 
 					{/* Color */} <Divider orientation="vertical" />
 
+					{/* Colors */}
 					<Grid
 						item
 						container
@@ -570,6 +579,7 @@ const DrawingBoard: React.FC = () => {
 						wrap='nowrap'
 
 					>
+						{/* Undo */}
 						<IconButton
 							aria-label="Undo"
 							onClick={handleUndo}
@@ -580,6 +590,8 @@ const DrawingBoard: React.FC = () => {
 							<UndoIcon />
 							{/* <sub>{history.length}</sub> */}
 						</IconButton>
+
+						{/* Redo */}
 						<IconButton
 							aria-label="Redo"
 							onClick={handleRedo}
@@ -590,7 +602,8 @@ const DrawingBoard: React.FC = () => {
 							<RedoIcon />
 							{/* <sub>{historyRedo.length}</sub> */}
 						</IconButton>
-						{/* {historyAction} */}
+						
+						{/* Erase All */}
 						<ErasingAllConfirmationButton
 							handleEraseAll={handleEraseAll}
 							disabled={history.length === 0}
