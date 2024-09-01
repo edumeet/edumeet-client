@@ -477,7 +477,7 @@ const DrawingBoard: React.FC = () => {
 							size='small'
 						>
 							<DrawIcon
-								style={{ color: tool === 'pencilBrush' ? color : 'inherit' }}
+								// style={{ color: color }}
 							/>
 						</IconButton>
 
@@ -490,7 +490,7 @@ const DrawingBoard: React.FC = () => {
 							size='small'
 						>
 							<AbcIcon
-								style={{ color: tool === 'text' ? color : 'inherit' }}
+								// style={{ color: color }}
 							/>
 						</IconButton>
 
