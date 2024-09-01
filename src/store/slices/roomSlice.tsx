@@ -59,7 +59,7 @@ export interface RoomState {
 	}
 }
 
-type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
+type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'drawing'>;
 
 const initialState: RoomState = {
 	logo: edumeetConfig.theme.logo,
