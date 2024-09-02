@@ -244,11 +244,12 @@ const DrawingBoard: React.FC = () => {
 	};
 	
 	const handleUseTextTool = () => {
-		
+
 		setCanvas((prevState) => {
 			if (prevState) {
 				prevState.isDrawingMode = false;
 				prevState.selection = false;
+				prevState.defaultCursor = 'text';
 				prevState.forEachObject((obj) => {
 					obj.selectable = false;
 				});
@@ -261,13 +262,13 @@ const DrawingBoard: React.FC = () => {
 						fontSize: textSize,
 						fontFamily: 'Arial',
 					});
-
+	
 					prevState.add(text);
 					prevState.setActiveObject(text);
 					text.enterEditing();
-				
+					
 				});
-
+	
 				handleSetTool('text');
 			}
 			
