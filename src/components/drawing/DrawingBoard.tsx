@@ -155,8 +155,6 @@ const DrawingBoard: React.FC = () => {
 			
 		}
 		
-		handleUseBgColor(bgColor);
-
 	}, [ canvas, tool, color, pencilBrushSize, textSize, eraserSize, zoom ]);
 	
 	/* size  */
@@ -178,11 +176,19 @@ const DrawingBoard: React.FC = () => {
 		}
 	}, [ isColorsPickerPopover ]);
 	
-	useEffect(() => {
-		
+	useEffect(() => {		
 		handleUseBgColor(bgColor);
-		handleUseEraserTool();
 
+		if (tool === 'eraser') {
+			setCanvas((prevState) => {
+				if (prevState) {
+					prevState.freeDrawingBrush.color = bgColor;
+					prevState.renderAll();
+				}
+				
+				return prevState;
+			});
+		}
 	}, [ bgColor ]);
 
 	/* history */
