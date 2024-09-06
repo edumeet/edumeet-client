@@ -254,6 +254,7 @@ const DrawingBoard: React.FC = () => {
 				prevState.isDrawingMode = false;
 				prevState.selection = false;
 				prevState.defaultCursor = 'text';
+				prevState.hoverCursor = 'text';
 				prevState.forEachObject((obj) => {
 					obj.selectable = false;
 				});
