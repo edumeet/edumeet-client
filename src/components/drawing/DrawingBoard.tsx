@@ -44,7 +44,8 @@ const DrawingBoard: React.FC = () => {
 	const eraserSizeRange = useAppSelector((state) => state.room.drawing.eraserSizeRange); // eslint-disable-line
 	const textSize = useAppSelector((state) => state.room.drawing.textSize);
 	const textSizeRange = useAppSelector((state) => state.room.drawing.textSizeRange);// eslint-disable-line
-	const [ sizeLabel, setSizeLabel ] = useState<number>();
+	
+	const [ size, setSize ] = useState<number>();
 	const [ sizeRange, setSizeRange ] = useState<{ min: number, max: number }>();
 
 	// colors
@@ -140,20 +141,19 @@ const DrawingBoard: React.FC = () => {
 		switch (tool) {
 			case 'pencilBrush':
 				handleUsePencilBrush();
-				setSizeLabel(pencilBrushSize);
+				setSize(pencilBrushSize);
 				setSizeRange(pencilBrushSizeRange);
 				break;
 			case
 				'text':
 				handleUseTextTool();
-				setSizeLabel(textSize);
+				setSize(textSize);
 				setSizeRange(textSizeRange);
-
 
 				break;
 			case 'eraser':
 				handleUseEraserTool();
-				setSizeLabel(eraserSize);
+				setSize(eraserSize);
 				setSizeRange(eraserSizeRange);
 				break;
 			
@@ -556,7 +556,7 @@ const DrawingBoard: React.FC = () => {
 							onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
 							onMouseUp={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
 							onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
-							disabled={sizeRange && sizeLabel === sizeRange.max}
+							disabled={sizeRange && size === sizeRange.max}
 							title="Increase Size"
 							size='small'
 						>
@@ -571,7 +571,7 @@ const DrawingBoard: React.FC = () => {
 							alignItems="center" 
 							justifyContent="center"
 						>
-							{sizeLabel}
+							{size}
 						</Typography>
 						
 						{/* Decrease Size */}
@@ -581,7 +581,7 @@ const DrawingBoard: React.FC = () => {
 							onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
 							onMouseUp={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
 							onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
-							disabled={sizeRange && sizeLabel === sizeRange.min}
+							disabled={sizeRange && size === sizeRange.min}
 							title="Decrease Size"
 							size='small'
 						>
