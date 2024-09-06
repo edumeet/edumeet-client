@@ -473,7 +473,6 @@ const DrawingBoard: React.FC = () => {
 
 			{/* Menu */}
 			<Grid container item
-				// xs={12}
 				sx={{
 					borderTop: '1px solid gray',
 					backgroundColor: 'lightgray',
