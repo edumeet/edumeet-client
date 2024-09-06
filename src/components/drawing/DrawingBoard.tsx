@@ -326,7 +326,6 @@ const DrawingBoard: React.FC = () => {
 		switch (tool) {
             
 			case 'pencilBrush':
-                
 				switch (e.type) {
 					case 'click': dispatch(roomActions.setDrawingPencilBrushSize({ operation })); break;
 					case 'mousedown':
