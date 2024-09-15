@@ -97,43 +97,47 @@ const DrawingBoard: React.FC = () => {
 				return prevState;
 
 			});
-
-			const resizeCanvas = () => {
-		
-				const windowInnerWidth = window.innerWidth;
-				const calculatedHeight = windowInnerWidth / aspectRatio;
-				const scaleFactor = Math.min(windowInnerWidth / 1920, window.innerHeight / 1080);
-
-				setCanvas((prevState) => {
-
-					if (prevState) {
-						prevState.setWidth(windowInnerWidth); // (originalWidth * scaleFactor);
-						prevState.setHeight(calculatedHeight); // (originalHeight * scaleFactor);
-						prevState.setZoom(scaleFactor);
-						prevState.renderAll();
-					}
-
-					return prevState;
-				});
-				
-				setCanvasWidth(windowInnerWidth); // (originalWidth * scaleFactor)
-				setCanvasHeight(calculatedHeight); // (originalHeight * scaleFactor)
-				handleSetZoom(scaleFactor);
-		
-			};
-
-			resizeCanvas();
-			
-			window.addEventListener('resize', resizeCanvas);
-            
-			return () => {
-			
-				window.removeEventListener('resize', resizeCanvas);
-			
-				// prevState.dispose();
-
-			};
 		}
+	}, []);
+
+	/* set canvas size */
+	useEffect(() => {
+		const resizeCanvas = () => {
+		
+			const windowInnerWidth = window.innerWidth;
+			const calculatedHeight = windowInnerWidth / aspectRatio;
+			const scaleFactor = Math.min(windowInnerWidth / 1920, window.innerHeight / 1080);
+
+			setCanvas((prevState) => {
+
+				if (prevState) {
+					prevState.setWidth(windowInnerWidth); // (originalWidth * scaleFactor);
+					prevState.setHeight(calculatedHeight); // (originalHeight * scaleFactor);
+					prevState.setZoom(scaleFactor);
+					prevState.renderAll();
+				}
+
+				return prevState;
+			});
+				
+			setCanvasWidth(windowInnerWidth); // (originalWidth * scaleFactor)
+			setCanvasHeight(calculatedHeight); // (originalHeight * scaleFactor)
+			handleSetZoom(scaleFactor);
+		
+		};
+
+		resizeCanvas();
+			
+		window.addEventListener('resize', resizeCanvas);
+            
+		return () => {
+			
+			window.removeEventListener('resize', resizeCanvas);
+			
+			// prevState.dispose();
+
+		};
+		
 	}, []);
 
 	/* tools */
