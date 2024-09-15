@@ -152,9 +152,6 @@ const Spotlights = ({
 					</MediaControls>
 				</VideoBox>
 			)}
-			{!hideSelfView && drawingEnabled && drawingOpen && (
-				<DrawingBoard />
-			)}
 			{ !hideSelfView && extraVideoEnabled &&
 				<VideoBox
 					order={3}
@@ -176,6 +173,19 @@ const Spotlights = ({
 					</MediaControls>
 				</VideoBox>
 			}
+			{/* {!hideSelfView && drawingEnabled && drawingOpen && (
+				<DrawingBoard />
+			)} */}
+			{drawingEnabled && drawingOpen && (
+				<VideoBox
+					order={2}
+					width={style.width}
+					height={style.height}
+				>
+					<DrawingBoard />
+
+				</VideoBox>
+			)}
 
 			{ videoConsumers.map((consumer) => (
 				<VideoConsumer

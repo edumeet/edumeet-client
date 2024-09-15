@@ -117,13 +117,10 @@ const MainContent = (): JSX.Element => {
 	return (
 		<WrapperContainer headless={headless ? 1 : 0} ref={mainContainer}>
 			<ControlButtonsBar />
-			{/* <MainContainer horizontal={horizontal ? 1 : 0} >
-				{ spotlightsVisible && <Spotlights windowSize={windowSize} horizontal={horizontal} videos={videosVisible} /> }
-				{ videosVisible && <Democratic windowSize={windowSize} horizontal={spotlightsVisible && horizontal} spotlights={spotlightsVisible} /> }
-			</MainContainer> */}
 			<MainContainer horizontal={horizontal ? 1 : 0} >
-				{ drawingOpen && <Spotlights windowSize={windowSize} horizontal={horizontal} videos={videosVisible} /> }
-				{ !drawingOpen && videosVisible && <Democratic windowSize={windowSize} horizontal={spotlightsVisible && horizontal} spotlights={spotlightsVisible} /> }
+				{ (spotlightsVisible || drawingOpen) && <Spotlights windowSize={windowSize} horizontal={horizontal} videos={videosVisible} /> }
+				{ videosVisible && <Democratic windowSize={windowSize} horizontal={spotlightsVisible && horizontal} spotlights={spotlightsVisible} /> }
+				{/* { (videosVisible && !drawingOpen) && <Democratic windowSize={windowSize} horizontal={spotlightsVisible && horizontal} spotlights={spotlightsVisible} /> } */}
 			</MainContainer>
 			{ !isMobile && eitherOpen &&
 				<SideContent
