@@ -6,11 +6,11 @@ import VideoConsumer from '../videoconsumer/VideoConsumer';
 import { Box } from '@mui/material';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
+import DrawingView from '../drawing/DrawingView';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
 import ExtraVideoButton from '../controlbuttons/ExtraVideoButton';
-import DrawingBoard from '../drawing/DrawingBoard';
 
 type SpotlightsDivProps = {
 	headless: number;
@@ -178,7 +178,7 @@ const Spotlights = ({
 					width={style.width}
 					height={style.height}
 				>
-					<DrawingBoard width={style.width} height={style.height}/>
+					<DrawingView width={style.width} height={style.height}/>
 				</VideoBox>
 			}
 
