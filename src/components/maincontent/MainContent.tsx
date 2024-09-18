@@ -85,7 +85,6 @@ const MainContent = (): JSX.Element => {
 	const headless = useAppSelector((state) => state.room.headless);
 	const spotlightsVisible = useAppSelector(selectedVideoBoxesSelector) > 0;
 	const videosVisible = useAppSelector(videoBoxesSelector) > 0;
-	const drawingOpen = useAppSelector((state) => state.ui.drawingOpen);
 
 	const height = (chatOpen && participantListOpen) && verticalDivide ? '50%' : '100%';
 
@@ -118,9 +117,8 @@ const MainContent = (): JSX.Element => {
 		<WrapperContainer headless={headless ? 1 : 0} ref={mainContainer}>
 			<ControlButtonsBar />
 			<MainContainer horizontal={horizontal ? 1 : 0} >
-				{ (spotlightsVisible || drawingOpen) && <Spotlights windowSize={windowSize} horizontal={horizontal} videos={videosVisible} /> }
+				{ spotlightsVisible && <Spotlights windowSize={windowSize} horizontal={horizontal} videos={videosVisible} /> }
 				{ videosVisible && <Democratic windowSize={windowSize} horizontal={spotlightsVisible && horizontal} spotlights={spotlightsVisible} /> }
-				{/* { (videosVisible && !drawingOpen) && <Democratic windowSize={windowSize} horizontal={spotlightsVisible && horizontal} spotlights={spotlightsVisible} /> } */}
 			</MainContainer>
 			{ !isMobile && eitherOpen &&
 				<SideContent

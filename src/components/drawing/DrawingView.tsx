@@ -19,8 +19,6 @@ import BgColorsPicker from './BgColorsPicker';
 import { RoomState } from '../../store/slices/roomSlice';
 
 interface DrawingBoardProps {
-	// roundedCorners: boolean;
-	// videoRef: React.RefObject<HTMLVideoElement>;
 	width: number;
 	height: number;
 }
@@ -478,10 +476,7 @@ const DrawingBoard = ({ width, height }: DrawingBoardProps): JSX.Element => {
 	return (
 		<Grid
 			container
-			// width={width}
-			// height={height}	
 		>
-
 			{/* Canvas */}
 			<Grid item>
 				<Box ref={canvasRef} component="canvas" />
@@ -492,7 +487,6 @@ const DrawingBoard = ({ width, height }: DrawingBoardProps): JSX.Element => {
 				sx={{
 					borderTop: '1px solid gray',
 					backgroundColor: 'lightgray',
-					// display: 'none',
 				}}
 				justifyContent='center'
 				direction='row'
