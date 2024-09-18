@@ -38,6 +38,7 @@ const DrawingBoard = ({ width, height }: DrawingBoardProps): JSX.Element => {
 	const zoom = useAppSelector((state) => state.room.drawing.zoom);
 	
 	// tools
+	const menuRef = useRef<HTMLDivElement>(null);
 	const tool = useAppSelector((state) => state.room.drawing.tool);
 	
 	// size
@@ -110,8 +111,10 @@ const DrawingBoard = ({ width, height }: DrawingBoardProps): JSX.Element => {
 		const resizeCanvas = () => {
 		
 			const currWidth = width;
+			const currHeight = height - (menuRef.current?.clientHeight ?? 0);
+
 			// const currHeight = (height / aspectRatio);
-			const currHeight = (height);
+
 			const currScaleFactor = Math.min(currWidth / 1920, currHeight / 1080);
 
 			setCanvas((prevState) => {
@@ -488,6 +491,7 @@ const DrawingBoard = ({ width, height }: DrawingBoardProps): JSX.Element => {
 					borderTop: '1px solid gray',
 					backgroundColor: 'lightgray',
 				}}
+				ref={menuRef}
 				justifyContent='center'
 				direction='row'
 				wrap='nowrap'
