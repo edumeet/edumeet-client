@@ -25,7 +25,7 @@ interface DrawingBoardProps {
 	height: number;
 }
 
-const DrawingBoard: React.FC<DrawingBoardProps> = ({width, height}) => { // eslint-disable-line
+const DrawingBoard = ({ width, height }: DrawingBoardProps): JSX.Element => {
 	const dispatch = useAppDispatch();
     
 	// theme
