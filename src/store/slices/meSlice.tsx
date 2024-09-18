@@ -39,6 +39,7 @@ export interface MeState {
 	screenAudioEnabled: boolean;
 	extraVideoEnabled: boolean;
 	extraAudioEnabled: boolean;
+	drawingEnabled: boolean;
 }
 
 const initialState: MeState = {
@@ -72,6 +73,7 @@ const initialState: MeState = {
 	screenAudioEnabled: false,
 	extraVideoEnabled: false,
 	extraAudioEnabled: false,
+	drawingEnabled: false,
 };
 
 const meSlice = createSlice({
@@ -168,6 +170,9 @@ const meSlice = createSlice({
 		}),
 		setExtraAudioEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.extraAudioEnabled = action.payload;
+		}),
+		setDrawingEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.drawingEnabled = action.payload;
 		}),
 	},
 	extraReducers: (builder) => {

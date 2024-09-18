@@ -500,7 +500,7 @@ export const selectedVideoBoxesSelector = createSelector(
 	spotlightScreenConsumerSelector,
 	spotlightExtraVideoConsumerSelector,
 	(
-		{ screenEnabled, extraVideoEnabled },
+		{ screenEnabled, extraVideoEnabled, drawingEnabled },
 		screenConsumers,
 		extraVideoConsumers,
 	) => {
@@ -509,7 +509,8 @@ export const selectedVideoBoxesSelector = createSelector(
 		// Add our own screen share, if it exists
 		if (screenEnabled) videoBoxes++;
 		if (extraVideoEnabled) videoBoxes++;
-
+		if (drawingEnabled) videoBoxes++;
+		
 		// Add everyone else's video
 		videoBoxes += screenConsumers.length + extraVideoConsumers.length;
 

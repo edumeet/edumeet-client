@@ -18,7 +18,14 @@ import ColorsPicker from './ColorsPicker';
 import BgColorsPicker from './BgColorsPicker';
 import { RoomState } from '../../store/slices/roomSlice';
 
-const DrawingBoard: React.FC = () => {
+interface DrawingBoardProps {
+	// roundedCorners: boolean;
+	// videoRef: React.RefObject<HTMLVideoElement>;
+	width: number;
+	height: number;
+}
+
+const DrawingBoard: React.FC<DrawingBoardProps> = ({width, height}) => { // eslint-disable-line
 	const dispatch = useAppDispatch();
     
 	// theme
@@ -29,7 +36,7 @@ const DrawingBoard: React.FC = () => {
 	const [ canvas, setCanvas ] = useState<fabric.Canvas>();
 	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
 	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
-	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
+	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio); // eslint-disable-line
 	const zoom = useAppSelector((state) => state.room.drawing.zoom);
 	
 	// tools
@@ -104,25 +111,26 @@ const DrawingBoard: React.FC = () => {
 	useEffect(() => {
 		const resizeCanvas = () => {
 		
-			const windowInnerWidth = window.innerWidth;
-			const calculatedHeight = windowInnerWidth / aspectRatio;
-			const scaleFactor = Math.min(windowInnerWidth / 1920, window.innerHeight / 1080);
+			const currWidth = width;
+			// const currHeight = (height / aspectRatio);
+			const currHeight = (height);
+			const currScaleFactor = Math.min(currWidth / 1920, currHeight / 1080);
 
 			setCanvas((prevState) => {
 
 				if (prevState) {
-					prevState.setWidth(windowInnerWidth); // (originalWidth * scaleFactor);
-					prevState.setHeight(calculatedHeight); // (originalHeight * scaleFactor);
-					prevState.setZoom(scaleFactor);
+					prevState.setWidth(currWidth); 
+					prevState.setHeight(currHeight);
+					prevState.setZoom(currScaleFactor);
 					prevState.renderAll();
 				}
 
 				return prevState;
 			});
 				
-			setCanvasWidth(windowInnerWidth); // (originalWidth * scaleFactor)
-			setCanvasHeight(calculatedHeight); // (originalHeight * scaleFactor)
-			handleSetZoom(scaleFactor);
+			setCanvasWidth(currWidth); 
+			setCanvasHeight(currHeight);
+			handleSetZoom(currScaleFactor);
 		
 		};
 
@@ -138,7 +146,7 @@ const DrawingBoard: React.FC = () => {
 
 		};
 		
-	}, []);
+	}, [ width, height ]);
 
 	/* tools */
 	useEffect(() => {
@@ -468,7 +476,11 @@ const DrawingBoard: React.FC = () => {
 	};
 
 	return (
-		<Grid container>
+		<Grid
+			container
+			// width={width}
+			// height={height}	
+		>
 
 			{/* Canvas */}
 			<Grid item>
@@ -480,6 +492,7 @@ const DrawingBoard: React.FC = () => {
 				sx={{
 					borderTop: '1px solid gray',
 					backgroundColor: 'lightgray',
+					// display: 'none',
 				}}
 				justifyContent='center'
 				direction='row'

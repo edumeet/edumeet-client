@@ -61,8 +61,7 @@ const Spotlights = ({
 	const headless = useAppSelector((state) => state.room.headless);
 	const screenEnabled = useAppSelector((state) => state.me.screenEnabled);
 	const extraVideoEnabled = useAppSelector((state) => state.me.extraVideoEnabled);
-	const drawingEnabled = useAppSelector((state) => state.room.drawingEnabled);
-	const drawingOpen = useAppSelector((state) => state.ui.drawingOpen);
+	const drawingEnabled = useAppSelector((state) => state.me.drawingEnabled);
 
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const [ dimensions, setDimensions ] = useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
@@ -173,19 +172,15 @@ const Spotlights = ({
 					</MediaControls>
 				</VideoBox>
 			}
-			{/* {!hideSelfView && drawingEnabled && drawingOpen && (
-				<DrawingBoard />
-			)} */}
-			{drawingEnabled && drawingOpen && (
+			{ !hideSelfView && drawingEnabled &&
 				<VideoBox
-					order={2}
+					order={4}
 					width={style.width}
 					height={style.height}
 				>
-					<DrawingBoard />
-
+					<DrawingBoard width={style.width} height={style.height}/>
 				</VideoBox>
-			)}
+			}
 
 			{ videoConsumers.map((consumer) => (
 				<VideoConsumer
