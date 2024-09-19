@@ -5,12 +5,10 @@ import { AppThunk } from '../store';
 const logger = new Logger('CountdownTimerActions');
 
 /**
- * This thunk action sends a chat message.
+ * This thunk action enables the countdown timer.
  * 
- * @param message - Message to send.
  * @returns {AppThunk<Promise<void>>} Promise.
  */
-
 export const enableCountdownTimer = (): 
 AppThunk<Promise<void>> => async (
 	dispatch,
@@ -28,6 +26,11 @@ AppThunk<Promise<void>> => async (
 	}
 };
 
+/** 
+ * This thunk action disables the countdown timer.
+ * 
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
 export const disableCountdownTimer = (): 
 AppThunk<Promise<void>> => async (
 	dispatch,
@@ -47,6 +50,13 @@ AppThunk<Promise<void>> => async (
 	}
 };
 
+/**
+ * 
+ * This thunk action starts the countdown timer.
+ * 
+ * @returns {AppThunk<Promise<void>>} Promise.
+ * 
+ */
 export const startCountdownTimer = (): 
 AppThunk<Promise<void>> => async (
 	dispatch,
@@ -63,6 +73,13 @@ AppThunk<Promise<void>> => async (
 	}
 };
 
+/**
+ * 
+ * This thunk action stops the countdown timer.
+ * 
+ * @returns {AppThunk<Promise<void>>} Promise.
+ *
+ */
 export const stopCountdownTimer = (): 
 AppThunk<Promise<void>> => async (
 	dispatch,
@@ -79,6 +96,14 @@ AppThunk<Promise<void>> => async (
 	}
 };
 
+/**
+ * 
+ * This thunk action sets the countdown timer remaining time.
+ * 
+ * @param time - Time to set.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ *
+ */
 export const setCountdownTimerInitialTime = (time : string): 
 AppThunk<Promise<void>> => async (
 	dispatch,
