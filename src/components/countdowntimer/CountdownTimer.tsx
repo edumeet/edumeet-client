@@ -3,7 +3,7 @@ import { IconButton, Grid, Switch, TextField, styled } from '@mui/material';
 import { HighlightOff as HighlightOffIcon, Pause as PauseIcon, PlayArrow as PlayArrowIcon } from '@mui/icons-material';
 import moment from 'moment';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import * as countdownTimerActions from '../../store/actions/countdownTimerActions';
+import { setCountdownTimerInitialTime, startCountdownTimer, stopCountdownTimer, disableCountdownTimer, enableCountdownTimer } from '../../store/actions/countdownTimerActions';
 import { 
 	countdownTimerStartLabel, countdownTimerStopLabel, 
 	countdownTimerEnableLabel, countdownTimerDisableLabel, countdownTimerSetLabel } 
@@ -71,12 +71,12 @@ const CountdownTimer = () : JSX.Element => {
 								? moment(`${e.target.value}:00`, 'HH:mm:ss').format('HH:mm:ss')
 								: moment(`${e.target.value}`, 'HH:mm:ss').format('HH:mm:ss');
 							
-							dispatch(countdownTimerActions.setCountdownTimerInitialTime(time));
+							dispatch(setCountdownTimerInitialTime(time));
 						}}
 						onKeyDown={(e) => {
 							if (remainingTime !== '00:00:00') {
 								if (e.key === 'Enter') {
-									dispatch(countdownTimerActions.startCountdownTimer());
+									dispatch(startCountdownTimer());
 									e.preventDefault();
 								}
 							}
@@ -93,7 +93,7 @@ const CountdownTimer = () : JSX.Element => {
 						size='small'
 						disabled={ !isEnabled || (isStarted || remainingTime === '00:00:00') }
 						onClick={() => {
-							dispatch(countdownTimerActions.setCountdownTimerInitialTime('00:00:00'));
+							dispatch(setCountdownTimerInitialTime('00:00:00'));
 						}}
 					>
 						<HighlightOffIcon />
@@ -113,9 +113,9 @@ const CountdownTimer = () : JSX.Element => {
 						disabled={!isEnabled || remainingTime === '00:00:00'}
 						onClick={() => {
 							if (!isStarted) {
-								dispatch(countdownTimerActions.startCountdownTimer());
+								dispatch(startCountdownTimer());
 							} else {
-								dispatch(countdownTimerActions.stopCountdownTimer());
+								dispatch(stopCountdownTimer());
 								handleFocus();
 							}
 						}}
@@ -136,8 +136,8 @@ const CountdownTimer = () : JSX.Element => {
 						disabled={isStarted}
 						onChange={() => {
 							dispatch(isEnabled ? 
-								countdownTimerActions.disableCountdownTimer() : 
-								countdownTimerActions.enableCountdownTimer()
+								disableCountdownTimer() : 
+								enableCountdownTimer()
 							);
 						}}
 						color='error'

@@ -14,7 +14,7 @@ import HelpButton from '../../components/controlbuttons/HelpButton';
 import { useNotifier, useAppSelector, useAppDispatch } from '../../store/hooks';
 import moment from 'moment';
 
-import { roomActions as roomSlices } from '../../store/slices/roomSlice';
+import { roomActions } from '../../store/slices/roomSlice';
 
 const Room = (): JSX.Element => {
 	useNotifier();
@@ -55,7 +55,7 @@ const Room = (): JSX.Element => {
 
 				const remainingTimeString = moment.unix(remainingTimeUnix).format('HH:mm:ss');
 
-				dispatch(roomSlices.setCountdownTimerRemainingTime(remainingTimeString));
+				dispatch(roomActions.setCountdownTimerRemainingTime(remainingTimeString));
 
 			}, 1000);
 			
