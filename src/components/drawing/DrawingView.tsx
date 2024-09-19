@@ -18,12 +18,12 @@ import ColorsPicker from './ColorsPicker';
 import BgColorsPicker from './BgColorsPicker';
 import { RoomState } from '../../store/slices/roomSlice';
 
-interface DrawingBoardProps {
+interface DrawingViewProps {
 	width: number;
 	height: number;
 }
 
-const DrawingBoard = ({ width, height }: DrawingBoardProps): JSX.Element => {
+const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	const dispatch = useAppDispatch();
     
 	// theme
@@ -680,4 +680,4 @@ const DrawingBoard = ({ width, height }: DrawingBoardProps): JSX.Element => {
 	);
 };
 
-export default DrawingBoard;
+export default DrawingView;
