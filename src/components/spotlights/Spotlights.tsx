@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
@@ -6,7 +7,8 @@ import VideoConsumer from '../videoconsumer/VideoConsumer';
 import { Box } from '@mui/material';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
-import DrawingView from '../drawing/DrawingView';
+const DrawingView = lazy(() => import('../drawing/DrawingView')); // import DrawingView from '../drawing/DrawingView';
+
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
@@ -178,7 +180,9 @@ const Spotlights = ({
 					width={style.width}
 					height={style.height}
 				>
-					<DrawingView width={style.width} height={style.height}/>
+					<Suspense>
+						<DrawingView width={style.width} height={style.height}/>
+					</Suspense>
 				</VideoBox>
 			}
 
