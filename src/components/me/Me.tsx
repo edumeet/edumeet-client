@@ -15,6 +15,7 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 	const mirroredSelfView = useAppSelector((state) => state.settings.mirroredSelfView);
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const hideSelfView = useAppSelector((state) => state.settings.hideSelfView);
+	const contain = useAppSelector((state) => state.settings.videoContainEnabled);
 	const id = useAppSelector((state) => state.me.id);
 	const isActiveSpeaker = useIsActiveSpeaker(id);
 	const isMobile = useAppSelector(isMobileSelector);
@@ -30,7 +31,7 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 					width={style.width}
 					height={style.height}
 				>
-					{ webcamEnabled && <VideoView mirrored={mirroredSelfView} source='webcam' /> }
+					{ webcamEnabled && <VideoView mirrored={mirroredSelfView} contain={contain} source='webcam' /> }
 					{ micEnabled && <Volume /> }
 					{ micEnabled && !isMobile && <UnmuteAlert /> }
 					<DisplayName disabled={false} displayName={displayName} isMe />

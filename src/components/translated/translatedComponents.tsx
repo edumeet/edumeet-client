@@ -658,6 +658,11 @@ export const backgroundBlurLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Background blur'
 });
 
+export const videoContainLabel = (): string => intl.formatMessage({
+	id: 'settings.containVideo',
+	defaultMessage: 'Uncrop my video'
+});
+
 export const videoSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.videoSettings',
 	defaultMessage: 'Video settings'

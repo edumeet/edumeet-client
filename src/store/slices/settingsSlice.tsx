@@ -36,6 +36,7 @@ export interface SettingsState {
 	notificationSounds: boolean;
 	locale?: string;
 	blurEnabled?: boolean;
+	videoContainEnabled?: boolean;
 }
 
 type SettingsUpdate = Partial<SettingsState>;
@@ -70,6 +71,7 @@ const initialState: SettingsState = {
 	notificationSounds: true,
 	locale: detect(),
 	blurEnabled: false,
+	videoContainEnabled: true,
 };
 
 const settingsSlice = createSlice({
@@ -171,6 +173,9 @@ const settingsSlice = createSlice({
 		}),
 		setBlurEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.blurEnabled = action.payload;
+		}),
+		setVideoContainEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.videoContainEnabled = action.payload;
 		}),
 	},
 });
