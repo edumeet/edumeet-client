@@ -13,9 +13,9 @@ import RedoIcon from '@mui/icons-material/Redo';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
-import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
-import ColorsPicker from './ColorsPicker';
-import BgColorsPicker from './BgColorsPicker';
+import ErasingAllConfirmationButton from './menu/ErasingAllConfirmationButton';
+import ColorsPicker from './menu/ColorsPicker';
+import BgColorsPicker from './menu/BgColorsPicker';
 import { DrawingState } from '../../store/slices/drawingSlice';
 
 interface DrawingViewProps {
