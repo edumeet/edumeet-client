@@ -37,6 +37,7 @@ import settingsSlice from './slices/settingsSlice';
 import peersSlice from './slices/peersSlice';
 import notificationsSlice from './slices/notificationsSlice';
 import uiSlice from './slices/uiSlice';
+import drawingSlice from './slices/drawingSlice';
 import { EdumeetConfig } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 import { createContext } from 'react';
@@ -124,6 +125,7 @@ const reducer = combineReducers({
 	settings: settingsSlice.reducer,
 	signaling: signalingSlice.reducer,
 	ui: uiSlice.reducer,
+	drawing: drawingSlice.reducer
 });
 
 const pReducer = persistReducer<RootState>(persistConfig, reducer);

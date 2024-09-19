@@ -25,7 +25,7 @@ export interface RoomState {
 	startTranscriptionInProgress?: boolean;
 	transcriptionRunning?: boolean;
 	state: RoomConnectionState;
-	roomMode: RoomMode;
+	roomMode: RoomMode;	
 	breakoutsEnabled?: boolean;
 	chatEnabled?: boolean;
 	filesharingEnabled?: boolean;
@@ -36,30 +36,9 @@ export interface RoomState {
 	audioCodec?: string;
 	screenSharingCodec?: VideoCodec;
 	screenSharingSimulcast?: boolean;
-	drawingEnabled?: boolean;
-	drawing: {
-		zoom: number,
-		tools: [ 'pencilBrush', 'text', 'eraser' ],
-		tool: RoomState['drawing']['tools'][number],
-		pencilBrushSize: number,
-		pencilBrushSizeRange: { min: number, max: number },
-		textSize: number,
-		textSizeRange: { min: number, max: number },
-		eraserSize: number,
-		eraserSizeRange: { min: number, max: number },
-		colorsPickers: [ 'Row', 'Popover' ],
-		colorsPicker: RoomState['drawing']['colorsPickers'][number],
-		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
-		color: RoomState['drawing']['colors'][number],
-		bgColors: ['gray', 'white', 'black'],
-		bgColor: RoomState['drawing']['bgColors'][number]
-		history: string
-		historyUndo: fabric.Object[]
-		historyRedo: fabric.Object[]
-	}
 }
 
-type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'drawing'>;
+type RoomUpdate = Omit<RoomState, 'roomMode' | 'state'>;
 
 const initialState: RoomState = {
 	logo: edumeetConfig.theme.logo,
@@ -77,28 +56,6 @@ const initialState: RoomState = {
 	audioCodec: 'opus',
 	screenSharingCodec: 'vp8',
 	screenSharingSimulcast: edumeetConfig.simulcastSharing,
-	drawingEnabled: true,
-	drawing: {
-		tools: [ 'pencilBrush', 'text', 'eraser' ],
-		tool: 'pencilBrush',
-		pencilBrushSize: 20,
-		pencilBrushSizeRange: { min: 1, max: 100 },
-		textSize: 30,
-		textSizeRange: { min: 1, max: 100 },
-		eraserSize: 60,
-		eraserSizeRange: { min: 1, max: 100 },
-		zoom: 10,
-		colorsPickers: [ 'Row', 'Popover' ],
-		colorsPicker: 'Popover',
-		colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
-		color: 'black',
-		bgColors: [ 'gray', 'white', 'black' ],
-		bgColor: 'gray',
-		history: '',
-		historyUndo: [],
-		historyRedo: [],
-	}
-
 };
 
 const roomSlice = createSlice({
@@ -119,53 +76,6 @@ const roomSlice = createSlice({
 			action: PayloadAction<RoomConnectionState>
 		) => {
 			state.state = action.payload;
-		}),
-		setDrawingTool: ((state, action: PayloadAction<RoomState['drawing']['tool']>) => {
-			state.drawing.tool = action.payload;
-		}),
-		setDrawingColorsPicker: ((state, action: PayloadAction<RoomState['drawing']['colorsPicker']>) => {
-			state.drawing.colorsPicker = action.payload;
-		}),
-		setDrawingColor: ((state, action: PayloadAction<RoomState['drawing']['color']>) => {
-			state.drawing.color = action.payload;
-		}),
-		setDrawingBgColor: ((state, action: PayloadAction<RoomState['drawing']['bgColor']>) => {
-			state.drawing.bgColor = action.payload;
-		}),
-		setDrawingHistory: ((state, action: PayloadAction<string>) => {
-			state.drawing.history = action.payload;
-		}),
-		setDrawingZoom: ((state, action: PayloadAction<number>) => {
-			state.drawing.zoom = action.payload;
-		}),
-		setDrawingPencilBrushSize: ((state, action: PayloadAction<{ operation: 'inc' | 'dec'}>) => {
-			
-			const operation = action.payload.operation;
-			const { min, max } = state.drawing.pencilBrushSizeRange;
-			const curr = state.drawing.pencilBrushSize;
-
-			(operation === 'inc' && curr < max) && state.drawing.pencilBrushSize++;
-			(operation === 'dec' && curr > min) && state.drawing.pencilBrushSize--;
-		}),
-	
-		setDrawingTextSize: ((state, action: PayloadAction<{ operation: 'inc' | 'dec'}>) => {
-			
-			const operation = action.payload.operation;
-			const { min, max } = state.drawing.textSizeRange;
-			const curr = state.drawing.textSize;
-
-			(operation === 'inc' && curr < max) && state.drawing.textSize++;
-			(operation === 'dec' && curr > min) && state.drawing.textSize--;
-		}),
-	
-		setDrawingEraserSize: ((state, action: PayloadAction<{ operation: 'inc' | 'dec'}>) => {
-			
-			const operation = action.payload.operation;
-			const { min, max } = state.drawing.eraserSizeRange;
-			const curr = state.drawing.eraserSize;
-
-			(operation === 'inc' && curr < max) && state.drawing.eraserSize++;
-			(operation === 'dec' && curr > min) && state.drawing.eraserSize--;
 		}),
 	}
 });

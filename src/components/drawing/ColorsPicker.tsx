@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 // import Row from './Row';
 // import Menu from './Popover';
-import { RoomState } from '../../store/slices/roomSlice';
+import { DrawingState } from '../../store/slices/drawingSlice';
 import { Grid, Popover } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CircleIcon from '@mui/icons-material/Circle';
 
 interface Props {
-	colorsPicker: RoomState['drawing']['colorsPicker'];
-	colors: RoomState['drawing']['colors'];
-	color: RoomState['drawing']['color'];
-	handleUseColor: (selectedColor: RoomState['drawing']['color']) => void; // eslint-disable-line
+	colorsPicker: DrawingState['colorsPicker'];
+	colors: DrawingState['colors'];
+	color: DrawingState['color'];
+	handleUseColor: (selectedColor: DrawingState['color']) => void; // eslint-disable-line
 }
 
 const ColorsPicker: React.FC<Props> = (props) => {
@@ -48,7 +48,6 @@ const ColorsPicker: React.FC<Props> = (props) => {
 				))}
 			</>;
 		case 'Popover':
-
 			return <>
 				<IconButton
 					onClick={handleClick}

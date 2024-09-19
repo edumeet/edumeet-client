@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { roomActions } from '../../store/slices/roomSlice';
+import { drawingActions } from '../../store/slices/drawingSlice';
 
 import { fabric } from 'fabric';
 import { Box, Divider, Grid, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
@@ -16,7 +16,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 import ColorsPicker from './ColorsPicker';
 import BgColorsPicker from './BgColorsPicker';
-import { RoomState } from '../../store/slices/roomSlice';
+import { DrawingState } from '../../store/slices/drawingSlice';
 
 interface DrawingViewProps {
 	width: number;
@@ -35,32 +35,32 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
 	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio); // eslint-disable-line
-	const zoom = useAppSelector((state) => state.room.drawing.zoom);
+	const zoom = useAppSelector((state) => state.drawing.zoom);
 	
 	// tools
 	const menuRef = useRef<HTMLDivElement>(null);
-	const tool = useAppSelector((state) => state.room.drawing.tool);
+	const tool = useAppSelector((state) => state.drawing.tool);
 	
 	// size
 	const sizeRef = useRef<NodeJS.Timeout | null>(null);
 	
-	const pencilBrushSize = useAppSelector((state) => state.room.drawing.pencilBrushSize);
-	const pencilBrushSizeRange = useAppSelector((state) => state.room.drawing.pencilBrushSizeRange); // eslint-disable-line
-	const eraserSize = useAppSelector((state) => state.room.drawing.eraserSize);
-	const eraserSizeRange = useAppSelector((state) => state.room.drawing.eraserSizeRange); // eslint-disable-line
-	const textSize = useAppSelector((state) => state.room.drawing.textSize);
-	const textSizeRange = useAppSelector((state) => state.room.drawing.textSizeRange);// eslint-disable-line
+	const pencilBrushSize = useAppSelector((state) => state.drawing.pencilBrushSize);
+	const pencilBrushSizeRange = useAppSelector((state) => state.drawing.pencilBrushSizeRange); // eslint-disable-line
+	const eraserSize = useAppSelector((state) => state.drawing.eraserSize);
+	const eraserSizeRange = useAppSelector((state) => state.drawing.eraserSizeRange); // eslint-disable-line
+	const textSize = useAppSelector((state) => state.drawing.textSize);
+	const textSizeRange = useAppSelector((state) => state.drawing.textSizeRange);// eslint-disable-line
 	
 	const [ size, setSize ] = useState<number>();
 	const [ sizeRange, setSizeRange ] = useState<{ min: number, max: number }>();
 
 	// colors
 	const isColorsPickerPopover = useMediaQuery(theme.breakpoints.between('xs', 'md'));
-	const colorsPicker = useAppSelector((state) => state.room.drawing.colorsPicker);
-	const colors = useAppSelector((state) => state.room.drawing.colors);
-	const color = useAppSelector((state) => state.room.drawing.color);
-	const bgColors = useAppSelector((state) => state.room.drawing.bgColors);
-	const bgColor = useAppSelector((state) => state.room.drawing.bgColor);
+	const colorsPicker = useAppSelector((state) => state.drawing.colorsPicker);
+	const colors = useAppSelector((state) => state.drawing.colors);
+	const color = useAppSelector((state) => state.drawing.color);
+	const bgColors = useAppSelector((state) => state.drawing.bgColors);
+	const bgColor = useAppSelector((state) => state.drawing.bgColor);
 	
 	// history
 	const [ history, setHistory ] = useState<fabric.Object[]>([]);
@@ -187,9 +187,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	/* colors  */
 	useEffect(() => {
 		if (isColorsPickerPopover) {
-			dispatch(roomActions.setDrawingColorsPicker('Popover'));
+			dispatch(drawingActions.setDrawingColorsPicker('Popover'));
 		} else {
-			dispatch(roomActions.setDrawingColorsPicker('Row'));
+			dispatch(drawingActions.setDrawingColorsPicker('Row'));
 		}
 	}, [ isColorsPickerPopover ]);
 	
@@ -215,11 +215,11 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 	/* handling functions */
 	const handleSetZoom = (value: number) => {
-		dispatch(roomActions.setDrawingZoom(value));
+		dispatch(drawingActions.setDrawingZoom(value));
 	};
     
-	const handleSetTool = (value: RoomState['drawing']['tool']) => {
-		dispatch(roomActions.setDrawingTool(value));
+	const handleSetTool = (value: DrawingState['tool']) => {
+		dispatch(drawingActions.setDrawingTool(value));
 	};
 
 	const handleUsePencilBrush = () => {
@@ -340,14 +340,14 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
             
 			case 'pencilBrush':
 				switch (e.type) {
-					case 'click': dispatch(roomActions.setDrawingPencilBrushSize({ operation })); break;
+					case 'click': dispatch(drawingActions.setDrawingPencilBrushSize({ operation })); break;
 					case 'mousedown':
                         
 						if (!sizeRef.current) {
 							sizeRef.current = setTimeout(() => {
 								sizeRef.current = setInterval(() => {
 									
-									dispatch(roomActions.setDrawingPencilBrushSize({ operation }));
+									dispatch(drawingActions.setDrawingPencilBrushSize({ operation }));
         
 								}, 20);
 							}, 600);
@@ -361,13 +361,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 			case 'text':
                 
 				switch (e.type) {
-					case 'click': dispatch(roomActions.setDrawingTextSize({ operation })); break;
+					case 'click': dispatch(drawingActions.setDrawingTextSize({ operation })); break;
 					case 'mousedown':
 						if (!sizeRef.current) {
 							sizeRef.current = setTimeout(() => {
 								sizeRef.current = setInterval(() => {
                                 
-									dispatch(roomActions.setDrawingTextSize({ operation }));
+									dispatch(drawingActions.setDrawingTextSize({ operation }));
     
 								}, 20);
 							}, 600);
@@ -381,13 +381,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 			case 'eraser':
                 
 				switch (e.type) {
-					case 'click': dispatch(roomActions.setDrawingEraserSize({ operation })); break;
+					case 'click': dispatch(drawingActions.setDrawingEraserSize({ operation })); break;
 					case 'mousedown':
 						if (!sizeRef.current) {
 							sizeRef.current = setTimeout(() => {
 								sizeRef.current = setInterval(() => {
                                     
-									dispatch(roomActions.setDrawingEraserSize({ operation }));
+									dispatch(drawingActions.setDrawingEraserSize({ operation }));
                                     
 								}, 20);
 							}, 600);
@@ -408,13 +408,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 		}				
 	};
 
-	const handleUseColor = (selectedColor: RoomState['drawing']['color']) => {
-		dispatch(roomActions.setDrawingColor(selectedColor));
+	const handleUseColor = (selectedColor: DrawingState['color']) => {
+		dispatch(drawingActions.setDrawingColor(selectedColor));
 
 	};
 
-	const handleUseBgColor = (selectedColor: RoomState['drawing']['bgColor']) => {
-		dispatch(roomActions.setDrawingBgColor(selectedColor));
+	const handleUseBgColor = (selectedColor: DrawingState['bgColor']) => {
+		dispatch(drawingActions.setDrawingBgColor(selectedColor));
 
 		setCanvas((prevState) => {
 			if (prevState) {
@@ -430,7 +430,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	/* handle history */
 
 	const handleSetHistory = (value: fabric.Object[]) => {
-		dispatch(roomActions.setDrawingHistory(JSON.stringify(value)));
+		dispatch(drawingActions.setDrawingHistory(JSON.stringify(value)));
 	};
 	
 	const handleUndo = () => {

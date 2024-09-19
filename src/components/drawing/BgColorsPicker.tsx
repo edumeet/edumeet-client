@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 // import Row from './Row';
 // import Menu from './Popover';
-import { RoomState } from '../../store/slices/roomSlice';
+import { DrawingState } from '../../store/slices/drawingSlice';
 import { Grid, Popover } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import RectangleIcon from '@mui/icons-material/Rectangle';
 
 interface Props {
-	bgColors: RoomState['drawing']['bgColors'];
-	bgColor: RoomState['drawing']['bgColor'];
-	handleUseBgColor: (selectedColor: RoomState['drawing']['bgColor']) => void; // eslint-disable-line
+	bgColors: DrawingState['bgColors'];
+	bgColor: DrawingState['bgColor'];
+	handleUseBgColor: (selectedColor: DrawingState['bgColor']) => void; // eslint-disable-line
 }
 
 const BgColorsPicker: React.FC<Props> = (props) => {
