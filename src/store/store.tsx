@@ -4,6 +4,7 @@ import {
 	ThunkAction,
 	Action,
 } from '@reduxjs/toolkit';
+import * as Redux from 'redux';
 import { createLogger } from 'redux-logger';
 import {
 	persistStore,
@@ -152,8 +153,8 @@ export const store = configureStore({
 				duration: true,
 				timestamp: false,
 				level: 'log',
-				logErrors: true,
-			}) ] : []))
+				logErrors: true
+			}) as Redux.Middleware ] : []))
 });
 
 export const persistor = persistStore(store);
