@@ -5,6 +5,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 import { closeLabel } from '../translated/translatedComponents';
 import ShortcutKeys from './ShortcutKeys';
 import GenericDialog from '../genericdialog/GenericDialog';
+import ImpressumButton from '../controlbuttons/ImpressumButton';
 
 const HelpDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -21,7 +22,7 @@ const HelpDialog = (): JSX.Element => {
 			open={ helpOpen }
 			onClose={ handleCloseHelp }
 			maxWidth='xs'
-			content={ <ShortcutKeys /> }
+			content={ <><ShortcutKeys /><ImpressumButton /></> }
 			actions={
 				<Button
 					onClick={ handleCloseHelp }

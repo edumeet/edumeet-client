@@ -17,9 +17,8 @@ const ImpressumButton: React.FC = () => {
 	return (
 		<div>
 			<ImpressumContainer>
-				<Button href={impressumUrl} variant="text" color="primary" title='Privacy info' >
+				<Button target="_blank" href={impressumUrl} variant="text" color="primary" title='Privacy info' >
 					<InfoIcon />
-					
 				</Button>
 			</ImpressumContainer>
 		</div>
