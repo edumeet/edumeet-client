@@ -3,6 +3,7 @@ import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
+	impressumUrl: '/privacy/privacy.html',
 	loginEnabled: false,
 	developmentPort: 8443,
 	productionPort: 443,
@@ -93,6 +94,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 
 export interface EdumeetConfig {
 	managementUrl?: string;
+	impressumUrl: string;
 	loginEnabled: boolean;
 	developmentPort: number;
 	productionPort: number;
