@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { drawingActions } from '../../store/slices/drawingSlice';
+import { DrawingState } from '../../store/slices/drawingSlice';
 
 import { fabric } from 'fabric';
 import { Box, Divider, Grid, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
@@ -16,7 +17,6 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import ErasingAllConfirmationButton from './menu/ErasingAllConfirmationButton';
 import ColorsPicker from './menu/ColorsPicker';
 import BgColorsPicker from './menu/BgColorsPicker';
-import { DrawingState } from '../../store/slices/drawingSlice';
 
 interface DrawingViewProps {
 	width: number;
@@ -359,7 +359,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				break;
             
 			case 'text':
-                
 				switch (e.type) {
 					case 'click': dispatch(drawingActions.setDrawingTextSize({ operation })); break;
 					case 'mousedown':
@@ -379,7 +378,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				break;
             
 			case 'eraser':
-                
 				switch (e.type) {
 					case 'click': dispatch(drawingActions.setDrawingEraserSize({ operation })); break;
 					case 'mousedown':
@@ -404,7 +402,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				clearInterval(sizeRef.current);
 				sizeRef.current = null;
 			}
-                    
 		}				
 	};
 
