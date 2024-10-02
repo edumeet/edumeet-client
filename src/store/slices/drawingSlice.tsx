@@ -48,6 +48,9 @@ const drawingSlice = createSlice({
 	name: 'drawing',
 	initialState,
 	reducers: {
+		setDrawingEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.drawingEnabled = action.payload;
+		}),
 		setDrawingTool: ((state, action: PayloadAction<DrawingState['tool']>) => {
 			state.tool = action.payload;
 		}),

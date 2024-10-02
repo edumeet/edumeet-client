@@ -63,7 +63,7 @@ const Spotlights = ({
 	const headless = useAppSelector((state) => state.room.headless);
 	const screenEnabled = useAppSelector((state) => state.me.screenEnabled);
 	const extraVideoEnabled = useAppSelector((state) => state.me.extraVideoEnabled);
-	const drawingEnabled = useAppSelector((state) => state.me.drawingEnabled);
+	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled);
 
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const [ dimensions, setDimensions ] = useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });

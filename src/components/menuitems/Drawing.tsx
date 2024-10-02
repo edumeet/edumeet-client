@@ -10,7 +10,7 @@ import {
 } from '../translated/translatedComponents';
 import { MenuItemProps } from '../floatingmenu/FloatingMenu';
 import MoreActions from '../moreactions/MoreActions';
-import { meActions } from '../../store/slices/meSlice'; // eslint-disable-line
+import { drawingActions } from '../../store/slices/drawingSlice'; // eslint-disable-line
 import { permissions } from '../../utils/roles'; // eslint-disable-line
 import DrawingIcon from '@mui/icons-material/Edit';
 // import RemoveDrawingIcon from '@mui/icons-material/Backspace';
@@ -22,7 +22,7 @@ const Drawing = ({
 	// const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 	// const locked = useAppSelector((state) => state.permissions.locked);
 	// const locked = useAppSelector((state) => state.permissions.locked);
-	const drawingEnabled = useAppSelector((state) => state.me.drawingEnabled);
+	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled);
 	const drawingLabel = drawingEnabled ? stopDrawingLabel() : startDrawingLabel();
 
 	return (
@@ -34,7 +34,7 @@ const Drawing = ({
 				onClick();
 
 				// drawingOpen ? dispatch(unlock()) : dispatch(lock());
-				dispatch(meActions.setDrawingEnabled(!drawingEnabled));
+				dispatch(drawingActions.setDrawingEnabled(!drawingEnabled));
 			}}
 		>
 			{ <DrawingIcon /> }
