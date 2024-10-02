@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { drawingActions } from '../../store/slices/drawingSlice';
+import { setDrawingBgColor } from '../../store/actions/drawingActions';
 import { DrawingState } from '../../store/slices/drawingSlice';
 
 import { fabric } from 'fabric';
@@ -411,7 +412,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	};
 
 	const handleUseBgColor = (selectedColor: DrawingState['bgColor']) => {
-		dispatch(drawingActions.setDrawingBgColor(selectedColor));
+		dispatch(setDrawingBgColor(selectedColor));
 
 		setCanvas((prevState) => {
 			if (prevState) {

@@ -1,5 +1,5 @@
 import { Logger } from '../../utils/Logger';
-import { drawingActions } from '../slices/drawingSlice';
+import { drawingActions, DrawingState } from '../slices/drawingSlice';
 import { AppThunk } from '../store';
 
 const logger = new Logger('DrawingActions');
@@ -40,5 +40,27 @@ AppThunk<Promise<void>> => async (
 		dispatch(drawingActions.disableDrawing(false));
 	} catch (error) {
 		logger.error('moderator:disableDrawing() [error:"%o"]', error);
+	}
+};
+
+/**
+ * This thunk action set background color of drawing.
+ * 
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const setDrawingBgColor = (bgColor: DrawingState['bgColor']): 
+AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('setDrawingBgColor()');
+
+	try {
+		await signalingService.sendRequest('setDrawingBgColor', bgColor);
+
+		dispatch(drawingActions.setDrawingBgColor(bgColor));
+	} catch (error) {
+		logger.error('setDrawingBgColor() [error:"%o"]', error);
 	}
 };

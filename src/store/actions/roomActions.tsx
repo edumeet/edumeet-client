@@ -86,6 +86,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 			drawingActions.enableDrawing(true) : 
 			drawingActions.disableDrawing(false)
 		);
+		dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
 	});
 
 	if (!getState().me.audioMuted) dispatch(updateMic());

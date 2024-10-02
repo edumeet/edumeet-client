@@ -40,6 +40,15 @@ const createDrawingMiddleware = ({
 
 								break;
 							}
+
+							case 'settedDrawingBgColor': {
+
+								const bgColor = notification.data.bgColor;
+
+								dispatch(drawingActions.setDrawingBgColor(bgColor));
+
+								break;
+							}
 						}
 					} catch (error) {
 						logger.error('error on signalService "notification" event [error:%o]', error);
