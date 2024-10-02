@@ -27,6 +27,7 @@ import createPeerMiddleware from './middlewares/peerMiddleware';
 import createPermissionsMiddleware from './middlewares/permissionsMiddleware';
 import createChatMiddleware from './middlewares/chatMiddleware';
 import createNotificationMiddleware from './middlewares/notificationMiddleware';
+import createDrawingMiddleware from './middlewares/drawingMiddleware';
 import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
 import consumersSlice from './slices/consumersSlice';
@@ -150,6 +151,7 @@ export const store = configureStore({
 			createRoomMiddleware(middlewareOptions),
 			createNotificationMiddleware(middlewareOptions),
 			createEffectsMiddleware(middlewareOptions),
+			createDrawingMiddleware(middlewareOptions),
 			...(edumeetConfig.reduxLoggingEnabled ? [ createLogger({
 				duration: true,
 				timestamp: false,

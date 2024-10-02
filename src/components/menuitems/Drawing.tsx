@@ -11,6 +11,7 @@ import {
 import { MenuItemProps } from '../floatingmenu/FloatingMenu';
 import MoreActions from '../moreactions/MoreActions';
 import { drawingActions } from '../../store/slices/drawingSlice'; // eslint-disable-line
+import { enableDrawing, disableDrawing } from '../../store/actions/drawingActions'; // eslint-disable-line
 import { permissions } from '../../utils/roles'; // eslint-disable-line
 import DrawingIcon from '@mui/icons-material/Edit';
 // import RemoveDrawingIcon from '@mui/icons-material/Backspace';
@@ -32,9 +33,7 @@ const Drawing = ({
 			// disabled={!hasExtraVideoPermission}
 			onClick={() => {
 				onClick();
-
-				// drawingOpen ? dispatch(unlock()) : dispatch(lock());
-				dispatch(drawingActions.setDrawingEnabled(!drawingEnabled));
+				dispatch(!drawingEnabled ? enableDrawing() : disableDrawing());
 			}}
 		>
 			{ <DrawingIcon /> }

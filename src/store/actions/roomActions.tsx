@@ -4,6 +4,7 @@ import { meActions } from '../slices/meSlice';
 import { peersActions } from '../slices/peersSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { roomActions } from '../slices/roomSlice';
+import { drawingActions } from '../slices/drawingSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppThunk, fileService } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
@@ -62,6 +63,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		tracker,
 		chatHistory,
 		fileHistory,
+		drawing,
 		breakoutRooms,
 		locked,
 		lobbyPeers,
@@ -80,6 +82,10 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+		dispatch(drawing.isEnabled ? 
+			drawingActions.enableDrawing(true) : 
+			drawingActions.disableDrawing(false)
+		);
 	});
 
 	if (!getState().me.audioMuted) dispatch(updateMic());
