@@ -105,48 +105,41 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 			});
 		}
+
+		return () => {
+			setCanvas((prevCanvas) => {
+				prevCanvas?.dispose();
+				
+				return undefined;
+			});
+		};
 	}, []);
 
 	/* set canvas size */
 	useEffect(() => {
-		const resizeCanvas = () => {
 		
-			const currWidth = width;
-			const currHeight = height - (menuRef.current?.clientHeight ?? 0);
+		const currWidth = width;
+		const currHeight = height - (menuRef.current?.clientHeight ?? 0);
 
-			// const currHeight = (height / aspectRatio);
+		// const currHeight = (height / aspectRatio);
 
-			const currScaleFactor = Math.min(currWidth / 1920, currHeight / 1080);
+		const currScaleFactor = Math.min(currWidth / 1920, currHeight / 1080);
 
-			setCanvas((prevState) => {
+		setCanvas((prevState) => {
 
-				if (prevState) {
-					prevState.setWidth(currWidth); 
-					prevState.setHeight(currHeight);
-					prevState.setZoom(currScaleFactor);
-					prevState.renderAll();
-				}
+			if (prevState) {
+				prevState.setWidth(currWidth); 
+				prevState.setHeight(currHeight);
+				prevState.setZoom(currScaleFactor);
+				prevState.renderAll();
+			}
 
-				return prevState;
-			});
-				
-			setCanvasWidth(currWidth); 
-			setCanvasHeight(currHeight);
-			handleSetZoom(currScaleFactor);
-		
-		};
-
-		resizeCanvas();
+			return prevState;
+		});
 			
-		window.addEventListener('resize', resizeCanvas);
-            
-		return () => {
-			
-			window.removeEventListener('resize', resizeCanvas);
-			
-			canvas?.dispose();
-
-		};
+		setCanvasWidth(currWidth); 
+		setCanvasHeight(currHeight);
+		handleSetZoom(currScaleFactor);
 		
 	}, [ width, height ]);
 
@@ -170,7 +163,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				setSize(eraserSize);
 				setSizeRange(eraserSizeRange);
 				break;
-			
 		}
 		
 	}, [ canvas, tool, color, pencilBrushSize, textSize, eraserSize, zoom ]);
