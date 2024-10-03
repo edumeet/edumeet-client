@@ -10,14 +10,14 @@ const logger = new Logger('DrawingActions');
  * @returns {AppThunk<Promise<void>>} Promise.
  */
 export const enableDrawing = (): AppThunk<Promise<void>> => async (dispatch, getState, { signalingService }): Promise<void> => {
-	logger.debug('moderator:enableDrawing()');
+	logger.debug('enableDrawing()');
 
 	try {
-		await signalingService.sendRequest('moderator:enableDrawing');
+		await signalingService.sendRequest('enableDrawing');
 
-		dispatch(drawingActions.enableDrawing(true));
+		dispatch(drawingActions.enableDrawing());
 	} catch (error) {
-		logger.error('moderator:enableDrawing() [error:"%o"]', error);
+		logger.error('enableDrawing() [error:"%o"]', error);
 	}
 };
 
@@ -32,14 +32,14 @@ AppThunk<Promise<void>> => async (
 	getState,
 	{ signalingService }
 ): Promise<void> => {
-	logger.debug('moderator:disableDrawing()');
+	logger.debug('disableDrawing()');
 
 	try {
-		await signalingService.sendRequest('moderator:disableDrawing');
+		await signalingService.sendRequest('disableDrawing');
 
-		dispatch(drawingActions.disableDrawing(false));
+		dispatch(drawingActions.disableDrawing());
 	} catch (error) {
-		logger.error('moderator:disableDrawing() [error:"%o"]', error);
+		logger.error('disableDrawing() [error:"%o"]', error);
 	}
 };
 

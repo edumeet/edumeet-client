@@ -29,14 +29,14 @@ const createDrawingMiddleware = ({
 							
 							case 'moderator:enabledDrawing': {
  
-								dispatch(drawingActions.enableDrawing(true));
+								dispatch(drawingActions.enableDrawing());
 
 								break;
 							}
 
-							case 'moderator:disabledDrawing': {
+							case 'disabledDrawing': {
  
-								dispatch(drawingActions.disableDrawing(false));
+								dispatch(drawingActions.disableDrawing());
 
 								break;
 							}

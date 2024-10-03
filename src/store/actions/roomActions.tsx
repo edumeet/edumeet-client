@@ -82,10 +82,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-		dispatch(drawing.isEnabled ? 
-			drawingActions.enableDrawing(true) : 
-			drawingActions.disableDrawing(false)
-		);
+		dispatch(drawing.isEnabled ? drawingActions.enableDrawing() : drawingActions.disableDrawing());
 		dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
 	});
 
