@@ -144,7 +144,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 			
 			window.removeEventListener('resize', resizeCanvas);
 			
-			// prevState.dispose();
+			canvas?.dispose();
 
 		};
 		
