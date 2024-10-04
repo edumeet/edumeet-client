@@ -174,7 +174,7 @@ const Spotlights = ({
 					</MediaControls>
 				</VideoBox>
 			}
-			{ !hideSelfView && drawingEnabled &&
+			{ drawingEnabled &&
 				<VideoBox
 					order={4}
 					width={style.width}
