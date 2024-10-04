@@ -12,6 +12,7 @@ import {
 	mirroredSelfViewLabel,
 	enableNotificationSoundsLabel,
 	enableVerticallyStackedSidePanels,
+	videoContainLabel,
 } from '../translated/translatedComponents';
 import LastNSlider from '../lastnslider/LastNSlider';
 
@@ -23,6 +24,7 @@ const AppearanceSettings = (): JSX.Element => {
 		hideSelfView,
 		notificationSounds,
 		verticalDivide,
+		videoContainEnabled,
 	} = useAppSelector((state) => state.settings);
 
 	const handleChange = (
@@ -88,6 +90,16 @@ const AppearanceSettings = (): JSX.Element => {
 						/>
 					}
 					label={ enableVerticallyStackedSidePanels() }
+				/>
+				<FormControlLabel
+					control={
+						<Switch
+							checked={ videoContainEnabled }
+							onChange={ (event) => handleChange(event, 'videoContainEnabled') }
+							inputProps={ { 'aria-label': 'controlled' } }
+						/>
+					}
+					label={ videoContainLabel() }
 				/>
 			</FormGroup>
 		</>
