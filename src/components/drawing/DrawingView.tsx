@@ -33,8 +33,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	// canvas
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [ canvas, setCanvas ] = useState<fabric.Canvas>();
-	const [ canvasWidth, setCanvasWidth ] = useState<number>(); // eslint-disable-line
-	const [ canvasHeight, setCanvasHeight ] = useState<number>(); // eslint-disable-line
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio); // eslint-disable-line
 	const zoom = useAppSelector((state) => state.drawing.zoom);
 	
@@ -137,8 +135,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 			return prevState;
 		});
 			
-		setCanvasWidth(currWidth); 
-		setCanvasHeight(currHeight);
 		handleSetZoom(currScaleFactor);
 		
 	}, [ width, height ]);
