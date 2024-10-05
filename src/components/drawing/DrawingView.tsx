@@ -557,10 +557,10 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 						{/* Increase Size */}
 						<IconButton
 							aria-label="Increase Size"
-							onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
-							onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
-							onMouseUp={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
-							onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'inc')}
+							onClick={(e) => handleChangeSize(e, 'inc')}
+							onMouseDown={(e) => handleChangeSize(e, 'inc')}
+							onMouseUp={(e) => handleChangeSize(e, 'inc')}
+							onMouseLeave={(e) => handleChangeSize(e, 'inc')}
 							disabled={sizeRange && size === sizeRange.max}
 							title="Increase Size"
 							size='small'
@@ -582,10 +582,10 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 						{/* Decrease Size */}
 						<IconButton
 							aria-label="Decrease Size"
-							onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
-							onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
-							onMouseUp={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
-							onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => handleChangeSize(e, 'dec')}
+							onClick={(e) => handleChangeSize(e, 'dec')}
+							onMouseDown={(e) => handleChangeSize(e, 'dec')}
+							onMouseUp={(e) => handleChangeSize(e, 'dec')}
+							onMouseLeave={(e) => handleChangeSize(e, 'dec')}
 							disabled={sizeRange && size === sizeRange.min}
 							title="Decrease Size"
 							size='small'
