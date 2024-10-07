@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { drawingActions } from '../../store/slices/drawingSlice';
+import { drawingActions, DrawingState } from '../../store/slices/drawingSlice';
 import { setDrawingBgColor } from '../../store/actions/drawingActions';
-import { DrawingState } from '../../store/slices/drawingSlice';
 
 import { fabric } from 'fabric';
 import { Box, Divider, Grid, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
@@ -44,11 +43,11 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	const sizeRef = useRef<NodeJS.Timeout | null>(null);
 	
 	const pencilBrushSize = useAppSelector((state) => state.drawing.pencilBrushSize);
-	const pencilBrushSizeRange = useAppSelector((state) => state.drawing.pencilBrushSizeRange); // eslint-disable-line
+	const pencilBrushSizeRange = useAppSelector((state) => state.drawing.pencilBrushSizeRange);
 	const eraserSize = useAppSelector((state) => state.drawing.eraserSize);
-	const eraserSizeRange = useAppSelector((state) => state.drawing.eraserSizeRange); // eslint-disable-line
+	const eraserSizeRange = useAppSelector((state) => state.drawing.eraserSizeRange);
 	const textSize = useAppSelector((state) => state.drawing.textSize);
-	const textSizeRange = useAppSelector((state) => state.drawing.textSizeRange);// eslint-disable-line
+	const textSizeRange = useAppSelector((state) => state.drawing.textSizeRange);
 	
 	const [ size, setSize ] = useState<number>();
 	const [ sizeRange, setSizeRange ] = useState<{ min: number, max: number }>();
@@ -62,9 +61,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	const bgColor = useAppSelector((state) => state.drawing.bgColor);
 	
 	// history
-	const [ history, setHistory ] = useState<fabric.Object[]>([]);
-	const [ historyRedo, setHistoryRedo ] = useState<fabric.Object[]>([]);
-	const historyActionRef = useRef<string | null>(null);
+	const actionRef = useRef< 'text' | 'undo' | 'redo' | 'clear' | null>(null);
+	const pastActions = useAppSelector((state) => state.drawing.history.past);
+	const futureActions = useAppSelector((state) => state.drawing.history.future);
 
 	/* create canvas object */
 	useEffect(() => {
@@ -76,27 +75,55 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 			setCanvas((prevState) => {
 				if (prevState) {
-					prevState.on('object:added', () => {
-						switch (historyActionRef.current) {
-							case null:
-								setHistory(prevState.getObjects());
-								setHistoryRedo([]);
-								historyActionRef.current = null;
-								break;
+
+					const addId = (obj: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+						
+						// (!('id' in obj)) && (obj.id = new Date().toLocaleTimeString('en-GB', { hour12: false }));
+						(!('id' in obj)) && (obj.id = Date.now());
+						
+						obj.toObject = (function(toObject) {
+								return function (this: any) { // eslint-disable-line
+								return { id: (this as any).id, ...toObject.call(this) }; // eslint-disable-line @typescript-eslint/no-explicit-any
+							};
+						})(obj.toObject);
+
+						return obj;
+					};
+
+					prevState.on('object:added', (e) => {
+						
+						if (actionRef.current === null) {
 							
-							case 'redo':
-								setHistory(prevState.getObjects());
-								historyActionRef.current = null;
-								break;
+							const obj = addId(e.target);
+
+							dispatch(drawingActions.recordAction({ object: obj.toObject(), status: 'added' }));
 						}
+
 					});
-					prevState.on('object:modified', () => { 
-						setHistory(prevState.getObjects());
+
+					prevState.on('object:modified', (e) => { 
+						
+						if (actionRef.current === null) {
+							
+							const obj = addId(e.target);
+
+							dispatch(drawingActions.recordAction({ object: obj.toObject(), status: 'modified' }));
+						}
+
 					});
-					prevState.on('object:removed', () => { 
-						setHistory(prevState.getObjects());
-		
+
+					prevState.on('object:removed', (e) => { 
+
+						if (actionRef.current === null) {
+							
+							const obj = addId(e.target);
+
+							dispatch(drawingActions.recordAction({ object: obj.toObject(), status: 'removed' }));
+						
+						}
+	
 					});
+					
 				}
 
 				return prevState;
@@ -105,8 +132,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 		}
 
 		return () => {
-			setCanvas((prevCanvas) => {
-				prevCanvas?.dispose();
+			setCanvas((prevState) => {
+				prevState?.dispose();
 				
 				return undefined;
 			});
@@ -197,11 +224,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 		}
 	}, [ bgColor ]);
 
-	/* history */
-	useEffect(() => {
-		handleSetHistory(history);
-	}, [ history ]);
-
 	/* handling functions */
 	const handleSetZoom = (value: number) => {
 		dispatch(drawingActions.setDrawingZoom(value));
@@ -253,6 +275,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 		setCanvas((prevState) => {
 			if (prevState) {
+
+				actionRef.current = 'text';
+
 				prevState.isDrawingMode = false;
 				prevState.selection = false;
 				prevState.defaultCursor = 'text';
@@ -274,6 +299,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 					prevState.setActiveObject(text);
 					text.enterEditing();
 					
+					text.on('editing:exited', () => {
+						prevState.off('mouse:down');
+					});
 				});
 	
 				handleSetTool('text');
@@ -415,16 +443,39 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	
 	/* handle history */
 
-	const handleSetHistory = (value: fabric.Object[]) => {
-		dispatch(drawingActions.setDrawingHistory(JSON.stringify(value)));
-	};
-	
 	const handleUndo = () => {
+
 		setCanvas((prevState) => {
 			if (prevState) {
-				setHistoryRedo((prevItems) => [ ...prevItems, history[history.length - 1] ]);
-				prevState.remove(history[history.length - 1]);
-				prevState.renderAll();
+
+				actionRef.current = 'undo';
+
+				const lastAction = pastActions.at(-1);
+
+				if (lastAction !== undefined) {
+
+					fabric.util.enlivenObjects([ lastAction.object ], (lA: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+
+						if (lastAction.status === 'added') {
+						
+							const foundObject = prevState.getObjects().find((curr: any) => curr.id === lA[0].id); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+							foundObject && prevState.remove(foundObject);
+
+						} else if (lastAction.status === 'modified') {
+							// found.object.set(found.object._stateProperties); // restore modified properties
+							// prevState?.renderAll();
+						} else if (lastAction.status === 'removed') {
+							prevState.add(lA[0]);
+
+						}
+
+						dispatch(drawingActions.undo());
+
+					}, 'fabric');
+
+					actionRef.current = null;
+				}
 			}
 			
 			return prevState;
@@ -432,30 +483,57 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	};
 	
 	const handleRedo = () => {
+
 		setCanvas((prevState) => {
 			if (prevState) {
-			
-				historyActionRef.current = 'redo';
 
-				setHistoryRedo((prevItems) => prevItems.slice(0, prevItems.length - 1));
-			
-				prevState.add(historyRedo[historyRedo.length - 1]);
-				prevState.renderAll();
+				actionRef.current = 'redo';
 
+				const nextAction = futureActions.at(-1);
+
+				if (nextAction !== undefined) {
+
+					fabric.util.enlivenObjects([ nextAction.object ], (nA: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+
+						if (nextAction.status === 'added') {
+							prevState.add(nA[0]);
+						} else if (nextAction.status === 'modified') {
+							// found.object.set(found.object._stateProperties); // restore modified properties
+							// prevState?.renderAll();
+						} else if (nextAction.status === 'removed') {
+
+							const foundObject = prevState.getObjects().find((obj: any) => obj.id === nA[0].id); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+							foundObject && prevState.remove(foundObject);
+						}
+
+						dispatch(drawingActions.redo());
+
+					}, 'fabric');
+
+					actionRef.current = null;
+				
+				}
 			}
 			
 			return prevState;
 		});
 	};
-	
+
 	const handleEraseAll = () => {
 		setCanvas((prevState) => {
+			
 			if (prevState) {
+
+				actionRef.current = 'clear';
+
 				prevState.clear();
 				prevState.backgroundColor = bgColor;
 
-				if (prevState.getObjects().length === 0)
-					setHistoryRedo([]);
+				dispatch(drawingActions.clear());
+
+				actionRef.current = null;
+
 			}
 			
 			return prevState;
@@ -513,9 +591,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							style={{ border: tool === 'pencilBrush' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
-							<DrawIcon
-								// style={{ color: color }}
-							/>
+							<DrawIcon />
 						</IconButton>
 
 						{/* Text */}
@@ -526,9 +602,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							style={{ border: tool === 'text' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
-							<AbcIcon
-								// style={{ color: color }}
-							/>
+							<AbcIcon />
 						</IconButton>
 
 						{/* Eraser */}
@@ -635,10 +709,10 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							onClick={handleUndo}
 							title="Undo"
 							size='small'
-							disabled={history.length === 0}
+							disabled={pastActions.length === 0}
 						>
 							<UndoIcon />
-							{/* <sub>{history.length}</sub> */}
+							<sub>{pastActions.length}</sub>
 						</IconButton>
 
 						{/* Redo */}
@@ -647,16 +721,17 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							onClick={handleRedo}
 							title="Redo"
 							size='small'
-							disabled={historyRedo.length === 0}
+							disabled={futureActions.length === 0}
 						>
 							<RedoIcon />
-							{/* <sub>{historyRedo.length}</sub> */}
+							<sub>{futureActions.length}</sub>
 						</IconButton>
 						
 						{/* Erase All */}
 						<ErasingAllConfirmationButton
 							handleEraseAll={handleEraseAll}
-							disabled={history.length === 0}
+							disabled={pastActions.length === 0 && futureActions.length === 0}
+
 						/>
 						
 					</Grid>

@@ -1,25 +1,34 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface DrawingState {
-	drawingEnabled?: boolean;
-	zoom: number,
-	tools: [ 'pencilBrush', 'text', 'eraser' ],
-	tool: DrawingState['tools'][number],
-	pencilBrushSize: number,
-	pencilBrushSizeRange: { min: number, max: number },
-	textSize: number,
-	textSizeRange: { min: number, max: number },
+export interface DrawingState extends HistoryState {
+	drawingEnabled?: boolean
+	zoom: number
+	tools: [ 'pencilBrush', 'text', 'eraser' ]
+	tool: DrawingState['tools'][number]
+	pencilBrushSize: number
+	pencilBrushSizeRange: { min: number, max: number }
+	textSize: number
+	textSizeRange: { min: number, max: number }
 	eraserSize: number,
-	eraserSizeRange: { min: number, max: number },
-	colorsPickers: [ 'Row', 'Popover' ],
-	colorsPicker: DrawingState['colorsPickers'][number],
+	eraserSizeRange: { min: number, max: number }
+	colorsPickers: [ 'Row', 'Popover' ]
+	colorsPicker: DrawingState['colorsPickers'][number]
 	colors: [ 'black', 'white', 'gray', 'green', 'yellow', 'orange', 'red', 'blue', 'purple' ],
-	color: DrawingState['colors'][number],
-	bgColors: ['gray', 'white', 'black'],
+	color: DrawingState['colors'][number]
+	bgColors: ['gray', 'white', 'black']
 	bgColor: DrawingState['bgColors'][number]
-	history: string
-	historyUndo: fabric.Object[]
-	historyRedo: fabric.Object[]
+}
+
+export interface HistoryState {
+	history: {
+		past: FabricAction[]
+		future: FabricAction[]
+	}
+}
+
+export interface FabricAction {
+	object: fabric.Object['toObject']
+	status: 'added' | 'modified' | 'removed'
 }
 
 const initialState: DrawingState = {
@@ -39,9 +48,10 @@ const initialState: DrawingState = {
 	color: 'black',
 	bgColors: [ 'gray', 'white', 'black' ],
 	bgColor: 'gray',
-	history: '',
-	historyUndo: [],
-	historyRedo: [],
+	history: {	
+		past: [],
+		future: [],
+	}
 };
 
 const drawingSlice = createSlice({
@@ -66,9 +76,31 @@ const drawingSlice = createSlice({
 		setDrawingBgColor: ((state, action: PayloadAction<DrawingState['bgColor']>) => {
 			state.bgColor = action.payload;
 		}),
-		setDrawingHistory: ((state, action: PayloadAction<string>) => {
-			state.history = action.payload;
+
+		recordAction: ((state, action: PayloadAction<FabricAction>) => {
+			state.history.past.push(action.payload);
+			state.history.future = [];
 		}),
+
+		undo: (state) => {
+			const previousAction = state.history.past.pop();
+
+			if (previousAction) {
+				state.history.future.push(previousAction);
+			}
+		},
+		redo: (state) => {
+			const nextAction = state.history.future.pop();
+
+			if (nextAction) {
+				state.history.past.push(nextAction);
+			}
+		},
+		clear: (state) => {
+			state.history.past = [];
+			state.history.future = [];
+		},
+
 		setDrawingZoom: ((state, action: PayloadAction<number>) => {
 			state.zoom = action.payload;
 		}),
