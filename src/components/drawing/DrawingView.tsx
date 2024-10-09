@@ -68,16 +68,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	/* create canvas object */
 	useEffect(() => {
 
-		const addId = (obj: fabric.Object & { id?: number }) => {
-			obj.id = obj.id ?? Date.now();
-
-			const originalToObject = obj.toObject.bind(obj);
-
-			obj.toObject = () => ({ id: obj.id, ...originalToObject() });
-
-			return obj;
-		};
-
 		if (canvasRef.current) {
 
 			setCanvas(new fabric.Canvas(canvasRef.current, {
@@ -88,39 +78,25 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 			setCanvas((prevState) => {
 				if (prevState) {
 
-					prevState.on('object:added', (e) => {
-						
+					const handleObjectEvent = (status: 'added' | 'modified' | 'removed') => (e: fabric.IEvent) => {
+					
 						if (actionRef.current === null) {
-							
-							const obj = addId(e.target as fabric.Object & { id?: number });
 
-							dispatch(drawingActions.recordAction({ object: obj.toObject(), status: 'added' }));
+							const obj = e.target as fabric.Object & { id?: number };
+
+							obj.id = obj.id ?? Date.now();
+					
+							const originalToObject = obj.toObject.bind(obj);
+					
+							obj.toObject = () => ({ id: obj.id, ...originalToObject() });
+					
+							dispatch(drawingActions.recordAction({ object: obj.toObject(), status }));
 						}
+					};
 
-					});
-
-					prevState.on('object:modified', (e) => { 
-						
-						if (actionRef.current === null) {
-							
-							const obj = addId(e.target as fabric.Object & { id?: number });
-
-							dispatch(drawingActions.recordAction({ object: obj.toObject(), status: 'modified' }));
-						}
-
-					});
-
-					prevState.on('object:removed', (e) => { 
-
-						if (actionRef.current === null) {
-							
-							const obj = addId(e.target as fabric.Object & { id?: number });
-
-							dispatch(drawingActions.recordAction({ object: obj.toObject(), status: 'removed' }));
-						
-						}
-	
-					});
+					prevState.on('object:added', handleObjectEvent('added'));
+					prevState.on('object:modified', handleObjectEvent('modified'));
+					prevState.on('object:removed', handleObjectEvent('removed'));
 					
 				}
 
