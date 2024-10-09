@@ -67,7 +67,19 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 	/* create canvas object */
 	useEffect(() => {
+
+		const addId = (obj: fabric.Object & { id?: number }) => {
+			obj.id = obj.id ?? Date.now();
+
+			const originalToObject = obj.toObject.bind(obj);
+
+			obj.toObject = () => ({ id: obj.id, ...originalToObject() });
+
+			return obj;
+		};
+
 		if (canvasRef.current) {
+
 			setCanvas(new fabric.Canvas(canvasRef.current, {
 				backgroundColor: bgColor,
 				isDrawingMode: true
@@ -76,25 +88,11 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 			setCanvas((prevState) => {
 				if (prevState) {
 
-					const addId = (obj: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
-						
-						// (!('id' in obj)) && (obj.id = new Date().toLocaleTimeString('en-GB', { hour12: false }));
-						(!('id' in obj)) && (obj.id = Date.now());
-						
-						obj.toObject = (function(toObject) {
-								return function (this: any) { // eslint-disable-line
-								return { id: (this as any).id, ...toObject.call(this) }; // eslint-disable-line @typescript-eslint/no-explicit-any
-							};
-						})(obj.toObject);
-
-						return obj;
-					};
-
 					prevState.on('object:added', (e) => {
 						
 						if (actionRef.current === null) {
 							
-							const obj = addId(e.target);
+							const obj = addId(e.target as fabric.Object & { id?: number });
 
 							dispatch(drawingActions.recordAction({ object: obj.toObject(), status: 'added' }));
 						}
@@ -105,7 +103,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 						
 						if (actionRef.current === null) {
 							
-							const obj = addId(e.target);
+							const obj = addId(e.target as fabric.Object & { id?: number });
 
 							dispatch(drawingActions.recordAction({ object: obj.toObject(), status: 'modified' }));
 						}
@@ -116,7 +114,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 						if (actionRef.current === null) {
 							
-							const obj = addId(e.target);
+							const obj = addId(e.target as fabric.Object & { id?: number });
 
 							dispatch(drawingActions.recordAction({ object: obj.toObject(), status: 'removed' }));
 						
@@ -454,11 +452,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 				if (lastAction !== undefined) {
 
-					fabric.util.enlivenObjects([ lastAction.object ], (lA: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+					fabric.util.enlivenObjects([ lastAction.object ], (lA : fabric.Object[]) => {
+
+						const enlivenObject : fabric.Object & { id?: number } = lA[0];
 
 						if (lastAction.status === 'added') {
 						
-							const foundObject = prevState.getObjects().find((curr: any) => curr.id === lA[0].id); // eslint-disable-line @typescript-eslint/no-explicit-any
+							const foundObject = prevState.getObjects().find((curr: fabric.Object & { id?: number }) => curr.id === enlivenObject.id);
 
 							foundObject && prevState.remove(foundObject);
 
@@ -466,7 +466,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							// found.object.set(found.object._stateProperties); // restore modified properties
 							// prevState?.renderAll();
 						} else if (lastAction.status === 'removed') {
-							prevState.add(lA[0]);
+							prevState.add(enlivenObject);
 
 						}
 
@@ -493,16 +493,18 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 				if (nextAction !== undefined) {
 
-					fabric.util.enlivenObjects([ nextAction.object ], (nA: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+					fabric.util.enlivenObjects([ nextAction.object ], (nA: fabric.Object[]) => {
+
+						const enlivenObject : fabric.Object & { id?: number } = nA[0];
 
 						if (nextAction.status === 'added') {
-							prevState.add(nA[0]);
+							prevState.add(enlivenObject);
 						} else if (nextAction.status === 'modified') {
 							// found.object.set(found.object._stateProperties); // restore modified properties
 							// prevState?.renderAll();
 						} else if (nextAction.status === 'removed') {
 
-							const foundObject = prevState.getObjects().find((obj: any) => obj.id === nA[0].id); // eslint-disable-line @typescript-eslint/no-explicit-any
+							const foundObject = prevState.getObjects().find((obj: fabric.Object & { id?: number }) => obj.id === enlivenObject.id);
 
 							foundObject && prevState.remove(foundObject);
 						}
