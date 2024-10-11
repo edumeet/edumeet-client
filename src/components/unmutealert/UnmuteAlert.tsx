@@ -7,10 +7,7 @@ import { useAppSelector } from '../../store/hooks';
 
 const StyledAlert = styled(Alert)(() => ({
 	position: 'absolute',
-	width: '40%',
-	left: '50%',
-	top: '50%',
-	transform: 'translate(-50%, -50%)',
+	width: '100%',
 	transition: 'opacity 0.5s ease',
 	textAlign: 'center',
 	opacity: 0,
