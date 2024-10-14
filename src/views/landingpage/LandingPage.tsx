@@ -8,10 +8,12 @@ import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { QRCode } from 'react-qrcode-logo';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 const LandingPage = (): JSX.Element => {
 	const navigate = useNavigate();
-	const [ roomId, setRoomId ] = useState(randomString({ length: 8 }).toLowerCase());
+	const randomizeOnBlank = edumeetConfig.randomizeOnBlank;
+	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomString({ length: 8 }).toLowerCase() : '');
 	const onClicked = () => navigate(`/${roomId}`);
 
 	return (
@@ -26,7 +28,7 @@ const LandingPage = (): JSX.Element => {
 							value={roomId}
 							setValue={setRoomId}
 							onEnter={onClicked}
-							randomizeOnBlank
+							randomizeOnBlank={randomizeOnBlank}
 							autoFocus
 						/>
 					</Container>
