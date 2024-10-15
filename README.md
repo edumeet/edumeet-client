@@ -76,5 +76,6 @@ can be found here: [config.example.js](public/config/config.example.js).
 | buttonControlBar | If true, the media control buttons will be shown in separate control bar, not in the ME container. | `"boolean"` | ``false`` |
 | logo | If not null, it shows the logo loaded from the specified URL, otherwise it shows the title. | `"url"` | ``"images/logo.edumeet.svg"`` |
 | title | The title to show if the logo is not specified. | `"string"` | ``"edumeet"`` |
+| randomizeOnBlank | Enable or disable randomize room name when it is blank. | `"boolean"` | ``true`` |
 
 ---
