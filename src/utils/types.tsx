@@ -97,7 +97,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 export interface EdumeetConfig {
 	managementUrl?: string;
 	impressumUrl: string;
-	p2penabled?: boolean;
+	p2penabled: boolean;
 	loginEnabled: boolean;
 	developmentPort: number;
 	productionPort: number;
