@@ -31,6 +31,7 @@ const MediaPreview = ({
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
+	const contain = useAppSelector((state) => state.settings.videoContainEnabled);
 
 	useEffect(() => {
 		if (startAudio) dispatch(updatePreviewMic({ newDeviceId: audioDevice, updateSelection }));
@@ -68,7 +69,7 @@ const MediaPreview = ({
 						/>
 					</MediaControls>
 				)}
-				{ previewWebcamTrackId && <VideoView mirrored previewTrack /> }
+				{ previewWebcamTrackId && <VideoView contain={contain} mirrored previewTrack /> }
 			</VideoBox>
 		</>
 	);

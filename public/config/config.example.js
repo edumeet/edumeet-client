@@ -142,6 +142,10 @@ var config = {
 	// The title to show if the logo is not specified.
 	title: 'edumeet',
 
+	// If true, a random room name will be generated when the input field is blank;
+	// otherwise, it will remain empty and users will have to enter a room name.
+	randomizeOnBlank: true,
+
 	// Client theme. Take a look at mui theme documentation.
 	theme: {
 		palette: {
