@@ -36,7 +36,7 @@ const WebcamPreviewButton = (props: ControlButtonProps): JSX.Element => {
 		<ControlButton
 			toolTip={webcamTip}
 			onClick={() => {
-				if (webcamState === 'unsupported') return;
+				// if (webcamState === 'unsupported') return;
 
 				if (webcamState === 'off') {
 					dispatch(updatePreviewWebcam({ newDeviceId: videoDevice }));

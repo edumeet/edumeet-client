@@ -9,6 +9,8 @@
 var config = {
 	// Location of management service.
 	managementUrl: 'http://localhost:3030',
+	// Location of the privacy files.
+	impressumUrl: '/privacy/privacy.html',
 	// If ability to log in is enabled.
 	loginEnabled: true,
 

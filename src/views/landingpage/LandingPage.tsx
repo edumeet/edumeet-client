@@ -8,7 +8,9 @@ import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { QRCode } from 'react-qrcode-logo';
+import ImpressumButton from '../../components/controlbuttons/ImpressumButton';
 import edumeetConfig from '../../utils/edumeetConfig';
+
 
 const LandingPage = (): JSX.Element => {
 	const navigate = useNavigate();
@@ -35,14 +37,15 @@ const LandingPage = (): JSX.Element => {
 
 				}
 				actions={
-					<Button
-						onClick={onClicked}
-						variant='contained'
-						disabled={!roomId}
-						size='small'
-					>
-						{ joinLabel()}
-					</Button>
+					<><ImpressumButton />
+						<Button
+							onClick={onClicked}
+							variant='contained'
+							disabled={!roomId}
+							size='small'
+						>
+							{ joinLabel()}
+						</Button></>
 				}
 			/>
 			
