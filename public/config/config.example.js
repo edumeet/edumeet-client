@@ -146,6 +146,9 @@ var config = {
 	// otherwise, it will remain empty and users will have to enter a room name.
 	randomizeOnBlank: true,
 
+	// Enable or disable transcription.
+	transcriptionEnabled: true,
+
 	// Client theme. Take a look at mui theme documentation.
 	theme: {
 		palette: {
