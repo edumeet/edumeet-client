@@ -78,7 +78,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	},
 	title: 'edumeet',
 	randomizeOnBlank: true,
-	transcriptionEnabled: true;
+	transcriptionEnabled: true,
 	theme: {
 		background: 'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
 		appBarColor: 'rgba(0, 0, 0, 0.4)',
