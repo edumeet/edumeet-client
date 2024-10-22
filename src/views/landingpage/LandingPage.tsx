@@ -11,7 +11,6 @@ import { QRCode } from 'react-qrcode-logo';
 import ImpressumButton from '../../components/controlbuttons/ImpressumButton';
 import edumeetConfig from '../../utils/edumeetConfig';
 
-
 const LandingPage = (): JSX.Element => {
 	const navigate = useNavigate();
 	const randomizeOnBlank = edumeetConfig.randomizeOnBlank;
