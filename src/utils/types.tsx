@@ -261,3 +261,10 @@ export interface HTMLMediaElementWithSink extends HTMLMediaElement {
 	// eslint-disable-next-line no-unused-vars
 	setSinkId(deviceId: string): Promise<void>
 }
+
+export type Tenant = {
+
+	id: number,
+	name: string,
+	description: string
+};

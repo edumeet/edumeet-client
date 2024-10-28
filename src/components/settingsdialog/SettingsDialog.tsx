@@ -1,17 +1,19 @@
 import { Button, Tab, Tabs } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SettingsTab, uiActions } from '../../store/slices/uiSlice';
-import { advancedSettingsLabel, appearanceSettingsLabel, closeLabel, mediaSettingsLabel } from '../translated/translatedComponents';
+import { advancedSettingsLabel, appearanceSettingsLabel, closeLabel, managementSettingsLabel, mediaSettingsLabel } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import MediaSettings from './MediaSettings';
 import AppearanceSettings from './AppearanceSettings';
 import GenericDialog from '../genericdialog/GenericDialog';
 import AdvancedSettings from './AdvancedSettings';
+import MangagementSettings from './ManagementSettings';
 
 const tabs: SettingsTab[] = [
 	'media',
 	'appearance',
-	'advanced'
+	'advanced',
+	'management'
 ];
 
 const SettingsDialog = (): JSX.Element => {
@@ -43,10 +45,13 @@ const SettingsDialog = (): JSX.Element => {
 						<Tab label={mediaSettingsLabel()} />
 						<Tab label={appearanceSettingsLabel()} />
 						<Tab label={advancedSettingsLabel()} />
+						<Tab label={managementSettingsLabel()} />
 					</Tabs>
 					{ currentSettingsTab === 'media' && <MediaSettings /> }
 					{ currentSettingsTab === 'appearance' && <AppearanceSettings /> }
 					{ currentSettingsTab === 'advanced' && <AdvancedSettings /> }
+					{ currentSettingsTab === 'management' && <MangagementSettings /> }
+
 				</>
 			}
 			actions={

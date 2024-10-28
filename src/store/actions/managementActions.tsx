@@ -32,3 +32,142 @@ export const createRoom = (roomName: string): AppThunk<Promise<void>> => async (
 		name: roomName
 	});
 };
+
+export const getUserData = (): AppThunk<Promise<object | undefined>> => async (
+	_dispatch,
+	_getState,
+	{ managementService }
+): Promise<object | undefined> => {
+
+	logger.debug('getUserData()',);
+
+	let data: object | undefined;
+
+	try {
+		data = await (await managementService).reAuthenticate();
+		
+		// eslint-disable-next-line no-console
+		console.log(data);
+	} catch (error) {
+		
+		// eslint-disable-next-line no-console
+		console.error(error);
+	}
+
+	return data;
+};
+
+export const getTenants = (): AppThunk<Promise<object | undefined>> => async (
+	_dispatch,
+	_getState,
+	{ managementService }
+): Promise<object | undefined> => {
+
+	logger.debug('getTenants()');
+
+	let data: object | undefined;
+
+	const serviceName='tenants';
+
+	try {
+		data = await (await managementService).service(serviceName).find(
+			{
+				query: {
+					$sort: {
+						id: 1
+					}
+				}
+			}
+		);
+	
+		// eslint-disable-next-line no-console
+		console.log(data);
+	} catch (error) {
+		// eslint-disable-next-line no-console
+		console.error(error);
+	}
+
+	return data;
+};
+
+export const deleteTenant = (id : number): AppThunk<Promise<object | undefined>> => async (
+	_dispatch,
+	_getState,
+	{ managementService }
+): Promise<object | undefined> => {
+
+	logger.debug('deleteTenant()');
+
+	let data: object | undefined;
+
+	const serviceName='tenants';
+
+	try {
+		data = await (await managementService).service(serviceName).remove(
+			id
+		);
+	
+		// eslint-disable-next-line no-console
+		console.log(data);
+	} catch (error) {
+		// eslint-disable-next-line no-console
+		console.error(error);
+	}
+
+	return data;
+};
+
+export const createTenant = (name : string, description : string): AppThunk<Promise<object | undefined>> => async (
+	_dispatch,
+	_getState,
+	{ managementService }
+): Promise<object | undefined> => {
+
+	logger.debug('createTenant()');
+
+	let data: object | undefined;
+
+	const serviceName='tenants';
+
+	try {
+		data = await (await managementService).service(serviceName).create(
+			{ name: name, description: description }
+		);
+	
+		// eslint-disable-next-line no-console
+		console.log(data);
+	} catch (error) {
+		// eslint-disable-next-line no-console
+		console.error(error);
+	}
+
+	return data;
+};
+
+export const modifyTenant = (id : number, params : object): AppThunk<Promise<object | undefined>> => async (
+	_dispatch,
+	_getState,
+	{ managementService }
+): Promise<object | undefined> => {
+
+	logger.debug('modifyTenant()');
+
+	let data: object | undefined;
+
+	const serviceName='tenants';
+
+	try {
+		data = await (await managementService).service(serviceName).patch(
+			id,
+			params
+		);
+	
+		// eslint-disable-next-line no-console
+		console.log(data);
+	} catch (error) {
+		// eslint-disable-next-line no-console
+		console.error(error);
+	}
+
+	return data;
+};
