@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { managementExtraSettingsLabel } from '../../translated/translatedComponents';
-import TenantTable from '../../managementservice/tenant/Tenant';
+import TenantTable from '../../managementservice/tenants/Tenant';
+import TenantFQDNTable from '../../managementservice/tenants/TenatnFQDN';
+import TenantOAuthTable from '../../managementservice/tenants/TenantOAuth';
 const ManagementTenantSetting = () => {
 	const [ open, setOpen ] = useState(false);
 
@@ -23,10 +25,10 @@ const ManagementTenantSetting = () => {
 					<TenantTable />
 					<hr/>
 					<h4>Tenant domain(s)</h4>
-					{/* <TenantTable2 /> */}
+					<TenantFQDNTable />
 					<hr/>
 					<h4>Tenant auth(s)</h4>
-					{/* <TenantTable3 /> */}
+					<TenantOAuthTable />
 					<h4>TenantOwners</h4>
 					{/* <TenantTable4 /> */}
 					<hr/>

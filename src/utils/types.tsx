@@ -263,8 +263,25 @@ export interface HTMLMediaElementWithSink extends HTMLMediaElement {
 }
 
 export type Tenant = {
-
 	id: number,
 	name: string,
 	description: string
+};
+
+export type TenantFQDN = {
+	id: number,
+	tenantId: number,
+	description: string,
+	fqdn: string
+};
+
+export type TenantOAuth = {
+	id: number,
+	tenantId: number,
+	access_url: string,
+	authorize_url: string,
+	profile_url: string,
+	redirect_uri: string,
+	scope: string,
+	scope_delimiter: string,
 };
