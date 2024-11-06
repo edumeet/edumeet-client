@@ -14,6 +14,7 @@ import ManagementGroupSetting from './managementsettings/ManagementGroupSettings
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import ManagementRoleSetting from './managementsettings/ManagementRoleSettings';
 import RuleIcon from '@mui/icons-material/Rule';
+import SignIn from './managementsettings/ManagementAdminLoginSettings';
 
 const ManagementSettings = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -29,6 +30,7 @@ const ManagementSettings = (): JSX.Element => {
 
 	return (
 		<List>
+			<SignIn/>
 			<ListItem>
 				<ListItemIcon sx={{ minWidth: 29 }}>
 					<PeopleOutlineIcon />

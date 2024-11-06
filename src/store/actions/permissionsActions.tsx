@@ -21,6 +21,65 @@ export const login = (): AppThunk<Promise<void>> => async (
 	window.open(`${config.managementUrl}/oauth/tenant?tenantId=${tenantId}`, 'loginWindow');
 };
 
+export const adminLogin = (email: string, password:string): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ signalingService, managementService }
+): Promise<void> => {
+	logger.debug('adminLogin() [email s%]', email);
+
+	const admin = await (await managementService).authenticate({
+		strategy: 'local',
+		email: email,
+		password: password
+	});
+
+	if (admin) {
+		const accessToken = admin.accessToken;
+
+		if (accessToken) {
+			const authResult = await (await managementService).authenticate({ accessToken, strategy: 'jwt' });
+
+			if (authResult.accessToken === accessToken) {
+				dispatch(permissionsActions.setToken(accessToken));
+				dispatch(permissionsActions.setLoggedIn(true));
+			}
+		}
+	}
+	if (getState().signaling.state === 'connected')
+		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
+};
+
+export const checkJWT = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ signalingService, managementService }
+): Promise<void> => {
+	logger.debug('checkJWT()');
+
+	const accessToken = localStorage.getItem('feathers-jwt');
+	let loggedIn = false;
+
+	/* 	logger.debug('checkJWT() token : %s', accessToken); */	
+	
+	if (accessToken) {
+		const authResult = await (await managementService).authenticate({ accessToken, strategy: 'jwt' });
+
+		if (authResult.accessToken === accessToken) {
+			loggedIn=true;
+			dispatch(permissionsActions.setToken(accessToken));
+		} else {
+			await (await managementService).authentication.removeAccessToken();
+			dispatch(permissionsActions.setToken());
+		}
+	}
+	
+	dispatch(permissionsActions.setLoggedIn(loggedIn));
+	
+	if (getState().signaling.state === 'connected')
+		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
+};
+
 export const logout = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,

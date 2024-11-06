@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
 import { Tenant } from '../../../utils/types';
-
 import { createTenant, deleteTenant, getTenants, modifyTenant } from '../../../store/actions/managementActions';
 import { useAppDispatch } from '../../../store/hooks';
 
@@ -60,10 +59,9 @@ const TenantTable = () => {
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
-		});
-		
-		setIsLoading(false);
+			setIsLoading(false);
 
+		});
 	}
 
 	useEffect(() => {

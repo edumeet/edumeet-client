@@ -285,3 +285,104 @@ export type TenantOAuth = {
 	scope: string,
 	scope_delimiter: string,
 };
+
+export type User = {
+	id: number,
+    ssoId: string,
+    tenantId: number,
+    email: string,
+    name: string,
+    avatar: string,
+    roles: [],
+    tenantAdmin: boolean,
+    tenantOwner: boolean
+};
+
+export type Roles = {
+	id: number,
+    name: string,   
+    description: string,
+    tenantId: number
+    permissions: Array<Permissions>
+};
+
+export type GroupRoles = {
+	id: number,
+    groupId: number,
+    role:Roles,
+    roleId:number,
+    roomId:number
+};
+
+export type UsersRoles = {
+	id: number,
+    userId: number,
+    role:Roles,
+    roleId:number,
+    roomId:number
+};
+
+export type RoomOwners = {
+	id: number,
+    roomId: number,
+    userId: number,   
+};
+export type TenantOwners = {
+	id: number,
+    tenantId: number,
+    userId: number,   
+};
+
+export type TenantAdmins = {
+	id: number,
+    tenantId: number,
+    userId: number,   
+};
+
+export type Permissions = {
+	id: number,
+    name: string,   
+    description: string,
+};
+
+export type RolePermissions = {
+	id: number,
+    permission: Permissions
+    permissionId: number,   
+    roleId: number,
+};
+
+export type Room = {
+	id?: number,
+	name?: string,
+	description: string,
+	createdAt?: string,
+	updatedAt?: string,
+	creatorId?: string,
+	defaultRoleId? : number,
+	tenantId?: number | null,
+	logo: string | null,
+	background: string | null,
+	maxActiveVideos: number,
+	locked: boolean,
+	chatEnabled: boolean,
+	raiseHandEnabled: boolean,
+	filesharingEnabled: boolean,
+	groupRoles?: Array<Roles>,
+	localRecordingEnabled: boolean,
+	owners?: Array<RoomOwners>,
+	breakoutsEnabled: boolean,
+};
+
+export type Groups = {
+	id: number,
+    name: string,   
+    description: string,
+    tenantId: number
+};
+
+export type GroupUsers = {
+	id: number,
+    groupId: number,   
+    userId: number
+};

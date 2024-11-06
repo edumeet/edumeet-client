@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { managementExtraSettingsLabel } from '../../translated/translatedComponents';
+import GroupTable from '../../managementservice/groups/Groups';
 
 const ManagementGroupSetting = (): JSX.Element => {
 	const [ open, setOpen ] = useState(false);
@@ -19,6 +20,7 @@ const ManagementGroupSetting = (): JSX.Element => {
 			<Collapse in={ open } timeout='auto' unmountOnExit>
 				<List component='div'>
 					<h4>Groups</h4>
+					<GroupTable/>
 				</List>
 			</Collapse>
 		</List>
