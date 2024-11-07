@@ -772,3 +772,13 @@ export const roomServerConnectionError = (message: string): string => intl.forma
 	id: 'svc.roomServerConnectionError',
 	defaultMessage: `Room-server: ${message}`
 });
+
+export const imprintLabel = (): string => intl.formatMessage({
+	id: 'label.imprint',
+	defaultMessage: 'Imprint'
+});
+
+export const privacyLabel = (): string => intl.formatMessage({
+	id: 'label.privacy',
+	defaultMessage: 'Privacy'
+});

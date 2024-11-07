@@ -1,11 +1,12 @@
 import { AccountCircle } from '@mui/icons-material';
+import { Box, Link, Typography } from '@mui/material';
 import { useState } from 'react';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { roomLockedLabel, yourNameLabel } from '../../components/translated/translatedComponents';
+import { roomLockedLabel, yourNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
 import { setDisplayName } from '../../store/actions/meActions';
 import {
 	useAppDispatch,
@@ -17,6 +18,7 @@ import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 import { canSelectAudioOutput } from '../../store/selectors';
 import TestAudioOutputButton from '../../components/audiooutputtest/AudioOutputTest';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 const Lobby = (): React.JSX.Element => {
 	useNotifier();
@@ -31,6 +33,9 @@ const Lobby = (): React.JSX.Element => {
 			(localDisplayName?.trim() ? localDisplayName : localDisplayName?.trim()) ?? 'Guest'
 		));
 	};
+
+	const privacyUrl = edumeetConfig.privacyUrl ?? '';
+	const imprintUrl = edumeetConfig.imprintUrl ?? '';
 
 	return (
 		<GenericDialog
@@ -53,7 +58,23 @@ const Lobby = (): React.JSX.Element => {
 					</ChooserDiv>
 				</>
 			}
-			actions={roomLockedLabel()}
+			actions={
+				<Box display="flex" flexDirection="column" alignItems="center" justifyContent="space-between" width="100%">
+					{roomLockedLabel()}
+					<Box display="flex" alignItems="left">
+						{imprintUrl.trim() !== '' && (
+							<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
+								<Typography variant="body2">{ imprintLabel() }</Typography>
+							</Link>
+						)}
+						{privacyUrl.trim() !== '' && (
+							<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
+								<Typography variant="body2">{ privacyLabel() }</Typography>
+							</Link>
+						)}
+					</Box>
+				</Box>
+			}
 		/>
 	);
 };

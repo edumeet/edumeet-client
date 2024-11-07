@@ -149,6 +149,12 @@ var config = {
 	// Enable or disable transcription.
 	transcriptionEnabled: true,
 
+	// Imprint. If you want to link your imprint, please provide a URL in this variable. If it is empty, no link will be shown.
+	imprintUrl: '',
+
+	// Privacy notice. If you want to link your privacy notices, please provide a URL in this variable. If it is empty, no link will be shown.
+	privacyUrl: '',
+
 	// Client theme. Take a look at mui theme documentation.
 	theme: {
 		palette: {

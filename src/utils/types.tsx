@@ -3,7 +3,6 @@ import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
-	impressumUrl: '/privacy/privacy.html',
 	p2penabled: false,
 	loginEnabled: false,
 	developmentPort: 8443,
@@ -92,12 +91,13 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContentItemDarkColor: 'rgba(150, 150, 150, 0.4)',
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
-	reduxLoggingEnabled: false
+	reduxLoggingEnabled: false,
+	imprintUrl: '',
+	privacyUrl: ''
 };
 
 export interface EdumeetConfig {
 	managementUrl?: string;
-	impressumUrl: string;
 	p2penabled: boolean;
 	loginEnabled: boolean;
 	developmentPort: number;
@@ -133,6 +133,8 @@ export interface EdumeetConfig {
 	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
+	imprintUrl: string;
+	privacyUrl: string;
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
