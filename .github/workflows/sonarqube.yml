@@ -8,15 +8,8 @@ jobs:
     - uses: actions/checkout@master
       with:
         fetch-depth: 0
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'oracle'
-        java-version: '17'
-    - name: Verify Java version
-      run: java -version
     - name: SonarQube Scan
-      uses: kitabisa/sonarqube-action@v1.2.1
+      uses: kitabisa/sonarqube-action@v1.2.0
       with:
         host: ${{ secrets.SONARQUBE_HOST }}
         login: ${{ secrets.SONARQUBE_TOKEN }}
