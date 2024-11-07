@@ -687,6 +687,9 @@ const RoomTable = () => {
 				columnVisibility: {
 					updatedAt: false,
 					creatorId: false,
+					createdAt: false,
+					ssoId: false,
+					breakoutsEnabled: false,
 					// tenantId: false,
 					logo: false,
 					background: false,

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
@@ -504,7 +505,12 @@ const TenantOAuthTable = () => {
 			columns={columns}
 			data={data} // fallback to array if data is undefined
 			initialState={{
-				columnVisibility: {}
+				columnVisibility: {
+					access_url: false,
+					authorize_url: false,
+					profile_url: false,
+					scope_delimiter: false,
+				}
 			}}
 			state={{ isLoading }} /></>;
 };

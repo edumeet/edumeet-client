@@ -14,6 +14,8 @@ import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { meActions } from './store/slices/meSlice';
+import Management from './views/management/Management';
+import { checkJWT } from './store/actions/permissionsActions';
 
 type AppParams = {
 	id: string;
@@ -44,12 +46,21 @@ const App = (): JSX.Element => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		dispatch(startListeners());
 
-		return () => {
-			dispatch(stopListeners());
-			dispatch(roomActions.setState('new'));
-		};
+		if (id=='mgmt-admin') {
+			dispatch(checkJWT()).then(() => {
+				/* loggedIn = useAppSelector((state) => state.permissions.loggedIn); */
+				dispatch(roomActions.setState('mgmt-admin'));
+			});
+			
+		} else {
+			dispatch(startListeners());
+
+			return () => {
+				dispatch(stopListeners());
+				dispatch(roomActions.setState('new'));
+			};
+		}
 	}, []);
 
 	const handleFileDrop = (event: React.DragEvent<HTMLDivElement>): void => {
@@ -91,7 +102,7 @@ const App = (): JSX.Element => {
 				onDragOver={(event) => event.preventDefault()}
 				backgroundimage={backgroundImage}
 			>
-				{ roomState === 'joined' ? <Room /> : roomState === 'lobby' ? <Lobby /> : roomState === 'new' && <Join roomId={id} /> }
+				{ roomState === 'mgmt-admin' ? <Management /> : roomState === 'joined' ? <Room /> : roomState === 'lobby' ? <Lobby /> : roomState === 'new' && <Join roomId={id} /> }
 			</StyledBackground>
 		</SnackbarProvider>
 	);

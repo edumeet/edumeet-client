@@ -405,6 +405,8 @@ const UserTable = () => {
 			data={data} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
+					avatar: false,
+					ssoId: false,
 				}
 			}}
 			state={{ isLoading }}
