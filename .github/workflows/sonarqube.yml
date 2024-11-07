@@ -7,7 +7,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - name: SonarQube Scan
+    - name: SonarQube Scaner
       uses: sonarsource/sonarqube-scan-action@v3.0.0
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
