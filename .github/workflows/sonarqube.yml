@@ -1,15 +1,15 @@
 name: SonarQube CI
 on: push
 jobs:
-  sonarQubeTrigger:
-    name: SonarQube Trigger
-    runs-on: ubuntu-22.04
+  sonarqube:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v4
       with:
+        # Disabling shallow clones is recommended for improving the relevancy of reporting
         fetch-depth: 0
     - name: SonarQube Scan
-      uses: kitabisa/sonarqube-action@v1.2.1
-      with:
-        host: ${{ secrets.SONARQUBE_HOST }}
-        login: ${{ secrets.SONARQUBE_TOKEN }}
+      uses: sonarsource/sonarqube-scan-action@v3.0.0
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
