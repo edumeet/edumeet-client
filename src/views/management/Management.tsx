@@ -30,10 +30,11 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { getUserData } from '../../store/actions/managementActions';
 import { useAppDispatch } from '../../store/hooks';
+import PermissionTable from '../../components/managementservice/permisssion/Permission';
+import InfoIcon from '@mui/icons-material/Info';
 
 /* import InboxIcon from '@mui/icons-material/MoveToInbox'; */
 /* import MailIcon from '@mui/icons-material/Mail'; */
-/* import InfoIcon from '@mui/icons-material/Info'; */
 
 const drawerWidth = 300;
 
@@ -81,6 +82,8 @@ export default function ManagementUI(/* props: Props */) {
 				return <GroupTable />;
 			case 'role':
 				return <RoleTable />;
+			case 'permission':
+				return <PermissionTable />;
 			default:
 				return <div style={{ padding: '18px' }}>Select an item to load a component</div>;
 		}
@@ -121,14 +124,16 @@ export default function ManagementUI(/* props: Props */) {
 
 			<Divider />
 			<List>
-				{/* <ListItem key={'Dashboard'} disablePadding >
+				<ListItem key={'Permissions'} disablePadding onClick={
+					() => setSelectedComponent('permission')
+				}>
 					<ListItemButton >
 						<ListItemIcon>
-							<InboxIcon />
+							<InfoIcon />
 						</ListItemIcon>
-						<ListItemText primary={'Dashboard'} />
+						<ListItemText primary={'Permissions'} />
 					</ListItemButton>
-				</ListItem> */}
+				</ListItem>
 				<ListItem key={'Tenants'} disablePadding onClick={
 					() => setSelectedComponent('tenant')
 				}>
