@@ -32,6 +32,8 @@ import { getUserData } from '../../store/actions/managementActions';
 import { useAppDispatch } from '../../store/hooks';
 import PermissionTable from '../../components/managementservice/permisssion/Permission';
 import InfoIcon from '@mui/icons-material/Info';
+import TenantAdminTable from '../../components/managementservice/tenants/TenantAdmin';
+import TenantOwnerTable from '../../components/managementservice/tenants/TenantOwner';
 
 /* import InboxIcon from '@mui/icons-material/MoveToInbox'; */
 /* import MailIcon from '@mui/icons-material/Mail'; */
@@ -69,6 +71,8 @@ export default function ManagementUI(/* props: Props */) {
 					<TenantTable />
 					<TenantFQDNTable />
 					<TenantOAuthTable />
+					<TenantOwnerTable />
+					<TenantAdminTable />
 				</>;
 			case 'tenant-fqdn':
 				return <TenantFQDNTable />;
