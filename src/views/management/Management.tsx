@@ -40,6 +40,7 @@ import { startMGMTListeners, stopMGMTListeners } from '../../store/actions/mgmtA
 import RoomOwnerTable from '../../components/managementservice/rooms/RoomOwner';
 import GroupRoleTable from '../../components/managementservice/groups/GroupRole';
 import GroupUserTable from '../../components/managementservice/groups/GroupUser';
+import RoomUserRoleTable from '../../components/managementservice/rooms/roomUserRole';
 
 /* import InboxIcon from '@mui/icons-material/MoveToInbox'; */
 /* import MailIcon from '@mui/icons-material/Mail'; */
@@ -104,6 +105,7 @@ export default function ManagementUI(/* props: Props */) {
 					return <>
 						<RoomOwnerTable />
 						<RoomTable />
+						<RoomUserRoleTable />
 					</>;
 
 				case 'user':
