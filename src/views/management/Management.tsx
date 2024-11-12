@@ -38,6 +38,7 @@ import { checkJWT, logout } from '../../store/actions/permissionsActions';
 import SignIn from '../../components/settingsdialog/managementsettings/ManagementAdminLoginSettings';
 import { startMGMTListeners, stopMGMTListeners } from '../../store/actions/mgmtActions';
 import RoomOwnerTable from '../../components/managementservice/rooms/RoomOwner';
+import GroupRoleTable from '../../components/managementservice/groups/GroupRole';
 
 /* import InboxIcon from '@mui/icons-material/MoveToInbox'; */
 /* import MailIcon from '@mui/icons-material/Mail'; */
@@ -107,7 +108,10 @@ export default function ManagementUI(/* props: Props */) {
 				case 'user':
 					return <UserTable />;
 				case 'group':
-					return <GroupTable />;
+					return <>
+						<GroupTable />
+						<GroupRoleTable />
+					</>;
 				case 'role':
 					return <RoleTable />;
 				case 'permission':
