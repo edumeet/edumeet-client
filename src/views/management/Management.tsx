@@ -39,6 +39,7 @@ import SignIn from '../../components/settingsdialog/managementsettings/Managemen
 import { startMGMTListeners, stopMGMTListeners } from '../../store/actions/mgmtActions';
 import RoomOwnerTable from '../../components/managementservice/rooms/RoomOwner';
 import GroupRoleTable from '../../components/managementservice/groups/GroupRole';
+import GroupUserTable from '../../components/managementservice/groups/GroupUser';
 
 /* import InboxIcon from '@mui/icons-material/MoveToInbox'; */
 /* import MailIcon from '@mui/icons-material/Mail'; */
@@ -111,6 +112,7 @@ export default function ManagementUI(/* props: Props */) {
 					return <>
 						<GroupTable />
 						<GroupRoleTable />
+						<GroupUserTable />
 					</>;
 				case 'role':
 					return <RoleTable />;
