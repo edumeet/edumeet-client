@@ -689,6 +689,41 @@ export const getRooms = (): AppThunk<Promise<object | undefined>> => async (
 	
 	return data;
 };
+export const getRoomByName = (name: string): AppThunk<Promise<object | undefined>> => async (
+	_dispatch,
+	_getState,
+	{ managementService }
+): Promise<object | undefined> => {
+	
+	logger.debug('getRooms()');
+	
+	let data: object | undefined;
+	
+	const serviceName='rooms';
+	
+	try {
+		data = await (await managementService).service(serviceName).find(
+			{
+				query: {
+					name: {
+						$in: [ name ]
+					},
+					$sort: {
+						id: 1
+					}
+				}
+			}
+		);
+		
+		// eslint-disable-next-line no-console
+		console.log(data);
+	} catch (error) {
+		// eslint-disable-next-line no-console
+		console.error(error);
+	}
+	
+	return data;
+};
 export const deleteRoom = (id : number): AppThunk<Promise<object | undefined>> => async (
 	_dispatch,
 	_getState,

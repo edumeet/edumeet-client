@@ -1,20 +1,15 @@
-import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import ManagementTenantSetting from './managementsettings/ManagementTenantSettings';
-import { groupSettingsLabel, roleSettingsLabel, roomSettingsLabel, ruleSettingsLabel, tenantSettingsLabel, userSettingsLabel } from '../translated/translatedComponents';
-import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getUserData } from '../../store/actions/managementActions';
-import { useAppDispatch } from '../../store/hooks';
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import ManagementRoomSetting from './managementsettings/ManagementRoomSettings';
-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
-import ManagementUserSetting from './managementsettings/ManagementUserSettings';
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
-import ManagementGroupSetting from './managementsettings/ManagementGroupSettings';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import ManagementRoleSetting from './managementsettings/ManagementRoleSettings';
-import RuleIcon from '@mui/icons-material/Rule';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import CurrentRoomModal from '../managementservice/rooms/CurrentRoom';
+import ListItem from '@mui/material/ListItem/ListItem';
+import ListItemButton from '@mui/material/ListItemButton/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText/ListItemText';
+import InfoIcon from '@mui/icons-material/Info';
+import Box from '@mui/material/Box/Box';
 import SignIn from './managementsettings/ManagementAdminLoginSettings';
+import List from '@mui/material/List';
 
 const ManagementSettings = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -27,53 +22,56 @@ const ManagementSettings = (): JSX.Element => {
 		});
 		
 	});
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+
+	useEffect(() => {
+	}, [ loggedIn ]);
+	
+	const [ selectedComponent, setSelectedComponent ] = useState('');
+
+	// Function to render the selected component in the placeholder
+	const renderComponent = () => {
+
+		if (loggedIn) {
+			switch (selectedComponent) {
+				case 'currentroom':
+					return <>
+						<CurrentRoomModal />
+					</>;
+				default:
+					return <Box sx={{ minWidth: '400px' }}></Box>;
+			}
+		} else {
+			return <SignIn />;
+		}
+	};
 
 	return (
-		<List>
-			<SignIn/>
-			<ListItem>
-				<ListItemIcon sx={{ minWidth: 29 }}>
-					<PeopleOutlineIcon />
-				</ListItemIcon>
-				<ListItemText primary={tenantSettingsLabel()} />
-			</ListItem>
-			<ManagementTenantSetting />
-			<ListItem>
-				<ListItemIcon sx={{ minWidth: 29 }}>
-					<MeetingRoomIcon />
-				</ListItemIcon>
-				<ListItemText primary={roomSettingsLabel()} />
-			</ListItem>
-			<ManagementRoomSetting />
-			<ListItem>
-				<ListItemIcon sx={{ minWidth: 29 }}>
-					<PersonSearchIcon />
-				</ListItemIcon>
-				<ListItemText primary={userSettingsLabel()} />
-			</ListItem>
-			<ManagementUserSetting />
-			<ListItem>
-				<ListItemIcon sx={{ minWidth: 29 }}>
-					<SupervisorAccountIcon />
-				</ListItemIcon>
-				<ListItemText primary={groupSettingsLabel()} />
-			</ListItem>
-			<ManagementGroupSetting />
-			<ListItem>
-				<ListItemIcon sx={{ minWidth: 29 }}>
-					<AdminPanelSettingsIcon />
-				</ListItemIcon>
-				<ListItemText primary={roleSettingsLabel()} />
-			</ListItem>
-			<ManagementRoleSetting />
-			<ListItem>
-				<ListItemIcon sx={{ minWidth: 29 }}>
-					<RuleIcon />
-				</ListItemIcon>
-				<ListItemText primary={ruleSettingsLabel()} />
-			</ListItem>
+		<>
+			<List>
+				<ListItem key={'Room settings'} disablePadding onClick={() => setSelectedComponent('currentRoom')}>
+					<ListItemButton disabled>
+						<ListItemIcon>
+							<InfoIcon />
+						</ListItemIcon>
+						<ListItemText primary={'Room settings'} />
+					</ListItemButton>
+					<CurrentRoomModal />
+				</ListItem>
 			
-		</List>
+				<ListItem key={'Management settings'} disablePadding style={{ textDecoration: 'none' }} onClick={() => window.open('/mgmt-admin', 'edumeet-mgmt')}>
+					<ListItemButton>
+						<ListItemIcon>
+							<InfoIcon />
+						</ListItemIcon>
+						<ListItemText primary={'Advanced management settings'} />
+					</ListItemButton>
+				</ListItem>
+			</List>
+
+			<div style={{ background: 'white', padding: '2px', maxWidth: '100%', minWidth: '300px' }}>
+				{renderComponent()}
+			</div></>
 	);
 };
 
