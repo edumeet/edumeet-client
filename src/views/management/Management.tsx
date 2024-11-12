@@ -37,6 +37,7 @@ import TenantOwnerTable from '../../components/managementservice/tenants/TenantO
 import { checkJWT, logout } from '../../store/actions/permissionsActions';
 import SignIn from '../../components/settingsdialog/managementsettings/ManagementAdminLoginSettings';
 import { startMGMTListeners, stopMGMTListeners } from '../../store/actions/mgmtActions';
+import RoomOwnerTable from '../../components/managementservice/rooms/RoomOwner';
 
 /* import InboxIcon from '@mui/icons-material/MoveToInbox'; */
 /* import MailIcon from '@mui/icons-material/Mail'; */
@@ -55,26 +56,26 @@ export default function ManagementUI(/* props: Props */) {
 
 	const [ selectedComponent, setSelectedComponent ] = useState('');
 	const [ username, setUsername ] = useState('');
-	let loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	useEffect(() => {
 		dispatch(startMGMTListeners());
 
 		dispatch(checkJWT()).then(() => {
-			loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 		});
 
+		return () => {
+			dispatch(stopMGMTListeners());
+		};
+	}, []);
+	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getUserData()).then((tdata: any) => {
 			if (tdata) {
 				setUsername(tdata.user.email);				
 			}
 		});
-		
-		return () => {
-			dispatch(stopMGMTListeners());
-		};
-	}, []);
+	}, [ loggedIn ]);
 
 	// Function to render the selected component in the placeholder
 	const renderComponent = () => {
@@ -98,7 +99,11 @@ export default function ManagementUI(/* props: Props */) {
 				case 'tenant-oauth':
 					return <TenantOAuthTable />;
 				case 'room':
-					return <RoomTable />;
+					return <>
+						<RoomOwnerTable />
+						<RoomTable />
+					</>;
+
 				case 'user':
 					return <UserTable />;
 				case 'group':

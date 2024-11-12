@@ -359,7 +359,7 @@ export type Room = {
 	createdAt?: string,
 	updatedAt?: string,
 	creatorId?: string,
-	defaultRoleId? : number,
+	defaultRoleId? : number | string,
 	tenantId?: number | null,
 	logo: string | null,
 	background: string | null,
