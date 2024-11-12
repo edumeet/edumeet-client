@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import { adminLogin } from '../../../store/actions/permissionsActions';
 import { useAppDispatch } from '../../../store/hooks';
+import LoginButton from '../../controlbuttons/LoginButton';
 
 export default function SignIn() {
 
@@ -29,7 +30,7 @@ export default function SignIn() {
 
 	return (
 		<>
-			<Container component="main" maxWidth="xs">
+			<Container component="main">
 				<CssBaseline />
 				<Box
 					sx={{
@@ -40,7 +41,11 @@ export default function SignIn() {
 					}}
 				>
 					<img src='/images/logo.edumeet.svg' />
-
+					<hr/>
+					<Box>
+						<LoginButton />
+					</Box>
+					<hr/>
 					<Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
 						<TextField
 							margin="normal"

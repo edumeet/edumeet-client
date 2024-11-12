@@ -16,7 +16,6 @@ import { setLocale } from './store/actions/localeActions';
 import { CssBaseline } from '@mui/material';
 import { Logger } from './utils/Logger';
 import { SnackbarProvider } from 'notistack';
-import StyledBackground from './components/StyledBackground';
 import Management from './views/management/Management';
 
 const ErrorBoundary = lazy(() => import('./views/errorboundary/ErrorBoundary'));
@@ -47,9 +46,7 @@ const router = createBrowserRouter(
 			<Route path='/' element={<Suspense><LandingPage /></Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
 			<Route path='/mgmt-admin' element={<Suspense>
 				<SnackbarProvider>
-					<StyledBackground>
-						<Management />
-					</StyledBackground>
+					<Management />
 				</SnackbarProvider>
 			</Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
 			

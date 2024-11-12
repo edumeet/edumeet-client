@@ -29,11 +29,14 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { getUserData } from '../../store/actions/managementActions';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import PermissionTable from '../../components/managementservice/permisssion/Permission';
 import InfoIcon from '@mui/icons-material/Info';
 import TenantAdminTable from '../../components/managementservice/tenants/TenantAdmin';
 import TenantOwnerTable from '../../components/managementservice/tenants/TenantOwner';
+import { checkJWT, logout } from '../../store/actions/permissionsActions';
+import SignIn from '../../components/settingsdialog/managementsettings/ManagementAdminLoginSettings';
+import { startMGMTListeners, stopMGMTListeners } from '../../store/actions/mgmtActions';
 
 /* import InboxIcon from '@mui/icons-material/MoveToInbox'; */
 /* import MailIcon from '@mui/icons-material/Mail'; */
@@ -41,6 +44,7 @@ import TenantOwnerTable from '../../components/managementservice/tenants/TenantO
 const drawerWidth = 300;
 
 export default function ManagementUI(/* props: Props */) {
+	
 	const dispatch = useAppDispatch();
 	
 	const [ mobileOpen, setMobileOpen ] = React.useState(false);
@@ -51,8 +55,14 @@ export default function ManagementUI(/* props: Props */) {
 
 	const [ selectedComponent, setSelectedComponent ] = useState('');
 	const [ username, setUsername ] = useState('');
+	let loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	useEffect(() => {
+		dispatch(startMGMTListeners());
+
+		dispatch(checkJWT()).then(() => {
+			loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getUserData()).then((tdata: any) => {
@@ -60,36 +70,48 @@ export default function ManagementUI(/* props: Props */) {
 				setUsername(tdata.user.email);				
 			}
 		});
-	
+		
+		return () => {
+			dispatch(stopMGMTListeners());
+		};
 	}, []);
 
 	// Function to render the selected component in the placeholder
 	const renderComponent = () => {
-		switch (selectedComponent) {
-			case 'tenant':
-				return <>
-					<TenantTable />
-					<TenantFQDNTable />
-					<TenantOAuthTable />
-					<TenantOwnerTable />
-					<TenantAdminTable />
-				</>;
-			case 'tenant-fqdn':
-				return <TenantFQDNTable />;
-			case 'tenant-oauth':
-				return <TenantOAuthTable />;
-			case 'room':
-				return <RoomTable />;
-			case 'user':
-				return <UserTable />;
-			case 'group':
-				return <GroupTable />;
-			case 'role':
-				return <RoleTable />;
-			case 'permission':
-				return <PermissionTable />;
-			default:
-				return <div style={{ padding: '18px' }}>Select an item to load a component</div>;
+
+		if (loggedIn) {
+			switch (selectedComponent) {
+				case 'login':
+					return <div style={{ minWidth: '400px' }}>
+						<SignIn />
+					</div>;
+				case 'tenant':
+					return <>
+						<TenantTable />
+						<TenantFQDNTable />
+						<TenantOAuthTable />
+						<TenantOwnerTable />
+						<TenantAdminTable />
+					</>;
+				case 'tenant-fqdn':
+					return <TenantFQDNTable />;
+				case 'tenant-oauth':
+					return <TenantOAuthTable />;
+				case 'room':
+					return <RoomTable />;
+				case 'user':
+					return <UserTable />;
+				case 'group':
+					return <GroupTable />;
+				case 'role':
+					return <RoleTable />;
+				case 'permission':
+					return <PermissionTable />;
+				default:
+					return <Box sx={{ minWidth: '400px' }}>Select an item to load a component </Box>;
+			}
+		} else {
+			return <SignIn />;
 		}
 	};
 
@@ -102,18 +124,22 @@ export default function ManagementUI(/* props: Props */) {
 					<img src='/images/logo.edumeet.svg' />
 				</ListItem>
 			
-				<ListItem key={'{username}'} disablePadding >
-
+				<ListItem key={'{username}'} disablePadding onClick={
+					() => { if (!loggedIn) { setSelectedComponent('login'); } }
+				}>
 					<ListItemButton>
 						<ListItemIcon>
 							<PersonOutlineIcon/>
 						</ListItemIcon>
-						<ListItemText primary={`${username}`} />
+						<ListItemText primary={username} />
 					</ListItemButton>
 				</ListItem>
 				<ListItem key={'Logout'} disablePadding onClick={
 					async () => {
-						window.location.reload();
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						dispatch(logout()).then(() => {
+							window.location.reload();	
+						});
 					}
 				}>
 					<ListItemButton>
@@ -190,18 +216,6 @@ export default function ManagementUI(/* props: Props */) {
 				</ListItem>
 			</List>
 			<Divider />
-			{/* <List>
-				{[ 'General', 'Logs', 'About us' ].map((text, index) => (
-					<ListItem key={text} disablePadding>
-						<ListItemButton>
-							<ListItemIcon>
-								{index % 2 === 0 ? <InfoIcon /> : <MailIcon />}
-							</ListItemIcon>
-							<ListItemText primary={text} />
-						</ListItemButton>
-					</ListItem>
-				))}
-			</List> */}
 		</div >
 	);
 
@@ -212,6 +226,7 @@ export default function ManagementUI(/* props: Props */) {
 				<CssBaseline />
 				<AppBar
 					position="fixed"
+					style={{ backgroundColor: '#9C298C' }}
 					sx={{
 						width: { sm: `calc(100% - ${drawerWidth}px)` },
 						ml: { sm: `${drawerWidth}px` },
@@ -266,10 +281,11 @@ export default function ManagementUI(/* props: Props */) {
 				</Box>
 				<Box
 					component="main"
-					sx={{ flexGrow: 1, p: 1, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+					
+					sx={{ flexGrow: 1, p: 1, width: { xs: 'calc(100%)', sm: 'calc(100%)' } }}
 				>
 					<Toolbar />
-					<div style={{ background: 'white', padding: '2px' }}>
+					<div style={{ background: 'white', padding: '2px', maxWidth: '100%', minWidth: '300px' }}>
 						{renderComponent()}
 					</div>
 
