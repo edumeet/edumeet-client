@@ -705,9 +705,7 @@ export const getRoomByName = (name: string): AppThunk<Promise<object | undefined
 		data = await (await managementService).service(serviceName).find(
 			{
 				query: {
-					name: {
-						$in: [ name ]
-					},
+					name: name,
 					$sort: {
 						id: 1
 					}
