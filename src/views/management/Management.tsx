@@ -1,4 +1,3 @@
-import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -29,7 +28,7 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { getUserData } from '../../store/actions/managementActions';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
 import PermissionTable from '../../components/managementservice/permisssion/Permission';
 import InfoIcon from '@mui/icons-material/Info';
 import TenantAdminTable from '../../components/managementservice/tenants/TenantAdmin';
@@ -42,16 +41,14 @@ import GroupRoleTable from '../../components/managementservice/groups/GroupRole'
 import GroupUserTable from '../../components/managementservice/groups/GroupUser';
 import RoomUserRoleTable from '../../components/managementservice/rooms/roomUserRole';
 
-/* import InboxIcon from '@mui/icons-material/MoveToInbox'; */
-/* import MailIcon from '@mui/icons-material/Mail'; */
-
 const drawerWidth = 300;
 
 export default function ManagementUI(/* props: Props */) {
-	
+	useNotifier();
+		
 	const dispatch = useAppDispatch();
 	
-	const [ mobileOpen, setMobileOpen ] = React.useState(false);
+	const [ mobileOpen, setMobileOpen ] = useState(false);
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen);
@@ -130,8 +127,6 @@ export default function ManagementUI(/* props: Props */) {
 
 	const drawer = (
 		<div>
-			{/* <Toolbar /> */}
-
 			<List>
 				<ListItem style={{ justifyContent: 'center' }} >
 					<img src='/images/logo.edumeet.svg' />

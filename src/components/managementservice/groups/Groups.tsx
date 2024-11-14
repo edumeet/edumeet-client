@@ -2,22 +2,15 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Snackbar } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import React from 'react';
-import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
 import { Groups, Tenant } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, getTenants, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { notificationsActions } from '../../../store/slices/notificationsSlice';
 
 const GroupTable = () => {
 	const dispatch = useAppDispatch();
-
-	const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-		props,
-		ref,
-	) {
-		return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-	});
 
 	type TenantOptionTypes = Array<Tenant>
 
@@ -67,18 +60,6 @@ const GroupTable = () => {
 	const [ cantPatch ] = useState(false);
 	const [ cantDelete ] = useState(false);
 	const [ tenantId, setTenantId ] = useState(0);
-	
-	const [ alertOpen, setAlertOpen ] = React.useState(false);
-	const [ alertMessage, setAlertMessage ] = React.useState('');
-	const [ alertSeverity, setAlertSeverity ] = React.useState<AlertColor>('success');
-
-	const handleAlertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-		if (reason === 'clickaway') {
-			return;
-		}
-  
-		setAlertOpen(false);
-	};
 
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
 	const [ descriptionDisabled, setDescriptionDisabled ] = useState(false);
@@ -87,9 +68,7 @@ const GroupTable = () => {
 	async function fetchProduct() {
 		
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getTenants()).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('Tenant data', tdata);
+		dispatch(getData('tenants')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setTenants(tdata.data);
 			}
@@ -99,8 +78,6 @@ const GroupTable = () => {
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('groups')).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('Rooms data', tdata);
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
@@ -164,14 +141,9 @@ const GroupTable = () => {
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch(deleteData(id, 'groups')).then((tdata: any) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+			dispatch(deleteData(id, 'groups')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				setAlertMessage('Successfull delete!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
 			});
 		}
 	};
@@ -182,16 +154,9 @@ const GroupTable = () => {
 		if (name != '' && id === 0) {
 			dispatch(createData({ 
 				name: name,
-			}, 'groups')).then((tdata: unknown) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+			}, 'groups')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				// TODO finish
-				setAlertMessage('Successfull add!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
-	
 			});
 		} else if (name != '' && id != 0) {
 			dispatch(patchData(id,
@@ -199,21 +164,15 @@ const GroupTable = () => {
 					name: name,
 					description: description,
 					tenantId: tenantId
-				}, 'groups')).then((tdata: unknown) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+				}, 'groups')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				// TODO finish
-				setAlertMessage('Successfull add!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
-	
 			});
 		} else {
-			setAlertMessage('Name cannot be empty!');
-			setAlertSeverity('warning');
-			setAlertOpen(true);
+			dispatch(notificationsActions.enqueueNotification({
+				message: 'Name cannot be empty!',
+				options: { variant: 'warning' }
+			}));
 		}
 
 	};
@@ -225,11 +184,6 @@ const GroupTable = () => {
 				Add new
 			</Button>
 			<hr />
-			<Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
-				<Alert onClose={handleAlertClose} severity={alertSeverity} sx={{ width: '100%' }}>
-					{alertMessage}
-				</Alert>
-			</Snackbar>
 
 			<Dialog open={open} onClose={handleClose}>
 				<DialogTitle>Add/Edit</DialogTitle>

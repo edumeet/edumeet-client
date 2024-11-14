@@ -1,32 +1,19 @@
 /* eslint-disable camelcase */
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
-// eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, Snackbar } from '@mui/material';
-import React from 'react';
-import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
 import { Tenant, TenantOAuth } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createTenantOAuth, deleteTenantOAuth, getTenantOAuths, getTenants, modifyTenantOAuth } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { notificationsActions } from '../../../store/slices/notificationsSlice';
 
 const TenantOAuthTable = () => {
 
 	const dispatch = useAppDispatch();
 
-	const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-		props,
-		ref,
-	) {
-		return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-	});
-
 	type TenantOptionTypes = Array<Tenant>
 
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
-
-	const [ alertOpen, setAlertOpen ] = React.useState(false);
-	const [ alertMessage, setAlertMessage ] = React.useState('');
-	const [ alertSeverity, setAlertSeverity ] = React.useState<AlertColor>('success');
 
 	const getTenantName = (id: string): string => {
 		const t = tenants.find((type) => type.id === parseInt(id));
@@ -102,18 +89,14 @@ const TenantOAuthTable = () => {
 		setIsLoading(true);
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getTenants()).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('Tenant data', tdata);
+		dispatch(getData('tenants')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setTenants(tdata.data);
 			}
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getTenantOAuths()).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('Tenant data', tdata);
+		dispatch(getData('tenantOAuths')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
@@ -127,7 +110,7 @@ const TenantOAuthTable = () => {
 		fetchProduct();
 	}, []);
 
-	const [ open, setOpen ] = React.useState(false);
+	const [ open, setOpen ] = useState(false);
 
 	const handleClickOpen = () => {
 		setId(0);
@@ -176,9 +159,10 @@ const TenantOAuthTable = () => {
 			method: 'GET',
 		}).then(async (response) => {
 			if (!response.ok) {
-				setAlertMessage(response.statusText.toString());
-				setAlertSeverity('error');
-				setAlertOpen(true);
+				dispatch(notificationsActions.enqueueNotification({
+					message: response.statusText.toString(),
+					options: { variant: 'error' }
+				}));
 			} else {
 				const json = await response.json(); // assuming they return json
 
@@ -190,12 +174,12 @@ const TenantOAuthTable = () => {
 					setProfileUrl(json.userinfo_endpoint);
 
 			}
-			
 		})
 			.catch((error) => {
-				setAlertMessage(error.toString());
-				setAlertSeverity('error');
-				setAlertOpen(true);
+				dispatch(notificationsActions.enqueueNotification({
+					message: error.toString(),
+					options: { variant: 'error' }
+				}));
 			});
 
 	};
@@ -238,14 +222,9 @@ const TenantOAuthTable = () => {
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch(deleteTenantOAuth(id)).then((tdata: any) => {
-				// eslint-disable-next-line no-console
-				console.log('Tenant data', tdata);
+			dispatch(deleteData(id, 'tenantOAuths')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				setAlertMessage('Successfull delete!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
 			});
 		}
 	};
@@ -255,7 +234,7 @@ const TenantOAuthTable = () => {
 		// add new data / mod data / error
 		if (id === 0) {
 
-			dispatch(createTenantOAuth({ 
+			dispatch(createData({ 
 				'key': key,
 				'secret': secret,
 				'tenantId': tenantId,
@@ -265,60 +244,33 @@ const TenantOAuthTable = () => {
 				'redirect_uri': redirect,
 				'scope': scope,
 				'scope_delimiter': scopeDelimeter
-			})).then((tdata: unknown) => {
-				// eslint-disable-next-line no-console
-				console.log('Tenant data', tdata);
+			}, 'tenantOAuths')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				// TODO finish
-				setAlertMessage('Successfull add!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
-	
 			});
 
 		} else if (id != 0) {
-			dispatch(modifyTenantOAuth(id, { 
+			dispatch(patchData(id, { 
 				'tenantId': tenantId,
 				'access_url': accessUrl,
 				'authorize_url': authorizeUrl,
 				'profile_url': profileUrl,
 				'redirect_uri': redirect,
 				'scope': scope,
-				'scope_delimiter': scopeDelimeter })).then((tdata: unknown) => {
-				// eslint-disable-next-line no-console
-				console.log('Tenant data', tdata);
-				// TODO finish
+				'scope_delimiter': scopeDelimeter }, 'tenantOAuths')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				setAlertMessage('Successfull modify!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
-        
 			});
 		}
 
 	};
 	
-	const handleAlertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-		if (reason === 'clickaway') {
-			return;
-		}
-  
-		setAlertOpen(false);
-	};
-
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
 				Add new
 			</Button>
 			<hr/>
-			<Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
-				<Alert onClose={handleAlertClose} severity={alertSeverity} sx={{ width: '100%' }}>
-					{alertMessage}
-				</Alert>
-			</Snackbar>
 			<Dialog maxWidth="lg" open={open} onClose={handleClose}>
 				<DialogTitle>Add/Edit</DialogTitle>
 				<DialogContent>

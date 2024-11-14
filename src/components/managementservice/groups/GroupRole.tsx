@@ -1,5 +1,5 @@
+/* eslint-disable camelcase */
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
-// eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
 import React from 'react';
@@ -90,7 +90,6 @@ const GroupRoleTable = () => {
 	};
 	
 	// should be memoized or stable
-	// eslint-disable-next-line camelcase
 	const columns = useMemo<MRT_ColumnDef<GroupRoles>[]>(
 		() => [
 			{
@@ -239,10 +238,7 @@ const GroupRoleTable = () => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch(deleteData(id, 'roomGroupRoles')).then((tdata: any) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+			dispatch(deleteData(id, 'roomGroupRoles')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});

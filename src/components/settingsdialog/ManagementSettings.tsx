@@ -14,11 +14,7 @@ const ManagementSettings = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		dispatch(getUserData()).then((data) => {
-		// eslint-disable-next-line no-console
-			console.log('data', data);
-		});
-		
+		dispatch(getUserData()).then(() => {});
 	}, []);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 

@@ -163,9 +163,7 @@ const TenantOwnerTable = () => {
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch(deleteData(id, 'tenantOwners')).then((tdata: any) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+			dispatch(deleteData(id, 'tenantOwners')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
@@ -180,9 +178,7 @@ const TenantOwnerTable = () => {
 			dispatch(createData({ 
 				tenantId: tenantId,
 				userId: userId
-			}, 'tenantOwners')).then((tdata: unknown) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+			}, 'tenantOwners')).then(() => {
 				fetchProduct();
 				setOpen(false);
    
@@ -192,10 +188,7 @@ const TenantOwnerTable = () => {
 			dispatch(patchData(id, { 
 				tenantId: tenantId,
 				userId: userId
-			}, 'tenantOwners')).then((tdata: unknown) => {
-				// eslint-disable-next-line no-console
-				console.log('Room data', tdata);
-				// TODO finish
+			}, 'tenantOwners')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});

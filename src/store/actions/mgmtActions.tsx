@@ -4,6 +4,7 @@ import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('listenerActions');
 
+// eslint-disable-next-line no-unused-vars
 let messageListener: (event: MessageEvent) => void;
 
 export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
@@ -11,7 +12,7 @@ export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
 	getState,
 	{ signalingService, managementService }
 ): Promise<void> => {
-	logger.debug('startListeners()');
+	logger.debug('startMGMTListeners()');
 
 	messageListener = async ({ data }: MessageEvent) => {
 		if (data.type === 'edumeet-login') {

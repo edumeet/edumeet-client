@@ -4,7 +4,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import React from 'react';
 import { Roles, Room, Tenant } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createRoom, getRoles, getRoomByName, getTenants, modifyRoom } from '../../../store/actions/managementActions';
+import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
 
 const CurrentRoomModal = () => {
 	const dispatch = useAppDispatch();
@@ -43,18 +43,14 @@ const CurrentRoomModal = () => {
 
 	async function fetchProduct() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getTenants()).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('Tenant data', tdata);
+		dispatch(getData('tenants')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setTenants(tdata.data);
 			}
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getRoles()).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('Role data', tdata);
+		dispatch(getData('roles')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setRoles(tdata.data);
 			}
@@ -63,8 +59,6 @@ const CurrentRoomModal = () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getRoomByName(window.location.pathname.substring(1))).then((tdata: any) => {
 			
-			// eslint-disable-next-line no-console
-			console.log('Rooms data', tdata);
 			const r = tdata.data[0] as Room;
 
 			const tid = r.id;
@@ -258,9 +252,7 @@ const CurrentRoomModal = () => {
 		if (defaultRoleId) {
 			obj.defaultRoleId=defaultRoleId;
 		}
-		dispatch(modifyRoom(id, obj)).then((tdata: unknown) => {
-			// eslint-disable-next-line no-console
-			console.log('Room data', tdata);
+		dispatch(patchData(id, obj, 'rooms')).then(() => {
 			setOpen(false);
 		});
 
@@ -377,9 +369,9 @@ const CurrentRoomModal = () => {
 			</DialogActions>
 		</Dialog>
 		<div style={{ margin: 'auto', textAlign: 'center' }}>
-				
+			<Button onClick={ roomExists ? handleOpen : handleCreateRoom}>{ roomExists ? 'Edit':'Claim '}  Current Room</Button>				
 		</div>
-		<Button onClick={ roomExists ? handleOpen : handleCreateRoom}>{ roomExists ? 'Edit':'Claim '}  Current Room</Button>
+
 	</>;
 };
 

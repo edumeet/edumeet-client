@@ -1,24 +1,16 @@
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete, Snackbar } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete } from '@mui/material';
 import React from 'react';
-import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
 import { GroupRoles, Roles, Room, RoomOwners, Tenant, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createRoomWithParams, deleteRoom, getRoles, getRooms, getTenants, getUsers, modifyRoom } from '../../../store/actions/managementActions';
+import { createRoomWithParams, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 
 // nested data is ok, see accessorKeys in ColumnDef below
 
 const RoomTable = () => {
 	const dispatch = useAppDispatch();
-
-	const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-		props,
-		ref,
-	) {
-		return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-	});
 
 	type TenantOptionTypes = Array<Tenant>
 
@@ -27,10 +19,6 @@ const RoomTable = () => {
 	type RoleTypes = Array<Roles>
 
 	const [ roles, setRoles ] = useState<RoleTypes>([ { 'description': 'Test', 'id': 1, 'name': 'Test', 'tenantId': 1, 'permissions': [] } ]);
-
-	const [ alertOpen, setAlertOpen ] = React.useState(false);
-	const [ alertMessage, setAlertMessage ] = React.useState('');
-	const [ alertSeverity, setAlertSeverity ] = React.useState<AlertColor>('success');
 
 	const getTenantName = (id: string): string => {
 		const t = tenants.find((type) => type.id === parseInt(id));
@@ -226,9 +214,7 @@ const RoomTable = () => {
 
 	async function fetchProduct() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getUsers()).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('User data', tdata);
+		dispatch(getData('users')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setUsers(tdata.data);
 			}
@@ -237,9 +223,7 @@ const RoomTable = () => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getTenants()).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('Tenant data', tdata);
+		dispatch(getData('tenants')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setTenants(tdata.data);
 			}
@@ -248,9 +232,7 @@ const RoomTable = () => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getRoles()).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('Role data', tdata);
+		dispatch(getData('roles')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setRoles(tdata.data);
 			}
@@ -259,9 +241,7 @@ const RoomTable = () => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getRooms()).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('Rooms data', tdata);
+		dispatch(getData('rooms')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
@@ -367,14 +347,9 @@ const RoomTable = () => {
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch(deleteRoom(id)).then((tdata: any) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+			dispatch(deleteData(id, 'rooms')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				setAlertMessage('Successfull delete!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
 			});
 		}
 	};
@@ -396,16 +371,9 @@ const RoomTable = () => {
 				filesharingEnabled: filesharingEnabled,
 				localRecordingEnabled: localRecordingEnabled,
 				breakoutsEnabled: breakoutsEnabled
-			})).then((tdata: unknown) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+			})).then(() => {
 				fetchProduct();
 				setOpen(false);
-				// TODO finish
-				setAlertMessage('Successfull add!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
-	
 			});
 
 		} else if (name != '' && id != 0) {
@@ -425,41 +393,21 @@ const RoomTable = () => {
 			if (defaultRoleId) {
 				obj.defaultRoleId=defaultRoleId;
 			}
-			dispatch(modifyRoom(id, obj)).then((tdata: unknown) => {
-				// eslint-disable-next-line no-console
-				console.log('Room data', tdata);
-				// TODO finish
+			dispatch(patchData(id, obj, 'rooms')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				setAlertMessage('Successfull modify!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
-
 			});
             
 		}
 
 	};
 
-	const handleAlertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-		if (reason === 'clickaway') {
-			return;
-		}
-  
-		setAlertOpen(false);
-	};
-	
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
 				Add new
 			</Button>
 			<hr/>
-			<Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
-				<Alert onClose={handleAlertClose} severity={alertSeverity} sx={{ width: '100%' }}>
-					{alertMessage}
-				</Alert>
-			</Snackbar>
 			<Dialog open={open} onClose={handleClose}>
 				<DialogTitle>Add/Edit</DialogTitle>
 				<DialogContent>

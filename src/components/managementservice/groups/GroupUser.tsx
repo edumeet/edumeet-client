@@ -165,10 +165,7 @@ const GroupUserTable = () => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch(deleteData(id, 'groupUsers')).then((tdata: any) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+			dispatch(deleteData(id, 'groupUsers')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});

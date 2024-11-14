@@ -1,26 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Snackbar } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import React from 'react';
-import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { Permissions } from '../../../utils/types';
 
 const PermissionTable = () => {
 	const dispatch = useAppDispatch();
-
-	const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-		props,
-		ref,
-	) {
-		return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-	});
-
-	const [ alertOpen, setAlertOpen ] = React.useState(false);
-	const [ alertMessage, setAlertMessage ] = React.useState('');
-	const [ alertSeverity, setAlertSeverity ] = React.useState<AlertColor>('success');
 
 	// should be memoized or stable
 	// eslint-disable-next-line camelcase
@@ -56,8 +44,6 @@ const PermissionTable = () => {
 		
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('permissions')).then((tdata: any) => {
-			// eslint-disable-next-line no-console
-			console.log('Rooms data', tdata);
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
@@ -103,14 +89,9 @@ const PermissionTable = () => {
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch(deleteData(id, 'permissions')).then((tdata: any) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+			dispatch(deleteData(id, 'permissions')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				setAlertMessage('Successfull delete!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
 			});
 		}
 	};
@@ -122,43 +103,21 @@ const PermissionTable = () => {
 			dispatch(createData({ 
 				name: name,
 				description: description
-			}, 'permissions')).then((tdata: unknown) => {
-				// eslint-disable-next-line no-console
-				console.log('User data', tdata);
+			}, 'permissions')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				// TODO finish
-				setAlertMessage('Successfull add!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
-    
 			});
 
 		} else if (name != '' && id != 0) {
 			dispatch(patchData(id, { 
 				name: name,
 				description: description
-			}, 'permissions')).then((tdata: unknown) => {
-				// eslint-disable-next-line no-console
-				console.log('Room data', tdata);
-				// TODO finish
+			}, 'permissions')).then(() => {
 				fetchProduct();
 				setOpen(false);
-				setAlertMessage('Successfull modify!');
-				setAlertSeverity('success');
-				setAlertOpen(true);
-
 			});
 		}
 
-	};
-
-	const handleAlertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-		if (reason === 'clickaway') {
-			return;
-		}
-  
-		setAlertOpen(false);
 	};
 
 	return <>
@@ -168,11 +127,6 @@ const PermissionTable = () => {
 			</Button>
 			<hr/>
 
-			<Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
-				<Alert onClose={handleAlertClose} severity={alertSeverity} sx={{ width: '100%' }}>
-					{alertMessage}
-				</Alert>
-			</Snackbar>
 			<Dialog open={open} onClose={handleClose}>
 				<DialogTitle>Add/Edit</DialogTitle>
 				<DialogContent>
