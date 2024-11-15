@@ -88,35 +88,46 @@ export default function ManagementUI(/* props: Props */) {
 					</div>;
 				case 'tenant':
 					return <>
+						Tenant settings
 						<TenantTable />
+						Tenant domain settings
 						<TenantFQDNTable />
+						Tenant authentication source
 						<TenantOAuthTable />
+						Tenant admins
 						<TenantOwnerTable />
+						Tenants owners
 						<TenantAdminTable />
 					</>;
-				case 'tenant-fqdn':
-					return <TenantFQDNTable />;
-				case 'tenant-oauth':
-					return <TenantOAuthTable />;
 				case 'room':
 					return <>
-						<RoomOwnerTable />
+						Room settings
 						<RoomTable />
+						Room owners
+						<RoomOwnerTable />
+						Room user roles
 						<RoomUserRoleTable />
 					</>;
-
 				case 'user':
-					return <UserTable />;
+					return <>
+						User data
+						<UserTable />
+					</>;
 				case 'group':
 					return <>
+						Group table
 						<GroupTable />
+						Group roles
 						<GroupRoleTable />
+						Group user roles
 						<GroupUserTable />
 					</>;
 				case 'role':
-					return <RoleTable />;
+					return <>Roles
+						<RoleTable />
+					</>;
 				case 'permission':
-					return <PermissionTable />;
+					return <>Permissions<PermissionTable /></>;
 				default:
 					return <Box sx={{ minWidth: '400px' }}>Select an item to load a component </Box>;
 			}
