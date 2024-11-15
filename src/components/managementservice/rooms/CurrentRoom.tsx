@@ -1,7 +1,6 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete } from '@mui/material';
-import React from 'react';
 import { Roles, Room, Tenant } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
@@ -23,7 +22,6 @@ const CurrentRoomModal = () => {
 	const [ description, setDescription ] = useState('');
 	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 	const [ tenantId, setTenantId ] = useState(0);
-	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 	const [ defaultRoleId, setDefaultRoletId ] = useState(0);
 
 	const [ breakoutsEnabled, setBreakoutsEnabled ] = useState(false);
@@ -179,7 +177,7 @@ const CurrentRoomModal = () => {
 		checkRoomExists();
 	}, []);
 	
-	const [ open, setOpen ] = React.useState(false);
+	const [ open, setOpen ] = useState(false);
 
 	const handleNameChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
 		setName(event.target.value);

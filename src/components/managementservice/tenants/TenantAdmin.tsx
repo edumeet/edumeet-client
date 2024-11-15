@@ -2,7 +2,6 @@ import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
-import React from 'react';
 import { Tenant, TenantOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
@@ -76,7 +75,6 @@ const TenantAdminTable = () => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ cantPatch, setcantPatch ] = useState(false);
-	
 	const [ tenantId, setTenantId ] = useState(0);
 	const [ userId, setUserId ] = useState(0);
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
@@ -117,7 +115,7 @@ const TenantAdminTable = () => {
 		fetchProduct();
 	}, []);
 
-	const [ open, setOpen ] = React.useState(false);
+	const [ open, setOpen ] = useState(false);
 
 	const handleClickOpen = () => {
 		setId(0);
