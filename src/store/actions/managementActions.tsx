@@ -90,6 +90,10 @@ export const deleteData = (id : number, serviceName:string): AppThunk<Promise<ob
 		data = await (await managementService).service(serviceName).remove(
 			id
 		);
+		dispatch(notificationsActions.enqueueNotification({
+			message: 'Delete successfull',
+			options: { variant: 'success' }
+		}));
 
 	} catch (error) {
 		if (error instanceof Error) {
@@ -119,6 +123,10 @@ export const createData = (params : object, serviceName:string): AppThunk<Promis
 			params
 		);
 
+		dispatch(notificationsActions.enqueueNotification({
+			message: 'Creation successfull',
+			options: { variant: 'success' }
+		}));
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
@@ -147,6 +155,10 @@ export const patchData = (id : number, params : object, serviceName : string): A
 			params
 		);
 
+		dispatch(notificationsActions.enqueueNotification({
+			message: 'Modification successfull',
+			options: { variant: 'success' }
+		}));
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
