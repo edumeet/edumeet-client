@@ -8,6 +8,7 @@ import AppearanceSettings from './AppearanceSettings';
 import GenericDialog from '../genericdialog/GenericDialog';
 import AdvancedSettings from './AdvancedSettings';
 import MangagementSettings from './ManagementSettings';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 const tabs: SettingsTab[] = [
 	'media',
@@ -37,15 +38,18 @@ const SettingsDialog = (): JSX.Element => {
 				<>
 					<Tabs
 						value={tabs.indexOf(currentSettingsTab)}
-						onChange={(_event, value) =>
-							dispatch(uiActions.setCurrentSettingsTab(tabs[value]))
+						onChange={(_event, value) => {
+							if ((!edumeetConfig.loginEnabled && tabs[value]!=='management') || edumeetConfig.loginEnabled) {
+								dispatch(uiActions.setCurrentSettingsTab(tabs[value]));
+							} 
+						}
 						}
 						variant='fullWidth'
 					>
 						<Tab label={mediaSettingsLabel()} />
 						<Tab label={appearanceSettingsLabel()} />
 						<Tab label={advancedSettingsLabel()} />
-						<Tab label={managementSettingsLabel()} />
+						{ edumeetConfig.loginEnabled && <Tab label={managementSettingsLabel()}/> } 
 					</Tabs>
 					{ currentSettingsTab === 'media' && <MediaSettings /> }
 					{ currentSettingsTab === 'appearance' && <AppearanceSettings /> }
