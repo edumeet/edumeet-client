@@ -11,7 +11,10 @@ import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog
 import Help from '../../components/helpdialog/HelpDialog';
 import MainContent from '../../components/maincontent/MainContent';
 import HelpButton from '../../components/controlbuttons/HelpButton';
-import { useNotifier } from '../../store/hooks';
+import { useNotifier, useAppSelector, useAppDispatch } from '../../store/hooks';
+import moment from 'moment';
+
+import { roomActions } from '../../store/slices/roomSlice';
 
 const Room = (): JSX.Element => {
 	useNotifier();
@@ -36,6 +39,30 @@ const Room = (): JSX.Element => {
 	};
 
 	const handleFullscreenChange = () => setFullscreen(fscreen.fullscreenElement !== null);
+
+	const remainingTime = useAppSelector((state) => state.room.countdownTimer.remainingTime);
+	const isStarted = useAppSelector((state) => state.room.countdownTimer.isStarted);
+	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+
+		if (isStarted) {
+
+			const _countdownTimerRef = setInterval(() => {
+				let remainingTimeUnix = moment(`1000-01-01 ${remainingTime}`).unix();
+
+				remainingTimeUnix--;
+
+				const remainingTimeString = moment.unix(remainingTimeUnix).format('HH:mm:ss');
+
+				dispatch(roomActions.setCountdownTimerRemainingTime(remainingTimeString));
+
+			}, 1000);
+			
+			return () => { clearInterval(_countdownTimerRef); };
+		}
+
+	}, [ isStarted, remainingTime, dispatch ]);
 
 	return (
 		<>

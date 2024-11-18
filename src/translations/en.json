@@ -279,5 +279,12 @@
 	"svc.mgmtUnavailable": "Management service: Unavailable",
 	"svc.mediaNodeUnavailable": "Media-node service: Unavailable",
 	"svc.mediaConnectionNodeError": "Media-node service: Connection error",
-	"svc.mediaConnectionNodeSuccess": "Media-Node service: Got connection"
+	"svc.mediaConnectionNodeSuccess": "Media-Node service: Got connection",
+	"label.countdownTimer.title": "Countdown timer",
+	"label.countdownTimer.enable": "Enable",
+	"label.countdownTimer.disable": "Disable",
+	"label.countdownTimer.start": "Start",
+	"label.countdownTimer.stop": "Stop",
+	"label.countdownTimer.set": "Set",
+	"label.countdownTimer.finished": "Time is up!"
 }
