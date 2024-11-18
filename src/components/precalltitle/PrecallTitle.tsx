@@ -1,15 +1,26 @@
 import { Grid, Typography } from '@mui/material';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import edumeetConfig from '../../utils/edumeetConfig';
 import LoginButton from '../controlbuttons/LoginButton';
 import { loginLabel, logoutLabel } from '../translated/translatedComponents';
 import LogoutButton from '../controlbuttons/LogoutButton';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { checkJWT } from '../../store/actions/permissionsActions';
 
 const PrecallTitle = (): React.JSX.Element => {
+	const dispatch = useAppDispatch();
+
 	const logo = useAppSelector((state) => state.room.logo);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
-	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	let loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+
+	useEffect(() => {
+
+		dispatch(checkJWT()).then(() => {
+			loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+		});
+
+	}, []);
 
 	return (
 		<Grid

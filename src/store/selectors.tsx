@@ -8,6 +8,7 @@ import { Peer } from './slices/peersSlice';
 import { RootState } from './store';
 import { RoomSession } from './slices/roomSessionsSlice';
 import { MeState } from './slices/meSlice';
+import edumeetConfig from './../utils/edumeetConfig';
 
 // eslint-disable-next-line no-unused-vars
 type Selector<S> = (state: RootState) => S;
@@ -67,7 +68,7 @@ export const roomSessionsLengthSelector = createSelector(
 export const p2pModeSelector = createSelector(
 	roomSessionsLengthSelector,
 	peersLengthSelector,
-	(sessions, peers) => sessions === 1 && peers < 2
+	(sessions, peers) => sessions === 1 && peers < 2 && edumeetConfig.p2penabled
 );
 
 /**

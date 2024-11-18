@@ -12,6 +12,7 @@ const WindowedVideo = (): JSX.Element => {
 	const sessionId = useAppSelector((state) => state.me.sessionId);
 	const consumers = useAppSelector(windowedConsumersSelector);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
+	const contain = useAppSelector((state) => state.settings.videoContainEnabled);
 
 	const [ consumersToRender, setConsumersToRender ] = useState<StateConsumer[]>(consumers);
 
@@ -35,7 +36,7 @@ const WindowedVideo = (): JSX.Element => {
 							height: '100%'
 						}}
 					>
-						<VideoView consumer={consumer} contain roundedCorners={false} />
+						<VideoView consumer={consumer} contain={contain} roundedCorners={false} />
 					</VideoBox>
 				</SeparateWindow>
 			))}

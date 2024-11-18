@@ -69,6 +69,9 @@ const App = (): JSX.Element => {
 		if (roomState ==='left') {
 			dispatch(roomActions.setState('new'));
 			navigate('/');
+			setTimeout(() => {
+				window.location.reload();
+			}, 0);
 		}
 	}, [ roomState ]);
 			

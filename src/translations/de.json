@@ -59,6 +59,7 @@
   "label.fullscreen": "Vollbild",
   "label.guest": null,
   "label.high": "Hoch (HD)",
+  "label.imprint": "Impressum",
   "label.italic": "kursiv",
   "label.join": "Eintreten",
   "label.joinBreakoutRoom": null,
@@ -77,6 +78,7 @@
   "label.openSettings": null,
   "label.participants": "Teilnehmer",
   "label.password": "Passwort",
+  "label.privacy": "Datenschutz",
   "label.promoteAllPeers": "Alle Teilnehmer reinlassen",
   "label.recordingInProgress": "Aufnahme läuft...",
   "label.removeBreakoutRoom": null,
@@ -277,5 +279,6 @@
   "svc.mgmtUnavailable": null,
   "svc.mediaNodeUnavailable": null,
   "svc.mediaConnectionNodeError": null,
-  "svc.mediaConnectionNodeSuccess": null
+  "svc.mediaConnectionNodeSuccess": null,
+  "settings.testAudioOutput": null
 }

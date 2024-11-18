@@ -513,6 +513,11 @@ export const advancedSettingsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Advanced'
 });
 
+export const managementSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.management',
+	defaultMessage: 'Management'
+});
+
 export const audioInputDeviceLabel = (): string => intl.formatMessage({
 	id: 'settings.audioInput',
 	defaultMessage: 'Audio input device'
@@ -658,6 +663,11 @@ export const backgroundBlurLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Background blur'
 });
 
+export const videoContainLabel = (): string => intl.formatMessage({
+	id: 'settings.containVideo',
+	defaultMessage: 'Uncrop my video'
+});
+
 export const videoSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.videoSettings',
 	defaultMessage: 'Video settings'
@@ -797,8 +807,43 @@ export const countdownTimerSetLabel = (): string => intl.formatMessage({
 	id: 'label.countdownTimer.set',
 	defaultMessage: 'Set'
 });
-
 export const countdownTimerFinishedLabel = (): string => intl.formatMessage({
 	id: 'label.countdownTimer.finished',
 	defaultMessage: 'Time is up!'
+});
+export const tenantSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementTenantSettings',
+	defaultMessage: 'Tenant settings'
+});
+export const roomSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementRoomSettings',
+	defaultMessage: 'Room settings'
+});
+export const userSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementUserSettings',
+	defaultMessage: 'User settings'
+});
+export const groupSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementGroupSettings',
+	defaultMessage: 'Group settings'
+});
+export const roleSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementRoleSettings',
+	defaultMessage: 'Role settings'
+});
+export const managementExtraSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementExtraSettings',
+	defaultMessage: '...'
+});
+export const ruleSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementRuleSettings',
+	defaultMessage: 'Rule settings'
+});
+export const imprintLabel = (): string => intl.formatMessage({
+	id: 'label.imprint',
+	defaultMessage: 'Imprint'
+});
+export const privacyLabel = (): string => intl.formatMessage({
+	id: 'label.privacy',
+	defaultMessage: 'Privacy'
 });

@@ -287,5 +287,6 @@
 	"label.countdownTimer.start": "Start",
 	"label.countdownTimer.stop": "Stop",
 	"label.countdownTimer.set": "Ustaw",
-	"label.countdownTimer.finished": "Czas minął!"
+	"label.countdownTimer.finished": "Czas minął!",
+  "settings.testAudioOutput": null
 }

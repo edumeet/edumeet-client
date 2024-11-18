@@ -60,7 +60,7 @@ export const localeList = [
 		locale: [ 'hi', 'hi-hi' ]
 	},
 	{
-		name: 'Hungarian',
+		name: 'Hungarian (magyar)',
 		file: 'hu',
 		locale: [ 'hu', 'hu-hu' ]
 	},
