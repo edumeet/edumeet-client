@@ -8,13 +8,17 @@ import {
 	List,
 	ListItem,
 	ListItemAvatar,
-	ListItemText
+	ListItemText,
+	Link,
+	Typography
 } from '@mui/material';
 import WebAssetIcon from '@mui/icons-material/WebAsset';
 import ErrorIcon from '@mui/icons-material/Error';
 import { FormattedMessage } from 'react-intl';
 import { memo } from 'react';
 import { RawStyledDialog } from '../../components/genericdialog/GenericDialog';
+import { imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 interface UnsupportedBrowserProps {
 	platform: string;
@@ -38,6 +42,9 @@ const UnsupportedBrowser = ({
 }: UnsupportedBrowserProps): JSX.Element => {
 	if (platform !== 'desktop')
 		dense = true;
+
+	const privacyUrl = edumeetConfig.privacyUrl ?? '';
+	const imprintUrl = edumeetConfig.imprintUrl ?? '';
 
 	return (
 		<RawStyledDialog
@@ -100,6 +107,18 @@ const UnsupportedBrowser = ({
 						</Hidden>
 					</Grid>
 				</Grid>
+				<Box display="flex" alignItems="left">
+					{imprintUrl.trim() !== '' && (
+						<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
+							<Typography variant="body2">{ imprintLabel() }</Typography>
+						</Link>
+					)}
+					{privacyUrl.trim() !== '' && (
+						<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
+							<Typography variant="body2">{ privacyLabel() }</Typography>
+						</Link>
+					)}
+				</Box>
 			</DialogContent>
 		</RawStyledDialog>
 	);
