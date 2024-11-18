@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
 
-export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left';
+export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left' | 'mgmt-admin';
 export type RoomMode = 'P2P' | 'SFU';
 export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';
 

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { roomSessionsActions } from './roomSessionsSlice';
 
-export type SettingsTab = 'media' | 'appearance' | 'advanced';
+export type SettingsTab = 'media' | 'appearance' | 'advanced' | 'management';
 
 export interface UiState {
 	fullScreenConsumer?: string;
