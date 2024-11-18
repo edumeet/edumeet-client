@@ -11,8 +11,7 @@ import edumeetConfig from './edumeetConfig';
  */
 export const getSignalingUrl = (peerId: string, roomId: string, tenantId: string | undefined, token: string | undefined): string => {
 	const hostname = edumeetConfig.serverHostname || window.location.hostname;
-	const port = import.meta.env.NODE_ENV !== 'production' ?
-		edumeetConfig.developmentPort : edumeetConfig.productionPort;
+	const port = import.meta.env.PROD ? edumeetConfig.productionPort : edumeetConfig.developmentPort;
 
 	let tenantParam = '';
 	let tokenParam = '';
@@ -22,3 +21,12 @@ export const getSignalingUrl = (peerId: string, roomId: string, tenantId: string
 
 	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}${tenantParam}${tokenParam}`;
 };
+
+export class SocketTimeoutError extends Error {
+	constructor(message: string) {
+		super(message);
+
+		this.name = 'SocketTimeoutError';
+		this.stack = (new Error(message)).stack;
+	}
+}

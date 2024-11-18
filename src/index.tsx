@@ -13,15 +13,17 @@ import edumeetConfig from './utils/edumeetConfig';
 import { intl } from './utils/intlManager';
 import { useAppDispatch } from './store/hooks';
 import { setLocale } from './store/actions/localeActions';
-import { Logger } from 'edumeet-common';
 import { CssBaseline } from '@mui/material';
+import { Logger } from './utils/Logger';
+import { SnackbarProvider } from 'notistack';
+import Management from './views/management/Management';
 
 const ErrorBoundary = lazy(() => import('./views/errorboundary/ErrorBoundary'));
 const App = lazy(() => import('./App'));
 const LandingPage = lazy(() => import('./views/landingpage/LandingPage'));
 const UnsupportedBrowser = lazy(() => import('./views/unsupported/UnsupportedBrowser'));
 
-if (import.meta.env.VITE_APP_DEBUG === '*' || import.meta.env.NODE_ENV !== 'production') {
+if (import.meta.env.VITE_APP_DEBUG === '*' || !import.meta.env.PROD) {
 	debug.enable('* -engine* -socket* -RIE* *WARN* *ERROR*');
 }
 
@@ -31,13 +33,26 @@ const device = deviceInfo();
 const unsupportedBrowser = !browserInfo.satisfies(supportedBrowsers);
 const webrtcUnavailable = !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.RTCPeerConnection;
 
+// Detect the base url we are hosted on
+const basename = window.location.pathname.split('/')
+	.slice(0, -1)
+	.join('/');
+
+logger.debug('Starting app [baseUrl:%s]', basename);
+
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<>
 			<Route path='/' element={<Suspense><LandingPage /></Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
+			<Route path='/mgmt-admin' element={<Suspense>
+				<SnackbarProvider>
+					<Management />
+				</SnackbarProvider>
+			</Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
+			
 			<Route path='/:id' element={<Suspense><App /></Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
 		</>
-	)
+	), { basename }
 );
 
 /**

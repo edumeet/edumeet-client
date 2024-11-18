@@ -195,6 +195,7 @@
 	"settings.cantSelectAudioOutput": "Unable to select audio output device",
 	"settings.cantSelectCamera": "Unable to select video device",
 	"settings.channelCount": "Select the audio channel count",
+	"settings.containVideo": "Uncrop my video",
 	"settings.echoCancellation": "Echo cancellation",
 	"settings.enableOpusDetails": "Enable OPUS details (page reload required)",
 	"settings.frameRate": "Select your video frame rate",
@@ -227,6 +228,7 @@
 	"settings.showAdvancedAudio": "Advanced audio settings",
 	"settings.showAdvancedVideo": "Advanced video settings",
 	"settings.showNotifications": "Show notifications",
+	"settings.testAudioOutput": "Test audio output",
 	"settings.verticallyStackedSidePanels": "Vertically stacked side panels",
 	"settings.webcamFrameRate": "Select your webcam frame rate",
 	"settings.enableBlurBackground": "Enable blur background effect",
@@ -277,5 +279,12 @@
 	"svc.mgmtUnavailable": "Management service: Unavailable",
 	"svc.mediaNodeUnavailable": "Media-node service: Unavailable",
 	"svc.mediaConnectionNodeError": "Media-node service: Connection error",
-	"svc.mediaConnectionNodeSuccess": "Media-Node service: Got connection"
+	"svc.mediaConnectionNodeSuccess": "Media-Node service: Got connection",
+	"label.countdownTimer.title": "Countdown timer",
+	"label.countdownTimer.enable": "Enable",
+	"label.countdownTimer.disable": "Disable",
+	"label.countdownTimer.start": "Start",
+	"label.countdownTimer.stop": "Stop",
+	"label.countdownTimer.set": "Set",
+	"label.countdownTimer.finished": "Time is up!"
 }

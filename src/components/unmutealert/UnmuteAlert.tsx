@@ -1,21 +1,13 @@
 import { Alert, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useContext, useEffect, useState } from 'react';
-import { StateProducer } from '../../store/slices/producersSlice';
 import { ServiceContext } from '../../store/store';
-import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { mutedPTTLabel } from '../translated/translatedComponents';
-
-interface UnmuteAlertProps {
-	micProducer: StateProducer;
-}
+import { useAppSelector } from '../../store/hooks';
 
 const StyledAlert = styled(Alert)(() => ({
 	position: 'absolute',
-	width: '40%',
-	left: '50%',
-	top: '50%',
-	transform: 'translate(-50%, -50%)',
+	width: '100%',
 	transition: 'opacity 0.5s ease',
 	textAlign: 'center',
 	opacity: 0,
@@ -29,18 +21,13 @@ const StyledAlert = styled(Alert)(() => ({
 	}
 }));
 
-const UnmuteAlert = ({
-	micProducer
-}: UnmuteAlertProps): JSX.Element => {
+const UnmuteAlert = (): JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ speaking, setSpeaking ] = useState(false);
+	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 
 	useEffect(() => {
-		const producer = mediaService.getProducer(micProducer.id);
-		let volumeWatcher: VolumeWatcher | undefined;
-
-		if (producer)
-			volumeWatcher = producer.appData.volumeWatcher as VolumeWatcher;
+		const volumeWatcher = mediaService.mediaSenders['mic'].volumeWatcher;
 
 		const onVolumeChange = ({ scaledVolume }: { scaledVolume: number }): void => {
 			setSpeaking(Boolean(scaledVolume));
@@ -57,7 +44,7 @@ const UnmuteAlert = ({
 		<StyledAlert
 			variant='filled'
 			severity='warning'
-			className={ micProducer?.paused && speaking ? 'enabled' : '' }
+			className={ audioMuted && speaking ? 'enabled' : '' }
 		>
 			<Typography>{ mutedPTTLabel() }</Typography>
 		</StyledAlert>

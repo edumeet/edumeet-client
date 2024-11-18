@@ -6,7 +6,7 @@ import {
 	SelectChangeEvent
 } from '@mui/material';
 import {
-	updateAdvancedVideoSettings,
+	updateVideoSettings,
 	updateAudioSettings,
 	updateScreenshareSettings,
 } from '../../store/actions/mediaActions';
@@ -35,7 +35,7 @@ export const ResolutionSelector = ({
 	const resolution = useAppSelector((state) => state.settings.resolution);
 
 	const handleResolutionChange = (event: SelectChangeEvent<string>): void => {
-		dispatch(updateAdvancedVideoSettings({
+		dispatch(updateVideoSettings({
 			resolution: event.target.value as Resolution
 		}));
 	};
@@ -80,7 +80,7 @@ export const FrameRateSelector = ({
 
 	const handleFrameRateChange = (event: SelectChangeEvent<string>): void => {
 		if (device === 'webcam') {
-			dispatch(updateAdvancedVideoSettings({
+			dispatch(updateVideoSettings({
 				frameRate: parseInt(event.target.value)
 			}));
 		} else {

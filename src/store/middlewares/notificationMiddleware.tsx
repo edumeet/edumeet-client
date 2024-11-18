@@ -1,13 +1,17 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { Logger } from 'edumeet-common';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { peersActions } from '../slices/peersSlice';
 import { MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { roomActions } from '../slices/roomSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { HTMLMediaElementWithSink } from '../../utils/types';
+import { settingsActions } from '../slices/settingsSlice';
+import { Logger } from '../../utils/Logger';
 
 interface SoundAlert {
 	[type: string]: {
-		audio: HTMLAudioElement;
+		audio: HTMLMediaElementWithSink;
 		debounce: number;
 		last?: number;
 	};
@@ -21,78 +25,94 @@ const createNotificationMiddleware = ({
 	logger.debug('createNotificationMiddleware()');
 
 	const soundAlerts: SoundAlert = {
-		'default': {
-			audio: new Audio('/sounds/notify.mp3'),
-			debounce: 0
-		}
+		default: {
+			audio: new Audio('/sounds/notify.mp3') as HTMLMediaElementWithSink,
+			debounce: 0,
+		},
 	};
 
-	const playNotificationSounds = async (type: string) => {
+	const playNotificationSounds = (type: string, ignoreDebounce = false) => {
 		const soundAlert = soundAlerts[type] ?? soundAlerts['default'];
 
 		const now = Date.now();
 
-		if (soundAlert?.last && (now - soundAlert.last) < soundAlert.debounce)
+		if (!ignoreDebounce && soundAlert?.last && (now - soundAlert.last) < soundAlert.debounce)
 			return;
 
 		soundAlert.last = now;
 
-		await soundAlert.audio.play().catch((error) => {
-			logger.error('soundAlert.play() [error:"%o"]', error);
-		});
+		soundAlert.audio.play().catch((error) => logger.error('soundAlert.play() [error:"%o"]', error));
 	};
 
 	// Load notification alerts sounds and make them available
 	for (const [ k, v ] of Object.entries(config.notificationSounds)) {
 		if (v?.play) {
 			soundAlerts[k] = {
-				audio: new Audio(v.play),
-				debounce: v.debounce ?? 0
+				audio: new Audio(v.play) as HTMLMediaElementWithSink,
+				debounce: v.debounce ?? 0,
 			};
 		}
 	}
+
+	const attachAudioOutput = (deviceId: string) => {
+		Object.values(soundAlerts).forEach((alert) => {
+			alert.audio.setSinkId(deviceId).catch((e) => logger.error(e));
+		});
+	};
 
 	const middleware: Middleware = ({
 		getState
 	}: {
 		getState: () => RootState
-	}) =>
-		(next) => async (action) => {
-			// Reproduce notification alerts
-			if (getState().settings.notificationSounds) {
-				// Raised hand
-				if (peersActions.updatePeer.match(action)) {
-					const { raisedHand } = action.payload;
+	}) => (next) => (action) => {
+		// Reproduce notification alerts
+		if (getState().settings.notificationSounds) {
+			// Raised hand
+			if (peersActions.updatePeer.match(action)) {
+				const { raisedHand } = action.payload;
 
-					if (raisedHand) await playNotificationSounds('raisedHand');
-				}
-
-				// Chat message
-				if (
-					roomSessionsActions.addMessage.match(action) &&
-					action.payload.peerId !== getState().me.id
-				) {
-					await playNotificationSounds('chatMessage');
-				}
-
-				// Parked peer
-				if (lobbyPeersActions.addPeer.match(action)) {
-					await playNotificationSounds('parkedPeer');
-				}
-
-				// Send file
-				if (roomSessionsActions.addFile.match(action)) {
-					await playNotificationSounds('sendFile');
-				}
-
-				// New peer
-				if (peersActions.addPeer.match(action)) {
-					await playNotificationSounds('newPeer');
-				}
+				if (raisedHand) playNotificationSounds('raisedHand');
 			}
 
-			return next(action);
-		};
+			// Chat message
+			if (
+				roomSessionsActions.addMessage.match(action) &&
+					action.payload.peerId !== getState().me.id
+			) {
+				playNotificationSounds('chatMessage');
+			}
+
+			// Parked peer
+			if (lobbyPeersActions.addPeer.match(action)) {
+				playNotificationSounds('parkedPeer');
+			}
+
+			// Send file
+			if (roomSessionsActions.addFile.match(action)) {
+				playNotificationSounds('sendFile');
+			}
+
+			// New peer
+			if (peersActions.addPeer.match(action)) {
+				playNotificationSounds('newPeer');
+			}
+
+			// Finished countdownTimer
+			if (roomActions.finishCountdownTimer.match(action)) {
+				playNotificationSounds('finishedCountdownTimer');
+			}
+
+			if (settingsActions.setSelectedAudioOutputDevice.match(action) && action.payload) {
+				attachAudioOutput(action.payload);
+			}
+
+			if (notificationsActions.playTestSound.match(action)) {
+				playNotificationSounds('default', true);
+			}
+		}
+
+		return next(action);
+	};
 
 	return middleware;
 };

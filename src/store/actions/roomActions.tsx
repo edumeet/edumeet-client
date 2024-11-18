@@ -1,4 +1,3 @@
-import { Logger } from 'edumeet-common';
 import { batch } from 'react-redux';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { meActions } from '../slices/meSlice';
@@ -11,6 +10,7 @@ import { updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { getTenantFromFqdn } from './managementActions';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('RoomActions');
 
@@ -52,13 +52,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('joinRoom()');
 
-	await mediaService.createTransports();
+	dispatch(meActions.setLocalCapabilities(mediaService.localCapabilities));
 
-	if (!mediaService.mediaCapabilities) throw new Error('Media capabilities not set!');
-
-	dispatch(meActions.setMediaCapabilities(mediaService.mediaCapabilities));
-
-	const rtpCapabilities = mediaService.rtpCapabilities;
 	const displayName = getState().settings.displayName;
 	const { sessionId, picture } = getState().me;
 
@@ -67,33 +62,36 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		tracker,
 		chatHistory,
 		fileHistory,
+		countdownTimer,
 		breakoutRooms,
 		locked,
 		lobbyPeers,
-		roomMode = 'SFU',
 	} = await signalingService.sendRequest('join', {
 		displayName,
 		picture,
-		rtpCapabilities,
 	});
 
 	fileService.tracker = tracker;
 	fileService.iceServers = mediaService.iceServers;
 
 	batch(() => {
-		dispatch(roomActions.setMode(roomMode));
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
 		dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
 		dispatch(peersActions.addPeers(peers));
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+		dispatch(roomActions.joinCountdownTimer(countdownTimer));
 
-		if (peers.length < 10) {
-			if (!getState().me.audioMuted) dispatch(updateMic({ start: true }));
-			if (!getState().me.videoMuted) dispatch(updateWebcam({ start: true }));
-		}
+		dispatch(countdownTimer.isStarted ? 
+			roomActions.startCountdownTimer() : 
+			roomActions.stopCountdownTimer()
+		);
+
 	});
+
+	if (!getState().me.audioMuted) dispatch(updateMic());
+	if (!getState().me.videoMuted) dispatch(updateWebcam());
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
@@ -184,9 +182,10 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 			dispatch(meActions.setSessionId(sessionId));
 			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-			if (!audioMuted) dispatch(updateMic({ start: true }));
-			if (!videoMuted) dispatch(updateWebcam({ start: true }));
 		});
+
+		if (!audioMuted) dispatch(updateMic());
+		if (!videoMuted) dispatch(updateWebcam());
 	} catch (error) {
 		logger.error('joinBreakoutRoom() [error:%o]', error);
 	} finally {
@@ -204,9 +203,7 @@ export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
 
 	try {
-		const {
-			sessionId,
-		} = await signalingService.sendRequest('leaveBreakoutRoom');
+		const { sessionId } = await signalingService.sendRequest('leaveBreakoutRoom');
 
 		dispatch(meActions.setSessionId(sessionId));
 	} catch (error) {
@@ -216,20 +213,12 @@ export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 	}
 };
 
-export const closeMeeting = (): AppThunk<Promise<void>> => async (
-	dispatch,
+export const closeMeeting = (): AppThunk<void> => (
+	_dispatch,
 	_getState,
 	{ signalingService }
-): Promise<void> => {
+) => {
 	logger.debug('closeMeeting()');
 
-	dispatch(roomActions.updateRoom({ closeMeetingInProgress: true }));
-
-	try {
-		await signalingService.sendRequest('moderator:closeMeeting');
-	} catch (error) {
-		logger.error('closeMeeting() [error:%o]', error);
-	} finally {
-		dispatch(roomActions.updateRoom({ closeMeetingInProgress: false }));
-	}
+	signalingService.notify('moderator:closeMeeting');
 };

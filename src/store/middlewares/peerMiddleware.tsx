@@ -4,23 +4,25 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { peersActions } from '../slices/peersSlice';
 import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { setRaisedHand } from '../actions/meActions';
-import { micProducerSelector, screenProducerSelector, webcamProducerSelector } from '../selectors';
-import { producersActions } from '../slices/producersSlice';
-import { Logger } from 'edumeet-common';
+import { stopMic, stopScreenSharing, stopWebcam } from '../actions/mediaActions';
+import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { p2pModeSelector } from '../selectors';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('PeerMiddleware');
 
 const createPeerMiddleware = ({
 	signalingService,
-	mediaService
+	mediaService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createPeerMiddleware()');
 
 	const middleware: Middleware = ({
-		dispatch, getState
+		getState,
+		dispatch
 	}: {
+		getState: () => RootState;
 		dispatch: AppDispatch,
-		getState: () => RootState
 	}) =>
 		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
@@ -34,7 +36,8 @@ const createPeerMiddleware = ({
 									displayName,
 									picture,
 									raisedHand,
-									raisedHandTimestamp
+									raisedHandTimestamp,
+									recording,
 								} = notification.data;
 
 								dispatch(peersActions.addPeer({
@@ -44,6 +47,7 @@ const createPeerMiddleware = ({
 									picture,
 									raisedHand,
 									raisedHandTimestamp,
+									recording,
 									transcripts: [],
 								}));
 
@@ -68,13 +72,15 @@ const createPeerMiddleware = ({
 
 							case 'changeDisplayName':
 							case 'changePicture':
+							case 'recording':
 							case 'raisedHand': {
 								const {
 									peerId,
 									displayName,
 									picture,
 									raisedHand,
-									raisedHandTimestamp
+									raisedHandTimestamp,
+									recording,
 								} = notification.data;
 
 								dispatch(
@@ -83,7 +89,8 @@ const createPeerMiddleware = ({
 										displayName,
 										picture,
 										raisedHand,
-										raisedHandTimestamp
+										raisedHandTimestamp,
+										recording,
 									})
 								);
 
@@ -134,7 +141,7 @@ const createPeerMiddleware = ({
 										displayName,
 										picture,
 									}));
-		
+								
 								break;
 							}
 
@@ -145,47 +152,20 @@ const createPeerMiddleware = ({
 							}
 
 							case 'moderator:mute': {
-								const micProducer = micProducerSelector(getState());
-
-								if (micProducer && !micProducer.paused) {
-									dispatch(
-										producersActions.setProducerPaused({
-											producerId: micProducer.id,
-											local: true,
-										})
-									);
-								}
-
+								dispatch(stopMic());
+								
 								break;
 							}
 
 							case 'moderator:stopVideo': {
-								const webcamProducer = webcamProducerSelector(getState());
-
-								if (webcamProducer) {
-									dispatch(
-										producersActions.closeProducer({
-											producerId: webcamProducer.id,
-											local: true,
-										})
-									);
-								}
-
+								dispatch(stopWebcam());
+								
 								break;
 							}
 
 							case 'moderator:stopScreenSharing': {
-								const screenProducer = screenProducerSelector(getState());
-
-								if (screenProducer) {
-									dispatch(
-										producersActions.closeProducer({
-											producerId: screenProducer.id,
-											local: true,
-										})
-									);
-								}
-
+								dispatch(stopScreenSharing());
+								
 								break;
 							}
 						}
@@ -195,27 +175,39 @@ const createPeerMiddleware = ({
 				});
 			}
 
-			if (peersActions.addPeers.match(action)) {
-				const clientId = getState().me.id;
-
-				for (const peer of action.payload) {
-					const { id } = peer;
-
-					mediaService.addPeer(id, clientId);
-				}
+			if (peersActions.addPeer.match(action)) {
+				mediaService.addPeerId(action.payload.id);
 			}
 
-			if (peersActions.addPeer.match(action)) {
-				const { id } = action.payload;
-				const clientId = getState().me.id;
-
-				mediaService.addPeer(id, clientId);
+			if (peersActions.addPeers.match(action)) {
+				action.payload.forEach((peer) => {
+					mediaService.addPeerId(peer.id);
+				});
 			}
 
 			if (peersActions.removePeer.match(action)) {
-				const { id } = action.payload;
+				mediaService.removePeerId(action.payload.id);
+			}
+			
+			if (
+				peersActions.addPeer.match(action) ||
+				peersActions.addPeers.match(action) ||
+				peersActions.removePeer.match(action) ||
+				roomSessionsActions.addRoomSession.match(action) ||
+				roomSessionsActions.removeRoomSession.match(action) ||
+				roomSessionsActions.addRoomSessions.match(action)
+			) {
+				const oldP2pMode = p2pModeSelector(getState());
 
-				mediaService.removePeer(id);
+				next(action);
+
+				const p2pMode = p2pModeSelector(getState());
+
+				if (oldP2pMode !== p2pMode) {
+					mediaService.setP2PMode(p2pMode);
+				}
+
+				return;
 			}
 
 			return next(action);

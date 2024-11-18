@@ -513,15 +513,25 @@ export const advancedSettingsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Advanced'
 });
 
-// export const audioInputDeviceLabel = (): string => intl.formatMessage({
-// 	id: 'settings.audioInput',
-// 	defaultMessage: 'Audio input device'
-// });
+export const managementSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.management',
+	defaultMessage: 'Management'
+});
 
-// export const audioOutputDeviceLabel = (): string => intl.formatMessage({
-// 	id: 'settings.audioOutput',
-// 	defaultMessage: 'Audio output device'
-// });
+export const audioInputDeviceLabel = (): string => intl.formatMessage({
+	id: 'settings.audioInput',
+	defaultMessage: 'Audio input device'
+});
+
+export const audioOutputDeviceLabel = (): string => intl.formatMessage({
+	id: 'settings.audioOutput',
+	defaultMessage: 'Audio output device'
+});
+
+export const testAudioOutputLabel = (): string => intl.formatMessage({
+	id: 'settings.testAudioOutput',
+	defaultMessage: 'Test Audio output'
+});
 
 export const tryToLoadAudioDevices = (): string => intl.formatMessage({
 	id: 'settings.tryToLoadAudioDevices',
@@ -536,11 +546,6 @@ export const selectAudioInputDeviceLabel = (): string => intl.formatMessage({
 export const selectAudioOutputDeviceLabel = (): string => intl.formatMessage({
 	id: 'settings.selectAudioOutput',
 	defaultMessage: 'Select audio output device'
-});
-
-export const audioDeviceLabel = (): string => intl.formatMessage({
-	id: 'settings.audio',
-	defaultMessage: 'Audio input device'
 });
 
 export const noAudioInputDevicesLabel = (): string => intl.formatMessage({
@@ -658,6 +663,11 @@ export const backgroundBlurLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Background blur'
 });
 
+export const videoContainLabel = (): string => intl.formatMessage({
+	id: 'settings.containVideo',
+	defaultMessage: 'Uncrop my video'
+});
+
 export const videoSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.videoSettings',
 	defaultMessage: 'Video settings'
@@ -766,4 +776,74 @@ export const mediaNodeConnectionSuccess = (): string => intl.formatMessage({
 export const roomServerConnectionError = (message: string): string => intl.formatMessage({
 	id: 'svc.roomServerConnectionError',
 	defaultMessage: `Room-server: ${message}`
+});
+
+export const countdownTimerTitleLabel = (): string => intl.formatMessage({
+	id: 'label.countdownTimer.title',
+	defaultMessage: 'Countdown timer'
+});
+
+export const countdownTimerStartLabel = (): string => intl.formatMessage({
+	id: 'label.countdownTimer.start',
+	defaultMessage: 'Start'
+});
+
+export const countdownTimerStopLabel = (): string => intl.formatMessage({
+	id: 'label.countdownTimer.stop',
+	defaultMessage: 'Stop'
+});
+
+export const countdownTimerEnableLabel = (): string => intl.formatMessage({
+	id: 'label.countdownTimer.enable',
+	defaultMessage: 'Enable'
+});
+
+export const countdownTimerDisableLabel = (): string => intl.formatMessage({
+	id: 'label.countdownTimer.disable',
+	defaultMessage: 'Disable'
+});
+
+export const countdownTimerSetLabel = (): string => intl.formatMessage({
+	id: 'label.countdownTimer.set',
+	defaultMessage: 'Set'
+});
+export const countdownTimerFinishedLabel = (): string => intl.formatMessage({
+	id: 'label.countdownTimer.finished',
+	defaultMessage: 'Time is up!'
+});
+export const tenantSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementTenantSettings',
+	defaultMessage: 'Tenant settings'
+});
+export const roomSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementRoomSettings',
+	defaultMessage: 'Room settings'
+});
+export const userSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementUserSettings',
+	defaultMessage: 'User settings'
+});
+export const groupSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementGroupSettings',
+	defaultMessage: 'Group settings'
+});
+export const roleSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementRoleSettings',
+	defaultMessage: 'Role settings'
+});
+export const managementExtraSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementExtraSettings',
+	defaultMessage: '...'
+});
+export const ruleSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementRuleSettings',
+	defaultMessage: 'Rule settings'
+});
+export const imprintLabel = (): string => intl.formatMessage({
+	id: 'label.imprint',
+	defaultMessage: 'Imprint'
+});
+export const privacyLabel = (): string => intl.formatMessage({
+	id: 'label.privacy',
+	defaultMessage: 'Privacy'
 });

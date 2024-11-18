@@ -1,5 +1,5 @@
-import { Logger } from 'edumeet-common';
 import type WebTorrent from 'webtorrent';
+import { Logger } from '../utils/Logger';
 
 const logger = new Logger('FileService');
 

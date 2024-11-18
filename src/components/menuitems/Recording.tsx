@@ -12,7 +12,7 @@ import StopIcon from '@mui/icons-material/Stop';
 import { MenuItemProps } from '../floatingmenu/FloatingMenu';
 import { permissions } from '../../utils/roles';
 import MoreActions from '../moreactions/MoreActions';
-import { recordingActions } from '../../store/slices/recordingSlice';
+import { startRecording, stopRecording } from '../../store/actions/recordingActions';
 
 const Recording = ({
 	onClick
@@ -20,7 +20,7 @@ const Recording = ({
 	const dispatch = useAppDispatch();
 	const hasRecordingPermission = usePermissionSelector(permissions.LOCAL_RECORD_ROOM);
 	const canRecord = useAppSelector((state) => state.me.canRecord);
-	const recording = useAppSelector((state) => state.recording.recording);
+	const recording = useAppSelector((state) => state.room.recording);
 	const recordTip = recording ? stopRecordingLabel() : startRecordingLabel();
 
 	return (
@@ -30,9 +30,7 @@ const Recording = ({
 			onClick={() => {
 				onClick();
 
-				recording ?
-					dispatch(recordingActions.stop()) :
-					dispatch(recordingActions.start());
+				recording ? dispatch(stopRecording()) : dispatch(startRecording());
 			}}
 		>
 			{ recording ? <StopIcon /> : <RecordIcon /> }

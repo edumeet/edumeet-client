@@ -1,4 +1,4 @@
-import type { RtpCapabilities, RtpEncodingParameters } from 'mediasoup-client/lib/RtpParameters';
+import type { RtpEncodingParameters } from 'mediasoup-client/lib/RtpParameters';
 import { Resolution, SimulcastProfile } from './types';
 
 const VIDEO_CONSTRAINS: Record<Resolution, Record<string, number>> = {
@@ -12,54 +12,62 @@ const VIDEO_CONSTRAINS: Record<Resolution, Record<string, number>> = {
 const SIMULCAST_PROFILES = {
 	'320': [ {
 		'scaleResolutionDownBy': 1,
-		'maxBitrate': 150000
+		'maxBitrate': 150_000
 	} ],
 	'640': [ {
 		'scaleResolutionDownBy': 2,
-		'maxBitrate': 150000
+		'maxBitrate': 150_000
 	}, {
 		'scaleResolutionDownBy': 1,
-		'maxBitrate': 500000
+		'maxBitrate': 500_000
 	} ],
 	'1280': [ {
 		'scaleResolutionDownBy': 4,
-		'maxBitrate': 150000
+		'maxBitrate': 150_000
 	}, {
 		'scaleResolutionDownBy': 2,
-		'maxBitrate': 500000
+		'maxBitrate': 500_000
 	}, {
 		'scaleResolutionDownBy': 1,
-		'maxBitrate': 1200000
+		'maxBitrate': 1_200_000
 	} ],
 	'1920': [ {
 		'scaleResolutionDownBy': 6,
-		'maxBitrate': 150000
+		'maxBitrate': 150_000
 	}, {
 		'scaleResolutionDownBy': 3,
-		'maxBitrate': 500000
+		'maxBitrate': 500_000
 	}, {
 		'scaleResolutionDownBy': 1,
-		'maxBitrate': 3500000
+		'maxBitrate': 3_500_000
 	} ],
 	'3840': [ {
 		'scaleResolutionDownBy': 12,
-		'maxBitrate': 150000
+		'maxBitrate': 150_000
 	}, {
 		'scaleResolutionDownBy': 6,
-		'maxBitrate': 500000
+		'maxBitrate': 500_000
 	}, {
 		'scaleResolutionDownBy': 1,
-		'maxBitrate': 10000000
+		'maxBitrate': 10_000_000
 	} ]
 };
 
-// Used for VP9 webcam video.
-const VIDEO_KSVC_ENCODINGS: RtpEncodingParameters[] =
-	[ { scalabilityMode: 'S3T3_KEY' } ];
+const SVC_ENCODINGS = {
+	'320': [ { 'scalabilityMode': 'L1T2_KEY', 'maxBitrate': 120_000 } ],
+	'640': [ { 'scalabilityMode': 'L2T2_KEY', 'maxBitrate': 350_000 } ],
+	'1280': [ { 'scalabilityMode': 'L3T2_KEY', 'maxBitrate': 1_000_000 } ],
+	'1920': [ { 'scalabilityMode': 'L3T2_KEY', 'maxBitrate': 2_500_000 } ],
+	'3840': [ { 'scalabilityMode': 'L3T2_KEY', 'maxBitrate': 5_000_000 } ]
+};
 
-// Used for VP9 desktop sharing.
-const VIDEO_SVC_ENCODINGS: RtpEncodingParameters[] =
-	[ { scalabilityMode: 'S3T3', dtx: true } ];
+const SVC_SCREEN_SHARING_ENCODINGS = {
+	'320': [ { 'scalabilityMode': 'L1T2', 'maxBitrate': 120_000 } ],
+	'640': [ { 'scalabilityMode': 'L2T2', 'maxBitrate': 350_000 } ],
+	'1280': [ { 'scalabilityMode': 'L2T2', 'maxBitrate': 1_000_000 } ],
+	'1920': [ { 'scalabilityMode': 'L2T2', 'maxBitrate': 2_500_000 } ],
+	'3840': [ { 'scalabilityMode': 'L3T2', 'maxBitrate': 5_000_000 } ]
+};
 
 /**
  * 
@@ -70,7 +78,6 @@ const VIDEO_SVC_ENCODINGS: RtpEncodingParameters[] =
  * @returns {RtpEncodingParameters[]} The video RTP parameters.
  */
 export const getEncodings = (
-	rtpCapabilities: RtpCapabilities,
 	width: number | undefined,
 	height: number | undefined,
 	svc = false,
@@ -79,17 +86,11 @@ export const getEncodings = (
 	if (!width || !height)
 		throw new Error('missing width or height');
 
-	const firstVideoCodec =
-		rtpCapabilities.codecs?.find((c) => c.kind === 'video');
-
-	if (!firstVideoCodec)
-		throw new Error('No video codecs');
-
 	let encodings: RtpEncodingParameters[];
 	const size = (width > height ? width : height);
 
 	if (svc)
-		encodings = screenSharing ? VIDEO_SVC_ENCODINGS : VIDEO_KSVC_ENCODINGS;
+		encodings = screenSharing ? chooseEncodings(SVC_SCREEN_SHARING_ENCODINGS, size) : chooseEncodings(SVC_ENCODINGS, size);
 	else
 		encodings = chooseEncodings(SIMULCAST_PROFILES, size);
 

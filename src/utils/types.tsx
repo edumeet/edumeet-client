@@ -1,12 +1,16 @@
 import { ThemeOptions } from '@mui/material';
 import { ClientMonitorConfig } from '@observertc/client-monitor-js';
+import { TFLite } from '../services/effectsService';
+
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
+	p2penabled: false,
 	loginEnabled: false,
 	developmentPort: 8443,
 	productionPort: 443,
 	serverHostname: undefined,
+	askForMediaOnJoin: true,
 	hideNonVideo: false,
 	resolution: 'medium',
 	frameRate: 30,
@@ -68,12 +72,17 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		'raisedHand': {
 			'play': '/sounds/notify-hand.mp3'
 		},
+		'finishedCountdownTimer': {
+			'play': '/sounds/notify-countdowntimer.mp3'
+		},
 		'default': {
 			'debounce': 5000,
 			'play': '/sounds/notify.mp3'
 		}
 	},
 	title: 'edumeet',
+	randomizeOnBlank: true,
+	transcriptionEnabled: true,
 	theme: {
 		background: 'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
 		appBarColor: 'rgba(0, 0, 0, 0.4)',
@@ -89,17 +98,20 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	},
 	reduxLoggingEnabled: false,
 	clientMontitor: {
-		tickingTimeInMs: 1000,
 		collectingPeriodInMs: 2000,
-	}
+	},
+	imprintUrl: '',
+	privacyUrl: ''
 };
 
 export interface EdumeetConfig {
 	managementUrl?: string;
+	p2penabled: boolean;
 	loginEnabled: boolean;
 	developmentPort: number;
 	productionPort: number;
 	serverHostname?: string;
+	askForMediaOnJoin: boolean;
 	hideNonVideo: boolean;
 	resolution: Resolution;
 	frameRate: number;
@@ -125,9 +137,13 @@ export interface EdumeetConfig {
 	buttonControlBar: boolean;
 	notificationSounds: Record<NotificationType, NotificationSound>;
 	title: string;
+	randomizeOnBlank: boolean;
+	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
 	clientMontitor: ClientMonitorConfig;
+	imprintUrl: string;
+	privacyUrl: string;
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
@@ -138,7 +154,8 @@ export interface HTMLMediaElementWithSink extends HTMLMediaElement {
 export type Resolution = 'low' | 'medium' | 'high' | 'veryhigh' | 'ultra';
 
 export interface SimulcastProfile {
-	scaleResolutionDownBy: number;
+	scaleResolutionDownBy?: number;
+	scalabilityMode?: string;
 	maxBitrate: number;
 }
 
@@ -158,7 +175,7 @@ export interface AudioPreset {
 	opusMaxPlaybackRate: number;
 }
 
-export type NotificationType = 'default' | 'chatMessage' | 'raisedHand';
+export type NotificationType = 'default' | 'chatMessage' | 'raisedHand' | 'finishedCountdownTimer';
 
 export interface NotificationSound {
 	play: string;
@@ -188,6 +205,22 @@ export interface SocketMessage {
 	data?: any; // TODO: define inbound notification data
 }
 
+export type InboundNotification = (
+	// eslint-disable-next-line no-unused-vars
+	notification: SocketMessage
+) => void;
+
+export type InboundRequest = (
+	// eslint-disable-next-line no-unused-vars
+	request: SocketMessage,
+	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
+	respond: (response: any) => void,
+	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
+	reject: (error: any) => void
+) => void;
+
+export type ProducerSource = 'mic' | 'webcam' | 'screen' | 'screenaudio' | 'extravideo' | 'extraaudio';
+
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';
 
 export type ButtonSize = 'small' | 'medium' | 'large';
@@ -216,3 +249,153 @@ export interface Dimensions {
 	width: number,
 	height: number
 }
+
+export interface BlurBackgroundPipeline {
+	render: () => void;
+	cleanup: () => void;
+}
+
+export interface Dimensions {
+	width: number,
+	height: number
+}
+
+export interface BlurBackgroundPipelineOptions {
+    source: {
+        element: HTMLVideoElement,
+        dimensions: Dimensions
+    },
+    canvas: HTMLCanvasElement,
+    backend: TFLite,
+    segmentation: Dimensions
+}
+
+export interface HTMLMediaElementWithSink extends HTMLMediaElement {
+	// eslint-disable-next-line no-unused-vars
+	setSinkId(deviceId: string): Promise<void>
+}
+
+export type Tenant = {
+	id: number,
+	name: string,
+	description: string
+};
+
+export type TenantFQDN = {
+	id: number,
+	tenantId: number,
+	description: string,
+	fqdn: string
+};
+
+export type TenantOAuth = {
+	id: number,
+	tenantId: number,
+	access_url: string,
+	authorize_url: string,
+	profile_url: string,
+	redirect_uri: string,
+	scope: string,
+	scope_delimiter: string,
+};
+
+export type User = {
+	id: number,
+    ssoId: string,
+    tenantId: number,
+    email: string,
+    name: string,
+    avatar: string,
+    roles: [],
+    tenantAdmin: boolean,
+    tenantOwner: boolean
+};
+
+export type Roles = {
+	id: number,
+    name: string,   
+    description: string,
+    tenantId: number
+    permissions: Array<Permissions>
+};
+
+export type GroupRoles = {
+	id: number,
+    groupId: number,
+    role:Roles,
+    roleId:number,
+    roomId:number
+};
+
+export type UsersRoles = {
+	id: number,
+    userId: number,
+    role:Roles,
+    roleId:number,
+    roomId:number
+};
+
+export type RoomOwners = {
+	id: number,
+    roomId: number,
+    userId: number,   
+};
+export type TenantOwners = {
+	id: number,
+    tenantId: number,
+    userId: number,   
+};
+
+export type TenantAdmins = {
+	id: number,
+    tenantId: number,
+    userId: number,   
+};
+
+export type Permissions = {
+	id: number,
+    name: string,   
+    description: string,
+};
+
+export type RolePermissions = {
+	id: number,
+    permission: Permissions
+    permissionId: number,   
+    roleId: number,
+};
+
+export type Room = {
+	id?: number,
+	name?: string,
+	description: string,
+	createdAt?: string,
+	updatedAt?: string,
+	creatorId?: string,
+	defaultRoleId? : number | string,
+	tenantId?: number | null,
+	logo: string | null,
+	background: string | null,
+	maxActiveVideos: number,
+	locked: boolean,
+	chatEnabled: boolean,
+	raiseHandEnabled: boolean,
+	filesharingEnabled: boolean,
+	groupRoles?: Array<Roles>,
+	localRecordingEnabled: boolean,
+	owners?: Array<RoomOwners>,
+	breakoutsEnabled: boolean,
+};
+
+export type Groups = {
+	id: number,
+    name: string,   
+    description: string,
+    tenantId: number
+};
+
+export type GroupUsers = {
+	id: number,
+    groupId: number,   
+    userId: number
+};

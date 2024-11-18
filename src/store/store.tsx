@@ -4,6 +4,7 @@ import {
 	ThunkAction,
 	Action,
 } from '@reduxjs/toolkit';
+import * as Redux from 'redux';
 import { createLogger } from 'redux-logger';
 import {
 	persistStore,
@@ -25,19 +26,17 @@ import createRoomMiddleware from './middlewares/roomMiddleware';
 import createFilesharingMiddleware from './middlewares/filesharingMiddleware';
 import createPeerMiddleware from './middlewares/peerMiddleware';
 import createPermissionsMiddleware from './middlewares/permissionsMiddleware';
-import createRecordingMiddleware from './middlewares/recordingMiddleware';
 import createChatMiddleware from './middlewares/chatMiddleware';
 import createNotificationMiddleware from './middlewares/notificationMiddleware';
+import createCountdownTimerMiddleware from './middlewares/countdownTimerMiddleware';
 import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
 import consumersSlice from './slices/consumersSlice';
 import signalingSlice from './slices/signalingSlice';
-import webrtcSlice from './slices/webrtcSlice';
 import permissionsSlice from './slices/permissionsSlice';
 import lobbyPeersSlice from './slices/lobbyPeersSlice';
 import settingsSlice from './slices/settingsSlice';
 import peersSlice from './slices/peersSlice';
-import producersSlice from './slices/producersSlice';
 import notificationsSlice from './slices/notificationsSlice';
 import uiSlice from './slices/uiSlice';
 import { EdumeetConfig } from '../utils/types';
@@ -45,13 +44,22 @@ import edumeetConfig from '../utils/edumeetConfig';
 import { createContext } from 'react';
 import { DeviceService } from '../services/deviceService';
 import { FileService } from '../services/fileService';
-import recordingSlice from './slices/recordingSlice';
 import roomSessionsSlice from './slices/roomSessionsSlice';
-import { Application, feathers } from '@feathersjs/feathers/lib';
-import rest from '@feathersjs/rest-client';
-import authentication from '@feathersjs/authentication-client';
+import type { Application } from '@feathersjs/feathers/lib';
 import { EffectsService } from '../services/effectsService';
 import { createClientMonitor } from '@observertc/client-monitor-js';
+import createEffectsMiddleware from './middlewares/effectsMiddleware';
+
+declare global {
+	interface Window {
+		mediaService: MediaService;
+		signalingService: SignalingService;
+		deviceService: DeviceService;
+		fileService: FileService;
+		managementService: Promise<Application>;
+		effectsService: EffectsService;
+	}
+}
 
 export interface MiddlewareOptions {
 	mediaService: MediaService;
@@ -59,7 +67,7 @@ export interface MiddlewareOptions {
 	fileService: FileService;
 	deviceService: DeviceService;
 	signalingService: SignalingService;
-	managementService: Application;
+	managementService: Promise<Application>;
 	config: EdumeetConfig;
 }
 
@@ -72,9 +80,15 @@ const persistConfig = {
 const monitor = edumeetConfig.clientMontitor ? createClientMonitor(edumeetConfig.clientMontitor) : undefined;
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
-const managementService = feathers()
-	.configure(rest(edumeetConfig.managementUrl).fetch(window.fetch.bind(window)))
-	.configure(authentication());
+const managementService = (async () => {
+	const { feathers } = await import('@feathersjs/feathers/lib');
+	const { default: rest } = await import('@feathersjs/rest-client');
+	const { default: authentication } = await import('@feathersjs/authentication-client');
+
+	return feathers()
+		.configure(rest(edumeetConfig.managementUrl).fetch(window.fetch.bind(window)))
+		.configure(authentication());
+})() as Promise<Application>;
 
 export const mediaService = new MediaService({ signalingService }, monitor);
 export const fileService = new FileService();
@@ -108,14 +122,11 @@ const reducer = combineReducers({
 	me: meSlice.reducer,
 	peers: peersSlice.reducer,
 	permissions: permissionsSlice.reducer,
-	producers: producersSlice.reducer,
 	room: roomSlice.reducer,
 	roomSessions: roomSessionsSlice.reducer,
 	settings: settingsSlice.reducer,
 	signaling: signalingSlice.reducer,
 	ui: uiSlice.reducer,
-	webrtc: webrtcSlice.reducer,
-	recording: recordingSlice.reducer,
 });
 
 const pReducer = persistReducer<RootState>(persistConfig, reducer);
@@ -139,13 +150,14 @@ export const store = configureStore({
 			createPermissionsMiddleware(middlewareOptions),
 			createRoomMiddleware(middlewareOptions),
 			createNotificationMiddleware(middlewareOptions),
-			createRecordingMiddleware(middlewareOptions),
+			createEffectsMiddleware(middlewareOptions),
+			createCountdownTimerMiddleware(middlewareOptions),
 			...(edumeetConfig.reduxLoggingEnabled ? [ createLogger({
 				duration: true,
 				timestamp: false,
 				level: 'log',
-				logErrors: true,
-			}) ] : []))
+				logErrors: true
+			}) as Redux.Middleware ] : []))
 });
 
 export const persistor = persistStore(store);
@@ -157,3 +169,10 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 	MiddlewareOptions,
 	Action<string>
 >;
+
+window.mediaService = mediaService;
+window.signalingService = signalingService;
+window.deviceService = deviceService;
+window.fileService = fileService;
+window.managementService = managementService;
+window.effectsService = effectsService;

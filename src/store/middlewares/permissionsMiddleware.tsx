@@ -2,7 +2,7 @@ import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions } from '../store';
 import { permissionsActions } from '../slices/permissionsSlice';
-import { Logger } from 'edumeet-common';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('PermissionsMiddleware');
 
@@ -16,7 +16,7 @@ const createPermissionsMiddleware = ({
 	}: {
 		dispatch: AppDispatch,
 	}) =>
-		(next) => async (action) => {
+		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
 				signalingService.on('notification', (notification) => {
 					try {

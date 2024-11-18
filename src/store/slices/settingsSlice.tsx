@@ -10,9 +10,9 @@ export interface SettingsState {
 	hideNonVideo: boolean;
 	hideSelfView: boolean;
 	verticalDivide: boolean;
-	dynamicWidth: boolean;
 	aspectRatio: number;
 	selectedAudioDevice?: string;
+	selectedAudioOutputDevice?: string;
 	selectedVideoDevice?: string;
 	resolution: Resolution;
 	frameRate: number;
@@ -36,6 +36,7 @@ export interface SettingsState {
 	notificationSounds: boolean;
 	locale?: string;
 	blurEnabled?: boolean;
+	videoContainEnabled?: boolean;
 }
 
 type SettingsUpdate = Partial<SettingsState>;
@@ -52,7 +53,6 @@ const initialState: SettingsState = {
 	hideNonVideo: edumeetConfig.hideNonVideo,
 	hideSelfView: false,
 	verticalDivide: true,
-	dynamicWidth: true,
 	aspectRatio: edumeetConfig.aspectRatio,
 	audioPreset: edumeetConfig.audioPreset,
 	audioPresets: edumeetConfig.audioPresets,
@@ -71,6 +71,7 @@ const initialState: SettingsState = {
 	notificationSounds: true,
 	locale: detect(),
 	blurEnabled: false,
+	videoContainEnabled: true,
 };
 
 const settingsSlice = createSlice({
@@ -98,14 +99,14 @@ const settingsSlice = createSlice({
 		setVerticalDivide: ((state, action: PayloadAction<boolean>) => {
 			state.verticalDivide = action.payload;
 		}),
-		setDynamicWidth: ((state, action: PayloadAction<boolean>) => {
-			state.dynamicWidth = action.payload;
-		}),
 		setAspectRatio: ((state, action: PayloadAction<number>) => {
 			state.aspectRatio = action.payload;
 		}),
 		setSelectedAudioDevice: ((state, action: PayloadAction<string | undefined>) => {
 			state.selectedAudioDevice = action.payload;
+		}),
+		setSelectedAudioOutputDevice: ((state, action: PayloadAction<string | undefined>) => {
+			state.selectedAudioOutputDevice = action.payload;
 		}),
 		setSelectedVideoDevice: ((state, action: PayloadAction<string | undefined>) => {
 			state.selectedVideoDevice = action.payload;
@@ -172,6 +173,9 @@ const settingsSlice = createSlice({
 		}),
 		setBlurEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.blurEnabled = action.payload;
+		}),
+		setVideoContainEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.videoContainEnabled = action.payload;
 		}),
 	},
 });

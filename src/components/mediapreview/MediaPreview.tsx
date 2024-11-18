@@ -14,6 +14,7 @@ interface MediaPreviewProps {
 	startVideo?: boolean;
 	stopAudio?: boolean;
 	stopVideo?: boolean;
+	updateSelection?: boolean;
 }
 
 const MediaPreview = ({
@@ -22,6 +23,7 @@ const MediaPreview = ({
 	startVideo = true,
 	stopAudio = true,
 	stopVideo = true,
+	updateSelection = false
 }: MediaPreviewProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
@@ -29,10 +31,11 @@ const MediaPreview = ({
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
 	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
+	const contain = useAppSelector((state) => state.settings.videoContainEnabled);
 
 	useEffect(() => {
-		if (startAudio) dispatch(updatePreviewMic({ restart: true, newDeviceId: audioDevice }));
-		if (startVideo) dispatch(updatePreviewWebcam({ restart: true, newDeviceId: videoDevice }));
+		if (startAudio) dispatch(updatePreviewMic({ newDeviceId: audioDevice, updateSelection }));
+		if (startVideo) dispatch(updatePreviewWebcam({ newDeviceId: videoDevice, updateSelection }));
 
 		return (): void => {
 			if (stopAudio) dispatch(stopPreviewMic());
@@ -66,10 +69,7 @@ const MediaPreview = ({
 						/>
 					</MediaControls>
 				)}
-				{ previewWebcamTrackId && <VideoView
-					mirrored
-					trackId={previewWebcamTrackId}
-				/> }
+				{ previewWebcamTrackId && <VideoView contain={contain} mirrored previewTrack /> }
 			</VideoBox>
 		</>
 	);

@@ -225,6 +225,7 @@
   "settings.settings": "Innstillinger",
   "settings.showAdvancedAudio": "Avanserte audioinnstillinger",
   "settings.showAdvancedVideo": "Avanserte videoinnstillinger",
+  "settings.testAudioOutput": "Test lydutgang",
   "settings.showNotifications": "Vis varslinger",
   "settings.verticallyStackedSidePanels": "Stable sidepaneler vertikalt",
   "settings.webcamFrameRate": "Velg webkamera bildefrekvens",

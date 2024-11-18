@@ -1,6 +1,6 @@
-import { Logger } from 'edumeet-common';
 import { AppThunk } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('ChatActions');
 

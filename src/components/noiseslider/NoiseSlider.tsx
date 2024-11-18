@@ -2,12 +2,10 @@ import { Slider, styled, Typography } from '@mui/material';
 import { Harker } from 'hark';
 import { SyntheticEvent, useContext, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { meProducersSelector } from '../../store/selectors';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { noiseSuppressionLabel } from '../translated/translatedComponents';
-import type { Producer } from 'mediasoup-client/lib/types';
 
 const StyledSlider = styled(Slider)(() => ({
 	'.MuiSlider-root': {
@@ -36,21 +34,17 @@ const StyledSlider = styled(Slider)(() => ({
 
 const NoiseSlider = (): JSX.Element => {
 	const dispatch = useAppDispatch();
+	const micEnabled = useAppSelector((state) => state.me.micEnabled);
 	const noiseThreshold = useAppSelector((state) => state.settings.noiseThreshold);
 	const { mediaService } = useContext(ServiceContext);
-	const { micProducer } = useAppSelector(meProducersSelector);
 	const [ volumeLevel, setVolume ] = useState<number>(0);
 	const [ sliderValue, setSliderValue ] = useState<number>(noiseThreshold);
 
 	useEffect(() => {
-		let producer: Producer | undefined;
 		let volumeWatcher: VolumeWatcher | undefined;
 
-		if (micProducer)
-			producer = mediaService.getProducer(micProducer.id);
-
-		if (producer)
-			volumeWatcher = producer.appData.volumeWatcher as VolumeWatcher | undefined;
+		if (micEnabled)
+			volumeWatcher = mediaService.mediaSenders['mic'].volumeWatcher;
 
 		const onVolumeChange = ({ volume }: { volume: number }): void => {
 			setVolume(volume);
@@ -63,7 +57,7 @@ const NoiseSlider = (): JSX.Element => {
 		};
 	}, []);
 
-	const handleSliderChange = (event: Event, value: number | number[]): void => {
+	const handleSliderChange = (_event: Event, value: number | number[]): void => {
 		setSliderValue(value as number);
 	};
 
@@ -72,14 +66,10 @@ const NoiseSlider = (): JSX.Element => {
 		value: number | number[]
 	): void => {
 		if (sliderValue !== noiseThreshold) {
-			let producer: Producer | undefined;
 			let hark: Harker | undefined;
 	
-			if (micProducer)
-				producer = mediaService.getProducer(micProducer.id);
-	
-			if (producer)
-				hark = (producer.appData.volumeWatcher as VolumeWatcher | undefined)?.hark;
+			if (micEnabled)
+				hark = mediaService.mediaSenders['mic'].volumeWatcher?.hark;
 	
 			hark?.setThreshold(value as number);
 			dispatch(settingsActions.setNoiseThreshold(value as number));

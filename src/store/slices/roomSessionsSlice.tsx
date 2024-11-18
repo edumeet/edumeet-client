@@ -11,6 +11,7 @@ export interface RoomSession {
 	activeSpeakerId?: string;
 	fullscreenConsumer?: string;
 	windowedConsumers: string[];
+	spotlightConsumers: string[];
 	selectedPeers: string[];
 	spotlights: string[];
 	chatHistory: ChatMessage[];
@@ -19,6 +20,7 @@ export interface RoomSession {
 
 export const initialRoomSession = {
 	windowedConsumers: [],
+	spotlightConsumers: [],
 	selectedPeers: [],
 	spotlights: [],
 	chatHistory: [],
@@ -95,6 +97,21 @@ const roomSessionsSlice = createSlice({
 
 			roomSession.windowedConsumers =
 				roomSession.windowedConsumers.filter((id) => id !== action.payload.consumerId);
+		}),
+		addSpotlightConsumer: ((state, action: PayloadAction<{ sessionId: string, consumerId: string }>) => {
+			const roomSession = state[action.payload.sessionId];
+
+			if (!roomSession) return;
+
+			roomSession.spotlightConsumers.push(action.payload.consumerId);
+		}),
+		removeSpotlightConsumer: ((state, action: PayloadAction<{ sessionId: string, consumerId: string }>) => {
+			const roomSession = state[action.payload.sessionId];
+
+			if (!roomSession) return;
+
+			roomSession.spotlightConsumers =
+				roomSession.spotlightConsumers.filter((id) => id !== action.payload.consumerId);
 		}),
 		selectPeer: ((state, action: PayloadAction<{ sessionId: string, peerId: string }>) => {
 			const roomSession = state[action.payload.sessionId];
@@ -223,8 +240,8 @@ const roomSessionsSlice = createSlice({
 			})
 			.addCase(consumersActions.removeConsumer, (state, action) => {
 				for (const roomSession of Object.values(state)) {
-					roomSession.windowedConsumers =
-						roomSession.windowedConsumers.filter((id) => id !== action.payload.consumerId);
+					roomSession.windowedConsumers = roomSession.windowedConsumers.filter((id) => id !== action.payload.consumerId);
+					roomSession.spotlightConsumers = roomSession.spotlightConsumers.filter((id) => id !== action.payload.consumerId);
 				}
 			})
 			.addCase(peersActions.updatePeer, (state, action) => {

@@ -1,6 +1,6 @@
-import { Logger } from 'edumeet-common';
 import EventEmitter from 'events';
 import type { Transport } from 'mediasoup-client/lib/Transport';
+import { Logger } from './Logger';
 
 const logger = new Logger('PerformanceMonitor');
 const SAMPLE_WINDOW = 8;

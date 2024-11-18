@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { Button } from '@mui/material';
+import { Button, Box, Link, Typography } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
-import { joinLabel, yourNameLabel } from '../../components/translated/translatedComponents';
+import { joinLabel, yourNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
@@ -15,6 +15,11 @@ import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import { BlurSwitch } from '../../components/settingsdialog/SettingsSwitches';
 import { meActions } from '../../store/slices/meSlice';
+import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
+import { canSelectAudioOutput } from '../../store/selectors';
+import TestAudioOutputButton from '../../components/audiooutputtest/AudioOutputTest';
+import edumeetConfig from '../../utils/edumeetConfig';
+import MicVolume from '../../components/volume/MicVolume';
 
 interface JoinProps {
 	roomId: string;
@@ -29,6 +34,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 	const mediaLoading = useAppSelector((state) => state.me.videoInProgress || state.me.audioInProgress);
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 	const videoMuted = useAppSelector((state) => state.me.videoMuted);
+	const showAudioOutputChooser = useAppSelector(canSelectAudioOutput);
 	
 	const url = new URL(window.location.href);
 	const headless = Boolean(url.searchParams.get('headless'));
@@ -56,14 +62,20 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 		}
 	}, []);
 
+	const privacyUrl = edumeetConfig.privacyUrl ?? '';
+	const imprintUrl = edumeetConfig.imprintUrl ?? '';
+
 	return (
 		<GenericDialog
 			title={ <PrecallTitle /> }
 			content={
 				<>
-					<MediaPreview startAudio={!audioMuted} startVideo={!videoMuted} stopAudio={false} stopVideo={false} />
+					<MediaPreview startAudio={!audioMuted} startVideo={!videoMuted} stopAudio={false} stopVideo={false} updateSelection />
 					<AudioInputChooser />
+					{ showAudioOutputChooser && <AudioOutputChooser /> }
 					<VideoInputChooser />
+					<MicVolume />
+					<TestAudioOutputButton />
 					<BlurSwitch />
 					<ChooserDiv>
 						<TextInputField
@@ -78,14 +90,28 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 				</>
 			}
 			actions={
-				<Button
-					onClick={handleJoin}
-					variant='contained'
-					disabled={!displayName || joinInProgress || mediaLoading}
-					size='small'
-				>
-					{ joinLabel() }
-				</Button>
+				<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+					<Box display="flex" alignItems="left">
+						{imprintUrl.trim() !== '' && (
+							<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
+								<Typography variant="body2">{ imprintLabel() }</Typography>
+							</Link>
+						)}
+						{privacyUrl.trim() !== '' && (
+							<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
+								<Typography variant="body2">{ privacyLabel() }</Typography>
+							</Link>
+						)}
+					</Box>
+					<Button
+						onClick={handleJoin}
+						variant='contained'
+						disabled={!displayName || joinInProgress || mediaLoading}
+						size='small'
+					>
+						{ joinLabel() }
+					</Button>
+				</Box>
 			}
 		/>
 	);

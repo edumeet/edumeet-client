@@ -27,9 +27,7 @@ interface PeersProps {
 	style: Record<'width' | 'height', number>
 }
 
-const Peers = ({
-	style
-}: PeersProps): JSX.Element => {
+const Peers = ({ style }: PeersProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 	const openUsersTab = () => dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));

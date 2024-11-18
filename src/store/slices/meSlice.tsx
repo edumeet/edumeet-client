@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuid } from 'uuid';
-import { MediaCapabilities } from '../../services/mediaService';
+import { LocalCapabilities, MediaCapabilities } from '../../services/mediaService';
 import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 import { roomActions } from './roomSlice';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 export interface MeState {
 	id: string;
@@ -22,6 +23,9 @@ export interface MeState {
 	escapeMeeting: boolean;
 	audioMuted: boolean;
 	videoMuted: boolean;
+	lostAudio: boolean;
+	lostVideo: boolean;
+	webGLSupport: boolean;
 	// Status flags
 	audioInProgress: boolean;
 	videoInProgress: boolean;
@@ -29,6 +33,12 @@ export interface MeState {
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
 	escapeMeetingInProgress: boolean;
+	micEnabled: boolean;
+	webcamEnabled: boolean;
+	screenEnabled: boolean;
+	screenAudioEnabled: boolean;
+	extraVideoEnabled: boolean;
+	extraAudioEnabled: boolean;
 }
 
 const initialState: MeState = {
@@ -44,8 +54,11 @@ const initialState: MeState = {
 	devices: [],
 	raisedHand: false,
 	escapeMeeting: false,
-	audioMuted: false,
-	videoMuted: false,
+	audioMuted: edumeetConfig.askForMediaOnJoin ? false : true,
+	videoMuted: edumeetConfig.askForMediaOnJoin ? false : true,
+	lostAudio: false,
+	lostVideo: false,
+	webGLSupport: false,
 	// Status flags
 	audioInProgress: false,
 	videoInProgress: false,
@@ -53,6 +66,12 @@ const initialState: MeState = {
 	displayNameInProgress: false,
 	raisedHandInProgress: false,
 	escapeMeetingInProgress: false,
+	micEnabled: false,
+	webcamEnabled: false,
+	screenEnabled: false,
+	screenAudioEnabled: false,
+	extraVideoEnabled: false,
+	extraAudioEnabled: false,
 };
 
 const meSlice = createSlice({
@@ -83,6 +102,12 @@ const meSlice = createSlice({
 		) => {
 			return { ...state, ...action.payload };
 		}),
+		setLocalCapabilities: ((
+			state,
+			action: PayloadAction<LocalCapabilities>
+		) => {
+			return { ...state, ...action.payload };
+		}),
 		setDevices: ((state, action: PayloadAction<MediaDeviceInfo[]>) => {
 			state.devices = action.payload;
 		}),
@@ -97,6 +122,15 @@ const meSlice = createSlice({
 		}),
 		setVideoMuted: ((state, action: PayloadAction<boolean>) => {
 			state.videoMuted = action.payload;
+		}),
+		setLostAudio: ((state, action: PayloadAction<boolean>) => {
+			state.lostAudio = action.payload;
+		}),
+		setLostVideo: ((state, action: PayloadAction<boolean>) => {
+			state.lostVideo = action.payload;
+		}),
+		setWebGLSupport: ((state, action: PayloadAction<boolean>) => {
+			state.webGLSupport = action.payload;
 		}),
 		// Status flags
 		setAudioInProgress: ((state, action: PayloadAction<boolean>) => {
@@ -116,6 +150,24 @@ const meSlice = createSlice({
 		}),
 		setDispayNameInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.displayNameInProgress = action.payload;
+		}),
+		setMicEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.micEnabled = action.payload;
+		}),
+		setWebcamEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.webcamEnabled = action.payload;
+		}),
+		setScreenEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.screenEnabled = action.payload;
+		}),
+		setScreenAudioEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.screenAudioEnabled = action.payload;
+		}),
+		setExtraVideoEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.extraVideoEnabled = action.payload;
+		}),
+		setExtraAudioEnabled: ((state, action: PayloadAction<boolean>) => {
+			state.extraAudioEnabled = action.payload;
 		}),
 	},
 	extraReducers: (builder) => {

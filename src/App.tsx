@@ -1,11 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { startListeners, stopListeners } from './store/actions/startActions';
-import {
-	useAppDispatch,
-	useAppSelector,
-	usePermissionSelector
-} from './store/hooks';
+import { useAppDispatch, useAppSelector, usePermissionSelector } from './store/hooks';
 import StyledBackground from './components/StyledBackground';
 import Join from './views/join/Join';
 import Lobby from './views/lobby/Lobby';
@@ -17,6 +13,7 @@ import { permissions } from './utils/roles';
 import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
+import { meActions } from './store/slices/meSlice';
 
 type AppParams = {
 	id: string;
@@ -72,13 +69,26 @@ const App = (): JSX.Element => {
 		if (roomState ==='left') {
 			dispatch(roomActions.setState('new'));
 			navigate('/');
+			setTimeout(() => {
+				window.location.reload();
+			}, 0);
 		}
 	}, [ roomState ]);
+			
+	/**
+	 * Detect WebGL-support.
+	 */
+	useEffect(() => {
+		const canvas = document.createElement('canvas');
+		const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+		if (gl && gl instanceof WebGLRenderingContext) {
+			dispatch(meActions.setWebGLSupport(true));
+		} 
+	}, []);
 
 	return (
-		<SnackbarProvider action={
-			(snackbarKey: SnackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} />
-		}>
+		<SnackbarProvider action={ (snackbarKey: SnackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} /> }>
 			<StyledBackground
 				onDrop={handleFileDrop}
 				onDragOver={(event) => event.preventDefault()}

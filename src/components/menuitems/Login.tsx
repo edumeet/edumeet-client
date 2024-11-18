@@ -9,15 +9,25 @@ import {
 	logoutLabel,
 } from '../translated/translatedComponents';
 import MoreActions from '../moreactions/MoreActions';
-import { login, logout } from '../../store/actions/permissionsActions';
+import { checkJWT, login, logout } from '../../store/actions/permissionsActions';
 import { MenuItemProps } from '../floatingmenu/FloatingMenu';
+import { useEffect } from 'react';
 
 const Login = ({
 	onClick
 }: MenuItemProps): JSX.Element => {
+
 	const dispatch = useAppDispatch();
-	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	let loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const loginButtonLabel = loggedIn ? logoutLabel() : loginLabel();
+
+	useEffect(() => {
+
+		dispatch(checkJWT()).then(() => {
+			loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+		});
+
+	}, []);
 
 	return (
 		<MenuItem

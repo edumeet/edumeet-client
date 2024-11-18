@@ -1,5 +1,8 @@
 import { FormControlLabel, Switch } from '@mui/material';
-import { updateAudioSettings, updateVideoSettings } from '../../store/actions/mediaActions';
+import {
+	updateVideoSettings,
+	updateAudioSettings,
+} from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	autoGainControlLabel,
@@ -17,10 +20,10 @@ export const EchoCancellationSwitch = (): JSX.Element => {
 	return (
 		<FormControlLabel
 			control={
-				<Switch 
+				<Switch
 					color='primary'
 					checked={ echoCancellation }
-					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+					onChange={(event): void => {
 						dispatch(updateAudioSettings({ echoCancellation: event.target.checked }));
 					}}
 				/>
@@ -37,10 +40,10 @@ export const AutoGainControlSwitch = (): JSX.Element => {
 	return (
 		<FormControlLabel
 			control={
-				<Switch 
+				<Switch
 					color='primary'
 					checked={ autoGainControl }
-					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+					onChange={(event): void => {
 						dispatch(updateAudioSettings({ autoGainControl: event.target.checked }));
 					}}
 				/>
@@ -57,10 +60,10 @@ export const NoiseSuppressionSwitch = (): JSX.Element => {
 	return (
 		<FormControlLabel
 			control={
-				<Switch 
+				<Switch
 					color='primary'
 					checked={ noiseSuppression }
-					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+					onChange={(event): void => {
 						dispatch(updateAudioSettings({ noiseSuppression: event.target.checked }));
 					}}
 				/>
@@ -77,10 +80,10 @@ export const OpusDtxSwitch = (): JSX.Element => {
 	return (
 		<FormControlLabel
 			control={
-				<Switch 
+				<Switch
 					color='primary'
 					checked={ opusDtx }
-					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+					onChange={(event): void => {
 						dispatch(updateAudioSettings({ opusDtx: event.target.checked }));
 					}}
 				/>
@@ -97,10 +100,10 @@ export const OpusFecSwitch = (): JSX.Element => {
 	return (
 		<FormControlLabel
 			control={
-				<Switch 
+				<Switch
 					color='primary'
 					checked={ opusFec }
-					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+					onChange={(event): void => {
 						dispatch(updateAudioSettings({ opusFec: event.target.checked }));
 					}}
 				/>
@@ -113,16 +116,18 @@ export const OpusFecSwitch = (): JSX.Element => {
 export const BlurSwitch = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const blurEnabled = useAppSelector((state) => state.settings.blurEnabled);
+	const blurSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
 
 	return (
 		<FormControlLabel
 			control={
-				<Switch 
+				<Switch
 					color='primary'
 					checked={ blurEnabled }
-					onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+					onChange={(event): void => {
 						dispatch(updateVideoSettings({ blurEnabled: event.target.checked }));
 					}}
+					disabled={blurSwitchDisabled}
 				/>
 			}
 			label={ backgroundBlurLabel() }

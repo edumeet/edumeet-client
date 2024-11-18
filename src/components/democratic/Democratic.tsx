@@ -1,22 +1,26 @@
 import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
-import { speakerVideoConsumersSelector, videoBoxesSelector } from '../../store/selectors';
+import { spotlightWebcamConsumerSelector, videoBoxesSelector } from '../../store/selectors';
 import Me from '../me/Me';
 import VideoConsumer from '../videoconsumer/VideoConsumer';
 import Peers from '../peers/Peers';
-import ControlButtonsBar from '../controlbuttonsbar/ControlButtonsBar';
+import { Box } from '@mui/material';
 
 type DemocraticDivProps = {
 	headless: number;
+	horizontal: number;
+	spotlights: number;
 };
 
-const DemocraticDiv = styled('div')<DemocraticDivProps>(({
+const DemocraticDiv = styled(Box)<DemocraticDivProps>(({
 	theme,
 	headless,
+	horizontal,
+	spotlights,
 }) => ({
-	width: '100%',
-	height: headless ? 'calc(100% - 8px)' : 'calc(100% - 64px)',
+	width: horizontal ? '25rem' : '100%',
+	height: headless ? `calc(${horizontal || !spotlights ? '100%' : '25rem'} - 8px)` : `calc(${horizontal || !spotlights ? '100%' : '25rem'} - 64px)`,
 	marginBottom: headless ? 0 : 64,
 	display: 'flex',
 	flexDirection: 'row',
@@ -28,7 +32,17 @@ const DemocraticDiv = styled('div')<DemocraticDivProps>(({
 	alignContent: 'center',
 }));
 
-const Democratic = (): JSX.Element => {
+type DemocraticProps = {
+	windowSize: number;
+	horizontal: boolean;
+	spotlights: boolean;
+};
+
+const Democratic = ({
+	windowSize,
+	horizontal,
+	spotlights,
+}: DemocraticProps): JSX.Element => {
 	const theme = useTheme();
 	const peersRef = useRef<HTMLDivElement>(null);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
@@ -37,10 +51,9 @@ const Democratic = (): JSX.Element => {
 	const chatOpen = useAppSelector((state) => state.ui.chatOpen);
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 	const boxes = useAppSelector(videoBoxesSelector);
-	const speakerVideoConsumers = useAppSelector(speakerVideoConsumersSelector);
+	const webcamConsumers = useAppSelector(spotlightWebcamConsumerSelector);
 	const currentSession = useAppSelector((state) => state.me.sessionId);
 	const headless = useAppSelector((state) => state.room.headless);
-	const [ windowSize, setWindowSize ] = useState(0);
 	const [ dimensions, setDimensions ] = useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
 	const updateDimensions = (): void => {
@@ -87,23 +100,6 @@ const Democratic = (): JSX.Element => {
 		}
 	};
 
-	useEffect(() => {
-		let timeoutId: ReturnType<typeof setTimeout> | undefined;
-
-		const resizeListener = () => {
-			clearTimeout(timeoutId);
-			timeoutId = setTimeout(() => setWindowSize(window.innerWidth + window.innerHeight), 50);
-		};
-
-		window.addEventListener('resize', resizeListener);
-		updateDimensions();
-
-		return () => {
-			window.removeEventListener('resize', resizeListener);
-			clearTimeout(timeoutId);
-		};
-	}, []);
-
 	useEffect(() => updateDimensions(), [
 		boxes,
 		windowSize,
@@ -112,6 +108,9 @@ const Democratic = (): JSX.Element => {
 		participantListOpen,
 		verticalDivide,
 		currentSession,
+		webcamConsumers,
+		horizontal,
+		spotlights
 	]);
 
 	const style = {
@@ -120,10 +119,9 @@ const Democratic = (): JSX.Element => {
 	};
 
 	return (
-		<DemocraticDiv ref={peersRef} headless={headless ? 1 : 0}>
-			<ControlButtonsBar />
+		<DemocraticDiv ref={peersRef} headless={headless ? 1 : 0} horizontal={horizontal ? 1 : 0} spotlights={spotlights ? 1 : 0}>
 			<Me style={style} />
-			{ speakerVideoConsumers.map((consumer) => (
+			{ webcamConsumers.map((consumer) => (
 				<VideoConsumer
 					key={consumer.id}
 					consumer={consumer}

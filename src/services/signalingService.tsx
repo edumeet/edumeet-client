@@ -1,7 +1,8 @@
-import { InboundNotification, InboundRequest, List, Logger, skipIfClosed } from 'edumeet-common';
 import EventEmitter from 'events';
-import { SocketMessage } from '../utils/types';
+import { InboundNotification, InboundRequest, SocketMessage } from '../utils/types';
 import { RoomServerConnection } from '../utils/RoomServerConnection';
+import { Logger } from '../utils/Logger';
+import { List } from '../utils/List';
 
 /* eslint-disable no-unused-vars */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -22,8 +23,15 @@ export class SignalingService extends EventEmitter {
 	public connections = List<RoomServerConnection>();
 	private connected = false;
 
-	@skipIfClosed
+	constructor() {
+		super();
+
+		this.setMaxListeners(Infinity);
+	}
+
 	public close(): void {
+		if (this.closed) return;
+
 		logger.debug('close()');
 
 		this.closed = true;
@@ -34,7 +42,6 @@ export class SignalingService extends EventEmitter {
 		this.emit('close');
 	}
 
-	@skipIfClosed
 	public disconnect(): void {
 		logger.debug('disconnect()');
 
@@ -42,7 +49,6 @@ export class SignalingService extends EventEmitter {
 		this.connections.clear();
 	}
 
-	@skipIfClosed
 	public addConnection(connection: RoomServerConnection): void {
 		logger.debug('addConnection()');
 
@@ -85,13 +91,12 @@ export class SignalingService extends EventEmitter {
 		});
 	}
 
-	@skipIfClosed
-	public notify(notification: SocketMessage): void {
-		logger.debug('notify() [method: %s]', notification.method);
+	public notify(method: string, data: unknown = {}): void {
+		logger.debug('notify() [method: %s]', method);
 
 		for (const connection of this.connections.items) {
 			try {
-				return connection.notify(notification);
+				return connection.notify({ method, data } as SocketMessage);
 			} catch (error) {
 				logger.error('notify() [error: %o]', error);
 			}
@@ -100,7 +105,6 @@ export class SignalingService extends EventEmitter {
 		logger.warn('notify() no connection available');
 	}
 
-	@skipIfClosed
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public async sendRequest(method: string, data: unknown = {}): Promise<any> {
 		logger.debug('request() [method: %s]', method);

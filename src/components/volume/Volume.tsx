@@ -1,11 +1,10 @@
 import { styled } from '@mui/material';
 import type { Consumer } from 'mediasoup-client/lib/Consumer';
-import type { Producer } from 'mediasoup-client/lib/Producer';
 import { useContext, useEffect, useState } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
-import { StateProducer } from '../../store/slices/producersSlice';
 import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
+import type { Consumer as PeerConsumer } from 'ortc-p2p/src/types';
 
 type VolumeBarProps = {
 	small: number;
@@ -39,25 +38,23 @@ const VolumeBar = styled('div')<VolumeBarProps>(({ small, volume = 0 }) => ({
 interface VolumeProps {
 	small?: boolean;
 	consumer?: StateConsumer;
-	producer?: StateProducer;
 }
 
 const Volume = ({
 	small = false,
 	consumer,
-	producer,
 }: VolumeProps): JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ volume, setVolume ] = useState<number>(0);
 
 	useEffect(() => {
-		let media: Consumer | Producer | undefined;
+		let media: Consumer | PeerConsumer | undefined;
 		let volumeWatcher: VolumeWatcher | undefined;
 
 		if (consumer)
 			media = mediaService.getConsumer(consumer.id);
-		else if (producer)
-			media = mediaService.getProducer(producer.id);
+		else
+			volumeWatcher = mediaService.mediaSenders['mic'].volumeWatcher;
 
 		if (media)
 			volumeWatcher = media.appData.volumeWatcher as VolumeWatcher | undefined;
@@ -71,12 +68,12 @@ const Volume = ({
 		return () => {
 			volumeWatcher?.off('volumeChange', onVolumeChange);
 		};
-	}, [ consumer, producer ]);
+	}, [ consumer ]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (
 		<VolumeContainer small={small ? 1 : 0}>
-			<VolumeBar volume={!producer?.paused ? volume : 0} small={small ? 1 : 0} />
+			<VolumeBar volume={volume} small={small ? 1 : 0} />
 		</VolumeContainer>
 	);
 };

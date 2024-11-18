@@ -1,17 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { peersActions } from './peersSlice';
-import { ProducerSource } from './producersSlice';
 import { roomActions } from './roomSlice';
+import { ProducerSource } from '../../utils/types';
 
 export interface StateConsumer {
 	id: string;
 	peerId: string;
+	peerConsumer: boolean;
 	kind: string;
 	audioGain?: number;
 	localPaused: boolean;
 	remotePaused: boolean;
 	source: ProducerSource;
-	score?: number;
 }
 
 type ConsumersState = StateConsumer[];
@@ -25,66 +25,43 @@ const consumersSlice = createSlice({
 		addConsumer: ((state, action: PayloadAction<StateConsumer>) => {
 			state.push(action.payload);
 		}),
-		removeConsumer: ((
-			state,
-			action: PayloadAction<{ consumerId: string, local?: boolean }>
-		) => {
+		removeConsumer: ((state, action: PayloadAction<{ consumerId: string, local?: boolean }>) => {
 			return state.filter((consumer) => consumer.id !== action.payload.consumerId);
 		}),
-		setAudioGain: ((
-			state,
-			action: PayloadAction<{ consumerId: string, audioGain?: number }>
-		) => {
+		setAudioGain: ((state, action: PayloadAction<{ consumerId: string, audioGain?: number }>) => {
 			const consumer = state.find((c) => c.id === action.payload.consumerId);
 
 			if (consumer)
 				consumer.audioGain = action.payload.audioGain;
 		}),
-		setConsumerPaused: ((
-			state,
-			action: PayloadAction<{ consumerId: string, local?: boolean }>
-		) => {
+		setConsumerPaused: ((state, action: PayloadAction<{ consumerId: string, local?: boolean }>) => {
 			const { consumerId, local } = action.payload;
 			const consumer = state.find((c) => c.id === consumerId);
 
-			if (consumer) {
+			if (consumer && local !== undefined) {
 				if (local)
 					consumer.localPaused = true;
 				else
 					consumer.remotePaused = true;
 			}
 		}),
-		setConsumerResumed: ((
-			state,
-			action: PayloadAction<{ consumerId: string, local?: boolean }>
-		) => {
+		setConsumerResumed: ((state, action: PayloadAction<{ consumerId: string, local?: boolean }>) => {
 			const { consumerId, local } = action.payload;
 			const consumer = state.find((c) => c.id === consumerId);
 
-			if (consumer) {
+			if (consumer && local !== undefined) {
 				if (local)
 					consumer.localPaused = false;
 				else
 					consumer.remotePaused = false;
 			}
 		}),
-		setScore: ((
-			state,
-			action: PayloadAction<{ consumerId: string, score: number }>
-		) => {
-			const consumer = state.find((c) => c.id === action.payload.consumerId);
-
-			if (consumer) consumer.score = action.payload.score;
-		}),
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(peersActions.removePeer, (state, action) => {
-				return state.filter((consumer) => consumer.peerId !== action.payload.id);
-			})
-			.addCase(roomActions.setState, (_state, action) => {
-				if (action.payload === 'left')
-					return [];
+			.addCase(peersActions.removePeer, (state, { payload: { id } }) => state.filter((consumer) => consumer.peerId !== id))
+			.addCase(roomActions.setState, (_state, { payload }) => {
+				if (payload === 'left') return [];
 			});
 	}
 });

@@ -1,11 +1,11 @@
 import { useRouteError } from 'react-router-dom';
-import { Logger } from 'edumeet-common';
 import { useAppDispatch } from '../../store/hooks';
 import { RawStyledDialog } from '../../components/genericdialog/GenericDialog';
 import { DialogTitle } from '@mui/material';
 import { generalErrorLabel } from '../../components/translated/translatedComponents';
 import { useEffect } from 'react';
 import { leaveRoom } from '../../store/actions/roomActions';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('ErrorBoundary');
 

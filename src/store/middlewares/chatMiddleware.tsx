@@ -1,9 +1,9 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { Logger } from 'edumeet-common';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { uiActions } from '../slices/uiSlice';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('ChatMiddleware');
 

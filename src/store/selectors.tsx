@@ -5,15 +5,16 @@ import { Permission } from '../utils/roles';
 import { StateConsumer } from './slices/consumersSlice';
 import { LobbyPeer } from './slices/lobbyPeersSlice';
 import { Peer } from './slices/peersSlice';
-import { StateProducer } from './slices/producersSlice';
 import { RootState } from './store';
 import { RoomSession } from './slices/roomSessionsSlice';
+import { MeState } from './slices/meSlice';
+import edumeetConfig from './../utils/edumeetConfig';
 
 // eslint-disable-next-line no-unused-vars
 type Selector<S> = (state: RootState) => S;
 
+const meSelector: Selector<MeState> = (state) => state.me;
 const mePermissionsSelect: Selector<Permission[]> = (state) => state.permissions.permissions;
-const producersSelect: Selector<StateProducer[]> = (state) => state.producers;
 const consumersSelect: Selector<StateConsumer[]> = (state) => state.consumers;
 const roomSessionsSelect: Selector<Record<string, RoomSession>> = (state) => state.roomSessions;
 const peersSelector: Selector<Record<string, Peer>> = (state) => state.peers;
@@ -24,8 +25,15 @@ const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNo
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
 const headlessSelector: Selector<boolean | undefined> = (state) => state.room.headless;
+const recordingSelector: Selector<boolean | undefined> = (state) => state.room.recording;
 
 export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
+
+export const canSelectAudioOutput: Selector<boolean> = (state) => {
+	const { name, version } = state.me.browser;
+
+	return name === 'chrome' && Number.parseInt(version) >= 110 && 'setSinkId' in HTMLAudioElement.prototype;
+};
 
 /**
  * Returns the peers as an array.
@@ -35,6 +43,32 @@ export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.p
 export const peersArraySelector = createSelector(
 	peersSelector,
 	(peers) => Object.values(peers)
+);
+
+/**
+ * Returns the number of peers excluding the client.
+ * 
+ * @returns {number} the number of peers.
+ */
+export const peersLengthSelector = createSelector(
+	peersArraySelector,
+	(peers) => peers.length
+);
+
+export const roomSessionsArraySelector = createSelector(
+	roomSessionsSelect,
+	(roomSessions) => Object.values(roomSessions)
+);
+
+export const roomSessionsLengthSelector = createSelector(
+	roomSessionsArraySelector,
+	(roomSessions) => roomSessions.length
+);
+
+export const p2pModeSelector = createSelector(
+	roomSessionsLengthSelector,
+	peersLengthSelector,
+	(sessions, peers) => sessions === 1 && peers < 2 && edumeetConfig.p2penabled
 );
 
 /**
@@ -105,6 +139,17 @@ export const sessionIdSpotlightsSelector = createSelector(
 	(roomSession) => roomSession.spotlights
 );
 
+export const sessionIdSpotlightedConsumerSelector = createSelector(
+	currentRoomSessionSelector,
+	consumersSelect,
+	(roomSession, consumers) => consumers.filter((c) => roomSession.spotlights.includes(c.id))
+);
+
+const consumerSelectedPeerIdsSelector = createSelector(
+	consumersSelect,
+	(consumers) => consumers.filter((c) => c.source === 'screen' || c.source === 'extravideo').map((c) => c.peerId)
+);
+
 /**
  * Returns the list of peerIds that are currently selected or
  * spotlighted. Cropped to maxActiveVideos.
@@ -114,12 +159,12 @@ export const sessionIdSpotlightsSelector = createSelector(
 export const spotlightPeersSelector = createSelector(
 	maxActiveVideosSelector,
 	currentRoomSessionSelector,
-	(maxActiveVideos, roomSession) => {
+	consumerSelectedPeerIdsSelector,
+	(maxActiveVideos, roomSession, consumerSelectedPeerIds) => {
 		const { spotlights, selectedPeers } = roomSession;
+		const uniqueSet = Array.from(new Set([ ...consumerSelectedPeerIds, ...selectedPeers, ...spotlights ]));
 
-		return selectedPeers.concat(spotlights.filter((item) => selectedPeers.indexOf(item) < 0))
-			.slice(0, maxActiveVideos)
-			.sort((a, b) => String(a).localeCompare(String(b)));
+		return uniqueSet.slice(0, maxActiveVideos).sort((a, b) => String(a).localeCompare(String(b)));
 	}
 );
 
@@ -144,46 +189,6 @@ export const breakoutRoomsSelector = createSelector(
 );
 
 /**
- * Returns the list of extra video state producers of the client.
- * 
- * @returns {StateProducer[]} the list of video state producers.
- */
-export const extraVideoProducersSelector = createSelector(
-	producersSelect,
-	(producers) => producers.filter((p) => p.source === 'extravideo')
-);
-
-/**
- * Returns the mic state producer of the client.
- * 
- * @returns {StateProducer | undefined} the mic state producer.
- */
-export const micProducerSelector = createSelector(
-	producersSelect,
-	(producers) => producers.find((p) => p.source === 'mic')
-);
-
-/**
- * Returns the webcam state producer of the client.
- * 
- * @returns {StateProducer | undefined} the webcam state producer.
- */
-export const webcamProducerSelector = createSelector(
-	producersSelect,
-	(producers) => producers.find((p) => p.source === 'webcam')
-);
-
-/**
- * Returns the screen state producer of the client.
- * 
- * @returns {StateProducer | undefined} the screen state producer.
- */
-export const screenProducerSelector = createSelector(
-	producersSelect,
-	(producers) => producers.find((p) => p.source === 'screen')
-);
-
-/**
  * Returns the list of mic state consumers of all peers.
  * 
  * @returns {StateConsumer[]} the list of mic state consumers.
@@ -203,7 +208,9 @@ export const micConsumerSelector = createSelector(
 export const spotlightWebcamConsumerSelector = createSelector(
 	spotlightPeersSelector,
 	consumersSelect,
-	(spotlights, consumers) => consumers.filter((c) => c.source === 'webcam' && spotlights.includes(c.peerId))
+	(spotlights, consumers) => consumers.filter(
+		(c) => c.source === 'webcam' && !c.remotePaused && spotlights.includes(c.peerId)
+	)
 );
 
 /**
@@ -216,7 +223,9 @@ export const spotlightWebcamConsumerSelector = createSelector(
 export const spotlightScreenConsumerSelector = createSelector(
 	spotlightPeersSelector,
 	consumersSelect,
-	(spotlights, consumers) => consumers.filter((c) => c.source === 'screen' && spotlights.includes(c.peerId))
+	(spotlights, consumers) => consumers.filter(
+		(c) => c.source === 'screen' && !c.remotePaused && spotlights.includes(c.peerId)
+	)
 );
 
 /**
@@ -229,7 +238,9 @@ export const spotlightScreenConsumerSelector = createSelector(
 export const spotlightExtraVideoConsumerSelector = createSelector(
 	spotlightPeersSelector,
 	consumersSelect,
-	(spotlights, consumers) => consumers.filter((c) => c.source === 'extravideo' && spotlights.includes(c.peerId))
+	(spotlights, consumers) => consumers.filter(
+		(c) => c.source === 'extravideo' && !c.remotePaused && spotlights.includes(c.peerId)
+	)
 );
 
 /**
@@ -261,11 +272,7 @@ export const parentParticipantListSelector = createSelector(
 					.localeCompare(String(b.displayName || ''))
 				);
 
-		return [
-			...raisedHandSortedPeers,
-			...spotlightSortedPeers,
-			...peersSorted
-		];
+		return [ ...raisedHandSortedPeers, ...spotlightSortedPeers, ...peersSorted ];
 	}
 );
 
@@ -320,16 +327,6 @@ export const roomSessionCreationTimestampSelector = createSelector(
 );
 
 /**
- * Returns the number of peers excluding the client.
- * 
- * @returns {number} the number of peers.
- */
-export const peersLengthSelector = createSelector(
-	peersArraySelector,
-	(peers) => peers.length
-);
-
-/**
  * Returns the number of peers in the lobby.
  * 
  * @returns {number} the number of peers in the lobby.
@@ -347,6 +344,12 @@ export const lobbyPeersLengthSelector = createSelector(
 export const raisedHandsSelector = createSelector(
 	peersArraySelector,
 	(peers) => peers.reduce((a, b) => (a + (b.raisedHand ? 1 : 0)), 0)
+);
+
+export const someoneIsRecordingSelector = createSelector(
+	sessionIdPeersSelector,
+	recordingSelector,
+	(peers, recording) => recording || peers.some((peer) => peer.recording)
 );
 
 /**
@@ -384,7 +387,7 @@ export const audioConsumerSelector = createSelector(
 );
 
 /**
- * Returns the state consumers of the visible video tiles in the Democratic view.
+ * Returns the state consumers of all the visible video tiles.
  * This is the list of screen, webcam and extra video tiles, consumers only.
  * 
  * @returns {StateConsumer[]} the list of state consumers.
@@ -426,77 +429,10 @@ export const resumedVideoConsumersSelector = createSelector(
 	}
 );
 
-/**
- * Returns the list of peerIds that are currently selected or
- * speaking. Cropped to lastN if enabled.
- * 
- * @returns {string[]} the list of peerIds.
-*/ 
-export const speakerPeersSelector = createSelector(
-	maxActiveVideosSelector,
-	sessionIdSpotlightsSelector,
-	(maxActiveVideos, speakers) => speakers.slice(0, maxActiveVideos)
-);
-
-/**
- * Returns the list of webcam state consumers of the peers that are
- * currently selected or speaking.
- * 
- * @returns {StateConsumer[]} the list of webcam state consumers.
- * @see speakerPeersSelector
- */
-export const speakerWebcamConsumerSelector = createSelector(
-	speakerPeersSelector,
-	consumersSelect,
-	(speakers, consumers) => consumers.filter((c) => c.kind === 'video' && c.source === 'webcam' && speakers.includes(c.peerId))
-);
-
-/**
- * Returns the list of screen state consumers of the peers that are
- * currently selected or speaking.
- * 
- * @returns {StateConsumer[]} the list of screen state consumers.
- * @see speakerPeersSelector
- */
-export const speakerScreenConsumerSelector = createSelector(
-	speakerPeersSelector,
-	consumersSelect,
-	(speakers, consumers) => consumers.filter((c) => c.kind === 'video' && c.source === 'screen' && speakers.includes(c.peerId))
-);
-
-/**
- * Returns the list of extra video state consumers of the peers that are
- * currently selected or speaking.
- * 
- * @returns {StateConsumer[]} the list of extra video state consumers.
- * @see speakerPeersSelector
- */
-export const speakerExtraVideoConsumerSelector = createSelector(
-	speakerPeersSelector,
-	consumersSelect,
-	(speakers, consumers) => consumers.filter((c) => c.source === 'extravideo' && speakers.includes(c.peerId))
-);
-
-/**
- * Returns the state consumers of the visible video tiles in the Democratic view.
- * This is the list of screen, webcam and extra video tiles, consumers only.
- * 
- * @returns {StateConsumer[]} the list of state consumers.
- * @see speakerWebcamConsumerSelector
- * @see speakerScreenConsumerSelector
- * @see speakerExtraVideoConsumerSelector
- * @see Democratic.tsx
- */
-export const speakerVideoConsumersSelector = createSelector(
-	speakerWebcamConsumerSelector,
-	speakerScreenConsumerSelector,
-	speakerExtraVideoConsumerSelector,
-	(
-		webcamConsumers,
-		screenConsumers,
-		extraVideoConsumers,
-	) => ([
-		...webcamConsumers,
+export const selectedVideoConsumersSelector = createSelector(
+	spotlightScreenConsumerSelector,
+	spotlightExtraVideoConsumerSelector,
+	(screenConsumers, extraVideoConsumers) => ([
 		...screenConsumers,
 		...extraVideoConsumers,
 	])
@@ -530,7 +466,7 @@ export const activeSpeakerIsAudioOnlySelector = createSelector(
  * 
  * @returns {number} the number of visible video tiles.
  * @see screenProducerSelector
- * @see extraVideoProducersSelector
+ * @see extraVideoProducerSelector
  * @see spotlightPeersSelector
  * @see spotlightWebcamConsumerSelector
  * @see spotlightScreenConsumerSelector
@@ -538,70 +474,48 @@ export const activeSpeakerIsAudioOnlySelector = createSelector(
  * @see Democratic.tsx
  */
 export const videoBoxesSelector = createSelector(
-	screenProducerSelector,
-	extraVideoProducersSelector,
 	hideSelfViewSelector,
 	spotlightWebcamConsumerSelector,
-	spotlightScreenConsumerSelector,
-	spotlightExtraVideoConsumerSelector,
 	audioOnlySessionPeersSelector,
 	hideNonVideoSelector,
 	headlessSelector,
 	(
-		screenProducer,
-		extraVideoProducers,
 		hideSelfView,
 		webcamConsumers,
-		screenConsumers,
-		extraVideoConsumers,
 		audioOnlyPeers,
 		hideNonVideo,
 		headless,
 	) => {
 		let videoBoxes = hideSelfView ? 0 : 1; // Maybe add a box for Me view
 
-		// Add our own screen share, if it exists
-		if (screenProducer) videoBoxes++;
-
-		// Add our own video
-		videoBoxes += extraVideoProducers.length;
-
 		// Add everyone else's video
-		videoBoxes += webcamConsumers.length + screenConsumers.length + extraVideoConsumers.length;
+		videoBoxes += webcamConsumers.length;
 
 		if (audioOnlyPeers.length > 0 && !hideNonVideo && !headless) videoBoxes++; // Add the audio only box
 
 		return videoBoxes;
 	});
 
-/**
- * Returns the set of mic/webcam/screen/extravideo producers that are
- * currently active in the client.
- * 
- * @returns {{
- * 	micProducer: StateProducer | undefined,
- * 	webcamProducer: StateProducer | undefined,
- * 	screenProducer: StateProducer | undefined,
- * 	extraVideoProducers: StateProducer[]
- * }} the state producers.
- * @see micProducerSelector
- * @see webcamProducerSelector
- * @see screenProducerSelector
- * @see extraVideoProducersSelector
- */
-export const meProducersSelector = createSelector(
-	micProducerSelector,
-	webcamProducerSelector,
-	screenProducerSelector,
-	extraVideoProducersSelector,
-	(micProducer, webcamProducer, screenProducer, extraVideoProducers) =>
-		({
-			micProducer,
-			webcamProducer,
-			screenProducer,
-			extraVideoProducers
-		})
-);
+export const selectedVideoBoxesSelector = createSelector(
+	meSelector,
+	spotlightScreenConsumerSelector,
+	spotlightExtraVideoConsumerSelector,
+	(
+		{ screenEnabled, extraVideoEnabled },
+		screenConsumers,
+		extraVideoConsumers,
+	) => {
+		let videoBoxes = 0;
+
+		// Add our own screen share, if it exists
+		if (screenEnabled) videoBoxes++;
+		if (extraVideoEnabled) videoBoxes++;
+
+		// Add everyone else's video
+		videoBoxes += screenConsumers.length + extraVideoConsumers.length;
+
+		return videoBoxes;
+	});
 
 /**
  * Factory function that returns a selector that returns a peer.
@@ -655,10 +569,10 @@ export const makePeerConsumerSelector = (id: string): Selector<{
 	return createSelector(
 		consumersSelect,
 		(consumers: StateConsumer[]) => {
-			const micConsumer = consumers.find((c) => c.peerId === id && c.source === 'mic');
-			const webcamConsumer = consumers.find((c) => c.peerId === id && c.source === 'webcam');
-			const screenConsumer = consumers.find((c) => c.peerId === id && c.source === 'screen');
-			const extraVideoConsumers = consumers.filter((c) => c.peerId === id && c.source === 'extravideo');
+			const micConsumer = consumers.find((c) => c.peerId === id && c.source === 'mic' && !c.remotePaused);
+			const webcamConsumer = consumers.find((c) => c.peerId === id && c.source === 'webcam' && !c.remotePaused);
+			const screenConsumer = consumers.find((c) => c.peerId === id && c.source === 'screen' && !c.remotePaused);
+			const extraVideoConsumers = consumers.filter((c) => c.peerId === id && c.source === 'extravideo' && !c.remotePaused);
 
 			return { micConsumer, webcamConsumer, screenConsumer, extraVideoConsumers };
 		}

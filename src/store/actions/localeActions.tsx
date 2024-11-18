@@ -1,4 +1,4 @@
-import { Logger } from 'edumeet-common';
+import { Logger } from '../../utils/Logger';
 import { loadLocale } from '../../utils/intlManager';
 import { roomActions } from '../slices/roomSlice';
 import { settingsActions } from '../slices/settingsSlice';

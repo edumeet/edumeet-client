@@ -2,13 +2,16 @@ import { Middleware } from '@reduxjs/toolkit';
 import { consumersActions, StateConsumer } from '../slices/consumersSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomActions } from '../slices/roomSlice';
-import { producersActions, ProducerSource } from '../slices/producersSlice';
 import { resumedVideoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { Logger } from 'edumeet-common';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { meActions } from '../slices/meSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { batch } from 'react-redux';
+import { updateMic, updateWebcam } from '../actions/mediaActions';
+import { ProducerSource } from '../../utils/types';
+import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -41,7 +44,7 @@ const createMediaMiddleware = ({
 		dispatch: AppDispatch,
 		getState: () => RootState
 	}) =>
-		(next) => async (action) => {
+		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
 				mediaService.init();
 			}
@@ -50,12 +53,13 @@ const createMediaMiddleware = ({
 				// Server has provided us with a new Consumer. The MediaService
 				// has created it for us and we need to add it to the store.
 				// MediaService will notify us of any changes to Consumer.
-				mediaService.on('consumerCreated', (consumer, producerPaused) => {
+				mediaService.on('consumerCreated', (consumer, paused, producerPaused, peerConsumer) => {
 					const stateConsumer: StateConsumer = {
 						id: consumer.id,
 						peerId: consumer.appData.peerId as string,
+						peerConsumer,
 						kind: consumer.kind,
-						localPaused: false,
+						localPaused: paused,
 						remotePaused: producerPaused,
 						source: consumer.appData.source as ProducerSource,
 					};
@@ -93,53 +97,72 @@ const createMediaMiddleware = ({
 
 				// Server has changed the state of a Consumer/Producer, update the store.
 				mediaService.on('consumerClosed', (consumer) => {
-					dispatch(consumersActions.removeConsumer({
-						consumerId: consumer.id
-					}));
+					dispatch(consumersActions.removeConsumer({ consumerId: consumer.id }));
 				});
 
 				mediaService.on('consumerPaused', (consumer) => {
-					dispatch(consumersActions.setConsumerPaused({
-						consumerId: consumer.id
-					}));
+					dispatch(consumersActions.setConsumerPaused({ consumerId: consumer.id, local: false }));
 				});
 
 				mediaService.on('consumerResumed', (consumer) => {
-					dispatch(consumersActions.setConsumerResumed({
-						consumerId: consumer.id
-					}));
+					dispatch(consumersActions.setConsumerResumed({ consumerId: consumer.id, local: false }));
 				});
 
-				mediaService.on('producerClosed', (producer) => {
-					dispatch(producersActions.closeProducer({
-						producerId: producer.id
-					}));
+				mediaService.on('mediaClosed', (source) => {
+					logger.debug('mediaClosed() [source:%s]', source);
 
-					producer.kind === 'video' && dispatch(meActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(meActions.setAudioMuted(true));
-				});
+					if (source === 'webcam') {
+						if (!mediaService.mediaSenders['webcam'].paused) {
+							dispatch(meActions.setLostVideo(true));
+							dispatch(meActions.setVideoMuted(true));
+						}
 
-				mediaService.on('producerPaused', (producer) => {
-					dispatch(producersActions.setProducerPaused({
-						producerId: producer.id
-					}));
-					
-					producer.kind === 'video' && dispatch(meActions.setVideoMuted(true));
-					producer.kind === 'audio' && dispatch(meActions.setAudioMuted(true));
-				});
+						dispatch(meActions.setWebcamEnabled(false));
+					}
 
-				mediaService.on('producerResumed', (producer) => {
-					dispatch(producersActions.setProducerResumed({
-						producerId: producer.id
-					}));
-				});
+					if (source === 'mic') {
+						if (!mediaService.mediaSenders['mic'].paused) {
+							dispatch(meActions.setLostAudio(true));
+							dispatch(meActions.setAudioMuted(true));
+						}
 
-				mediaService.on('consumerScore', (consumerId, score) => {
-					dispatch(consumersActions.setScore({ consumerId, score }));	
+						dispatch(meActions.setMicEnabled(false));
+					}
+
+					if (source === 'screen') {
+						dispatch(meActions.setScreenEnabled(false));
+					}
+
+					if (source === 'screenaudio') {
+						dispatch(meActions.setScreenAudioEnabled(false));
+					}
+
+					if (source === 'extravideo') {
+						dispatch(meActions.setExtraVideoEnabled(false));
+					}
+
+					if (source === 'extraaudio') {
+						dispatch(meActions.setExtraAudioEnabled(false));
+					}
 				});
 			
-				mediaService.on('producerScore', (producerId, score) => {
-					dispatch(producersActions.setScore({ producerId, score }));	
+				mediaService.on('lostMediaServer', () => {
+					batch(() => {
+						dispatch(notificationsActions.enqueueNotification({
+							message: 'Lost connection to media server, reconnecting...',
+							options: { variant: 'error' }
+						}));
+
+						if (getState().me.lostAudio) {
+							dispatch(meActions.setLostAudio(false));
+							dispatch(updateMic());
+						}
+
+						if (getState().me.lostVideo) {
+							dispatch(meActions.setLostVideo(false));
+							dispatch(updateWebcam());
+						}
+					});
 				});
 			}
 
@@ -151,19 +174,10 @@ const createMediaMiddleware = ({
 			// These actions are dispatched from the UI somewhere manually (button clicks, etc)
 			// We need to make the mediaService aware of the actions.
 			if (consumersActions.setConsumerPaused.match(action) && action.payload.local)
-				await mediaService.changeConsumer(action.payload.consumerId, 'pause');
+				mediaService.changeConsumer(action.payload.consumerId, 'pause');
 
 			if (consumersActions.setConsumerResumed.match(action) && action.payload.local)
-				await mediaService.changeConsumer(action.payload.consumerId, 'resume');
-
-			if (producersActions.setProducerPaused.match(action) && action.payload.local)
-				await mediaService.changeProducer(action.payload.producerId, 'pause');
-
-			if (producersActions.setProducerResumed.match(action) && action.payload.local)
-				await mediaService.changeProducer(action.payload.producerId, 'resume');
-
-			if (producersActions.closeProducer.match(action) && action.payload.local)
-				await mediaService.changeProducer(action.payload.producerId, 'close');
+				mediaService.changeConsumer(action.payload.consumerId, 'resume');
 
 			if ( // These events will possibly change which Consumer is being displayed
 				consumersActions.addConsumer.match(action) ||
@@ -206,20 +220,17 @@ const createMediaMiddleware = ({
 				if (peersActions.removePeer.match(action))
 					({ id: removedPeerId } = action.payload);
 
-				await Promise.all([
-					pausedConsumersList.map(async ({ id: consumerId, peerId }) => {
-						if (peerId !== removedPeerId && consumerId !== removedConsumerId) {
-							await mediaService.changeConsumer(consumerId, 'pause');
-							dispatch(consumersActions.setConsumerPaused({ consumerId }));
-						}
-					}),
-					resumedConsumersList.map(async ({ id: consumerId, peerId }) => {
-						if (peerId !== removedPeerId && consumerId !== removedConsumerId) {
-							await mediaService.changeConsumer(consumerId, 'resume');
-							dispatch(consumersActions.setConsumerResumed({ consumerId }));
-						}
-					})
-				]);
+				pausedConsumersList.forEach(({ id: consumerId, peerId }) => {
+					if (peerId !== removedPeerId && consumerId !== removedConsumerId) {
+						dispatch(consumersActions.setConsumerPaused({ consumerId, local: true }));
+					}
+				});
+
+				resumedConsumersList.forEach(({ id: consumerId, peerId }) => {
+					if (peerId !== removedPeerId && consumerId !== removedConsumerId) {
+						dispatch(consumersActions.setConsumerResumed({ consumerId, local: true }));
+					}
+				});
 
 				return;
 			}
