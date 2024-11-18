@@ -11,8 +11,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import LogoutIcon from '@mui/icons-material/Logout';
 import TenantTable from '../../components/managementservice/tenants/Tenant';
-import TenantFQDNTable from '../../components/managementservice/tenants/TenatnFQDN';
-import TenantOAuthTable from '../../components/managementservice/tenants/TenantOAuth';
 import { useEffect, useState } from 'react';
 import RoomTable from '../../components/managementservice/rooms/Room';
 import GroupTable from '../../components/managementservice/groups/Groups';
@@ -90,10 +88,6 @@ export default function ManagementUI(/* props: Props */) {
 					return <>
 						Tenant settings
 						<TenantTable />
-						Tenant domain settings
-						<TenantFQDNTable />
-						Tenant authentication source
-						<TenantOAuthTable />
 						Tenant admins
 						<TenantOwnerTable />
 						Tenants owners
@@ -101,7 +95,7 @@ export default function ManagementUI(/* props: Props */) {
 					</>;
 				case 'room':
 					return <>
-						Room settings
+						Rooms
 						<RoomTable />
 						Room owners
 						<RoomOwnerTable />
@@ -239,78 +233,72 @@ export default function ManagementUI(/* props: Props */) {
 	);
 
 	return (
-		<>
+		<Box sx={{ display: 'flex', flex: 1, marginRight: '300px' }}>
+			<CssBaseline />
+			<AppBar
+				position="fixed"
+				style={{ backgroundColor: '#9C298C' }}
+				sx={{
+					width: { sm: `calc(100% - ${drawerWidth}px)` },
+					ml: { sm: `${drawerWidth}px` },
+				}}
+			>
+				<Toolbar>
+					<IconButton
+						color="inherit"
+						aria-label="open drawer"
+						edge="start"
+						onClick={handleDrawerToggle}
+						sx={{ mr: 2, display: { sm: 'none' } }}
+					>
+						<MenuIcon />
+					</IconButton>
+					<Typography variant="h6" noWrap component="div">
+							Edumeet management client
+					</Typography>
+				</Toolbar>
+			</AppBar>
+			<Box
+				component="nav"
+				sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+				aria-label="mailbox folders"
+			>
+				{/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+				<Drawer
 
-			<Box sx={{ display: 'flex', flex: 1, marginRight: '300px' }}>
-				<CssBaseline />
-				<AppBar
-					position="fixed"
-					style={{ backgroundColor: '#9C298C' }}
+					variant="temporary"
+					open={mobileOpen}
+					onClose={handleDrawerToggle}
+					ModalProps={{
+						keepMounted: true, // Better open performance on mobile.
+					}}
 					sx={{
-						width: { sm: `calc(100% - ${drawerWidth}px)` },
-						ml: { sm: `${drawerWidth}px` },
+						display: { xs: 'block', sm: 'none' },
+						'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
 					}}
 				>
-					<Toolbar>
-						<IconButton
-							color="inherit"
-							aria-label="open drawer"
-							edge="start"
-							onClick={handleDrawerToggle}
-							sx={{ mr: 2, display: { sm: 'none' } }}
-						>
-							<MenuIcon />
-						</IconButton>
-						<Typography variant="h6" noWrap component="div">
-							Edumeet management client
-						</Typography>
-					</Toolbar>
-				</AppBar>
-				<Box
-					component="nav"
-					sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-					aria-label="mailbox folders"
+					{drawer}
+				</Drawer>
+				<Drawer
+					variant="permanent"
+					sx={{
+						display: { xs: 'none', sm: 'block' },
+						'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+					}}
+					open
 				>
-					{/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-					<Drawer
-
-						variant="temporary"
-						open={mobileOpen}
-						onClose={handleDrawerToggle}
-						ModalProps={{
-							keepMounted: true, // Better open performance on mobile.
-						}}
-						sx={{
-							display: { xs: 'block', sm: 'none' },
-							'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-						}}
-					>
-						{drawer}
-					</Drawer>
-					<Drawer
-						variant="permanent"
-						sx={{
-							display: { xs: 'none', sm: 'block' },
-							'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-						}}
-						open
-					>
-						{drawer}
-					</Drawer>
-				</Box>
-				<Box
-					component="main"
-					
-					sx={{ flexGrow: 1, p: 1, width: { xs: 'calc(100%)', sm: 'calc(100%)' } }}
-				>
-					<Toolbar />
-					<div style={{ background: 'white', padding: '2px', maxWidth: '100%', minWidth: '300px' }}>
-						{renderComponent()}
-					</div>
-
-				</Box>
-
+					{drawer}
+				</Drawer>
 			</Box>
-		</>
+			<Box
+				component="main"
+				sx={{ flexGrow: 1, p: 1, width: { xs: 'calc(100%)', sm: 'calc(100%)' } }}
+			>
+				<Toolbar />
+				<div style={{ background: 'white', padding: '2px', maxWidth: '100%', minWidth: '300px' }}>
+					{renderComponent()}
+				</div>
+			</Box>
+		</Box>
 	);
 }
