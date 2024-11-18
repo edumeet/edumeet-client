@@ -77,5 +77,8 @@ can be found here: [config.example.js](public/config/config.example.js).
 | logo | If not null, it shows the logo loaded from the specified URL, otherwise it shows the title. | `"url"` | ``"images/logo.edumeet.svg"`` |
 | title | The title to show if the logo is not specified. | `"string"` | ``"edumeet"`` |
 | randomizeOnBlank | Enable or disable randomize room name when it is blank. | `"boolean"` | ``true`` |
+| transcriptionEnabled | Enable or disable transcription. | `"boolean"` | ``true`` |
+| imprintUrl | Show a link to an imprint in the edumeet UI, keep blank to not show a link | `"string"` | ``""`` |
+| privacyUrl | Show a link to a privacy notice in the edumeet UI, keep blank to not show a link | `"string"` | ``""`` |
 
 ---

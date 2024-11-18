@@ -805,4 +805,13 @@ export const managementExtraSettingsLabel = (): string => intl.formatMessage({
 export const ruleSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.managementRuleSettings',
 	defaultMessage: 'Rule settings'
+
+export const imprintLabel = (): string => intl.formatMessage({
+	id: 'label.imprint',
+	defaultMessage: 'Imprint'
+});
+
+export const privacyLabel = (): string => intl.formatMessage({
+	id: 'label.privacy',
+	defaultMessage: 'Privacy'
 });

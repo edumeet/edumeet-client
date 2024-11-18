@@ -17,6 +17,7 @@ import { ProducerSource } from '../utils/types';
 import { MediaSender } from '../utils/mediaSender';
 import type { ClientMonitor } from '@observertc/client-monitor-js';
 import { Logger } from '../utils/Logger';
+import edumeetConfig from '../utils/edumeetConfig';
 
 const logger = new Logger('MediaService');
 
@@ -665,7 +666,7 @@ export class MediaService extends EventEmitter {
 	get localCapabilities(): LocalCapabilities {
 		return {
 			canRecord: Boolean(MediaRecorder),
-			canTranscribe: Boolean(window.webkitSpeechRecognition),
+			canTranscribe: Boolean(window.webkitSpeechRecognition) && edumeetConfig.transcriptionEnabled,
 		};
 	}
 

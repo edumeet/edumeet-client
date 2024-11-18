@@ -1,11 +1,11 @@
-import { Button } from '@mui/material';
+import { Button, Box, Link, Typography } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions } from '../../store/slices/uiSlice';
-import { closeLabel } from '../translated/translatedComponents';
+import { closeLabel, imprintLabel, privacyLabel } from '../translated/translatedComponents';
 import ShortcutKeys from './ShortcutKeys';
 import GenericDialog from '../genericdialog/GenericDialog';
-import ImpressumButton from '../controlbuttons/ImpressumButton';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 const HelpDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -17,21 +17,38 @@ const HelpDialog = (): JSX.Element => {
 		}));
 	};
 
+	const privacyUrl = edumeetConfig.privacyUrl ?? '';
+	const imprintUrl = edumeetConfig.imprintUrl ?? '';
+
 	return (
 		<GenericDialog
 			open={ helpOpen }
 			onClose={ handleCloseHelp }
 			maxWidth='xs'
-			content={ <><ShortcutKeys /><ImpressumButton /></> }
+			content={ <><ShortcutKeys /></> }
 			actions={
-				<Button
-					onClick={ handleCloseHelp }
-					startIcon={ <Close /> }
-					variant='contained'
-					size='small'
-				>
-					{ closeLabel() }
-				</Button>
+				<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+					<Box display="flex" alignItems="left">
+						{imprintUrl.trim() !== '' && (
+							<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
+								<Typography variant="body2">{ imprintLabel() }</Typography>
+							</Link>
+						)}
+						{privacyUrl.trim() !== '' && (
+							<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
+								<Typography variant="body2">{ privacyLabel() }</Typography>
+							</Link>
+						)}
+					</Box>
+					<Button
+						onClick={ handleCloseHelp }
+						startIcon={ <Close /> }
+						variant='contained'
+						size='small'
+					>
+						{ closeLabel() }
+					</Button>
+				</Box>
 			}
 		/>
 	);

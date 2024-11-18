@@ -146,6 +146,15 @@ var config = {
 	// otherwise, it will remain empty and users will have to enter a room name.
 	randomizeOnBlank: true,
 
+	// Enable or disable transcription.
+	transcriptionEnabled: true,
+
+	// Imprint. If you want to link your imprint, please provide a URL in this variable. If it is empty, no link will be shown.
+	imprintUrl: '',
+
+	// Privacy notice. If you want to link your privacy notices, please provide a URL in this variable. If it is empty, no link will be shown.
+	privacyUrl: '',
+
 	// Client theme. Take a look at mui theme documentation.
 	theme: {
 		palette: {

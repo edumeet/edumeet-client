@@ -3,7 +3,6 @@ import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
-	impressumUrl: '/privacy/privacy.html',
 	p2penabled: false,
 	loginEnabled: false,
 	developmentPort: 8443,
@@ -78,6 +77,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	},
 	title: 'edumeet',
 	randomizeOnBlank: true,
+	transcriptionEnabled: true,
 	theme: {
 		background: 'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
 		appBarColor: 'rgba(0, 0, 0, 0.4)',
@@ -91,12 +91,13 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContentItemDarkColor: 'rgba(150, 150, 150, 0.4)',
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
-	reduxLoggingEnabled: false
+	reduxLoggingEnabled: false,
+	imprintUrl: '',
+	privacyUrl: ''
 };
 
 export interface EdumeetConfig {
 	managementUrl?: string;
-	impressumUrl: string;
 	p2penabled: boolean;
 	loginEnabled: boolean;
 	developmentPort: number;
@@ -129,8 +130,11 @@ export interface EdumeetConfig {
 	notificationSounds: Record<NotificationType, NotificationSound>;
 	title: string;
 	randomizeOnBlank: boolean;
+	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
+	imprintUrl: string;
+	privacyUrl: string;
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
