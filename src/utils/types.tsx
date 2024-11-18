@@ -2,7 +2,6 @@ import { ThemeOptions } from '@mui/material';
 import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 import { TFLite } from '../services/effectsService';
 
-
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
 	p2penabled: false,

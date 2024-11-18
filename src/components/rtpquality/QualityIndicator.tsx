@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { ServiceContext } from '../../store/store';
 import Stats from './Stats';
 import { SignalCellularAlt } from '@mui/icons-material';
-import { AlertState } from '@observertc/client-monitor-js/lib/ClientMonitor';
+import { ClientMonitor } from '@observertc/client-monitor-js/lib/ClientMonitor';
 
 const QualityIndicator = (): JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
@@ -11,20 +11,23 @@ const QualityIndicator = (): JSX.Element => {
 
 	useEffect(() => {
 		// this runs on mount
-		const monitor = mediaService.monitor;
+		const monitor = mediaService.monitor as ClientMonitor;
 		
 		if (!monitor) {
 			return;
 		}
-		const listener = (state: AlertState) => setDistorted(state === 'on');
-
-		monitor.on('congestion-alert', listener);
+		
+		monitor.on('congestion', () => {
+			setDistorted(true);
+		});
 
 		return () => {
 			if (!monitor) {
 				return;
 			}
-			monitor.off('congestion-alert', listener);
+			monitor.on('stats-collected', () => {
+				setDistorted(false);
+			});
 		};
 	}, []);
 

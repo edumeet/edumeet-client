@@ -25,7 +25,6 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 	const micEnabled = useAppSelector((state) => state.me.micEnabled);
 	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
 
-
 	return (
 		<>
 			{ !hideSelfView && (
@@ -40,7 +39,8 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 					{ micEnabled && !isMobile && <UnmuteAlert /> }
 
 					<DisplayName disabled={false} displayName={displayName} isMe />
- 					<QualityIndicator />
+					{ !isMobile && showStats && <PeerStatsView /> }
+					<QualityIndicator />
 
 				</VideoBox>
 			)}

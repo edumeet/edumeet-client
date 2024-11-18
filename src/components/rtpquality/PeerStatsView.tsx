@@ -88,28 +88,26 @@ const PeerStatsView = ({
 		let listener: () => void | undefined;
 		const storage = monitor.storage;
 		
-		if (producerId) {
-			const producer = mediaService.getProducer(producerId);
+		if (mediaService.previewWebcamTrack) {
+			
+			listener = () => {
+				const trackId = mediaService.previewWebcamTrack?.id;
 
-			if (producer) {
-				listener = () => {
-					const trackId = producer.track?.id;
+				if (!trackId) {
+					return;
+				}
+				const trackStats = storage.getTrack(trackId);
 
-					if (!trackId) {
-						return;
-					}
-					const trackStats = storage.getTrack(trackId);
-
-					if (!trackStats) {
-						return;
-					}
+				if (!trackStats) {
+					return;
+				}
 					
-					const newOutboundStats = createOutboundStats(trackStats, storage.avgRttInS);
+				const newOutboundStats = createOutboundStats(trackStats, storage.avgRttInS);
 
-					setOutboundStats(newOutboundStats);
-				};
-				monitor.on('stats-collected', listener);
-			}
+				setOutboundStats(newOutboundStats);
+			};
+			monitor.on('stats-collected', listener);
+
 		} else if (consumerId) {
 			const consumer = mediaService.getConsumer(consumerId);
 
