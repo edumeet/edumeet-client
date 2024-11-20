@@ -16,18 +16,16 @@ const QualityIndicator = (): JSX.Element => {
 		if (!monitor) {
 			return;
 		}
-		
-		monitor.on('congestion', () => {
-			setDistorted(true);
-		});
+
+		const detector = monitor.createCongestionDetector();
+
+		detector.on('alert-state', (state) => setDistorted(state === 'on'));
 
 		return () => {
 			if (!monitor) {
 				return;
 			}
-			monitor.on('stats-collected', () => {
-				setDistorted(false);
-			});
+			detector.on('alert-state', (state) => setDistorted(state === 'on'));
 		};
 	}, []);
 
