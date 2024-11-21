@@ -1,4 +1,5 @@
 import { ThemeOptions } from '@mui/material';
+import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
@@ -70,6 +71,9 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		'raisedHand': {
 			'play': '/sounds/notify-hand.mp3'
 		},
+		'finishedCountdownTimer': {
+			'play': '/sounds/notify-countdowntimer.mp3'
+		},
 		'default': {
 			'debounce': 5000,
 			'play': '/sounds/notify.mp3'
@@ -92,6 +96,9 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
 	reduxLoggingEnabled: false,
+	clientMontitor: {
+		collectingPeriodInMs: 2000,
+	},
 	imprintUrl: '',
 	privacyUrl: ''
 };
@@ -133,6 +140,7 @@ export interface EdumeetConfig {
 	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
+	clientMontitor: ClientMonitorConfig;
 	imprintUrl: string;
 	privacyUrl: string;
 }
@@ -166,7 +174,7 @@ export interface AudioPreset {
 	opusMaxPlaybackRate: number;
 }
 
-export type NotificationType = 'default' | 'chatMessage' | 'raisedHand';
+export type NotificationType = 'default' | 'chatMessage' | 'raisedHand' | 'finishedCountdownTimer';
 
 export interface NotificationSound {
 	play: string;

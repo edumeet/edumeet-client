@@ -133,6 +133,9 @@ var config = {
 		'raisedHand': {
 			'play': '/sounds/notify-hand.mp3'
 		},
+		'finishedCountdownTimer': {
+			'play': '/sounds/notify-countdowntimer.mp3'
+		},
 		'default': {
 			'debounce': 5000,
 			'play': '/sounds/notify.mp3'

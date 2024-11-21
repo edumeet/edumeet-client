@@ -810,7 +810,6 @@ export const imprintLabel = (): string => intl.formatMessage({
 	id: 'label.imprint',
 	defaultMessage: 'Imprint'
 });
-
 export const privacyLabel = (): string => intl.formatMessage({
 	id: 'label.privacy',
 	defaultMessage: 'Privacy'

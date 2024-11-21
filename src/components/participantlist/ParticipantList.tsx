@@ -8,13 +8,15 @@ import { breakoutRoomsSelector, inParentRoomSelector, parentParticipantListSelec
 import { permissions } from '../../utils/roles';
 import {
 	breakoutRoomsLabel,
-	participantsLabel
+	participantsLabel,
+	countdownTimerTitleLabel
 } from '../translated/translatedComponents';
 import ListMe from './ListMe';
 import ListModerator from './ListModerator';
 import ListPeer from './ListPeer';
 import BreakoutModerator from '../breakoutrooms/BreakoutModerator';
 import ListBreakoutRoom from '../breakoutrooms/ListBreakoutRoom';
+import CountdownTimer from '../countdowntimer/CountdownTimer';
 
 const ParticipantListDiv = styled(Box)(({ theme }) => ({
 	width: '100%',
@@ -37,7 +39,14 @@ const ParticipantList = (): JSX.Element => {
 
 	return (
 		<ParticipantListDiv>
-			{ isModerator && <ListModerator /> }
+			{ isModerator && <>
+				<ListModerator />
+				<ListHeader>
+					{countdownTimerTitleLabel()}
+				</ListHeader>
+				<CountdownTimer />
+			</>
+			}
 			{ (breakoutsEnabled && (rooms.length > 0 || canCreateRooms)) &&
 				<>
 					<ListHeader>

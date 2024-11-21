@@ -278,5 +278,15 @@
   "svc.mediaNodeUnavailable": "Usługa węzła mediów niedostępna",
   "svc.mediaConnectionNodeError": "Usługa węzła mediów: błąd połączenia",
   "svc.mediaConnectionNodeSuccess": "Usługa węzła mediów: połączono",
+  "tooltip.coundowntimer.start": "Start",
+  "tooltip.coundowntimer.stop": "Stop",
+  "tooltip.coundowntimer.pause": "Pause",
+  "label.countdownTimer.title": "Timer",
+	"label.countdownTimer.enable": "Włącz",
+	"label.countdownTimer.disable": "Wyłącz",
+	"label.countdownTimer.start": "Start",
+	"label.countdownTimer.stop": "Stop",
+	"label.countdownTimer.set": "Ustaw",
+	"label.countdownTimer.finished": "Czas minął!",
   "settings.testAudioOutput": null
 }
