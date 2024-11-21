@@ -51,6 +51,21 @@ export default defineConfig({
 						return '@react-dom';
 					}
 					if (
+						id.includes('@formatjs')
+					) {
+						return '@formatjs';
+					}
+					if (
+						id.includes('@tanstack')
+					) {
+						return '@tanstack';
+					}
+					if (
+						id.includes('@observrtc')
+					) {
+						return '@observrtc';
+					}
+					if (
 						id.includes('router')
 					) {
 						return '@router';

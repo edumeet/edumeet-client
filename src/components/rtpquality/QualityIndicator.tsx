@@ -18,7 +18,7 @@ const QualityIndicator = (): JSX.Element => {
 		}
 
 		const detector = monitor.createCongestionDetector();
-		const listener = (state) => setDistorted(state === 'on');
+		const listener = (state: string) => setDistorted(state === 'on');
 		
 		detector.on('alert-state', listener);
 
