@@ -173,7 +173,7 @@ const TenantAdminTable = () => {
 			dispatch(createData({ 
 				tenantId: tenantId,
 				userId: userId
-			}, 'tenantOwners')).then(() => {
+			}, 'tenantAdmins')).then(() => {
 				fetchProduct();
 				setOpen(false);
    
