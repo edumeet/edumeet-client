@@ -197,6 +197,7 @@ const TenantOwnerTable = () => {
 
 	return <>
 		<div>
+			<h4>Tenant owners</h4>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
 				Add new
 			</Button>

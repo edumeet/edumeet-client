@@ -27,17 +27,17 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { getUserData } from '../../store/actions/managementActions';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
-import PermissionTable from '../../components/managementservice/permisssion/Permission';
-import InfoIcon from '@mui/icons-material/Info';
 import TenantAdminTable from '../../components/managementservice/tenants/TenantAdmin';
 import TenantOwnerTable from '../../components/managementservice/tenants/TenantOwner';
 import { checkJWT, logout } from '../../store/actions/permissionsActions';
 import SignIn from '../../components/settingsdialog/managementsettings/ManagementAdminLoginSettings';
 import { startMGMTListeners, stopMGMTListeners } from '../../store/actions/mgmtActions';
-import RoomOwnerTable from '../../components/managementservice/rooms/RoomOwner';
 import GroupRoleTable from '../../components/managementservice/groups/GroupRole';
 import GroupUserTable from '../../components/managementservice/groups/GroupUser';
-import RoomUserRoleTable from '../../components/managementservice/rooms/roomUserRole';
+
+/* import RoomUserRoleTable from '../../components/managementservice/rooms/roomUserRole'; */
+/* import PermissionTable from '../../components/managementservice/permisssion/Permission';
+import InfoIcon from '@mui/icons-material/Info'; */
 
 const drawerWidth = 300;
 
@@ -97,10 +97,10 @@ export default function ManagementUI(/* props: Props */) {
 					return <>
 						Rooms
 						<RoomTable />
-						Room owners
-						<RoomOwnerTable />
-						Room user roles
-						<RoomUserRoleTable />
+						{/* Room owners
+						<RoomOwnerTable /> */}
+						{/* Room user roles
+						<RoomUserRoleTable /> */}
 					</>;
 				case 'user':
 					return <>
@@ -120,8 +120,9 @@ export default function ManagementUI(/* props: Props */) {
 					return <>Roles
 						<RoleTable />
 					</>;
-				case 'permission':
-					return <>Permissions<PermissionTable /></>;
+
+				/* case 'permission':
+					return <>Permissions<PermissionTable /></>; */
 				default:
 					return <Box sx={{ minWidth: '400px' }}>Select an item to load a component </Box>;
 			}
@@ -167,7 +168,7 @@ export default function ManagementUI(/* props: Props */) {
 
 			<Divider />
 			<List>
-				<ListItem key={'Permissions'} disablePadding onClick={
+				{/* <ListItem key={'Permissions'} disablePadding onClick={
 					() => setSelectedComponent('permission')
 				}>
 					<ListItemButton >
@@ -176,7 +177,7 @@ export default function ManagementUI(/* props: Props */) {
 						</ListItemIcon>
 						<ListItemText primary={'Permissions'} />
 					</ListItemButton>
-				</ListItem>
+				</ListItem> */}
 				<ListItem key={'Tenants'} disablePadding onClick={
 					() => setSelectedComponent('tenant')
 				}>
@@ -263,7 +264,6 @@ export default function ManagementUI(/* props: Props */) {
 				sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
 				aria-label="mailbox folders"
 			>
-				{/* The implementation can be swapped with js to avoid SEO duplication of links. */}
 				<Drawer
 
 					variant="temporary"

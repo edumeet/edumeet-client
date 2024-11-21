@@ -192,6 +192,7 @@ const TenantAdminTable = () => {
 
 	return <>
 		<div>
+			<h4>Tenant admins</h4>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
 				Add new
 			</Button>
