@@ -47,6 +47,7 @@ import { FileService } from '../services/fileService';
 import roomSessionsSlice from './slices/roomSessionsSlice';
 import type { Application } from '@feathersjs/feathers/lib';
 import { EffectsService } from '../services/effectsService';
+import { createClientMonitor } from '@observertc/client-monitor-js';
 import createEffectsMiddleware from './middlewares/effectsMiddleware';
 
 declare global {
@@ -76,7 +77,7 @@ const persistConfig = {
 	stateReconciler: autoMergeLevel2,
 	whitelist: [ 'settings' ]
 };
-
+const monitor = edumeetConfig.clientMontitor ? createClientMonitor(edumeetConfig.clientMontitor) : undefined;
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
 const managementService = (async () => {
@@ -89,7 +90,7 @@ const managementService = (async () => {
 		.configure(authentication());
 })() as Promise<Application>;
 
-export const mediaService = new MediaService({ signalingService });
+export const mediaService = new MediaService({ signalingService }, monitor);
 export const fileService = new FileService();
 const effectsService = new EffectsService();
 

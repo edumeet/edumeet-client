@@ -6,6 +6,8 @@ import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
+import PeerStatsView from '../rtpquality/PeerStatsView';
+import QualityIndicator from '../rtpquality/QualityIndicator';
 
 interface MeProps {
 	style: Record<'width' | 'height', number>
@@ -19,6 +21,7 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 	const id = useAppSelector((state) => state.me.id);
 	const isActiveSpeaker = useIsActiveSpeaker(id);
 	const isMobile = useAppSelector(isMobileSelector);
+	const showStats = useAppSelector((state) => state.ui.showStats);
 	const micEnabled = useAppSelector((state) => state.me.micEnabled);
 	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
 
@@ -34,7 +37,11 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 					{ webcamEnabled && <VideoView mirrored={mirroredSelfView} contain={contain} source='webcam' /> }
 					{ micEnabled && <Volume /> }
 					{ micEnabled && !isMobile && <UnmuteAlert /> }
+
 					<DisplayName disabled={false} displayName={displayName} isMe />
+					{ !isMobile && showStats && <PeerStatsView /> }
+					<QualityIndicator />
+
 				</VideoBox>
 			)}
 		</>

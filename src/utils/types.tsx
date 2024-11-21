@@ -1,4 +1,5 @@
 import { ThemeOptions } from '@mui/material';
+import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
@@ -95,6 +96,9 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
 	reduxLoggingEnabled: false,
+	clientMontitor: {
+		collectingPeriodInMs: 2000,
+	},
 	imprintUrl: '',
 	privacyUrl: ''
 };
@@ -136,6 +140,7 @@ export interface EdumeetConfig {
 	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
+	clientMontitor: ClientMonitorConfig;
 	imprintUrl: string;
 	privacyUrl: string;
 }
