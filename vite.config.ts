@@ -61,9 +61,9 @@ export default defineConfig({
 						return '@tanstack';
 					}
 					if (
-						id.includes('@observrtc')
+						id.includes('@observertc')
 					) {
-						return '@observrtc';
+						return '@observertc';
 					}
 					if (
 						id.includes('router')
