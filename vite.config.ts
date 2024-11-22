@@ -1,4 +1,4 @@
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig, /* splitVendorChunkPlugin */ } from 'vite';
 import react from '@vitejs/plugin-react';
 import eslint from 'vite-plugin-eslint';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
@@ -12,8 +12,8 @@ export default defineConfig({
 		eslint(),
 		viteTsconfigPaths(),
 		basicSsl(),
-		splitVendorChunkPlugin(),
-		visualizer({
+/* 		splitVendorChunkPlugin(),
+ */		visualizer({
 			emitFile: false,
 			filename: "stats.html",
 		})
@@ -36,45 +36,27 @@ export default defineConfig({
 		rollupOptions: {
 			output: {
 				manualChunks(id: string) {
-					// creating a chunk to @open-ish deps. Reducing the vendor chunk size
-					if (id.includes('@mui') ) {
-						if (id.includes('material')){
-							return '@mui-material';
-						} else {
-							return '@mui';
-						}
-					}
-					// creating a chunk to react routes deps. Reducing the vendor chunk size
-					if (
-						id.includes('react-dom')
-					) {
-						return '@react-dom';
-					}
-					if (
-						id.includes('@formatjs')
-					) {
-						return '@formatjs';
-					}
-					if (
-						id.includes('@tanstack')
-					) {
-						return '@tanstack';
-					}
-					if (
-						id.includes('@observertc')
-					) {
-						return '@observertc';
-					}
-					if (
-						id.includes('router')
-					) {
-						return '@router';
-					}
 					if (
 						id.includes('ortc-p2p')
 					) {
 						return '@ortc-p2p';
 					}
+					if (
+						id.includes('material-react-table/dist/index.esm.js')
+					) {
+						return 'material-react-table/dist/index.esm.js';
+					}
+					if (
+						id.includes('x-date-pickers')
+					) {
+						return 'x-date-pickers';
+					}
+					if (
+						id.includes('@mui')
+					) {
+						return '@mui';
+					}
+
 				},
 			},
 		},
