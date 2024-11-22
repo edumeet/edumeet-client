@@ -11,8 +11,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import LogoutIcon from '@mui/icons-material/Logout';
 import TenantTable from '../../components/managementservice/tenants/Tenant';
-import TenantFQDNTable from '../../components/managementservice/tenants/TenatnFQDN';
-import TenantOAuthTable from '../../components/managementservice/tenants/TenantOAuth';
 import { useEffect, useState } from 'react';
 import RoomTable from '../../components/managementservice/rooms/Room';
 import GroupTable from '../../components/managementservice/groups/Groups';
@@ -29,17 +27,17 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { getUserData } from '../../store/actions/managementActions';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
-import PermissionTable from '../../components/managementservice/permisssion/Permission';
-import InfoIcon from '@mui/icons-material/Info';
 import TenantAdminTable from '../../components/managementservice/tenants/TenantAdmin';
 import TenantOwnerTable from '../../components/managementservice/tenants/TenantOwner';
 import { checkJWT, logout } from '../../store/actions/permissionsActions';
 import SignIn from '../../components/settingsdialog/managementsettings/ManagementAdminLoginSettings';
 import { startMGMTListeners, stopMGMTListeners } from '../../store/actions/mgmtActions';
-import RoomOwnerTable from '../../components/managementservice/rooms/RoomOwner';
 import GroupRoleTable from '../../components/managementservice/groups/GroupRole';
 import GroupUserTable from '../../components/managementservice/groups/GroupUser';
-import RoomUserRoleTable from '../../components/managementservice/rooms/roomUserRole';
+
+/* import RoomUserRoleTable from '../../components/managementservice/rooms/roomUserRole'; */
+/* import PermissionTable from '../../components/managementservice/permisssion/Permission';
+import InfoIcon from '@mui/icons-material/Info'; */
 
 const drawerWidth = 300;
 
@@ -90,10 +88,6 @@ export default function ManagementUI(/* props: Props */) {
 					return <>
 						Tenant settings
 						<TenantTable />
-						Tenant domain settings
-						<TenantFQDNTable />
-						Tenant authentication source
-						<TenantOAuthTable />
 						Tenant admins
 						<TenantOwnerTable />
 						Tenants owners
@@ -101,12 +95,12 @@ export default function ManagementUI(/* props: Props */) {
 					</>;
 				case 'room':
 					return <>
-						Room settings
+						Rooms
 						<RoomTable />
-						Room owners
-						<RoomOwnerTable />
-						Room user roles
-						<RoomUserRoleTable />
+						{/* Room owners
+						<RoomOwnerTable /> */}
+						{/* Room user roles
+						<RoomUserRoleTable /> */}
 					</>;
 				case 'user':
 					return <>
@@ -126,8 +120,9 @@ export default function ManagementUI(/* props: Props */) {
 					return <>Roles
 						<RoleTable />
 					</>;
-				case 'permission':
-					return <>Permissions<PermissionTable /></>;
+
+				/* case 'permission':
+					return <>Permissions<PermissionTable /></>; */
 				default:
 					return <Box sx={{ minWidth: '400px' }}>Select an item to load a component </Box>;
 			}
@@ -173,7 +168,7 @@ export default function ManagementUI(/* props: Props */) {
 
 			<Divider />
 			<List>
-				<ListItem key={'Permissions'} disablePadding onClick={
+				{/* <ListItem key={'Permissions'} disablePadding onClick={
 					() => setSelectedComponent('permission')
 				}>
 					<ListItemButton >
@@ -182,7 +177,7 @@ export default function ManagementUI(/* props: Props */) {
 						</ListItemIcon>
 						<ListItemText primary={'Permissions'} />
 					</ListItemButton>
-				</ListItem>
+				</ListItem> */}
 				<ListItem key={'Tenants'} disablePadding onClick={
 					() => setSelectedComponent('tenant')
 				}>
@@ -239,78 +234,71 @@ export default function ManagementUI(/* props: Props */) {
 	);
 
 	return (
-		<>
+		<Box sx={{ display: 'flex', flex: 1, marginRight: '300px' }}>
+			<CssBaseline />
+			<AppBar
+				position="fixed"
+				style={{ backgroundColor: '#9C298C' }}
+				sx={{
+					width: { sm: `calc(100% - ${drawerWidth}px)` },
+					ml: { sm: `${drawerWidth}px` },
+				}}
+			>
+				<Toolbar>
+					<IconButton
+						color="inherit"
+						aria-label="open drawer"
+						edge="start"
+						onClick={handleDrawerToggle}
+						sx={{ mr: 2, display: { sm: 'none' } }}
+					>
+						<MenuIcon />
+					</IconButton>
+					<Typography variant="h6" noWrap component="div">
+							Edumeet management client
+					</Typography>
+				</Toolbar>
+			</AppBar>
+			<Box
+				component="nav"
+				sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+				aria-label="mailbox folders"
+			>
+				<Drawer
 
-			<Box sx={{ display: 'flex', flex: 1, marginRight: '300px' }}>
-				<CssBaseline />
-				<AppBar
-					position="fixed"
-					style={{ backgroundColor: '#9C298C' }}
+					variant="temporary"
+					open={mobileOpen}
+					onClose={handleDrawerToggle}
+					ModalProps={{
+						keepMounted: true, // Better open performance on mobile.
+					}}
 					sx={{
-						width: { sm: `calc(100% - ${drawerWidth}px)` },
-						ml: { sm: `${drawerWidth}px` },
+						display: { xs: 'block', sm: 'none' },
+						'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
 					}}
 				>
-					<Toolbar>
-						<IconButton
-							color="inherit"
-							aria-label="open drawer"
-							edge="start"
-							onClick={handleDrawerToggle}
-							sx={{ mr: 2, display: { sm: 'none' } }}
-						>
-							<MenuIcon />
-						</IconButton>
-						<Typography variant="h6" noWrap component="div">
-							Edumeet management client
-						</Typography>
-					</Toolbar>
-				</AppBar>
-				<Box
-					component="nav"
-					sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-					aria-label="mailbox folders"
+					{drawer}
+				</Drawer>
+				<Drawer
+					variant="permanent"
+					sx={{
+						display: { xs: 'none', sm: 'block' },
+						'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+					}}
+					open
 				>
-					{/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-					<Drawer
-
-						variant="temporary"
-						open={mobileOpen}
-						onClose={handleDrawerToggle}
-						ModalProps={{
-							keepMounted: true, // Better open performance on mobile.
-						}}
-						sx={{
-							display: { xs: 'block', sm: 'none' },
-							'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-						}}
-					>
-						{drawer}
-					</Drawer>
-					<Drawer
-						variant="permanent"
-						sx={{
-							display: { xs: 'none', sm: 'block' },
-							'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-						}}
-						open
-					>
-						{drawer}
-					</Drawer>
-				</Box>
-				<Box
-					component="main"
-					
-					sx={{ flexGrow: 1, p: 1, width: { xs: 'calc(100%)', sm: 'calc(100%)' } }}
-				>
-					<Toolbar />
-					<div style={{ background: 'white', padding: '2px', maxWidth: '100%', minWidth: '300px' }}>
-						{renderComponent()}
-					</div>
-
-				</Box>
-
+					{drawer}
+				</Drawer>
 			</Box>
-		</>
+			<Box
+				component="main"
+				sx={{ flexGrow: 1, p: 1, width: { xs: 'calc(100%)', sm: 'calc(100%)' } }}
+			>
+				<Toolbar />
+				<div style={{ background: 'white', padding: '2px', maxWidth: '100%', minWidth: '300px' }}>
+					{renderComponent()}
+				</div>
+			</Box>
+		</Box>
 	);
 }

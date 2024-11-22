@@ -44,7 +44,10 @@ const SettingsDialog = (): JSX.Element => {
 							} 
 						}
 						}
-						variant='fullWidth'
+						centered
+						variant="scrollable"
+						scrollButtons="auto"
+						allowScrollButtonsMobile
 					>
 						<Tab label={mediaSettingsLabel()} />
 						<Tab label={appearanceSettingsLabel()} />

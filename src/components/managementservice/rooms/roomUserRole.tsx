@@ -4,9 +4,11 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
 import { Roles, Room, User, UsersRoles } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, /* getDataByRoomId, */ patchData } from '../../../store/actions/managementActions';
+import { RoomProp } from './Room';
 
-const RoomUserRoleTable = () => {
+const RoomUserRoleTable = (props: RoomProp) => {
+	const roomId = props.roomId;
 	const dispatch = useAppDispatch();
 
 	type RoomOptionTypes = Array<Room>
@@ -139,16 +141,19 @@ const RoomUserRoleTable = () => {
 	const [ id, setId ] = useState(0);
 	const [ userId, setUserId ] = useState(0);
 	const [ roleId, setRoleId ] = useState(0);
-	const [ roomId, setRoomId ] = useState(0);
+
+	/* const [ roomId, setRoomId ] = useState(0); */
 
 	const [ cantPatch, setCantPatch ] = useState(true);
 	const [ cantDelete ] = useState(false);
 	const [ userIdOption, setUserIdOption ] = useState<User | undefined>();
 	const [ roleIdOption, setRoleIdOption ] = useState<Roles | undefined>();
-	const [ roomIdOption, setRoomIdOption ] = useState<Room | undefined>();
+
+	/* const [ roomIdOption, setRoomIdOption ] = useState<Room | undefined>(); */
 	const [ userIdOptionDisabled, setUserIdOptionDisabled ] = useState(true);
 	const [ roleIdOptionDisabled, setRoleIdOptionDisabled ] = useState(true);
-	const [ roomIdOptionDisabled, setRoomIdOptionDisabled ] = useState(true);
+
+	/* const [ roomIdOptionDisabled, setRoomIdOptionDisabled ] = useState(true); */
 
 	async function fetchProduct() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -176,8 +181,9 @@ const RoomUserRoleTable = () => {
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('roomUserRoles')).then((tdata: any) => {
+			
 			if (tdata != undefined) {
-				setData(tdata);
+				setData(tdata.data);
 			}
 			setIsLoading(false);
         
@@ -197,13 +203,16 @@ const RoomUserRoleTable = () => {
 		setId(0);
 		setUserId(0);
 		setRoleId(0);
-		setRoomId(0);
+
+		/* setRoomId(0); */
 		setUserIdOption(undefined);
 		setRoleIdOption(undefined);
-		setRoomIdOption(undefined);
+
+		/* setRoomIdOption(undefined); */
 		setUserIdOptionDisabled(false);
 		setRoleIdOptionDisabled(false);
-		setRoomIdOptionDisabled(false);
+
+		/* setRoomIdOptionDisabled(false); */
 		setCantPatch(false);
 		setOpen(true);
 	};
@@ -212,7 +221,8 @@ const RoomUserRoleTable = () => {
 		setCantPatch(true);
 		setUserIdOptionDisabled(true);
 		setRoleIdOptionDisabled(true);
-		setRoomIdOptionDisabled(true);
+
+		/* setRoomIdOptionDisabled(true); */
 		setOpen(true);
 	};
 
@@ -228,12 +238,13 @@ const RoomUserRoleTable = () => {
 			setRoleIdOption(newValue);
 		}
 	};
-	const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
+
+	/* const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
 		if (newValue && typeof newValue.id === 'number') {
 			setRoomId(newValue.id);
 			setRoomIdOption(newValue);
 		}
-	};
+	}; */
 
 	const handleClose = () => {
 		setOpen(false);
@@ -279,6 +290,7 @@ const RoomUserRoleTable = () => {
 
 	return <>
 		<div>
+			<h4>Room-User roles</h4>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
 				Add new
 			</Button>
@@ -312,51 +324,6 @@ const RoomUserRoleTable = () => {
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="Role" />}
 					/>
-					<Autocomplete
-						options={rooms}
-						getOptionLabel={(option) => ((typeof option.name == 'string')?option.name:'')}
-						fullWidth
-						disableClearable
-						readOnly={roomIdOptionDisabled}
-						onChange={handleRoomIdChange}
-						value={roomIdOption}
-						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Room" />}
-					/>
-					{/* <TextField
-						autoFocus
-						margin="dense"
-						id="userId"
-						label="userId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleUserIdChange}
-						value={userId}
-					/>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="roleId"
-						label="roleId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleRoleIdChange}
-						value={roleId}
-					/>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="roomId"
-						label="roomId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleRoomIdChange}
-						value={roomId}
-					/> */}
-					
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={delTenant} disabled={cantDelete} color='warning'>Delete</Button>
@@ -374,7 +341,8 @@ const RoomUserRoleTable = () => {
 					const tid = r[0].getValue();
 					const tuserId=r[1].getValue();
 					const troleId=r[2].getValue();
-					const troomId=r[3].getValue();
+
+					/* const troomId=r[3].getValue(); */
 
 					if (typeof tid === 'number') {
 						setId(tid);
@@ -401,17 +369,6 @@ const RoomUserRoleTable = () => {
 					} else {
 						setRoleId(0);
 						setRoleIdOption(undefined);
-					}
-					if (typeof troomId === 'string') {
-						const troom = rooms.find((x) => x.id === parseInt(troomId));
-
-						if (troom) {
-							setRoomIdOption(troom);
-						}
-						setRoomId(parseInt(troomId));
-					} else {
-						setRoomId(0);
-						setRoomIdOption(undefined);
 					}
 
 					handleClickOpenNoreset();

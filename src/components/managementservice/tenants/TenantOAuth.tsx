@@ -1,13 +1,15 @@
 /* eslint-disable camelcase */
-import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { Tenant, TenantOAuth } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByID, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
+import { TenantProp } from './Tenant';
 
-const TenantOAuthTable = () => {
+const TenantOAuthTable = (props: TenantProp) => {
+	const tenantId = props.tenantId;
 
 	const dispatch = useAppDispatch();
 
@@ -71,10 +73,9 @@ const TenantOAuthTable = () => {
 	const [ data, setData ] = useState([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
-	const [ tenantId, setTenantId ] = useState(0);
 	const [ profileUrl, setProfileUrl ] = useState('');
 	const [ wellknown, setWellknown ] = useState('');
-	const [ wellknownEpmty, setWellknownEmpty ] = useState(true);
+	const [ wellknownEmpty, setWellknownEmpty ] = useState(true);
 
 	const [ key, setKey ] = useState('');
 	const [ secret, setSecret ] = useState('');
@@ -83,8 +84,7 @@ const TenantOAuthTable = () => {
 	const [ scope, setScope ] = useState('');
 	const [ scopeDelimeter, setScopeDelimeter ] = useState('');
 	const [ redirect, setRedirect ] = useState('');
-	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
-
+	
 	async function fetchProduct() {
 		setIsLoading(true);
 
@@ -96,7 +96,7 @@ const TenantOAuthTable = () => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getData('tenantOAuths')).then((tdata: any) => {
+		dispatch(getDataByID(tenantId, 'tenantOAuths')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
@@ -114,7 +114,6 @@ const TenantOAuthTable = () => {
 
 	const handleClickOpen = () => {
 		setId(0);
-		setTenantId(0);
 		setProfileUrl('https://edumeet.example.com/kc/realms/<realm>/protocol/openid-connect/userinfo');
 		setKey('edumeet-dev-client');
 		setSecret('');
@@ -122,21 +121,12 @@ const TenantOAuthTable = () => {
 		setAccessUrl('https://edumeet.example.com/kc/realms/<realm>/protocol/openid-connect/token');
 		setScope('openid profile email');
 		setScopeDelimeter(' ');
-		setTenantIdOption(undefined);
-		setTenantId(0);
 		setRedirect('https://edumeet.example.com/mgmt/oauth/tenant/callback');
 		setOpen(true);
 	};
 
 	const handleClickOpenNoreset = () => {
 		setOpen(true);
-	};
-
-	const handleTenantIdChange = (event: SyntheticEvent<Element, Event>, newValue: Tenant) => {
-		if (newValue) {
-			setTenantId(newValue.id);
-			setTenantIdOption(newValue);
-		}
 	};
 
 	const handleProfileUrlChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -289,16 +279,6 @@ const TenantOAuthTable = () => {
 						onChange={handleTenantIdChange}
 						value={tenantId}
 					/> */}
-					<Autocomplete
-						options={tenants}
-						getOptionLabel={(option) => option.name}
-						fullWidth
-						disableClearable
-						onChange={handleTenantIdChange}
-						value={tenantIdOption}
-						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Tenant" />}
-					/>
 					<TextField
 						margin="dense"
 						required
@@ -309,7 +289,7 @@ const TenantOAuthTable = () => {
 						value={wellknown}
 						onChange={handleWellknownChange}
 					/>
-					<Button onClick={handleWellknownUpdate} variant="contained" fullWidth disabled={wellknownEpmty} >Update parameters from URL</Button>
+					<Button onClick={handleWellknownUpdate} variant="contained" fullWidth disabled={wellknownEmpty} >Update parameters from URL</Button>
 					<TextField
 						margin="dense"
 						required
@@ -409,7 +389,7 @@ const TenantOAuthTable = () => {
 					const r = row.getAllCells();
 
 					const tid = r[0].getValue();
-					const ttenantId= r[1].getValue();
+					// const ttenantId= r[1].getValue();
 					const taccess= r[2].getValue();
 					const tauthorize= r[3].getValue();
 					const tprofile= r[4].getValue();
@@ -420,17 +400,6 @@ const TenantOAuthTable = () => {
 					if (typeof tid === 'number') {
 						setId(tid);
 					}
-					if (typeof ttenantId === 'string') {
-						const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
-
-						if (ttenant) {
-							setTenantIdOption(ttenant);
-						}
-						setTenantId(parseInt(ttenantId));
-					} else {
-						setTenantId(0);
-					}
-
 					if (typeof tprofile === 'string') { setProfileUrl(tprofile); } else {
 						setProfileUrl('');
 					}

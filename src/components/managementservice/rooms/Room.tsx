@@ -6,8 +6,12 @@ import React from 'react';
 import { GroupRoles, Roles, Room, RoomOwners, Tenant, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createRoomWithParams, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import RoomOwnerTable from './RoomOwner';
+import RoomUserRoleTable from './roomUserRole';
 
-// nested data is ok, see accessorKeys in ColumnDef below
+export interface RoomProp {
+	roomId: number;
+}
 
 const RoomTable = () => {
 	const dispatch = useAppDispatch();
@@ -510,7 +514,8 @@ const RoomTable = () => {
 					<FormControlLabel control={<Checkbox checked={filesharingEnabled} onChange={handleFilesharingEnabledChange} />} label="filesharingEnabled" />
 					<FormControlLabel control={<Checkbox checked={localRecordingEnabled} onChange={handleLocalRecordingEnabledChange} />} label="localRecordingEnabled" />
 					<FormControlLabel control={<Checkbox checked={breakoutsEnabled} onChange={handleBreakoutsEnabledChange} />} label="breakoutsEnabled" />
-					
+					<RoomOwnerTable roomId={id} />
+					<RoomUserRoleTable roomId={id} />
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={delTenant} disabled={cantDelete} color='warning'>Delete</Button>

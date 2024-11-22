@@ -45,7 +45,7 @@ const PrecallTitle = (): React.JSX.Element => {
 				>
 					{ loginEnabled &&
 						<Grid item>
-							<Grid container direction='column' alignItems='center'>
+							<Grid container direction='column' alignItems='center' style={{ maxHeight: '40px' }}>
 								<Grid item>
 									{ loggedIn ? <LogoutButton
 										type='iconbutton'

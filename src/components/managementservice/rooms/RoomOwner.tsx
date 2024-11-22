@@ -4,9 +4,12 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
 import { Room, RoomOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByRoomId, patchData } from '../../../store/actions/managementActions';
+import { RoomProp } from './Room';
 
-const RoomOwnerTable = () => {
+const RoomOwnerTable = (props: RoomProp) => {
+	const roomId = props.roomId;
+
 	const dispatch = useAppDispatch();
 
 	type RoomOptionTypes = Array<Room>
@@ -104,11 +107,11 @@ const RoomOwnerTable = () => {
 	const [ id, setId ] = useState(0);
 	const [ cantPatch, setcantPatch ] = useState(false);
 	const [ userIdOption, setUserIdOption ] = useState<User | undefined>();
-	const [ roomIdOption, setRoomIdOption ] = useState<Room | undefined>();
 	const [ userIdOptionDisabled, setUserIdOptionDisabled ] = useState(true);
-	const [ roomIdOptionDisabled, setRoomIdOptionDisabled ] = useState(true);
+
+	/* const [ roomIdOptionDisabled, setRoomIdOptionDisabled ] = useState(true); */
+	/* const [ roomIdOption, setRoomIdOption ] = useState<Room | undefined>(); */
 	
-	const [ roomId, setRoomId ] = useState(0);
 	const [ userId, setUserId ] = useState(0);
 
 	async function fetchProduct() {
@@ -130,7 +133,7 @@ const RoomOwnerTable = () => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getData('roomOwners')).then((tdata: any) => {
+		dispatch(getDataByRoomId(roomId, 'roomOwners')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
@@ -150,19 +153,23 @@ const RoomOwnerTable = () => {
 
 	const handleClickOpen = () => {
 		setId(0);
-		setRoomId(0);
+
+		/* setRoomId(0); */
 		setUserId(0);
 		setUserIdOption(undefined);
-		setRoomIdOption(undefined);
+
+		/* setRoomIdOption(undefined); */
 		setUserIdOptionDisabled(false);
-		setRoomIdOptionDisabled(false);
+
+		/* setRoomIdOptionDisabled(false); */
 		setcantPatch(false);
 		setOpen(true);
 	};
 
 	const handleClickOpenNoreset = () => {
 		setUserIdOptionDisabled(true);
-		setRoomIdOptionDisabled(true);
+
+		/* setRoomIdOptionDisabled(true); */
 		setcantPatch(true);
 		setOpen(true);
 	};
@@ -173,12 +180,13 @@ const RoomOwnerTable = () => {
 			setUserIdOption(newValue);
 		}
 	};
-	const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
+
+	/* const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
 		if (newValue && typeof newValue.id === 'number') {
 			setRoomId(newValue.id);
 			setRoomIdOption(newValue);
 		}
-	};
+	}; */
 
 	const handleClose = () => {
 		setOpen(false);
@@ -222,6 +230,7 @@ const RoomOwnerTable = () => {
 
 	return <>
 		<div>
+			<h4>Room owners</h4>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
 				Add new
 			</Button>
@@ -233,7 +242,7 @@ const RoomOwnerTable = () => {
 						These are the parameters that you can change.
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
-					<Autocomplete
+					{/* <Autocomplete
 						options={rooms}
 						getOptionLabel={(option) => ((typeof option.name == 'string')?option.name:'')}
 						fullWidth
@@ -243,7 +252,7 @@ const RoomOwnerTable = () => {
 						value={roomIdOption}
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="Room" />}
-					/>
+					/> */}
 					<Autocomplete
 						options={users}
 						getOptionLabel={(option) => option.email}
@@ -270,7 +279,8 @@ const RoomOwnerTable = () => {
 					const r = row.getAllCells();
 
 					const tid = r[0].getValue();
-					const troomId=r[1].getValue();
+
+					/* const troomId=r[1].getValue(); */
 					const tuserId=r[2].getValue();
 					
 					if (typeof tid === 'number') {
@@ -288,7 +298,7 @@ const RoomOwnerTable = () => {
 						setUserIdOption(undefined);
 					}
 					
-					if (typeof troomId === 'string') {
+					/* 					if (typeof troomId === 'string') {
 						const troom = rooms.find((x) => x.id === parseInt(troomId));
 
 						if (troom) {
@@ -298,7 +308,7 @@ const RoomOwnerTable = () => {
 					} else {
 						setRoomId(0);
 						setRoomIdOption(undefined);
-					}
+					} */
 
 					handleClickOpenNoreset();
 

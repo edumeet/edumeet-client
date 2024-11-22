@@ -1,13 +1,14 @@
-import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { Tenant, TenantFQDN } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByID, patchData } from '../../../store/actions/managementActions';
+import { TenantProp } from './Tenant';
 
-const TenantFQDNTable = () => {
-
+const TenantFQDNTable = (props: TenantProp) => {
+	const tenantId = props.tenantId;
 	const dispatch = useAppDispatch();
 
 	type TenantOptionTypes = Array<Tenant>
@@ -54,9 +55,6 @@ const TenantFQDNTable = () => {
 	const [ data, setData ] = useState([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
-	const [ tenantId, setTenantId ] = useState(0);
-	
-	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
 
 	const [ fqdn, setFQDN ] = useState('');
 
@@ -73,7 +71,7 @@ const TenantFQDNTable = () => {
 		});
 		
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getData('tenantFQDNs')).then((tdata: any) => {
+		dispatch(getDataByID(tenantId, 'tenantFQDNs')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
@@ -90,8 +88,6 @@ const TenantFQDNTable = () => {
 
 	const handleClickOpen = () => {
 		setId(0);
-		setTenantId(0);
-		setTenantIdOption(undefined);
 		setDescription('');
 		setFQDN('');
 		setOpen(true);
@@ -99,13 +95,6 @@ const TenantFQDNTable = () => {
 
 	const handleClickOpenNoreset = () => {
 		setOpen(true);
-	};
-
-	const handleTenantIdChange = (event: SyntheticEvent<Element, Event>, newValue: Tenant) => {
-		if (newValue) {
-			setTenantId(newValue.id);
-			setTenantIdOption(newValue);
-		}
 	};
 
 	const handleDescriptionChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -164,16 +153,6 @@ const TenantFQDNTable = () => {
 						These are the parameters that you can change.
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
-					<Autocomplete
-						options={tenants}
-						getOptionLabel={(option) => option.name}
-						fullWidth
-						disableClearable
-						onChange={handleTenantIdChange}
-						value={tenantIdOption}
-						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Tenant" />}
-					/>
 					<TextField
 						margin="dense"
 						id="description"
@@ -207,23 +186,12 @@ const TenantFQDNTable = () => {
 					const r = row.getAllCells();
 
 					const tid = r[0].getValue();
-					const ttenantId = r[1].getValue();
+					// const ttenantId = r[1].getValue();
 					const tdescription = r[2].getValue();
 					const tfqdn = r[3].getValue();
 
 					if (typeof tid === 'number') {
 						setId(tid);
-					}
-
-					if (typeof ttenantId === 'string') {
-						const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
-
-						if (ttenant) {
-							setTenantIdOption(ttenant);
-						}
-						setTenantId(parseInt(ttenantId));
-					} else {
-						setTenantId(0);
 					}
 
 					if (typeof tdescription === 'string') {
@@ -244,7 +212,11 @@ const TenantFQDNTable = () => {
 			columns={columns}
 			data={data} // fallback to array if data is undefined
 			initialState={{
-				columnVisibility: {}
+				columnVisibility: {
+					id: false,
+					tenantId: false,
+					description: false
+				}
 			}}
 			state={{ isLoading }} /></>;
 };
