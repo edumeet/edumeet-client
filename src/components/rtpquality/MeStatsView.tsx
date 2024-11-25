@@ -126,8 +126,7 @@ const MeStatsView = () : JSX.Element => {
 						<span key={index + 2}>sending: {stats.sendingKbps ?? -1} kbps</span><br />
 						<span key={index + 3}>RTT: {stats.RTT ?? -1} ms</span><br />
 						<span key={index + 4}>Fps: {stats.Fps ?? -1}</span><br />
-						<span key={index + 5}>rid: {stats.rid ?? -1}</span><br />
-						<span key={index + 6}>Res: {stats.frameWidth ?? -1}x{stats.frameHeight ?? -1}</span><br />						
+						<span key={index + 5}>Res: {stats.frameWidth ?? -1}x{stats.frameHeight ?? -1} ({stats.rid ?? -1})</span><br />
 						<br />
 					</div>
 				);

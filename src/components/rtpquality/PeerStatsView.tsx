@@ -133,6 +133,7 @@ const PeerStatsView = ({
 						<span key={index + 3}>FractionLoss: {stats.fractionLoss ?? -1}</span><br />
 						<span key={index + 4}>MOS: {stats.meanOpinionScore}</span><br />
 						<span key={index + 5}>Res: {stats.frameWidth ?? -1}x{stats.frameHeight ?? -1}</span><br />
+						<br />
 					</div>
 				);
 			})}
