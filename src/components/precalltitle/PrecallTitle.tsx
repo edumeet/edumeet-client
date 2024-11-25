@@ -1,4 +1,5 @@
-import { Grid, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+import { Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import edumeetConfig from '../../utils/edumeetConfig';
 import LoginButton from '../controlbuttons/LoginButton';
@@ -23,44 +24,25 @@ const PrecallTitle = (): React.JSX.Element => {
 	}, []);
 
 	return (
-		<Grid
-			container
-			direction='row'
-			justifyContent='space-between'
-			alignItems='center'
-		>
-			<Grid item>
-				{ logo ?
+		<Grid container spacing={2}>
+			<Grid size={8}>
+				{logo ?
 					<img alt='Logo' src={logo} /> :
-					<Typography variant='h5'> {edumeetConfig.title} </Typography>
+					<Typography variant='h5'> {edumeetConfig.title} </Typography>}
+			</Grid>
+			<Grid size={4} style={{ display: 'flex', justifyContent: 'end' }} >
+				{loginEnabled &&
+							<>
+								{loggedIn ? <LogoutButton
+									type='iconbutton'
+									toolTipLocation='left' /> : <LoginButton type="iconbutton" toolTipLocation='left' />}
+								{loggedIn ? logoutLabel() : loginLabel()}
+							</>
+	
 				}
-			</Grid>
 
-			<Grid item>
-				<Grid
-					container
-					direction='row'
-					justifyContent='flex-end'
-					alignItems='center'
-				>
-					{ loginEnabled &&
-						<Grid item>
-							<Grid container direction='column' alignItems='center' style={{ maxHeight: '40px' }}>
-								<Grid item>
-									{ loggedIn ? <LogoutButton
-										type='iconbutton'
-										toolTipLocation='left'
-									/> : <LoginButton type="iconbutton" toolTipLocation='left' />
-									}
-								</Grid>
-								<Grid item>
-									{ loggedIn ? logoutLabel() : loginLabel() }
-								</Grid>
-							</Grid>
-						</Grid>
-					}
-				</Grid>
 			</Grid>
+			
 		</Grid>
 	);
 };
