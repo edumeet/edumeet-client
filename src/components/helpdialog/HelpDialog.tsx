@@ -25,7 +25,7 @@ const HelpDialog = (): JSX.Element => {
 			open={ helpOpen }
 			onClose={ handleCloseHelp }
 			maxWidth='xs'
-			content={ <><ShortcutKeys /></> }
+			content={ <ShortcutKeys /> }
 			actions={
 				<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
 					<Box display="flex" alignItems="left">

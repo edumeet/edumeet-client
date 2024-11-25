@@ -28,3 +28,4 @@ yarn-error.log*
 
 !types.d.ts
 .vscode
+stats.html
