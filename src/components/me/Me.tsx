@@ -6,7 +6,7 @@ import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
-import PeerStatsView from '../rtpquality/PeerStatsView';
+import MeStatsView from '../rtpquality/MeStatsView';
 import QualityIndicator from '../rtpquality/QualityIndicator';
 
 interface MeProps {
@@ -39,7 +39,7 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 					{ micEnabled && !isMobile && <UnmuteAlert /> }
 
 					<DisplayName disabled={false} displayName={displayName} isMe />
-					{ !isMobile && showStats && <PeerStatsView /> }
+					{ !isMobile && showStats && <MeStatsView /> }
 					<QualityIndicator />
 
 				</VideoBox>
