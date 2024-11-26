@@ -24,7 +24,8 @@ function createOutboundStats(trackStats: TrackStats, avgRttInS?: number): Outbou
 	const result: OutboundStats[] = [];
 
 	for (const outboundRtpEntry of trackStats.outboundRtps()) {
-		
+		if (!outboundRtpEntry.stats.active)
+			continue;
 		const stats = outboundRtpEntry.stats;
 		const item: OutboundStats = {
 			ssrc: stats.ssrc,
@@ -41,7 +42,7 @@ function createOutboundStats(trackStats: TrackStats, avgRttInS?: number): Outbou
 
 	return result;
 }
-
+// FIXME: not work on p2p mode
 export const MeStatsView = () : JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ outboundStats, setOutboundStats ] = useState<OutboundStats[]>([]);
