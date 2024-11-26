@@ -42,8 +42,7 @@ function createOutboundStats(trackStats: TrackStats, avgRttInS?: number): Outbou
 	return result;
 }
 
-/* eslint-disable */
-const MeStatsView = () : JSX.Element => {
+export const MeStatsView = () : JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ outboundStats, setOutboundStats ] = useState<OutboundStats[]>([]);
 
@@ -133,4 +132,5 @@ const MeStatsView = () : JSX.Element => {
 			})}
 		</Stats>);
 };
+
 export default MeStatsView;
