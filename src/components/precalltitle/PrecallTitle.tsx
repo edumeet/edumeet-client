@@ -32,17 +32,14 @@ const PrecallTitle = (): React.JSX.Element => {
 			</Grid>
 			<Grid size={4} style={{ display: 'flex', justifyContent: 'end' }} >
 				{loginEnabled &&
-							<>
-								{loggedIn ? <LogoutButton
-									type='iconbutton'
-									toolTipLocation='left' /> : <LoginButton type="iconbutton" toolTipLocation='left' />}
-								{loggedIn ? logoutLabel() : loginLabel()}
-							</>
-	
+					<>
+						{loggedIn ? <LogoutButton
+							type='iconbutton'
+							toolTipLocation='left' /> : <LoginButton type="iconbutton" toolTipLocation='left' />}
+						{loggedIn ? logoutLabel() : loginLabel()}
+					</>
 				}
-
 			</Grid>
-			
 		</Grid>
 	);
 };
