@@ -1,14 +1,19 @@
 import React, { useRef } from 'react';
-import { IconButton, Grid, Switch, TextField, styled } from '@mui/material';
+import { IconButton, Grid, Switch, styled } from '@mui/material';
 import { HighlightOff as HighlightOffIcon, Pause as PauseIcon, PlayArrow as PlayArrowIcon } from '@mui/icons-material';
 import moment from 'moment';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCountdownTimerInitialTime, startCountdownTimer, stopCountdownTimer, disableCountdownTimer, enableCountdownTimer } from '../../store/actions/countdownTimerActions';
 import { 
 	countdownTimerStartLabel, countdownTimerStopLabel, 
-	countdownTimerEnableLabel, countdownTimerDisableLabel, countdownTimerSetLabel } 
+	countdownTimerEnableLabel, countdownTimerDisableLabel } 
 	from '../translated/translatedComponents';
 import { isMobileSelector } from '../../store/selectors';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+
+import 'dayjs/locale/de';
 
 const CountdownTimerDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
@@ -53,35 +58,20 @@ const CountdownTimer = () : JSX.Element => {
 
 				{/*  set */}
 				<Grid item xs={8}>
-					<TextField fullWidth
-						aria-label={countdownTimerSetLabel()}
-						inputRef={inputRef}
-						autoFocus={!isMobile}
-						sx={{ flexGrow: '1' }}
-						variant='outlined'
-						label={(isMobile) ? 'timer (HH:mm)' : 'timer (HH:mm:ss)'}
-						disabled={!isEnabled || (isStarted && remainingTime !== '00:00:00')}
-						type='time'
-						value={remainingTime}
-						size='small'
-						InputLabelProps={{ shrink: true }}
-						inputProps={{ step: '1' }}
-						onChange={(e) => {
-							const time = (isMobile && moment(e.target.value, 'HH:mm', true).isValid())
-								? moment(`${e.target.value}:00`, 'HH:mm:ss').format('HH:mm:ss')
-								: moment(`${e.target.value}`, 'HH:mm:ss').format('HH:mm:ss');
-							
-							dispatch(setCountdownTimerInitialTime(time));
-						}}
-						onKeyDown={(e) => {
-							if (remainingTime !== '00:00:00') {
-								if (e.key === 'Enter') {
-									dispatch(startCountdownTimer());
-									e.preventDefault();
-								}
-							}
-						}}
-					/>
+					<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="de">
+						<TimePicker
+							label={(isMobile) ? 'timer (HH:mm)' : 'timer (HH:mm:ss)'}
+							ampm={false}
+							views={[ 'hours', 'minutes', 'seconds' ]}
+							defaultValue={moment('2024-12-01T00:00')}
+							disabled={!isEnabled || (isStarted && remainingTime !== '00:00:00')}
+							onChange={(newValue: moment.Moment | null) => {
+								if (newValue)
+									dispatch(setCountdownTimerInitialTime(newValue.format('HH:mm:ss')));
+							}}
+						/>  
+					</LocalizationProvider>
+
 				</Grid>
 
 				{/* reset */}
