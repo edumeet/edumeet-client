@@ -7,6 +7,7 @@ import {
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { audioOutputDeviceLabel, noAudioOutputDevicesLabel, selectAudioOutputDeviceLabel } from '../translated/translatedComponents';
+import TestAudioOutputButton from '../audiooutputtest/AudioOutputTest';
 
 const AudioOutputChooser = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -37,8 +38,13 @@ const AudioOutputChooser = (): JSX.Element => {
 						disabled={audioDevices.length < 2 || audioInProgress}
 						devices={audioDevices}
 					/>
+					<TestAudioOutputButton />
 				</ChooserDiv>
 			)}
+			{audioDevices.length == 1 && (
+				<TestAudioOutputButton />
+			)}
+
 		</>
 	);
 };

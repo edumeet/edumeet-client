@@ -13,11 +13,9 @@ import { settingsActions } from '../../store/slices/settingsSlice';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
-import { BlurSwitch } from '../../components/settingsdialog/SettingsSwitches';
 import { meActions } from '../../store/slices/meSlice';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 import { canSelectAudioOutput } from '../../store/selectors';
-import TestAudioOutputButton from '../../components/audiooutputtest/AudioOutputTest';
 import edumeetConfig from '../../utils/edumeetConfig';
 import MicVolume from '../../components/volume/MicVolume';
 
@@ -75,8 +73,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 					{ showAudioOutputChooser && <AudioOutputChooser /> }
 					<VideoInputChooser />
 					<MicVolume />
-					<TestAudioOutputButton />
-					<BlurSwitch />
+					
 					<ChooserDiv>
 						<TextInputField
 							label={yourNameLabel()}

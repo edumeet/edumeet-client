@@ -15,6 +15,7 @@ import {
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { meActions } from '../../store/slices/meSlice';
+import { BlurButton, BlurSwitch } from '../settingsdialog/SettingsSwitches';
 
 interface VideoInputChooserProps {
 	withConfirm?: boolean;
@@ -79,7 +80,12 @@ const VideoInputChooser = ({
 							</Button>
 						)}
 					</>
+					<BlurButton />
+
 				</ChooserDiv>
+			}
+			{ videoDevices.length == 1 &&
+				<BlurSwitch />
 			}
 		</>
 	);

@@ -2,7 +2,6 @@ import { List, styled } from '@mui/material';
 import AudioInputChooser from '../devicechooser/AudioInputChooser';
 import VideoInputChooser from '../devicechooser/VideoInputChooser';
 import MediaPreview from '../mediapreview/MediaPreview';
-import { BlurSwitch } from './SettingsSwitches';
 import { useAppSelector } from '../../store/hooks';
 import { canSelectAudioOutput } from '../../store/selectors';
 import AudioOutputChooser from '../devicechooser/AudioOutputChooser';
@@ -23,7 +22,6 @@ const MediaSettings = (): JSX.Element => {
 			</NestedList>
 			<NestedList>
 				<VideoInputChooser withConfirm />
-				<BlurSwitch />
 			</NestedList>
 		</List>
 	);
