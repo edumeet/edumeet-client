@@ -11,6 +11,7 @@ var config = {
 	managementUrl: 'http://localhost:3030',
 	// Location of the privacy files.
 	impressumUrl: '/privacy/privacy.html',
+	loginImageURL: '',
 	// If ability to log in is enabled.
 	loginEnabled: true,
 

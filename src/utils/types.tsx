@@ -4,6 +4,7 @@ import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	managementUrl: undefined,
+	loginImageURL: '',
 	p2penabled: false,
 	loginEnabled: false,
 	developmentPort: 8443,
@@ -105,6 +106,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 
 export interface EdumeetConfig {
 	managementUrl?: string;
+	loginImageURL?: string;
 	p2penabled: boolean;
 	loginEnabled: boolean;
 	developmentPort: number;
