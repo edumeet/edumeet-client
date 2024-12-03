@@ -13,14 +13,10 @@ const PrecallTitle = (): React.JSX.Element => {
 
 	const logo = useAppSelector((state) => state.room.logo);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
-	let loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	useEffect(() => {
-
-		dispatch(checkJWT()).then(() => {
-			loggedIn = useAppSelector((state) => state.permissions.loggedIn);
-		});
-
+		dispatch(checkJWT());
 	}, []);
 
 	return (
