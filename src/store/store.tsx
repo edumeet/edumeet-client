@@ -34,6 +34,7 @@ import meSlice from './slices/meSlice';
 import consumersSlice from './slices/consumersSlice';
 import signalingSlice from './slices/signalingSlice';
 import permissionsSlice from './slices/permissionsSlice';
+import managementSlice from './slices/managementSlice';
 import lobbyPeersSlice from './slices/lobbyPeersSlice';
 import settingsSlice from './slices/settingsSlice';
 import peersSlice from './slices/peersSlice';
@@ -122,6 +123,7 @@ const reducer = combineReducers({
 	me: meSlice.reducer,
 	peers: peersSlice.reducer,
 	permissions: permissionsSlice.reducer,
+	management: managementSlice.reducer,
 	room: roomSlice.reducer,
 	roomSessions: roomSessionsSlice.reducer,
 	settings: settingsSlice.reducer,

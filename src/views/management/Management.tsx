@@ -25,13 +25,13 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import { getUserData } from '../../store/actions/managementActions';
+import { getUserData, startMGMTListeners, stopMGMTListeners } from '../../store/actions/managementActions';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
 import TenantAdminTable from '../../components/managementservice/tenants/TenantAdmin';
 import TenantOwnerTable from '../../components/managementservice/tenants/TenantOwner';
 import { checkJWT, logout } from '../../store/actions/permissionsActions';
+import { managamentActions } from '../../store/slices/managementSlice';
 import SignIn from '../../components/settingsdialog/managementsettings/ManagementAdminLoginSettings';
-import { startMGMTListeners, stopMGMTListeners } from '../../store/actions/mgmtActions';
 import GroupRoleTable from '../../components/managementservice/groups/GroupRole';
 import GroupUserTable from '../../components/managementservice/groups/GroupUser';
 
@@ -43,41 +43,40 @@ const drawerWidth = 300;
 
 export default function ManagementUI(/* props: Props */) {
 	useNotifier();
-		
 	const dispatch = useAppDispatch();
-	
+
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	const username = useAppSelector((state) => state.management.username);
+
 	const [ mobileOpen, setMobileOpen ] = useState(false);
 
 	const handleDrawerToggle = () => {
-		setMobileOpen(!mobileOpen);
+		setMobileOpen((prev) => !prev);
 	};
 
 	const [ selectedComponent, setSelectedComponent ] = useState('');
-	const [ username, setUsername ] = useState('');
-	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	useEffect(() => {
 		dispatch(startMGMTListeners());
 
-		dispatch(checkJWT()).then(() => {
-		});
+		dispatch(checkJWT());
 
 		return () => {
 			dispatch(stopMGMTListeners());
 		};
 	}, []);
+
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getUserData()).then((tdata: any) => {
 			if (tdata) {
-				setUsername(tdata.user.email);				
+				dispatch(managamentActions.setUsername(tdata.user.email));			
 			}
 		});
 	}, [ loggedIn ]);
 
 	// Function to render the selected component in the placeholder
 	const renderComponent = () => {
-
 		if (loggedIn) {
 			switch (selectedComponent) {
 				case 'login':
