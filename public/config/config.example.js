@@ -7,6 +7,10 @@
 
 // eslint-disable-next-line
 var config = {
+	infoTooltipEnabled: false,
+	infoTooltipText: 'Tooltip text',
+	infoTooltipLink: '',
+	infoTooltipDesc: 'Tooltip desc ... Lorem ipsum',
 	// Location of management service.
 	managementUrl: 'http://localhost:3030',
 	// Location of the privacy files.

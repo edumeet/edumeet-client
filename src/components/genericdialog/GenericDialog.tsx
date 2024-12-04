@@ -1,8 +1,12 @@
 import { ReactNode } from 'react';
-import { DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { DialogActions, DialogContent, DialogTitle, Link } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Dialog } from '@mui/material';
 import { memo } from 'react';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid2';
+
+import edumeetConfig from '../../utils/edumeetConfig';
 
 export const RawStyledDialog = memo(styled(Dialog)({
 	'.MuiDialog-paper': {
@@ -46,6 +50,13 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
 	paddingLeft: theme.spacing(2),
 }));
 
+const StyledDialogFooter = styled(DialogActions)(({ theme }) => ({
+	paddingTop: theme.spacing(1),
+	paddingBottom: theme.spacing(2),
+	paddingRight: theme.spacing(2),
+	paddingLeft: theme.spacing(2),
+}));
+
 const GenericDialog = ({
 	title,
 	content,
@@ -54,6 +65,11 @@ const GenericDialog = ({
 	onClose,
 	maxWidth = 'xs',
 }: GenericDialogProps): JSX.Element => {
+	const infoTooltipEnabled = edumeetConfig.infoTooltipEnabled;
+	const infoTooltipText = edumeetConfig.infoTooltipText;
+	const infoTooltipLink = edumeetConfig.infoTooltipLink;
+	const infoTooltipDesc = edumeetConfig.infoTooltipDesc;
+	
 	return (
 		<StyledPrecallDialog open={open} onClose={onClose} maxWidth={maxWidth}>
 			<StyledDialogTitle>
@@ -65,6 +81,18 @@ const GenericDialog = ({
 			<StyledDialogActions>
 				{ actions }
 			</StyledDialogActions>
+			<Divider />
+			{infoTooltipEnabled && <StyledDialogFooter>
+				<Grid container>
+					<Grid size={12} textAlign={'center'}>
+						{infoTooltipLink!='' ? <Link href={infoTooltipLink}>{ infoTooltipText }</Link> : infoTooltipText }
+					</Grid>
+					{infoTooltipDesc!='' && <Grid size={12} textAlign={'justify'}>
+						{ infoTooltipDesc }
+					</Grid>
+					}
+				</Grid>
+			</StyledDialogFooter>}
 		</StyledPrecallDialog>
 	);
 };

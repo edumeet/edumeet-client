@@ -3,6 +3,10 @@ import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
+	infoTooltipEnabled: false,
+	infoTooltipText: '',
+	infoTooltipLink: '',
+	infoTooltipDesc: '',
 	managementUrl: undefined,
 	loginImageURL: '',
 	p2penabled: false,
@@ -105,6 +109,10 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 };
 
 export interface EdumeetConfig {
+	infoTooltipEnabled: boolean;
+	infoTooltipText?: string;
+	infoTooltipLink?: string;
+	infoTooltipDesc?: string;
 	managementUrl?: string;
 	loginImageURL?: string;
 	p2penabled: boolean;
