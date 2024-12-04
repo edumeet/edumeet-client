@@ -21,6 +21,7 @@ interface GenericDialogProps {
 	open?: boolean;
 	onClose?: () => void;
 	maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+	showFooter?: boolean;
 }
 
 const StyledPrecallDialog = styled(RawStyledDialog)(({ theme }) => ({
@@ -64,6 +65,7 @@ const GenericDialog = ({
 	open = true,
 	onClose,
 	maxWidth = 'xs',
+	showFooter = false,
 }: GenericDialogProps): JSX.Element => {
 	const infoTooltipEnabled = edumeetConfig.infoTooltipEnabled;
 	const infoTooltipText = edumeetConfig.infoTooltipText;
@@ -82,7 +84,7 @@ const GenericDialog = ({
 				{ actions }
 			</StyledDialogActions>
 			<Divider />
-			{infoTooltipEnabled && <StyledDialogFooter>
+			{infoTooltipEnabled && showFooter && <StyledDialogFooter>
 				<Grid container>
 					<Grid size={12} textAlign={'center'}>
 						{infoTooltipLink!='' ? <Link href={infoTooltipLink}>{ infoTooltipText }</Link> : infoTooltipText }

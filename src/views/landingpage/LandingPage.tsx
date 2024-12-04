@@ -22,6 +22,7 @@ const LandingPage = (): JSX.Element => {
 	return (
 		<StyledBackground>
 			<GenericDialog
+				showFooter={true}
 				title={ <PrecallTitle /> }
 				content={
 					<Container style={{ textAlign: 'center' }}>
