@@ -35,10 +35,6 @@ import SignIn from '../../components/settingsdialog/managementsettings/Managemen
 import GroupRoleTable from '../../components/managementservice/groups/GroupRole';
 import GroupUserTable from '../../components/managementservice/groups/GroupUser';
 
-/* import RoomUserRoleTable from '../../components/managementservice/rooms/roomUserRole'; */
-/* import PermissionTable from '../../components/managementservice/permisssion/Permission';
-import InfoIcon from '@mui/icons-material/Info'; */
-
 const drawerWidth = 300;
 
 export default function ManagementUI(/* props: Props */) {
@@ -94,10 +90,6 @@ export default function ManagementUI(/* props: Props */) {
 					return <>
 						Rooms
 						<RoomTable />
-						{/* Room owners
-						<RoomOwnerTable /> */}
-						{/* Room user roles
-						<RoomUserRoleTable /> */}
 					</>;
 				case 'user':
 					return <>
@@ -118,8 +110,6 @@ export default function ManagementUI(/* props: Props */) {
 						<RoleTable />
 					</>;
 
-				/* case 'permission':
-					return <>Permissions<PermissionTable /></>; */
 				default:
 					return <Box sx={{ minWidth: '400px' }}>Select an item to load a component </Box>;
 			}
@@ -132,7 +122,7 @@ export default function ManagementUI(/* props: Props */) {
 		<div>
 			<List>
 				<ListItem style={{ justifyContent: 'center' }} >
-					<img src='/images/logo.edumeet.svg' />
+					<img src='/images/logo.edumeet.svg' alt='logo' />
 				</ListItem>
 			
 				<ListItem key={'{username}'} disablePadding onClick={
