@@ -87,9 +87,7 @@ export default function ManagementUI(/* props: Props */) {
 					return <>
 						Tenant settings
 						<TenantTable />
-						Tenant admins
 						<TenantOwnerTable />
-						Tenants owners
 						<TenantAdminTable />
 					</>;
 				case 'room':
