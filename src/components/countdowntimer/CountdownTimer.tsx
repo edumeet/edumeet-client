@@ -12,7 +12,7 @@ import { isMobileSelector } from '../../store/selectors';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-
+import { fullscreenConsumerSelector } from '../../store/selectors';
 import 'dayjs/locale/de';
 
 const CountdownTimerDiv = styled('div')(({ theme }) => ({
@@ -48,6 +48,8 @@ const CountdownTimer = () : JSX.Element => {
 			clearTimeout(timeout);
 		};
 	};
+	
+	const consumer = useAppSelector(fullscreenConsumerSelector);
 
 	return (
 		<CountdownTimerDiv>
@@ -60,7 +62,12 @@ const CountdownTimer = () : JSX.Element => {
 				<Grid item xs={8}>
 					<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="de">
 						<TimePicker
-							label={(isMobile) ? 'timer (HH:mm)' : 'timer (HH:mm:ss)'}
+							label={
+								consumer 
+									? '' // Hide the label if consumer is empty
+									: (isMobile ? 'timer (HH:mm)' : 'timer (HH:mm:ss)')
+							}
+							
 							ampm={false}
 							views={[ 'hours', 'minutes', 'seconds' ]}
 							defaultValue={moment('2024-12-01T00:00')}

@@ -73,7 +73,8 @@ const VideoBox = ({
 			children={children}
 			roundedcorners={roundedCorners ? 1 : 0}
 			sx={sx}
-			style={{ zIndex: '200' }} 
+
+			/* style={{ zIndex: '200' }}  */
 		/>
 	);
 };

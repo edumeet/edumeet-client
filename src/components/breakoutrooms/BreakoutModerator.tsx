@@ -1,10 +1,11 @@
 import { IconButton, styled } from '@mui/material';
 import { memo, useState } from 'react';
 import { createBreakoutRoomLabel, newBreakoutRoomNameLabel } from '../translated/translatedComponents';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createBreakoutRoom } from '../../store/actions/roomActions';
 import TextInputField from '../textinputfield/TextInputField';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import { fullscreenConsumerSelector } from '../../store/selectors';
 
 const ModeratorDiv = styled('div')(({ theme }) => ({
 	width: '100%',
@@ -26,10 +27,12 @@ const BreakoutModerator = (): JSX.Element => {
 		}
 	};
 
+	const consumer = useAppSelector(fullscreenConsumerSelector);
+
 	return (
 		<ModeratorDiv>
 			<TextInputField
-				label={newBreakoutRoomNameLabel()}
+				label={consumer ? '' : newBreakoutRoomNameLabel()}
 				value={name}
 				margin='dense'
 				setValue={setName}
