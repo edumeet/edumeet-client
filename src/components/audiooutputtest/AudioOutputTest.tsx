@@ -5,7 +5,6 @@ import {
 	useDeviceSelector
 } from '../../store/hooks';
 import { notificationsActions } from '../../store/slices/notificationsSlice';
-import { ChooserDiv } from '../devicechooser/DeviceChooser';
 import { testAudioOutputLabel } from '../translated/translatedComponents';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 
@@ -21,7 +20,6 @@ const TestAudioOutputButton = (): JSX.Element => {
 	return (
 		<>
 			{ audioDevices.length > 1 &&
-			<ChooserDiv>
 				<Tooltip title={ testAudioOutputLabel() }>
 					<Button
 						onClick={triggerTestSound}
@@ -30,7 +28,6 @@ const TestAudioOutputButton = (): JSX.Element => {
 						<AudiotrackIcon />
 					</Button>
 				</Tooltip>
-			</ChooserDiv>
 			}
 		</>
 	);

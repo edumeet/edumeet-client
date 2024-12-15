@@ -17,7 +17,6 @@ import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 import { canSelectAudioOutput } from '../../store/selectors';
-import TestAudioOutputButton from '../../components/audiooutputtest/AudioOutputTest';
 import edumeetConfig from '../../utils/edumeetConfig';
 
 const Lobby = (): React.JSX.Element => {
@@ -45,7 +44,6 @@ const Lobby = (): React.JSX.Element => {
 					<MediaPreview />
 					<AudioInputChooser />
 					{showAudioOutputChooser && <AudioOutputChooser /> }
-					<TestAudioOutputButton />
 					<VideoInputChooser />
 					<ChooserDiv>
 						<TextInputField

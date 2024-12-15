@@ -1,4 +1,4 @@
-import { Button, Tooltip } from '@mui/material';
+import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { updatePreviewWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import {
@@ -16,7 +16,6 @@ import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { meActions } from '../../store/slices/meSlice';
 import { BlurButton, BlurSwitch } from '../settingsdialog/SettingsSwitches';
-import SaveIcon from '@mui/icons-material/Save';
 
 interface VideoInputChooserProps {
 	withConfirm?: boolean;
@@ -69,22 +68,23 @@ const VideoInputChooser = ({
 						noDevicesLabel={noVideoDevicesLabel()}
 						disabled={videoDevices.length < 2 || videoInProgress}
 						devices={videoDevices}
-					/>
-					<>
-						{ withConfirm && (selectedVideoDevice !== videoDevice) && (
-							<Tooltip title={ applyLabel() }>
+						extraButtons={<>
+							<BlurButton />
+
+							{ withConfirm && (selectedVideoDevice !== videoDevice) && (
+								
 								<Button
-									variant='contained'
+									variant='text'
 									onClick={handleConfirm}
 									disabled={videoInProgress}
 								>
-									<SaveIcon/>
+									{applyLabel()}
 								</Button>
-							</Tooltip>
-						)}
-					</>
-					<BlurButton />
-
+								
+							)}
+						</>}
+					/>
+					
 				</ChooserDiv>
 			}
 			{ videoDevices.length == 1 &&

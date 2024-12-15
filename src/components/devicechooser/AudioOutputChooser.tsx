@@ -37,8 +37,8 @@ const AudioOutputChooser = (): JSX.Element => {
 						noDevicesLabel={noAudioOutputDevicesLabel()}
 						disabled={audioDevices.length < 2 || audioInProgress}
 						devices={audioDevices}
+						extraButtons={<TestAudioOutputButton />						}
 					/>
-					<TestAudioOutputButton />
 				</ChooserDiv>
 			)}
 			{audioDevices.length == 1 && (

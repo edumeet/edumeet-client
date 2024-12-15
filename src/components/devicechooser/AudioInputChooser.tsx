@@ -1,4 +1,4 @@
-import { Button, Tooltip } from '@mui/material';
+import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
@@ -15,7 +15,6 @@ import {
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { meActions } from '../../store/slices/meSlice';
-import SaveIcon from '@mui/icons-material/Save';
 
 interface AudioInputChooserProps {
 	withConfirm?: boolean;
@@ -68,18 +67,18 @@ const AudioInputChooser = ({
 						noDevicesLabel={noAudioInputDevicesLabel()}
 						disabled={audioDevices.length < 2 || audioInProgress}
 						devices={audioDevices}
-					/>
-					{ withConfirm && (selectedAudioDevice !== audioDevice) && (
-						<Tooltip title={ applyLabel() }>
+						extraButtons={<>{ withConfirm && (selectedAudioDevice !== audioDevice) && (
 							<Button
-								variant='contained'
+								variant='text'
 								onClick={handleConfirm}
 								disabled={audioInProgress}
 							>
-								<SaveIcon/>
+								{applyLabel()}
 							</Button>
-						</Tooltip>
-					)}
+						
+						)}</>}
+					/>
+					
 				</ChooserDiv>
 			}
 		</>
