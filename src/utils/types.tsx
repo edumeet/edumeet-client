@@ -3,6 +3,7 @@ import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
+	qrCodeEnabled: false,
 	infoTooltipEnabled: false,
 	infoTooltipText: '',
 	infoTooltipLink: '',
@@ -109,6 +110,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 };
 
 export interface EdumeetConfig {
+	qrCodeEnabled: boolean;
 	infoTooltipEnabled: boolean;
 	infoTooltipText?: string;
 	infoTooltipLink?: string;

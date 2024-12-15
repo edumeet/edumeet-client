@@ -7,6 +7,9 @@
 
 // eslint-disable-next-line
 var config = {
+	// If enabled QR code will show at the join dialog
+	qrCodeEnabled: false,
+	// If enabled a Tooltip will show at the landing page and join dialog bottom
 	infoTooltipEnabled: false,
 	infoTooltipText: 'Tooltip text',
 	infoTooltipLink: '',
