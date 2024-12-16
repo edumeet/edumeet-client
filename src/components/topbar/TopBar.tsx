@@ -1,4 +1,4 @@
-import { AppBar, Chip, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Chip, Hidden, Popover, Toolbar, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { useAppSelector, usePermissionSelector } from '../../store/hooks';
@@ -15,6 +15,8 @@ import { formatDuration } from '../../utils/formatDuration';
 import LogoutButton from '../controlbuttons/LogoutButton';
 import RecordIcon from '../recordicon/RecordIcon';
 import CountdownTimerChip from '../countdowntimer/CountdownTimerChip';
+import MoreIcon from '@mui/icons-material/MoreVert';
+import ControlButton from '../controlbuttons/ControlButton';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -100,6 +102,24 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 		}
 	}, []);
 
+	const [ anchorEl, setAnchorEl ] = useState<HTMLButtonElement | null>(null);
+
+	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+	const open = Boolean(anchorEl);
+	const id = open ? 'simple-popover' : undefined;
+
+	const menuItems = <>{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
+		<SettingsButton type='iconbutton' />
+		{ canLock && <LockButton type='iconbutton' /> }
+		{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
+		{ loginEnabled && (loggedIn ? <LogoutButton type='iconbutton' /> : <LoginButton type='iconbutton' />) }</>;
+
 	return (
 		<StyledAppBar position='fixed'>
 			<Toolbar variant='dense'>
@@ -115,11 +135,33 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 				<TopBarDiv grow={1} />
 				<TopBarDiv marginRight={1}>
 					{ someoneIsRecording && <RecordIcon color='error' /> }
-					{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
-					<SettingsButton type='iconbutton' />
-					{ canLock && <LockButton type='iconbutton' /> }
-					{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
-					{ loginEnabled && (loggedIn ? <LogoutButton type='iconbutton' /> : <LoginButton type='iconbutton' />) }
+					<Hidden smUp>
+						<ControlButton type='iconbutton' onClick={handleClick} >
+							<MoreIcon />
+						</ControlButton>
+					</Hidden>
+					<Popover
+						id={id}
+						open={open}
+						anchorEl={anchorEl}
+						onClose={handleClose}
+						anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'center',
+						}}
+						transformOrigin={{
+							vertical: 'top',
+							horizontal: 'center',
+						}}
+					>
+						<Box sx={{ display: 'flex', gap: 1, padding: 1 }}>
+							{menuItems}
+						</Box>
+					</Popover>
+
+					<Hidden smDown>
+						{menuItems}
+					</Hidden>
 				</TopBarDiv>
 				<TopBarDiv marginRight={1}>
 					<StyledChip size='small' label={ formatDuration(meetingDuration) } />

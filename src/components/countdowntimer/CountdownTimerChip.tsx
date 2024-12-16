@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chip, Hidden } from '@mui/material';
+import { Chip } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions } from '../../store/slices/uiSlice';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
@@ -40,7 +40,7 @@ const CountdownTimerChip = (): JSX.Element => {
 						animation: `${percentage}% blink-animation 1s infinite`,
 						width: 'auto',
 					}}
-					label={<Hidden mdDown>{remainingTime}</Hidden>}
+					label={remainingTime}
 					size="small"
 					icon={<AvTimerIcon style={{ color: 'white' }} />}
 					onClick={() => openUsersTab()}
