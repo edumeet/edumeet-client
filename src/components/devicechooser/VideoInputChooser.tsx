@@ -74,6 +74,7 @@ const VideoInputChooser = ({
 							{ withConfirm && (selectedVideoDevice !== videoDevice) && (
 								
 								<Button
+									style={{ minWidth: 'fit-content' }}
 									variant='text'
 									onClick={handleConfirm}
 									disabled={videoInProgress}

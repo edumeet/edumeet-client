@@ -69,6 +69,7 @@ const AudioInputChooser = ({
 						devices={audioDevices}
 						extraButtons={<>{ withConfirm && (selectedAudioDevice !== audioDevice) && (
 							<Button
+								style={{ minWidth: 'fit-content' }}
 								variant='text'
 								onClick={handleConfirm}
 								disabled={audioInProgress}
