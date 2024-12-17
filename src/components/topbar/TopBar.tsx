@@ -1,5 +1,5 @@
-import { AppBar, Box, Chip, Hidden, Popover, Toolbar, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { AppBar, Box, Chip, Hidden, Popover, Toolbar, Typography, useMediaQuery } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { useAppSelector, usePermissionSelector } from '../../store/hooks';
 import { lobbyPeersLengthSelector, roomSessionCreationTimestampSelector, someoneIsRecordingSelector } from '../../store/selectors';
@@ -42,6 +42,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 		paddingLeft: theme.spacing(1),
 		paddingRight: theme.spacing(1),
 	}
+}));
+const StyledBox = styled(Box)(() => ({
+	color: 'white',
+	backgroundColor: 'rgba(0, 0, 0, 0.4)',
 }));
 
 const LogoImg = styled('img')(({ theme }) => ({
@@ -102,17 +106,26 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 		}
 	}, []);
 
+	const theme = useTheme();
+	const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 	const [ anchorEl, setAnchorEl ] = useState<HTMLButtonElement | null>(null);
 
-	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
+	const open = Boolean(anchorEl);
+	const id = open ? 'simple-popover' : undefined;
 
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
-	const open = Boolean(anchorEl);
-	const id = open ? 'simple-popover' : undefined;
+
+	// Effect to call onClose when isMobile is false
+	useEffect(() => {
+		if (!isSm && open) {
+			handleClose?.(); // Safely call onClose if it exists
+		}
+	}, [ isSm, open, handleClose ]);
+	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
 
 	const menuItems = <>{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
 		<SettingsButton type='iconbutton' />
@@ -142,7 +155,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 					</Hidden>
 					<Popover
 						id={id}
-						open={open}
+						open={open && isSm}
 						anchorEl={anchorEl}
 						onClose={handleClose}
 						anchorOrigin={{
@@ -153,10 +166,15 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 							vertical: 'top',
 							horizontal: 'center',
 						}}
+						slotProps={{
+							paper: {
+								sx: { backgroundColor: 'transparent', boxShadow: 'none' },
+							},
+						}}
 					>
-						<Box sx={{ display: 'flex', gap: 1, padding: 1 }}>
+						<StyledBox sx={{ display: 'flex', gap: 1, padding: 1 }}>
 							{menuItems}
-						</Box>
+						</StyledBox>
 					</Popover>
 
 					<Hidden smDown>
