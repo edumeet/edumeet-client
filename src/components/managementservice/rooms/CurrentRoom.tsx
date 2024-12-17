@@ -1,16 +1,16 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete } from '@mui/material';
-import { Roles, Room, Tenant } from '../../../utils/types';
+import { Roles, Room } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
 
 const CurrentRoomModal = () => {
 	const dispatch = useAppDispatch();
 
-	type TenantOptionTypes = Array<Tenant>
+	/* type TenantOptionTypes = Array<Tenant> */
 
-	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
+	/* const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]); */
 
 	type RoleTypes = Array<Roles>
 
@@ -34,18 +34,18 @@ const CurrentRoomModal = () => {
 	const [ filesharingEnabled, setFilesharingEnabled ] = useState(false);
 	const [ localRecordingEnabled, setLocalRecordingEnabled ] = useState(false);
 	
-	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
+	/* const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>(); */
 	const [ defaultRoleIdOption, setDefaultRoleIdOption ] = useState<Roles | undefined>();
 
 	const [ cantPatch ] = useState(false);
 
 	async function fetchProduct() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getData('tenants')).then((tdata: any) => {
+		/* dispatch(getData('tenants')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setTenants(tdata.data);
 			}
-		});
+		}); */
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('roles')).then((tdata: any) => {
@@ -102,11 +102,11 @@ const CurrentRoomModal = () => {
 				setDefaultRoleIdOption(undefined);
 			}
 			if (typeof ttenantId === 'string') {
-				const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
+				/* const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
 
 				if (ttenant) {
 					setTenantIdOption(ttenant);
-				}
+				} */
 				setTenantId(parseInt(ttenantId));
 			} else {
 				setTenantId(0);
@@ -309,7 +309,7 @@ const CurrentRoomModal = () => {
 					sx={{ marginTop: '8px' }}
 					renderInput={(params) => <TextField {...params} label="Default Role" />}
 				/>
-				<Autocomplete
+				{/* <Autocomplete
 					options={tenants}
 					getOptionLabel={(option) => option.name}
 					fullWidth
@@ -319,7 +319,7 @@ const CurrentRoomModal = () => {
 					value={tenantIdOption}
 					sx={{ marginTop: '8px' }}
 					renderInput={(params) => <TextField {...params} label="Tenant" />}
-				/>
+				/> */}
 				<TextField
 					autoFocus
 					margin="dense"

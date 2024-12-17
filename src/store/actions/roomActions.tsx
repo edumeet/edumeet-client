@@ -11,6 +11,7 @@ import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsS
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { getTenantFromFqdn } from './managementActions';
 import { Logger } from '../../utils/Logger';
+import { stopListeners } from './startActions';
 
 const logger = new Logger('RoomActions');
 
@@ -98,7 +99,7 @@ export const leaveRoom = (): AppThunk<Promise<void>> => async (
 	dispatch
 ): Promise<void> => {
 	logger.debug('leaveRoom()');
-
+	dispatch(stopListeners());
 	dispatch(signalingActions.disconnect());
 };
 

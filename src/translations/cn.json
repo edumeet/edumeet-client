@@ -278,5 +278,16 @@
   "svc.mediaNodeUnavailable": null,
   "svc.mediaConnectionNodeError": null,
   "svc.mediaConnectionNodeSuccess": null,
-  "settings.testAudioOutput": null
+  "settings.testAudioOutput": null,
+  "settings.containVideo": null,
+  "label.countdownTimer.title": null,
+  "label.countdownTimer.enable": null,
+  "label.countdownTimer.disable": null,
+  "label.countdownTimer.start": null,
+  "label.countdownTimer.stop": null,
+  "label.countdownTimer.set": null,
+  "label.countdownTimer.finished": null,
+  "tooltip.coundowntimer.start": null,
+  "tooltip.coundowntimer.stop": null,
+  "tooltip.coundowntimer.pause": null
 }

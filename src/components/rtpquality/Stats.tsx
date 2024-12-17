@@ -22,7 +22,7 @@ const StatsDiv = styled('div')<StatsDivProps>(({
 	autohide: autoHide
 }) => ({
 	position,
-	width: '100%',
+	width: '30%',
 	height: '100%',
 	display: 'flex',
 	...(withGap && {
@@ -43,7 +43,8 @@ const StatsDiv = styled('div')<StatsDivProps>(({
 	color: 'white',
 	alignItems: alignitems,
 	justifyContent: justifycontent,
-	zIndex: 20,
+
+	/* zIndex: 20, */
 }));
 
 interface StatsProps {

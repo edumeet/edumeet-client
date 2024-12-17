@@ -18,14 +18,16 @@ const LandingPage = (): JSX.Element => {
 
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
+	const qrCodeEnabled = edumeetConfig.qrCodeEnabled;
 
 	return (
 		<StyledBackground>
 			<GenericDialog
+				showFooter={true}
 				title={ <PrecallTitle /> }
 				content={
 					<Container style={{ textAlign: 'center' }}>
-						<QRCode value={`${window.location.protocol}//${window.location.hostname }/${roomId}`} />
+						{qrCodeEnabled && <QRCode value={`${window.location.protocol}//${window.location.hostname }/${roomId}`} />}
 						<TextInputField
 							label={roomNameLabel()}
 							value={roomId}

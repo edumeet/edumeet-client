@@ -808,7 +808,7 @@ export const ruleSettingsLabel = (): string => intl.formatMessage({
 });
 export const imprintLabel = (): string => intl.formatMessage({
 	id: 'label.imprint',
-	defaultMessage: 'Imprint'
+	defaultMessage: 'Impressum'
 });
 export const privacyLabel = (): string => intl.formatMessage({
 	id: 'label.privacy',

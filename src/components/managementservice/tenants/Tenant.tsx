@@ -152,10 +152,11 @@ const TenantTable = () => {
 
 						value={description}
 					/>
-					Tenant domains
-					<TenantFQDNTable tenantId={id} />
+					{ id !=0 && <>Tenant domains
+						<TenantFQDNTable tenantId={id} />
 					Tenant Auth
-					<TenantOAuthTable tenantId={id} />
+						<TenantOAuthTable tenantId={id} />
+					</>}
 
 				</DialogContent>
 				<DialogActions>
