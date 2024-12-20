@@ -221,7 +221,7 @@ export default function ManagementUI(/* props: Props */) {
 	);
 
 	return (
-		<Box sx={{ display: 'flex', flex: 1, marginRight: '300px' }}>
+		<Box sx={{ display: 'flex', flex: 1, marginRight: { sm: '300px' } }}>
 			<CssBaseline />
 			<AppBar
 				position="fixed"
@@ -279,7 +279,7 @@ export default function ManagementUI(/* props: Props */) {
 			</Box>
 			<Box
 				component="main"
-				sx={{ flexGrow: 1, p: 1, width: { xs: 'calc(100%)', sm: 'calc(100%)' } }}
+				sx={{ flexGrow: 1, p: 1, width: 'calc(100%)' }}
 			>
 				<Toolbar />
 				<div style={{ background: 'white', padding: '2px', maxWidth: '100%', minWidth: '300px' }}>
