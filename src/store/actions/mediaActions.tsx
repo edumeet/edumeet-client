@@ -252,13 +252,25 @@ export const updatePreviewWebcam = ({
 			dispatch(meActions.setPreviewWebcamTrackId());
 		}
 
-		const stream = await navigator.mediaDevices.getUserMedia({
-			video: {
-				deviceId: { ideal: deviceId },
+		const lastSelectedVideoDevice = getState().settings.selectedVideoDevice;
+
+		let videoOptions = {
+			deviceId: { ideal: deviceId },
+			...getVideoConstrains(resolution, aspectRatio),
+			frameRate
+		};
+
+		if (!newDeviceId && lastSelectedVideoDevice) {
+			videoOptions = {
+				deviceId: { ideal: lastSelectedVideoDevice },
 				...getVideoConstrains(resolution, aspectRatio),
 				frameRate
-			}
-		});
+			};
+		}
+
+		const stream = await navigator.mediaDevices.getUserMedia({
+			video: videoOptions
+		});	
 
 		([ track ] = stream.getVideoTracks());
 

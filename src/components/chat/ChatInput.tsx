@@ -2,9 +2,10 @@ import { Send } from '@mui/icons-material';
 import { IconButton, styled } from '@mui/material';
 import { useState } from 'react';
 import { sendChat } from '../../store/actions/chatActions';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import TextInputField from '../textinputfield/TextInputField';
 import { chatInputLabel } from '../translated/translatedComponents';
+import { fullscreenConsumerSelector } from '../../store/selectors';
 
 const ChatInputDiv = styled('div')(({ theme }) => ({
 	marginLeft: theme.spacing(1),
@@ -22,10 +23,12 @@ const ChatInput = (): JSX.Element => {
 		}
 	};
 
+	const consumer = useAppSelector(fullscreenConsumerSelector);
+
 	return (
 		<ChatInputDiv>
 			<TextInputField
-				label={chatInputLabel()}
+				label={ consumer ? '' : chatInputLabel()}
 				value={message}
 				margin='dense'
 				setValue={setMessage}

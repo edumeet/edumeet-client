@@ -67,16 +67,19 @@ const AudioInputChooser = ({
 						noDevicesLabel={noAudioInputDevicesLabel()}
 						disabled={audioDevices.length < 2 || audioInProgress}
 						devices={audioDevices}
+						extraButtons={<>{ withConfirm && (selectedAudioDevice !== audioDevice) && (
+							<Button
+								style={{ minWidth: 'fit-content' }}
+								variant='text'
+								onClick={handleConfirm}
+								disabled={audioInProgress}
+							>
+								{applyLabel()}
+							</Button>
+						
+						)}</>}
 					/>
-					{ withConfirm && (selectedAudioDevice !== audioDevice) && (
-						<Button
-							variant='contained'
-							onClick={handleConfirm}
-							disabled={audioInProgress}
-						>
-							{ applyLabel() }
-						</Button>
-					)}
+					
 				</ChooserDiv>
 			}
 		</>

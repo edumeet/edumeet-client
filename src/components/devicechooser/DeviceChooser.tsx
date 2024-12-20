@@ -5,7 +5,7 @@ import {
 	Select,
 	styled
 } from '@mui/material';
-import { memo } from 'react';
+import { memo, ReactElement } from 'react';
 import { MediaDevice } from '../../services/deviceService';
 
 interface DeviceChooserProps {
@@ -17,6 +17,7 @@ interface DeviceChooserProps {
 	noDevicesLabel: string;
 	disabled: boolean;
 	devices: MediaDevice[];
+	extraButtons?: ReactElement;
 }
 
 export const ChooserDiv = styled('div')(({ theme }) => ({
@@ -35,6 +36,7 @@ const DeviceChooser = ({
 	noDevicesLabel,
 	disabled,
 	devices,
+	extraButtons
 }: DeviceChooserProps): JSX.Element => {
 	const label = devices.length ? devicesLabel : noDevicesLabel;
 	const labelId = new Date().getUTCMilliseconds();
@@ -47,6 +49,7 @@ const DeviceChooser = ({
 			<Select
 				labelId={`device-simple-select-helper-label-${labelId}`}
 				label={label}
+				startAdornment={extraButtons}
 				value={devices.length ? (value || '') : ''}
 				onChange={(event) => {
 					if (event.target.value)
