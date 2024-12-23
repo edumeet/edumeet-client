@@ -1,4 +1,4 @@
-import { FormControlLabel, Switch } from '@mui/material';
+import { Button, FormControlLabel, Switch, Tooltip } from '@mui/material';
 import {
 	updateVideoSettings,
 	updateAudioSettings,
@@ -12,6 +12,8 @@ import {
 	enableOpusFecLabel,
 	noiseSuppressionLabel
 } from '../translated/translatedComponents';
+import BlurOnIcon from '@mui/icons-material/BlurOn';
+import BlurOffIcon from '@mui/icons-material/BlurOff';
 
 export const EchoCancellationSwitch = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -132,5 +134,22 @@ export const BlurSwitch = (): JSX.Element => {
 			}
 			label={ backgroundBlurLabel() }
 		/>
+	);
+};
+export const BlurButton = (): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const blurEnabled = useAppSelector((state) => state.settings.blurEnabled);
+
+	const blurSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
+
+	return (
+		<Tooltip title={ backgroundBlurLabel() }>
+			<Button onClick={() => dispatch(updateVideoSettings({ blurEnabled: !blurEnabled }))} 
+				disabled={blurSwitchDisabled}>
+				{!blurEnabled && <BlurOnIcon />}
+				{blurEnabled && <BlurOffIcon />}
+			</Button>
+		</Tooltip>
+		
 	);
 };

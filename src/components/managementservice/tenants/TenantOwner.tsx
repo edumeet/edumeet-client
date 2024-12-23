@@ -43,7 +43,7 @@ const TenantOwnerTable = () => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'no such email';
+			return 'Hidden email';
 		}
 	};
 	// should be memoized or stable

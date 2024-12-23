@@ -64,7 +64,7 @@ const RoomTable = () => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'no such email';
+			return 'Hidden email';
 		}
 	};
 
@@ -210,7 +210,9 @@ const RoomTable = () => {
 	const [ raiseHandEnabled, setRaiseHandEnabled ] = useState(false);
 	const [ filesharingEnabled, setFilesharingEnabled ] = useState(false);
 	const [ localRecordingEnabled, setLocalRecordingEnabled ] = useState(false);
-	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
+
+	/* 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>(); */	
+	
 	const [ defaultRoleIdOption, setDefaultRoleIdOption ] = useState<Roles | undefined>();
 
 	const [ cantPatch ] = useState(false);
@@ -271,7 +273,8 @@ const RoomTable = () => {
 		setName('');
 		setDescription('');
 		setTenantId(0);
-		setTenantIdOption(undefined);
+
+		/* 		setTenantIdOption(undefined); */
 		setDefaultRoletId(0);
 		setDefaultRoleIdOption(undefined);
 		setLogo('');
@@ -464,7 +467,7 @@ const RoomTable = () => {
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="Default Role" />}
 					/>
-					<Autocomplete
+					{/* <Autocomplete
 						options={tenants}
 						getOptionLabel={(option) => option.name}
 						fullWidth
@@ -474,7 +477,7 @@ const RoomTable = () => {
 						value={tenantIdOption}
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="Tenant" />}
-					/>
+					/> */}
 					<TextField
 						autoFocus
 						margin="dense"
@@ -514,8 +517,12 @@ const RoomTable = () => {
 					<FormControlLabel control={<Checkbox checked={filesharingEnabled} onChange={handleFilesharingEnabledChange} />} label="filesharingEnabled" />
 					<FormControlLabel control={<Checkbox checked={localRecordingEnabled} onChange={handleLocalRecordingEnabledChange} />} label="localRecordingEnabled" />
 					<FormControlLabel control={<Checkbox checked={breakoutsEnabled} onChange={handleBreakoutsEnabledChange} />} label="breakoutsEnabled" />
-					<RoomOwnerTable roomId={id} />
-					<RoomUserRoleTable roomId={id} />
+					
+					{ id !=0 && <>
+						<RoomOwnerTable roomId={id} />
+						<RoomUserRoleTable roomId={id} />
+					</>}
+					
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={delTenant} disabled={cantDelete} color='warning'>Delete</Button>
@@ -573,11 +580,11 @@ const RoomTable = () => {
 						setDefaultRoleIdOption(undefined);
 					}
 					if (typeof ttenantId === 'string') {
-						const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
 
-						if (ttenant) {
+						/* const ttenant = tenants.find((x) => x.id === parseInt(ttenantId)); */
+						/* if (ttenant) {
 							setTenantIdOption(ttenant);
-						}
+						} */
 						setTenantId(parseInt(ttenantId));
 					} else {
 						setTenantId(0);
