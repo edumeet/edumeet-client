@@ -17,7 +17,6 @@ import { meActions } from '../../store/slices/meSlice';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 import { canSelectAudioOutput } from '../../store/selectors';
 import edumeetConfig from '../../utils/edumeetConfig';
-import MicVolume from '../../components/volume/MicVolume';
 
 interface JoinProps {
 	roomId: string;
@@ -73,8 +72,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 					<AudioInputChooser />
 					{ showAudioOutputChooser && <AudioOutputChooser /> }
 					<VideoInputChooser />
-					<MicVolume />
-					
+				
 					<ChooserDiv>
 						<TextInputField
 							label={yourNameLabel()}

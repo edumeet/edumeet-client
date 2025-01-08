@@ -5,6 +5,7 @@ import { StateConsumer } from '../../store/slices/consumersSlice';
 import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import type { Consumer as PeerConsumer } from 'ortc-p2p/src/types';
+import hark from 'hark';
 
 type VolumeBarProps = {
 	small: number;
@@ -53,8 +54,23 @@ const Volume = ({
 
 		if (consumer)
 			media = mediaService.getConsumer(consumer.id);
-		else
+		else if (mediaService.mediaSenders['mic'].volumeWatcher)
 			volumeWatcher = mediaService.mediaSenders['mic'].volumeWatcher;
+		else if (mediaService.previewMicTrack) {
+			// We do not send it so the state is different on join dialog.
+			const harkStream = new MediaStream();
+			
+			harkStream.addTrack(mediaService.previewMicTrack.clone());
+			
+			const micHark = hark(harkStream, {
+				play: false,
+				interval: 50,
+				threshold: -60,
+				history: 100
+			});
+			
+			volumeWatcher = new VolumeWatcher({ hark: micHark });
+		}
 
 		if (media)
 			volumeWatcher = media.appData.volumeWatcher as VolumeWatcher | undefined;
@@ -68,7 +84,7 @@ const Volume = ({
 		return () => {
 			volumeWatcher?.off('volumeChange', onVolumeChange);
 		};
-	}, [ consumer ]);
+	}, [ consumer, mediaService.previewMicTrack ]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (
