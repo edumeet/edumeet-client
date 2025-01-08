@@ -133,6 +133,8 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 		{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 		{ loginEnabled && (loggedIn ? <LogoutButton type='iconbutton' /> : <LoginButton type='iconbutton' />) }</>;
 
+	const isEnabled = useAppSelector((state) => state.room.countdownTimer.isEnabled);
+
 	return (
 		<StyledAppBar position='fixed'>
 			<Toolbar variant='dense'>
@@ -184,9 +186,11 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 				<TopBarDiv marginRight={1}>
 					<StyledChip size='small' label={ formatDuration(meetingDuration) } />
 				</TopBarDiv>
-				<TopBarDiv marginRight={2}>
-					<CountdownTimerChip />
-				</TopBarDiv>
+				{
+					isEnabled && <TopBarDiv marginRight={1}>
+						<CountdownTimerChip />
+					</TopBarDiv>
+				}
 				<LeaveButton />
 			</Toolbar>
 		</StyledAppBar>
