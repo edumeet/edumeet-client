@@ -9,6 +9,8 @@
 var config = {
 	// If enabled QR code will show at the join dialog
 	qrCodeEnabled: false,
+	// If enabled countdownTimer will be enabled in the rooom.
+	countdownTimerEnabled: false,
 	// If enabled a Tooltip will show at the landing page and join dialog bottom
 	infoTooltipEnabled: false,
 	infoTooltipText: 'Tooltip text',
