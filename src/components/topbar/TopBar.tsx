@@ -187,7 +187,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 					<StyledChip size='small' label={ formatDuration(meetingDuration) } />
 				</TopBarDiv>
 				{
-					isEnabled && <TopBarDiv marginRight={1}>
+					(edumeetConfig.countdownTimerEnabled && isEnabled) && <TopBarDiv marginRight={1}>
 						<CountdownTimerChip />
 					</TopBarDiv>
 				}
