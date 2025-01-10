@@ -1,13 +1,11 @@
 import React, { useRef } from 'react';
-import { IconButton, Grid, Switch, styled } from '@mui/material';
+import { IconButton, Grid, styled } from '@mui/material';
 import { HighlightOff as HighlightOffIcon, Pause as PauseIcon, PlayArrow as PlayArrowIcon } from '@mui/icons-material';
 import moment from 'moment';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setCountdownTimerInitialTime, startCountdownTimer, stopCountdownTimer, disableCountdownTimer, enableCountdownTimer } from '../../store/actions/countdownTimerActions';
+import { setCountdownTimerInitialTime, startCountdownTimer, stopCountdownTimer } from '../../store/actions/countdownTimerActions';
 import { 
-	countdownTimerStartLabel, countdownTimerStopLabel, 
-	countdownTimerEnableLabel, countdownTimerDisableLabel } 
-	from '../translated/translatedComponents';
+	countdownTimerStartLabel, countdownTimerStopLabel }	from '../translated/translatedComponents';
 import { isMobileSelector } from '../../store/selectors';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -122,7 +120,7 @@ const CountdownTimer = () : JSX.Element => {
 				</Grid>
 
 				{/*  enable/disable */}
-				<Grid item xs={1}>
+				{/* <Grid item xs={1}>
 					<Switch
 						aria-label={ !isStarted ? 
 							countdownTimerDisableLabel() : 
@@ -140,7 +138,7 @@ const CountdownTimer = () : JSX.Element => {
 						color='error'
 						size='small'
 					/>
-				</Grid>
+				</Grid> */}
 			</Grid>
 		</CountdownTimerDiv>
 	);
