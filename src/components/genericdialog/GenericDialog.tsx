@@ -56,6 +56,7 @@ const StyledDialogFooter = styled(DialogActions)(({ theme }) => ({
 	paddingBottom: theme.spacing(2),
 	paddingRight: theme.spacing(2),
 	paddingLeft: theme.spacing(2),
+	justifyContent: 'center',
 }));
 
 const GenericDialog = ({
