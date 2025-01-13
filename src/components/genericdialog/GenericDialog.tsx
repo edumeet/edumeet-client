@@ -3,7 +3,6 @@ import { DialogActions, DialogContent, DialogTitle, Link } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Dialog } from '@mui/material';
 import { memo } from 'react';
-import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid2';
 
 import edumeetConfig from '../../utils/edumeetConfig';
@@ -84,7 +83,7 @@ const GenericDialog = ({
 			<StyledDialogActions>
 				{ actions }
 			</StyledDialogActions>
-			<Divider />
+			
 			{infoTooltipEnabled && showFooter && <StyledDialogFooter>
 				<Grid container>
 					<Grid size={12} textAlign={'center'}>

@@ -9,7 +9,7 @@
 var config = {
 	// If enabled QR code will show at the join dialog
 	qrCodeEnabled: false,
-	// If enabled countdownTimer will be enabled in the rooom.
+	// If enabled countdownTimer will be enabled in the room.
 	countdownTimerEnabled: false,
 	// If enabled a Tooltip will show at the landing page and join dialog bottom
 	infoTooltipEnabled: false,
@@ -19,7 +19,9 @@ var config = {
 	// Location of management service.
 	managementUrl: 'http://localhost:3030',
 	// Location of the privacy files.
-	impressumUrl: '/privacy/privacy.html',
+	imprintUrl: '',
+	privacyUrl: '',
+
 	loginImageURL: '',
 	// If ability to log in is enabled.
 	loginEnabled: true,
