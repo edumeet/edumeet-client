@@ -289,5 +289,14 @@
   "label.countdownTimer.finished": null,
   "tooltip.coundowntimer.start": null,
   "tooltip.coundowntimer.stop": null,
-  "tooltip.coundowntimer.pause": null
+  "tooltip.coundowntimer.pause": null,
+  "label.management": null,
+  "label.managementTenantSettings": null,
+  "label.managementRoomSettings": null,
+  "label.managementUserSettings": null,
+  "label.managementGroupSettings": null,
+  "label.managementRoleSettings": null,
+  "label.managementRuleSettings": null,
+  "label.imprint": null,
+  "label.privacy": null
 }

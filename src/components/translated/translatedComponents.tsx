@@ -798,10 +798,6 @@ export const roleSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.managementRoleSettings',
 	defaultMessage: 'Role settings'
 });
-export const managementExtraSettingsLabel = (): string => intl.formatMessage({
-	id: 'label.managementExtraSettings',
-	defaultMessage: '...'
-});
 export const ruleSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.managementRuleSettings',
 	defaultMessage: 'Rule settings'

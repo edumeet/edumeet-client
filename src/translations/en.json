@@ -289,5 +289,14 @@
 	"label.countdownTimer.start": "Start",
 	"label.countdownTimer.stop": "Stop",
 	"label.countdownTimer.set": "Set",
-	"label.countdownTimer.finished": "Time is up!"
+	"label.countdownTimer.finished": "Time is up!",
+	"label.management": "Management!",
+	"label.managementTenantSettings": "Tenant settings",
+	"label.managementRoomSettings": "Room settings",
+	"label.managementUserSettings": "User settings",
+	"label.managementGroupSettings": "Group settings",
+	"label.managementRoleSettings": "Role settings",
+	"label.managementRuleSettings": "Rule settings",
+	"label.imprint": "About us",
+	"label.privacy": "Privacy"
 }
