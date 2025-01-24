@@ -42,10 +42,12 @@ const ParticipantList = (): JSX.Element => {
 		<ParticipantListDiv>
 			{ isModerator && <>
 				<ListModerator />
-				<ListHeader>
-					{countdownTimerTitleLabel()}
-				</ListHeader>
-				{ edumeetConfig.countdownTimerEnabled && <CountdownTimer /> }
+				{ edumeetConfig.countdownTimerEnabled && <>
+					<ListHeader>
+						{countdownTimerTitleLabel()}
+					</ListHeader>
+					<CountdownTimer />
+				</> }
 			</>
 			}
 			{ (breakoutsEnabled && (rooms.length > 0 || canCreateRooms)) &&
