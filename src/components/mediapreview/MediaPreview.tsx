@@ -7,6 +7,7 @@ import MediaControls from '../mediacontrols/MediaControls';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import { stopPreviewMic, stopPreviewWebcam, updatePreviewMic, updatePreviewWebcam } from '../../store/actions/mediaActions';
+import Volume from '../volume/Volume';
 
 interface MediaPreviewProps {
 	withControls?: boolean;
@@ -32,6 +33,8 @@ const MediaPreview = ({
 	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
 	const contain = useAppSelector((state) => state.settings.videoContainEnabled);
+	// We do not send it so the state is different on join dialog.
+	const micEnabled = useAppSelector((state) => state.me.previewMicTrackId);
 
 	useEffect(() => {
 		if (startAudio) dispatch(updatePreviewMic({ newDeviceId: audioDevice, updateSelection }));
@@ -67,9 +70,12 @@ const MediaPreview = ({
 							offColor='error'
 							disabledColor='default'
 						/>
+
 					</MediaControls>
 				)}
 				{ previewWebcamTrackId && <VideoView contain={contain} mirrored previewTrack /> }
+				{ micEnabled && <Volume /> }
+
 			</VideoBox>
 		</>
 	);

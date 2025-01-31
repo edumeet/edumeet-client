@@ -5,7 +5,6 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { enterFullscreenLabel, leaveFullscreenLabel } from '../translated/translatedComponents';
 import { fullscreenConsumerSelector } from '../../store/selectors';
 import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
-
 interface FullscreenVideoButtonProps extends ControlButtonProps {
 	consumerId: string;
 }

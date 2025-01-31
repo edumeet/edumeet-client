@@ -25,59 +25,54 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import { getUserData } from '../../store/actions/managementActions';
+import { getUserData, startMGMTListeners, stopMGMTListeners } from '../../store/actions/managementActions';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
 import TenantAdminTable from '../../components/managementservice/tenants/TenantAdmin';
 import TenantOwnerTable from '../../components/managementservice/tenants/TenantOwner';
 import { checkJWT, logout } from '../../store/actions/permissionsActions';
+import { managamentActions } from '../../store/slices/managementSlice';
 import SignIn from '../../components/settingsdialog/managementsettings/ManagementAdminLoginSettings';
-import { startMGMTListeners, stopMGMTListeners } from '../../store/actions/mgmtActions';
 import GroupRoleTable from '../../components/managementservice/groups/GroupRole';
 import GroupUserTable from '../../components/managementservice/groups/GroupUser';
-
-/* import RoomUserRoleTable from '../../components/managementservice/rooms/roomUserRole'; */
-/* import PermissionTable from '../../components/managementservice/permisssion/Permission';
-import InfoIcon from '@mui/icons-material/Info'; */
 
 const drawerWidth = 300;
 
 export default function ManagementUI(/* props: Props */) {
 	useNotifier();
-		
 	const dispatch = useAppDispatch();
-	
+
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	const username = useAppSelector((state) => state.management.username);
+
 	const [ mobileOpen, setMobileOpen ] = useState(false);
 
 	const handleDrawerToggle = () => {
-		setMobileOpen(!mobileOpen);
+		setMobileOpen((prev) => !prev);
 	};
 
 	const [ selectedComponent, setSelectedComponent ] = useState('');
-	const [ username, setUsername ] = useState('');
-	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	useEffect(() => {
 		dispatch(startMGMTListeners());
 
-		dispatch(checkJWT()).then(() => {
-		});
+		dispatch(checkJWT());
 
 		return () => {
 			dispatch(stopMGMTListeners());
 		};
 	}, []);
+
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getUserData()).then((tdata: any) => {
 			if (tdata) {
-				setUsername(tdata.user.email);				
+				dispatch(managamentActions.setUsername(tdata.user.email));			
 			}
 		});
 	}, [ loggedIn ]);
 
 	// Function to render the selected component in the placeholder
 	const renderComponent = () => {
-
 		if (loggedIn) {
 			switch (selectedComponent) {
 				case 'login':
@@ -88,19 +83,13 @@ export default function ManagementUI(/* props: Props */) {
 					return <>
 						Tenant settings
 						<TenantTable />
-						Tenant admins
 						<TenantOwnerTable />
-						Tenants owners
 						<TenantAdminTable />
 					</>;
 				case 'room':
 					return <>
 						Rooms
 						<RoomTable />
-						{/* Room owners
-						<RoomOwnerTable /> */}
-						{/* Room user roles
-						<RoomUserRoleTable /> */}
 					</>;
 				case 'user':
 					return <>
@@ -121,8 +110,6 @@ export default function ManagementUI(/* props: Props */) {
 						<RoleTable />
 					</>;
 
-				/* case 'permission':
-					return <>Permissions<PermissionTable /></>; */
 				default:
 					return <Box sx={{ minWidth: '400px' }}>Select an item to load a component </Box>;
 			}
@@ -135,7 +122,7 @@ export default function ManagementUI(/* props: Props */) {
 		<div>
 			<List>
 				<ListItem style={{ justifyContent: 'center' }} >
-					<img src='/images/logo.edumeet.svg' />
+					<img src='/images/logo.edumeet.svg' alt='logo' />
 				</ListItem>
 			
 				<ListItem key={'{username}'} disablePadding onClick={
@@ -234,7 +221,7 @@ export default function ManagementUI(/* props: Props */) {
 	);
 
 	return (
-		<Box sx={{ display: 'flex', flex: 1, marginRight: '300px' }}>
+		<Box sx={{ display: 'flex', flex: 1, marginRight: { sm: '300px' } }}>
 			<CssBaseline />
 			<AppBar
 				position="fixed"
@@ -292,7 +279,7 @@ export default function ManagementUI(/* props: Props */) {
 			</Box>
 			<Box
 				component="main"
-				sx={{ flexGrow: 1, p: 1, width: { xs: 'calc(100%)', sm: 'calc(100%)' } }}
+				sx={{ flexGrow: 1, p: 1, width: 'calc(100%)' }}
 			>
 				<Toolbar />
 				<div style={{ background: 'white', padding: '2px', maxWidth: '100%', minWidth: '300px' }}>

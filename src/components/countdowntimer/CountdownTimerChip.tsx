@@ -38,7 +38,7 @@ const CountdownTimerChip = (): JSX.Element => {
 						backgroundColor: backgroundColor,
 						background: `linear-gradient(to right, ${indicatorColor} ${percentage}%, ${backgroundColor} ${percentage}%)`,
 						animation: `${percentage}% blink-animation 1s infinite`,
-						width: '86px',
+						width: 'auto',
 					}}
 					label={remainingTime}
 					size="small"

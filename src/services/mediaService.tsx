@@ -137,19 +137,8 @@ export class MediaService extends EventEmitter {
 
 	public _monitor: Promise<ClientMonitor> = (async () => {
 		const { createClientMonitor } = await import('@observertc/client-monitor-js');
-		const { ClientSampleEncoder, schemaVersion } = await import('@observertc/samples-encoder');
 
-		const sampleEncoder = new ClientSampleEncoder();
 		const monitor = createClientMonitor({ collectingPeriodInMs: 5000 });
-
-		monitor.on('sample-created', ({ clientSample }) => {
-			const encodedSample = sampleEncoder.encodeToBase64(clientSample);
-
-			this.signalingService.notify('clientSample', {
-				schemaVersion,
-				encodedSample,
-			});
-		});
 
 		return monitor;
 	})();

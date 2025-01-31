@@ -46,7 +46,7 @@ const GroupUserTable = () => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'no such email';
+			return 'Hidden email';
 		}
 	};
 

@@ -15,6 +15,7 @@ import {
 import DeviceChooser, { ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { meActions } from '../../store/slices/meSlice';
+import { BlurButton, BlurSwitch } from '../settingsdialog/SettingsSwitches';
 
 interface VideoInputChooserProps {
 	withConfirm?: boolean;
@@ -67,19 +68,28 @@ const VideoInputChooser = ({
 						noDevicesLabel={noVideoDevicesLabel()}
 						disabled={videoDevices.length < 2 || videoInProgress}
 						devices={videoDevices}
+						extraButtons={<>
+							<BlurButton />
+
+							{ withConfirm && (selectedVideoDevice !== videoDevice) && (
+								
+								<Button
+									style={{ minWidth: 'fit-content' }}
+									variant='text'
+									onClick={handleConfirm}
+									disabled={videoInProgress}
+								>
+									{applyLabel()}
+								</Button>
+								
+							)}
+						</>}
 					/>
-					<>
-						{ withConfirm && (selectedVideoDevice !== videoDevice) && (
-							<Button
-								variant='contained'
-								onClick={handleConfirm}
-								disabled={videoInProgress}
-							>
-								{ applyLabel() }
-							</Button>
-						)}
-					</>
+					
 				</ChooserDiv>
+			}
+			{ videoDevices.length == 1 &&
+				<BlurSwitch />
 			}
 		</>
 	);

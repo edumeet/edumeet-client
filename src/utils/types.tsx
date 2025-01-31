@@ -3,7 +3,14 @@ import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
+	qrCodeEnabled: false,
+	countdownTimerEnabled: false,
+	infoTooltipEnabled: false,
+	infoTooltipText: '',
+	infoTooltipLink: '',
+	infoTooltipDesc: '',
 	managementUrl: undefined,
+	loginImageURL: '',
 	p2penabled: false,
 	loginEnabled: false,
 	developmentPort: 8443,
@@ -104,7 +111,14 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 };
 
 export interface EdumeetConfig {
+	qrCodeEnabled: boolean;
+	countdownTimerEnabled: boolean,
+	infoTooltipEnabled: boolean;
+	infoTooltipText?: string;
+	infoTooltipLink?: string;
+	infoTooltipDesc?: string;
 	managementUrl?: string;
+	loginImageURL?: string;
 	p2penabled: boolean;
 	loginEnabled: boolean;
 	developmentPort: number;

@@ -17,6 +17,7 @@ import ListPeer from './ListPeer';
 import BreakoutModerator from '../breakoutrooms/BreakoutModerator';
 import ListBreakoutRoom from '../breakoutrooms/ListBreakoutRoom';
 import CountdownTimer from '../countdowntimer/CountdownTimer';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 const ParticipantListDiv = styled(Box)(({ theme }) => ({
 	width: '100%',
@@ -41,10 +42,12 @@ const ParticipantList = (): JSX.Element => {
 		<ParticipantListDiv>
 			{ isModerator && <>
 				<ListModerator />
-				<ListHeader>
-					{countdownTimerTitleLabel()}
-				</ListHeader>
-				<CountdownTimer />
+				{ edumeetConfig.countdownTimerEnabled && <>
+					<ListHeader>
+						{countdownTimerTitleLabel()}
+					</ListHeader>
+					<CountdownTimer />
+				</> }
 			</>
 			}
 			{ (breakoutsEnabled && (rooms.length > 0 || canCreateRooms)) &&
