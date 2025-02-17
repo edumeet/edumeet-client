@@ -100,7 +100,7 @@ const GroupTable = () => {
 		setId(0);
 		setName('');
 		setDescription('');
-		setDescriptionDisabled(false);
+		setDescriptionDisabled(true);
 		// try to get current tenantId
 		// TODO
 		setTenantId(0);
@@ -209,7 +209,6 @@ const GroupTable = () => {
 						id="description"
 						label="description"
 						type="text"
-						required
 						fullWidth
 						disabled={descriptionDisabled}
 						onChange={handleDescriptionChange}
