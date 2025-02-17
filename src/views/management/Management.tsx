@@ -221,7 +221,7 @@ export default function ManagementUI(/* props: Props */) {
 	);
 
 	return (
-		<Box sx={{ display: 'flex', flex: 1, marginRight: { sm: '300px' } }}>
+		<Box sx={{ display: 'flex', flex: 1, marginRight: { sm: '0px' } }}>
 			<CssBaseline />
 			<AppBar
 				position="fixed"
