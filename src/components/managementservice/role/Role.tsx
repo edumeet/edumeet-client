@@ -121,11 +121,12 @@ const RoleTable = () => {
 		setDescription('');
 		setTenantId(0);
 		setChecked(new Array(permissions.length).fill(false));
-
+		setCheckedDisabled(true);
 		setOpen(true);
 	};
 
 	const handleClickOpenNoreset = () => {
+		setCheckedDisabled(false);
 		setOpen(true);
 	};
 
@@ -226,6 +227,7 @@ const RoleTable = () => {
 	const [ permissions, setPermissions ] = React.useState(Array<Permissions>);
 
 	const [ checked, setChecked ] = React.useState(new Array(0).fill(true));
+	const [ checkedDisabled, setCheckedDisabled ] = React.useState(false);
 
 	const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setChecked(new Array(permissions.length).fill(event.target.checked));
@@ -243,6 +245,7 @@ const RoleTable = () => {
 		<Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
 			{Object.entries(permissions).map(([ key, value ]) =>
 				<FormControlLabel
+					disabled={checkedDisabled}
 					key={`${key}uniqe`}
 					control={<Checkbox checked={checked[parseInt(key)]}
 						onChange={(event) => handleChangeMod(event, parseInt(key))
@@ -285,7 +288,6 @@ const RoleTable = () => {
 						id="description"
 						label="description"
 						type="text"
-						required
 						fullWidth
 						onChange={handleDescriptionChange}
 						value={description}
@@ -306,6 +308,7 @@ const RoleTable = () => {
 							label="All permissions"
 							control={
 								<Checkbox
+									disabled={checkedDisabled}
 									checked={checked.every((num) => num === true)}
 									indeterminate={checked.some((num) => num === true) && checked.some((num) => num === false)}
 									onChange={handleChange1}
