@@ -843,3 +843,32 @@ export const countdownTimerFinishedLabel = (): string => intl.formatMessage({
 	id: 'label.countdownTimer.finished',
 	defaultMessage: 'Time is up!'
 });
+export const startDrawingLabel = (): string => intl.formatMessage({
+	id: 'room.startDrawing',
+	defaultMessage: 'Start drawing'
+});
+
+export const stopDrawingLabel = (): string => intl.formatMessage({
+	id: 'room.stopDrawing',
+	defaultMessage: 'Stop drawing'
+});
+
+export const removeDrawingLabels = (): string => intl.formatMessage({
+	id: 'room.removeDrawings',
+	defaultMessage: 'Remove drawings for all'
+});
+
+export const drawingRemovedLabel = (): string => intl.formatMessage({
+	id: 'room.drawingsRemoved',
+	defaultMessage: 'The drawings have been removed'
+});
+
+export const startDrawingModeLabel = (): string => intl.formatMessage({
+	id: 'room.startDrawingMode',
+	defaultMessage: 'The drawing mode has been started'
+});
+
+export const stopDrawingModeLabel = (): string => intl.formatMessage({
+	id: 'room.stopDrawingMode',
+	defaultMessage: 'The drawing mode has been stopped'
+});

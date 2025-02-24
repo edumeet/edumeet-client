@@ -29,6 +29,7 @@ import createPermissionsMiddleware from './middlewares/permissionsMiddleware';
 import createChatMiddleware from './middlewares/chatMiddleware';
 import createNotificationMiddleware from './middlewares/notificationMiddleware';
 import createCountdownTimerMiddleware from './middlewares/countdownTimerMiddleware';
+import createDrawingMiddleware from './middlewares/drawingMiddleware';
 import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
 import consumersSlice from './slices/consumersSlice';
@@ -40,6 +41,7 @@ import settingsSlice from './slices/settingsSlice';
 import peersSlice from './slices/peersSlice';
 import notificationsSlice from './slices/notificationsSlice';
 import uiSlice from './slices/uiSlice';
+import drawingSlice from './slices/drawingSlice';
 import { EdumeetConfig } from '../utils/types';
 import edumeetConfig from '../utils/edumeetConfig';
 import { createContext } from 'react';
@@ -129,6 +131,7 @@ const reducer = combineReducers({
 	settings: settingsSlice.reducer,
 	signaling: signalingSlice.reducer,
 	ui: uiSlice.reducer,
+	drawing: drawingSlice.reducer
 });
 
 const pReducer = persistReducer<RootState>(persistConfig, reducer);
@@ -154,6 +157,7 @@ export const store = configureStore({
 			createNotificationMiddleware(middlewareOptions),
 			createEffectsMiddleware(middlewareOptions),
 			createCountdownTimerMiddleware(middlewareOptions),
+			createDrawingMiddleware(middlewareOptions),
 			...(edumeetConfig.reduxLoggingEnabled ? [ createLogger({
 				duration: true,
 				timestamp: false,

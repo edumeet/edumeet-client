@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
@@ -6,6 +7,8 @@ import VideoConsumer from '../videoconsumer/VideoConsumer';
 import { Box } from '@mui/material';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
+const DrawingView = lazy(() => import('../drawing/DrawingView')); // import DrawingView from '../drawing/DrawingView';
+
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import ScreenshareButton from '../controlbuttons/ScreenshareButton';
@@ -60,6 +63,8 @@ const Spotlights = ({
 	const headless = useAppSelector((state) => state.room.headless);
 	const screenEnabled = useAppSelector((state) => state.me.screenEnabled);
 	const extraVideoEnabled = useAppSelector((state) => state.me.extraVideoEnabled);
+	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled);
+
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const [ dimensions, setDimensions ] = useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
@@ -167,6 +172,17 @@ const Spotlights = ({
 							disabledColor='default'
 						/>
 					</MediaControls>
+				</VideoBox>
+			}
+			{ drawingEnabled &&
+				<VideoBox
+					order={4}
+					width={style.width}
+					height={style.height}
+				>
+					<Suspense>
+						<DrawingView width={style.width} height={style.height}/>
+					</Suspense>
 				</VideoBox>
 			}
 

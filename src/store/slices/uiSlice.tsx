@@ -19,6 +19,7 @@ export interface UiState {
 	showStats: boolean;
 	chatOpen: boolean;
 	participantListOpen: boolean;
+	drawingOpen: boolean;
 }
 
 type UiUpdate = Partial<Omit<UiState, 'currentSettingsTab'>>;
@@ -37,6 +38,7 @@ const initialState: UiState = {
 	currentSettingsTab: 'media',
 	chatOpen: false,
 	participantListOpen: false,
+	drawingOpen: false
 };
 
 const uiSlice = createSlice({
