@@ -10,12 +10,17 @@ import EjectBreakoutRoomButton from '../textbuttons/EjectBreakoutRoomButton';
 import RemoveBreakoutRoomButton from '../textbuttons/RemoveBreakoutRoomButton';
 import ListMe from '../participantlist/ListMe';
 import { useState } from 'react';
+import GhostObject from '../draganddrop/GhostObject';
+import DraggableWrapper from '../draganddrop/DraggableWrapper';
+import { isMobileSelector, peersArraySelector } from '../../store/selectors';
 
 interface BreakoutRoomProps {
 	room: RoomSession;
 	canChangeRoom: boolean;
 	canCreateRoom: boolean;
 	isModerator: boolean;
+	dragOver: string;
+	draggedPeerids: string[];
 }
 
 interface AccordionProps {
@@ -71,16 +76,22 @@ const ListBreakoutRoom = ({
 	canChangeRoom,
 	canCreateRoom,
 	isModerator,
+	dragOver,
+	draggedPeerids,
 }: BreakoutRoomProps): JSX.Element => {
 	const [ expanded, setExpanded ] = useState(false);
 	const sessionId = useAppSelector((state) => state.me.sessionId);
 	const inSession = room.sessionId === sessionId;
 	const participants = usePeersInSession(room.sessionId);
+	const isMobile = useAppSelector(isMobileSelector);
+	const showParticipantsList = participants.filter((peer) => !draggedPeerids.includes(peer.id));
+	const dragExpand = dragOver === room.sessionId ? true : false;
+	const showGhosts = (useAppSelector(peersArraySelector)).filter((peer) => draggedPeerids.includes(peer.id));
 
 	return (
 		<StyledAccordion
 			TransitionProps={{ unmountOnExit: true }}
-			expanded={inSession || expanded}
+			expanded={inSession || expanded || dragExpand }
 			onChange={(_, exp) => setExpanded(exp)}
 			insession={inSession ? 1 : 0}
 		>
@@ -103,12 +114,21 @@ const ListBreakoutRoom = ({
 				))}
 			</AccordionSummary>
 			<BreakoutRoomAccordionDetails>
+				{dragExpand ? (
+					showGhosts.map((peer) => (
+						<GhostObject key={peer.id}>
+							<ListPeer key={peer.id} peer={peer} isModerator={isModerator} />
+						</GhostObject>
+					))
+				): null }
 				{ inSession && <ListMe /> }
 				{ participants.length > 0 &&
-					<Flipper flipKey={participants}>
-						{ participants.map((peer) => (
+					<Flipper flipKey={showParticipantsList}>
+						{ showParticipantsList.map((peer) => (
 							<Flipped key={peer.id} flipId={peer.id}>
-								<ListPeer key={peer.id} peer={peer} isModerator={isModerator} />
+								<DraggableWrapper key={peer.id} id={peer.id} disabled={!isModerator || isMobile}>
+									<ListPeer key={peer.id} peer={peer} isModerator={isModerator} />
+								</DraggableWrapper>
 							</Flipped>
 						)) }
 					</Flipper>
