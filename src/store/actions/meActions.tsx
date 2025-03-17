@@ -1,3 +1,4 @@
+import { ThumbnailItem } from '../../services/clientImageService';
 import { Logger } from '../../utils/Logger';
 import { meActions } from '../slices/meSlice';
 import { settingsActions } from '../slices/settingsSlice';
@@ -109,4 +110,72 @@ export const setEscapeMeeting = (
 	} finally {
 		dispatch(meActions.setEscapeMeetingInProgress(false));
 	}
+};
+
+/**
+ * 
+ * @param imageName image file name
+ */
+export const setUserBackground = (
+	imageName: string
+): AppThunk<void> => async (
+	dispatch,
+	_getState,
+	{ clientImageService }
+) => {
+	await clientImageService.setUserBackgroundImage(imageName);
+	dispatch(meActions.setBackgroundImage(await clientImageService.getUserBackgroundImage()));
+};
+
+/**
+ * Loads userBackground from persistent storage
+ */
+export const loadUserBackground = (
+): AppThunk<Promise<void>> => async (dispatch, _getState, { clientImageService }) => {
+	const userBackground = await clientImageService.loadUserBackgroundImage();
+
+	dispatch(meActions.setBackgroundImage(userBackground));
+};
+
+/**
+ * Loads thumbnailList from persistent storage
+ */
+export const loadThumbnails = (
+): AppThunk<Promise<void>> => async (dispatch, _getState, { clientImageService }) => {
+	const thumbnails = await clientImageService.loadThumbnails();
+
+	dispatch(meActions.setThumbnailList(thumbnails));
+};
+
+/**
+ * Saves image and also a thumbnail.
+ * 
+ * @param image 
+ * @returns 
+ */
+export const saveImage = (
+	image: File,
+): AppThunk<Promise<ThumbnailItem>> => async (
+	dispatch, _getState, { clientImageService }
+) => {
+	const thumbnailItem = await clientImageService.saveImageAndThumbnail(image);
+
+	dispatch(meActions.addThumbnail(thumbnailItem));
+
+	return thumbnailItem;
+};
+
+export const getImage = (
+	name: string
+): AppThunk<Promise<string>> => async (_dispatch, _getState, { clientImageService }) => {
+	return await clientImageService.getImage(name);
+};
+
+/**
+ * Clear storage and revokes object urls
+ */
+export const clearImageStorage = (
+): AppThunk<Promise<void>> => async (dispatch, getState, { clientImageService }) => {
+	await clientImageService.clearStorage(getState().me.thumbnailList);
+	dispatch(meActions.setThumbnailList([]));
 };
