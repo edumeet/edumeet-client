@@ -5,7 +5,7 @@ export type ThumbnailItem = { imageName: string; thumbnailUrl: string };
 const logger = new Logger('ImageFileService');
 
 const IMAGE_DIR = 'images';
-const SELCTED_USER_BACKGROUND = 'userBackgroundImage';
+const SELECTED_USER_BACKGROUND = 'userBackgroundImage';
 
 export class ClientImageService {
 	private imagesDirHandle!: FileSystemDirectoryHandle;
@@ -43,7 +43,7 @@ export class ClientImageService {
 		URL.revokeObjectURL(this.currentImage);
 		const selectedHandle = await this.imagesDirHandle.getFileHandle(imageName, { create: false });
 		const selectedFile = await selectedHandle.getFile();
-		const userBackgroundFile = await this.saveImage(SELCTED_USER_BACKGROUND, selectedFile);
+		const userBackgroundFile = await this.saveImage(SELECTED_USER_BACKGROUND, selectedFile);
 		const userBackground = URL.createObjectURL(userBackgroundFile);
 	
 		this.currentImage = userBackground;
@@ -57,7 +57,7 @@ export class ClientImageService {
 	public async loadUserBackgroundImage(): Promise<string> {
 		await this.init();
 		URL.revokeObjectURL(this.currentImage);
-		const fileHandle = await this.imagesDirHandle.getFileHandle(SELCTED_USER_BACKGROUND, { create: false });
+		const fileHandle = await this.imagesDirHandle.getFileHandle(SELECTED_USER_BACKGROUND, { create: false });
 		const userBackground = URL.createObjectURL(await fileHandle.getFile());
 	
 		this.currentImage = userBackground;
