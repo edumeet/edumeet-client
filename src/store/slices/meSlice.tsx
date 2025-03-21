@@ -1,12 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuid } from 'uuid';
+import { ThumbnailItem } from '../../services/clientImageService';
 import { LocalCapabilities, MediaCapabilities } from '../../services/mediaService';
 import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
-import { roomActions } from './roomSlice';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { roomActions } from './roomSlice';
 
 export interface MeState {
 	id: string;
+	backgroundImage?: string;
+	thumbnailList: ThumbnailItem[];
 	sessionId: string;
 	browser: Omit<DeviceInfo, 'bowser'>;
 	previewWebcamTrackId?: string;
@@ -43,6 +46,7 @@ export interface MeState {
 
 const initialState: MeState = {
 	id: uuid(),
+	thumbnailList: [],
 	sessionId: 'temp',
 	browser: deviceInfo(),
 	canSendMic: true,
@@ -83,6 +87,15 @@ const meSlice = createSlice({
 		}),
 		setMe: ((state, action: PayloadAction<string>) => {
 			state.id = action.payload;
+		}),
+		setBackgroundImage: ((state, action: PayloadAction<string>) => {
+			state.backgroundImage = action.payload;
+		}),
+		setThumbnailList: ((state, action: PayloadAction<ThumbnailItem[]>) => {
+			state.thumbnailList = [ ...action.payload ];
+		}),
+		addThumbnail: ((state, action: PayloadAction<ThumbnailItem>) => {
+			state.thumbnailList = [ ...state.thumbnailList, action.payload ];
 		}),
 		setPreviewWebcamTrackId: ((state, action: PayloadAction<string | undefined>) => {
 			state.previewWebcamTrackId = action.payload;
