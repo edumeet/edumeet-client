@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 // import Row from './Row';
 // import Menu from './Popover';
-import { DrawingState } from '../../../store/slices/drawingSlice';
-import { Grid, Popover } from '@mui/material';
+import { DrawingState } from '../../../store/slices/drawingSlice2';
+import { Grid2 as Grid, Popover } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CircleIcon from '@mui/icons-material/Circle';
 
@@ -85,7 +85,6 @@ const ColorsPicker: React.FC<Props> = (props) => {
 			
 						{colors.map((value) => (
 							<Grid
-								item
 								key={value}
 							>
 								{value !== color &&
