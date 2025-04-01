@@ -5,6 +5,7 @@ import { drawingActions, DrawingState } from '../../store/slices/drawingSlice2';
 import { setDrawingBgColor } from '../../store/actions/drawingActions';
 
 import { Canvas, FabricObject, PencilBrush, Textbox, util } from 'fabric';
+import { EraserBrush, isTransparent } from '@erase2d/fabric';
 import { Box, Divider, Grid2 as Grid, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 import PanToolIcon from '@mui/icons-material/PanTool';
@@ -84,9 +85,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 						if (actionRef.current === null) {
 					
 							const object = obj.target as FabricObject;
-					
+
+							object.erasable = Object.hasOwn(object, 'text') ? false : true;
 							object.id = object.id ?? Date.now();
 										
+							console.log(status);
+							console.log(JSON.stringify(object));
+
 							dispatch(drawingActions.recordAction({ object: object.toObject(), status }));
 						}
 					};
@@ -336,7 +341,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 	const handleUseEraserTool = () => {
 
-		// Look at this: https://www.npmjs.com/package/@erase2d/fabric?activeTab=readme
+		// Erasor tool from: https://github.com/ShaMan123/erase2d
 
 		const border = 1;
 		const len = eraserSize * zoom;
@@ -345,11 +350,44 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 		setCanvas((prevState) => {
 			if (prevState) {
-				prevState.freeDrawingBrush = new PencilBrush(prevState);
-				prevState.freeDrawingBrush.color = bgColor;
+				const eraser = new EraserBrush(prevState);
+
+				prevState.freeDrawingBrush = eraser;
 				prevState.freeDrawingBrush.width = eraserSize;
 				prevState.freeDrawingBrush.strokeLineCap = 'round';			
 				prevState.freeDrawingCursor = `url(${eraserCursor(len, strokeColor, pos, border)}) ${ len / 2 } ${ len / 2 }, default`;
+
+				eraser.on('end', async (e) => {
+					e.preventDefault();
+					const { targets } = e.detail;
+
+					await eraser.commit(e.detail);
+
+					// array of all objects on the canvas where erase have been used on
+					const masking = await Promise.all(
+						targets.map(
+							async (target) => [ target, await isTransparent(target) ] as const
+						)
+					);
+
+					// Erase fully masked objects
+					const fullyErased = masking
+						.filter(([ , masked ]) => masked)
+						.map(([ object ]) => object);
+
+					fullyErased.forEach((object) => (object.parent || prevState).remove(object));
+
+					// fire event when erase has ended to add to history
+					if (fullyErased.length == 0) {
+						targets.forEach((target) => {
+							console.log(JSON.stringify(target));
+							prevState.fire('object:modified', { target: target });
+						});
+					}
+
+					prevState.requestRenderAll();
+				});
+				
 				prevState.isDrawingMode = true;
 				prevState.selection = false;
 			}
@@ -484,7 +522,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 									const _enlivenObject : FabricObject & { id?: number } = pA[0];
 									const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === _enlivenObject.id);
 
-									// In case the object is a textbox we need to typecast to as getObjects() returns a FabricObject. 
+									// In case the object is a textbox we need to typecast as getObjects() returns a FabricObject. 
 									// At the time of writing this there is no Canvas method to get Textbox objects from the canvas.
 									if (foundObject && Object.hasOwn(foundObject, 'text') && Object.hasOwn(_enlivenObject, 'text')) {
 										const fo = foundObject as Textbox;
@@ -508,6 +546,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 						// add removed object
 						} else if (lastAction.status === 'removed') {
+							// Set erasable to true, is undefined as the property is from erase2d and not fabricjs
+							enlivenObject.erasable = true;
+
 							prevState.add(enlivenObject);
 						}
         
@@ -542,6 +583,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
         
 						// remove added object
 						if (nextAction.status === 'added') {    
+							// Set erasable to true, is undefined as the property is from erase2d and not fabricjs
+							enlivenObject.erasable = true;
+
 							prevState.add(enlivenObject);
 							
 							// revert changes to object
@@ -549,12 +593,12 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 
-							// As textboxes will never have the status added we will need to add it here
+							// As newly created textboxes do not have the status added we will need to add it here
 							if (foundObject == undefined && Object.hasOwn(enlivenObject, 'text')) {
 								prevState.add(enlivenObject);
 							}
 
-							// In case the object is a textbox we need to typecast to as getObjects() returns a FabricObject. 
+							// In case the object is a textbox we need to typecast as getObjects() returns a FabricObject. 
 							// At the time of writing this there is no Canvas method to get Textbox objects from the canvas.
 							if (foundObject && Object.hasOwn(foundObject, 'text') && Object.hasOwn(enlivenObject, 'text')) {
 								const fo = foundObject as Textbox;

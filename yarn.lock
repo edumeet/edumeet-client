@@ -338,6 +338,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.4.0.tgz#5e13fac887f08c44f76b0ccaf3370eb00fec9bb6"
   integrity sha512-snKqtPW01tN0ui7yu9rGv69aJXr/a/Ywvl11sUjNtEcRc+ng/mQriFL0wLXMef74iHa/EkftbDzU9F8iFbH+zg==
 
+"@erase2d/fabric@^1.1.7":
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/@erase2d/fabric/-/fabric-1.1.7.tgz#730550f8f9ad5990de38206c330f3ca9a5011983"
+  integrity sha512-tUpcMWCUydb+0y8keLY3JUHFs2KCACmeFKcKXtf1RJIx+DWhARnwwNcWaY/Jy5xtFH7Mi1xY2GbwDq8+HbTsBg==
+
 "@esbuild/android-arm64@0.18.20":
   version "0.18.20"
   resolved "https://registry.yarnpkg.com/@esbuild/android-arm64/-/android-arm64-0.18.20.tgz#984b4f9c8d0377443cc2dfcef266d02244593622"

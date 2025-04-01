@@ -12,6 +12,7 @@
 		"@emotion/cache": "^11.13.1",
 		"@emotion/react": "^11.13.3",
 		"@emotion/styled": "^11.13.0",
+		"@erase2d/fabric": "^1.1.7",
 		"@feathersjs/authentication-client": "^5.0.30",
 		"@feathersjs/feathers": "^5.0.30",
 		"@feathersjs/rest-client": "^5.0.30",
