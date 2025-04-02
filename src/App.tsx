@@ -36,7 +36,8 @@ const SnackbarCloseButton = ({
 };
 
 const App = (): JSX.Element => {
-	const backgroundImage = useAppSelector((state) => state.room.backgroundImage);
+	const roomBackgroundImage = useAppSelector((state) => state.room.backgroundImage);
+	const userBackgroundImage = useAppSelector((state) => state.me.backgroundImage);
 	const dispatch = useAppDispatch();
 	const roomState = useAppSelector((state) => state.room.state);
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
@@ -92,7 +93,7 @@ const App = (): JSX.Element => {
 			<StyledBackground
 				onDrop={handleFileDrop}
 				onDragOver={(event) => event.preventDefault()}
-				backgroundimage={backgroundImage}
+				backgroundimage={userBackgroundImage ?? roomBackgroundImage}
 			>
 				{ roomState === 'joined' ? <Room /> : roomState === 'lobby' ? <Lobby /> : roomState === 'new' && <Join roomId={id} /> }
 			</StyledBackground>

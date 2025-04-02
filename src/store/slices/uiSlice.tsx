@@ -13,6 +13,7 @@ export interface UiState {
 	helpOpen: boolean;
 	aboutOpen: boolean;
 	lobbyDialogOpen: boolean;
+	backgroundSelectDialogOpen: boolean;
 	extraVideoDialogOpen: boolean;
 	extraAudioDialogOpen: boolean;
 	currentSettingsTab: SettingsTab;
@@ -32,6 +33,7 @@ const initialState: UiState = {
 	helpOpen: false,
 	aboutOpen: false,
 	lobbyDialogOpen: false,
+	backgroundSelectDialogOpen: false,
 	extraVideoDialogOpen: false,
 	extraAudioDialogOpen: false,
 	currentSettingsTab: 'media',

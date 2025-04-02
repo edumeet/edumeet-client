@@ -150,6 +150,16 @@ export const mirroredSelfViewLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Mirrored self view video'
 });
 
+export const selectBackgroundLabel = (): string => intl.formatMessage({
+	id: 'settings.selectBackground',
+	defaultMessage: 'Select background'
+});
+
+export const currentlySelectedLabel = (): string => intl.formatMessage({
+	id: 'settings.currentlySelected',
+	defaultMessage: 'Currently Selected'
+});
+
 export const hideNoVideoParticipantsLabel =
 	(): string => intl.formatMessage({
 		id: 'settings.hideNoVideoParticipants',
