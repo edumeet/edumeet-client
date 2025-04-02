@@ -214,6 +214,34 @@ export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 	}
 };
 
+export const moveToBreakoutRoom = (peerId: string, sessionId: string, oldSessionId: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('moveToBreakoutRoom()');
+
+	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
+
+	try {
+		const {
+			chatHistory,
+			fileHistory,
+		} = await signalingService.sendRequest('moveToBreakoutRoom', { roomSessionId: sessionId, roomPeerId: peerId });
+
+		batch(() => {
+			dispatch(peersActions.setPeerSessionId({ id: peerId, sessionId, oldSessionId }));
+			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+		});
+
+	} catch (error) {
+		logger.error('moveToBreakoutRoom() [error:%o]', error);
+	} finally {
+		dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: false }));
+	}
+};
+
 export const closeMeeting = (): AppThunk<void> => (
 	_dispatch,
 	_getState,
