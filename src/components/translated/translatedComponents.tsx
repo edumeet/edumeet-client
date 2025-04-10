@@ -508,6 +508,16 @@ export const applyLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Apply'
 });
 
+export const removeImagesLabel = (): string => intl.formatMessage({
+	id: 'label.removeImages',
+	defaultMessage: 'Remove images'
+});
+
+export const useRoomBgLabel = (): string => intl.formatMessage({
+	id: 'label.useRoomBg',
+	defaultMessage: 'Use room background'
+});
+
 export const mediaSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.media',
 	defaultMessage: 'Media'

@@ -88,7 +88,7 @@ const meSlice = createSlice({
 		setMe: ((state, action: PayloadAction<string>) => {
 			state.id = action.payload;
 		}),
-		setBackgroundImage: ((state, action: PayloadAction<string>) => {
+		setBackgroundImage: ((state, action: PayloadAction<string | undefined>) => {
 			state.backgroundImage = action.payload;
 		}),
 		setThumbnailList: ((state, action: PayloadAction<ThumbnailItem[]>) => {

@@ -117,7 +117,7 @@ export const setEscapeMeeting = (
  * @param imageName image file name
  */
 export const setUserBackground = (
-	imageName: string
+	imageName: string,
 ): AppThunk<void> => async (
 	dispatch,
 	_getState,
@@ -165,10 +165,28 @@ export const saveImage = (
 	return thumbnailItem;
 };
 
+/**
+ * Get image with file name
+ * 
+ * @param name 
+ * @returns 
+ */
 export const getImage = (
-	name: string
-): AppThunk<Promise<string>> => async (_dispatch, _getState, { clientImageService }) => {
+	name: string,
+): AppThunk<Promise<File | undefined>> => async (_dispatch, _getState, { clientImageService }) => {
 	return await clientImageService.getImage(name);
+};
+
+/**
+ * Deletes image and revokes its object url
+ */
+export const deleteImage = (
+	thumbnail: ThumbnailItem,
+): AppThunk<Promise<void>> => async (dispatch, getState, { clientImageService }) => {
+	await clientImageService.deleteImage(thumbnail);
+	const newThumbnailList = getState().me.thumbnailList.filter((thumb) => thumb.imageName != thumbnail.imageName);
+
+	dispatch(meActions.setThumbnailList(newThumbnailList));
 };
 
 /**

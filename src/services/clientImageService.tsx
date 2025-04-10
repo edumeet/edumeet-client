@@ -5,6 +5,7 @@ export type ThumbnailItem = { imageName: string; thumbnailUrl: string };
 const logger = new Logger('ImageFileService');
 
 const IMAGE_DIR = 'images';
+const THUMBNAIL_SUFFIX = '_thumb';
 const SELECTED_USER_BACKGROUND = 'userBackgroundImage';
 
 export class ClientImageService {
@@ -71,13 +72,18 @@ export class ClientImageService {
 	 * @param name name of image file
 	 * @returns string containing a URL representing the file
 	 */
-	public async getImage(name: string) {
+	public async getImage(name: string): Promise<File | undefined> {
 		this.init();
 
-		const fileHandle = await this.imagesDirHandle.getFileHandle(name, { create: false });
-		const file = await fileHandle.getFile();
+		try {
+			const fileHandle = await this.imagesDirHandle.getFileHandle(name, { create: false });
 
-		return URL.createObjectURL(file);
+			return await fileHandle.getFile();
+		} catch (NotFoundError) {
+			logger.warn(`File ${name} not found.`);
+
+			return undefined;
+		}
 	}
 
 	/**
@@ -88,7 +94,7 @@ export class ClientImageService {
 	 */
 	public async saveImageAndThumbnail(image: File): Promise<ThumbnailItem> {
 		await this.saveImage(`${image.name}`, image);
-		const thumbnail = await this.saveImage(`${image.name}_thumb`, await this.generateThumbnail(image));
+		const thumbnail = await this.saveImage(image.name + THUMBNAIL_SUFFIX, await this.generateThumbnail(image));
 
 		return {
 			imageName: image.name,
@@ -161,11 +167,11 @@ export class ClientImageService {
 
 		// @ts-expect-error root.entries() exists in later versions of ts
 		for await (const entry of this.imagesDirHandle.values()) {
-			if (entry.kind === 'file' && entry.name.endsWith('_thumb')) {
+			if (entry.kind === 'file' && entry.name.endsWith(THUMBNAIL_SUFFIX)) {
 				const file = await entry.getFile();
 
 				thumbnails.push({
-					imageName: entry.name.replace('_thumb', ''),
+					imageName: entry.name.replace(THUMBNAIL_SUFFIX, ''),
 					thumbnailUrl: URL.createObjectURL(file)
 				});
 			}
@@ -174,6 +180,22 @@ export class ClientImageService {
 		return thumbnails;
 	}
 
+	/**
+	 * Deletes image and its thumbnail.
+	 * 
+	 * @param thumbnail
+	 */
+	public async deleteImage(thumbnail: ThumbnailItem) {
+		this.init();
+
+		const fileHandle = await this.imagesDirHandle.getFileHandle(thumbnail.imageName, { create: false });
+		const fileThumbnailHandle = await this.imagesDirHandle.getFileHandle(thumbnail.imageName + THUMBNAIL_SUFFIX, { create: false });
+	
+		URL.revokeObjectURL(thumbnail.thumbnailUrl);
+		await this.imagesDirHandle.removeEntry(fileHandle.name);
+		await this.imagesDirHandle.removeEntry(fileThumbnailHandle.name);
+	}
+	
 	public async clearStorage(thumbnailObjectUrls: ThumbnailItem[]) {
 		for (const thumbnail of thumbnailObjectUrls) {
 			URL.revokeObjectURL(thumbnail.thumbnailUrl);

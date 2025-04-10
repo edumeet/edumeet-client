@@ -5,9 +5,10 @@ import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { clearImageStorage, loadUserBackground, setUserBackground } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { meActions } from '../../store/slices/meSlice';
 import { uiActions } from '../../store/slices/uiSlice';
 import GenericDialog from '../genericdialog/GenericDialog';
-import { applyLabel, closeLabel, selectBackgroundLabel } from '../translated/translatedComponents';
+import { applyLabel, closeLabel, removeImagesLabel, selectBackgroundLabel, useRoomBgLabel } from '../translated/translatedComponents';
 import BackgroundPicker from './BackgroundPicker';
 
 const BackgroundSelectDialog = (): JSX.Element => {
@@ -29,6 +30,13 @@ const BackgroundSelectDialog = (): JSX.Element => {
 			backgroundSelectDialogOpen: !backgroundSelectDialogOpen
 		}));
 		selectedBackground && dispatch(setUserBackground(selectedBackground));
+	};
+
+	const handleUnsetBackground = (): void => {
+		dispatch(uiActions.setUi({
+			backgroundSelectDialogOpen: !backgroundSelectDialogOpen
+		}));
+		dispatch(meActions.setBackgroundImage(''));
 	};
 
 	const handleClearStorage = (): void => {
@@ -64,11 +72,20 @@ const BackgroundSelectDialog = (): JSX.Element => {
 						{applyLabel()}
 					</Button>
 					<Button
+						onClick={handleUnsetBackground}
+						startIcon={<CloseIcon />}
+						variant='contained'
+						size='small'
+					>
+						{useRoomBgLabel()}
+					</Button>
+					<Button
 						onClick={handleClearStorage}
 						startIcon={<DeleteForever />}
+						color='warning'
 						variant='contained'
 						size='small'>
-						Clear Images
+						{removeImagesLabel()}
 					</Button>
 					<Button
 						onClick={handleCloseBackgroundSelectDialog}
