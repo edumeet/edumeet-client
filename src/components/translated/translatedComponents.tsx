@@ -150,6 +150,16 @@ export const mirroredSelfViewLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Mirrored self view video'
 });
 
+export const selectBackgroundLabel = (): string => intl.formatMessage({
+	id: 'settings.selectBackground',
+	defaultMessage: 'Select background'
+});
+
+export const currentlySelectedLabel = (): string => intl.formatMessage({
+	id: 'settings.currentlySelected',
+	defaultMessage: 'Currently Selected'
+});
+
 export const hideNoVideoParticipantsLabel =
 	(): string => intl.formatMessage({
 		id: 'settings.hideNoVideoParticipants',
@@ -496,6 +506,16 @@ export const closeLabel = (): string => intl.formatMessage({
 export const applyLabel = (): string => intl.formatMessage({
 	id: 'label.apply',
 	defaultMessage: 'Apply'
+});
+
+export const removeImagesLabel = (): string => intl.formatMessage({
+	id: 'label.removeImages',
+	defaultMessage: 'Remove images'
+});
+
+export const useRoomBgLabel = (): string => intl.formatMessage({
+	id: 'label.useRoomBg',
+	defaultMessage: 'Use room background'
 });
 
 export const mediaSettingsLabel = (): string => intl.formatMessage({
