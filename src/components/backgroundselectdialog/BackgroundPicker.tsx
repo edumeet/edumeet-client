@@ -1,21 +1,39 @@
-import { DeleteForever } from '@mui/icons-material';
-import { Box, IconButton, ImageList, ImageListItem, ImageListItemBar, Input, Typography } from '@mui/material';
+import { CloudUpload, DeleteForever } from '@mui/icons-material';
+import { Box, Button, IconButton, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import React, { useEffect, useState } from 'react';
 import { ThumbnailItem } from '../../services/clientImageService';
 import { deleteImage, getImage, loadThumbnails, saveImage } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { uploadFileLabel, roomBgLabel } from '../translated/translatedComponents';
 
-type BackgroundProps = {
-	setSelectedBackground: React.Dispatch<React.SetStateAction<string | undefined>>
+interface RoomBgTileProps {
+	backgroundimage?: string;
 }
 
-const BackgroundPicker = ({ setSelectedBackground }: BackgroundProps): JSX.Element => {
+const RoomBgTile = styled('img')<RoomBgTileProps>(({ theme, backgroundimage }) => ({
+	height: 164,
+	width: 'inherit',
+	overflow: 'initial',
+	background: theme.background,
+	...(backgroundimage && {
+		backgroundImage: `url(${backgroundimage})`
+	}),
+}));
+
+type BackgroundPickerProps = {
+	setSelectedBackground: React.Dispatch<React.SetStateAction<string | undefined>>,
+}
+
+const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	const thumbnails: ThumbnailItem[] = useAppSelector((state) => state.me.thumbnailList);
 	const previousBackground: string | undefined = useAppSelector((state) => state.me.backgroundImage);
+	const roomBackgroundImage = useAppSelector((state) => state.room.backgroundImage);
 
 	const [ selectedItem, setSelectedItem ] = useState<{ imageName: string, imageUrl: string } | undefined>();
+	const [ useRoomBackground, setUseRoomBackground ] = useState(!previousBackground);
 
 	useEffect(() => {
 		const loadThumbnailsOnMount = async () => {
@@ -31,9 +49,11 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundProps): JSX.Eleme
 
 		if (item.imageName === selectedItem?.imageName) return;
 
+		setUseRoomBackground(false);
 		const image = await dispatch(getImage(item.imageName));
 
 		if (image) {
+			selectedItem?.imageName && URL.revokeObjectURL(selectedItem.imageName);
 			const imageUrlRef = URL.createObjectURL(image);
 
 			setSelectedItem({ imageName: item.imageName, imageUrl: imageUrlRef });
@@ -41,6 +61,12 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundProps): JSX.Eleme
 		} else {
 			setSelectedItem(undefined);
 		}
+	};
+
+	const handleSelectRoomBg = () => {
+		setSelectedItem(undefined);
+		setUseRoomBackground(true);
+		setSelectedBackground('');
 	};
 
 	const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,13 +97,14 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundProps): JSX.Eleme
 	const handleOnDelete = async (item: ThumbnailItem) => {
 		if (selectedItem?.imageName === item.imageName) {
 			setSelectedItem(undefined);
+			URL.revokeObjectURL(selectedItem.imageUrl);
 		}
 		dispatch(deleteImage(item));
 	};
 
 	return (
 		<Box
-			onDrop={handleFileDrop}
+			onDrop={ handleFileDrop }
 			onDragOver={(event) => {
 				event.preventDefault();
 				event.stopPropagation();
@@ -91,18 +118,56 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundProps): JSX.Eleme
 					justifyContent: 'center',
 				}}
 			>
-				<Box
-					component='img'
-					src={selectedItem?.imageUrl ?? previousBackground}
-					sx={{
-						height: 328,
-						objectFit: 'cover'
-					}}
-					alt='Select an image' />
+				{ useRoomBackground
+					? <RoomBgTile
+						backgroundimage={roomBackgroundImage}
+						sx={{
+							height: 'inherit',
+							objectFit: 'cover'
+						}} />
+					: <Box
+						component='img'
+						src={selectedItem?.imageUrl ?? previousBackground}
+						sx={{
+							height: 'inherit',
+							objectFit: 'cover'
+						}}
+						alt='Select an image' />
+				}
 			</Box>
-			<Input type='file' inputProps={{ multiple: true }} fullWidth onChange={handleFileUpload} />
-			<Typography variant='h6'>Thumbnails</Typography>
+			<Button
+				sx={{
+					margin: '2px'
+				}}
+				component="label"
+				role={undefined}
+				variant="contained"
+				tabIndex={-1}
+				startIcon={<CloudUpload />}
+			>
+				{ uploadFileLabel() }
+				<input
+					hidden
+					multiple
+					type='file'
+					onChange={ handleFileUpload } />
+			</Button>
 			<ImageList sx={{ width: 'fit-content', height: 450 }} cols={4} rowHeight={164}>
+
+				<ImageListItem
+					key='room-background'
+					onClick={ handleSelectRoomBg }>
+					<RoomBgTile backgroundimage={roomBackgroundImage} />
+					<ImageListItemBar
+						sx={{
+							background:
+							'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, ' +
+							'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+						}}
+						position='top'
+						title={roomBgLabel()} />
+				</ImageListItem>
+
 				{thumbnails.map((item) => (
 					<ImageListItem
 						key={item.imageName}
@@ -130,7 +195,7 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundProps): JSX.Eleme
 									aria-label={`delete ${item.imageName}`}
 								>
 									<DeleteForever htmlColor='red' />
-								</IconButton>
+								</IconButton> 
 							}
 							sx={{
 								position: 'absolute',

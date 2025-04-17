@@ -402,6 +402,11 @@ export const downloadFileLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Download'
 });
 
+export const uploadFileLabel = (): string => intl.formatMessage({
+	id: 'filesharing.upload',
+	defaultMessage: 'Upload file'
+});
+
 export const saveFileLabel = (): string => intl.formatMessage({
 	id: 'filesharing.save',
 	defaultMessage: 'Save'
@@ -508,14 +513,14 @@ export const applyLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Apply'
 });
 
-export const removeImagesLabel = (): string => intl.formatMessage({
-	id: 'label.removeImages',
-	defaultMessage: 'Remove images'
+export const removeAllImagesLabel = (): string => intl.formatMessage({
+	id: 'label.removeAllImages',
+	defaultMessage: 'Remove all images'
 });
 
-export const useRoomBgLabel = (): string => intl.formatMessage({
+export const roomBgLabel = (): string => intl.formatMessage({
 	id: 'label.useRoomBg',
-	defaultMessage: 'Use room background'
+	defaultMessage: 'Room background'
 });
 
 export const mediaSettingsLabel = (): string => intl.formatMessage({
