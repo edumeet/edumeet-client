@@ -150,6 +150,16 @@ export const mirroredSelfViewLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Mirrored self view video'
 });
 
+export const selectBackgroundLabel = (): string => intl.formatMessage({
+	id: 'settings.selectBackground',
+	defaultMessage: 'Select background'
+});
+
+export const currentlySelectedLabel = (): string => intl.formatMessage({
+	id: 'settings.currentlySelected',
+	defaultMessage: 'Currently Selected'
+});
+
 export const hideNoVideoParticipantsLabel =
 	(): string => intl.formatMessage({
 		id: 'settings.hideNoVideoParticipants',
@@ -392,6 +402,11 @@ export const downloadFileLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Download'
 });
 
+export const uploadFileLabel = (): string => intl.formatMessage({
+	id: 'filesharing.upload',
+	defaultMessage: 'Upload file'
+});
+
 export const saveFileLabel = (): string => intl.formatMessage({
 	id: 'filesharing.save',
 	defaultMessage: 'Save'
@@ -496,6 +511,16 @@ export const closeLabel = (): string => intl.formatMessage({
 export const applyLabel = (): string => intl.formatMessage({
 	id: 'label.apply',
 	defaultMessage: 'Apply'
+});
+
+export const removeAllImagesLabel = (): string => intl.formatMessage({
+	id: 'label.removeAllImages',
+	defaultMessage: 'Remove all images'
+});
+
+export const roomBgLabel = (): string => intl.formatMessage({
+	id: 'label.useRoomBg',
+	defaultMessage: 'Room background'
 });
 
 export const mediaSettingsLabel = (): string => intl.formatMessage({
