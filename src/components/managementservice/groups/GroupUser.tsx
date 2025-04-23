@@ -105,7 +105,7 @@ const GroupUserTable = () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('groupUsers')).then((tdata: any) => {
 			if (tdata != undefined) {
-				setData(tdata);
+				setData(tdata.data);
 			}
 			setIsLoading(false);
 
