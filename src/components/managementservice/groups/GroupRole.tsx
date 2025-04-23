@@ -292,7 +292,7 @@ const GroupRoleTable = () => {
 						onChange={handleGroupIdChange}
 						value={groupIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="User" />}
+						renderInput={(params) => <TextField {...params} label="Group" />}
 					/>
 					<Autocomplete
 						options={roles}
