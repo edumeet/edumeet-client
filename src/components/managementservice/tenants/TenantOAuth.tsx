@@ -4,7 +4,7 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { Tenant, TenantOAuth } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, getDataByID, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
 import { TenantProp } from './Tenant';
 
@@ -96,7 +96,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getDataByID(tenantId, 'tenantOAuths')).then((tdata: any) => {
+		dispatch(getDataByTenantID(tenantId, 'tenantOAuths')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}

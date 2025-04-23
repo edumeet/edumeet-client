@@ -4,7 +4,7 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { Tenant, TenantFQDN } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, getDataByID, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { TenantProp } from './Tenant';
 
 const TenantFQDNTable = (props: TenantProp) => {
@@ -71,7 +71,7 @@ const TenantFQDNTable = (props: TenantProp) => {
 		});
 		
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getDataByID(tenantId, 'tenantFQDNs')).then((tdata: any) => {
+		dispatch(getDataByTenantID(tenantId, 'tenantFQDNs')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
@@ -155,21 +155,21 @@ const TenantFQDNTable = (props: TenantProp) => {
 					<input type="hidden" name="id" value={id} />
 					<TextField
 						margin="dense"
-						id="description"
-						label="description"
-						type="text"
-						fullWidth
-						onChange={handleDescriptionChange}
-						value={description}
-					/>
-					<TextField
-						margin="dense"
 						id="fqdn"
 						label="fqdn"
 						type="text"
 						fullWidth
 						onChange={handleFQDNChange}
 						value={fqdn}
+					/>
+					<TextField
+						margin="dense"
+						id="description"
+						label="description"
+						type="text"
+						fullWidth
+						onChange={handleDescriptionChange}
+						value={description}
 					/>
 				</DialogContent>
 				<DialogActions>
