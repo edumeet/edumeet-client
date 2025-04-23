@@ -412,3 +412,14 @@ export type GroupUsers = {
     groupId: number,   
     userId: number
 };
+export type Rule = {
+	id: number,
+	name?: string,
+	tenantId?: number | null,
+	parameter: string,
+	method: string,
+	negate: boolean,
+	value: string,
+	action: string,
+	type: string,
+}

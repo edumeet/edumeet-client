@@ -34,6 +34,8 @@ import { managamentActions } from '../../store/slices/managementSlice';
 import SignIn from '../../components/settingsdialog/managementsettings/ManagementAdminLoginSettings';
 import GroupRoleTable from '../../components/managementservice/groups/GroupRole';
 import GroupUserTable from '../../components/managementservice/groups/GroupUser';
+import RuleTable from '../../components/managementservice/rules/Rule';
+import RuleIcon from '@mui/icons-material/Rule';
 
 const drawerWidth = 300;
 
@@ -109,7 +111,10 @@ export default function ManagementUI(/* props: Props */) {
 					return <>Roles
 						<RoleTable />
 					</>;
-
+				case 'rule':
+					return <>Rules
+						<RuleTable />
+					</>;
 				default:
 					return <Box sx={{ minWidth: '400px' }}>Select an item to load a component </Box>;
 			}
@@ -215,6 +220,16 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemText primary={'Role(s)'} />
 					</ListItemButton>
 				</ListItem>
+				<ListItem key={'Rule(s)'} disablePadding onClick={
+					() => setSelectedComponent('rule')
+				}>
+					<ListItemButton >
+						<ListItemIcon>
+							<RuleIcon />
+						</ListItemIcon>
+						<ListItemText primary={'Rule(s)'} />
+					</ListItemButton>
+				</ListItem>
 			</List>
 			<Divider />
 		</div >
@@ -279,7 +294,7 @@ export default function ManagementUI(/* props: Props */) {
 			</Box>
 			<Box
 				component="main"
-				sx={{ flexGrow: 1, p: 1, width: 'calc(100%)' }}
+				sx={{ flexGrow: 1, p: 1, width: 'calc(100% - 300px)' }}
 			>
 				<Toolbar />
 				<div style={{ background: 'white', padding: '2px', maxWidth: '100%', minWidth: '300px' }}>
