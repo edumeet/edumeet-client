@@ -127,7 +127,14 @@ const RuleTable = () => {
 		setTenantId(0);
 		setCantDelete(true);
 		setOpen(true);
-		setAccessId('0');
+		setTenantIdOption(undefined);
+		setType('');
+		setParameter('');
+		setMethod('');
+		setNegate(false);
+		setValue('');
+		setAction('');
+		setAccessId('');
 	};
 
 	const handleClickOpenNoreset = () => {
