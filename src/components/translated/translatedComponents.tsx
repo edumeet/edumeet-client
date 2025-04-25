@@ -10,6 +10,11 @@ export const yesLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Yes'
 });
 
+export const defaultLabel = (): string => intl.formatMessage({
+	id: 'label.default',
+	defaultMessage: 'Default'
+});
+
 export const joinedRoomLabel = (): string => intl.formatMessage({
 	id: 'room.joined',
 	defaultMessage: 'You have joined the room'
@@ -519,7 +524,7 @@ export const removeAllImagesLabel = (): string => intl.formatMessage({
 });
 
 export const roomBgLabel = (): string => intl.formatMessage({
-	id: 'label.useRoomBg',
+	id: 'label.roomBackground',
 	defaultMessage: 'Room background'
 });
 

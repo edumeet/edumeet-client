@@ -11,7 +11,7 @@ import GenericDialog from '../genericdialog/GenericDialog';
 import { applyLabel, closeLabel, removeAllImagesLabel, selectBackgroundLabel } from '../translated/translatedComponents';
 import BackgroundPicker from './BackgroundPicker';
 
-const BackgroundSelectDialog = (): JSX.Element => {
+const BackgroundSelectDialog = ({ autoApply = false }): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const backgroundSelectDialogOpen = useAppSelector((state) => state.ui.backgroundSelectDialogOpen);
 
@@ -24,6 +24,14 @@ const BackgroundSelectDialog = (): JSX.Element => {
 
 		checkForSavedBackground();
 	}, []);
+
+	useEffect(() => {
+		if (!autoApply) return;
+
+		selectedBackground
+			? dispatch(setUserBackground(selectedBackground))
+			: dispatch(meActions.setBackgroundImage(''));
+	}, [ selectedBackground ]);
 
 	const handleApply = (): void => {
 		dispatch(uiActions.setUi({
@@ -58,7 +66,6 @@ const BackgroundSelectDialog = (): JSX.Element => {
 					<Button
 						onClick={handleApply}
 						startIcon={<DoneIcon />}
-						color='success'
 						variant='contained'
 						size='small'
 					>
@@ -67,8 +74,7 @@ const BackgroundSelectDialog = (): JSX.Element => {
 					<Button
 						onClick={handleClearStorage}
 						startIcon={<DeleteForever />}
-						color='warning'
-						variant='contained'
+						color='secondary'
 						size='small'>
 						{removeAllImagesLabel()}
 					</Button>

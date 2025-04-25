@@ -1,25 +1,14 @@
-import { CloudUpload, DeleteForever } from '@mui/icons-material';
-import { Box, Button, IconButton, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { DeleteForever } from '@mui/icons-material';
+import { Box, IconButton, ImageList, ImageListItem, ImageListItemBar, useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import React, { useEffect, useState } from 'react';
 import { ThumbnailItem } from '../../services/clientImageService';
-import { deleteImage, getImage, loadThumbnails, saveImage } from '../../store/actions/meActions';
+import { deleteImage, getImage, loadThumbnails } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { uploadFileLabel, roomBgLabel } from '../translated/translatedComponents';
-
-interface RoomBgTileProps {
-	backgroundimage?: string;
-}
-
-const RoomBgTile = styled('img')<RoomBgTileProps>(({ theme, backgroundimage }) => ({
-	height: 164,
-	width: 'inherit',
-	overflow: 'initial',
-	background: theme.background,
-	...(backgroundimage && {
-		backgroundImage: `url(${backgroundimage})`
-	}),
-}));
+import { defaultLabel, selectBackgroundLabel } from '../translated/translatedComponents';
+import UploadImageButton from './UploadFileButton';
+import RoomBackgroundTile from './RoomBackgroundTile';
+import DropZone from './DropZone';
 
 type BackgroundPickerProps = {
 	setSelectedBackground: React.Dispatch<React.SetStateAction<string | undefined>>,
@@ -27,10 +16,10 @@ type BackgroundPickerProps = {
 
 const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-
+	const theme = useTheme();
+	const isMd = useMediaQuery(theme.breakpoints.up('md'));
 	const thumbnails: ThumbnailItem[] = useAppSelector((state) => state.me.thumbnailList);
 	const previousBackground: string | undefined = useAppSelector((state) => state.me.backgroundImage);
-	const roomBackgroundImage = useAppSelector((state) => state.room.backgroundImage);
 
 	const [ selectedItem, setSelectedItem ] = useState<{ imageName: string, imageUrl: string } | undefined>();
 	const [ useRoomBackground, setUseRoomBackground ] = useState(!previousBackground);
@@ -69,31 +58,6 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 		setSelectedBackground('');
 	};
 
-	const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-		const files: FileList | null = event.target.files;
-
-		if (files?.length) saveFiles(files);
-	};
-
-	const handleFileDrop = async (event: React.DragEvent<HTMLDivElement>) => {
-		event.preventDefault();
-		event.stopPropagation();
-
-		const droppedFiles: FileList | null = event.dataTransfer.files;
-
-		if (droppedFiles?.length) saveFiles(droppedFiles);
-	};
-
-	const saveFiles = async (fileList: FileList) => {
-		let newThumbnail;
-
-		for (const file of fileList) {
-			newThumbnail = await dispatch(saveImage(file));
-		}
-
-		newThumbnail && await handleSelectImage(newThumbnail);
-	};
-
 	const handleOnDelete = async (item: ThumbnailItem) => {
 		if (selectedItem?.imageName === item.imageName) {
 			setSelectedItem(undefined);
@@ -103,28 +67,18 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 	};
 
 	return (
-		<Box
-			onDrop={ handleFileDrop }
-			onDragOver={(event) => {
-				event.preventDefault();
-				event.stopPropagation();
-			}}>
+		<DropZone afterImageDropHook={handleSelectImage}>
 			<Box
 				sx={{
-					width: '100%',
 					height: 328,
+					width: '100%',
 					border: '1px dashed #ccc',
 					display: 'flex',
 					justifyContent: 'center',
 				}}
 			>
 				{ useRoomBackground
-					? <RoomBgTile
-						backgroundimage={roomBackgroundImage}
-						sx={{
-							height: 'inherit',
-							objectFit: 'cover'
-						}} />
+					? <RoomBackgroundTile />
 					: <Box
 						component='img'
 						src={selectedItem?.imageUrl ?? previousBackground}
@@ -132,32 +86,17 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 							height: 'inherit',
 							objectFit: 'cover'
 						}}
-						alt='Select an image' />
+						alt={selectBackgroundLabel()} />
 				}
 			</Box>
-			<Button
-				sx={{
-					margin: '2px'
-				}}
-				component="label"
-				role={undefined}
-				variant="contained"
-				tabIndex={-1}
-				startIcon={<CloudUpload />}
-			>
-				{ uploadFileLabel() }
-				<input
-					hidden
-					multiple
-					type='file'
-					onChange={ handleFileUpload } />
-			</Button>
-			<ImageList sx={{ width: 'fit-content', height: 450 }} cols={4} rowHeight={164}>
 
+			<UploadImageButton afterImageUploadHook={handleSelectImage}/>
+
+			<ImageList sx={{ width: 'fit-content', height: '100%' }} cols={isMd ? 5 : 3 } rowHeight={164}>
 				<ImageListItem
 					key='room-background'
 					onClick={ handleSelectRoomBg }>
-					<RoomBgTile backgroundimage={roomBackgroundImage} />
+					<RoomBackgroundTile />
 					<ImageListItemBar
 						sx={{
 							background:
@@ -165,7 +104,7 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 							'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
 						}}
 						position='top'
-						title={roomBgLabel()} />
+						title={defaultLabel()} />
 				</ImageListItem>
 
 				{thumbnails.map((item) => (
@@ -194,7 +133,7 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 									}}
 									aria-label={`delete ${item.imageName}`}
 								>
-									<DeleteForever htmlColor='red' />
+									<DeleteForever htmlColor='secondary' />
 								</IconButton> 
 							}
 							sx={{
@@ -209,7 +148,7 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 					</ImageListItem>
 				))}
 			</ImageList>
-		</Box>
+		</DropZone>
 	);
 };
 
