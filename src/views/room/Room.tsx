@@ -76,7 +76,7 @@ const Room = (): JSX.Element => {
 			/>
 			<MainContent />
 			<FullscreenVideo />
-			<BackgroundSelectDialog />
+			<BackgroundSelectDialog autoApply />
 			<LobbyDialog />
 			<Settings />
 			<Help />

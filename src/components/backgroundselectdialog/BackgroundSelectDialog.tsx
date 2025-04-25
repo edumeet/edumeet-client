@@ -64,14 +64,14 @@ const BackgroundSelectDialog = ({ autoApply = false }): JSX.Element => {
 			}
 			actions={
 				<>
-					<Button
+					{ !autoApply && <Button
 						onClick={handleApply}
 						size='small'
 						startIcon={<DoneIcon />}
 						variant='contained'
 					>
 						{applyLabel()}
-					</Button>
+					</Button> }
 					<UploadImageButton />
 					<Button
 						color='secondary'

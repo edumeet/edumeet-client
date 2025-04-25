@@ -71,7 +71,6 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 				sx={{
 					height: 328,
 					width: '100%',
-					border: '1px dashed',
 					display: 'flex',
 					justifyContent: 'center',
 				}}
