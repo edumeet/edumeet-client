@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { ThumbnailItem } from '../../services/clientImageService';
 import { deleteImage, getImage, loadThumbnails } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { defaultLabel, selectBackgroundLabel } from '../translated/translatedComponents';
+import { currentlySelectedLabel, defaultLabel, selectBackgroundLabel } from '../translated/translatedComponents';
 import DropZone from './DropZone';
 import RoomBackgroundTile from './RoomBackgroundTile';
 
@@ -73,19 +73,38 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 					width: '100%',
 					display: 'flex',
 					justifyContent: 'center',
+					position: 'relative',
 				}}
 			>
-				{useRoomBackground
-					? <RoomBackgroundTile />
-					: <Box
+				{useRoomBackground ? (
+					<RoomBackgroundTile />
+				) : (
+					<Box
 						component='img'
 						src={selectedItem?.imageUrl ?? previousBackground}
 						sx={{
 							height: 'inherit',
-							objectFit: 'cover'
+							width: '100%',
+							objectFit: 'cover',
+							display: 'block',
 						}}
-						alt={selectBackgroundLabel()} />
-				}
+						alt={selectBackgroundLabel()}
+					/>
+				)}
+
+				<Box
+					sx={{
+						position: 'absolute',
+						top: theme.spacing(1),
+						left: theme.spacing(1),
+						backgroundColor: `${theme.palette.primary.main}AA`,
+						color: theme.palette.primary.contrastText,
+						px: 2,
+						py: 0.5,
+					}}
+				>
+					{currentlySelectedLabel()}
+				</Box>
 			</Box>
 
 			<ImageList
