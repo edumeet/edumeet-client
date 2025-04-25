@@ -10,6 +10,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 import GenericDialog from '../genericdialog/GenericDialog';
 import { applyLabel, closeLabel, removeAllImagesLabel, selectBackgroundLabel } from '../translated/translatedComponents';
 import BackgroundPicker from './BackgroundPicker';
+import UploadImageButton from './UploadFileButton';
 
 const BackgroundSelectDialog = ({ autoApply = false }): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -65,24 +66,26 @@ const BackgroundSelectDialog = ({ autoApply = false }): JSX.Element => {
 				<>
 					<Button
 						onClick={handleApply}
+						size='small'
 						startIcon={<DoneIcon />}
 						variant='contained'
-						size='small'
 					>
 						{applyLabel()}
 					</Button>
+					<UploadImageButton />
 					<Button
-						onClick={handleClearStorage}
-						startIcon={<DeleteForever />}
 						color='secondary'
-						size='small'>
+						onClick={handleClearStorage}
+						size='small'
+						startIcon={<DeleteForever />}
+					>
 						{removeAllImagesLabel()}
 					</Button>
 					<Button
 						onClick={handleCloseBackgroundSelectDialog}
+						size='small'
 						startIcon={<CloseIcon />}
 						variant='contained'
-						size='small'
 					>
 						{closeLabel()}
 					</Button>

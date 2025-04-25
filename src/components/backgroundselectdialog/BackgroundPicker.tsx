@@ -6,9 +6,8 @@ import { ThumbnailItem } from '../../services/clientImageService';
 import { deleteImage, getImage, loadThumbnails } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { defaultLabel, selectBackgroundLabel } from '../translated/translatedComponents';
-import UploadImageButton from './UploadFileButton';
-import RoomBackgroundTile from './RoomBackgroundTile';
 import DropZone from './DropZone';
+import RoomBackgroundTile from './RoomBackgroundTile';
 
 type BackgroundPickerProps = {
 	setSelectedBackground: React.Dispatch<React.SetStateAction<string | undefined>>,
@@ -72,12 +71,12 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 				sx={{
 					height: 328,
 					width: '100%',
-					border: '1px dashed #ccc',
+					border: '1px dashed',
 					display: 'flex',
 					justifyContent: 'center',
 				}}
 			>
-				{ useRoomBackground
+				{useRoomBackground
 					? <RoomBackgroundTile />
 					: <Box
 						component='img'
@@ -90,18 +89,23 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 				}
 			</Box>
 
-			<UploadImageButton afterImageUploadHook={handleSelectImage}/>
+			<ImageList
+				sx={{
+					width: 'fit-content',
+					height: '100%',
+				}}
+				cols={isMd ? 5 : 3}
+				rowHeight={164}>
 
-			<ImageList sx={{ width: 'fit-content', height: '100%' }} cols={isMd ? 5 : 3 } rowHeight={164}>
 				<ImageListItem
 					key='room-background'
-					onClick={ handleSelectRoomBg }>
+					onClick={handleSelectRoomBg}>
 					<RoomBackgroundTile />
 					<ImageListItemBar
 						sx={{
 							background:
-							'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, ' +
-							'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+								'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, ' +
+								'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
 						}}
 						position='top'
 						title={defaultLabel()} />
@@ -134,7 +138,7 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 									aria-label={`delete ${item.imageName}`}
 								>
 									<DeleteForever htmlColor='secondary' />
-								</IconButton> 
+								</IconButton>
 							}
 							sx={{
 								position: 'absolute',

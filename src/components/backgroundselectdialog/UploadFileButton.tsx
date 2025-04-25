@@ -8,7 +8,7 @@ import { ThumbnailItem } from '../../services/clientImageService';
 
 interface UploadFileButtonProps {
 	// eslint-disable-next-line no-unused-vars
-	afterImageUploadHook: (uploadedThumbnailItem: ThumbnailItem) => unknown;
+	afterImageUploadHook?: (uploadedThumbnailItem: ThumbnailItem) => unknown;
 }
 
 export const UploadImageButton = ({ afterImageUploadHook }: UploadFileButtonProps): React.JSX.Element => {
@@ -25,25 +25,23 @@ export const UploadImageButton = ({ afterImageUploadHook }: UploadFileButtonProp
 			newThumbnail = await dispatch(saveImage(file));
 		}
 
-		newThumbnail && afterImageUploadHook(newThumbnail);
+		newThumbnail && afterImageUploadHook?.(newThumbnail);
 	};
 
 	return (
 		<Button
-			sx={{
-				margin: '2'
-			}}
 			component="label"
 			role={undefined}
-			variant="contained"
+			size='small'
 			startIcon={<CloudUpload />}
+			variant="contained"
 		>
 			{ uploadFileLabel() }
 			<input
 				hidden
 				multiple
-				type='file'
-				onChange={ handleFileUpload } />
+				onChange={ handleFileUpload }
+				type='file' />
 		</Button>
 	);
 };
