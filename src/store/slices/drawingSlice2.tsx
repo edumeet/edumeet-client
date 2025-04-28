@@ -17,7 +17,7 @@ FabricObject.customProperties = [ 'id' ];
 export interface DrawingState extends HistoryState {
     drawingEnabled?: boolean
     zoom: number
-    tools: [ 'move', 'pencilBrush', 'text', 'eraser' ]
+    tools: [ 'edit', 'pencilBrush', 'text', 'eraser' ]
     tool: DrawingState['tools'][number]
     pencilBrushSize: number
     pencilBrushSizeRange: { min: number, max: number }
@@ -47,7 +47,7 @@ export interface FabricAction {
 
 const initialState: DrawingState = {
 	drawingEnabled: false,
-	tools: [ 'move', 'pencilBrush', 'text', 'eraser' ],
+	tools: [ 'edit', 'pencilBrush', 'text', 'eraser' ],
 	tool: 'pencilBrush',
 	pencilBrushSize: 20,
 	pencilBrushSizeRange: { min: 1, max: 100 },

@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { drawingActions, DrawingState } from '../../store/slices/drawingSlice2';
 import { setDrawingBgColor } from '../../store/actions/drawingActions';
 
-import { Canvas, FabricObject, PencilBrush, Textbox, util } from 'fabric';
+import { Canvas, FabricObject, ImageFormat, IText, PencilBrush, util } from 'fabric';
 import { EraserBrush, isTransparent } from '@erase2d/fabric';
 import { Box, Divider, Grid2 as Grid, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
 
@@ -21,6 +21,7 @@ import ErasingAllConfirmationButton from './menu/ErasingAllConfirmationButton';
 import ColorsPicker from './menu/ColorsPicker';
 import BgColorsPicker from './menu/BgColorsPicker';
 import { FabricAction } from '../../store/slices/drawingSlice';
+import DownloadCanvasButton from './menu/DownloadCanvasButton';
 
 interface DrawingViewProps {
 	width: number;
@@ -41,6 +42,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	// tools
 	const menuRef = useRef<HTMLDivElement>(null);
 	const tool = useAppSelector((state) => state.drawing.tool);
+	const textLimiter = useRef<boolean>(true);
 	
 	// size
 	const sizeRef = useRef<NodeJS.Timeout | null>(null);
@@ -54,6 +56,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	
 	const [ size, setSize ] = useState<number>();
 	const [ sizeRange, setSizeRange ] = useState<{ min: number, max: number }>();
+
+	// Seems the fabricjs event handling is forcing textSize to be 30. This is the only work around I could find.
+	const textFontSizeRef = useRef<number>(textSize);
 
 	// colors
 	const isColorsPickerPopover = useMediaQuery(theme.breakpoints.between('xs', 'md'));
@@ -81,16 +86,15 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 			setCanvas((prevState) => {
 				if (prevState) {
 					
-					const handleObjectEvent = (status: 'added' | 'modified' | 'removed') => (obj: {target: FabricObject}) => {			
+					const handleObjectEvent = (status: 'added' | 'modified' | 'removed') => (obj: {target: FabricObject}) => {	
 						if (actionRef.current === null) {
 					
 							const object = obj.target as FabricObject;
 
 							object.erasable = Object.hasOwn(object, 'text') ? false : true;
 							object.id = object.id ?? Date.now();
-										
-							console.log(status);
-							console.log(JSON.stringify(object));
+							
+							// console.log(status, object);
 
 							dispatch(drawingActions.recordAction({ object: object.toObject(), status }));
 						}
@@ -141,31 +145,31 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 	/* tools */
 	useEffect(() => {
+
 		switch (tool) {
 			case 'move':
-				handleUseMoveTool();
+				handleUseEditTool();
 				break;
 			case 'pencilBrush':
-				handleUsePencilBrush();
 				setSize(pencilBrushSize);
 				setSizeRange(pencilBrushSizeRange);
+				handleUsePencilBrush();
 				break;
 			case
 				'text':
-				handleUseTextTool();
 				setSize(textSize);
 				setSizeRange(textSizeRange);
-
+				handleUseTextTool();
 				break;
 			case 'eraser':
-				handleUseEraserTool();
 				setSize(eraserSize);
 				setSizeRange(eraserSizeRange);
+				handleUseEraserTool();
 				break;
 		}
 		
-	}, [ canvas, tool, color, pencilBrushSize, textSize, eraserSize, zoom ]);
-	
+	}, [ tool, canvas, color, pencilBrushSize, textSize, eraserSize, zoom ]);
+
 	/* size  */
 	useEffect(() => {
 		return () => {
@@ -187,13 +191,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	
 	useEffect(() => {		
 		handleUseBgColor(bgColor);
-
-		if (tool === 'eraser') {
-			setCanvas((prevState) => {
-				
-				return prevState;
-			});
-		}
 	}, [ bgColor ]);
 
 	/* handling functions */
@@ -205,21 +202,51 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 		dispatch(drawingActions.setDrawingTool(value));
 	};
 
-	const handleUseMoveTool = () => {
-
+	const handleUseEditTool = () => {
+		
 		setCanvas((prevState) => {
 			if (prevState) {
+				actionRef.current = null;
+
 				prevState.isDrawingMode = false;
 				prevState.defaultCursor = 'default';
-				prevState.hoverCursor = 'default';
+				prevState.hoverCursor = 'grab';
 				prevState.selection = false;
+				prevState.forEachObject((obj) => {
+					obj.selectable = true;
+				});
 
-				/* For group select if prevState.selection = true */
+				const dispose = prevState.on('mouse:down', () => {
+					dispose();
+				});
+
+				// For group select if prevState.selection = true
 				// prevState.selectionColor ='transparent';
 				// prevState.selectionBorderColor = 'lightblue';
 				// prevState.selectionDashArray=[ 4, 4 ];
 
-				handleSetTool('move');
+				// Delete object on backspace during edit
+				
+				document.addEventListener('keydown', (e) => {
+					const key = e.key;
+					const active = prevState.getActiveObject();
+					
+					if (active) {
+						if (Object.hasOwn(active, 'text')) {
+							const _active = active as IText;
+
+							if (_active.isEditing) {
+								return;
+							}
+						}
+
+						if (key === 'Backspace') {
+							prevState.remove(active);
+						}
+					}
+				});
+				
+				handleSetTool('edit');
 			}
 			
 			return prevState;
@@ -254,9 +281,11 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 		const border = 1;
 		const len = pencilBrushSize * zoom;
 		const pos = (pencilBrushSize / 2) * zoom;
-	
+		
 		setCanvas((prevState) => {
 			if (prevState) {
+				actionRef.current = null;
+
 				prevState.freeDrawingBrush = new PencilBrush(prevState);
 				prevState.freeDrawingBrush.color = color;
 				prevState.freeDrawingBrush.width = pencilBrushSize;
@@ -264,6 +293,10 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				prevState.freeDrawingCursor = `url(${drawingCursor(len, pos, border)}) ${ len / 2 } ${ len / 2 }, default`;
 				prevState.isDrawingMode = true;
 				prevState.selection = false;
+
+				const dispose = prevState.on('mouse:down', () => {
+					dispose();
+				});
 			}
 
 			return prevState;
@@ -276,7 +309,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 		setCanvas((prevState) => {
 			if (prevState) {
-
+				actionRef.current = 'text';
+				
 				prevState.isDrawingMode = false;
 				prevState.selection = false;
 				prevState.defaultCursor = 'text';
@@ -284,35 +318,45 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				prevState.forEachObject((obj) => {
 					obj.selectable = false;
 				});
-				const dispose = prevState.on('mouse:down', (event) => {
-					actionRef.current = 'text';
+				textFontSizeRef.current = textSize;
 
-					const pointer = prevState.getScenePoint(event.e);
-					const text = new Textbox('', {
-						left: pointer.x,
-						top: pointer.y,
-						fill: color,
-						fontSize: textSize,
-						fontFamily: 'Arial',
-					});
+				if (textLimiter.current === true) {
+					
+					textLimiter.current = false;
+					
+					prevState.on('mouse:down', (e) => {	
 
-					prevState.add(text);
-					prevState.setActiveObject(text);
-					text.enterEditing();
-					
-					text.on('editing:exited', () => {
-						actionRef.current = null;
+						if (actionRef.current === 'text') {
+							actionRef.current = null;
+
+							const pointer = e.scenePoint;
+							const text = new IText('Edit text', {
+								left: pointer.x,
+								top: pointer.y,
+								fill: color,
+								fontSize: textFontSizeRef.current,
+								fontFamily: 'Arial',
+							});
+							
+							prevState.add(text);
+							prevState.setActiveObject(text);
+							
+							text.enterEditing();
+							text.selectAll();	
+							
+							text.on('editing:exited', () => {
+								textLimiter.current = true;
+							});
+						}
 					});
-					
-					dispose();
-				});
+				}
 				
-				handleSetTool('text');
-
 			}
 			
 			return prevState;
 		});
+
+		handleSetTool('text');
 	};
 
 	const eraserCursor = (len: number, strokeColor: string, pos: number, border: number) => {		
@@ -340,8 +384,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	};
 
 	const handleUseEraserTool = () => {
-
-		// Erasor tool from: https://github.com/ShaMan123/erase2d
+		// Eraser tool from: https://github.com/ShaMan123/erase2d
 
 		const border = 1;
 		const len = eraserSize * zoom;
@@ -350,12 +393,18 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 		setCanvas((prevState) => {
 			if (prevState) {
+				actionRef.current = null;
+
 				const eraser = new EraserBrush(prevState);
 
 				prevState.freeDrawingBrush = eraser;
 				prevState.freeDrawingBrush.width = eraserSize;
 				prevState.freeDrawingBrush.strokeLineCap = 'round';			
 				prevState.freeDrawingCursor = `url(${eraserCursor(len, strokeColor, pos, border)}) ${ len / 2 } ${ len / 2 }, default`;
+
+				const dispose = prevState.on('mouse:down', () => {
+					dispose();
+				});
 
 				eraser.on('end', async (e) => {
 					e.preventDefault();
@@ -370,18 +419,19 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 						)
 					);
 
-					// Erase fully masked objects
+					// Find all fully masked objects for erase 
 					const fullyErased = masking
 						.filter(([ , masked ]) => masked)
 						.map(([ object ]) => object);
 
 					fullyErased.forEach((object) => (object.parent || prevState).remove(object));
 
-					// fire event when erase has ended to add to history
-					if (fullyErased.length == 0) {
-						targets.forEach((target) => {
-							console.log(JSON.stringify(target));
-							prevState.fire('object:modified', { target: target });
+					const modified = targets.filter((target) => !fullyErased.includes(target));
+
+					// fire event when erase has ended to add to history 
+					if (fullyErased.length < masking.length) {
+						modified.forEach((object) => {
+							prevState.fire('object:modified', { target: object });
 						});
 					}
 
@@ -431,7 +481,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 								sizeRef.current = setInterval(() => {
                                 
 									dispatch(drawingActions.setDrawingTextSize({ operation }));
-    
+
 								}, 20);
 							}, 600);
 						}
@@ -485,7 +535,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 			return prevState;
 		});
 	};
-	
+
 	/* handle history */
 	const handleUndo = () => {
 		setCanvas((prevState) => {
@@ -494,7 +544,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				actionRef.current = 'undo';
 
 				const lastAction = pastActions.at(-1);
-        
+
 				if (lastAction !== undefined) {
 					
 					// Creates a fabric instance of an object
@@ -522,33 +572,50 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 									const _enlivenObject : FabricObject & { id?: number } = pA[0];
 									const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === _enlivenObject.id);
 
+									if (!foundObject) {
+										return;
+									}
+
 									// In case the object is a textbox we need to typecast as getObjects() returns a FabricObject. 
 									// At the time of writing this there is no Canvas method to get Textbox objects from the canvas.
-									if (foundObject && Object.hasOwn(foundObject, 'text') && Object.hasOwn(_enlivenObject, 'text')) {
-										const fo = foundObject as Textbox;
-										const eo = _enlivenObject as Textbox;
+									if (Object.hasOwn(foundObject, 'text') && Object.hasOwn(_enlivenObject, 'text')) {
+										const foundTextbox = foundObject as IText;
+										const enlivenTextbox = _enlivenObject as IText;
 
-										fo.set({ text: eo.text });
+										foundTextbox.set({ text: enlivenTextbox.text });
 									}
-									
-									foundObject?.set({ angle: _enlivenObject.angle, width: _enlivenObject.width, height: _enlivenObject.height, scaleX: _enlivenObject.scaleX, scaleY: _enlivenObject.scaleY });
-									foundObject?.setXY(_enlivenObject.getXY());
+
+									// erase changes the clipPath - therefore we must set the clippath to the previous
+									foundObject.clipPath = _enlivenObject.clipPath;
+
+									foundObject.set({ angle: _enlivenObject.angle, width: _enlivenObject.width, height: _enlivenObject.height, scaleX: _enlivenObject.scaleX, scaleY: _enlivenObject.scaleY, dirty: true });
+									foundObject.setXY(_enlivenObject.getXY());
 
 									// Call to update state on canvas
-									foundObject?.setCoords();
+									foundObject.setCoords();
 									prevState.renderAll();
 								});
-							} else if (prevAction == undefined && Object.hasOwn(enlivenObject, 'text')) {
-								const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
-
-								foundObject && prevState.remove(foundObject);
 							}
 
 						// add removed object
 						} else if (lastAction.status === 'removed') {
+
+							// Need the previous object and state for cases when objects was erased using eraser tool
+							const FilteredActions = pastActions.filter((obj: FabricAction) => obj.object.id == enlivenObject.id);
+							const prevAction = FilteredActions.length >= 2 ? FilteredActions[FilteredActions.length - 2] : undefined;
+
+							if (prevAction !== undefined) {
+								util.enlivenObjects([ prevAction.object ]).then((prevObjects) => {
+									const pA = prevObjects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+									const _enlivenObject : FabricObject & { id?: number } = pA[0];
+
+									enlivenObject.clipPath = _enlivenObject.clipPath;
+								
+								});
+							}
+							
 							// Set erasable to true, is undefined as the property is from erase2d and not fabricjs
 							enlivenObject.erasable = true;
-
 							prevState.add(enlivenObject);
 						}
         
@@ -581,40 +648,51 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 						const nA = objects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
 						const enlivenObject : FabricObject = nA[0];
         
-						// remove added object
+						// Add object
 						if (nextAction.status === 'added') {    
+							const FilteredActions = pastActions.filter((obj: FabricAction) => obj.object.id == enlivenObject.id);
+							const prevAction = FilteredActions.length >= 2 ? FilteredActions[FilteredActions.length - 2] : undefined;
+
+							if (prevAction !== undefined) {
+								util.enlivenObjects([ prevAction.object ]).then((prevObjects) => {
+									const pA = prevObjects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+									const _enlivenObject : FabricObject & { id?: number } = pA[0];
+
+									enlivenObject.clipPath = _enlivenObject.clipPath;
+								
+								});
+							}
+
 							// Set erasable to true, is undefined as the property is from erase2d and not fabricjs
 							enlivenObject.erasable = true;
-
 							prevState.add(enlivenObject);
 							
 							// revert changes to object
 						} else if (nextAction.status === 'modified') {
 
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
-
-							// As newly created textboxes do not have the status added we will need to add it here
-							if (foundObject == undefined && Object.hasOwn(enlivenObject, 'text')) {
-								prevState.add(enlivenObject);
+						
+							if (!foundObject) {
+								return;
 							}
-
 							// In case the object is a textbox we need to typecast as getObjects() returns a FabricObject. 
 							// At the time of writing this there is no Canvas method to get Textbox objects from the canvas.
 							if (foundObject && Object.hasOwn(foundObject, 'text') && Object.hasOwn(enlivenObject, 'text')) {
-								const fo = foundObject as Textbox;
-								const eo = enlivenObject as Textbox;
+								const foundTextbox = foundObject as IText;
+								const enlivenTextbox = enlivenObject as IText;
 
-								fo.set({ text: eo.text });
+								foundTextbox.set({ text: enlivenTextbox.text });
 							}
 
-							foundObject?.set({ angle: enlivenObject.angle, width: enlivenObject.width, height: enlivenObject.height, scaleX: enlivenObject.scaleX, scaleY: enlivenObject.scaleY });
+							foundObject.clipPath = enlivenObject.clipPath;
+							foundObject.set({ angle: enlivenObject.angle, width: enlivenObject.width, height: enlivenObject.height, scaleX: enlivenObject.scaleX, scaleY: enlivenObject.scaleY, dirty: true });
 							foundObject?.setXY(enlivenObject.getXY());
-									
+						
 							// Call to update state on canvas
 							foundObject?.setCoords();
 							prevState.renderAll();
 							
-							// add removed object
+							// Remove object
 						} else if (nextAction.status === 'removed') {
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 
@@ -649,6 +727,38 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				actionRef.current = null;
 			}
 			
+			return prevState;
+		});
+	};
+
+	const handleDownloadCanvasAsImage = (fileType: ImageFormat) => {
+		setCanvas((prevState) => {
+			if (prevState) {
+
+				const file = prevState.toDataURL({ format: fileType, multiplier: 1 });
+				const downloadlink = document.createElement('a');
+
+				downloadlink.href = file;
+				downloadlink.download = 'canvas-image';
+				downloadlink.click();
+			}
+
+			return prevState;
+		});
+	};
+
+	const handleDownloadCanvasAsSvg = () => {
+		setCanvas((prevState) => {
+			if (prevState) {
+
+				const file = prevState.toSVG();
+				const downloadlink = document.createElement('a');
+
+				downloadlink.setAttribute('href', `data:image/svg+xml;base64,${window.btoa(file)}`);
+				downloadlink.setAttribute('download', 'canvas-image.svg');
+				downloadlink.click();
+			}
+
 			return prevState;
 		});
 	};
@@ -695,10 +805,10 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 					>
 						{/* Move */}
 						<IconButton
-							aria-label="Use move Tool"
-							onClick={handleUseMoveTool}
-							title="Use Move Tool"
-							style={{ border: tool === 'move' ? '2px solid gray' : '2px solid lightgray' }}
+							aria-label="Use Edit Tool"
+							onClick={handleUseEditTool}
+							title="Use Edit Tool"
+							style={{ border: tool === 'edit' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
 							<PanToolIcon />
@@ -850,7 +960,12 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							disabled={pastActions.length === 0 && futureActions.length === 0}
 
 						/>
-						
+						{/* Download Canvas */}
+						<DownloadCanvasButton
+							handleDownloadCanvasAsImage={handleDownloadCanvasAsImage}
+							handleDownloadCanvasAsSvg={handleDownloadCanvasAsSvg}
+							disabled={pastActions.length === 0 && futureActions.length === 0}
+						/>
 					</Grid>
 				</Grid>
 			</Grid>
