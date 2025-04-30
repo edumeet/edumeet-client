@@ -3,7 +3,7 @@ import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel, Box } from '@mui/material';
 import React from 'react';
-import { Rule, Tenant } from '../../../utils/types';
+import { Groups, Rule, Tenant } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 
@@ -68,13 +68,21 @@ const RuleTable = () => {
 			{
 				accessorKey: 'accessId',
 				header: 'Access Id'
-			}
-
+			}			
 		],
 		[ tenants ],
 	);
 
 	const [ data, setData ] = useState([]);
+
+	type GroupsOptionTypes = Array<Groups>
+	const [ groups, setGroups ] = useState<GroupsOptionTypes>([ {
+		'id': 0,
+		'name': '',   
+		'description': '',
+		'tenantId': 0
+	}
+	]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ name, setName ] = useState('');
@@ -111,6 +119,14 @@ const RuleTable = () => {
 			}
 			setIsLoading(false);
     
+		});
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch(getData('groups')).then((tdata: any) => {
+			if (tdata != undefined) {
+				setGroups(tdata.data);
+			}
+			setIsLoading(false);
+			
 		});
 	}
 
@@ -202,22 +218,7 @@ const RuleTable = () => {
 		// add new data / mod data / error
 		if (name != '' && id === 0) {
 			// add new assert rule
-			if (type=='assert') {
-				dispatch(createData({ 
-					name: name,
-					tenantId: tenantId,
-					parameter: parameter,
-					method: method,
-					negate: negate,
-					value: value,
-					action: action,
-					type: type,
-					accessId: ''
-				}, 'rules')).then(() => {
-					fetchProduct();
-					setOpen(false);
-				});
-			} else {
+			if (type=='gain' && action=='groupUsers') {
 				// gain
 				dispatch(createData({ 
 					name: name,
@@ -233,11 +234,9 @@ const RuleTable = () => {
 					fetchProduct();
 					setOpen(false);
 				});
-				
-			}
-		} else if (name != '' && id != 0) {
-			if (type=='assert') {
-				dispatch(patchData(id, { 
+			} else {
+				// assert
+				dispatch(createData({ 
 					name: name,
 					tenantId: tenantId,
 					parameter: parameter,
@@ -251,7 +250,10 @@ const RuleTable = () => {
 					fetchProduct();
 					setOpen(false);
 				});
-			} else {
+			}
+		} else if (name != '' && id != 0) {
+			if (type=='gain' && action=='groupUsers') {
+				// gain
 				dispatch(patchData(id, { 
 					name: name,
 					tenantId: tenantId,
@@ -262,6 +264,22 @@ const RuleTable = () => {
 					action: action,
 					type: type,
 					accessId: accessId
+				}, 'rules')).then(() => {
+					fetchProduct();
+					setOpen(false);
+				});
+			} else {
+				// assert
+				dispatch(patchData(id, { 
+					name: name,
+					tenantId: tenantId,
+					parameter: parameter,
+					method: method,
+					negate: negate,
+					value: value,
+					action: action,
+					type: type,
+					accessId: ''
 				}, 'rules')).then(() => {
 					fetchProduct();
 					setOpen(false);
@@ -295,7 +313,6 @@ const RuleTable = () => {
 						onChange={handleNameChange}
 						value={name}
 					/>
-
 					<Autocomplete
 						options={tenants}
 						getOptionLabel={(option) => option.name}
@@ -389,22 +406,32 @@ const RuleTable = () => {
 								required
 								onChange={handleActionChange}
 							>
-								<MenuItem value={'groupUsers'}>Add user to group</MenuItem>
+								<MenuItem value={'groupUsers'}>Make user group member</MenuItem>
 								<MenuItem value={'tenantOwners'}>Make user tenant owner</MenuItem>
 								<MenuItem value={'tenantAdmins'}>Make user tenant admin</MenuItem>
 								<MenuItem value={'superAdmin'}>Make user super admin</MenuItem>
 							</Select>
-						</FormControl><TextField
-							autoFocus
-							margin="dense"
-							id="value"
-							label="Access Id"
-							type="text"
-							required
-							fullWidth
-							onChange={handleAccessIdChange}
-							disabled={type !== 'gain'}
-							value={accessId} />
+						</FormControl>
+						{action=='groupUsers' && 
+						<FormControl
+							sx={{ marginTop: '8px' }}
+							fullWidth>
+							<InputLabel id="accessid-label">Access Id</InputLabel>
+							<Select
+								labelId="accessid-label"
+								id="accessid"
+								value={accessId}
+								disabled={type !== 'gain'}
+								label="Access Id"
+								required
+								onChange={handleAccessIdChange}
+							>
+								{Object.entries(groups).map(([ , v ]) =>
+									<MenuItem value={v.id}>{v.name}</MenuItem>
+								)}
+							</Select>
+						</FormControl>
+						}
 					</>
 					}
 
