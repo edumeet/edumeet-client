@@ -304,5 +304,9 @@
 	"label.managementRoleSettings": "Role settings",
 	"label.managementRuleSettings": "Rule settings",
 	"label.imprint": "About us",
-	"label.privacy": "Privacy"
+	"label.privacy": "Privacy",
+	"label.managementRoomSettingsLabel": "Room settings",
+	"label.managementAdvancedSettingsLabel": "Advanced management settings",
+	"label.managementClaimRoomLabel": "Claim current room",
+	"label.managementEditRoomLabel": "Edit current room"
 }

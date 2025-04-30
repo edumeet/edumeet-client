@@ -873,3 +873,19 @@ export const countdownTimerFinishedLabel = (): string => intl.formatMessage({
 	id: 'label.countdownTimer.finished',
 	defaultMessage: 'Time is up!'
 });
+export const managementRoomSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementRoomSettingsLabel',
+	defaultMessage: 'Room settings'
+});
+export const managementAdvancedSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementAdvancedSettingsLabel',
+	defaultMessage: 'Advanced management settings'
+});
+export const claimRoomLabel = (): string => intl.formatMessage({
+	id: 'label.managementClaimRoomLabel',
+	defaultMessage: 'Claim current room'
+});
+export const editRoomLabel = (): string => intl.formatMessage({
+	id: 'label.managementEditRoomLabel',
+	defaultMessage: 'Edit current room'
+});

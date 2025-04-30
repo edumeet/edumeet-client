@@ -298,5 +298,12 @@
   "label.managementRoleSettings": null,
   "label.managementRuleSettings": null,
   "label.imprint": null,
-  "label.privacy": null
+  "label.privacy": null,
+  "filesharing.upload": null,
+  "label.default": null,
+  "label.removeAllImages": null,
+  "label.roomBackground": null,
+  "settings.selectBackground": null,
+  "settings.currentlySelected": null,
+  "label.managementRoomSettingsLabel": null
 }
