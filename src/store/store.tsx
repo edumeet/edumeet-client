@@ -50,6 +50,7 @@ import type { Application } from '@feathersjs/feathers/lib';
 import { EffectsService } from '../services/effectsService';
 import { createClientMonitor } from '@observertc/client-monitor-js';
 import createEffectsMiddleware from './middlewares/effectsMiddleware';
+import { ClientImageService } from '../services/clientImageService';
 
 declare global {
 	interface Window {
@@ -66,6 +67,7 @@ export interface MiddlewareOptions {
 	mediaService: MediaService;
 	effectsService: EffectsService;
 	fileService: FileService;
+	clientImageService: ClientImageService;
 	deviceService: DeviceService;
 	signalingService: SignalingService;
 	managementService: Promise<Application>;
@@ -93,6 +95,7 @@ const managementService = (async () => {
 
 export const mediaService = new MediaService({ signalingService }, monitor);
 export const fileService = new FileService();
+export const clientImageService = new ClientImageService();
 const effectsService = new EffectsService();
 
 /**
@@ -110,6 +113,7 @@ const middlewareOptions = {
 	config: edumeetConfig,
 	mediaService,
 	fileService,
+	clientImageService,
 	deviceService,
 	signalingService,
 	managementService,

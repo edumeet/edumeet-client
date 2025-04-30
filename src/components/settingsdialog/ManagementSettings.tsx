@@ -9,6 +9,7 @@ import ListItemText from '@mui/material/ListItemText/ListItemText';
 import InfoIcon from '@mui/icons-material/Info';
 import SignIn from './managementsettings/ManagementAdminLoginSettings';
 import List from '@mui/material/List';
+import { managementAdvancedSettingsLabel, managementRoomSettingsLabel } from '../translated/translatedComponents';
 
 const ManagementSettings = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -28,7 +29,7 @@ const ManagementSettings = (): JSX.Element => {
 			<List>
 				<ListItem key={'Room settings'} disablePadding >
 					<ListItemButton>
-						<ListItemText primary={'Room settings'} />
+						<ListItemText primary={managementRoomSettingsLabel()} />
 					</ListItemButton>
 				</ListItem>
 				<CurrentRoomModal />
@@ -37,7 +38,7 @@ const ManagementSettings = (): JSX.Element => {
 						<ListItemIcon>
 							<InfoIcon />
 						</ListItemIcon>
-						<ListItemText primary={'Advanced management settings'} />
+						<ListItemText primary={managementAdvancedSettingsLabel()} />
 					</ListItemButton>
 				</ListItem>
 			</List>

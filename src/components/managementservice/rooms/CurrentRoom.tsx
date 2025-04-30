@@ -4,6 +4,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Roles, Room } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
+import { claimRoomLabel, editRoomLabel } from '../../translated/translatedComponents';
 
 const CurrentRoomModal = () => {
 	const dispatch = useAppDispatch();
@@ -367,7 +368,7 @@ const CurrentRoomModal = () => {
 			</DialogActions>
 		</Dialog>
 		<div style={{ margin: 'auto', textAlign: 'center' }}>
-			<Button onClick={ roomExists ? handleOpen : handleCreateRoom}>{ roomExists ? 'Edit':'Claim '}  Current Room</Button>				
+			<Button onClick={ roomExists ? handleOpen : handleCreateRoom}>{ roomExists ? editRoomLabel():claimRoomLabel()}</Button>				
 		</div>
 
 	</>;

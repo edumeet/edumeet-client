@@ -10,6 +10,11 @@ export const yesLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Yes'
 });
 
+export const defaultLabel = (): string => intl.formatMessage({
+	id: 'label.default',
+	defaultMessage: 'Default'
+});
+
 export const joinedRoomLabel = (): string => intl.formatMessage({
 	id: 'room.joined',
 	defaultMessage: 'You have joined the room'
@@ -148,6 +153,16 @@ export const hideSelfViewLabel = (): string => intl.formatMessage({
 export const mirroredSelfViewLabel = (): string => intl.formatMessage({
 	id: 'settings.mirrorOwnVideo',
 	defaultMessage: 'Mirrored self view video'
+});
+
+export const selectBackgroundLabel = (): string => intl.formatMessage({
+	id: 'settings.selectBackground',
+	defaultMessage: 'Select background'
+});
+
+export const currentlySelectedLabel = (): string => intl.formatMessage({
+	id: 'settings.currentlySelected',
+	defaultMessage: 'Currently Selected'
 });
 
 export const hideNoVideoParticipantsLabel =
@@ -392,6 +407,11 @@ export const downloadFileLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Download'
 });
 
+export const uploadFileLabel = (): string => intl.formatMessage({
+	id: 'filesharing.upload',
+	defaultMessage: 'Upload file'
+});
+
 export const saveFileLabel = (): string => intl.formatMessage({
 	id: 'filesharing.save',
 	defaultMessage: 'Save'
@@ -496,6 +516,16 @@ export const closeLabel = (): string => intl.formatMessage({
 export const applyLabel = (): string => intl.formatMessage({
 	id: 'label.apply',
 	defaultMessage: 'Apply'
+});
+
+export const removeAllImagesLabel = (): string => intl.formatMessage({
+	id: 'label.removeAllImages',
+	defaultMessage: 'Remove all images'
+});
+
+export const roomBgLabel = (): string => intl.formatMessage({
+	id: 'label.roomBackground',
+	defaultMessage: 'Room background'
 });
 
 export const mediaSettingsLabel = (): string => intl.formatMessage({
@@ -842,4 +872,20 @@ export const countdownTimerSetLabel = (): string => intl.formatMessage({
 export const countdownTimerFinishedLabel = (): string => intl.formatMessage({
 	id: 'label.countdownTimer.finished',
 	defaultMessage: 'Time is up!'
+});
+export const managementRoomSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementRoomSettingsLabel',
+	defaultMessage: 'Room settings'
+});
+export const managementAdvancedSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementAdvancedSettingsLabel',
+	defaultMessage: 'Advanced management settings'
+});
+export const claimRoomLabel = (): string => intl.formatMessage({
+	id: 'label.managementClaimRoomLabel',
+	defaultMessage: 'Claim current room'
+});
+export const editRoomLabel = (): string => intl.formatMessage({
+	id: 'label.managementEditRoomLabel',
+	defaultMessage: 'Edit current room'
 });
