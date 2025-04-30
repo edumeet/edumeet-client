@@ -68,7 +68,7 @@ const RoleTable = () => {
 	const [ tenantId, setTenantId ] = useState(0);
 
 	const [ cantPatch ] = useState(false);
-	const [ cantDelete ] = useState(false);
+	const [ cantDelete, setCantDelete ] = useState(false);
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
 
 	async function fetchProduct() {
@@ -120,6 +120,7 @@ const RoleTable = () => {
 		setName('');
 		setDescription('');
 		setTenantId(0);
+		setCantDelete(true);
 		setChecked(new Array(permissions.length).fill(false));
 		setCheckedDisabled(true);
 		setOpen(true);
@@ -127,6 +128,7 @@ const RoleTable = () => {
 
 	const handleClickOpenNoreset = () => {
 		setCheckedDisabled(false);
+		setCantDelete(false);
 		setOpen(true);
 	};
 
