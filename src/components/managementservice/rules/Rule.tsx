@@ -94,10 +94,6 @@ const RuleTable = () => {
 	const [ value, setValue ] = useState('');
 	const [ action, setAction ] = useState('');
 	const [ accessId, setAccessId ] = useState('');
-	
-	// eslint-disable-next-line no-console
-	console.log(tenantId);
-
 	const [ cantPatch ] = useState(false);
 	const [ cantDelete, setCantDelete ] = useState(false);
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
@@ -446,22 +442,7 @@ const RuleTable = () => {
 		<MaterialReactTable
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: async () => {
-
 					const r = row.getAllCells();
-
-					/* id
-					name
-					tenantId
-					parameter
-					method
-					negate
-					value
-					action
-					type */
-
-					// eslint-disable-next-line no-console
-					console.log(r);
-
 					const tid = r[0].getValue();
 					const tname = r[1].getValue();
 					const ttenantId = r[2].getValue();
