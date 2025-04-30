@@ -68,7 +68,12 @@ export default function ManagementUI(/* props: Props */) {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getUserData()).then((tdata: any) => {
 			if (tdata) {
-				dispatch(managamentActions.setUsername(tdata.user.email));			
+				if (tdata.user.name!=null && tdata.user.name !='') {
+					dispatch(managamentActions.setUsername(tdata.user.name));
+				} else {
+					dispatch(managamentActions.setUsername(tdata.user.email));
+				}
+				
 			}
 		});
 	}, [ loggedIn ]);
