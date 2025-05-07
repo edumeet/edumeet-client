@@ -319,5 +319,13 @@
   "label.management.chooseComponent": null,
   "label.management.groupRole": null,
   "label.management.groupUser": null,
-  "label.management.edumeetManagementClient": null
+  "label.management.edumeetManagementClient": null,
+  "label.management.tenantOwners": null,
+  "label.management.tenantAdmins": null,
+  "label.management.addNew": null,
+  "label.management.manageItem": null,
+  "label.management.genericItemDesc": null,
+  "label.delete": null,
+  "label.cancel": null,
+  "label.undefined": null
 }

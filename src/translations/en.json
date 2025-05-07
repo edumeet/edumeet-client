@@ -319,5 +319,14 @@
 	"label.management.chooseComponent": "Select an item to load a component",
 	"label.management.groupRole": "Group roles",
 	"label.management.groupUser": "User groups",
-	"label.management.edumeetManagementClient": "eduMEET Management client"
+	"label.management.edumeetManagementClient": "eduMEET Management client",
+	"label.management.tenantOwners": "Tenant owners",
+	"label.management.tenantAdmins": "Tenant admins",
+	"label.management.addNew": "Add item",
+	"label.management.manageItem": "Manage Item",
+	"label.management.genericItemDesc": "These are the parameters that you can change.",
+	"label.delete": "Delete",
+	"label.cancel": "Cancel",
+	"label.undefined": "Undefined"
+
 }

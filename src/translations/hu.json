@@ -319,5 +319,13 @@
   "label.management.chooseComponent": "Válassz menüpontot",
   "label.management.groupRole": "Csoport szerep összerendelés",
   "label.management.groupUser": "Csoport felhasználó összerendelés",
-  "label.management.edumeetManagementClient": "eduMEET Menedzsment felület"
+  "label.management.edumeetManagementClient": "eduMEET Menedzsment felület",
+  "label.management.tenantOwners": "Szervezet tulajdonos",
+  "label.management.tenantAdmins": "Szervezet rendszergazda",
+  "label.management.addNew": "Hozzáadás",
+  "label.management.manageItem": "Szerkesztés",
+  "label.management.genericItemDesc": "Ezek azok a paraméterek, amelyeket megváltoztathat.",
+  "label.delete": "Törlés",
+	"label.cancel": "Mégsem",
+  "label.undefined": "Ismeretlen"
 }
