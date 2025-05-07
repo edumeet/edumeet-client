@@ -308,5 +308,16 @@
 	"label.managementRoomSettingsLabel": "Room settings",
 	"label.managementAdvancedSettingsLabel": "Advanced management settings",
 	"label.managementClaimRoomLabel": "Claim current room",
-	"label.managementEditRoomLabel": "Edit current room"
+	"label.managementEditRoomLabel": "Edit current room",
+	"label.management.tenants": "Tenants",
+	"label.management.tenant": "Tenant",
+	"label.management.rooms": "Rooms",
+	"label.management.users": "Users",
+	"label.management.roles": "Roles",
+	"label.management.rules": "Rules",
+	"label.management.groups": "Groups",
+	"label.management.chooseComponent": "Select an item to load a component",
+	"label.management.groupRole": "Group roles",
+	"label.management.groupUser": "User groups",
+	"label.management.edumeetManagementClient": "eduMEET Management client"
 }

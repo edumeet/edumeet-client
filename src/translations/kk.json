@@ -305,5 +305,19 @@
   "label.roomBackground": null,
   "settings.selectBackground": null,
   "settings.currentlySelected": null,
-  "label.managementRoomSettingsLabel": null
+  "label.managementRoomSettingsLabel": null,
+  "label.managementAdvancedSettingsLabel": null,
+  "label.managementClaimRoomLabel": null,
+  "label.managementEditRoomLabel": null,
+  "label.management.tenants": null,
+  "label.management.tenant": null,
+  "label.management.rooms": null,
+  "label.management.users": null,
+  "label.management.roles": null,
+  "label.management.rules": null,
+  "label.management.groups": null,
+  "label.management.chooseComponent": null,
+  "label.management.groupRole": null,
+  "label.management.groupUser": null,
+  "label.management.edumeetManagementClient": null
 }

@@ -36,6 +36,7 @@ import GroupRoleTable from '../../components/managementservice/groups/GroupRole'
 import GroupUserTable from '../../components/managementservice/groups/GroupUser';
 import RuleTable from '../../components/managementservice/rules/Rule';
 import RuleIcon from '@mui/icons-material/Rule';
+import { chooseComponentLabel, edumeetManagementClientLabel, groupRolesLabel, groupsLabel, groupUsersLabel, logoutLabel, rolesLabel, roomSettingsLabel, roomsLabel, rulesLabel, tenantSettingsLabel, tenantsLabel, usersLabel } from '../../components/translated/translatedComponents';
 
 const drawerWidth = 300;
 
@@ -88,40 +89,42 @@ export default function ManagementUI(/* props: Props */) {
 					</div>;
 				case 'tenant':
 					return <>
-						Tenant settings
+						{tenantSettingsLabel()}
 						<TenantTable />
 						<TenantOwnerTable />
 						<TenantAdminTable />
 					</>;
 				case 'room':
 					return <>
-						Rooms
+						{roomSettingsLabel()}
 						<RoomTable />
 					</>;
 				case 'user':
 					return <>
-						User data
+						{usersLabel()}
 						<UserTable />
 					</>;
 				case 'group':
 					return <>
-						Group table
+						{groupsLabel()}
 						<GroupTable />
-						Group roles
+						{groupRolesLabel()}
 						<GroupRoleTable />
-						Group user roles
+						{groupUsersLabel()}
 						<GroupUserTable />
 					</>;
 				case 'role':
-					return <>Roles
+					return <>
+						{rolesLabel()}
 						<RoleTable />
 					</>;
 				case 'rule':
-					return <>Rules
+					return <>
+						{rulesLabel()}
 						<RuleTable />
 					</>;
 				default:
-					return <Box sx={{ minWidth: '400px' }}>Select an item to load a component </Box>;
+					return <Box sx={{ minWidth: '400px' }}>{ chooseComponentLabel() }</Box>;
 			}
 		} else {
 			return <SignIn />;
@@ -157,7 +160,7 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemIcon>
 							<LogoutIcon />
 						</ListItemIcon>
-						<ListItemText primary={'Logout'} />
+						<ListItemText primary={logoutLabel()} />
 					</ListItemButton>
 				</ListItem>
 
@@ -182,7 +185,7 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemIcon>
 							<PeopleOutlineIcon />
 						</ListItemIcon>
-						<ListItemText primary={'Tenants'} />
+						<ListItemText primary={tenantsLabel()} />
 					</ListItemButton>
 				</ListItem>
 				<ListItem key={'Room(s)'} disablePadding onClick={
@@ -192,7 +195,7 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemIcon>
 							<MeetingRoomIcon />
 						</ListItemIcon>
-						<ListItemText primary={'Room(s)'} />
+						<ListItemText primary={roomsLabel()} />
 					</ListItemButton>
 				</ListItem>
 				<ListItem key={'User(s)'} disablePadding onClick={
@@ -202,7 +205,7 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemIcon>
 							<PersonSearchIcon />
 						</ListItemIcon>
-						<ListItemText primary={'Users'} />
+						<ListItemText primary={usersLabel()} />
 					</ListItemButton>
 				</ListItem>
 				<ListItem key={'Group(s)'} disablePadding onClick={
@@ -212,7 +215,7 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemIcon>
 							<SupervisorAccountIcon />
 						</ListItemIcon>
-						<ListItemText primary={'Groups'} />
+						<ListItemText primary={groupsLabel()} />
 					</ListItemButton>
 				</ListItem>
 				<ListItem key={'Role(s)'} disablePadding onClick={
@@ -222,7 +225,7 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemIcon>
 							<AdminPanelSettingsIcon />
 						</ListItemIcon>
-						<ListItemText primary={'Role(s)'} />
+						<ListItemText primary={rolesLabel()} />
 					</ListItemButton>
 				</ListItem>
 				<ListItem key={'Rule(s)'} disablePadding onClick={
@@ -232,7 +235,7 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemIcon>
 							<RuleIcon />
 						</ListItemIcon>
-						<ListItemText primary={'Rule(s)'} />
+						<ListItemText primary={rulesLabel()} />
 					</ListItemButton>
 				</ListItem>
 			</List>
@@ -262,7 +265,7 @@ export default function ManagementUI(/* props: Props */) {
 						<MenuIcon />
 					</IconButton>
 					<Typography variant="h6" noWrap component="div">
-							Edumeet management client
+						{edumeetManagementClientLabel()}
 					</Typography>
 				</Toolbar>
 			</AppBar>

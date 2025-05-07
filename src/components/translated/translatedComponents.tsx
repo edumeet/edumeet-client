@@ -889,3 +889,47 @@ export const editRoomLabel = (): string => intl.formatMessage({
 	id: 'label.managementEditRoomLabel',
 	defaultMessage: 'Edit current room'
 });
+export const tenantsLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants',
+	defaultMessage: 'Tenants'
+});
+export const tenantLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenant',
+	defaultMessage: 'Tenant'
+});
+export const roomsLabel = (): string => intl.formatMessage({
+	id: 'label.management.rooms',
+	defaultMessage: 'Rooms'
+});
+export const usersLabel = (): string => intl.formatMessage({
+	id: 'label.management.users',
+	defaultMessage: 'Users'
+});
+export const groupsLabel = (): string => intl.formatMessage({
+	id: 'label.management.groups',
+	defaultMessage: 'Groups'
+});
+export const groupRolesLabel = (): string => intl.formatMessage({
+	id: 'label.management.groupRole',
+	defaultMessage: 'Group roles'
+});
+export const groupUsersLabel = (): string => intl.formatMessage({
+	id: 'label.management.groupUser',
+	defaultMessage: 'User groups'
+});
+export const rolesLabel = (): string => intl.formatMessage({
+	id: 'label.management.roles',
+	defaultMessage: 'Roles'
+});
+export const rulesLabel = (): string => intl.formatMessage({
+	id: 'label.management.rules',
+	defaultMessage: 'Rules'
+});
+export const chooseComponentLabel = (): string => intl.formatMessage({
+	id: 'label.management.chooseComponent',
+	defaultMessage: 'Select an item to load a component'
+});
+export const edumeetManagementClientLabel = (): string => intl.formatMessage({
+	id: 'label.management.edumeetManagementClient',
+	defaultMessage: 'eduMEET Management client'
+});
