@@ -7,6 +7,7 @@ import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
 import { TenantProp } from './Tenant';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantLabel } from '../../translated/translatedComponents';
 
 const TenantOAuthTable = (props: TenantProp) => {
 	const tenantId = props.tenantId;
@@ -37,7 +38,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 			},
 			{
 				accessorKey: 'tenantId',
-				header: 'Tenant',
+				header: tenantLabel(),
 				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
 
 			},
@@ -275,27 +276,16 @@ const TenantOAuthTable = (props: TenantProp) => {
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog maxWidth="lg" open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
-					{/* <TextField
-						autoFocus
-						margin="dense"
-						id="tenantId"
-						label="tenantId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleTenantIdChange}
-						value={tenantId}
-					/> */}
 					<TextField
 						margin="dense"
 						required
@@ -413,9 +403,9 @@ const TenantOAuthTable = (props: TenantProp) => {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant}>OK</Button>
+					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -472,6 +462,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 			data={data} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
+					tenantId: false,
 					access_url: false,
 					authorize_url: false,
 					profile_url: false,

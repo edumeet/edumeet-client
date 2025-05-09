@@ -901,13 +901,25 @@ export const roomsLabel = (): string => intl.formatMessage({
 	id: 'label.management.rooms',
 	defaultMessage: 'Rooms'
 });
+export const roomLabel = (): string => intl.formatMessage({
+	id: 'label.management.room',
+	defaultMessage: 'Room'
+});
 export const usersLabel = (): string => intl.formatMessage({
 	id: 'label.management.users',
 	defaultMessage: 'Users'
 });
+export const userLabel = (): string => intl.formatMessage({
+	id: 'label.management.user',
+	defaultMessage: 'User'
+});
 export const groupsLabel = (): string => intl.formatMessage({
 	id: 'label.management.groups',
 	defaultMessage: 'Groups'
+});
+export const groupLabel = (): string => intl.formatMessage({
+	id: 'label.management.group',
+	defaultMessage: 'Group'
 });
 export const groupRolesLabel = (): string => intl.formatMessage({
 	id: 'label.management.groupRole',
@@ -920,6 +932,14 @@ export const groupUsersLabel = (): string => intl.formatMessage({
 export const rolesLabel = (): string => intl.formatMessage({
 	id: 'label.management.roles',
 	defaultMessage: 'Roles'
+});
+export const roleLabel = (): string => intl.formatMessage({
+	id: 'label.management.role',
+	defaultMessage: 'Role'
+});
+export const defaultRoleLabel = (): string => intl.formatMessage({
+	id: 'label.management.defaultRole',
+	defaultMessage: 'Default Role'
 });
 export const rulesLabel = (): string => intl.formatMessage({
 	id: 'label.management.rules',
@@ -937,9 +957,17 @@ export const tenantOwnersLabel = (): string => intl.formatMessage({
 	id: 'label.management.tenantOwners',
 	defaultMessage: 'Tenant owners'
 });
+export const tenantOwnerLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenantOwner',
+	defaultMessage: 'Tenant owner'
+});
 export const tenantAdminsLabel = (): string => intl.formatMessage({
 	id: 'label.management.tenantAdmins',
 	defaultMessage: 'Tenant admins'
+});
+export const tenantAdminLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenantAdmin',
+	defaultMessage: 'Tenant admin'
 });
 export const addNewLabel = (): string => intl.formatMessage({
 	id: 'label.management.addNew',
@@ -964,4 +992,52 @@ export const cancelLabel = (): string => intl.formatMessage({
 export const undefinedLabel = (): string => intl.formatMessage({
 	id: 'label.undefined',
 	defaultMessage: 'Undefined'
+});
+export const authenticationLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenant.auth',
+	defaultMessage: 'Authentication'
+});
+export const fqdnLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenant.fqdn',
+	defaultMessage: 'FQDN'
+});
+export const nameLabel = (): string => intl.formatMessage({
+	id: 'label.management.name',
+	defaultMessage: 'Name'
+});
+export const descLabel = (): string => intl.formatMessage({
+	id: 'label.management.desc',
+	defaultMessage: 'Description'
+});
+export const logoLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.logo',
+	defaultMessage: 'Logo'
+});
+export const maxActiveVideosLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.maxActiveVideos',
+	defaultMessage: 'Maximum active videos'
+});
+export const chatEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.chatEnabled',
+	defaultMessage: 'Enable chat'
+});
+export const raiseHandEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.raiseHandEnabled',
+	defaultMessage: 'Enable raise hand'
+});
+export const filesharingEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.filesharingEnabled',
+	defaultMessage: 'Enabled filesharing'
+});
+export const localRecordingEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.localRecordingEnabled',
+	defaultMessage: 'Enable local recording'
+});
+export const breakoutsEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.breakoutsEnabled',
+	defaultMessage: 'Enable breakout rooms'
+});
+export const ownersLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.owners',
+	defaultMessage: 'Owners'
 });

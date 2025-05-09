@@ -5,7 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Tenant, TenantOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantLabel, tenantOwnersLabel, undefinedLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantLabel, tenantOwnersLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
 
 const TenantOwnerTable = () => {
 	const dispatch = useAppDispatch();
@@ -58,13 +58,13 @@ const TenantOwnerTable = () => {
 			},
 			{
 				accessorKey: 'tenantId',
-				header: 'Tenant',
+				header: tenantLabel(),
 				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
 
 			},
 			{
 				accessorKey: 'userId',
-				header: 'User',
+				header: userLabel(),
 				Cell: ({ cell }) => getUserEmail(cell.getValue<string>())
 
 			},
@@ -219,7 +219,7 @@ const TenantOwnerTable = () => {
 						onChange={handleUserIdChange}
 						value={userIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="User" />}
+						renderInput={(params) => <TextField {...params} label={userLabel()} />}
 					/>
 					<Autocomplete
 						options={tenants}
@@ -230,7 +230,7 @@ const TenantOwnerTable = () => {
 						onChange={handleTenantIdChange}
 						value={tenantIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Tenant" />}
+						renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
 					/>
 				</DialogContent>
 				<DialogActions>

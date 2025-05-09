@@ -6,6 +6,7 @@ import { Tenant, TenantFQDN } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { TenantProp } from './Tenant';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, tenantLabel, undefinedLabel } from '../../translated/translatedComponents';
 
 const TenantFQDNTable = (props: TenantProp) => {
 	const tenantId = props.tenantId;
@@ -21,7 +22,7 @@ const TenantFQDNTable = (props: TenantProp) => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined tenant';
+			return `${undefinedLabel()} ${tenantLabel()}`;
 		}
 	};
 
@@ -35,13 +36,13 @@ const TenantFQDNTable = (props: TenantProp) => {
 			},
 			{
 				accessorKey: 'tenantId',
-				header: 'Tenant',
+				header: tenantLabel(),
 				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
 
 			},
 			{
 				accessorKey: 'description',
-				header: 'description'
+				header: descLabel()
 			},
 			{
 				accessorKey: 'fqdn',
@@ -143,14 +144,14 @@ const TenantFQDNTable = (props: TenantProp) => {
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<TextField
@@ -173,9 +174,9 @@ const TenantFQDNTable = (props: TenantProp) => {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant}>OK</Button>
+					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>

@@ -327,5 +327,11 @@
   "label.management.genericItemDesc": null,
   "label.delete": null,
   "label.cancel": null,
-  "label.undefined": null
+  "label.undefined": null,
+  "label.management.tenant.auth": null,
+  "label.management.tenant.fqdn": null,
+  "label.management.user": null,
+  "label.management.role": null,
+  "label.management.name": null,
+  "label.management.desc": null
 }

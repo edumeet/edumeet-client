@@ -5,6 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Tenant, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, nameLabel, noLabel, rolesLabel, tenantAdminLabel, tenantLabel, tenantOwnerLabel, undefinedLabel, yesLabel } from '../../translated/translatedComponents';
 
 const UserTable = () => {
 	const dispatch = useAppDispatch();
@@ -19,7 +20,7 @@ const UserTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined tenant';
+			return `${undefinedLabel()} ${tenantLabel()}`;
 		}
 	};
 
@@ -38,7 +39,7 @@ const UserTable = () => {
 			},
 			{
 				accessorKey: 'tenantId',
-				header: 'Tenant',
+				header: tenantLabel(),
 				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
 
 			},
@@ -48,7 +49,7 @@ const UserTable = () => {
 			},
 			{
 				accessorKey: 'name',
-				header: 'Name'
+				header: nameLabel()
 			},
 			{
 				accessorKey: 'avatar',
@@ -56,21 +57,21 @@ const UserTable = () => {
 			},
 			{
 				accessorKey: 'roles',
-				header: 'roles'
+				header: rolesLabel()
 			},
 			{
 				accessorKey: 'tenantAdmin',
-				header: 'Is tenant Admin?',
+				header: tenantAdminLabel(),
 				filterVariant: 'checkbox',
 				Cell: ({ cell }) =>
-					(cell.getValue() === true ? 'yes' : 'no'),
+					(cell.getValue() === true ? yesLabel() : noLabel()),
                 
 			},
 			{
 				accessorKey: 'tenantOwner',
 				Cell: ({ cell }) =>
-					(cell.getValue() === true ? 'yes' : 'no'),
-				header: 'Is tenant owner?',
+					(cell.getValue() === true ? yesLabel() : noLabel()),
+				header: tenantOwnerLabel(),
 				filterVariant: 'checkbox'
 			},
 		],
@@ -211,14 +212,14 @@ const UserTable = () => {
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<TextField
@@ -280,9 +281,9 @@ const UserTable = () => {
 
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delUser} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addUser}>OK</Button>
+					<Button onClick={delUser} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addUser}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>

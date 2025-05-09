@@ -6,6 +6,7 @@ import { Room, RoomOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, getDataByRoomId, patchData } from '../../../store/actions/managementActions';
 import { RoomProp } from './Room';
+import { userLabel } from '../../translated/translatedComponents';
 
 const RoomOwnerTable = (props: RoomProp) => {
 	const roomId = props.roomId;
@@ -93,7 +94,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 			},
 			{
 				accessorKey: 'userId',
-				header: 'User',
+				header: userLabel(),
 				Cell: ({ cell }) => getUserName(cell.getValue<string>())
 
 			},

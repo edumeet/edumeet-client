@@ -5,6 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { GroupRoles, Groups, Roles, Room } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, groupLabel, manageItemLabel, roleLabel, roomLabel, undefinedLabel } from '../../translated/translatedComponents';
 
 const GroupRoleTable = () => {
 	const dispatch = useAppDispatch();
@@ -53,7 +54,7 @@ const GroupRoleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined role';
+			return `${undefinedLabel()} ${roleLabel()}`;
 		}
 	};
 
@@ -74,7 +75,7 @@ const GroupRoleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined group';
+			return `${undefinedLabel()} ${groupLabel()}`;
 		}
 	};
 
@@ -84,7 +85,7 @@ const GroupRoleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined room';
+			return `${undefinedLabel()} ${roomLabel()}`;
 		}
 	};
 	
@@ -97,19 +98,19 @@ const GroupRoleTable = () => {
 			},
 			{
 				accessorKey: 'groupId',
-				header: 'Group',
+				header: groupLabel(),
 				Cell: ({ cell }) => getGroupsName(cell.getValue<string>())
 
 			},
 			{
 				accessorKey: 'roleId',
-				header: 'Role',
+				header: roleLabel(),
 				Cell: ({ cell }) => getRoleName(cell.getValue<string>())
 
 			},
 			{
 				accessorKey: 'roomId',
-				header: 'Room',
+				header: roomLabel(),
 				Cell: ({ cell }) => getRoomName(cell.getValue<string>())
 
 			},
@@ -273,14 +274,14 @@ const GroupRoleTable = () => {
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<Autocomplete
@@ -292,7 +293,7 @@ const GroupRoleTable = () => {
 						onChange={handleGroupIdChange}
 						value={groupIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Group" />}
+						renderInput={(params) => <TextField {...params} label={groupLabel()} />}
 					/>
 					<Autocomplete
 						options={roles}
@@ -303,7 +304,7 @@ const GroupRoleTable = () => {
 						onChange={handleRoleIdChange}
 						value={roleIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Role" />}
+						renderInput={(params) => <TextField {...params} label={roleLabel()} />}
 					/>
 					<Autocomplete
 						options={rooms}
@@ -314,14 +315,14 @@ const GroupRoleTable = () => {
 						onChange={handleRoomIdChange}
 						value={roomIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Room" />}
+						renderInput={(params) => <TextField {...params} label={roomLabel()} />}
 					/>
 					
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} disabled={cantDelete} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} disabled={cantDelete} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
