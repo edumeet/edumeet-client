@@ -31,7 +31,7 @@ const BackgroundSelectDialog = ({ autoApply = false }): JSX.Element => {
 
 		selectedBackground
 			? dispatch(setUserBackground(selectedBackground))
-			: dispatch(meActions.setBackgroundImage(''));
+			: dispatch(meActions.setBackgroundImage(undefined));
 	}, [ selectedBackground ]);
 
 	const handleApply = (): void => {
@@ -40,11 +40,12 @@ const BackgroundSelectDialog = ({ autoApply = false }): JSX.Element => {
 		}));
 		selectedBackground
 			? dispatch(setUserBackground(selectedBackground))
-			: dispatch(meActions.setBackgroundImage(''));
+			: dispatch(meActions.setBackgroundImage(undefined));
 	};
 
 	const handleClearStorage = (): void => {
 		dispatch(clearImageStorage());
+		dispatch(meActions.setBackgroundImage(undefined));
 	};
 
 	const handleCloseBackgroundSelectDialog = (): void => {

@@ -8,6 +8,7 @@ import { useAppDispatch } from '../../../store/hooks';
 import { createRoomWithParams, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import RoomOwnerTable from './RoomOwner';
 import RoomUserRoleTable from './roomUserRole';
+import { addNewLabel, applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, defaultRoleLabel, deleteLabel, descLabel, filesharingEnabledLabel, genericItemDescLabel, groupRolesLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, ownersLabel, raiseHandEnabledLabel, roomBgLabel, roomLockedLabel, tenantLabel, undefinedLabel, yesLabel } from '../../translated/translatedComponents';
 
 export interface RoomProp {
 	roomId: number;
@@ -30,7 +31,7 @@ const RoomTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined tenant';
+			return `${undefinedLabel()} ${tenantLabel()}`;
 		}
 	};
 
@@ -40,7 +41,7 @@ const RoomTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'No default role';
+			return '-';
 		}
 	};
 
@@ -79,11 +80,11 @@ const RoomTable = () => {
 			},
 			{
 				accessorKey: 'name',
-				header: 'Name'
+				header: nameLabel()
 			},
 			{
 				accessorKey: 'description',
-				header: 'Desc'
+				header: descLabel()
 			},
 			{
 				accessorKey: 'createdAt',
@@ -101,67 +102,67 @@ const RoomTable = () => {
 			},
 			{
 				accessorKey: 'defaultRoleId',
-				header: 'Default Role',
+				header: defaultRoleLabel(),
 				Cell: ({ cell }) => getRoleName(cell.getValue<string>())
 
 			},
 			{
 				accessorKey: 'tenantId',
-				header: 'Tenant',
+				header: tenantLabel(),
 				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
 			},
 			{
 				accessorKey: 'logo',
-				header: 'Logo'
+				header: logoLabel()
 			},
 			{
 				accessorKey: 'background',
-				header: 'Background'
+				header: roomBgLabel()
 			},
 			{
 				accessorKey: 'maxActiveVideos',
-				header: 'Max Active Videos',
+				header: maxActiveVideosLabel(),
 			},
 			{
 				accessorKey: 'locked',
-				header: 'Locked',
+				header: roomLockedLabel(),
 				Cell: ({ cell }) =>
-					(cell.getValue() === true ? 'yes' : 'no'),
+					(cell.getValue() === true ? yesLabel() : noLabel()),
 				filterVariant: 'checkbox'
 			},
 			{
 				accessorKey: 'chatEnabled',
-				header: 'Chat Enabled',
+				header: chatEnabledLabel(),
 				Cell: ({ cell }) =>
-					(cell.getValue() === true ? 'yes' : 'no'),
+					(cell.getValue() === true ? yesLabel() : noLabel()),
 				filterVariant: 'checkbox'
 			},
 			{
 				accessorKey: 'raiseHandEnabled',
-				header: 'Raise Hand Enabled',
+				header: raiseHandEnabledLabel(),
 				Cell: ({ cell }) =>
-					(cell.getValue() === true ? 'yes' : 'no'),
+					(cell.getValue() === true ? yesLabel() : noLabel()),
 				filterVariant: 'checkbox'
 			},
 			{
 				accessorKey: 'filesharingEnabled',
-				header: 'Filesharing Enabled',
+				header: filesharingEnabledLabel(),
 				Cell: ({ cell }) =>
-					(cell.getValue() === true ? 'yes' : 'no'),
+					(cell.getValue() === true ? yesLabel() : noLabel()),
 				filterVariant: 'checkbox'
 			},
 			{
 				accessorKey: 'localRecordingEnabled',
-				header: 'Local Recording Enabled',
+				header: localRecordingEnabledLabel(),
 				Cell: ({ cell }) =>
-					(cell.getValue() === true ? 'yes' : 'no'),
+					(cell.getValue() === true ? yesLabel() : noLabel()),
 				filterVariant: 'checkbox'
 				
 			},
 
 			{
 				accessorKey: 'owners',
-				header: 'owners',
+				header: ownersLabel(),
 				Cell: ({ cell }) =>
 					(	
 						cell.getValue<Array<RoomOwners>>().map((single:RoomOwners) => getUserEmail(single.userId))
@@ -170,7 +171,7 @@ const RoomTable = () => {
 			},
 			{
 				accessorKey: 'groupRoles',
-				header: 'groupRoles',
+				header: groupRolesLabel(),
 				Cell: ({ cell }) =>
 					(	
 						cell.getValue<Array<GroupRoles>>().map((single:GroupRoles) => single.role.description)
@@ -179,9 +180,9 @@ const RoomTable = () => {
 			},
 			{
 				accessorKey: 'breakoutsEnabled',
-				header: 'Breakouts Enabled',
+				header: breakoutsEnabledLabel(),
 				Cell: ({ cell }) =>
-					(cell.getValue() === true ? 'yes' : 'no'),
+					(cell.getValue() === true ? yesLabel() : noLabel()),
 				filterVariant: 'checkbox'
 			},
 			
@@ -309,13 +310,6 @@ const RoomTable = () => {
 		}
 	};
 
-	/* const handleTenantIdChange = (event: SyntheticEvent<Element, Event>, newValue: Tenant) => {
-		if (newValue) {
-			setTenantId(newValue.id);
-			setTenantIdOption(newValue);
-		}
-	}; */
-
 	const handleLogoChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
 		setLogo(event.target.value);
 	};
@@ -412,21 +406,21 @@ const RoomTable = () => {
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<TextField
 						autoFocus
 						margin="dense"
 						id="name"
-						label="name"
+						label={nameLabel()}
 						type="text"
 						required
 						fullWidth
@@ -438,25 +432,13 @@ const RoomTable = () => {
 						autoFocus
 						margin="dense"
 						id="description"
-						label="description"
+						label={descLabel()}
 						type="text"
 						required
 						fullWidth
 						onChange={handleDescriptionChange}
 						value={description}
 					/>
-					{/* <TextField
-						autoFocus
-						margin="dense"
-						id="tenantId"
-						label="tenantId"
-						type="number"
-						disabled
-						required
-						fullWidth
-						onChange={handleTenantIdChange}
-						value={tenantId}
-					/> */}
 					<Autocomplete
 						options={roles}
 						getOptionLabel={(option) => option.name}
@@ -465,24 +447,13 @@ const RoomTable = () => {
 						onChange={handleDefaultRoleIdChange}
 						value={defaultRoleIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Default Role" />}
+						renderInput={(params) => <TextField {...params} label={defaultRoleLabel()} />}
 					/>
-					{/* <Autocomplete
-						options={tenants}
-						getOptionLabel={(option) => option.name}
-						fullWidth
-						disableClearable
-						readOnly
-						// onChange={handleTenantIdChange}
-						value={tenantIdOption}
-						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Tenant" />}
-					/> */}
 					<TextField
 						autoFocus
 						margin="dense"
 						id="logo"
-						label="logo"
+						label={logoLabel()}
 						type="text"
 						required
 						fullWidth
@@ -493,7 +464,7 @@ const RoomTable = () => {
 						autoFocus
 						margin="dense"
 						id="background"
-						label="background"
+						label={roomBgLabel()}
 						type="text"
 						required
 						fullWidth
@@ -504,19 +475,19 @@ const RoomTable = () => {
 						autoFocus
 						margin="dense"
 						id="maxActiveVideos"
-						label="maxActiveVideos"
+						label={maxActiveVideosLabel()}
 						type="number"
 						required
 						fullWidth
 						onChange={handleMaxActiveVideosChange}
 						value={maxActiveVideos}
 					/>
-					<FormControlLabel control={<Checkbox checked={locked} onChange={handleLockedChange} />} label="locked" />
-					<FormControlLabel control={<Checkbox checked={chatEnabled} onChange={handleChatEnabledChange} />} label="chatEnabled" />
-					<FormControlLabel control={<Checkbox checked={raiseHandEnabled} onChange={handleRaiseHandEnabledChange} />} label="raiseHandEnabled" />
-					<FormControlLabel control={<Checkbox checked={filesharingEnabled} onChange={handleFilesharingEnabledChange} />} label="filesharingEnabled" />
-					<FormControlLabel control={<Checkbox checked={localRecordingEnabled} onChange={handleLocalRecordingEnabledChange} />} label="localRecordingEnabled" />
-					<FormControlLabel control={<Checkbox checked={breakoutsEnabled} onChange={handleBreakoutsEnabledChange} />} label="breakoutsEnabled" />
+					<FormControlLabel control={<Checkbox checked={locked} onChange={handleLockedChange} />} label={lockRoomLabel()} />
+					<FormControlLabel control={<Checkbox checked={chatEnabled} onChange={handleChatEnabledChange} />} label={chatEnabledLabel()} />
+					<FormControlLabel control={<Checkbox checked={raiseHandEnabled} onChange={handleRaiseHandEnabledChange} />} label={raiseHandEnabledLabel()} />
+					<FormControlLabel control={<Checkbox checked={filesharingEnabled} onChange={handleFilesharingEnabledChange} />} label={filesharingEnabledLabel()} />
+					<FormControlLabel control={<Checkbox checked={localRecordingEnabled} onChange={handleLocalRecordingEnabledChange} />} label={localRecordingEnabledLabel()} />
+					<FormControlLabel control={<Checkbox checked={breakoutsEnabled} onChange={handleBreakoutsEnabledChange} />} label={breakoutsEnabledLabel()} />
 					
 					{ id !=0 && <>
 						<RoomOwnerTable roomId={id} />
@@ -525,9 +496,9 @@ const RoomTable = () => {
 					
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} disabled={cantDelete} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} disabled={cantDelete} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>

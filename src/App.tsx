@@ -14,6 +14,7 @@ import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { meActions } from './store/slices/meSlice';
+import edumeetConfig from './utils/edumeetConfig';
 
 type AppParams = {
 	id: string;
@@ -93,7 +94,7 @@ const App = (): JSX.Element => {
 			<StyledBackground
 				onDrop={handleFileDrop}
 				onDragOver={(event) => event.preventDefault()}
-				backgroundimage={userBackgroundImage ?? roomBackgroundImage}
+				backgroundimage={userBackgroundImage || roomBackgroundImage || edumeetConfig.theme.backgroundImage}
 			>
 				{ roomState === 'joined' ? <Room /> : roomState === 'lobby' ? <Lobby /> : roomState === 'new' && <Join roomId={id} /> }
 			</StyledBackground>

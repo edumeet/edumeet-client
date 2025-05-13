@@ -5,6 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Tenant, TenantOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantLabel, tenantOwnersLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
 
 const TenantOwnerTable = () => {
 	const dispatch = useAppDispatch();
@@ -19,7 +20,7 @@ const TenantOwnerTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined tenant';
+			return `${undefinedLabel()} ${tenantLabel()}`;
 		}
 	};
 
@@ -57,13 +58,13 @@ const TenantOwnerTable = () => {
 			},
 			{
 				accessorKey: 'tenantId',
-				header: 'Tenant',
+				header: tenantLabel(),
 				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
 
 			},
 			{
 				accessorKey: 'userId',
-				header: 'User',
+				header: userLabel(),
 				Cell: ({ cell }) => getUserEmail(cell.getValue<string>())
 
 			},
@@ -197,16 +198,16 @@ const TenantOwnerTable = () => {
 
 	return <>
 		<div>
-			<h4>Tenant owners</h4>
+			<h4>{tenantOwnersLabel()}</h4>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<Autocomplete
@@ -218,7 +219,7 @@ const TenantOwnerTable = () => {
 						onChange={handleUserIdChange}
 						value={userIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="User" />}
+						renderInput={(params) => <TextField {...params} label={userLabel()} />}
 					/>
 					<Autocomplete
 						options={tenants}
@@ -229,36 +230,13 @@ const TenantOwnerTable = () => {
 						onChange={handleTenantIdChange}
 						value={tenantIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Tenant" />}
+						renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
 					/>
-					{/* <TextField
-						autoFocus
-						margin="dense"
-						id="tenantId"
-						label="tenantId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleTenantIdChange}
-						value={tenantId}
-					/>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="userId"
-						label="userId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleUserIdChange}
-						value={userId}
-					/> */}
-
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>

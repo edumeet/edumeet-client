@@ -5,6 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { Permissions } from '../../../utils/types';
+import { descLabel, nameLabel } from '../../translated/translatedComponents';
 
 const PermissionTable = () => {
 	const dispatch = useAppDispatch();
@@ -20,11 +21,11 @@ const PermissionTable = () => {
 			},
 			{
 				accessorKey: 'name',
-				header: 'Name'
+				header: nameLabel()
 			},
 			{
 				accessorKey: 'description',
-				header: 'description'
+				header: descLabel()
 			},
 			
 		],

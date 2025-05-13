@@ -4,7 +4,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Roles, Room } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
-import { claimRoomLabel, editRoomLabel } from '../../translated/translatedComponents';
+import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, raiseHandEnabledLabel, roleLabel, roomBgLabel } from '../../translated/translatedComponents';
 
 const CurrentRoomModal = () => {
 	const dispatch = useAppDispatch();
@@ -259,17 +259,17 @@ const CurrentRoomModal = () => {
 
 	return <>
 		<Dialog open={open} onClose={handleClose}>
-			<DialogTitle>Add/Edit</DialogTitle>
+			<DialogTitle>{manageItemLabel()}</DialogTitle>
 			<DialogContent>
 				<DialogContentText>
-						These are the parameters that you can change.
+					{genericItemDescLabel()}
 				</DialogContentText>
 				<input type="hidden" name="id" value={id} />
 				<TextField
 					autoFocus
 					margin="dense"
 					id="name"
-					label="name"
+					label={nameLabel()}
 					type="text"
 					required
 					fullWidth
@@ -281,25 +281,13 @@ const CurrentRoomModal = () => {
 					autoFocus
 					margin="dense"
 					id="description"
-					label="description"
+					label={descLabel()}
 					type="text"
 					required
 					fullWidth
 					onChange={handleDescriptionChange}
 					value={description}
 				/>
-				{/* <TextField
-						autoFocus
-						margin="dense"
-						id="tenantId"
-						label="tenantId"
-						type="number"
-						disabled
-						required
-						fullWidth
-						onChange={handleTenantIdChange}
-						value={tenantId}
-					/> */}
 				<Autocomplete
 					options={roles}
 					getOptionLabel={(option) => option.name}
@@ -308,24 +296,13 @@ const CurrentRoomModal = () => {
 					onChange={handleDefaultRoleIdChange}
 					value={defaultRoleIdOption}
 					sx={{ marginTop: '8px' }}
-					renderInput={(params) => <TextField {...params} label="Default Role" />}
+					renderInput={(params) => <TextField {...params} label={`${defaultLabel()} ${roleLabel()}`} />}
 				/>
-				{/* <Autocomplete
-					options={tenants}
-					getOptionLabel={(option) => option.name}
-					fullWidth
-					disableClearable
-					readOnly
-					// onChange={handleTenantIdChange}
-					value={tenantIdOption}
-					sx={{ marginTop: '8px' }}
-					renderInput={(params) => <TextField {...params} label="Tenant" />}
-				/> */}
 				<TextField
 					autoFocus
 					margin="dense"
 					id="logo"
-					label="logo"
+					label={logoLabel()}
 					type="text"
 					required
 					fullWidth
@@ -336,7 +313,7 @@ const CurrentRoomModal = () => {
 					autoFocus
 					margin="dense"
 					id="background"
-					label="background"
+					label={roomBgLabel()}
 					type="text"
 					required
 					fullWidth
@@ -347,30 +324,29 @@ const CurrentRoomModal = () => {
 					autoFocus
 					margin="dense"
 					id="maxActiveVideos"
-					label="maxActiveVideos"
+					label={maxActiveVideosLabel()}
 					type="number"
 					required
 					fullWidth
 					onChange={handleMaxActiveVideosChange}
 					value={maxActiveVideos}
 				/>
-				<FormControlLabel control={<Checkbox checked={locked} onChange={handleLockedChange} />} label="locked" />
-				<FormControlLabel control={<Checkbox checked={chatEnabled} onChange={handleChatEnabledChange} />} label="chatEnabled" />
-				<FormControlLabel control={<Checkbox checked={raiseHandEnabled} onChange={handleRaiseHandEnabledChange} />} label="raiseHandEnabled" />
-				<FormControlLabel control={<Checkbox checked={filesharingEnabled} onChange={handleFilesharingEnabledChange} />} label="filesharingEnabled" />
-				<FormControlLabel control={<Checkbox checked={localRecordingEnabled} onChange={handleLocalRecordingEnabledChange} />} label="localRecordingEnabled" />
-				<FormControlLabel control={<Checkbox checked={breakoutsEnabled} onChange={handleBreakoutsEnabledChange} />} label="breakoutsEnabled" />
+				<FormControlLabel control={<Checkbox checked={locked} onChange={handleLockedChange} />} label={lockRoomLabel()} />
+				<FormControlLabel control={<Checkbox checked={chatEnabled} onChange={handleChatEnabledChange} />} label={chatEnabledLabel()} />
+				<FormControlLabel control={<Checkbox checked={raiseHandEnabled} onChange={handleRaiseHandEnabledChange} />} label={raiseHandEnabledLabel()} />
+				<FormControlLabel control={<Checkbox checked={filesharingEnabled} onChange={handleFilesharingEnabledChange} />} label={filesharingEnabledLabel()} />
+				<FormControlLabel control={<Checkbox checked={localRecordingEnabled} onChange={handleLocalRecordingEnabledChange} />} label={localRecordingEnabledLabel()} />
+				<FormControlLabel control={<Checkbox checked={breakoutsEnabled} onChange={handleBreakoutsEnabledChange} />} label={breakoutsEnabledLabel()} />
 					
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={handleClose}>Cancel</Button>
-				<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+				<Button onClick={handleClose}>{cancelLabel()}</Button>
+				<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 			</DialogActions>
 		</Dialog>
 		<div style={{ margin: 'auto', textAlign: 'center' }}>
 			<Button onClick={ roomExists ? handleOpen : handleCreateRoom}>{ roomExists ? editRoomLabel():claimRoomLabel()}</Button>				
 		</div>
-
 	</>;
 };
 

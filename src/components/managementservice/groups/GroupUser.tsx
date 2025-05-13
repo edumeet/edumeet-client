@@ -5,6 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Groups, GroupUsers, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, groupLabel, manageItemLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
 
 const GroupUserTable = () => {
 	const dispatch = useAppDispatch();
@@ -37,7 +38,7 @@ const GroupUserTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined group';
+			return `${undefinedLabel()} ${groupLabel()}`;
 		}
 	};
 	const getUserEmail = (id: string): string => {
@@ -61,12 +62,12 @@ const GroupUserTable = () => {
 			},
 			{
 				accessorKey: 'groupId',
-				header: 'Group',
+				header: groupLabel(),
 				Cell: ({ cell }) => getGroupName(cell.getValue<string>())
 			},
 			{
 				accessorKey: 'userId',
-				header: 'User',
+				header: userLabel(),
 				Cell: ({ cell }) => getUserEmail(cell.getValue<string>())
 
 			}
@@ -198,28 +199,16 @@ const GroupUserTable = () => {
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
-					{/* 					<TextField
-						autoFocus
-						margin="dense"
-						id="groupId"
-						label="groupId"
-						type="number"
-						required
-						fullWidth
-						disabled={groupIdDisabled}
-						onChange={handleGroupIdChange}
-						value={groupId}
-					/> */}
 					<Autocomplete
 						options={groups}
 						getOptionLabel={(option) => option.name}
@@ -229,20 +218,8 @@ const GroupUserTable = () => {
 						onChange={handleGroupIdChange}
 						value={groupIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Group" />}
+						renderInput={(params) => <TextField {...params} label={groupLabel()} />}
 					/>
-					{/* 					<TextField
-						autoFocus
-						margin="dense"
-						id="userId"
-						label="userId"
-						type="number"
-						required
-						fullWidth
-						disabled={userIdDisabled}
-						onChange={handleUserIdChange}
-						value={userId}
-					/> */}
 					<Autocomplete
 						options={users}
 						getOptionLabel={(option) => option.email}
@@ -252,13 +229,13 @@ const GroupUserTable = () => {
 						onChange={handleUserIdChange}
 						value={userIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="User" />}
+						renderInput={(params) => <TextField {...params} label={userLabel()} />}
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} disabled={cantDelete} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} disabled={cantDelete} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
