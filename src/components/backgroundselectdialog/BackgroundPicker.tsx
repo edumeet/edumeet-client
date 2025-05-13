@@ -7,7 +7,8 @@ import { deleteImage, getImage, loadThumbnails } from '../../store/actions/meAct
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { currentlySelectedLabel, defaultLabel, selectBackgroundLabel } from '../translated/translatedComponents';
 import DropZone from './DropZone';
-import RoomBackgroundTile from './RoomBackgroundTile';
+import RoomBackgroundTile, { RoomBgTile } from './RoomBackgroundTile';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 type BackgroundPickerProps = {
 	setSelectedBackground: React.Dispatch<React.SetStateAction<string | undefined>>,
@@ -17,11 +18,12 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const isMd = useMediaQuery(theme.breakpoints.up('md'));
+	const isSm = useMediaQuery(theme.breakpoints.up('sm'));
 	const thumbnails: ThumbnailItem[] = useAppSelector((state) => state.me.thumbnailList);
 	const previousBackground: string | undefined = useAppSelector((state) => state.me.backgroundImage);
 
 	const [ selectedItem, setSelectedItem ] = useState<{ imageName: string, imageUrl: string } | undefined>();
-	const [ useRoomBackground, setUseRoomBackground ] = useState(!previousBackground);
+	const roomBackgroundImage = useAppSelector((state) => state.room.backgroundImage) || edumeetConfig.theme.backgroundImage;
 
 	useEffect(() => {
 		const loadThumbnailsOnMount = async () => {
@@ -37,7 +39,6 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 
 		if (item.imageName === selectedItem?.imageName) return;
 
-		setUseRoomBackground(false);
 		const image = await dispatch(getImage(item.imageName));
 
 		if (image) {
@@ -53,7 +54,6 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 
 	const handleSelectRoomBg = () => {
 		setSelectedItem(undefined);
-		setUseRoomBackground(true);
 		setSelectedBackground('');
 	};
 
@@ -76,8 +76,18 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 					position: 'relative',
 				}}
 			>
-				{useRoomBackground ? (
-					<RoomBackgroundTile />
+				{ !previousBackground ? (
+					<Box
+						component='img'
+						src={roomBackgroundImage}
+						sx={{
+							height: 'inherit',
+							width: '100%',
+							objectFit: 'contain',
+							display: 'block',
+						}}
+						alt={selectBackgroundLabel()}
+					/>					
 				) : (
 					<Box
 						component='img'
@@ -85,7 +95,7 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 						sx={{
 							height: 'inherit',
 							width: '100%',
-							objectFit: 'cover',
+							objectFit: 'contain',
 							display: 'block',
 						}}
 						alt={selectBackgroundLabel()}
@@ -96,7 +106,6 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 					sx={{
 						position: 'absolute',
 						top: theme.spacing(1),
-						left: theme.spacing(1),
 						backgroundColor: `${theme.palette.primary.main}AA`,
 						color: theme.palette.primary.contrastText,
 						px: 2,
@@ -106,13 +115,14 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 					{currentlySelectedLabel()}
 				</Box>
 			</Box>
-
+			<br/>
 			<ImageList
 				sx={{
 					width: 'fit-content',
+					margin: 'auto',
 					height: '100%',
 				}}
-				cols={isMd ? 5 : 3}
+				cols={isMd ? 5 : (isSm? 3:2)}
 				rowHeight={164}>
 
 				<ImageListItem
@@ -128,7 +138,16 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 						position='top'
 						title={defaultLabel()} />
 				</ImageListItem>
-
+			</ImageList>
+			<br/>
+			<ImageList
+				sx={{
+					width: 'fit-content',
+					margin: 'auto',
+					height: '100%',
+				}}
+				cols={isMd ? 5 : (isSm? 3:2)}
+				rowHeight={164}>
 				{thumbnails.map((item) => (
 					<ImageListItem
 						key={item.imageName}
@@ -139,11 +158,7 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 								opacity: 1,
 							},
 						}}>
-						<img
-							srcSet={item.thumbnailUrl}
-							alt={item.imageName}
-							loading='lazy'
-						/>
+						<RoomBgTile backgroundImage={item.thumbnailUrl} />
 						<ImageListItemBar
 							title={item.imageName}
 							className='hover-bar'

@@ -114,7 +114,7 @@ export class ClientImageService {
 		return await imageFileHandle.getFile();
 	}
 
-	private async generateThumbnail(file: File, maxWidth = 150, maxHeight = 150): Promise<Blob> {
+	private async generateThumbnail(file: File, maxWidth = 300, maxHeight = 300): Promise<Blob> {
 		return new Promise((resolve, reject) => {
 			const img = new Image();
 
