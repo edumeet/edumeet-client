@@ -77,9 +77,9 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 				}}
 			>
 				{ !previousBackground ? (
-					<Box
+					roomBackgroundImage && <Box
 						component='img'
-						src={roomBackgroundImage}
+						src={roomBackgroundImage||''}
 						sx={{
 							height: 'inherit',
 							width: '100%',
