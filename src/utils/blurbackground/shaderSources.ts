@@ -48,7 +48,29 @@ export const shaderSources = {
 			outColor = vec4(frameColor.rgb + (1.0 - frameColor.a) * centerColor.rgb, 1.0);
 		}
 	`,
+	darkFragment: String.raw`#version 300 es
 
+		precision highp float;
+
+		out vec4 outColor;
+
+		void main() {
+			outColor = vec4(vec3(0.0), 1.0);
+		}
+	`,
+	testFragment: String.raw`#version 300 es
+
+		precision highp float;
+
+		out vec4 outColor;
+
+
+		void main() {
+
+			outColor = vec4(vec3(1.0,0.0,0.0), 1.0);
+		}
+	`,
+	
 	blendVertex: String.raw`#version 300 es
 
 		in vec2 a_position;

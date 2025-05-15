@@ -120,25 +120,26 @@ function buildBlurPass(
 	function render() {
 		gl.viewport(0, 0, outputWidth, outputHeight);
 		gl.useProgram(program);
+		// person
 		gl.uniform1i(inputFrameLocation, 0);
 		gl.activeTexture(gl.TEXTURE1);
 		gl.bindTexture(gl.TEXTURE_2D, personMaskTexture);
+	
+		// bg blur vertical
+		gl.uniform2f(texelSizeLocation, 0, texelHeight);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer1);
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		// blur full res
+		gl.activeTexture(gl.TEXTURE2);
+		gl.bindTexture(gl.TEXTURE_2D, texture1);
+		gl.uniform1i(inputFrameLocation, 2);
+		// bg blur horizontal
+		gl.uniform2f(texelSizeLocation, texelWidth, 0);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer2);
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		// blur full res
+		gl.bindTexture(gl.TEXTURE_2D, texture2);
 
-		for (let i = 0; i < 3; i++) {
-			gl.uniform2f(texelSizeLocation, 0, texelHeight);
-			gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer1);
-			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-			gl.activeTexture(gl.TEXTURE2);
-			gl.bindTexture(gl.TEXTURE_2D, texture1);
-			gl.uniform1i(inputFrameLocation, 2);
-
-			gl.uniform2f(texelSizeLocation, texelWidth, 0);
-			gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer2);
-			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-			gl.bindTexture(gl.TEXTURE_2D, texture2);
-		}
 	}
 
 	function cleanUp() {
