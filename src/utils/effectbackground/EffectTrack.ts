@@ -1,36 +1,36 @@
 import { createCanvasPipeline } from './CanvasPipeline';
-import { BlurBackgroundPipeline, BlurBackgroundPipelineOptions } from '../types';
+import { BackgroundConfig, BackgroundEffectPipeline, BackgroundPipelineOptions } from '../types';
 import { createWebGLPipeline } from './WebGLPipeline';
 import { TFLite, modelConfig } from '../../services/effectsService';
 import { Logger } from '../Logger';
 
-const logger = new Logger('BlurTrack');
+const logger = new Logger('EffectTrack');
 
 type workerMessage = {
 	timeout: boolean
 }
 
-export class BlurBackgroundNotSupportedError extends Error {
+export class EffectBackgroundNotSupportedError extends Error {
 	constructor(message: string) {
 		super(message);
 
-		this.name = 'BlurBackgroundNotSupportedError';
+		this.name = 'EffectBackgroundNotSupportedError';
 
 		if (Error.hasOwnProperty('captureStackTrace')) // Only in V8.
-			Error.captureStackTrace(this, BlurBackgroundNotSupportedError);
+			Error.captureStackTrace(this, EffectBackgroundNotSupportedError);
 		else
 			this.stack = (new Error(message)).stack;
 	}
 }
 
-export class BlurTrack {
+export class EffectTrack {
 	#backend?: TFLite;
 	#model?: ArrayBuffer;
 	#stream?: MediaStream;
 	#segWidth = 0;
 	#segHeight = 0;
 	#worker: Worker;
-	#pipeline?: BlurBackgroundPipeline;
+	#pipeline?: BackgroundEffectPipeline;
 	#targetFps = 30;
 	#timeoutId = 1;
 	#useWebGL: boolean;
@@ -41,16 +41,26 @@ export class BlurTrack {
 	#inputVideo = document.createElement('video');
 	#outputCanvas = document.createElement('canvas');
 
-	constructor(backend: TFLite, model: ArrayBuffer, inputTrack: MediaStreamTrack, useWebGL: boolean) {
+	private constructor(
+		backend: TFLite,
+		model: ArrayBuffer,
+		inputTrack: MediaStreamTrack,
+		useWebGL: boolean,
+		backgroundConfig: BackgroundConfig,
+	) {
 		logger.debug('constructor() [inputTrack.id %s, useWebGL: %s', inputTrack.id, useWebGL);
 		this.#backend = backend;
 		this.#model = model;
 		this.#backend.HEAPU8.set(new Uint8Array(this.#model), this.#backend._getModelBufferMemoryOffset());
 		this.#backend._loadModel(this.#model.byteLength);
-		this.#worker = this.#createWebWorker();
+		this.#worker = this.#createWebWorker(backgroundConfig.type);
 		this.#useWebGL = useWebGL;
 		this.inputTrack = inputTrack;
-		this.outputTrack = this.#startEffect(inputTrack);
+		this.outputTrack = this.#startEffect(inputTrack, backgroundConfig);
+	}
+
+	public static createTrack(backend: TFLite, model: ArrayBuffer, inputTrack: MediaStreamTrack, useWebGL: boolean, backgroundConfig: BackgroundConfig): EffectTrack {
+		return new EffectTrack(backend, model, inputTrack, useWebGL, backgroundConfig);
 	}
 
 	public async stop() {
@@ -71,7 +81,7 @@ export class BlurTrack {
 		}
 	}
 
-	#startEffect(inputTrack: MediaStreamTrack) {
+	#startEffect(inputTrack: MediaStreamTrack, backgroundConfig: BackgroundConfig) {
 		this.#inputVideo = document.createElement('video');
 		this.#segWidth = modelConfig.width;
 		this.#segHeight = modelConfig.height;
@@ -80,7 +90,7 @@ export class BlurTrack {
 
 		if (!width || !height) throw new Error('Missing track width and/or height');
 
-		const blurTrack = this.#createBlurTrack(inputTrack);
+		const effectTrack = this.#createEffectTrack(inputTrack);
 
 		if (!this.#backend) throw new Error('No ML Backend');
 
@@ -91,7 +101,8 @@ export class BlurTrack {
 			},
 			canvas: this.#outputCanvas,
 			backend: this.#backend,
-			segmentation: { width: this.#segWidth, height: this.#segHeight }
+			segmentation: { width: this.#segWidth, height: this.#segHeight },
+			backgroundConfig,
 		};
 
 		this.#createRenderingPipeline(pipelineOptions);
@@ -101,10 +112,12 @@ export class BlurTrack {
 			this.#inputVideo.onloadeddata = null;
 		};
 
-		return blurTrack;
+		return effectTrack;
 	}
 
-	#createRenderingPipeline(pipelineOptions: BlurBackgroundPipelineOptions) {
+	#createRenderingPipeline(pipelineOptions: BackgroundPipelineOptions) {
+		// TODO: canvasPipeline?
+		// TODO: Fix arguments so they are nicer
 		if (this.#useWebGL) {
 			try {
 				this.#pipeline = createWebGLPipeline(pipelineOptions);
@@ -123,7 +136,7 @@ export class BlurTrack {
 		if (!this.#pipeline) throw new Error('No rendering pipeline');
 	}
 
-	#createWebWorker(): Worker {
+	#createWebWorker(effectType: BackgroundConfig['type']): Worker {
 		logger.debug('#createWebWorker()');
 
 		const script = `onmessage = function(event) {
@@ -144,7 +157,7 @@ export class BlurTrack {
 
 		const worker = new Worker(
 			URL.createObjectURL(new Blob([ script ], { type: 'application/javascript' })),
-			{ name: 'BlurBackgroundService' }
+			{ name: `${effectType}BackgroundService` }
 		);
 
 		worker.onmessage = (message: MessageEvent<workerMessage>) => {
@@ -154,7 +167,7 @@ export class BlurTrack {
 		return worker;
 	}
 
-	#createBlurTrack(track: MediaStreamTrack) {
+	#createEffectTrack(track: MediaStreamTrack) {
 		logger.debug('#createTrack(), [track.id: %s]', track.id);
 
 		const targetFps = track.getSettings().frameRate;
@@ -189,7 +202,7 @@ export class BlurTrack {
 	#render() {
 		try {
 			if (!this.#pipeline) throw new Error('No pipeline');
-	
+
 			const startTime = performance.now();
 
 			this.#pipeline.render();

@@ -190,6 +190,7 @@
 	"settings.audioInput": "Audio device",
 	"settings.audioOutput": "Audio output device",
 	"settings.selectBackground": "Select background",
+	"settings.selectVideoBackground": "Select video background",
 	"settings.tryToLoadAudioDevices": "Try to load audio devices",
 	"settings.audioPreset": "Select the audio preset",
 	"settings.autoGainControl": "Auto gain control",

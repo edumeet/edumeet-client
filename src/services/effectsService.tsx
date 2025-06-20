@@ -11,9 +11,10 @@
  */
 
 import EventEmitter from 'events';
-import type { BlurTrack } from '../utils/blurbackground/BlurTrack';
+import { EffectTrack } from '../utils/effectbackground/EffectTrack';
 import { Logger } from '../utils/Logger';
 import { timeoutPromise } from '../utils/timeoutPromise';
+import { BackgroundConfig } from '../utils/types';
 
 const logger = new Logger('EffectsService');
 
@@ -45,17 +46,20 @@ export const modelConfig = {
 	height: 144
 };
 
-let BlurredTrack: typeof BlurTrack;
+let AppliedEffectTrack: typeof EffectTrack;
 
 /**
  * A service that handles tensorflow and mediapipe effects on the video stream, and RNNoise on the audio stream.
  */
 export class EffectsService extends EventEmitter {
-	public effectTracks = new Map<string, BlurTrack>();
+	public effectTracks = new Map<string, EffectTrack>();
 	private model?: ArrayBuffer;
 	public webGLSupport = false;
 
-	public async applyEffect(track: MediaStreamTrack): Promise<MediaStreamTrack> {
+	public async applyEffect(
+		track: MediaStreamTrack,
+		backgroundConfig: BackgroundConfig,
+	): Promise<MediaStreamTrack> {
 		logger.debug('applyEffect() [track.id %s, kind: %s]', track.id, track.kind);
 		if (track.kind !== 'video')
 			throw new Error('Audio effects are not yet implemented.');
@@ -64,9 +68,8 @@ export class EffectsService extends EventEmitter {
 
 		if (!this.model) this.model = await this.createModel();
 
-		if (!BlurredTrack) ({ BlurTrack: BlurredTrack } = await import('../utils/blurbackground/BlurTrack'));
-
-		const effectTrack = new BlurredTrack(MLBackend, this.model, track, this.webGLSupport);
+		if (!AppliedEffectTrack) ({ EffectTrack: AppliedEffectTrack } = await import('../utils/effectbackground/EffectTrack'));
+		const effectTrack = EffectTrack.createTrack(MLBackend, this.model, track, this.webGLSupport, backgroundConfig);
 
 		this.effectTracks.set(effectTrack.outputTrack.id, effectTrack);
 

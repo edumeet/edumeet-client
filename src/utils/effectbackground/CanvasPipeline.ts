@@ -1,9 +1,9 @@
 import { Logger } from '../Logger';
-import { BlurBackgroundPipeline, BlurBackgroundPipelineOptions } from '../types';
+import { BackgroundEffectPipeline, BackgroundPipelineOptions } from '../types';
 
 const logger = new Logger('canvasPipeline');
 
-export const createCanvasPipeline = ({ source, canvas, backend, segmentation }: BlurBackgroundPipelineOptions): BlurBackgroundPipeline => {
+export const createCanvasPipeline = ({ source, canvas, backend, segmentation }: BackgroundPipelineOptions): BackgroundEffectPipeline => {
 	logger.debug('createCanvasPipeline() [input: %o, segmentation: %o] ', source.dimensions, segmentation);
 
 	const segMaskCanvas = document.createElement('canvas');

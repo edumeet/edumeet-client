@@ -151,7 +151,7 @@ function clientWaitAsync(
 ) {
 	return new Promise<number>((resolve) => {
 		function test() {
-			const res = gl.clientWaitSync(sync, 0, 0);
+			const res = gl.clientWaitSync(sync, gl.SYNC_FLUSH_COMMANDS_BIT, 0);
 
 			if (res === gl.WAIT_FAILED) {
 				resolve(res);

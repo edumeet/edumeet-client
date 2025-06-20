@@ -263,7 +263,7 @@ export interface Dimensions {
 	height: number
 }
 
-export interface BlurBackgroundPipeline {
+export interface BackgroundEffectPipeline {
 	render: () => void;
 	cleanup: () => void;
 }
@@ -273,14 +273,28 @@ export interface Dimensions {
 	height: number
 }
 
-export interface BlurBackgroundPipelineOptions {
-    source: {
-        element: HTMLVideoElement,
-        dimensions: Dimensions
-    },
-    canvas: HTMLCanvasElement,
-    backend: TFLite,
-    segmentation: Dimensions
+export const BackgroundType = {
+	NONE: 'none',
+	BLUR: 'blur',
+	IMAGE: 'image'
+} as const;
+
+export type BackgroundType = typeof BackgroundType[keyof typeof BackgroundType];
+
+export type BackgroundConfig = {
+	type: BackgroundType;
+	url?: string;
+};
+
+export interface BackgroundPipelineOptions {
+	source: {
+		element: HTMLVideoElement,
+		dimensions: Dimensions
+	},
+	canvas: HTMLCanvasElement,
+	backend: TFLite,
+	segmentation: Dimensions,
+    backgroundConfig?: BackgroundConfig
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
@@ -314,68 +328,68 @@ export type TenantOAuth = {
 
 export type User = {
 	id: number,
-    ssoId: string,
-    tenantId: number,
-    email: string,
-    name: string,
-    avatar: string,
-    roles: [],
-    tenantAdmin: boolean,
-    tenantOwner: boolean
+	ssoId: string,
+	tenantId: number,
+	email: string,
+	name: string,
+	avatar: string,
+	roles: [],
+	tenantAdmin: boolean,
+	tenantOwner: boolean
 };
 
 export type Roles = {
 	id: number,
-    name: string,   
-    description: string,
-    tenantId: number
-    permissions: Array<Permissions>
+	name: string,	
+	description: string,
+	tenantId: number
+	permissions: Array<Permissions>
 };
 
 export type GroupRoles = {
 	id: number,
-    groupId: number,
-    role:Roles,
-    roleId:number,
-    roomId:number
+	groupId: number,
+	role:Roles,
+	roleId:number,
+	roomId:number
 };
 
 export type UsersRoles = {
 	id: number,
-    userId: number,
-    role:Roles,
-    roleId:number,
-    roomId:number
+	userId: number,
+	role:Roles,
+	roleId:number,
+	roomId:number
 };
 
 export type RoomOwners = {
 	id: number,
-    roomId: number,
-    userId: number,   
+	roomId: number,
+	userId: number,   
 };
 export type TenantOwners = {
 	id: number,
-    tenantId: number,
-    userId: number,   
+	tenantId: number,
+	userId: number,   
 };
 
 export type TenantAdmins = {
 	id: number,
-    tenantId: number,
-    userId: number,   
+	tenantId: number,
+	userId: number,   
 };
 
 export type Permissions = {
 	id: number,
-    name: string,   
-    description: string,
+	name: string,	
+	description: string,
 };
 
 export type RolePermissions = {
 	id: number,
-    permission: Permissions
-    permissionId: number,   
-    roleId: number,
+	permission: Permissions
+	permissionId: number,	
+	roleId: number,
 };
 
 export type Room = {
@@ -402,15 +416,15 @@ export type Room = {
 
 export type Groups = {
 	id: number,
-    name: string,   
-    description: string,
-    tenantId: number
+	name: string,	
+	description: string,
+	tenantId: number
 };
 
 export type GroupUsers = {
 	id: number,
-    groupId: number,   
-    userId: number
+	groupId: number,   
+	userId: number
 };
 export type Rule = {
 	id: number,

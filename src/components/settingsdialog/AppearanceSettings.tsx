@@ -16,6 +16,7 @@ import {
 	enableVerticallyStackedSidePanels,
 	selectBackgroundLabel,
 	videoContainLabel,
+	selectVideoBackgroundLabel,
 } from '../translated/translatedComponents';
 import LastNSlider from '../lastnslider/LastNSlider';
 
@@ -49,6 +50,13 @@ const AppearanceSettings = (): JSX.Element => {
 					dispatch(uiActions.setUi({ backgroundSelectDialogOpen: true }));
 				}}>
 				{ selectBackgroundLabel() }
+			</Button>
+			<Button
+				aria-label={ selectVideoBackgroundLabel() }
+				onClick={() => {
+					dispatch(uiActions.setUi({ videoBackgroundDialogOpen: true }));
+				}}>
+				{ selectVideoBackgroundLabel() }
 			</Button>
 			<FormControlLabel
 				control={
