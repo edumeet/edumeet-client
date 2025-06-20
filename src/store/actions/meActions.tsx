@@ -1,4 +1,4 @@
-import { ThumbnailItem } from '../../services/clientImageService';
+import { ImageKeys, ThumbnailItem } from '../../services/clientImageService';
 import { Logger } from '../../utils/Logger';
 import { meActions } from '../slices/meSlice';
 import { settingsActions } from '../slices/settingsSlice';
@@ -123,8 +123,8 @@ export const setUserBackground = (
 	_getState,
 	{ clientImageService }
 ) => {
-	await clientImageService.setUserBackgroundImage(imageName);
-	dispatch(meActions.setBackgroundImage(await clientImageService.getUserBackgroundImage()));
+	await clientImageService.setEarmarkedImage(imageName, ImageKeys.DESKTOP_BACKGROUND);
+	dispatch(meActions.setBackgroundImage(await clientImageService.getEarmarkedImage(ImageKeys.DESKTOP_BACKGROUND)));
 };
 
 /**
@@ -132,7 +132,7 @@ export const setUserBackground = (
  */
 export const loadUserBackground = (
 ): AppThunk<Promise<void>> => async (dispatch, _getState, { clientImageService }) => {
-	const userBackground = await clientImageService.loadUserBackgroundImage();
+	const userBackground = await clientImageService.loadEarmarkedImage(ImageKeys.DESKTOP_BACKGROUND);
 
 	dispatch(meActions.setBackgroundImage(userBackground));
 };

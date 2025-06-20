@@ -1,29 +1,31 @@
 import { DeleteForever } from '@mui/icons-material';
-import { Box, IconButton, ImageList, ImageListItem, ImageListItemBar, useMediaQuery } from '@mui/material';
+import { IconButton, ImageList, ImageListItem, ImageListItemBar, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ThumbnailItem } from '../../services/clientImageService';
 import { deleteImage, getImage, loadThumbnails } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { currentlySelectedLabel, defaultLabel, selectBackgroundLabel } from '../translated/translatedComponents';
+import { defaultLabel } from '../translated/translatedComponents';
 import DropZone from './DropZone';
 import RoomBackgroundTile, { RoomBgTile } from './RoomBackgroundTile';
-import edumeetConfig from '../../utils/edumeetConfig';
 
-type BackgroundPickerProps = {
-	setSelectedBackground: React.Dispatch<React.SetStateAction<string | undefined>>,
+export interface SelectedBackground {
+    imageName: string,
+    imageUrl: string
 }
 
-const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX.Element => {
+type BackgroundPickerProps = {
+	selectedBackground?: SelectedBackground,
+	setSelectedBackground: React.Dispatch<React.SetStateAction<SelectedBackground | undefined>>,
+	children?: React.ReactNode,
+}
+
+const BackgroundPicker = ({ selectedBackground, setSelectedBackground, children }: BackgroundPickerProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const isMd = useMediaQuery(theme.breakpoints.up('md'));
 	const isSm = useMediaQuery(theme.breakpoints.up('sm'));
 	const thumbnails: ThumbnailItem[] = useAppSelector((state) => state.me.thumbnailList);
-	const previousBackground: string | undefined = useAppSelector((state) => state.me.backgroundImage);
-
-	const [ selectedItem, setSelectedItem ] = useState<{ imageName: string, imageUrl: string } | undefined>();
-	const roomBackgroundImage = useAppSelector((state) => state.room.backgroundImage) || edumeetConfig.theme.backgroundImage;
 
 	useEffect(() => {
 		const loadThumbnailsOnMount = async () => {
@@ -32,89 +34,39 @@ const BackgroundPicker = ({ setSelectedBackground }: BackgroundPickerProps): JSX
 
 		loadThumbnailsOnMount();
 
-		return () => { selectedItem?.imageUrl && URL.revokeObjectURL(selectedItem.imageUrl); };
+		return () => { selectedBackground?.imageUrl && URL.revokeObjectURL(selectedBackground.imageUrl); };
 	}, []);
 
 	const handleSelectImage = async (item: ThumbnailItem) => {
 
-		if (item.imageName === selectedItem?.imageName) return;
+		if (item.imageName === selectedBackground?.imageName) return;
 
 		const image = await dispatch(getImage(item.imageName));
 
 		if (image) {
-			selectedItem?.imageName && URL.revokeObjectURL(selectedItem.imageName);
+			selectedBackground?.imageName && URL.revokeObjectURL(selectedBackground.imageName);
 			const imageUrlRef = URL.createObjectURL(image);
 
-			setSelectedItem({ imageName: item.imageName, imageUrl: imageUrlRef });
-			setSelectedBackground(item.imageName);
+			setSelectedBackground({ imageName: item.imageName, imageUrl: imageUrlRef });
 		} else {
-			setSelectedItem(undefined);
+			setSelectedBackground(undefined);
 		}
 	};
 
 	const handleSelectRoomBg = () => {
-		setSelectedItem(undefined);
-		setSelectedBackground('');
+		setSelectedBackground(undefined);
 	};
 
 	const handleOnDelete = async (item: ThumbnailItem) => {
-		if (selectedItem?.imageName === item.imageName) {
-			setSelectedItem(undefined);
-			URL.revokeObjectURL(selectedItem.imageUrl);
+		if (selectedBackground?.imageName === item.imageName) {
+			URL.revokeObjectURL(selectedBackground.imageUrl);
 		}
 		dispatch(deleteImage(item));
 	};
 
 	return (
 		<DropZone afterImageDropHook={handleSelectImage}>
-			<Box
-				sx={{
-					height: 328,
-					width: '100%',
-					display: 'flex',
-					justifyContent: 'center',
-					position: 'relative',
-				}}
-			>
-				{ !previousBackground ? (
-					roomBackgroundImage && <Box
-						component='img'
-						src={roomBackgroundImage||''}
-						sx={{
-							height: 'inherit',
-							width: '100%',
-							objectFit: 'contain',
-							display: 'block',
-						}}
-						alt={selectBackgroundLabel()}
-					/>					
-				) : (
-					<Box
-						component='img'
-						src={selectedItem?.imageUrl ?? previousBackground}
-						sx={{
-							height: 'inherit',
-							width: '100%',
-							objectFit: 'contain',
-							display: 'block',
-						}}
-						alt={selectBackgroundLabel()}
-					/>
-				)}
-
-				<Box
-					sx={{
-						position: 'absolute',
-						top: theme.spacing(1),
-						backgroundColor: `${theme.palette.primary.main}AA`,
-						color: theme.palette.primary.contrastText,
-						px: 2,
-						py: 0.5,
-					}}
-				>
-					{currentlySelectedLabel()}
-				</Box>
-			</Box>
+			{ children }
 			<br/>
 			<ImageList
 				sx={{
