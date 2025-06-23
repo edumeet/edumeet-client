@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { detect } from '../../utils/intlManager';
-import { AudioPreset, Resolution } from '../../utils/types';
+import { AudioPreset, BackgroundConfig, Resolution } from '../../utils/types';
 
 export interface SettingsState {
 	displayName: string;
@@ -35,7 +35,7 @@ export interface SettingsState {
 	opusMaxPlaybackRate: number;
 	notificationSounds: boolean;
 	locale?: string;
-	blurEnabled?: boolean;
+	videoBackgroundEffect: BackgroundConfig | null;
 	videoContainEnabled?: boolean;
 }
 
@@ -70,8 +70,7 @@ const initialState: SettingsState = {
 	opusMaxPlaybackRate: edumeetConfig.opusMaxPlaybackRate,
 	notificationSounds: true,
 	locale: detect(),
-	blurEnabled: false,
-	videoContainEnabled: true,
+	videoBackgroundEffect: null,
 };
 
 const settingsSlice = createSlice({
@@ -171,8 +170,10 @@ const settingsSlice = createSlice({
 		setLocale: ((state, action: PayloadAction<string>) => {
 			state.locale = action.payload;
 		}),
-		setBlurEnabled: ((state, action: PayloadAction<boolean>) => {
-			state.blurEnabled = action.payload;
+		setVideoBackgroundEffect: ((state, action: PayloadAction<BackgroundConfig | null>) => {
+			const videoBackgroundEffect = action.payload && { ...action.payload };
+
+			return { ...state, videoBackgroundEffect };
 		}),
 		setVideoContainEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.videoContainEnabled = action.payload;

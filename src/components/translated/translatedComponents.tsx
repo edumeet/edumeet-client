@@ -160,6 +160,11 @@ export const selectBackgroundLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Select background'
 });
 
+export const selectVideoBackgroundLabel = (): string => intl.formatMessage({
+	id: 'settings.selectVideoBackground',
+	defaultMessage: 'Select video background'
+});
+
 export const currentlySelectedLabel = (): string => intl.formatMessage({
 	id: 'settings.currentlySelected',
 	defaultMessage: 'Currently Selected'
