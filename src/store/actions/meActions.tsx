@@ -124,7 +124,11 @@ export const setUserBackground = (
 	{ clientImageService }
 ) => {
 	await clientImageService.setEarmarkedImage(imageName, ImageKeys.DESKTOP_BACKGROUND);
-	dispatch(meActions.setBackgroundImage(await clientImageService.getEarmarkedImage(ImageKeys.DESKTOP_BACKGROUND)));
+	const imageUrl: string | null = await clientImageService.getEarmarkedImage(ImageKeys.DESKTOP_BACKGROUND);
+
+	imageUrl
+		? dispatch(meActions.setSelectedDestop({ imageName, imageUrl }))
+		: dispatch(meActions.setSelectedDestop(null));
 };
 
 /**
@@ -132,9 +136,11 @@ export const setUserBackground = (
  */
 export const loadUserBackground = (
 ): AppThunk<Promise<void>> => async (dispatch, _getState, { clientImageService }) => {
-	const userBackground = await clientImageService.loadEarmarkedImage(ImageKeys.DESKTOP_BACKGROUND);
+	const imageUrl : string | null = await clientImageService.loadEarmarkedImage(ImageKeys.DESKTOP_BACKGROUND);
 
-	dispatch(meActions.setBackgroundImage(userBackground));
+	imageUrl
+		? dispatch(meActions.setSelectedDestop({ imageName: ImageKeys.DESKTOP_BACKGROUND, imageUrl }))
+		: dispatch(meActions.setSelectedDestop(null));
 };
 
 /**

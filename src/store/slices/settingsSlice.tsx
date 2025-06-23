@@ -35,7 +35,7 @@ export interface SettingsState {
 	opusMaxPlaybackRate: number;
 	notificationSounds: boolean;
 	locale?: string;
-	videoBackgroundEffect?: BackgroundConfig;
+	videoBackgroundEffect: BackgroundConfig | null;
 	videoContainEnabled?: boolean;
 }
 
@@ -70,6 +70,7 @@ const initialState: SettingsState = {
 	opusMaxPlaybackRate: edumeetConfig.opusMaxPlaybackRate,
 	notificationSounds: true,
 	locale: detect(),
+	videoBackgroundEffect: null,
 };
 
 const settingsSlice = createSlice({
@@ -169,9 +170,9 @@ const settingsSlice = createSlice({
 		setLocale: ((state, action: PayloadAction<string>) => {
 			state.locale = action.payload;
 		}),
-		setVideoBackgroundEffect: ((state, action: PayloadAction<BackgroundConfig | undefined>) => {
+		setVideoBackgroundEffect: ((state, action: PayloadAction<BackgroundConfig | null>) => {
 			const videoBackgroundEffect = action.payload && { ...action.payload };
-            
+
 			return { ...state, videoBackgroundEffect };
 		}),
 		setVideoContainEnabled: ((state, action: PayloadAction<boolean>) => {

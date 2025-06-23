@@ -15,8 +15,9 @@ export interface SelectedBackground {
 }
 
 type BackgroundPickerProps = {
-	selectedBackground?: SelectedBackground,
-	setSelectedBackground: React.Dispatch<React.SetStateAction<SelectedBackground | undefined>>,
+	selectedBackground: SelectedBackground | null,
+	// eslint-disable-next-line no-unused-vars
+	setSelectedBackground: (selected: SelectedBackground | null) => void,
 	children?: React.ReactNode,
 }
 
@@ -49,12 +50,8 @@ const BackgroundPicker = ({ selectedBackground, setSelectedBackground, children 
 
 			setSelectedBackground({ imageName: item.imageName, imageUrl: imageUrlRef });
 		} else {
-			setSelectedBackground(undefined);
+			setSelectedBackground(null);
 		}
-	};
-
-	const handleSelectRoomBg = () => {
-		setSelectedBackground(undefined);
 	};
 
 	const handleOnDelete = async (item: ThumbnailItem) => {
@@ -79,7 +76,7 @@ const BackgroundPicker = ({ selectedBackground, setSelectedBackground, children 
 
 				<ImageListItem
 					key='room-background'
-					onClick={handleSelectRoomBg}>
+					onClick={() => setSelectedBackground(null)}>
 					<RoomBackgroundTile />
 					<ImageListItemBar
 						sx={{

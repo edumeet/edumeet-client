@@ -1,7 +1,7 @@
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import { Button } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { clearImageStorage } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { uiActions } from '../../store/slices/uiSlice';
@@ -10,14 +10,30 @@ import { closeLabel, removeAllImagesLabel, selectVideoBackgroundLabel } from '..
 import BackgroundPicker, { SelectedBackground } from './BackgroundPicker';
 import UploadImageButton from './UploadFileButton';
 import MediaPreview from '../mediapreview/MediaPreview';
-import { BackgroundConfig } from '../../utils/types';
+import { BackgroundConfig, BackgroundType } from '../../utils/types';
 import { loadVideoBackground, updateVideoSettings } from '../../store/actions/mediaActions';
+import { ImageKeys } from '../../services/clientImageService';
+
+const toSelectedBackgroundFromVideo = (conf: BackgroundConfig | null): SelectedBackground | null => {
+	if (!conf?.url) return null;
+
+	return {
+		imageName: ImageKeys.VIDEO_BACKGROUND,
+		imageUrl: conf.url,
+	};
+};
+
+const fromSelectedBackgroundToVideo = (selected: SelectedBackground | null): BackgroundConfig => {
+	return {
+		type: selected ? BackgroundType.IMAGE : BackgroundType.NONE,
+		url: selected?.imageUrl,
+	};
+};
 
 const VideoBackgroundDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const videoBackgroundDialogOpen = useAppSelector((state) => state.ui.videoBackgroundDialogOpen);
-
-	const [ selectedBackground, setSelectedBackground ] = useState<SelectedBackground | undefined>();
+	const videoBackground = useAppSelector((state) => state.settings.videoBackgroundEffect);
 
 	useEffect(() => {
 		const checkForSavedBackground = async () => {
@@ -27,22 +43,13 @@ const VideoBackgroundDialog = (): JSX.Element => {
 		checkForSavedBackground();
 	}, []);
 
-	useEffect(() => {
-		const backgroundConfig: BackgroundConfig = {
-			type: selectedBackground ? 'image' : 'none',
-			url: selectedBackground?.imageUrl,
-		};
-
-		dispatch(updateVideoSettings({ videoBackgroundEffect: backgroundConfig }));
-	}, [ selectedBackground, setSelectedBackground ]);
-
 	const handleClearStorage = (): void => {
-		const backgroundConfig: BackgroundConfig = {
-			type: 'none',
-		};
-
 		dispatch(clearImageStorage());
-		dispatch(updateVideoSettings({ videoBackgroundEffect: backgroundConfig }));
+		dispatch(updateVideoSettings({
+			videoBackgroundEffect: {
+				type: BackgroundType.NONE,
+			}
+		}));
 	};
 
 	const handleCloseVideoBackgroundDialog = (): void => {
@@ -54,11 +61,11 @@ const VideoBackgroundDialog = (): JSX.Element => {
 			open={videoBackgroundDialogOpen}
 			onClose={handleCloseVideoBackgroundDialog}
 			maxWidth='md'
-			title={ selectVideoBackgroundLabel()}
+			title={selectVideoBackgroundLabel()}
 			content={
 				<BackgroundPicker
-					selectedBackground={ selectedBackground }
-					setSelectedBackground={ setSelectedBackground } >
+					selectedBackground={toSelectedBackgroundFromVideo(videoBackground)}
+					setSelectedBackground={(selected) => dispatch(updateVideoSettings({ videoBackgroundEffect: fromSelectedBackgroundToVideo(selected) }))}>
 					<MediaPreview withControls={false} />
 				</BackgroundPicker>
 			}

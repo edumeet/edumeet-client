@@ -1,22 +1,21 @@
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import { Button } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { clearImageStorage, loadUserBackground, setUserBackground } from '../../store/actions/meActions';
+import { useEffect } from 'react';
+import { clearImageStorage, loadUserBackground } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { meActions } from '../../store/slices/meSlice';
 import { uiActions } from '../../store/slices/uiSlice';
 import GenericDialog from '../genericdialog/GenericDialog';
 import { closeLabel, removeAllImagesLabel, selectBackgroundLabel } from '../translated/translatedComponents';
-import BackgroundPicker, { SelectedBackground } from './BackgroundPicker';
+import BackgroundPicker from './BackgroundPicker';
 import UploadImageButton from './UploadFileButton';
 import { RoomBackgroundPreview } from './RoomBackgroundPreview';
 
 const BackgroundSelectDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const backgroundSelectDialogOpen = useAppSelector((state) => state.ui.backgroundSelectDialogOpen);
-
-	const [ selectedBackground, setSelectedBackground ] = useState<SelectedBackground | undefined>();
+	const selectedBackground = useAppSelector((state) => state.me.selectedDestop);
 
 	useEffect(() => {
 		const checkForSavedBackground = async () => {
@@ -26,31 +25,25 @@ const BackgroundSelectDialog = (): JSX.Element => {
 		checkForSavedBackground();
 	}, []);
 
-	useEffect(() => {
-		selectedBackground
-			? dispatch(setUserBackground(selectedBackground.imageName))
-			: dispatch(meActions.setBackgroundImage(null));
-	}, [ selectedBackground ]);
-
 	const handleClearStorage = (): void => {
 		dispatch(clearImageStorage());
-		dispatch(meActions.setBackgroundImage(null));
+		dispatch(meActions.setSelectedDestop(null));
 	};
 
-	const handleCloseBackgroundSelectDialog = (): void => {
+	const handleCloseDialog = (): void => {
 		dispatch(uiActions.setUi({ backgroundSelectDialogOpen: !backgroundSelectDialogOpen }));
 	};
 
 	return (
 		<GenericDialog
 			open={backgroundSelectDialogOpen}
-			onClose={handleCloseBackgroundSelectDialog}
+			onClose={handleCloseDialog}
 			maxWidth='md'
 			title={selectBackgroundLabel()}
 			content={
 				<BackgroundPicker
 					selectedBackground={ selectedBackground }
-					setSelectedBackground={ setSelectedBackground }>
+					setSelectedBackground={ (selected) => dispatch(meActions.setSelectedDestop(selected)) }>
 					<RoomBackgroundPreview selectedBackground={ selectedBackground?.imageUrl } />
 				</BackgroundPicker>
 			}
@@ -66,7 +59,7 @@ const BackgroundSelectDialog = (): JSX.Element => {
 						{removeAllImagesLabel()}
 					</Button>
 					<Button
-						onClick={handleCloseBackgroundSelectDialog}
+						onClick={handleCloseDialog}
 						size='small'
 						startIcon={<CloseIcon />}
 						variant='contained'

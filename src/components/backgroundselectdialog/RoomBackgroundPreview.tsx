@@ -12,7 +12,7 @@ type RoomBackgroundPreviewProps = {
 export const RoomBackgroundPreview = ({ selectedBackground }: RoomBackgroundPreviewProps): React.JSX.Element => {
 	const theme = useTheme();
 	const roomBackgroundImage = useAppSelector((state) => state.room.backgroundImage) || edumeetConfig.theme.backgroundImage;
-	const previousBackground: string | null = useAppSelector((state) => state.me.backgroundImage);
+	const previousBackground = useAppSelector((state) => state.me.selectedDestop?.imageUrl);
 
 	return (
 		<Box
