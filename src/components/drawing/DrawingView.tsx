@@ -1,11 +1,14 @@
+/* eslint-disable no-console */
 import React, { useRef, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { drawingActions, DrawingState } from '../../store/slices/drawingSlice';
-import { setDrawingBgColor } from '../../store/actions/drawingActions';
+import { clearCanvas, setDrawingBgColor, updateCanvasState } from '../../store/actions/drawingActions';
 
-import { fabric } from 'fabric';
-import { Box, Divider, Grid, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Canvas, FabricObject, ImageFormat, IText, PencilBrush, util } from 'fabric';
+import { EraserBrush, isTransparent } from '@erase2d/fabric';
+import { Box, Divider, Grid2 as Grid, IconButton, Typography } from '@mui/material';
 
+import PanToolIcon from '@mui/icons-material/PanTool';
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
@@ -17,6 +20,9 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import ErasingAllConfirmationButton from './menu/ErasingAllConfirmationButton';
 import ColorsPicker from './menu/ColorsPicker';
 import BgColorsPicker from './menu/BgColorsPicker';
+import { FabricAction } from '../../store/slices/drawingSlice';
+import DownloadCanvasButton from './menu/DownloadCanvasButton';
+import { isMobileSelector } from '../../store/selectors';
 
 interface DrawingViewProps {
 	width: number;
@@ -26,18 +32,22 @@ interface DrawingViewProps {
 const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	const dispatch = useAppDispatch();
     
-	// theme
-	const theme = useTheme();     
+	// drawing setup   
+	const isMobile = useAppSelector(isMobileSelector);
+	const showEdit = true; // Visual feedback for other clients
+	const disableDraw = isMobile; // Disables draw for some - currently only mobile
 	
 	// canvas
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const [ canvas, setCanvas ] = useState<fabric.Canvas>();
-	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio); // eslint-disable-line
+	const [ canvas, setCanvas ] = useState<Canvas>();
 	const zoom = useAppSelector((state) => state.drawing.zoom);
+	const initiateActions = useAppSelector((state) => state.drawing.initiateAction);
+	const clearAction = useAppSelector((state) => state.drawing.clearAction);
 	
 	// tools
 	const menuRef = useRef<HTMLDivElement>(null);
 	const tool = useAppSelector((state) => state.drawing.tool);
+	const textLimiter = useRef<boolean>(true);
 	
 	// size
 	const sizeRef = useRef<NodeJS.Timeout | null>(null);
@@ -52,8 +62,11 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	const [ size, setSize ] = useState<number>();
 	const [ sizeRange, setSizeRange ] = useState<{ min: number, max: number }>();
 
+	// Seems the fabricjs event handling is forcing textSize to be 30. This is the only work around I could find.
+	const textFontSizeRef = useRef<number>(textSize);
+
 	// colors
-	const isColorsPickerPopover = useMediaQuery(theme.breakpoints.between('xs', 'md'));
+	const [ isColorsPickerPopover, setIsColorsPickerPopover ] = useState<boolean>(false);
 	const colorsPicker = useAppSelector((state) => state.drawing.colorsPicker);
 	const colors = useAppSelector((state) => state.drawing.colors);
 	const color = useAppSelector((state) => state.drawing.color);
@@ -61,77 +74,85 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	const bgColor = useAppSelector((state) => state.drawing.bgColor);
 	
 	// history
-	const actionRef = useRef< 'text' | 'undo' | 'redo' | 'clear' | null>(null);
+	const actionRef = useRef< 'text' | 'undo' | 'redo' | 'select' | 'clear' | 'update' | null>(null);
 	const pastActions = useAppSelector((state) => state.drawing.history.past);
 	const futureActions = useAppSelector((state) => state.drawing.history.future);
+	const updateAction = useAppSelector((state) => state.drawing.updateAction);
 
 	/* create canvas object */
 	useEffect(() => {
 
 		if (canvasRef.current) {
-
-			setCanvas(new fabric.Canvas(canvasRef.current, {
+			// Create a new canvas
+			setCanvas(new Canvas(canvasRef.current, {
 				backgroundColor: bgColor,
-				isDrawingMode: true
 			}));
 
+			initateCanvas();
+			
 			setCanvas((prevState) => {
 				if (prevState) {
-
-					const handleObjectEvent = (status: 'added' | 'modified' | 'removed') => (e: fabric.IEvent) => {
 					
+					const handleObjectEvent = (status: 'added' | 'modified' | 'removed') => (obj: {target: FabricObject}) => {	
 						if (actionRef.current === null) {
+					
+							const object = obj.target as FabricObject;
 
-							const obj = e.target as fabric.Object & { id?: number };
+							object.erasable = Object.hasOwn(object, 'text') ? false : true;
+							object.id = object.id ?? Date.now();
 
-							obj.id = obj.id ?? Date.now();
-					
-							const originalToObject = obj.toObject.bind(obj);
-					
-							obj.toObject = () => ({ id: obj.id, ...originalToObject() });
-					
-							dispatch(drawingActions.recordAction({ object: obj.toObject(), status }));
+							dispatch(drawingActions.recordAction({ object: object.toObject(), status }));
+							dispatch(updateCanvasState({ object: object.toObject(), status }));
 						}
 					};
 
+					const handleObjectMove = (status: 'editing' | 'lock') => (obj: {target: FabricObject}) => {
+						const object = obj.target;
+
+						dispatch(updateCanvasState({ object: object.toObject(), status }));
+					};
+					
 					prevState.on('object:added', handleObjectEvent('added'));
 					prevState.on('object:modified', handleObjectEvent('modified'));
 					prevState.on('object:removed', handleObjectEvent('removed'));
-					
+
+					// Visual feedback to other participants on transforming objects
+					if (showEdit) {
+						prevState.on('object:moving', handleObjectMove('editing'));
+						prevState.on('object:rotating', handleObjectMove('editing'));
+						prevState.on('object:scaling', handleObjectMove('editing'));
+					} else { // ensure object are not selectable even if no visual feedback is given for other clients
+						prevState.on('object:moving', handleObjectMove('lock'));
+						prevState.on('object:rotating', handleObjectMove('lock'));
+						prevState.on('object:scaling', handleObjectMove('lock'));
+					}
 				}
-
+            
 				return prevState;
-
+            
 			});
 		}
 
 		return () => {
-			setCanvas((prevState) => {
-				prevState?.dispose();
-				
-				return undefined;
-			});
+			dispatch(drawingActions.clear());
 		};
 	}, []);
 
 	/* set canvas size */
 	useEffect(() => {
-		
 		const currWidth = width;
 		const currHeight = height - (menuRef.current?.clientHeight ?? 0);
-
-		// const currHeight = (height / aspectRatio);
-
 		const currScaleFactor = Math.min(currWidth / 1920, currHeight / 1080);
 
 		setCanvas((prevState) => {
 
 			if (prevState) {
-				prevState.setWidth(currWidth); 
-				prevState.setHeight(currHeight);
+				prevState.setDimensions({ width: currWidth, height: currHeight });
 				prevState.setZoom(currScaleFactor);
 				prevState.renderAll();
 			}
+
+			setIsColorsPickerPopover(currWidth < 830 ? true : false);
 
 			return prevState;
 		});
@@ -142,28 +163,32 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 	/* tools */
 	useEffect(() => {
+
 		switch (tool) {
+			case 'edit':
+				setSize(0);
+				handleUseEditTool();
+				break;
 			case 'pencilBrush':
-				handleUsePencilBrush();
 				setSize(pencilBrushSize);
 				setSizeRange(pencilBrushSizeRange);
+				handleUsePencilBrush();
 				break;
 			case
 				'text':
-				handleUseTextTool();
 				setSize(textSize);
 				setSizeRange(textSizeRange);
-
+				handleUseTextTool();
 				break;
 			case 'eraser':
-				handleUseEraserTool();
 				setSize(eraserSize);
 				setSizeRange(eraserSizeRange);
+				handleUseEraserTool();
 				break;
 		}
 		
-	}, [ canvas, tool, color, pencilBrushSize, textSize, eraserSize, zoom ]);
-	
+	}, [ tool, canvas, color, pencilBrushSize, textSize, eraserSize, zoom ]);
+
 	/* size  */
 	useEffect(() => {
 		return () => {
@@ -183,20 +208,137 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 		}
 	}, [ isColorsPickerPopover ]);
 	
-	useEffect(() => {		
+	useEffect(() => {
 		handleUseBgColor(bgColor);
-
-		if (tool === 'eraser') {
-			setCanvas((prevState) => {
-				if (prevState) {
-					prevState.freeDrawingBrush.color = bgColor;
-					prevState.renderAll();
-				}
-				
-				return prevState;
-			});
-		}
 	}, [ bgColor ]);
+
+	// Clear canvas
+	useEffect(() => {
+		setCanvas((prevState) => {
+			
+			actionRef.current = 'clear';
+			
+			if (prevState) {
+				prevState.clear();
+				prevState.backgroundColor = bgColor;
+				
+				actionRef.current = null;
+			}
+			
+			return prevState;
+		});
+
+		dispatch(drawingActions.clear());
+
+	}, [ clearAction ]);
+	
+	// Update objects on canvas when other users makes a change
+	useEffect(() => {
+		setCanvas((prevState) => {
+
+			if (prevState) {
+				actionRef.current = actionRef.current == 'text' ? 'text' : 'update';
+
+				if (updateAction) {
+
+					const updating = util.enlivenObjects([ updateAction.object ]).then((objects) => {
+						const uO = objects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+						const enlivenObject : FabricObject = uO[0];
+						const textObject = Object.hasOwn(enlivenObject, 'text');
+						
+						if (updateAction.status == 'added') {
+
+							if (!textObject) {
+								enlivenObject.erasable = true;
+							}
+
+							enlivenObject.selectable = disableDraw || (actionRef.current == 'text') ? false: true;
+
+							prevState.add(enlivenObject);
+
+						} else if (updateAction.status == 'modified') {
+
+							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							
+							foundObject && modifyObject(foundObject, enlivenObject, prevState);
+
+						} else if (updateAction.status == 'removed') {
+
+							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+
+							foundObject && prevState.remove(foundObject);
+
+						} else if (updateAction.status == 'editing') {
+
+							prevState.getObjects().forEach((curr: FabricObject) => {
+								if (curr.id === enlivenObject.id) {
+									curr.selectable = false;
+									curr.set({ angle: enlivenObject.angle, width: enlivenObject.width, height: enlivenObject.height, scaleX: enlivenObject.scaleX, scaleY: enlivenObject.scaleY, dirty: true });
+									curr.setXY(enlivenObject.getXY());
+									curr.setCoords();
+									prevState.renderAll();
+								}
+
+							});
+
+						} else if (updateAction.status == 'lock') {
+							prevState.getObjects().forEach((curr: FabricObject) => {
+								if (curr.id === enlivenObject.id) {
+									curr.selectable = false;
+								}
+
+							});
+							
+						}
+
+					});
+					
+					updating.finally(() => {
+						
+						actionRef.current = actionRef.current == 'text' ? 'text' : null;
+					});
+				}
+
+			}
+
+			return prevState;
+		});
+
+	}, [ updateAction ]);
+
+	const initateCanvas = () => {
+		setCanvas((prevState) => {
+			
+			if (prevState) {
+				
+				if (initiateActions) {
+					
+					const actionsObj = initiateActions.map((a) => a.object);
+					
+					const initiating = util.enlivenObjects(actionsObj).then((objects) => {
+						actionRef.current = 'update';
+
+						const iO = objects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+
+						iO.forEach((iObject) => {
+							if (!Object.hasOwn(iObject, 'text')) {
+								iObject.erasable = true;
+							}
+							iObject.selectable = disableDraw || (iObject.selectable == false) ? false: true;
+							prevState.add(iObject);
+						});
+					
+					});
+				
+					initiating.finally(() => {
+						actionRef.current = null;
+					});
+				}
+			}
+			
+			return prevState;
+		});
+	};
 
 	/* handling functions */
 	const handleSetZoom = (value: number) => {
@@ -207,36 +349,100 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 		dispatch(drawingActions.setDrawingTool(value));
 	};
 
+	const handleUseEditTool = () => {
+		
+		setCanvas((prevState) => {
+			if (prevState) {
+				actionRef.current = null;
+
+				prevState.isDrawingMode = false;
+				prevState.defaultCursor = 'default';
+				prevState.hoverCursor = 'grab';
+				prevState.selection = false;
+				prevState.forEachObject((obj) => {
+					obj.selectable = disableDraw ? false: true;
+				});
+
+				const dispose = prevState.on('mouse:down', () => {
+					dispose();
+				});
+
+				// For group select if prevState.selection = true
+				// prevState.selectionColor ='transparent';
+				// prevState.selectionBorderColor = 'lightblue';
+				// prevState.selectionDashArray=[ 4, 4 ];
+
+				// Delete object on backspace during edit
+				document.addEventListener('keydown', (e) => {
+					const key = e.key;
+					const active = prevState.getActiveObject();
+					
+					if (active) {
+						if (Object.hasOwn(active, 'text')) {
+							const _active = active as IText;
+
+							if (_active.isEditing) {
+								return;
+							}
+						}
+
+						if (key === 'Backspace') {
+							prevState.remove(active);
+						}
+					}
+				});
+				
+				handleSetTool('edit');
+			}
+			
+			return prevState;
+		});
+	};
+
+	const drawingCursor = (len: number, pos: number, border: number) => {		
+		const cursor = `
+		<svg
+			height="${ len }"
+			width="${ len }"
+			stroke="${color}"
+			stroke-width="${border}"
+			fill="${ color }"
+			viewBox="0 0 ${ len } ${ len }"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<circle
+				cx="${pos}"
+				cy="${pos}"
+				r="${ (pos) - border }" 
+			/>
+		</svg>
+	`;
+	
+		return `data:image/svg+xml;base64,${ window.btoa(cursor) }`;
+
+	};
+
 	const handleUsePencilBrush = () => {
 
 		const border = 1;
 		const len = pencilBrushSize * zoom;
 		const pos = (pencilBrushSize / 2) * zoom;
-
-		const cursor = `\
-		url('data:image/svg+xml;utf8,\
-		<svg\
-			xmlns="http://www.w3.org/2000/svg"\
-			width="${len}"\
-			height="${len}"\
-			fill="transparent"\
-			stroke="${color}"\
-			stroke-width="${border}"\
-		>\
-			<circle cx="${pos}" cy="${pos}" r="${(pos) - border}"/>\
-		</svg>'\
-		) ${pos} ${pos}, auto`;
-	
+		
 		setCanvas((prevState) => {
 			if (prevState) {
-				prevState.freeDrawingBrush = new fabric.PencilBrush(prevState);
+				actionRef.current = null;
+
+				prevState.freeDrawingBrush = new PencilBrush(prevState);
 				prevState.freeDrawingBrush.color = color;
 				prevState.freeDrawingBrush.width = pencilBrushSize;
 				prevState.freeDrawingBrush.strokeLineCap = 'round';
-				prevState.freeDrawingCursor = cursor;
+				prevState.freeDrawingCursor = `url(${drawingCursor(len, pos, border)}) ${ len / 2 } ${ len / 2 }, default`;
 				prevState.isDrawingMode = true;
 				prevState.selection = false;
-				prevState.off('mouse:down');
+
+				const dispose = prevState.on('mouse:down', () => {
+					dispose();
+				});
 			}
 
 			return prevState;
@@ -249,9 +455,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 		setCanvas((prevState) => {
 			if (prevState) {
-
 				actionRef.current = 'text';
-
+				
 				prevState.isDrawingMode = false;
 				prevState.selection = false;
 				prevState.defaultCursor = 'text';
@@ -259,64 +464,128 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				prevState.forEachObject((obj) => {
 					obj.selectable = false;
 				});
-				prevState.on('mouse:down', (event) => {
-					const pointer = prevState.getPointer(event.e);
-					const text = new fabric.IText('', {
-						left: pointer.x,
-						top: pointer.y,
-						fill: color,
-						fontSize: textSize,
-						fontFamily: 'Arial',
-					});
-	
-					prevState.add(text);
-					prevState.setActiveObject(text);
-					text.enterEditing();
+				textFontSizeRef.current = textSize;
+
+				if (textLimiter.current === true) {
 					
-					text.on('editing:exited', () => {
-						prevState.off('mouse:down');
+					textLimiter.current = false;
+					
+					prevState.on('mouse:down', (e) => {	
+
+						if (actionRef.current === 'text') {
+							actionRef.current = null;
+
+							const pointer = e.scenePoint;
+							const text = new IText('Edit text', {
+								left: pointer.x,
+								top: pointer.y,
+								fill: color,
+								fontSize: textFontSizeRef.current,
+								fontFamily: 'Arial',
+							});
+							
+							prevState.add(text);
+							prevState.setActiveObject(text);
+							
+							text.enterEditing();
+							text.selectAll();	
+							
+							text.on('editing:exited', () => {
+								textLimiter.current = true;
+							});
+						}
 					});
-				});
-	
-				handleSetTool('text');
+				}
+				
 			}
 			
 			return prevState;
 		});
+
+		handleSetTool('text');
+	};
+
+	const eraserCursor = (len: number, strokeColor: string, pos: number, border: number) => {		
+		const cursor = `
+		<svg
+			height="${ len }"
+			width="${ len }"
+			stroke="${ strokeColor }"
+			stroke-width="${border}"
+			stroke-dasharray="5"
+			fill="transparent"
+			viewBox="0 0 ${ len } ${ len }"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<circle
+				cx="${pos}"
+				cy="${pos}"
+				r="${ (pos) - border }" 
+			/>
+		</svg>
+	`;
+	
+		return `data:image/svg+xml;base64,${ window.btoa(cursor) }`;
+
 	};
 
 	const handleUseEraserTool = () => {
+		// Eraser tool from: https://github.com/ShaMan123/erase2d
 
 		const border = 1;
 		const len = eraserSize * zoom;
 		const pos = (eraserSize / 2) * zoom;
 		const strokeColor = 'black';
 
-		const cursor = `\
-		url('data:image/svg+xml;utf8,\
-		<svg\
-			xmlns="http://www.w3.org/2000/svg"\
-			width="${len}"\
-			height="${len}"\
-			fill="transparent"\
-			stroke="${strokeColor}"\
-			stroke-width="${border}"\
-			stroke-dasharray="5" \
-		>\
-			<circle cx="${pos}" cy="${pos}" r="${(pos) - border}"/>\
-		</svg>'\
-		) ${pos} ${pos}, auto`;
-
 		setCanvas((prevState) => {
 			if (prevState) {
-				prevState.freeDrawingBrush = new fabric.PencilBrush(prevState);
-				prevState.freeDrawingBrush.color = bgColor;
+				actionRef.current = null;
+
+				const eraser = new EraserBrush(prevState);
+
+				prevState.freeDrawingBrush = eraser;
 				prevState.freeDrawingBrush.width = eraserSize;
 				prevState.freeDrawingBrush.strokeLineCap = 'round';			
-				prevState.freeDrawingCursor = cursor;
+				prevState.freeDrawingCursor = `url(${eraserCursor(len, strokeColor, pos, border)}) ${ len / 2 } ${ len / 2 }, default`;
+
+				const dispose = prevState.on('mouse:down', () => {
+					dispose();
+				});
+
+				eraser.on('end', async (e) => {
+					e.preventDefault();
+					const { targets } = e.detail;
+
+					await eraser.commit(e.detail);
+
+					// array of all objects on the canvas where erase have been used on
+					const masking = await Promise.all(
+						targets.map(
+							async (target) => [ target, await isTransparent(target) ] as const
+						)
+					);
+
+					// Find all fully masked objects for erase 
+					const fullyErased = masking
+						.filter(([ , masked ]) => masked)
+						.map(([ object ]) => object);
+
+					fullyErased.forEach((object) => (object.parent || prevState).remove(object));
+
+					const modified = targets.filter((target) => !fullyErased.includes(target));
+
+					// fire event when erase has ended to add to history 
+					if (fullyErased.length < masking.length) {
+						modified.forEach((object) => {
+							prevState.fire('object:modified', { target: object });
+						});
+					}
+
+					prevState.requestRenderAll();
+				});
+				
 				prevState.isDrawingMode = true;
 				prevState.selection = false;
-				prevState.off('mouse:down');
 			}
 			
 			return prevState;
@@ -358,7 +627,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 								sizeRef.current = setInterval(() => {
                                 
 									dispatch(drawingActions.setDrawingTextSize({ operation }));
-    
+
 								}, 20);
 							}, 600);
 						}
@@ -382,7 +651,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							}, 600);
 						}
 						break;
-					case 'mouseup':
 				}
 				
 				break;
@@ -398,7 +666,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 	const handleUseColor = (selectedColor: DrawingState['color']) => {
 		dispatch(drawingActions.setDrawingColor(selectedColor));
-
 	};
 
 	const handleUseBgColor = (selectedColor: DrawingState['bgColor']) => {
@@ -412,88 +679,187 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 			
 			return prevState;
 		});
+	};
 
+	const modifyObject = (oldObject: FabricObject, newObject: FabricObject, prevState: Canvas) => {
+		
+		// In case the object is an IText we need to typecast as getObjects() returns a FabricObject. 
+		// At the time of writing this there is no Canvas method to get IText objects from the canvas.
+		if (Object.hasOwn(oldObject, 'text') && Object.hasOwn(newObject, 'text')) {
+			const oldTextbox = oldObject as IText;
+			const newTextbox = newObject as IText;
+			
+			oldTextbox.set({ text: newTextbox.text });
+		}
+
+		// erase changes the clipPath - therefore we must set the clipPath to the previous
+		oldObject.clipPath = newObject.clipPath;
+		
+		oldObject.set({ angle: newObject.angle, width: newObject.width, height: newObject.height, scaleX: newObject.scaleX, scaleY: newObject.scaleY, dirty: true });
+		oldObject.setXY(newObject.getXY());
+		oldObject.selectable = disableDraw || (actionRef.current == 'text') ? false : true;
+
+		// Call to update state on canvas
+		oldObject.setCoords();
+		prevState.renderAll();
 	};
 	
 	/* handle history */
-
 	const handleUndo = () => {
-
 		setCanvas((prevState) => {
 			if (prevState) {
-
+        
 				actionRef.current = 'undo';
 
 				const lastAction = pastActions.at(-1);
 
 				if (lastAction !== undefined) {
+					
+					// Creates a fabric instance of an object
+					const undoing = util.enlivenObjects([ lastAction.object ]).then((objects) => {
 
-					fabric.util.enlivenObjects([ lastAction.object ], (lA : fabric.Object[]) => {
+						const lA = objects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+						const enlivenObject : FabricObject = lA[0];
+						const textObject = Object.hasOwn(enlivenObject, 'text');
 
-						const enlivenObject : fabric.Object & { id?: number } = lA[0];
-
-						if (lastAction.status === 'added') {
-						
-							const foundObject = prevState.getObjects().find((curr: fabric.Object & { id?: number }) => curr.id === enlivenObject.id);
+						// remove added object
+						if (lastAction.status === 'added') {    
+							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 
 							foundObject && prevState.remove(foundObject);
-
+							dispatch(updateCanvasState({ object: lastAction.object, status: 'removed' }));
+							
+						// revert changes to object
 						} else if (lastAction.status === 'modified') {
-							// found.object.set(found.object._stateProperties); // restore modified properties
-							// prevState?.renderAll();
+
+							// Filter all actions with the same object id and get the object's previous state which is the second newest object
+							const FilteredActions = pastActions.filter((obj: FabricAction) => obj.object.id == enlivenObject.id);
+							const prevAction = FilteredActions.length >= 2 ? FilteredActions[FilteredActions.length - 2] : undefined;
+							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							
+							if (prevAction !== undefined) {
+								util.enlivenObjects([ prevAction.object ]).then((prevObjects) => {
+									const pA = prevObjects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+									const _enlivenObject : FabricObject & { id?: number } = pA[0];
+
+									if (foundObject && foundObject.id === _enlivenObject.id) {
+										modifyObject(foundObject, _enlivenObject, prevState);
+									} else {
+										prevState.add(_enlivenObject);
+									}
+									dispatch(updateCanvasState({ object: prevAction.object, status: 'modified' }));
+								});
+							} else { // Undo case for modify of object other have created
+								foundObject && modifyObject(foundObject, enlivenObject, prevState);
+							}
+
+						// add removed object
 						} else if (lastAction.status === 'removed') {
-							prevState.add(enlivenObject);
+							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 
+							// Ensure object does not already exist on canvas before adding it back
+							if (!foundObject) {
+
+								// Need the previous object and state for cases when objects was erased using eraser tool
+								const FilteredActions = pastActions.filter((obj: FabricAction) => obj.object.id == enlivenObject.id);
+								const prevAction = FilteredActions.length >= 2 ? FilteredActions[FilteredActions.length - 2] : undefined;
+								
+								if (prevAction !== undefined) {
+									util.enlivenObjects([ prevAction.object ]).then((prevObjects) => {
+										const pA = prevObjects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+										const _enlivenObject : FabricObject & { id?: number } = pA[0];
+									
+										enlivenObject.clipPath = _enlivenObject.clipPath;
+								
+									});
+								}
+							
+								// Set erasable to true, it is undefined by default as the property is from erase2d and not fabricjs
+								if (!textObject) {
+									enlivenObject.erasable = true;
+								}
+								prevState.add(enlivenObject);
+								dispatch(updateCanvasState({ object: lastAction.object, status: 'added' }));
+							}
 						}
-
+        
 						dispatch(drawingActions.undo());
-
-					}, 'fabric');
-
-					actionRef.current = null;
+					});
+        
+					undoing.finally(() => {
+						actionRef.current = null;
+					});
 				}
 			}
-			
+                    
 			return prevState;
 		});
 	};
 	
 	const handleRedo = () => {
-
 		setCanvas((prevState) => {
 			if (prevState) {
-
+        
 				actionRef.current = 'redo';
-
+        
 				const nextAction = futureActions.at(-1);
-
+        
 				if (nextAction !== undefined) {
+					
+					const redoing = util.enlivenObjects([ nextAction.object ]).then((objects) => {
 
-					fabric.util.enlivenObjects([ nextAction.object ], (nA: fabric.Object[]) => {
+						const nA = objects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+						const enlivenObject : FabricObject = nA[0];
+						const textObject = Object.hasOwn(enlivenObject, 'text');
+        
+						// Add object
+						if (nextAction.status === 'added') {  
+							const FilteredActions = pastActions.filter((obj: FabricAction) => obj.object.id == enlivenObject.id);
+							const prevAction = FilteredActions.length >= 2 ? FilteredActions[FilteredActions.length - 2] : undefined;
 
-						const enlivenObject : fabric.Object & { id?: number } = nA[0];
+							if (prevAction !== undefined) {
+								util.enlivenObjects([ prevAction.object ]).then((prevObjects) => {
+									const pA = prevObjects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+									const _enlivenObject : FabricObject & { id?: number } = pA[0];
 
-						if (nextAction.status === 'added') {
+									enlivenObject.clipPath = _enlivenObject.clipPath;
+								
+								});
+							}
+
+							// Set erasable to true, is undefined as the property is from erase2d and not fabricjs
+							if (!textObject) {
+								enlivenObject.erasable = true;
+							}
 							prevState.add(enlivenObject);
+							dispatch(updateCanvasState({ object: nextAction.object, status: 'added' }));
+							
+							// revert changes to object
 						} else if (nextAction.status === 'modified') {
-							// found.object.set(found.object._stateProperties); // restore modified properties
-							// prevState?.renderAll();
-						} else if (nextAction.status === 'removed') {
 
-							const foundObject = prevState.getObjects().find((obj: fabric.Object & { id?: number }) => obj.id === enlivenObject.id);
+							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							
+							foundObject && modifyObject(foundObject, enlivenObject, prevState);
+							dispatch(updateCanvasState({ object: nextAction.object, status: 'modified' }));
+							
+							// Remove object
+						} else if (nextAction.status === 'removed') {
+							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 
 							foundObject && prevState.remove(foundObject);
+							dispatch(updateCanvasState({ object: nextAction.object, status: 'removed' }));
 						}
-
+        
 						dispatch(drawingActions.redo());
-
-					}, 'fabric');
-
-					actionRef.current = null;
-				
+        
+					});
+					
+					redoing.finally(() => {
+						actionRef.current = null;
+					});
 				}
 			}
-			
+                    
 			return prevState;
 		});
 	};
@@ -501,19 +867,50 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	const handleEraseAll = () => {
 		setCanvas((prevState) => {
 			
+			actionRef.current = 'clear';
+			
 			if (prevState) {
-
-				actionRef.current = 'clear';
-
 				prevState.clear();
 				prevState.backgroundColor = bgColor;
-
+				
 				dispatch(drawingActions.clear());
+				dispatch(clearCanvas());
 
 				actionRef.current = null;
-
 			}
 			
+			return prevState;
+		});
+	};
+
+	const handleDownloadCanvasAsImage = (fileType: ImageFormat) => {
+		setCanvas((prevState) => {
+			if (prevState) {
+
+				const file = prevState.toDataURL({ format: fileType, multiplier: 1 });
+				const downloadlink = document.createElement('a');
+
+				downloadlink.href = file;
+				downloadlink.download = 'canvas-image';
+				downloadlink.click();
+			}
+
+			return prevState;
+		});
+	};
+
+	const handleDownloadCanvasAsSvg = () => {
+		setCanvas((prevState) => {
+			if (prevState) {
+
+				const file = prevState.toSVG();
+				const downloadlink = document.createElement('a');
+
+				downloadlink.setAttribute('href', `data:image/svg+xml;base64,${window.btoa(file)}`);
+				downloadlink.setAttribute('download', 'canvas-image.svg');
+				downloadlink.click();
+			}
+
 			return prevState;
 		});
 	};
@@ -523,25 +920,24 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 			container
 		>
 			{/* Canvas */}
-			<Grid item>
+			<Grid>
 				<Box ref={canvasRef} component="canvas" />
 			</Grid>
 
 			{/* Menu */}
-			<Grid container item
+			<Grid container
 				sx={{
 					borderTop: '1px solid gray',
 					backgroundColor: 'lightgray',
 				}}
-				ref={menuRef}
 				justifyContent='center'
+				ref={menuRef}
 				direction='row'
 				wrap='nowrap'
-
+				size={{ xs: 12 }}
 			>
 				{/* Toolbar */}
-				<Grid
-					item
+				{ !disableDraw && <Grid
 					container	
 					margin={1}
 					border={1}
@@ -550,17 +946,26 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 					padding={0.6}
 					wrap='nowrap'
 					gap={0.5}
-					xs='auto'
 				>
 					
 					{/* Draw */} <Divider orientation="vertical" sx={{ display: 'none' }} />
 
 					<Grid
-						item
 						container
-						xs='auto'
+						size = {{ xs: 'auto' }}
 						wrap='nowrap'
 					>
+						{/* Edit */}
+						<IconButton
+							aria-label="Use Edit Tool"
+							onClick={handleUseEditTool}
+							title="Use Edit Tool"
+							style={{ border: tool === 'edit' ? '2px solid gray' : '2px solid lightgray' }}
+							size='small'
+						>
+							<PanToolIcon />
+						</IconButton>
+
 						{/* PencilBrush */}
 						<IconButton
 							aria-label="Use Pencil Brush Tool"
@@ -593,14 +998,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 						>
 							<AutoFixNormalIcon />
 						</IconButton>
-					</Grid>
+					</Grid> 
 
 					{ /* Size */ } <Divider orientation="vertical" />
 
 					<Grid
-						item
 						container
-						xs='auto'
+						size = {{ xs: 'auto' }}
 					>
 						{/* Increase Size */}
 						<IconButton
@@ -645,9 +1049,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 					{/* Colors */} <Divider orientation="vertical" />
 
 					<Grid
-						item
 						container
-						xs='auto'
+						size = {{ xs: 'auto' }}
 					>							
 						<ColorsPicker
 							colorsPicker={colorsPicker}
@@ -660,9 +1063,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 					{/* BgColors */} <Divider orientation="vertical" />
 
 					<Grid
-						item
 						container
-						xs='auto'
+						size = {{ xs: 'auto' }}
 					>							
 						<BgColorsPicker
 							bgColors={bgColors}
@@ -674,10 +1076,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 					{/* History */} <Divider orientation="vertical" />
 
 					<Grid
-						item
 						container
-						xs='auto'
-						justifyContent={'flex-end'}
+						size = {{ xs: 'auto' }}
+						sx = {{ justifyContent: 'flex-end' }}
 						wrap='nowrap'
 
 					>
@@ -711,9 +1112,14 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							disabled={pastActions.length === 0 && futureActions.length === 0}
 
 						/>
-						
+						{/* Download Canvas */}
+						<DownloadCanvasButton
+							handleDownloadCanvasAsImage={handleDownloadCanvasAsImage}
+							handleDownloadCanvasAsSvg={handleDownloadCanvasAsSvg}
+							disabled = { false }
+						/>
 					</Grid>
-				</Grid>
+				</Grid> }
 			</Grid>
 		</Grid>
 	);

@@ -64,7 +64,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		tracker,
 		chatHistory,
 		fileHistory,
-		countdownTimer,
+		// countdownTimer,
 		drawing,
 		breakoutRooms,
 		locked,
@@ -78,23 +78,29 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	fileService.iceServers = mediaService.iceServers;
 
 	batch(() => {
+		
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
 		dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
 		dispatch(peersActions.addPeers(peers));
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-		dispatch(roomActions.joinCountdownTimer(countdownTimer));
+		// dispatch(roomActions.joinCountdownTimer(countdownTimer));
 
-		dispatch(countdownTimer.isStarted ? 
-			roomActions.startCountdownTimer() : 
-			roomActions.stopCountdownTimer()
+		// dispatch(countdownTimer.isStarted ? 
+		// 	roomActions.startCountdownTimer() : 
+		// 	roomActions.stopCountdownTimer()
+		// );
+
+		dispatch(drawing.isEnabled ? 
+			drawingActions.enableDrawing() : 
+			drawingActions.disableDrawing()
 		);
 
-		dispatch(drawing.isEnabled ? drawingActions.enableDrawing() : drawingActions.disableDrawing());
 		dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
+		dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
 	});
-
+	
 	if (!getState().me.audioMuted) dispatch(updateMic());
 	if (!getState().me.videoMuted) dispatch(updateWebcam());
 };
@@ -177,6 +183,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 	try {
 		const audioMuted = getState().me.audioMuted;
 		const videoMuted = getState().me.videoMuted;
+
+		logger.debug('joinBreakoutRoom:', audioMuted, videoMuted);
 
 		const {
 			chatHistory,

@@ -113,7 +113,7 @@ const ControlButtonsBar = (): JSX.Element => {
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
-				{ <Drawing onClick={handleMoreClose} /> } 
+				{ !isMobile && <Drawing onClick={handleMoreClose} /> } 
 			</FloatingMenu>
 		</>
 	);

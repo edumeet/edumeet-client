@@ -7,12 +7,12 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 // import { notificationsActions } from '../slices/notificationsSlice';
 // import { drawingFinishedLabel } from '../../components/translated/translatedComponents';
 
-const logger = new Logger('ChatMiddleware');
+const logger = new Logger('DrawingMiddleware');
 
 const createDrawingMiddleware = ({
 	signalingService
 }: MiddlewareOptions): Middleware => {
-	logger.debug('createChatMiddleware()');
+	logger.debug('createDrawingMiddleware()');
 
 	const middleware: Middleware = ({
 		dispatch
@@ -41,11 +41,27 @@ const createDrawingMiddleware = ({
 								break;
 							}
 
-							case 'settedDrawingBgColor': {
+							case 'setDrawingBgColor': {
 
 								const bgColor = notification.data.bgColor;
 
 								dispatch(drawingActions.setDrawingBgColor(bgColor));
+
+								break;
+							}
+
+							case 'updateCanvas': {
+
+								const updateAction = notification.data.action;
+
+								dispatch(drawingActions.updateCanvas(updateAction));
+
+								break;
+							}
+
+							case 'clearCanvas': {
+
+								dispatch(drawingActions.clearCanvas());
 
 								break;
 							}

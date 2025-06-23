@@ -7,7 +7,7 @@ import VideoConsumer from '../videoconsumer/VideoConsumer';
 import { Box } from '@mui/material';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
-const DrawingView = lazy(() => import('../drawing/DrawingViewRework')); // import DrawingView from '../drawing/DrawingView';
+const DrawingView = lazy(() => import('../drawing/DrawingView')); // import DrawingView from '../drawing/DrawingView';
 
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
