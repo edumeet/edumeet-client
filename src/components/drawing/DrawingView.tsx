@@ -35,7 +35,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	// drawing setup   
 	const isMobile = useAppSelector(isMobileSelector);
 	const showEdit = true; // Visual feedback for other clients
-	const disableDraw = isMobile; // Disables draw for some - currently only mobile
+	const disableDraw = isMobile; // Disables drawing for some - currently only mobile
 	
 	// canvas
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -558,7 +558,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 					await eraser.commit(e.detail);
 
-					// array of all objects on the canvas where erase have been used on
+					// array of all objects on the canvas that erase have been used on
 					const masking = await Promise.all(
 						targets.map(
 							async (target) => [ target, await isTransparent(target) ] as const

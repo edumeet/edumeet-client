@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BasicTransformEvent, FabricObject } from 'fabric';
+import { FabricObject } from 'fabric';
 import { castDraft } from 'immer';
 
 // adds custom prop to fabric objects
@@ -12,11 +12,6 @@ declare module 'fabric' {
     interface SerializedObjectProps {
       id?: number;
     }
-	interface CanvasEvents {
-		'object:start:modify': Partial<BasicTransformEvent> & {
-			target: FabricObject
-		};
-	}
   }
 FabricObject.customProperties = [ 'id' ];
 

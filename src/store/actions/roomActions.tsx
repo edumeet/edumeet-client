@@ -64,7 +64,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		tracker,
 		chatHistory,
 		fileHistory,
-		// countdownTimer,
+		countdownTimer,
 		drawing,
 		breakoutRooms,
 		locked,
@@ -85,12 +85,12 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-		// dispatch(roomActions.joinCountdownTimer(countdownTimer));
+		dispatch(roomActions.joinCountdownTimer(countdownTimer));
 
-		// dispatch(countdownTimer.isStarted ? 
-		// 	roomActions.startCountdownTimer() : 
-		// 	roomActions.stopCountdownTimer()
-		// );
+		dispatch(countdownTimer.isStarted ? 
+			roomActions.startCountdownTimer() : 
+			roomActions.stopCountdownTimer()
+		);
 
 		dispatch(drawing.isEnabled ? 
 			drawingActions.enableDrawing() : 
