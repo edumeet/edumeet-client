@@ -340,7 +340,7 @@ export type User = {
 
 export type Roles = {
 	id: number,
-	name: string,	
+	name: string,
 	description: string,
 	tenantId: number
 	permissions: Array<Permissions>
@@ -365,30 +365,30 @@ export type UsersRoles = {
 export type RoomOwners = {
 	id: number,
 	roomId: number,
-	userId: number,   
+	userId: number,
 };
 export type TenantOwners = {
 	id: number,
 	tenantId: number,
-	userId: number,   
+	userId: number,
 };
 
 export type TenantAdmins = {
 	id: number,
 	tenantId: number,
-	userId: number,   
+	userId: number,
 };
 
 export type Permissions = {
 	id: number,
-	name: string,	
+	name: string,
 	description: string,
 };
 
 export type RolePermissions = {
 	id: number,
 	permission: Permissions
-	permissionId: number,	
+	permissionId: number,
 	roleId: number,
 };
 
@@ -416,14 +416,14 @@ export type Room = {
 
 export type Groups = {
 	id: number,
-	name: string,	
+	name: string,
 	description: string,
 	tenantId: number
 };
 
 export type GroupUsers = {
 	id: number,
-	groupId: number,   
+	groupId: number,
 	userId: number
 };
 export type Rule = {
