@@ -5,6 +5,11 @@ export const noLabel = (): string => intl.formatMessage({
 	defaultMessage: 'No'
 });
 
+export const noneLabel = (): string => intl.formatMessage({
+	id: 'label.none',
+	defaultMessage: 'None'
+});
+
 export const yesLabel = (): string => intl.formatMessage({
 	id: 'label.yes',
 	defaultMessage: 'Yes'

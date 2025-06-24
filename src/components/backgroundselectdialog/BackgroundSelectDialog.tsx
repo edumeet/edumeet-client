@@ -11,6 +11,7 @@ import { closeLabel, removeAllImagesLabel, selectBackgroundLabel } from '../tran
 import BackgroundPicker from './BackgroundPicker';
 import UploadImageButton from './UploadFileButton';
 import { RoomBackgroundPreview } from './RoomBackgroundPreview';
+import RoomBackgroundTile from './RoomBackgroundTile';
 
 const BackgroundSelectDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -43,7 +44,8 @@ const BackgroundSelectDialog = (): JSX.Element => {
 			content={
 				<BackgroundPicker
 					selectedBackground={ selectedBackground }
-					setSelectedBackground={ (selected) => dispatch(meActions.setSelectedDestop(selected)) }>
+					setSelectedBackground={ (selected) => dispatch(meActions.setSelectedDestop(selected)) }
+					defaultTile={<RoomBackgroundTile />}>
 					<RoomBackgroundPreview selectedBackground={ selectedBackground?.imageUrl } />
 				</BackgroundPicker>
 			}

@@ -1,27 +1,32 @@
 import { DeleteForever } from '@mui/icons-material';
-import { IconButton, ImageList, ImageListItem, ImageListItemBar, useMediaQuery } from '@mui/material';
+import { Box, IconButton, ImageList, ImageListItem, ImageListItemBar, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React, { useEffect } from 'react';
 import { ThumbnailItem } from '../../services/clientImageService';
 import { deleteImage, getImage, loadThumbnails } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { defaultLabel } from '../translated/translatedComponents';
+import { defaultLabel, noneLabel } from '../translated/translatedComponents';
 import DropZone from './DropZone';
-import RoomBackgroundTile, { RoomBgTile } from './RoomBackgroundTile';
+import { RoomBgTile } from './RoomBackgroundTile';
 
 export interface SelectedBackground {
-    imageName: string,
-    imageUrl: string
+	imageName: string,
+	imageUrl: string
 }
+
+const NoneTile = (): React.JSX.Element => {
+	return (<Box height={164} width={150} />);
+};
 
 type BackgroundPickerProps = {
 	selectedBackground: SelectedBackground | null,
 	// eslint-disable-next-line no-unused-vars
 	setSelectedBackground: (selected: SelectedBackground | null) => void,
 	children?: React.ReactNode,
+	defaultTile?: React.ReactNode
 }
 
-const BackgroundPicker = ({ selectedBackground, setSelectedBackground, children }: BackgroundPickerProps): JSX.Element => {
+const BackgroundPicker = ({ selectedBackground, setSelectedBackground, defaultTile, children }: BackgroundPickerProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const isMd = useMediaQuery(theme.breakpoints.up('md'));
@@ -63,21 +68,21 @@ const BackgroundPicker = ({ selectedBackground, setSelectedBackground, children 
 
 	return (
 		<DropZone afterImageDropHook={handleSelectImage}>
-			{ children }
-			<br/>
+			{children}
+			<br />
 			<ImageList
 				sx={{
 					width: 'fit-content',
 					margin: 'auto',
 					height: '100%',
 				}}
-				cols={isMd ? 5 : (isSm? 3:2)}
+				cols={isMd ? 5 : (isSm ? 3 : 2)}
 				rowHeight={164}>
 
 				<ImageListItem
-					key='room-background'
+					key='default-background'
 					onClick={() => setSelectedBackground(null)}>
-					<RoomBackgroundTile />
+					{defaultTile ?? <NoneTile />}
 					<ImageListItemBar
 						sx={{
 							background:
@@ -85,17 +90,17 @@ const BackgroundPicker = ({ selectedBackground, setSelectedBackground, children 
 								'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
 						}}
 						position='top'
-						title={defaultLabel()} />
+						title={defaultTile ? defaultLabel() : noneLabel()} />
 				</ImageListItem>
 			</ImageList>
-			<br/>
+			<br />
 			<ImageList
 				sx={{
 					width: 'fit-content',
 					margin: 'auto',
 					height: '100%',
 				}}
-				cols={isMd ? 5 : (isSm? 3:2)}
+				cols={isMd ? 5 : (isSm ? 3 : 2)}
 				rowHeight={164}>
 				{thumbnails.map((item) => (
 					<ImageListItem
