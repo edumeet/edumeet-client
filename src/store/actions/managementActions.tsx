@@ -59,7 +59,9 @@ export const getData = (serviceName:string): AppThunk<Promise<object | undefined
 			{
 				query: {
 					$sort: {
-						id: 1
+						id: 1,
+						$limit: 9999
+					
 					}
 				}
 			}
@@ -94,7 +96,8 @@ export const getDataByID = (id:string|number, serviceName:string): AppThunk<Prom
 				query: {
 					id: id,
 					$sort: {
-						id: 1
+						id: 1,
+						$limit: 9999
 					}
 				}
 			}
@@ -128,7 +131,8 @@ export const getDataByTenantID = (id:string|number, serviceName:string): AppThun
 				query: {
 					tenantId: id,
 					$sort: {
-						id: 1
+						id: 1,
+						$limit: 9999
 					}
 				}
 			}
