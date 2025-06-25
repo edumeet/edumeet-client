@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useRef, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { drawingActions, DrawingState } from '../../store/slices/drawingSlice';
@@ -78,6 +77,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	const pastActions = useAppSelector((state) => state.drawing.history.past);
 	const futureActions = useAppSelector((state) => state.drawing.history.future);
 	const updateAction = useAppSelector((state) => state.drawing.updateAction);
+	const addedObjectsRef = useRef<FabricObject[]>([]);
 
 	/* create canvas object */
 	useEffect(() => {
@@ -256,11 +256,19 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 
 							prevState.add(enlivenObject);
 
+							if (!addedObjectsRef.current.some((obj) => obj.id === enlivenObject.id)) {
+								const arr = [ ...addedObjectsRef.current, enlivenObject.toObject() ];
+								
+								addedObjectsRef.current = arr;
+							}
+
 						} else if (updateAction.status == 'modified') {
 
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 							
-							foundObject && modifyObject(foundObject, enlivenObject, prevState);
+							if (foundObject && foundObject.id === enlivenObject.id) {
+								modifyObject(foundObject, enlivenObject, prevState);
+							}
 
 						} else if (updateAction.status == 'removed') {
 
@@ -682,7 +690,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 	};
 
 	const modifyObject = (oldObject: FabricObject, newObject: FabricObject, prevState: Canvas) => {
-		
 		// In case the object is an IText we need to typecast as getObjects() returns a FabricObject. 
 		// At the time of writing this there is no Canvas method to get IText objects from the canvas.
 		if (Object.hasOwn(oldObject, 'text') && Object.hasOwn(newObject, 'text')) {
@@ -738,19 +745,49 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 							
 							if (prevAction !== undefined) {
-								util.enlivenObjects([ prevAction.object ]).then((prevObjects) => {
-									const pA = prevObjects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
-									const _enlivenObject : FabricObject & { id?: number } = pA[0];
+								const _undoing = util.enlivenObjects([ prevAction.object ]).then((prevObjects) => {
+									actionRef.current = 'undo';
+
+									const _objs = prevObjects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+									const _enlivenObject : FabricObject & { id?: number } = _objs[0];
 
 									if (foundObject && foundObject.id === _enlivenObject.id) {
 										modifyObject(foundObject, _enlivenObject, prevState);
+										dispatch(updateCanvasState({ object: prevAction.object, status: 'modified' }));
 									} else {
+										_enlivenObject.erasable = Object.hasOwn(_enlivenObject, 'text') ? false : true;
 										prevState.add(_enlivenObject);
+										dispatch(updateCanvasState({ object: _enlivenObject, status: 'added' }));
 									}
-									dispatch(updateCanvasState({ object: prevAction.object, status: 'modified' }));
 								});
-							} else { // Undo case for modify of object other have created
-								foundObject && modifyObject(foundObject, enlivenObject, prevState);
+
+								_undoing.finally(() => {
+									actionRef.current = null;
+								});
+
+							} else { // Undo case for modify of object other users have created
+								const addedObject = addedObjectsRef.current.find((obj: FabricObject) => obj.id === enlivenObject.id);
+
+								const _undoing = util.enlivenObjects([ addedObject ]).then((added) => {
+									actionRef.current = 'undo';
+
+									const _objs = added.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+									const _enlivenObject : FabricObject & { id?: number } = _objs[0];
+								
+									if (foundObject && foundObject.id === _enlivenObject.id) {
+										modifyObject(foundObject, _enlivenObject, prevState);
+										dispatch(updateCanvasState({ object: _enlivenObject, status: 'modified' }));
+									} else {
+										_enlivenObject.erasable = Object.hasOwn(_enlivenObject, 'text') ? false : true;
+										prevState.add(_enlivenObject);
+										dispatch(updateCanvasState({ object: _enlivenObject, status: 'added' }));
+									}
+									
+								});
+
+								_undoing.finally(() => {
+									actionRef.current = null;
+								});
 							}
 
 						// add removed object
@@ -765,13 +802,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 								const prevAction = FilteredActions.length >= 2 ? FilteredActions[FilteredActions.length - 2] : undefined;
 								
 								if (prevAction !== undefined) {
-									util.enlivenObjects([ prevAction.object ]).then((prevObjects) => {
-										const pA = prevObjects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
-										const _enlivenObject : FabricObject & { id?: number } = pA[0];
-									
-										enlivenObject.clipPath = _enlivenObject.clipPath;
-								
-									});
+									enlivenObject.clipPath = prevAction.object.clipPath;
 								}
 							
 								// Set erasable to true, it is undefined by default as the property is from erase2d and not fabricjs
@@ -816,31 +847,37 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 						if (nextAction.status === 'added') {  
 							const FilteredActions = pastActions.filter((obj: FabricAction) => obj.object.id == enlivenObject.id);
 							const prevAction = FilteredActions.length >= 2 ? FilteredActions[FilteredActions.length - 2] : undefined;
+							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 
 							if (prevAction !== undefined) {
-								util.enlivenObjects([ prevAction.object ]).then((prevObjects) => {
-									const pA = prevObjects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
-									const _enlivenObject : FabricObject & { id?: number } = pA[0];
-
-									enlivenObject.clipPath = _enlivenObject.clipPath;
-								
-								});
+								enlivenObject.clipPath = prevAction.object.clipPath;
 							}
 
 							// Set erasable to true, is undefined as the property is from erase2d and not fabricjs
 							if (!textObject) {
 								enlivenObject.erasable = true;
 							}
-							prevState.add(enlivenObject);
-							dispatch(updateCanvasState({ object: nextAction.object, status: 'added' }));
+
+							if (!foundObject) {
+								prevState.add(enlivenObject);
+								dispatch(updateCanvasState({ object: nextAction.object, status: 'added' }));
+							} else {
+								modifyObject(foundObject, enlivenObject, prevState);
+								dispatch(updateCanvasState({ object: nextAction.object, status: 'modified' }));
+							}
 							
 							// revert changes to object
 						} else if (nextAction.status === 'modified') {
 
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 							
-							foundObject && modifyObject(foundObject, enlivenObject, prevState);
-							dispatch(updateCanvasState({ object: nextAction.object, status: 'modified' }));
+							if (foundObject && foundObject.id === enlivenObject.id) {
+								modifyObject(foundObject, enlivenObject, prevState);
+								dispatch(updateCanvasState({ object: nextAction.object, status: 'modified' }));
+							} else {
+								prevState.add(enlivenObject);
+								dispatch(updateCanvasState({ object: enlivenObject, status: 'added' }));
+							}
 							
 							// Remove object
 						} else if (nextAction.status === 'removed') {
@@ -875,6 +912,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				
 				dispatch(drawingActions.clear());
 				dispatch(clearCanvas());
+
+				addedObjectsRef.current = [];
 
 				actionRef.current = null;
 			}
