@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useRef, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { drawingActions, DrawingState } from '../../store/slices/drawingSlice';
@@ -257,18 +258,14 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							prevState.add(enlivenObject);
 
 							if (!addedObjectsRef.current.some((obj) => obj.id === enlivenObject.id)) {
-								const arr = [ ...addedObjectsRef.current, enlivenObject.toObject() ];
-								
-								addedObjectsRef.current = arr;
+								addedObjectsRef.current = [ ...addedObjectsRef.current, enlivenObject.toObject() ];
 							}
 
 						} else if (updateAction.status == 'modified') {
 
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 							
-							if (foundObject && foundObject.id === enlivenObject.id) {
-								modifyObject(foundObject, enlivenObject, prevState);
-							}
+							foundObject && modifyObject(foundObject, enlivenObject, prevState);
 
 						} else if (updateAction.status == 'removed') {
 
@@ -334,12 +331,17 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							}
 							iObject.selectable = disableDraw || (iObject.selectable == false) ? false: true;
 							prevState.add(iObject);
+	
+							addedObjectsRef.current = [ ...addedObjectsRef.current, iObject.toObject() ];
+
 						});
 					
 					});
 				
 					initiating.finally(() => {
 						actionRef.current = null;
+
+						console.log(addedObjectsRef.current);
 					});
 				}
 			}
