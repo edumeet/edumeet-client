@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useRef, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { drawingActions, DrawingState } from '../../store/slices/drawingSlice';
@@ -340,8 +339,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 				
 					initiating.finally(() => {
 						actionRef.current = null;
-
-						console.log(addedObjectsRef.current);
 					});
 				}
 			}
