@@ -266,6 +266,16 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 							
 							foundObject && modifyObject(foundObject, enlivenObject, prevState);
 
+							const actionIds = new Set(pastActions.map((act) => act.object.id));
+
+							if (!addedObjectsRef.current.some((obj) => actionIds.has(obj.id))) {
+								const idx = addedObjectsRef.current.findIndex((i) => i.id === enlivenObject.id);
+
+								if (idx !== -1) {
+									addedObjectsRef.current[idx] = enlivenObject;
+								}
+							}
+
 						} else if (updateAction.status == 'removed') {
 
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
