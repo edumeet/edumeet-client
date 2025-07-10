@@ -67,8 +67,8 @@ const ControlButtonsBar = (): JSX.Element => {
 			>
 				<MicButton offColor='error' toolTipLocation='bottom' />
 				<WebcamButton offColor='error' toolTipLocation='bottom' />
-				{ !isMobile && <RaiseHandButton toolTipLocation='bottom' /> }
 				{ !isMobile && <ScreenshareButton toolTipLocation='bottom' /> }
+				{ !isMobile && <RaiseHandButton toolTipLocation='bottom' /> }
 				{ !isMobile && <ParticipantsButton toolTipLocation='bottom' onColor='primary' /> }
 				{ isMobile && <ParticipantsButton onClick={(event) => setParticipantAnchorEl(event.currentTarget)} toolTipLocation='bottom' /> }
 				{ !isMobile && chatEnabled && <ChatButton toolTipLocation='bottom' onColor='primary' /> }
