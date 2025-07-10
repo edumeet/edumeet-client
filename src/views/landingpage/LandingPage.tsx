@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Box, Link, Typography } from '@mui/material';
 import randomString from 'random-string';
@@ -9,6 +9,8 @@ import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { QRCode } from 'react-qrcode-logo';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { startListeners, stopListeners } from '../../store/actions/startActions';
+import { useAppDispatch } from '../../store/hooks';
 
 const LandingPage = (): JSX.Element => {
 	const navigate = useNavigate();
@@ -19,6 +21,16 @@ const LandingPage = (): JSX.Element => {
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
 	const qrCodeEnabled = edumeetConfig.qrCodeEnabled;
+	
+	const dispatch = useAppDispatch();
+	
+	useEffect(() => {
+		dispatch(startListeners());
+
+		return () => {
+			dispatch(stopListeners());
+		};
+	}, []);
 
 	return (
 		<StyledBackground>
