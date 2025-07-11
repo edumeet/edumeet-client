@@ -4,7 +4,6 @@ import {
 	useAppSelector,
 } from '../../store/hooks';
 import EscapeMeetingButton from '../controlbuttons/EscapeMeetingButton';
-import RaiseHandButton from '../controlbuttons/RaiseHandButton';
 import { meLabel } from '../translated/translatedComponents';
 import { useEffect, useState } from 'react';
 import { setDisplayName } from '../../store/actions/meActions';
@@ -46,7 +45,6 @@ const MeAvatar = styled('img')({
 });
 
 const ListMe = (): JSX.Element => {
-	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const picture = useAppSelector((state) => state.me.picture);
 	const displayName = useAppSelector((state) => state.settings.displayName);
 
@@ -90,7 +88,6 @@ const ListMe = (): JSX.Element => {
 				</MeInfoDiv>
 			}
 			<EscapeMeetingButton type='iconbutton' size='small' />
-			{ raiseHandEnabled && <RaiseHandButton type='iconbutton' size='small' /> }
 		</MeDiv>
 	);
 };
