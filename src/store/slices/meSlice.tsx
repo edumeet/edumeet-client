@@ -8,7 +8,10 @@ import { roomActions } from './roomSlice';
 
 export interface MeState {
 	id: string;
-	backgroundImage?: string;
+	selectedDestop: {
+		imageName: string,
+		imageUrl: string
+	} | null,
 	thumbnailList: ThumbnailItem[];
 	sessionId: string;
 	browser: Omit<DeviceInfo, 'bowser'>;
@@ -46,6 +49,7 @@ export interface MeState {
 
 const initialState: MeState = {
 	id: uuid(),
+	selectedDestop: null,
 	thumbnailList: [],
 	sessionId: 'temp',
 	browser: deviceInfo(),
@@ -88,8 +92,8 @@ const meSlice = createSlice({
 		setMe: ((state, action: PayloadAction<string>) => {
 			state.id = action.payload;
 		}),
-		setBackgroundImage: ((state, action: PayloadAction<string | undefined>) => {
-			state.backgroundImage = action.payload;
+		setSelectedDestop: ((state, action: PayloadAction<{ imageName: string, imageUrl: string } | null>) => {
+			state.selectedDestop = action.payload;
 		}),
 		setThumbnailList: ((state, action: PayloadAction<ThumbnailItem[]>) => {
 			state.thumbnailList = [ ...action.payload ];
