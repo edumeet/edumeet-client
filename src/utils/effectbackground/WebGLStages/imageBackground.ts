@@ -69,19 +69,13 @@ export function buildBackgroundImageStage(
 	gl.uniform1f(blendModeLocation, 0);
 
 	let backgroundTexture: WebGLTexture | null = null;
-	// TODO Find a better to handle background being loaded
 
 	let backgroundReady = false;
 
 	if (backgroundImage?.complete && backgroundImage.naturalWidth > 0) {
-		logger.debug('backgroundImage.complete and valid');
 		updateBackgroundImage(backgroundImage);
 	} else if (backgroundImage) {
-		logger.debug('backgroundImage not complete yet...');
-		backgroundImage.onload = () => {
-			logger.debug('backgroundImage loaded via onload');
-			updateBackgroundImage(backgroundImage);
-		};
+		backgroundImage.onload = () => { updateBackgroundImage(backgroundImage); };
 		backgroundImage.onerror = () => {
 			logger.error('Failed to load background image');
 		};
@@ -100,7 +94,6 @@ export function buildBackgroundImageStage(
 		if (backgroundTexture !== null) {
 			gl.activeTexture(gl.TEXTURE2);
 			gl.bindTexture(gl.TEXTURE_2D, backgroundTexture);
-			// TODO Handle correctly the background not loaded yet
 			gl.uniform1i(backgroundLocation, 2);
 		} else {
 			logger.error('backgroundTexture is not initialized');
@@ -158,16 +151,6 @@ export function buildBackgroundImageStage(
 		backgroundReady = true;
 	}
 
-	// function updateLightWrapping(lightWrapping: number) {
-	//	 gl.useProgram(program)
-	//	 gl.uniform1f(lightWrappingLocation, lightWrapping)
-	// }
-
-	// function updateBlendMode(blendMode: BlendMode) {
-	//	 gl.useProgram(program)
-	//	 gl.uniform1f(blendModeLocation, blendMode === 'screen' ? 0 : 1)
-	// }
-
 	function cleanUp() {
 		gl.deleteTexture(backgroundTexture);
 		gl.deleteProgram(program);
@@ -177,8 +160,6 @@ export function buildBackgroundImageStage(
 
 	return {
 		render,
-		// updateLightWrapping,
-		// updateBlendMode,
 		cleanUp,
 	};
 }

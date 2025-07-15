@@ -116,8 +116,6 @@ export class EffectTrack {
 	}
 
 	#createRenderingPipeline(pipelineOptions: BackgroundPipelineOptions) {
-		// TODO: canvasPipeline?
-		// TODO: Fix arguments so they are nicer
 		if (this.#useWebGL) {
 			try {
 				this.#pipeline = createWebGLPipeline(pipelineOptions);

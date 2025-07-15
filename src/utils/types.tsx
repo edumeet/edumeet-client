@@ -294,7 +294,7 @@ export interface BackgroundPipelineOptions {
 	canvas: HTMLCanvasElement,
 	backend: TFLite,
 	segmentation: Dimensions,
-    backgroundConfig?: BackgroundConfig
+	backgroundConfig?: BackgroundConfig
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
@@ -349,17 +349,17 @@ export type Roles = {
 export type GroupRoles = {
 	id: number,
 	groupId: number,
-	role:Roles,
-	roleId:number,
-	roomId:number
+	role: Roles,
+	roleId: number,
+	roomId: number
 };
 
 export type UsersRoles = {
 	id: number,
 	userId: number,
-	role:Roles,
-	roleId:number,
-	roomId:number
+	role: Roles,
+	roleId: number,
+	roomId: number
 };
 
 export type RoomOwners = {
@@ -399,7 +399,7 @@ export type Room = {
 	createdAt?: string,
 	updatedAt?: string,
 	creatorId?: string,
-	defaultRoleId? : number | string,
+	defaultRoleId?: number | string,
 	tenantId?: number | null,
 	logo: string | null,
 	background: string | null,
