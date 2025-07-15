@@ -80,19 +80,25 @@ export class ClientImageService {
 	 * @param earmarkedImageName
 	 * @returns object url string
 	 */
-	public async loadEarmarkedImage(earmarkedImageName: ImageKeysType): Promise<string> {
+	public async loadEarmarkedImage(earmarkedImageName: ImageKeysType): Promise<string | null> {
 		await this.init();
 
 		const currentUrl = this.earmarkedImages[earmarkedImageName];
 
 		if (currentUrl) URL.revokeObjectURL(currentUrl);
 
-		const fileHandle = await this.imagesDirHandle.getFileHandle(earmarkedImageName, { create: false });
-		const earmarkedImage = URL.createObjectURL(await fileHandle.getFile());
-	
-		this.earmarkedImages[earmarkedImageName] = earmarkedImage;
+		try {
+			const fileHandle = await this.imagesDirHandle.getFileHandle(earmarkedImageName, { create: false });
+			const earmarkedImage = URL.createObjectURL(await fileHandle.getFile());
 
-		return earmarkedImage;
+			this.earmarkedImages[earmarkedImageName] = earmarkedImage;
+
+			return earmarkedImage;
+		} catch (err) {
+			logger.debug(`#loadEarmarkedImage: ${err}`);
+
+			return null;
+		}
 	}
 
 	public async getImage(name: string): Promise<File | undefined> {

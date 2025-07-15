@@ -10,9 +10,10 @@ import { closeLabel, removeAllImagesLabel, selectVideoBackgroundLabel } from '..
 import BackgroundPicker, { SelectedBackground } from './BackgroundPicker';
 import UploadImageButton from './UploadFileButton';
 import MediaPreview from '../mediapreview/MediaPreview';
-import { BackgroundConfig, BackgroundType } from '../../utils/types';
-import { loadVideoBackground, updateVideoSettings } from '../../store/actions/mediaActions';
+import { BackgroundConfig } from '../../utils/types';
+import { loadVideoBackground, setVideoBackground, updateVideoSettings } from '../../store/actions/mediaActions';
 import { ImageKeys } from '../../services/clientImageService';
+import { meActions } from '../../store/slices/meSlice';
 
 const toSelectedBackgroundFromVideo = (conf: BackgroundConfig | null): SelectedBackground | null => {
 	if (!conf?.url) return null;
@@ -23,17 +24,10 @@ const toSelectedBackgroundFromVideo = (conf: BackgroundConfig | null): SelectedB
 	};
 };
 
-const fromSelectedBackgroundToVideo = (selected: SelectedBackground | null): BackgroundConfig => {
-	return {
-		type: selected ? BackgroundType.IMAGE : BackgroundType.NONE,
-		url: selected?.imageUrl,
-	};
-};
-
 const VideoBackgroundDialog = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const videoBackgroundDialogOpen = useAppSelector((state) => state.ui.videoBackgroundDialogOpen);
-	const videoBackground = useAppSelector((state) => state.settings.videoBackgroundEffect);
+	const videoBackground = useAppSelector((state) => state.me.videoBackgroundEffect);
 
 	useEffect(() => {
 		const checkForSavedBackground = async () => {
@@ -41,15 +35,27 @@ const VideoBackgroundDialog = (): JSX.Element => {
 		};
 
 		checkForSavedBackground();
+
+		return () => {
+			dispatch(meActions.setVideoBackgroundEffectDisabled());
+			dispatch(updateVideoSettings());
+		};
 	}, []);
 
 	const handleClearStorage = (): void => {
 		dispatch(clearImageStorage());
-		dispatch(updateVideoSettings({
-			videoBackgroundEffect: {
-				type: BackgroundType.NONE,
-			}
-		}));
+		dispatch(meActions.setVideoBackgroundEffectDisabled());
+		dispatch(updateVideoSettings());
+	};
+
+	const handleSelectBackground = (selected: SelectedBackground | null): void => {
+		if (selected === null) {
+			dispatch(meActions.setVideoBackgroundEffectDisabled());
+			dispatch(updateVideoSettings());
+		}
+
+		selected?.imageName && dispatch(setVideoBackground(selected.imageName));
+		dispatch(uiActions.setUi({ videoBackgroundDialogOpen: !videoBackgroundDialogOpen }));
 	};
 
 	const handleCloseVideoBackgroundDialog = (): void => {
@@ -58,15 +64,16 @@ const VideoBackgroundDialog = (): JSX.Element => {
 
 	return (
 		<GenericDialog
-			open={videoBackgroundDialogOpen}
-			onClose={handleCloseVideoBackgroundDialog}
+			open={ videoBackgroundDialogOpen }
+			onClose={ handleCloseVideoBackgroundDialog }
 			maxWidth='md'
-			title={selectVideoBackgroundLabel()}
+			title={ selectVideoBackgroundLabel() }
 			content={
 				<BackgroundPicker
-					selectedBackground={toSelectedBackgroundFromVideo(videoBackground)}
-					setSelectedBackground={(selected) => dispatch(updateVideoSettings({ videoBackgroundEffect: fromSelectedBackgroundToVideo(selected) }))}>
-					<MediaPreview withControls={false} />
+					selectedBackground={ toSelectedBackgroundFromVideo(videoBackground) }
+					setSelectedBackground={ (selected) => handleSelectBackground(selected) }
+					showDefaultTile={false}>
+					<MediaPreview withControls={ false } />
 				</BackgroundPicker>
 			}
 			actions={
@@ -74,16 +81,16 @@ const VideoBackgroundDialog = (): JSX.Element => {
 					<UploadImageButton />
 					<Button
 						color='secondary'
-						onClick={handleClearStorage}
+						onClick={ handleClearStorage }
 						size='small'
-						startIcon={<DeleteForever />}
+						startIcon={ <DeleteForever /> }
 					>
-						{removeAllImagesLabel()}
+						{ removeAllImagesLabel() }
 					</Button>
 					<Button
-						onClick={handleCloseVideoBackgroundDialog}
+						onClick={ handleCloseVideoBackgroundDialog }
 						size='small'
-						startIcon={<CloseIcon />}
+						startIcon={ <CloseIcon /> }
 						variant='contained'
 					>
 						{closeLabel()}

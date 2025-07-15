@@ -5,6 +5,7 @@ import { LocalCapabilities, MediaCapabilities } from '../../services/mediaServic
 import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { roomActions } from './roomSlice';
+import { BackgroundConfig, BackgroundType } from '../../utils/types';
 
 export interface MeState {
 	id: string;
@@ -45,6 +46,7 @@ export interface MeState {
 	screenAudioEnabled: boolean;
 	extraVideoEnabled: boolean;
 	extraAudioEnabled: boolean;
+	videoBackgroundEffect: BackgroundConfig | null;
 }
 
 const initialState: MeState = {
@@ -80,6 +82,7 @@ const initialState: MeState = {
 	screenAudioEnabled: false,
 	extraVideoEnabled: false,
 	extraAudioEnabled: false,
+	videoBackgroundEffect: null,
 };
 
 const meSlice = createSlice({
@@ -185,6 +188,14 @@ const meSlice = createSlice({
 		}),
 		setExtraAudioEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.extraAudioEnabled = action.payload;
+		}),
+		setVideoBackgroundEffect: ((state, action: PayloadAction<BackgroundConfig | null>) => {
+			state.videoBackgroundEffect = action.payload;
+		}),
+		setVideoBackgroundEffectDisabled: ((state) => {
+			state.videoBackgroundEffect = {
+				type: BackgroundType.NONE
+			};
 		}),
 	},
 	extraReducers: (builder) => {

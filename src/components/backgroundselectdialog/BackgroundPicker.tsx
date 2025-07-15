@@ -23,10 +23,16 @@ type BackgroundPickerProps = {
 	// eslint-disable-next-line no-unused-vars
 	setSelectedBackground: (selected: SelectedBackground | null) => void,
 	children?: React.ReactNode,
-	defaultTile?: React.ReactNode
+	defaultTile?: React.ReactNode,
+	showDefaultTile?: boolean,
 }
 
-const BackgroundPicker = ({ selectedBackground, setSelectedBackground, defaultTile, children }: BackgroundPickerProps): JSX.Element => {
+const BackgroundPicker = ({
+	selectedBackground,
+	setSelectedBackground,
+	defaultTile,
+	showDefaultTile = true,
+	children }: BackgroundPickerProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const isMd = useMediaQuery(theme.breakpoints.up('md'));
@@ -70,7 +76,8 @@ const BackgroundPicker = ({ selectedBackground, setSelectedBackground, defaultTi
 		<DropZone afterImageDropHook={handleSelectImage}>
 			{children}
 			<br />
-			<ImageList
+
+			{ showDefaultTile && { ...(<ImageList
 				sx={{
 					width: 'fit-content',
 					margin: 'auto',
@@ -92,8 +99,10 @@ const BackgroundPicker = ({ selectedBackground, setSelectedBackground, defaultTi
 						position='top'
 						title={defaultTile ? defaultLabel() : noneLabel()} />
 				</ImageListItem>
-			</ImageList>
+			</ImageList>) }
+			}
 			<br />
+
 			<ImageList
 				sx={{
 					width: 'fit-content',
