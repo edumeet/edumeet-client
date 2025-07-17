@@ -42,6 +42,7 @@ const AudioGainSlider = ({
 			>
 				<VolumeDown />
 				<Slider
+					onPointerDown={(event) => event.stopPropagation()}
 					aria-label='Volume'
 					value={audioGain}
 					onChange={onChange}
