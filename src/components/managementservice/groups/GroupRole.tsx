@@ -49,7 +49,7 @@ const GroupRoleTable = () => {
 	]);
 
 	const getRoleName = (id: string): string => {
-		const t = roles.find((type) => type.id === parseInt(id));
+		const t = roles.find((type) => type.id == parseInt(id));
 	
 		if (t && t.name) {
 			return t.name;
@@ -70,7 +70,7 @@ const GroupRoleTable = () => {
 	]);
 
 	const getGroupsName = (id: string): string => {
-		const t = groups.find((type) => type.id === parseInt(id));
+		const t = groups.find((type) => type.id == parseInt(id));
 	
 		if (t && t.name) {
 			return t.name;
@@ -80,7 +80,7 @@ const GroupRoleTable = () => {
 	};
 
 	const getRoomName = (id: string): string => {
-		const t = rooms.find((type) => type.id === parseInt(id));
+		const t = rooms.find((type) => type.id == parseInt(id));
 	
 		if (t && t.name) {
 			return t.name;
@@ -212,19 +212,31 @@ const GroupRoleTable = () => {
 
 	const handleGroupIdChange = (event: SyntheticEvent<Element, Event>, newValue: Groups) => {
 		if (newValue) {
-			setGroupId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setGroupId(parseInt(newValue.id));
+			} else {
+				setGroupId(newValue.id);
+			}
 			setGroupIdOption(newValue);
 		}
 	};
 	const handleRoleIdChange = (event: SyntheticEvent<Element, Event>, newValue: Roles) => {
 		if (newValue) {
-			setRoleId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setRoleId(parseInt(newValue.id));
+			} else {
+				setRoleId(newValue.id);
+			}
 			setRoleIdOption(newValue);
 		}
 	};
 	const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
-		if (newValue && typeof newValue.id === 'number') {
-			setRoomId(newValue.id);
+		if (newValue && newValue.id) {
+			if (typeof newValue.id != 'number') {
+				setRoomId(parseInt(newValue.id));
+			} else {
+				setRoomId(newValue.id);
+			}
 			setRoomIdOption(newValue);
 		}
 	};
@@ -339,7 +351,10 @@ const GroupRoleTable = () => {
 
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof tgroupId === 'string') {
 						setGroupId(parseInt(tgroupId));
 					} else {
@@ -347,7 +362,7 @@ const GroupRoleTable = () => {
 					}
 
 					if (typeof tgroupId === 'string') {
-						const tgroup = groups.find((x) => x.id === parseInt(tgroupId));
+						const tgroup = groups.find((x) => x.id == parseInt(tgroupId));
 
 						if (tgroup) {
 							setGroupIdOption(tgroup);
@@ -359,7 +374,7 @@ const GroupRoleTable = () => {
 					}
 
 					if (typeof troleId === 'string') {
-						const troles = roles.find((x) => x.id === parseInt(troleId));
+						const troles = roles.find((x) => x.id == parseInt(troleId));
 
 						if (troles) {
 							setRoleIdOption(troles);
@@ -370,7 +385,7 @@ const GroupRoleTable = () => {
 						setRoleIdOption(undefined);
 					}
 					if (typeof troomId === 'string') {
-						const troom = rooms.find((x) => x.id === parseInt(troomId));
+						const troom = rooms.find((x) => x.id == parseInt(troomId));
 
 						if (troom) {
 							setRoomIdOption(troom);

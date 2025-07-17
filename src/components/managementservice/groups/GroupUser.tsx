@@ -33,7 +33,7 @@ const GroupUserTable = () => {
 	} ]);
 
 	const getGroupName = (id: string): string => {
-		const t = groups.find((type) => type.id === parseInt(id));
+		const t = groups.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
@@ -42,7 +42,7 @@ const GroupUserTable = () => {
 		}
 	};
 	const getUserEmail = (id: string): string => {
-		const t = users.find((type) => type.id === parseInt(id));
+		const t = users.find((type) => type.id == parseInt(id));
 
 		if (t && t.email) {
 			return t.email;
@@ -145,14 +145,22 @@ const GroupUserTable = () => {
 
 	const handleGroupIdChange = (event: SyntheticEvent<Element, Event>, newValue: Groups) => {
 		if (newValue) {
-			setGroupId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setGroupId(parseInt(newValue.id));
+			} else {
+				setGroupId(newValue.id);
+			}
 			setGroupIdOption(newValue);
 		}
 	};
 
 	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User) => {
 		if (newValue) {
-			setUserId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setUserId(parseInt(newValue.id));
+			} else {
+				setUserId(newValue.id);
+			}
 			setUserIdOption(newValue);
 		}
 	};
@@ -251,6 +259,8 @@ const GroupUserTable = () => {
 
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
 
 					if (typeof tgroupId === 'string') {

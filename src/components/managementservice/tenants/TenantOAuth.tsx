@@ -19,7 +19,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
 
 	const getTenantName = (id: string): string => {
-		const t = tenants.find((type) => type.id === parseInt(id));
+		const t = tenants.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
@@ -428,7 +428,10 @@ const TenantOAuthTable = (props: TenantProp) => {
 
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof tprofile === 'string') { setProfileUrl(tprofile); } else {
 						setProfileUrl('');
 					}
