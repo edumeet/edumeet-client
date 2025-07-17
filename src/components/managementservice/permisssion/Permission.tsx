@@ -177,7 +177,10 @@ const PermissionTable = () => {
 					
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof tname === 'string') {
 						setName(tname);
 					} else {

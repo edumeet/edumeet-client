@@ -177,7 +177,11 @@ const RoomOwnerTable = (props: RoomProp) => {
 
 	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User) => {
 		if (newValue) {
-			setUserId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setUserId(parseInt(newValue.id));
+			} else {
+				setUserId(newValue.id);
+			}
 			setUserIdOption(newValue);
 		}
 	};
@@ -286,7 +290,10 @@ const RoomOwnerTable = (props: RoomProp) => {
 					
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof tuserId === 'string') {
 						const tuser = users.find((x) => x.id === parseInt(tuserId));
 

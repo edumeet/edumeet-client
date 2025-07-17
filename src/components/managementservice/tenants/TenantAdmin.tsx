@@ -15,7 +15,7 @@ const TenantAdminTable = () => {
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
 
 	const getTenantName = (id: string): string => {
-		const t = tenants.find((type) => type.id === parseInt(id));
+		const t = tenants.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
@@ -39,7 +39,7 @@ const TenantAdminTable = () => {
 	} ]);
 	// nested data is ok, see accessorKeys in ColumnDef below
 	const getUserEmail = (id: string): string => {
-		const t = users.find((type) => type.id === parseInt(id));
+		const t = users.find((type) => type.id == parseInt(id));
 	
 		if (t && t.email) {
 			return t.email;
@@ -139,17 +139,25 @@ const TenantAdminTable = () => {
 
 	const handleTenantIdChange = (event: SyntheticEvent<Element, Event>, newValue: Tenant) => {
 		if (newValue) {
-			setTenantId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setTenantId(parseInt(newValue.id));
+			} else {
+				setTenantId(newValue.id);
+			}
+			
 			setTenantIdOption(newValue);
 		}
 	};
 	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User) => {
 		if (newValue) {
-			setUserId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setUserId(parseInt(newValue.id));
+			} else {
+				setUserId(newValue.id);
+			}
 			setUserIdOption(newValue);
 		}
 	};
-
 	const handleClose = () => {
 		setOpen(false);
 	};
@@ -270,9 +278,12 @@ const TenantAdminTable = () => {
 					
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof ttenantId === 'string') {
-						const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
+						const ttenant = tenants.find((x) => x.id == parseInt(ttenantId));
 
 						if (ttenant) {
 							setTenantIdOption(ttenant);
@@ -282,7 +293,7 @@ const TenantAdminTable = () => {
 						setTenantId(0);
 					}
 					if (typeof tuserId === 'string') {
-						const tuser = users.find((x) => x.id === parseInt(tuserId));
+						const tuser = users.find((x) => x.id == parseInt(tuserId));
 
 						if (tuser) {
 							setUserIdOption(tuser);

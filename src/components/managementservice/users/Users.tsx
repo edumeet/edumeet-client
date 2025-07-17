@@ -15,7 +15,7 @@ const UserTable = () => {
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
 
 	const getTenantName = (id: string): string => {
-		const t = tenants.find((type) => type.id === parseInt(id));
+		const t = tenants.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
@@ -141,7 +141,11 @@ const UserTable = () => {
 	};
 	const handleTenantIdChange = (event: SyntheticEvent<Element, Event>, newValue: Tenant) => {
 		if (newValue) {
-			setTenantId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setTenantId(parseInt(newValue.id));
+			} else {
+				setTenantId(newValue.id);
+			}
 			setTenantIdOption(newValue);
 		}
 	};
@@ -305,6 +309,8 @@ const UserTable = () => {
 	
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
 
 					if (typeof tssoId === 'string') {

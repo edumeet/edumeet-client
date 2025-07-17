@@ -229,13 +229,21 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User) => {
 		if (newValue) {
-			setUserId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setUserId(parseInt(newValue.id));
+			} else {
+				setUserId(newValue.id);
+			}
 			setUserIdOption(newValue);
 		}
 	};
 	const handleRoleIdChange = (event: SyntheticEvent<Element, Event>, newValue: Roles) => {
 		if (newValue) {
-			setRoleId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setRoleId(parseInt(newValue.id));
+			} else {
+				setRoleId(newValue.id);
+			}
 			setRoleIdOption(newValue);
 		}
 	};
@@ -347,7 +355,10 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof tuserId === 'string') {
 						const tuser = users.find((x) => x.id === parseInt(tuserId));
 

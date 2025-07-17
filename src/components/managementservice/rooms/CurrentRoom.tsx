@@ -77,7 +77,10 @@ const CurrentRoomModal = () => {
 
 			if (typeof tid === 'number') {
 				setId(tid);
+			} else if (typeof tid == 'string') {
+				setId(parseInt(tid));
 			}
+
 			if (typeof tname === 'string') {
 				setName(tname);
 			} else {
@@ -189,7 +192,11 @@ const CurrentRoomModal = () => {
 
 	const handleDefaultRoleIdChange = (event: SyntheticEvent<Element, Event>, newValue: Roles) => {
 		if (newValue) {
-			setDefaultRoletId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setDefaultRoletId(parseInt(newValue.id));
+			} else {
+				setDefaultRoletId(newValue.id);
+			}
 			setDefaultRoleIdOption(newValue);
 		}
 	};

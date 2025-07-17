@@ -26,7 +26,7 @@ const RoomTable = () => {
 	const [ roles, setRoles ] = useState<RoleTypes>([ { 'description': 'Test', 'id': 1, 'name': 'Test', 'tenantId': 1, 'permissions': [] } ]);
 
 	const getTenantName = (id: string): string => {
-		const t = tenants.find((type) => type.id === parseInt(id));
+		const t = tenants.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
@@ -36,7 +36,7 @@ const RoomTable = () => {
 	};
 
 	const getRoleName = (id: string): string => {
-		const t = roles.find((type) => type.id === parseInt(id));
+		const t = roles.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
@@ -305,7 +305,11 @@ const RoomTable = () => {
 
 	const handleDefaultRoleIdChange = (event: SyntheticEvent<Element, Event>, newValue: Roles) => {
 		if (newValue) {
-			setDefaultRoletId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setDefaultRoletId(parseInt(newValue.id));
+			} else {
+				setDefaultRoletId(newValue.id);
+			}
 			setDefaultRoleIdOption(newValue);
 		}
 	};
@@ -358,8 +362,7 @@ const RoomTable = () => {
 	const addTenant = async () => {
 
 		// add new data / mod data / error
-		if (name != '' && id === 0) {
-
+		if (name != '' && id == 0) {
 			dispatch(createRoomWithParams({ 
 				name: name,
 				description: description,
@@ -525,7 +528,10 @@ const RoomTable = () => {
 
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof tname === 'string') {
 						setName(tname);
 					} else {
