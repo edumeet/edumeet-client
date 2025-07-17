@@ -6,12 +6,21 @@ const logger = new Logger('ImageFileService');
 
 const IMAGE_DIR = 'images';
 const THUMBNAIL_SUFFIX = '_thumb';
-const SELECTED_USER_BACKGROUND = 'userBackgroundImage';
+
+export const ImageKeys = {
+	DESKTOP_BACKGROUND: 'userDesktopBackgroundImage',
+	VIDEO_BACKGROUND: 'videoBackgroundImage',
+} as const;
+
+type ImageKeysType = typeof ImageKeys[keyof typeof ImageKeys];
 
 export class ClientImageService {
 	private imagesDirHandle!: FileSystemDirectoryHandle;
 	private initialized = false;
-	private currentImage: string = '';
+	private earmarkedImages: Record<ImageKeysType, string | null> = {
+		[ImageKeys.DESKTOP_BACKGROUND]: null,
+		[ImageKeys.VIDEO_BACKGROUND]: null,
+	};
 
 	private async init(): Promise<void> {
 		if (this.initialized) return;
@@ -30,48 +39,68 @@ export class ClientImageService {
 		this.initialized = true;
 	}
 
-	public async getUserBackgroundImage(): Promise<string> {
+	/**
+	 * Get an earmarked image from memory.
+	 *
+	 * @param earmarkedImageName a key to an image stored in memory by this service.
+	 */
+	public async getEarmarkedImage(earmarkedImageName: ImageKeysType): Promise<string | null> {
 		await this.init();
 
-		return this.currentImage;
+		return this.earmarkedImages[earmarkedImageName];
 	}
 
 	/**
-	 * 
-	 * @param imageName image file name
+	 * Save and set an image to earmarked.
+	 *
+	 * @param imageName
+	 * @param earmarkedImageName specifies which earkmarked image name to use.
 	 */
-	public async setUserBackgroundImage(imageName: string) {
-		URL.revokeObjectURL(this.currentImage);
+	public async setEarmarkedImage(imageName: string, earmarkedImageName: ImageKeysType): Promise<void> {
+		await this.init();
+
+		const currentUrl = this.earmarkedImages[earmarkedImageName];
+
+		if (currentUrl) URL.revokeObjectURL(currentUrl);
+
+		this.earmarkedImages[earmarkedImageName] = await this.persistImage(imageName, earmarkedImageName);
+	}
+
+	private async persistImage(imageName: string, fileName: string): Promise<string> {
 		const selectedHandle = await this.imagesDirHandle.getFileHandle(imageName, { create: false });
 		const selectedFile = await selectedHandle.getFile();
-		const userBackgroundFile = await this.saveImage(SELECTED_USER_BACKGROUND, selectedFile);
-		const userBackground = URL.createObjectURL(userBackgroundFile);
-	
-		this.currentImage = userBackground;
+		const userBackgroundFile = await this.saveImage(fileName, selectedFile);
+		
+		return URL.createObjectURL(userBackgroundFile);
 	}
 
 	/**
-	 * Checks for persisted user background image.
-	 * 
+	 * Loads persisted earmarked image into memory.
+	 *
+	 * @param earmarkedImageName
 	 * @returns object url string
 	 */
-	public async loadUserBackgroundImage(): Promise<string> {
+	public async loadEarmarkedImage(earmarkedImageName: ImageKeysType): Promise<string | null> {
 		await this.init();
-		URL.revokeObjectURL(this.currentImage);
-		const fileHandle = await this.imagesDirHandle.getFileHandle(SELECTED_USER_BACKGROUND, { create: false });
-		const userBackground = URL.createObjectURL(await fileHandle.getFile());
-	
-		this.currentImage = userBackground;
 
-		return userBackground;
+		const currentUrl = this.earmarkedImages[earmarkedImageName];
+
+		if (currentUrl) URL.revokeObjectURL(currentUrl);
+
+		try {
+			const fileHandle = await this.imagesDirHandle.getFileHandle(earmarkedImageName, { create: false });
+			const earmarkedImage = URL.createObjectURL(await fileHandle.getFile());
+
+			this.earmarkedImages[earmarkedImageName] = earmarkedImage;
+
+			return earmarkedImage;
+		} catch (err) {
+			logger.debug(`#loadEarmarkedImage: ${err}`);
+
+			return null;
+		}
 	}
 
-	/**
-	 * Returns URL representing file. Should be revoked with URL.revokeObjectURL after use.
-	 * 
-	 * @param name name of image file
-	 * @returns string containing a URL representing the file
-	 */
 	public async getImage(name: string): Promise<File | undefined> {
 		this.init();
 

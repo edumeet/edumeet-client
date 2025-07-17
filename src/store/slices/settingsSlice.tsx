@@ -35,7 +35,6 @@ export interface SettingsState {
 	opusMaxPlaybackRate: number;
 	notificationSounds: boolean;
 	locale?: string;
-	blurEnabled?: boolean;
 	videoContainEnabled?: boolean;
 }
 
@@ -70,8 +69,6 @@ const initialState: SettingsState = {
 	opusMaxPlaybackRate: edumeetConfig.opusMaxPlaybackRate,
 	notificationSounds: true,
 	locale: detect(),
-	blurEnabled: false,
-	videoContainEnabled: true,
 };
 
 const settingsSlice = createSlice({
@@ -170,9 +167,6 @@ const settingsSlice = createSlice({
 		}),
 		setLocale: ((state, action: PayloadAction<string>) => {
 			state.locale = action.payload;
-		}),
-		setBlurEnabled: ((state, action: PayloadAction<boolean>) => {
-			state.blurEnabled = action.payload;
 		}),
 		setVideoContainEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.videoContainEnabled = action.payload;

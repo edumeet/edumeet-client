@@ -45,7 +45,6 @@ const SettingsDialog = (): JSX.Element => {
 						}
 						}
 						centered
-						variant="scrollable"
 						scrollButtons="auto"
 						allowScrollButtonsMobile
 					>

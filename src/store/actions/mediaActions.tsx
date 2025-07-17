@@ -1,10 +1,11 @@
 import { getEncodings, getVideoConstrains } from '../../utils/encodingsHandler';
-import { Resolution } from '../../utils/types';
+import { BackgroundConfig, BackgroundType, Resolution } from '../../utils/types';
 import { meActions } from '../slices/meSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { Logger } from '../../utils/Logger';
+import { ImageKeys } from '../../services/clientImageService';
 
 const logger = new Logger('MediaActions');
 
@@ -30,7 +31,6 @@ interface AudioSettings {
 interface VideoSettings {
 	resolution?: Resolution;
 	frameRate?: number;
-	blurEnabled?: boolean;
 }
 
 interface ScreenshareSettings {
@@ -230,7 +230,6 @@ export const updatePreviewWebcam = ({
 			aspectRatio,
 			resolution,
 			frameRate,
-			blurEnabled,
 		} = getState().settings;
 
 		if (!hasInitalVideoUpdatedDevices) {
@@ -270,7 +269,7 @@ export const updatePreviewWebcam = ({
 
 		const stream = await navigator.mediaDevices.getUserMedia({
 			video: videoOptions
-		});	
+		});
 
 		([ track ] = stream.getVideoTracks());
 
@@ -282,7 +281,11 @@ export const updatePreviewWebcam = ({
 			dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
 		}
 
-		if (blurEnabled) track = await effectsService.applyEffect(track);
+		const { videoBackgroundEffect } = getState().me;
+
+		if (videoBackgroundEffect && videoBackgroundEffect?.type !== BackgroundType.NONE) {
+			track = await effectsService.applyEffect(track, videoBackgroundEffect);
+		}
 
 		if (!hasPostVideoUpdatedDevices) {
 			postUpdateDevicesPromise = deviceService.updateMediaDevices();
@@ -564,9 +567,8 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 			resolution,
 			frameRate,
 			selectedVideoDevice,
-			blurEnabled,
 		} = getState().settings;
-		
+
 		const deviceId = deviceService.getDeviceId(selectedVideoDevice, 'videoinput');
 
 		if (!deviceId) logger.warn('no webcam devices');
@@ -582,7 +584,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 						frameRate
 					}
 				});
-	
+
 				([ track ] = stream.getVideoTracks());
 			}
 
@@ -595,7 +597,11 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 
 			const { deviceId: trackDeviceId, width, height } = inputTrack?.getSettings() ?? track.getSettings();
 
-			if (blurEnabled && !inputTrack) track = await effectsService.applyEffect(track);
+			const { videoBackgroundEffect } = getState().me;
+
+			if (videoBackgroundEffect && videoBackgroundEffect?.type !== BackgroundType.NONE && !inputTrack) {
+				track = await effectsService.applyEffect(track, videoBackgroundEffect);
+			}
 
 			// If we are taking the preview track we need to remove it from the media service
 			if (isPreview) mediaService.previewWebcamTrack = null;
@@ -610,7 +616,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 				await mediaService.mediaSenders['webcam'].replaceTrack(track);
 			} else if (config.simulcast) {
 				const encodings = getEncodings(width, height);
-	
+
 				await mediaService.mediaSenders['webcam'].start({
 					track,
 					zeroRtpOnPause: true,
@@ -863,9 +869,8 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 			aspectRatio,
 			resolution,
 			frameRate,
-			blurEnabled,
 		} = getState().settings;
-		
+
 		const deviceId = deviceService.getDeviceId(newDeviceId, 'videoinput');
 
 		if (!deviceId) logger.warn('no extravideo device');
@@ -885,7 +890,11 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 
 			const { width, height } = track.getSettings();
 
-			if (blurEnabled) track = await effectsService.applyEffect(track);
+			const { videoBackgroundEffect } = getState().me;
+
+			if (videoBackgroundEffect && videoBackgroundEffect?.type !== BackgroundType.NONE) {
+				track = await effectsService.applyEffect(track, videoBackgroundEffect);
+			}
 
 			if (mediaService.mediaSenders['extravideo'].running) {
 				if (mediaService.mediaSenders['extravideo'].track)
@@ -934,4 +943,51 @@ export const stopExtraVideo = (): AppThunk<void> => (
 	effectsService.stop(mediaService.mediaSenders['extravideo'].track?.id);
 	mediaService.mediaSenders['extravideo'].stop();
 	dispatch(meActions.setExtraVideoEnabled(false));
+};
+
+/**
+ * Loads user's video background from persistent storage into memory.
+ * This is needed since image has to be loaded in the same security context in order to not be blocked.
+ */
+export const loadVideoBackground = (
+): AppThunk<Promise<void>> => async (dispatch, getState, { clientImageService }) => {
+	const videoBackground = await clientImageService.loadEarmarkedImage(ImageKeys.VIDEO_BACKGROUND);
+	const backgroundEnabled = getState().me.videoBackgroundEffect?.type === BackgroundType.IMAGE;
+
+	if (videoBackground && backgroundEnabled) {
+		const videoBackgroundEffect: BackgroundConfig = {
+			type: BackgroundType.IMAGE,
+			url: videoBackground,
+		};
+
+		dispatch(meActions.setVideoBackgroundEffect(videoBackgroundEffect));
+	} else {
+		dispatch(meActions.setVideoBackgroundEffectDisabled());
+	}
+};
+
+/**
+ * Set user's video background from persistent storage into memory.
+ */
+export const setVideoBackground = (
+	imageName: string,
+): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ clientImageService }
+) => {
+	await clientImageService.setEarmarkedImage(imageName, ImageKeys.VIDEO_BACKGROUND);
+	const imageUrl: string | null = await clientImageService.getEarmarkedImage(ImageKeys.VIDEO_BACKGROUND);
+
+	if (imageUrl) {
+		const videoBackgroundEffect: BackgroundConfig = {
+			type: BackgroundType.IMAGE,
+			url: imageUrl,
+		};
+
+		dispatch(meActions.setVideoBackgroundEffect(videoBackgroundEffect));
+	} else {
+		dispatch(meActions.setVideoBackgroundEffectDisabled());
+	}
+	dispatch(updateVideoSettings());
 };

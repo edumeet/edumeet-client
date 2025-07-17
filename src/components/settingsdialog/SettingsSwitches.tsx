@@ -10,10 +10,16 @@ import {
 	echoCancellationLabel,
 	enableOpusDtxLabel,
 	enableOpusFecLabel,
-	noiseSuppressionLabel
+	noiseSuppressionLabel,
+	selectVideoBackgroundLabel
 } from '../translated/translatedComponents';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
 import BlurOffIcon from '@mui/icons-material/BlurOff';
+import ImageIcon from '@mui/icons-material/Image';
+import HideImageIcon from '@mui/icons-material/HideImage';
+import { uiActions } from '../../store/slices/uiSlice';
+import { BackgroundType } from '../../utils/types';
+import { meActions } from '../../store/slices/meSlice';
 
 export const EchoCancellationSwitch = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -117,8 +123,9 @@ export const OpusFecSwitch = (): JSX.Element => {
 
 export const BlurSwitch = (): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const blurEnabled = useAppSelector((state) => state.settings.blurEnabled);
 	const blurSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
+	const videoBackgroundEffectType = useAppSelector((state) => state.me.videoBackgroundEffect?.type);
+	const blurEnabled = videoBackgroundEffectType === BackgroundType.BLUR;
 
 	return (
 		<FormControlLabel
@@ -127,7 +134,8 @@ export const BlurSwitch = (): JSX.Element => {
 					color='primary'
 					checked={ blurEnabled }
 					onChange={(event): void => {
-						dispatch(updateVideoSettings({ blurEnabled: event.target.checked }));
+						dispatch(meActions.setVideoBackgroundEffect({ type: event.target.checked ? BackgroundType.BLUR : BackgroundType.NONE }));
+						dispatch(updateVideoSettings());
 					}}
 					disabled={blurSwitchDisabled}
 				/>
@@ -136,19 +144,59 @@ export const BlurSwitch = (): JSX.Element => {
 		/>
 	);
 };
+
 export const BlurButton = (): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const blurEnabled = useAppSelector((state) => state.settings.blurEnabled);
-
 	const blurSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
+	const videoBackgroundEffectType = useAppSelector((state) => state.me.videoBackgroundEffect?.type);
+	const blurEnabled = videoBackgroundEffectType === BackgroundType.BLUR;
 
 	return (
-		<Tooltip title={ backgroundBlurLabel() }>
-			<Button onClick={() => dispatch(updateVideoSettings({ blurEnabled: !blurEnabled }))} 
-				disabled={blurSwitchDisabled}>
-				{!blurEnabled && <BlurOnIcon />}
-				{blurEnabled && <BlurOffIcon />}
-			</Button>
+		<Tooltip title={ backgroundBlurLabel() } disableInteractive>
+			<span>
+				<Button
+					onClick={() => {
+						dispatch(meActions.setVideoBackgroundEffect({ type: blurEnabled ? BackgroundType.NONE : BackgroundType.BLUR }));
+						dispatch(updateVideoSettings());
+					}}
+					disabled={blurSwitchDisabled}>
+					{!blurEnabled && <BlurOnIcon />}
+					{blurEnabled && <BlurOffIcon />}
+				</Button>
+			</span>
+		</Tooltip>
+		
+	);
+};
+
+export const VideoBackgroundButton = (): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const videoBackgroundSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
+	const videoBackgroundEffectType = useAppSelector((state) => state.me.videoBackgroundEffect?.type);
+	const backgroundEnabled = videoBackgroundEffectType === BackgroundType.IMAGE;
+
+	const handleClick = () => {
+		if (backgroundEnabled) {
+			// was enabled, so disable
+			dispatch(meActions.setVideoBackgroundEffectDisabled());
+			dispatch(updateVideoSettings());
+		} else {
+			// was disabled, so open dialog
+			dispatch(uiActions.setUi({ videoBackgroundDialogOpen: true }));
+		}
+	};
+
+	return (
+		<Tooltip title={ selectVideoBackgroundLabel() } disableInteractive>
+			<span>
+				{backgroundEnabled}
+				<Button
+					onClick={handleClick}
+					disabled={videoBackgroundSwitchDisabled}>
+					{!backgroundEnabled && <ImageIcon />}
+					{backgroundEnabled && <HideImageIcon />}
+				</Button>
+			</span>
 		</Tooltip>
 		
 	);

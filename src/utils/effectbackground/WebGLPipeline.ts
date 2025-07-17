@@ -7,8 +7,9 @@
  * https://github.com/Volcomix/virtual-background#webgl-2
  */
 
-import { BlurBackgroundPipeline, BlurBackgroundPipelineOptions } from '../types';
+import { BackgroundEffectPipeline, BackgroundPipelineOptions } from '../types';
 import { buildBackgroundBlurStage } from './WebGLStages/blurBackground';
+import { buildBackgroundImageStage } from './WebGLStages/imageBackground';
 import { buildJointBilateralFilterStage } from './WebGLStages/jointBilateralFilter';
 import { buildLoadSegmentationStage } from './WebGLStages/loadSegmentation';
 import { buildResizingStage } from './WebGLStages/resize';
@@ -22,18 +23,24 @@ export const webglConfig = {
 	COVERAGE: [ 0.5, 0.75 ]
 };
 
-export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: BlurBackgroundPipelineOptions): BlurBackgroundPipeline => {
+export const createWebGLPipeline = ({
+	source,
+	canvas,
+	backend,
+	segmentation,
+	backgroundConfig,
+}: BackgroundPipelineOptions): BackgroundEffectPipeline => {
 	const worker = new WebGLWorker();
 
 	const gl = canvas.getContext('webgl2');
 
 	if (!gl) throw new Error('No WebGL context');
 
-	const vertexShader = compileShader(gl, gl.VERTEX_SHADER, shaderSources.mainVertex);
+	const mainVertexShader = compileShader(gl, gl.VERTEX_SHADER, shaderSources.mainVertex);
 
-	const vertexArray = gl.createVertexArray();
+	const vao = gl.createVertexArray();
 
-	gl.bindVertexArray(vertexArray);
+	gl.bindVertexArray(vao); // makes the vertex array the current
 
 	const positionBuffer = gl.createBuffer();
 
@@ -73,6 +80,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 	);
 
 	if (!segmentationTexture) throw new Error('No segmentationTexture');
+
 	const personMaskTexture = createTexture(
 		gl,
 		gl.RGBA8,
@@ -85,7 +93,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 	const resizingStage = buildResizingStage(
 		worker,
 		gl,
-		vertexShader,
+		mainVertexShader,
 		positionBuffer,
 		texCoordBuffer,
 		segmentation,
@@ -94,7 +102,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 
 	const loadSegmentationStage = buildLoadSegmentationStage(
 		gl,
-		vertexShader,
+		mainVertexShader,
 		positionBuffer,
 		texCoordBuffer,
 		segmentation,
@@ -104,7 +112,7 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 
 	const jointBilateralFilterStage = buildJointBilateralFilterStage(
 		gl,
-		vertexShader,
+		mainVertexShader,
 		positionBuffer,
 		texCoordBuffer,
 		segmentationTexture,
@@ -113,14 +121,28 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		canvas
 	);
 
-	const backgroundStage = buildBackgroundBlurStage(
-		gl,
-		vertexShader,
-		positionBuffer,
-		texCoordBuffer,
-		personMaskTexture,
-		canvas
-	);
+	const backgroundImage: HTMLImageElement | null = new Image();
+
+	if (backgroundConfig?.url) backgroundImage.src = backgroundConfig.url;
+
+	const backgroundStage =
+		backgroundConfig?.type === 'blur'
+			? buildBackgroundBlurStage(
+				gl,
+				mainVertexShader,
+				positionBuffer,
+				texCoordBuffer,
+				personMaskTexture,
+				canvas
+			)
+			: buildBackgroundImageStage(
+				gl,
+				positionBuffer,
+				texCoordBuffer,
+				personMaskTexture,
+				backgroundImage,
+				canvas
+			);
 
 	async function render() {
 		if (!gl) throw new Error('No rendering context');
@@ -134,10 +156,10 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 			gl.RGBA,
 			gl.RGBA,
 			gl.UNSIGNED_BYTE,
-			source.element
+			source.element,
 		);
 
-		gl.bindVertexArray(vertexArray);
+		gl.bindVertexArray(vao);
 
 		await resizingStage.render();
 
@@ -162,8 +184,8 @@ export const createWebGLPipeline = ({ source, canvas, backend, segmentation }: B
 		gl.deleteTexture(inputFrameTexture);
 		gl.deleteBuffer(texCoordBuffer);
 		gl.deleteBuffer(positionBuffer);
-		gl.deleteVertexArray(vertexArray);
-		gl.deleteShader(vertexShader);
+		gl.deleteVertexArray(vao);
+		gl.deleteShader(mainVertexShader);
 	}
 
 	return { render, cleanup };

@@ -5,6 +5,11 @@ export const noLabel = (): string => intl.formatMessage({
 	defaultMessage: 'No'
 });
 
+export const noneLabel = (): string => intl.formatMessage({
+	id: 'label.none',
+	defaultMessage: 'None'
+});
+
 export const yesLabel = (): string => intl.formatMessage({
 	id: 'label.yes',
 	defaultMessage: 'Yes'
@@ -158,6 +163,11 @@ export const mirroredSelfViewLabel = (): string => intl.formatMessage({
 export const selectBackgroundLabel = (): string => intl.formatMessage({
 	id: 'settings.selectBackground',
 	defaultMessage: 'Select background'
+});
+
+export const selectVideoBackgroundLabel = (): string => intl.formatMessage({
+	id: 'settings.selectVideoBackground',
+	defaultMessage: 'Select video background'
 });
 
 export const currentlySelectedLabel = (): string => intl.formatMessage({
