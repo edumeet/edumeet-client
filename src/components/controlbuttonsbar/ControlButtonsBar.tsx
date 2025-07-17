@@ -3,6 +3,7 @@ import MediaControls from '../../components/mediacontrols/MediaControls';
 import MicButton from '../../components/controlbuttons/MicButton';
 import WebcamButton from '../../components/controlbuttons/WebcamButton';
 import ScreenshareButton from '../../components/controlbuttons/ScreenshareButton';
+import RaiseHandButton from '../controlbuttons/RaiseHandButton';
 import { isMobileSelector } from '../../store/selectors';
 import ParticipantsButton from '../controlbuttons/ParticipantsButton';
 import ChatButton from '../controlbuttons/ChatButton';
@@ -67,6 +68,7 @@ const ControlButtonsBar = (): JSX.Element => {
 				<MicButton offColor='error' toolTipLocation='bottom' />
 				<WebcamButton offColor='error' toolTipLocation='bottom' />
 				{ !isMobile && <ScreenshareButton toolTipLocation='bottom' /> }
+				{ !isMobile && <RaiseHandButton toolTipLocation='bottom' /> }
 				{ !isMobile && <ParticipantsButton toolTipLocation='bottom' onColor='primary' /> }
 				{ isMobile && <ParticipantsButton onClick={(event) => setParticipantAnchorEl(event.currentTarget)} toolTipLocation='bottom' /> }
 				{ !isMobile && chatEnabled && <ChatButton toolTipLocation='bottom' onColor='primary' /> }
