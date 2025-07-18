@@ -912,6 +912,7 @@ export const startDrawingModeLabel = (): string => intl.formatMessage({
 export const stopDrawingModeLabel = (): string => intl.formatMessage({
 	id: 'room.stopDrawingMode',
 	defaultMessage: 'The drawing mode has been stopped'
+});
 
 export const managementRoomSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.managementRoomSettingsLabel',
