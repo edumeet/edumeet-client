@@ -32,7 +32,7 @@ export interface RoomState {
 	startTranscriptionInProgress?: boolean;
 	transcriptionRunning?: boolean;
 	state: RoomConnectionState;
-	roomMode: RoomMode;
+	roomMode: RoomMode;	
 	breakoutsEnabled?: boolean;
 	chatEnabled?: boolean;
 	filesharingEnabled?: boolean;

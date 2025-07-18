@@ -9,11 +9,13 @@ import { RootState } from './store';
 import { RoomSession } from './slices/roomSessionsSlice';
 import { MeState } from './slices/meSlice';
 import edumeetConfig from './../utils/edumeetConfig';
+import { DrawingState } from './slices/drawingSlice';
 
 // eslint-disable-next-line no-unused-vars
 type Selector<S> = (state: RootState) => S;
 
 const meSelector: Selector<MeState> = (state) => state.me;
+const drawingSelector: Selector<DrawingState> = (state) => state.drawing;
 const mePermissionsSelect: Selector<Permission[]> = (state) => state.permissions.permissions;
 const consumersSelect: Selector<StateConsumer[]> = (state) => state.consumers;
 const roomSessionsSelect: Selector<Record<string, RoomSession>> = (state) => state.roomSessions;
@@ -498,10 +500,12 @@ export const videoBoxesSelector = createSelector(
 
 export const selectedVideoBoxesSelector = createSelector(
 	meSelector,
+	drawingSelector,
 	spotlightScreenConsumerSelector,
 	spotlightExtraVideoConsumerSelector,
 	(
 		{ screenEnabled, extraVideoEnabled },
+		{ drawingEnabled },
 		screenConsumers,
 		extraVideoConsumers,
 	) => {
@@ -510,7 +514,8 @@ export const selectedVideoBoxesSelector = createSelector(
 		// Add our own screen share, if it exists
 		if (screenEnabled) videoBoxes++;
 		if (extraVideoEnabled) videoBoxes++;
-
+		if (drawingEnabled) videoBoxes++;
+		
 		// Add everyone else's video
 		videoBoxes += screenConsumers.length + extraVideoConsumers.length;
 

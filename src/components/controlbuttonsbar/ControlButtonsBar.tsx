@@ -17,6 +17,7 @@ import ExtraVideo from '../menuitems/ExtraVideo';
 import Transcription from '../menuitems/Transcription';
 import Filesharing from '../menuitems/Filesharing';
 import Recording from '../menuitems/Recording';
+import Drawing from '../menuitems/Drawing';
 import MoreButton from '../controlbuttons/MoreButton';
 
 interface ContainerProps {
@@ -37,6 +38,7 @@ const ControlButtonsBar = (): JSX.Element => {
 	const localRecordingEnabled = useAppSelector((state) => state.room.localRecordingEnabled);
 	const canRecord = useAppSelector((state) => state.me.canRecord);
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
+	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled); // eslint-disable-line
 
 	const [ participantListAnchorEl, setParticipantAnchorEl ] = useState<HTMLElement | null>();
 	const isParticipantListOpen = Boolean(participantListAnchorEl);
@@ -113,6 +115,7 @@ const ControlButtonsBar = (): JSX.Element => {
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
+				{ !isMobile && <Drawing onClick={handleMoreClose} /> } 
 			</FloatingMenu>
 		</>
 	);

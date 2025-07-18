@@ -4,6 +4,7 @@ import { meActions } from '../slices/meSlice';
 import { peersActions } from '../slices/peersSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { roomActions } from '../slices/roomSlice';
+import { drawingActions } from '../slices/drawingSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppThunk, fileService } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
@@ -64,6 +65,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		chatHistory,
 		fileHistory,
 		countdownTimer,
+		drawing,
 		breakoutRooms,
 		locked,
 		lobbyPeers,
@@ -76,6 +78,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	fileService.iceServers = mediaService.iceServers;
 
 	batch(() => {
+		
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
 		dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
 		dispatch(peersActions.addPeers(peers));
@@ -89,8 +92,15 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 			roomActions.stopCountdownTimer()
 		);
 
-	});
+		dispatch(drawing.isEnabled ? 
+			drawingActions.enableDrawing() : 
+			drawingActions.disableDrawing()
+		);
 
+		dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
+		dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
+	});
+	
 	if (!getState().me.audioMuted) dispatch(updateMic());
 	if (!getState().me.videoMuted) dispatch(updateWebcam());
 };
@@ -173,6 +183,8 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 	try {
 		const audioMuted = getState().me.audioMuted;
 		const videoMuted = getState().me.videoMuted;
+
+		logger.debug('joinBreakoutRoom:', audioMuted, videoMuted);
 
 		const {
 			chatHistory,
