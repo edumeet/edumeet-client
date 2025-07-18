@@ -355,13 +355,14 @@ const GroupRoleTable = () => {
 						setId(parseInt(tid));
 					}
 
-					if (typeof tgroupId === 'string') {
-						setGroupId(parseInt(tgroupId));
-					} else {
-						setGroupId(0);
-					}
+					if (typeof tgroupId === 'number') {
+						const tgroup = groups.find((x) => x.id == tgroupId);
 
-					if (typeof tgroupId === 'string') {
+						if (tgroup) {
+							setGroupIdOption(tgroup);
+						}
+						setGroupId(tgroupId);
+					} else if (typeof tgroupId === 'string') {
 						const tgroup = groups.find((x) => x.id == parseInt(tgroupId));
 
 						if (tgroup) {
@@ -373,7 +374,14 @@ const GroupRoleTable = () => {
 						setGroupIdOption(undefined);
 					}
 
-					if (typeof troleId === 'string') {
+					if (typeof troleId === 'number') {
+						const troles = roles.find((x) => x.id == troleId);
+
+						if (troles) {
+							setRoleIdOption(troles);
+						}
+						setRoleId(troleId);
+					} else if (typeof troleId === 'string') {
 						const troles = roles.find((x) => x.id == parseInt(troleId));
 
 						if (troles) {
@@ -384,7 +392,14 @@ const GroupRoleTable = () => {
 						setRoleId(0);
 						setRoleIdOption(undefined);
 					}
-					if (typeof troomId === 'string') {
+					if (typeof troomId === 'number') {
+						const troom = rooms.find((x) => x.id == troomId);
+
+						if (troom) {
+							setRoomIdOption(troom);
+						}
+						setRoomId(troomId);
+					} else if (typeof troomId === 'string') {
 						const troom = rooms.find((x) => x.id == parseInt(troomId));
 
 						if (troom) {

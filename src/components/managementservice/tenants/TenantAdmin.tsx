@@ -281,8 +281,14 @@ const TenantAdminTable = () => {
 					} else if (typeof tid == 'string') {
 						setId(parseInt(tid));
 					}
+					if (typeof ttenantId === 'number') {
+						const ttenant = tenants.find((x) => x.id == ttenantId);
 
-					if (typeof ttenantId === 'string') {
+						if (ttenant) {
+							setTenantIdOption(ttenant);
+						}
+						setTenantId(ttenantId);
+					} else if (typeof ttenantId === 'string') {
 						const ttenant = tenants.find((x) => x.id == parseInt(ttenantId));
 
 						if (ttenant) {
@@ -292,7 +298,14 @@ const TenantAdminTable = () => {
 					} else {
 						setTenantId(0);
 					}
-					if (typeof tuserId === 'string') {
+					if (typeof tuserId === 'number') {
+						const tuser = users.find((x) => x.id == tuserId);
+
+						if (tuser) {
+							setUserIdOption(tuser);
+						}
+						setUserId(tuserId);
+					} else if (typeof tuserId === 'string') {
 						const tuser = users.find((x) => x.id == parseInt(tuserId));
 
 						if (tuser) {

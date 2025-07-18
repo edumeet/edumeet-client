@@ -259,16 +259,20 @@ const TenantOwnerTable = () => {
 					const ttenantId=r[1].getValue();
 					const tuserId=r[2].getValue();
 					
-					// eslint-disable-next-line no-console
-					console.log('ttenantId', typeof ttenantId, ttenantId, 'tuserId', tuserId, typeof tuserId);
-
 					if (typeof tid === 'number') {
 						setId(tid);
 					} else if (typeof tid == 'string') {
 						setId(parseInt(tid));
 					}
 
-					if (typeof ttenantId === 'string') {
+					if (typeof ttenantId === 'number') {
+						const ttenant = tenants.find((x) => x.id == ttenantId);
+
+						if (ttenant) {
+							setTenantIdOption(ttenant);
+						}
+						setTenantId(ttenantId);
+					} else if (typeof ttenantId === 'string') {
 						const ttenant = tenants.find((x) => x.id == parseInt(ttenantId));
 
 						if (ttenant) {
@@ -278,7 +282,14 @@ const TenantOwnerTable = () => {
 					} else {
 						setTenantId(0);
 					}
-					if (typeof tuserId === 'string') {
+					if (typeof tuserId === 'number') {
+						const tuser = users.find((x) => x.id == tuserId);
+
+						if (tuser) {
+							setUserIdOption(tuser);
+						}
+						setUserId(tuserId);
+					} else if (typeof tuserId === 'string') {
 						const tuser = users.find((x) => x.id == parseInt(tuserId));
 
 						if (tuser) {

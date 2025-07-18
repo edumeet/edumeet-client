@@ -471,8 +471,16 @@ const RuleTable = () => {
 					} else {
 						setName('');
 					}
-					if (typeof ttenantId === 'string') {
-						const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
+					
+					if (typeof ttenantId === 'number') {
+						const ttenant = tenants.find((x) => x.id == ttenantId);
+
+						if (ttenant) {
+							setTenantIdOption(ttenant);
+						}
+						setTenantId(ttenantId);
+					} else if (typeof ttenantId === 'string') {
+						const ttenant = tenants.find((x) => x.id == parseInt(ttenantId));
 
 						if (ttenant) {
 							setTenantIdOption(ttenant);

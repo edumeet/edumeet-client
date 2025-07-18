@@ -49,122 +49,132 @@ const CurrentRoomModal = () => {
 		}); */
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getData('roles')).then((tdata: any) => {
-			if (tdata != undefined) {
-				setRoles(tdata.data);
+		dispatch(getData('roles')).then((tdat: any) => {
+			if (tdat != undefined) {
+				setRoles(tdat.data);
 			}
-		});
-
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getRoomByName(window.location.pathname.substring(1))).then((tdata: any) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			dispatch(getRoomByName(window.location.pathname.substring(1))).then((tdata: any) => {
 			
-			const r = tdata.data[0] as Room;
+				const r = tdata.data[0] as Room;
 
-			const tid = r.id;
-			const tname=r.name;
-			const tdescription=r.description;
-			const tdefaultroleId=r.defaultRoleId;
-			const ttenantId=r.tenantId;
-			const tlogo=r.logo;
-			const tbackground=r.background;
-			const tmaxActiveVideos=r.maxActiveVideos;
-			const tlocked=r.locked;
-			const tchatEnabled=r.chatEnabled;
-			const traiseHandEnabled=r.raiseHandEnabled;
-			const tfilesharingEnabled=r.filesharingEnabled;
-			const tlocalRecordingEnabled=r.localRecordingEnabled;
-			const tbreakoutsEnabled=r.breakoutsEnabled;
+				const tid = r.id;
+				const tname=r.name;
+				const tdescription=r.description;
+				const tdefaultroleId=r.defaultRoleId;
+				const ttenantId=r.tenantId;
+				const tlogo=r.logo;
+				const tbackground=r.background;
+				const tmaxActiveVideos=r.maxActiveVideos;
+				const tlocked=r.locked;
+				const tchatEnabled=r.chatEnabled;
+				const traiseHandEnabled=r.raiseHandEnabled;
+				const tfilesharingEnabled=r.filesharingEnabled;
+				const tlocalRecordingEnabled=r.localRecordingEnabled;
+				const tbreakoutsEnabled=r.breakoutsEnabled;
 
-			if (typeof tid === 'number') {
-				setId(tid);
-			} else if (typeof tid == 'string') {
-				setId(parseInt(tid));
-			}
+				if (typeof tid === 'number') {
+					setId(tid);
+				} else if (typeof tid == 'string') {
+					setId(parseInt(tid));
+				}
 
-			if (typeof tname === 'string') {
-				setName(tname);
-			} else {
-				setName('');
-			}
-			if (typeof tdescription === 'string') {
-				setDescription(tdescription);
-			} else {
-				setDescription('');
-			}
-
-			if (typeof tdefaultroleId === 'string') {
-				const tdefaultrole = roles.find((x) => x.id === parseInt(tdefaultroleId));
-
-				if (tdefaultrole) {
-					setDefaultRoleIdOption(tdefaultrole);
+				if (typeof tname === 'string') {
+					setName(tname);
 				} else {
+					setName('');
+				}
+				if (typeof tdescription === 'string') {
+					setDescription(tdescription);
+				} else {
+					setDescription('');
+				}
+
+				if (typeof tdefaultroleId === 'number') {
+					const tdefaultrole = tdat.data.find((x: { id: number; }) => x.id == tdefaultroleId);
+
+					if (tdefaultrole) {
+						setDefaultRoleIdOption(tdefaultrole);
+					} else {
+						setDefaultRoleIdOption(undefined);
+					}
+					setDefaultRoletId(tdefaultroleId);
+				} else if (typeof tdefaultroleId === 'string') {
+					const tdefaultrole = tdat.data.find((x: { id: number; }) => x.id == parseInt(tdefaultroleId));
+
+					if (tdefaultrole) {
+						setDefaultRoleIdOption(tdefaultrole);
+					} else {
+						setDefaultRoleIdOption(undefined);
+					}
+					setDefaultRoletId(parseInt(tdefaultroleId));
+				} else {
+					setDefaultRoletId(0);
 					setDefaultRoleIdOption(undefined);
 				}
-				setDefaultRoletId(parseInt(tdefaultroleId));
-			} else {
-				setDefaultRoletId(0);
-				setDefaultRoleIdOption(undefined);
-			}
-			if (typeof ttenantId === 'string') {
+				if (typeof ttenantId === 'number') {
+					setTenantId(ttenantId);
+				} else if (typeof ttenantId === 'string') {
 				/* const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
 
 				if (ttenant) {
 					setTenantIdOption(ttenant);
 				} */
-				setTenantId(parseInt(ttenantId));
-			} else {
-				setTenantId(0);
-			}
+					setTenantId(parseInt(ttenantId));
+				} else {
+					setTenantId(0);
+				}
 
-			if (typeof tlogo === 'string') {
-				setLogo(tlogo);
-			} else {
-				setLogo('');
-			}
-			if (typeof tbackground === 'string') {
-				setBackground(tbackground);
-			} else {
-				setBackground('');
-			}
-			if (typeof tmaxActiveVideos === 'number') {
-				setMaxActiveVideos(tmaxActiveVideos);
-			} else {
-				setMaxActiveVideos(0);
-			}
+				if (typeof tlogo === 'string') {
+					setLogo(tlogo);
+				} else {
+					setLogo('');
+				}
+				if (typeof tbackground === 'string') {
+					setBackground(tbackground);
+				} else {
+					setBackground('');
+				}
+				if (typeof tmaxActiveVideos === 'number') {
+					setMaxActiveVideos(tmaxActiveVideos);
+				} else {
+					setMaxActiveVideos(0);
+				}
 
-			if (tlocked === true) {
-				setLocked(true);
-			} else {
-				setLocked(false);
-			}
-			if (tchatEnabled === true) {
-				setChatEnabled(true);
-			} else {
-				setChatEnabled(false);
-			}
-			if (traiseHandEnabled === true) {
-				setRaiseHandEnabled(true);
-			} else {
-				setRaiseHandEnabled(false);
-			}
-			if (tfilesharingEnabled === true) {
-				setFilesharingEnabled(true);
-			} else {
-				setFilesharingEnabled(false);
-			}
-			if (tlocalRecordingEnabled === true) {
-				setLocalRecordingEnabled(true);
-			} else {
-				setLocalRecordingEnabled(false);
-			}
-			if (tbreakoutsEnabled === true) {
-				setBreakoutsEnabled(true);
-			} else {
-				setBreakoutsEnabled(false);
-			}
+				if (tlocked === true) {
+					setLocked(true);
+				} else {
+					setLocked(false);
+				}
+				if (tchatEnabled === true) {
+					setChatEnabled(true);
+				} else {
+					setChatEnabled(false);
+				}
+				if (traiseHandEnabled === true) {
+					setRaiseHandEnabled(true);
+				} else {
+					setRaiseHandEnabled(false);
+				}
+				if (tfilesharingEnabled === true) {
+					setFilesharingEnabled(true);
+				} else {
+					setFilesharingEnabled(false);
+				}
+				if (tlocalRecordingEnabled === true) {
+					setLocalRecordingEnabled(true);
+				} else {
+					setLocalRecordingEnabled(false);
+				}
+				if (tbreakoutsEnabled === true) {
+					setBreakoutsEnabled(true);
+				} else {
+					setBreakoutsEnabled(false);
+				}
 	
-			setOpen(true);
+				setOpen(true);
             
+			});
 		});
 
 	}

@@ -544,7 +544,7 @@ const RoomTable = () => {
 					}
 
 					if (typeof tdefaultroleId === 'string') {
-						const tdefaultrole = roles.find((x) => x.id === parseInt(tdefaultroleId));
+						const tdefaultrole = roles.find((x) => x.id == parseInt(tdefaultroleId));
 
 						if (tdefaultrole) {
 							setDefaultRoleIdOption(tdefaultrole);
@@ -552,6 +552,15 @@ const RoomTable = () => {
 							setDefaultRoleIdOption(undefined);
 						}
 						setDefaultRoletId(parseInt(tdefaultroleId));
+					} else if (typeof tdefaultroleId === 'number') {
+						const tdefaultrole = roles.find((x) => x.id == tdefaultroleId);
+
+						if (tdefaultrole) {
+							setDefaultRoleIdOption(tdefaultrole);
+						} else {
+							setDefaultRoleIdOption(undefined);
+						}
+						setDefaultRoletId(tdefaultroleId);
 					} else {
 						setDefaultRoletId(0);
 						setDefaultRoleIdOption(undefined);

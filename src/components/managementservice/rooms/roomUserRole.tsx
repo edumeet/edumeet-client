@@ -359,8 +359,15 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						setId(parseInt(tid));
 					}
 
-					if (typeof tuserId === 'string') {
-						const tuser = users.find((x) => x.id === parseInt(tuserId));
+					if (typeof tuserId === 'number') {
+						const tuser = users.find((x) => x.id == tuserId);
+
+						if (tuser) {
+							setUserIdOption(tuser);
+						}
+						setUserId(tuserId);
+					} else if (typeof tuserId === 'string') {
+						const tuser = users.find((x) => x.id == parseInt(tuserId));
 
 						if (tuser) {
 							setUserIdOption(tuser);
@@ -371,8 +378,15 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						setUserIdOption(undefined);
 					}
 					
-					if (typeof troleId === 'string') {
-						const troles = roles.find((x) => x.id === parseInt(troleId));
+					if (typeof troleId === 'number') {
+						const troles = roles.find((x) => x.id == troleId);
+
+						if (troles) {
+							setRoleIdOption(troles);
+						}
+						setRoleId(troleId);
+					} else if (typeof troleId === 'string') {
+						const troles = roles.find((x) => x.id == parseInt(troleId));
 
 						if (troles) {
 							setRoleIdOption(troles);

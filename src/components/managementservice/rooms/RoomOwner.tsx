@@ -294,8 +294,15 @@ const RoomOwnerTable = (props: RoomProp) => {
 						setId(parseInt(tid));
 					}
 
-					if (typeof tuserId === 'string') {
-						const tuser = users.find((x) => x.id === parseInt(tuserId));
+					if (typeof tuserId === 'number') {
+						const tuser = users.find((x) => x.id == tuserId);
+
+						if (tuser) {
+							setUserIdOption(tuser);
+						}
+						setUserId(tuserId);
+					} else if (typeof tuserId === 'string') {
+						const tuser = users.find((x) => x.id == parseInt(tuserId));
 
 						if (tuser) {
 							setUserIdOption(tuser);

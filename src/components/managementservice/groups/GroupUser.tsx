@@ -263,8 +263,15 @@ const GroupUserTable = () => {
 						setId(parseInt(tid));
 					}
 
-					if (typeof tgroupId === 'string') {
-						const tgroup = groups.find((x) => x.id === parseInt(tgroupId));
+					if (typeof tgroupId === 'number') {
+						const tgroup = groups.find((x) => x.id == tgroupId);
+
+						if (tgroup) {
+							setGroupIdOption(tgroup);
+						}
+						setGroupId(tgroupId);
+					} else if (typeof tgroupId === 'string') {
+						const tgroup = groups.find((x) => x.id == parseInt(tgroupId));
 
 						if (tgroup) {
 							setGroupIdOption(tgroup);
@@ -274,8 +281,15 @@ const GroupUserTable = () => {
 						setGroupId(0);
 					}
 
-					if (typeof tuserId === 'string') {
-						const tuser = users.find((x) => x.id === parseInt(tuserId));
+					if (typeof tuserId === 'number') {
+						const tuser = users.find((x) => x.id == tuserId);
+
+						if (tuser) {
+							setUserIdOption(tuser);
+						}
+						setUserId(tuserId);
+					} else if (typeof tuserId === 'string') {
+						const tuser = users.find((x) => x.id == parseInt(tuserId));
 
 						if (tuser) {
 							setUserIdOption(tuser);
