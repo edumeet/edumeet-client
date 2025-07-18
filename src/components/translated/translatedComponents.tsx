@@ -5,9 +5,19 @@ export const noLabel = (): string => intl.formatMessage({
 	defaultMessage: 'No'
 });
 
+export const noneLabel = (): string => intl.formatMessage({
+	id: 'label.none',
+	defaultMessage: 'None'
+});
+
 export const yesLabel = (): string => intl.formatMessage({
 	id: 'label.yes',
 	defaultMessage: 'Yes'
+});
+
+export const defaultLabel = (): string => intl.formatMessage({
+	id: 'label.default',
+	defaultMessage: 'Default'
 });
 
 export const joinedRoomLabel = (): string => intl.formatMessage({
@@ -148,6 +158,21 @@ export const hideSelfViewLabel = (): string => intl.formatMessage({
 export const mirroredSelfViewLabel = (): string => intl.formatMessage({
 	id: 'settings.mirrorOwnVideo',
 	defaultMessage: 'Mirrored self view video'
+});
+
+export const selectBackgroundLabel = (): string => intl.formatMessage({
+	id: 'settings.selectBackground',
+	defaultMessage: 'Select background'
+});
+
+export const selectVideoBackgroundLabel = (): string => intl.formatMessage({
+	id: 'settings.selectVideoBackground',
+	defaultMessage: 'Select video background'
+});
+
+export const currentlySelectedLabel = (): string => intl.formatMessage({
+	id: 'settings.currentlySelected',
+	defaultMessage: 'Currently Selected'
 });
 
 export const hideNoVideoParticipantsLabel =
@@ -392,6 +417,11 @@ export const downloadFileLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Download'
 });
 
+export const uploadFileLabel = (): string => intl.formatMessage({
+	id: 'filesharing.upload',
+	defaultMessage: 'Upload file'
+});
+
 export const saveFileLabel = (): string => intl.formatMessage({
 	id: 'filesharing.save',
 	defaultMessage: 'Save'
@@ -496,6 +526,16 @@ export const closeLabel = (): string => intl.formatMessage({
 export const applyLabel = (): string => intl.formatMessage({
 	id: 'label.apply',
 	defaultMessage: 'Apply'
+});
+
+export const removeAllImagesLabel = (): string => intl.formatMessage({
+	id: 'label.removeAllImages',
+	defaultMessage: 'Remove all images'
+});
+
+export const roomBgLabel = (): string => intl.formatMessage({
+	id: 'label.roomBackground',
+	defaultMessage: 'Room background'
 });
 
 export const mediaSettingsLabel = (): string => intl.formatMessage({
@@ -843,6 +883,7 @@ export const countdownTimerFinishedLabel = (): string => intl.formatMessage({
 	id: 'label.countdownTimer.finished',
 	defaultMessage: 'Time is up!'
 });
+
 export const startDrawingLabel = (): string => intl.formatMessage({
 	id: 'room.startDrawing',
 	defaultMessage: 'Start drawing'
@@ -871,4 +912,173 @@ export const startDrawingModeLabel = (): string => intl.formatMessage({
 export const stopDrawingModeLabel = (): string => intl.formatMessage({
 	id: 'room.stopDrawingMode',
 	defaultMessage: 'The drawing mode has been stopped'
+
+export const managementRoomSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementRoomSettingsLabel',
+	defaultMessage: 'Room settings'
+});
+export const managementAdvancedSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.managementAdvancedSettingsLabel',
+	defaultMessage: 'Advanced management settings'
+});
+export const claimRoomLabel = (): string => intl.formatMessage({
+	id: 'label.managementClaimRoomLabel',
+	defaultMessage: 'Claim current room'
+});
+export const editRoomLabel = (): string => intl.formatMessage({
+	id: 'label.managementEditRoomLabel',
+	defaultMessage: 'Edit current room'
+});
+export const tenantsLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants',
+	defaultMessage: 'Tenants'
+});
+export const tenantLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenant',
+	defaultMessage: 'Tenant'
+});
+export const roomsLabel = (): string => intl.formatMessage({
+	id: 'label.management.rooms',
+	defaultMessage: 'Rooms'
+});
+export const roomLabel = (): string => intl.formatMessage({
+	id: 'label.management.room',
+	defaultMessage: 'Room'
+});
+export const usersLabel = (): string => intl.formatMessage({
+	id: 'label.management.users',
+	defaultMessage: 'Users'
+});
+export const userLabel = (): string => intl.formatMessage({
+	id: 'label.management.user',
+	defaultMessage: 'User'
+});
+export const groupsLabel = (): string => intl.formatMessage({
+	id: 'label.management.groups',
+	defaultMessage: 'Groups'
+});
+export const groupLabel = (): string => intl.formatMessage({
+	id: 'label.management.group',
+	defaultMessage: 'Group'
+});
+export const groupRolesLabel = (): string => intl.formatMessage({
+	id: 'label.management.groupRole',
+	defaultMessage: 'Group roles'
+});
+export const groupUsersLabel = (): string => intl.formatMessage({
+	id: 'label.management.groupUser',
+	defaultMessage: 'User groups'
+});
+export const rolesLabel = (): string => intl.formatMessage({
+	id: 'label.management.roles',
+	defaultMessage: 'Roles'
+});
+export const roleLabel = (): string => intl.formatMessage({
+	id: 'label.management.role',
+	defaultMessage: 'Role'
+});
+export const defaultRoleLabel = (): string => intl.formatMessage({
+	id: 'label.management.defaultRole',
+	defaultMessage: 'Default Role'
+});
+export const rulesLabel = (): string => intl.formatMessage({
+	id: 'label.management.rules',
+	defaultMessage: 'Rules'
+});
+export const chooseComponentLabel = (): string => intl.formatMessage({
+	id: 'label.management.chooseComponent',
+	defaultMessage: 'Select an item to load a component'
+});
+export const edumeetManagementClientLabel = (): string => intl.formatMessage({
+	id: 'label.management.edumeetManagementClient',
+	defaultMessage: 'eduMEET Management client'
+});
+export const tenantOwnersLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenantOwners',
+	defaultMessage: 'Tenant owners'
+});
+export const tenantOwnerLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenantOwner',
+	defaultMessage: 'Tenant owner'
+});
+export const tenantAdminsLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenantAdmins',
+	defaultMessage: 'Tenant admins'
+});
+export const tenantAdminLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenantAdmin',
+	defaultMessage: 'Tenant admin'
+});
+export const addNewLabel = (): string => intl.formatMessage({
+	id: 'label.management.addNew',
+	defaultMessage: 'Add item'
+});
+export const manageItemLabel = (): string => intl.formatMessage({
+	id: 'label.management.manageItem',
+	defaultMessage: 'Manage item'
+});
+export const genericItemDescLabel = (): string => intl.formatMessage({
+	id: 'label.management.genericItemDesc',
+	defaultMessage: 'These are the parameters that you can change.'
+});
+export const deleteLabel = (): string => intl.formatMessage({
+	id: 'label.delete',
+	defaultMessage: 'Delete'
+});
+export const cancelLabel = (): string => intl.formatMessage({
+	id: 'label.cancel',
+	defaultMessage: 'Cancel'
+});
+export const undefinedLabel = (): string => intl.formatMessage({
+	id: 'label.undefined',
+	defaultMessage: 'Undefined'
+});
+export const authenticationLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenant.auth',
+	defaultMessage: 'Authentication'
+});
+export const fqdnLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenant.fqdn',
+	defaultMessage: 'FQDN'
+});
+export const nameLabel = (): string => intl.formatMessage({
+	id: 'label.management.name',
+	defaultMessage: 'Name'
+});
+export const descLabel = (): string => intl.formatMessage({
+	id: 'label.management.desc',
+	defaultMessage: 'Description'
+});
+export const logoLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.logo',
+	defaultMessage: 'Logo'
+});
+export const maxActiveVideosLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.maxActiveVideos',
+	defaultMessage: 'Maximum active videos'
+});
+export const chatEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.chatEnabled',
+	defaultMessage: 'Enable chat'
+});
+export const raiseHandEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.raiseHandEnabled',
+	defaultMessage: 'Enable raise hand'
+});
+export const filesharingEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.filesharingEnabled',
+	defaultMessage: 'Enabled filesharing'
+});
+export const localRecordingEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.localRecordingEnabled',
+	defaultMessage: 'Enable local recording'
+});
+export const breakoutsEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.breakoutsEnabled',
+	defaultMessage: 'Enable breakout rooms'
+});
+export const ownersLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.owners',
+	defaultMessage: 'Owners'
+
 });

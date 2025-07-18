@@ -4,9 +4,10 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { Tenant, TenantOAuth } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, getDataByID, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
 import { TenantProp } from './Tenant';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantLabel } from '../../translated/translatedComponents';
 
 const TenantOAuthTable = (props: TenantProp) => {
 	const tenantId = props.tenantId;
@@ -18,7 +19,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
 
 	const getTenantName = (id: string): string => {
-		const t = tenants.find((type) => type.id === parseInt(id));
+		const t = tenants.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
@@ -37,7 +38,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 			},
 			{
 				accessorKey: 'tenantId',
-				header: 'Tenant',
+				header: tenantLabel(),
 				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
 
 			},
@@ -65,7 +66,14 @@ const TenantOAuthTable = (props: TenantProp) => {
 				accessorKey: 'scope_delimiter',
 				header: 'Scope delimiter'
 			},
-			
+			{
+				accessorKey: 'end_session_endpoint',
+				header: 'end_session_endpoint (full logout)'
+			},
+			{
+				accessorKey: 'name_parameter',
+				header: 'Name parameter (name/nickname/...)'
+			}
 		],
 		[ tenants ],
 	);
@@ -84,6 +92,8 @@ const TenantOAuthTable = (props: TenantProp) => {
 	const [ scope, setScope ] = useState('');
 	const [ scopeDelimeter, setScopeDelimeter ] = useState('');
 	const [ redirect, setRedirect ] = useState('');
+	const [ end_session_endpoint, setEndSession ] = useState('');
+	const [ name_parameter, setNameParameter ] = useState('');
 	
 	async function fetchProduct() {
 		setIsLoading(true);
@@ -96,7 +106,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getDataByID(tenantId, 'tenantOAuths')).then((tdata: any) => {
+		dispatch(getDataByTenantID(tenantId, 'tenantOAuths')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
@@ -122,6 +132,8 @@ const TenantOAuthTable = (props: TenantProp) => {
 		setScope('openid profile email');
 		setScopeDelimeter(' ');
 		setRedirect('https://edumeet.example.com/mgmt/oauth/tenant/callback');
+		setEndSession('https://edumeet.example.org/kc/realms/<realm>/protocol/openid-connect/logout');
+		setNameParameter('name');
 		setOpen(true);
 	};
 
@@ -201,6 +213,12 @@ const TenantOAuthTable = (props: TenantProp) => {
 	const handleRedirectChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
 		setRedirect(event.target.value);
 	};
+	const handleEndSessionChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+		setEndSession(event.target.value);
+	};
+	const handleNameParameterChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+		setNameParameter(event.target.value);
+	};
 
 	const handleClose = () => {
 		setOpen(false);
@@ -258,27 +276,16 @@ const TenantOAuthTable = (props: TenantProp) => {
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog maxWidth="lg" open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
-					{/* <TextField
-						autoFocus
-						margin="dense"
-						id="tenantId"
-						label="tenantId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleTenantIdChange}
-						value={tenantId}
-					/> */}
 					<TextField
 						margin="dense"
 						required
@@ -374,11 +381,31 @@ const TenantOAuthTable = (props: TenantProp) => {
 						value={redirect}
 						onChange={handleRedirectChange}
 					/>
+					<TextField
+						required
+						margin="dense"
+						id="end_session_endpoint"
+						label="end_session_endpoint"
+						type="text"
+						fullWidth
+						value={end_session_endpoint}
+						onChange={handleEndSessionChange}
+					/>
+					<TextField
+						required
+						margin="dense"
+						id="name_parameter"
+						label="name_parameter"
+						type="text"
+						fullWidth
+						value={name_parameter}
+						onChange={handleNameParameterChange}
+					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant}>OK</Button>
+					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -396,10 +423,15 @@ const TenantOAuthTable = (props: TenantProp) => {
 					const tredirect= r[5].getValue();
 					const tscope= r[6].getValue();
 					const tscopeDelimiter= r[7].getValue();
+					const tend_session_endpoint = r[8].getValue();
+					const tname_parameter= r[9].getValue();
 
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof tprofile === 'string') { setProfileUrl(tprofile); } else {
 						setProfileUrl('');
 					}
@@ -418,6 +450,12 @@ const TenantOAuthTable = (props: TenantProp) => {
 					if (typeof tredirect === 'string') { setRedirect(tredirect); } else {
 						setRedirect('');
 					}
+					if (typeof tend_session_endpoint === 'string') { setEndSession(tend_session_endpoint); } else {
+						setEndSession('');
+					}
+					if (typeof tname_parameter === 'string') { setNameParameter(tname_parameter); } else {
+						setNameParameter('');
+					}
 
 					handleClickOpenNoreset();
 
@@ -427,6 +465,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 			data={data} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
+					tenantId: false,
 					access_url: false,
 					authorize_url: false,
 					profile_url: false,

@@ -49,6 +49,62 @@ export const shaderSources = {
 		}
 	`,
 
+	// Background Image
+	buildBackgroundImageVertexShaderSource: String.raw`#version 300 es
+
+		uniform vec2 u_backgroundScale;
+		uniform vec2 u_backgroundOffset;
+
+		in vec2 a_position;
+		in vec2 a_texCoord;
+
+		out vec2 v_texCoord;
+		out vec2 v_backgroundCoord;
+
+		void main() {
+			// Flipping Y is required when rendering to canvas
+			gl_Position = vec4(a_position * vec2(1.0, -1.0), 0.0, 1.0);
+			v_texCoord = a_texCoord;
+			v_backgroundCoord = a_texCoord * u_backgroundScale + u_backgroundOffset;
+		}
+  `,
+
+	buildBackgroundImageFragmentShaderSource: String.raw`#version 300 es
+
+		precision highp float;
+
+		uniform sampler2D u_inputFrame;
+		uniform sampler2D u_personMask;
+		uniform sampler2D u_background;
+		uniform vec2 u_coverage;
+		uniform float u_lightWrapping;
+		uniform float u_blendMode;
+
+		in vec2 v_texCoord;
+		in vec2 v_backgroundCoord;
+
+		out vec4 outColor;
+
+		vec3 screen(vec3 a, vec3 b) {
+		  return 1.0 - (1.0 - a) * (1.0 - b);
+		}
+
+		vec3 linearDodge(vec3 a, vec3 b) {
+		  return a + b;
+		}
+
+		void main() {
+			vec3 frameColor = texture(u_inputFrame, v_texCoord).rgb;
+			vec3 backgroundColor = texture(u_background, v_backgroundCoord).rgb;
+			float personMask = texture(u_personMask, v_texCoord).a;
+			float lightWrapMask = 1.0 - max(0.0, personMask - u_coverage.y) / (1.0 - u_coverage.y);
+			vec3 lightWrap = u_lightWrapping * lightWrapMask * backgroundColor;
+			frameColor = u_blendMode * linearDodge(frameColor, lightWrap) + (1.0 - u_blendMode) * screen(frameColor, lightWrap);
+			personMask = smoothstep(u_coverage.x, u_coverage.y, personMask);
+			outColor = vec4(frameColor * personMask + backgroundColor * (1.0 - personMask), 1.0);
+		}
+  `,
+
 	blendVertex: String.raw`#version 300 es
 
 		in vec2 a_position;

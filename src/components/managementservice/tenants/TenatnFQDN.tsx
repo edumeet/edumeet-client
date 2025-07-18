@@ -4,8 +4,9 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { Tenant, TenantFQDN } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, getDataByID, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { TenantProp } from './Tenant';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, tenantLabel, undefinedLabel } from '../../translated/translatedComponents';
 
 const TenantFQDNTable = (props: TenantProp) => {
 	const tenantId = props.tenantId;
@@ -16,12 +17,12 @@ const TenantFQDNTable = (props: TenantProp) => {
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
 
 	const getTenantName = (id: string): string => {
-		const t = tenants.find((type) => type.id === parseInt(id));
+		const t = tenants.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined tenant';
+			return `${undefinedLabel()} ${tenantLabel()}`;
 		}
 	};
 
@@ -35,13 +36,13 @@ const TenantFQDNTable = (props: TenantProp) => {
 			},
 			{
 				accessorKey: 'tenantId',
-				header: 'Tenant',
+				header: tenantLabel(),
 				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
 
 			},
 			{
 				accessorKey: 'description',
-				header: 'description'
+				header: descLabel()
 			},
 			{
 				accessorKey: 'fqdn',
@@ -71,7 +72,7 @@ const TenantFQDNTable = (props: TenantProp) => {
 		});
 		
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getDataByID(tenantId, 'tenantFQDNs')).then((tdata: any) => {
+		dispatch(getDataByTenantID(tenantId, 'tenantFQDNs')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setData(tdata.data);
 			}
@@ -143,25 +144,16 @@ const TenantFQDNTable = (props: TenantProp) => {
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
-					<TextField
-						margin="dense"
-						id="description"
-						label="description"
-						type="text"
-						fullWidth
-						onChange={handleDescriptionChange}
-						value={description}
-					/>
 					<TextField
 						margin="dense"
 						id="fqdn"
@@ -171,11 +163,20 @@ const TenantFQDNTable = (props: TenantProp) => {
 						onChange={handleFQDNChange}
 						value={fqdn}
 					/>
+					<TextField
+						margin="dense"
+						id="description"
+						label="description"
+						type="text"
+						fullWidth
+						onChange={handleDescriptionChange}
+						value={description}
+					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant}>OK</Button>
+					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -192,6 +193,8 @@ const TenantFQDNTable = (props: TenantProp) => {
 
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
 
 					if (typeof tdescription === 'string') {

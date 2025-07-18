@@ -14,6 +14,7 @@ import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { meActions } from './store/slices/meSlice';
+import edumeetConfig from './utils/edumeetConfig';
 
 type AppParams = {
 	id: string;
@@ -36,7 +37,8 @@ const SnackbarCloseButton = ({
 };
 
 const App = (): JSX.Element => {
-	const backgroundImage = useAppSelector((state) => state.room.backgroundImage);
+	const roomBackgroundImage = useAppSelector((state) => state.room.backgroundImage);
+	const userBackgroundImage = useAppSelector((state) => state.me.selectedDestop?.imageUrl);
 	const dispatch = useAppDispatch();
 	const roomState = useAppSelector((state) => state.room.state);
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
@@ -92,7 +94,7 @@ const App = (): JSX.Element => {
 			<StyledBackground
 				onDrop={handleFileDrop}
 				onDragOver={(event) => event.preventDefault()}
-				backgroundimage={backgroundImage}
+				backgroundimage={userBackgroundImage || roomBackgroundImage || edumeetConfig.theme.backgroundImage}
 			>
 				{ roomState === 'joined' ? <Room /> : roomState === 'lobby' ? <Lobby /> : roomState === 'new' && <Join roomId={id} /> }
 			</StyledBackground>

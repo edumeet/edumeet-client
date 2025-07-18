@@ -5,6 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Groups, GroupUsers, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, groupLabel, manageItemLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
 
 const GroupUserTable = () => {
 	const dispatch = useAppDispatch();
@@ -32,16 +33,16 @@ const GroupUserTable = () => {
 	} ]);
 
 	const getGroupName = (id: string): string => {
-		const t = groups.find((type) => type.id === parseInt(id));
+		const t = groups.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined group';
+			return `${undefinedLabel()} ${groupLabel()}`;
 		}
 	};
 	const getUserEmail = (id: string): string => {
-		const t = users.find((type) => type.id === parseInt(id));
+		const t = users.find((type) => type.id == parseInt(id));
 
 		if (t && t.email) {
 			return t.email;
@@ -61,12 +62,12 @@ const GroupUserTable = () => {
 			},
 			{
 				accessorKey: 'groupId',
-				header: 'Group',
+				header: groupLabel(),
 				Cell: ({ cell }) => getGroupName(cell.getValue<string>())
 			},
 			{
 				accessorKey: 'userId',
-				header: 'User',
+				header: userLabel(),
 				Cell: ({ cell }) => getUserEmail(cell.getValue<string>())
 
 			}
@@ -105,7 +106,7 @@ const GroupUserTable = () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('groupUsers')).then((tdata: any) => {
 			if (tdata != undefined) {
-				setData(tdata);
+				setData(tdata.data);
 			}
 			setIsLoading(false);
 
@@ -144,14 +145,22 @@ const GroupUserTable = () => {
 
 	const handleGroupIdChange = (event: SyntheticEvent<Element, Event>, newValue: Groups) => {
 		if (newValue) {
-			setGroupId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setGroupId(parseInt(newValue.id));
+			} else {
+				setGroupId(newValue.id);
+			}
 			setGroupIdOption(newValue);
 		}
 	};
 
 	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User) => {
 		if (newValue) {
-			setUserId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setUserId(parseInt(newValue.id));
+			} else {
+				setUserId(newValue.id);
+			}
 			setUserIdOption(newValue);
 		}
 	};
@@ -198,28 +207,16 @@ const GroupUserTable = () => {
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
-					{/* 					<TextField
-						autoFocus
-						margin="dense"
-						id="groupId"
-						label="groupId"
-						type="number"
-						required
-						fullWidth
-						disabled={groupIdDisabled}
-						onChange={handleGroupIdChange}
-						value={groupId}
-					/> */}
 					<Autocomplete
 						options={groups}
 						getOptionLabel={(option) => option.name}
@@ -229,20 +226,8 @@ const GroupUserTable = () => {
 						onChange={handleGroupIdChange}
 						value={groupIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Group" />}
+						renderInput={(params) => <TextField {...params} label={groupLabel()} />}
 					/>
-					{/* 					<TextField
-						autoFocus
-						margin="dense"
-						id="userId"
-						label="userId"
-						type="number"
-						required
-						fullWidth
-						disabled={userIdDisabled}
-						onChange={handleUserIdChange}
-						value={userId}
-					/> */}
 					<Autocomplete
 						options={users}
 						getOptionLabel={(option) => option.email}
@@ -252,13 +237,13 @@ const GroupUserTable = () => {
 						onChange={handleUserIdChange}
 						value={userIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="User" />}
+						renderInput={(params) => <TextField {...params} label={userLabel()} />}
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} disabled={cantDelete} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} disabled={cantDelete} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -274,6 +259,8 @@ const GroupUserTable = () => {
 
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
 
 					if (typeof tgroupId === 'string') {

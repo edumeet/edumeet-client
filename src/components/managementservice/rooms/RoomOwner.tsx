@@ -6,6 +6,7 @@ import { Room, RoomOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, getDataByRoomId, patchData } from '../../../store/actions/managementActions';
 import { RoomProp } from './Room';
+import { userLabel } from '../../translated/translatedComponents';
 
 const RoomOwnerTable = (props: RoomProp) => {
 	const roomId = props.roomId;
@@ -93,7 +94,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 			},
 			{
 				accessorKey: 'userId',
-				header: 'User',
+				header: userLabel(),
 				Cell: ({ cell }) => getUserName(cell.getValue<string>())
 
 			},
@@ -176,7 +177,11 @@ const RoomOwnerTable = (props: RoomProp) => {
 
 	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User) => {
 		if (newValue) {
-			setUserId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setUserId(parseInt(newValue.id));
+			} else {
+				setUserId(newValue.id);
+			}
 			setUserIdOption(newValue);
 		}
 	};
@@ -285,7 +290,10 @@ const RoomOwnerTable = (props: RoomProp) => {
 					
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof tuserId === 'string') {
 						const tuser = users.find((x) => x.id === parseInt(tuserId));
 

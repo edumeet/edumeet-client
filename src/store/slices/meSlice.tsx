@@ -1,12 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuid } from 'uuid';
+import { ThumbnailItem } from '../../services/clientImageService';
 import { LocalCapabilities, MediaCapabilities } from '../../services/mediaService';
 import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
-import { roomActions } from './roomSlice';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { roomActions } from './roomSlice';
+import { BackgroundConfig, BackgroundType } from '../../utils/types';
 
 export interface MeState {
 	id: string;
+	selectedDestop: {
+		imageName: string,
+		imageUrl: string
+	} | null,
+	thumbnailList: ThumbnailItem[];
 	sessionId: string;
 	browser: Omit<DeviceInfo, 'bowser'>;
 	previewWebcamTrackId?: string;
@@ -39,10 +46,13 @@ export interface MeState {
 	screenAudioEnabled: boolean;
 	extraVideoEnabled: boolean;
 	extraAudioEnabled: boolean;
+	videoBackgroundEffect: BackgroundConfig | null;
 }
 
 const initialState: MeState = {
 	id: uuid(),
+	selectedDestop: null,
+	thumbnailList: [],
 	sessionId: 'temp',
 	browser: deviceInfo(),
 	canSendMic: true,
@@ -72,6 +82,7 @@ const initialState: MeState = {
 	screenAudioEnabled: false,
 	extraVideoEnabled: false,
 	extraAudioEnabled: false,
+	videoBackgroundEffect: null,
 };
 
 const meSlice = createSlice({
@@ -83,6 +94,15 @@ const meSlice = createSlice({
 		}),
 		setMe: ((state, action: PayloadAction<string>) => {
 			state.id = action.payload;
+		}),
+		setSelectedDestop: ((state, action: PayloadAction<{ imageName: string, imageUrl: string } | null>) => {
+			state.selectedDestop = action.payload;
+		}),
+		setThumbnailList: ((state, action: PayloadAction<ThumbnailItem[]>) => {
+			state.thumbnailList = [ ...action.payload ];
+		}),
+		addThumbnail: ((state, action: PayloadAction<ThumbnailItem>) => {
+			state.thumbnailList = [ ...state.thumbnailList, action.payload ];
 		}),
 		setPreviewWebcamTrackId: ((state, action: PayloadAction<string | undefined>) => {
 			state.previewWebcamTrackId = action.payload;
@@ -168,6 +188,14 @@ const meSlice = createSlice({
 		}),
 		setExtraAudioEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.extraAudioEnabled = action.payload;
+		}),
+		setVideoBackgroundEffect: ((state, action: PayloadAction<BackgroundConfig | null>) => {
+			state.videoBackgroundEffect = action.payload;
+		}),
+		setVideoBackgroundEffectDisabled: ((state) => {
+			state.videoBackgroundEffect = {
+				type: BackgroundType.NONE
+			};
 		}),
 	},
 	extraReducers: (builder) => {

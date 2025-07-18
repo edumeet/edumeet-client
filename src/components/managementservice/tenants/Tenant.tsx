@@ -7,6 +7,7 @@ import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import TenantFQDNTable from './TenatnFQDN';
 import TenantOAuthTable from './TenantOAuth';
+import { addNewLabel, applyLabel, authenticationLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
 export interface TenantProp {
 	tenantId: number;
 }
@@ -25,11 +26,11 @@ const TenantTable = () => {
 			},
 			{
 				accessorKey: 'name',
-				header: 'Name'
+				header: nameLabel()
 			},
 			{
 				accessorKey: 'description',
-				header: 'description'
+				header: descLabel()
 			}
 		],
 		[],
@@ -120,14 +121,14 @@ const TenantTable = () => {
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-			Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-					These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<TextField
@@ -152,17 +153,18 @@ const TenantTable = () => {
 
 						value={description}
 					/>
-					{ id !=0 && <>Tenant domains
+					{ id !=0 && <>
+						{`${tenantLabel()} ${fqdnLabel()}`}
 						<TenantFQDNTable tenantId={id} />
-					Tenant Auth
+						{`${tenantLabel()} ${authenticationLabel()}`}
 						<TenantOAuthTable tenantId={id} />
 					</>}
 
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant}>OK</Button>
+					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -178,6 +180,8 @@ const TenantTable = () => {
 
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
 
 					if (typeof tname === 'string') {

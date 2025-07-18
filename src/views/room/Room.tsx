@@ -5,6 +5,8 @@ import TopBar from '../../components/topbar/TopBar';
 import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
 import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import AudioPeers from '../../components/audiopeers/AudioPeers';
+import BackgroundSelectDialog from '../../components/backgroundselectdialog/BackgroundSelectDialog';
+import VideoBackgroundDialog from '../../components/backgroundselectdialog/VideoBackgroundDialog';
 import LobbyDialog from '../../components/lobbydialog/LobbyDialog';
 import FilesharingDialog from '../../components/filesharingdialog/FilesharingDialog';
 import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog';
@@ -75,6 +77,8 @@ const Room = (): JSX.Element => {
 			/>
 			<MainContent />
 			<FullscreenVideo />
+			<BackgroundSelectDialog />
+			<VideoBackgroundDialog />
 			<LobbyDialog />
 			<Settings />
 			<Help />

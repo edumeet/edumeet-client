@@ -5,6 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Tenant, TenantOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantLabel, tenantOwnersLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
 
 const TenantOwnerTable = () => {
 	const dispatch = useAppDispatch();
@@ -14,12 +15,12 @@ const TenantOwnerTable = () => {
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
 
 	const getTenantName = (id: string): string => {
-		const t = tenants.find((type) => type.id === parseInt(id));
+		const t = tenants.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined tenant';
+			return `${undefinedLabel()} ${tenantLabel()}`;
 		}
 	};
 
@@ -38,7 +39,7 @@ const TenantOwnerTable = () => {
 	} ]);
 	// nested data is ok, see accessorKeys in ColumnDef below
 	const getUserEmail = (id: string): string => {
-		const t = users.find((type) => type.id === parseInt(id));
+		const t = users.find((type) => type.id == parseInt(id));
 	
 		if (t && t.email) {
 			return t.email;
@@ -57,13 +58,13 @@ const TenantOwnerTable = () => {
 			},
 			{
 				accessorKey: 'tenantId',
-				header: 'Tenant',
+				header: tenantLabel(),
 				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
 
 			},
 			{
 				accessorKey: 'userId',
-				header: 'User',
+				header: userLabel(),
 				Cell: ({ cell }) => getUserEmail(cell.getValue<string>())
 
 			},
@@ -141,13 +142,22 @@ const TenantOwnerTable = () => {
 
 	const handleTenantIdChange = (event: SyntheticEvent<Element, Event>, newValue: Tenant) => {
 		if (newValue) {
-			setTenantId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setTenantId(parseInt(newValue.id));
+			} else {
+				setTenantId(newValue.id);
+			}
+			
 			setTenantIdOption(newValue);
 		}
 	};
 	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User) => {
 		if (newValue) {
-			setUserId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setUserId(parseInt(newValue.id));
+			} else {
+				setUserId(newValue.id);
+			}
 			setUserIdOption(newValue);
 		}
 	};
@@ -197,16 +207,16 @@ const TenantOwnerTable = () => {
 
 	return <>
 		<div>
-			<h4>Tenant owners</h4>
+			<h4>{tenantOwnersLabel()}</h4>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<Autocomplete
@@ -218,7 +228,7 @@ const TenantOwnerTable = () => {
 						onChange={handleUserIdChange}
 						value={userIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="User" />}
+						renderInput={(params) => <TextField {...params} label={userLabel()} />}
 					/>
 					<Autocomplete
 						options={tenants}
@@ -229,36 +239,13 @@ const TenantOwnerTable = () => {
 						onChange={handleTenantIdChange}
 						value={tenantIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Tenant" />}
+						renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
 					/>
-					{/* <TextField
-						autoFocus
-						margin="dense"
-						id="tenantId"
-						label="tenantId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleTenantIdChange}
-						value={tenantId}
-					/>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="userId"
-						label="userId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleUserIdChange}
-						value={userId}
-					/> */}
-
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -272,11 +259,17 @@ const TenantOwnerTable = () => {
 					const ttenantId=r[1].getValue();
 					const tuserId=r[2].getValue();
 					
+					// eslint-disable-next-line no-console
+					console.log('ttenantId', typeof ttenantId, ttenantId, 'tuserId', tuserId, typeof tuserId);
+
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof ttenantId === 'string') {
-						const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
+						const ttenant = tenants.find((x) => x.id == parseInt(ttenantId));
 
 						if (ttenant) {
 							setTenantIdOption(ttenant);
@@ -286,7 +279,7 @@ const TenantOwnerTable = () => {
 						setTenantId(0);
 					}
 					if (typeof tuserId === 'string') {
-						const tuser = users.find((x) => x.id === parseInt(tuserId));
+						const tuser = users.find((x) => x.id == parseInt(tuserId));
 
 						if (tuser) {
 							setUserIdOption(tuser);

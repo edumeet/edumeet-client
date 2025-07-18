@@ -8,6 +8,7 @@ import { Groups, Tenant } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel, undefinedLabel } from '../../translated/translatedComponents';
 
 const GroupTable = () => {
 	const dispatch = useAppDispatch();
@@ -17,12 +18,12 @@ const GroupTable = () => {
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
 
 	const getTenantName = (id: string): string => {
-		const t = tenants.find((type) => type.id === parseInt(id));
+		const t = tenants.find((type) => type.id == parseInt(id));
 
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined tenant';
+			return `${undefinedLabel()} ${tenantLabel()}`;
 		}
 	};
 
@@ -37,15 +38,15 @@ const GroupTable = () => {
 			},
 			{
 				accessorKey: 'name',
-				header: 'Name'
+				header: nameLabel()
 			},
 			{
 				accessorKey: 'description',
-				header: 'description'
+				header: descLabel()
 			},
 			{
 				accessorKey: 'tenantId',
-				header: 'Tenant',
+				header: tenantLabel(),
 				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
 			}
 		],
@@ -126,7 +127,11 @@ const GroupTable = () => {
 
 	const handleTenantIdChange = (event: SyntheticEvent<Element, Event>, newValue: Tenant) => {
 		if (newValue) {
-			setTenantId(newValue.id);
+			if (typeof newValue.id != 'number') {
+				setTenantId(parseInt(newValue.id));
+			} else {
+				setTenantId(newValue.id);
+			}
 			setTenantIdOption(newValue);
 		}
 	};
@@ -181,22 +186,21 @@ const GroupTable = () => {
 		<div>
 			
 			<Button variant="outlined" onClick={() => handleOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr />
-
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<TextField
 						autoFocus
 						margin="dense"
 						id="name"
-						label="name"
+						label={nameLabel()}
 						type="text"
 						required
 						fullWidth
@@ -207,25 +211,13 @@ const GroupTable = () => {
 						autoFocus
 						margin="dense"
 						id="description"
-						label="description"
+						label={descLabel()}
 						type="text"
 						fullWidth
 						disabled={descriptionDisabled}
 						onChange={handleDescriptionChange}
 						value={description}
 					/>
-					{/* <TextField
-						autoFocus
-						margin="dense"
-						id="tenantId"
-						label="tenantId"
-						type="number"
-						required
-						fullWidth
-						disabled={tenantIdDisabled}
-						onChange={handleTenantIdChange}
-						value={tenantId}
-					/> */}
 					<Autocomplete
 						options={tenants}
 						getOptionLabel={(option) => option.name}
@@ -236,13 +228,13 @@ const GroupTable = () => {
 						onChange={handleTenantIdChange}
 						value={tenantIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Tenant" />}
+						renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} disabled={cantDelete} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} disabled={cantDelete} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -259,7 +251,10 @@ const GroupTable = () => {
 
 					if (typeof tid === 'number') {
 						setId(tid);
+					} else if (typeof tid == 'string') {
+						setId(parseInt(tid));
 					}
+
 					if (typeof tname === 'string') {
 						setName(tname);
 					} else {
@@ -271,7 +266,7 @@ const GroupTable = () => {
 						setDescription('');
 					}
 					if (typeof ttenantId === 'string') {
-						const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
+						const ttenant = tenants.find((x) => x.id == parseInt(ttenantId));
 
 						if (ttenant) {
 							setTenantIdOption(ttenant);

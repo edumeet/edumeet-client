@@ -59,7 +59,9 @@ export const getData = (serviceName:string): AppThunk<Promise<object | undefined
 			{
 				query: {
 					$sort: {
-						id: 1
+						id: 1,
+						$limit: 9999
+					
 					}
 				}
 			}
@@ -94,7 +96,43 @@ export const getDataByID = (id:string|number, serviceName:string): AppThunk<Prom
 				query: {
 					id: id,
 					$sort: {
-						id: 1
+						id: 1,
+						$limit: 9999
+					}
+				}
+			}
+		);
+	
+	} catch (error) {
+		if (error instanceof Error) {
+			dispatch(notificationsActions.enqueueNotification({
+				message: `Failed to get data: ${error.toString()}`,
+				options: { variant: 'error' }
+			}));
+		}
+	}
+
+	return data;
+};
+export const getDataByTenantID = (id:string|number, serviceName:string): AppThunk<Promise<object | undefined>> => async (
+	dispatch,
+	_getState,
+	{ managementService }
+): Promise<object | undefined> => {
+
+	logger.debug('getDataByTenantID() [serviceName:%s]', serviceName);
+
+	let data: object | undefined;
+
+	try {
+
+		data = await (await managementService).service(serviceName).find(
+			{
+				query: {
+					tenantId: id,
+					$sort: {
+						id: 1,
+						$limit: 9999
 					}
 				}
 			}
