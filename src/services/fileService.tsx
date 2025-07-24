@@ -3,13 +3,21 @@ import { Logger } from '../utils/Logger';
 
 const logger = new Logger('FileService');
 
+export type LocalTorrentFile = WebTorrent.TorrentFile & {
+  blob:() => Promise<Blob>;
+};
+
+export type LocalWebTorrent = WebTorrent.Torrent & {
+  files?: LocalTorrentFile[];
+};
+
 export class FileService {
 	private webTorrent?: WebTorrent.Instance;
 	public tracker?: string;
 	public iceServers: RTCIceServer[] = [];
 	private initialized = false;
 
-	public getTorrent(magnetURI: string) {
+	public async getTorrent(magnetURI: string) {
 		return this.webTorrent?.get(magnetURI) || undefined;
 	}
 
@@ -43,16 +51,27 @@ export class FileService {
 		});
 	}
 
-	public async downloadFile(magnetURI: string): Promise<WebTorrent.Torrent> {
-		const existingTorrent = this.webTorrent?.get(magnetURI);
+	public async downloadFile(magnetURI: string): Promise<LocalWebTorrent | undefined > {
+		if (!this.initialized || !this.webTorrent) {
+			const Torrent = await import('webtorrent');
 
+			this.webTorrent = new Torrent.default({
+				tracker: {
+					rtcConfig: {
+						iceServers: this.iceServers,
+					}
+				},
+			});
+		}
+
+		// Await!
+		const existingTorrent = await this.webTorrent?.get(magnetURI);
+		
 		if (existingTorrent)
-			return existingTorrent;
+			return existingTorrent as LocalWebTorrent; 
 
 		return new Promise((resolve) => {
-			this.webTorrent?.add(magnetURI, (torrent) => {
-				return resolve(torrent);
-			});
+			return resolve(this.webTorrent?.add(magnetURI) as LocalWebTorrent);
 		});
 	}
 }
