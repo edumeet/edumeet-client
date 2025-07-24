@@ -52,17 +52,7 @@ export class FileService {
 	}
 
 	public async downloadFile(magnetURI: string): Promise<LocalWebTorrent | undefined > {
-		if (!this.initialized || !this.webTorrent) {
-			const Torrent = await import('webtorrent');
-
-			this.webTorrent = new Torrent.default({
-				tracker: {
-					rtcConfig: {
-						iceServers: this.iceServers,
-					}
-				},
-			});
-		}
+		await this.init();
 
 		// Await!
 		const existingTorrent = await this.webTorrent?.get(magnetURI);
