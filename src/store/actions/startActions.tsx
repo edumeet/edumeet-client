@@ -215,26 +215,22 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				break;
 			}
 
-			// case ' ': {
-			// 	const audioInProgress = getState().me.audioInProgress;
-			//
-			// 	if (audioInProgress) return;
-			//
-			// 	const hasAudioPermission = audioPermissionSelector(getState());
-			// 	const canSendMic = getState().me.canSendMic;
-			//
-			// 	if (!canSendMic || !hasAudioPermission) return;
-			//
-			// 	const micProducer = getState().producers.mic;
-			//
-			// 	if (!micProducer) {
-			// 		dispatch(updateMic({ start: true }));
-			// 	} else if (micProducer.paused) {
-			// 		dispatch(producersActions.setProducerResumed({ source: 'mic', local: true }));
-			// 	}
-			//
-			// 	break;
-			// }
+			case ' ': {
+				const audioInProgress = getState().me.audioInProgress;
+
+				if (audioInProgress) return;
+
+				const hasAudioPermission = audioPermissionSelector(getState());
+				const canSendMic = getState().me.canSendMic;
+
+				if (!hasAudioPermission || !canSendMic) return;
+
+				if (!getState().me.micEnabled) {
+					dispatch(updateMic());
+				}
+
+				break;
+			}
 
 			default: {
 				break;
@@ -258,25 +254,22 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 		logger.debug('[keyup:%s]', key);
 
 		switch (key) {
-			// case ' ': {
-			// 	const audioInProgress = getState().me.audioInProgress;
-			//
-			// 	if (audioInProgress) return;
-			//
-			// 	const hasAudioPermission = audioPermissionSelector(getState());
-			// 	const canSendMic = getState().me.canSendMic;
-			//
-			// 	if (!canSendMic || !hasAudioPermission) return;
-			//
-			// 	const micProducer = getState().producers.mic;
-			//
-			// 	if (!micProducer) return;
-			//
-			// 	if (!micProducer.paused) {
-			// 		dispatch(producersActions.setProducerPaused({ source: 'mic', local: true }));
-			// 	}
-			// 	break;
-			// }
+			case ' ': {
+				const audioInProgress = getState().me.audioInProgress;
+
+				if (audioInProgress) return;
+
+				const hasAudioPermission = audioPermissionSelector(getState());
+				const canSendMic = getState().me.canSendMic;
+
+				if (!hasAudioPermission || !canSendMic) return;
+
+				if (getState().me.micEnabled) {
+					dispatch(stopMic());
+				}
+
+				break;
+			}
 
 			default: {
 				break;
