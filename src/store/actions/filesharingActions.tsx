@@ -3,7 +3,7 @@ import { AppThunk } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
-import { filesharingTooBigLabel } from '../../components/translated/translatedComponents';
+import { filesharingTooBigLabel, filesharingUnsupportedLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('FilesharingActions');
 
@@ -22,6 +22,15 @@ export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 	dispatch(roomActions.updateRoom({ startFileSharingInProgress: true }));
 
 	try {
+
+		if (!fileService.tracker) {
+			dispatch(notificationsActions.enqueueNotification({
+				message: filesharingUnsupportedLabel(),
+				options: { variant: 'error' }
+			}));
+			throw Error('No tracker configured');
+		}
+
 		for (let index = 0; index < files.length; index++) {
 			const element = files[index];
 
