@@ -22,7 +22,6 @@ export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 	dispatch(roomActions.updateRoom({ startFileSharingInProgress: true }));
 
 	try {
-
 		if (!fileService.tracker) {
 			dispatch(notificationsActions.enqueueNotification({
 				message: filesharingUnsupportedLabel(),
@@ -31,7 +30,7 @@ export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 			throw Error('No tracker configured');
 		}
 
-		for (let index = 0; index < files.length; index++) {
+    for (let index = 0; index < files.length; index++) {
 			const element = files[index];
 
 			if (element.size > fileService.maxFileSize) {

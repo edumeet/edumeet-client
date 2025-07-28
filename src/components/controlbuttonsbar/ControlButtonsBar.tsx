@@ -39,6 +39,7 @@ const ControlButtonsBar = (): JSX.Element => {
 	const canRecord = useAppSelector((state) => state.me.canRecord);
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled); // eslint-disable-line
+	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 
 	const [ participantListAnchorEl, setParticipantAnchorEl ] = useState<HTMLElement | null>();
 	const isParticipantListOpen = Boolean(participantListAnchorEl);
@@ -70,7 +71,7 @@ const ControlButtonsBar = (): JSX.Element => {
 				<MicButton offColor='error' toolTipLocation='bottom' />
 				<WebcamButton offColor='error' toolTipLocation='bottom' />
 				{ !isMobile && <ScreenshareButton toolTipLocation='bottom' /> }
-				{ !isMobile && <RaiseHandButton toolTipLocation='bottom' /> }
+				{ !isMobile && raiseHandEnabled && <RaiseHandButton toolTipLocation='bottom' /> }
 				{ !isMobile && <ParticipantsButton toolTipLocation='bottom' onColor='primary' /> }
 				{ isMobile && <ParticipantsButton onClick={(event) => setParticipantAnchorEl(event.currentTarget)} toolTipLocation='bottom' /> }
 				{ !isMobile && chatEnabled && <ChatButton toolTipLocation='bottom' onColor='primary' /> }
