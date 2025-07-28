@@ -1,7 +1,6 @@
 import { Button, LinearProgress, styled } from '@mui/material';
 import { saveAs } from 'file-saver';
 import { useContext, useEffect, useState } from 'react';
-import WebTorrent, { TorrentFile } from 'webtorrent';
 import { useAppDispatch } from '../../store/hooks';
 import { notificationsActions } from '../../store/slices/notificationsSlice';
 import { ServiceContext } from '../../store/store';
@@ -13,6 +12,7 @@ import {
 } from '../translated/translatedComponents';
 import { FilesharingFile } from '../../utils/types';
 import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
+import { LocalTorrentFile, LocalWebTorrent } from '../../services/fileService';
 
 interface ListFilerProps {
 	file: FilesharingFile;
@@ -38,7 +38,7 @@ const ListFile = ({
 }: ListFilerProps): JSX.Element => {
 	const { fileService } = useContext(ServiceContext);
 	const dispatch = useAppDispatch();
-	const [ torrent, setTorrent ] = useState<WebTorrent.Torrent | undefined>();
+	const [ torrent, setTorrent ] = useState<LocalWebTorrent | undefined>();
 	const [ done, setDone ] = useState<boolean>(false);
 	const [ progress, setProgress ] = useState<number>(0);
 	const [ startInProgress, setStartInProgress ] = useState<boolean>(false);
@@ -46,20 +46,24 @@ const ListFile = ({
 	useEffect(() => {
 		if (file.started || isMe) {
 			(async () => {
-				const torrentFile = await fileService.getTorrent(file.magnetURI);
+				if (!torrent) {
+					const torrentFile = await fileService.getTorrent(file.magnetURI) as LocalWebTorrent;
 
-				setTorrent(torrentFile);
-				setDone(isMe || Boolean(torrentFile?.done));
-				setProgress(torrentFile?.progress || 0);
+					if (torrentFile) {
+						setTorrent(torrentFile);
+						// setDone(isMe || Boolean(torrentFile?.done));
+						setProgress(torrentFile?.progress || 0);
+					}
+				}
 			})();
 		}
 	}, []);
 
 	useEffect(() => {
+		
 		if (torrent) {
 			torrent.on('download', () => {
-				if (torrent.progress > progress)
-					setProgress(torrent.progress || 0);
+				setProgress(torrent.downloaded / torrent.length || 0);
 			});
 			torrent.on('done', () => setDone(true));
 
@@ -70,35 +74,37 @@ const ListFile = ({
 				}
 			};
 		}
+		
 	}, [ torrent ]);
 
 	const startTorrent = async (): Promise<void> => {
 		setStartInProgress(true);
+		
+		dispatch(roomSessionsActions.updateFile({ ...file, started: true }));
 
 		const newTorrent = await fileService.downloadFile(file.magnetURI);
 
 		setTorrent(newTorrent);
-		dispatch(roomSessionsActions.updateFile({ ...file, started: true }));
+
 		setStartInProgress(false);
 	};
 
-	const saveSubFile = (saveFile: TorrentFile): void => {
-		saveFile.getBlob((err, blob) => {
-			if (err)
-				return dispatch(notificationsActions.enqueueNotification({
-					message: saveFileErrorLabel(),
-					options: { variant: 'error' }
-				}));
+	const saveSubFile = async (saveFile: LocalTorrentFile): Promise<void> => {
 
-			if (blob)
-				saveAs(blob, saveFile.name);
-		});
+		try {
+			saveAs(await saveFile.blob(), saveFile.name);
+		} catch (error) {
+			dispatch(notificationsActions.enqueueNotification({
+				message: saveFileErrorLabel(),
+				options: { variant: 'error' }
+			}));
+		}
 	};
 
 	return (
 		<FileDiv>
 			{ file.started || isMe ?
-				torrent?.files.map((subFile, index) => (
+				torrent?.files?.map((subFile, index) => (
 					<FileDiv key={index}>
 						<FileInfoDiv>
 							({ isMe ? meLabel() : file.displayName }) { subFile.name }
@@ -106,7 +112,7 @@ const ListFile = ({
 								<Button
 									aria-label={saveFileLabel()}
 									variant='contained'
-									onClick={() => saveSubFile(subFile)}
+									onClick={() => saveSubFile(subFile as LocalTorrentFile)}
 									size='small'
 								>
 									{ saveFileLabel() }
@@ -117,7 +123,8 @@ const ListFile = ({
 				))
 				:
 				<FileInfoDiv>
-					{ file.displayName }
+					{ file.displayName }: 
+					{ new URLSearchParams(file.magnetURI.slice(8)).get('dn') }
 					{ !file.started &&
 						<Button
 							aria-label={downloadFileLabel()}
@@ -132,10 +139,12 @@ const ListFile = ({
 				</FileInfoDiv>
 			}
 			{ file.started && !done &&
-				<LinearProgress
-					variant='determinate'
-					value={progress * 100}
-				/>
+				<>
+					<LinearProgress
+						variant='determinate'
+						value={progress * 100} />
+					<div>{ Math.round(progress * 100) }%</div>
+				</>
 			}
 		</FileDiv>
 	);

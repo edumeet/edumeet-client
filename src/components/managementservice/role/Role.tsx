@@ -130,7 +130,9 @@ const RoleTable = () => {
 	const handleClickOpenNoreset = () => {
 		setCheckedDisabled(false);
 		setCantDelete(false);
+		setChecked(new Array(permissions.length).fill(false));
 		setOpen(true);
+
 	};
 
 	const handleNameChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -194,14 +196,13 @@ const RoleTable = () => {
 
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(getData('rolePermissions')).then((rp: any) => {
-
 				checked.forEach(async (element, index) => {
-					const c = rp.data.filter((x: RolePermissions) => x.permissionId == index+1);
+					
+					const c = rp.data.filter((x: RolePermissions) => x.permissionId == index+1 && x.roleId==id);
 
 					if ((c.length === 0) === element) {
 	
 						if (element) {
-
 							dispatch(createData({ 
 								roleId: id,
 								permissionId: index+1
@@ -382,7 +383,8 @@ const RoleTable = () => {
 						const a = new Array(permissions.length).fill(false);
 
 						rp.data.forEach((element: RolePermissions) => {
-							a[element.permissionId-1] = true;
+							if (element.roleId == tid)
+								a[parseInt(element.permissionId.toString())-1] = true;
 						});
 				
 						setChecked(a);

@@ -56,7 +56,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 	]);
 
 	const getUserName = (id: string): string => {
-		const t = users.find((type) => type.id === parseInt(id));
+		const t = users.find((type) => type.id == parseInt(id));
 	
 		if (t && t.email) {
 			return t.email;
@@ -68,7 +68,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 	// nested data is ok, see accessorKeys in ColumnDef below
 	
 	const getRoomName = (id: string): string => {
-		const t = rooms.find((type) => type.id === parseInt(id));
+		const t = rooms.find((type) => type.id == parseInt(id));
 	
 		if (t && t.name) {
 			return t.name;

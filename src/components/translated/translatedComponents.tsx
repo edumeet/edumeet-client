@@ -397,6 +397,11 @@ export const filesharingLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Filesharing'
 });
 
+export const filesharingTooBigLabel = (): string => intl.formatMessage({
+	id: 'filesharing.filesharingTooBig',
+	defaultMessage: 'Filesize is too big!'
+});
+
 export const noFilesLabel = (): string => intl.formatMessage({
 	id: 'filesharing.noFiles',
 	defaultMessage: 'No files'

@@ -65,7 +65,7 @@ const ListMe = (): JSX.Element => {
 
 	return (
 		<MeDiv>
-			<MeAvatar src={picture ?? '/images/buddy.svg'} />
+			<MeAvatar src={picture?.trim() || '/images/buddy.svg'} />
 			{ isEditing ?
 				<StyledTextField
 					value={`${prefix}${value}`}

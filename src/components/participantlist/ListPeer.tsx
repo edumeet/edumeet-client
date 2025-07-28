@@ -75,7 +75,7 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): JSX.Element => {
 				if (isSelected) dispatch(roomSessionsActions.deselectPeer({ sessionId: peer.sessionId, peerId: peer.id }));
 				else dispatch(roomSessionsActions.selectPeer({ sessionId: peer.sessionId, peerId: peer.id }));
 			}}>
-				<PeerAvatar src={peer.picture ?? '/images/buddy.svg'} />
+				<PeerAvatar src={peer.picture?.trim() || '/images/buddy.svg'} />
 				{ peer.recording && <RecordIcon color='error' /> }
 				{ peer.raisedHand &&
 					<IconButton
