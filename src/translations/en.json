@@ -34,6 +34,7 @@
 	"filesharing.error": "There was a filesharing error",
 	"filesharing.missingSeeds": "If this process takes a long time, there might not be anyone seeding this torrent. Try asking someone to reupload the file that you want.",
 	"filesharing.save": "Save",
+	"filesharing.filesharingTooBig": "Filesize is too big!",
 	"filesharing.saveFileError": "Unable to save file",
 	"filesharing.startingFileShare": "Attempting to share file",
 	"filesharing.successfulFileShare": "File successfully shared",

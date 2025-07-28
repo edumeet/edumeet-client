@@ -62,6 +62,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	const {
 		peers,
 		tracker,
+		maxFileSize,
 		chatHistory,
 		fileHistory,
 		countdownTimer,
@@ -75,6 +76,9 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	});
 
 	fileService.tracker = tracker;
+	if (maxFileSize)
+		fileService.maxFileSize = maxFileSize;
+	
 	fileService.iceServers = mediaService.iceServers;
 
 	batch(() => {

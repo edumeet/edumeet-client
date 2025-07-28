@@ -2,6 +2,8 @@ import { roomActions } from '../slices/roomSlice';
 import { AppThunk } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { Logger } from '../../utils/Logger';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { filesharingTooBigLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('FilesharingActions');
 
@@ -17,10 +19,20 @@ export const sendFiles = (files: FileList): AppThunk<Promise<void>> => async (
 	{ signalingService, fileService }
 ): Promise<void> => {
 	logger.debug('sendFiles() [files:"%s"]', files);
-
 	dispatch(roomActions.updateRoom({ startFileSharingInProgress: true }));
 
 	try {
+		for (let index = 0; index < files.length; index++) {
+			const element = files[index];
+
+			if (element.size > fileService.maxFileSize) {
+				dispatch(notificationsActions.enqueueNotification({
+					message: filesharingTooBigLabel(),
+					options: { variant: 'error' }
+				}));
+				throw Error('file too big');
+			}
+		}
 		const sessionId = getState().me.sessionId;
 		const magnetURI = await fileService.sendFiles(files);
 

@@ -14,6 +14,7 @@ export type LocalWebTorrent = WebTorrent.Torrent & {
 export class FileService {
 	private webTorrent?: WebTorrent.Instance;
 	public tracker?: string;
+	public maxFileSize: number = 100_000_000; 
 	public iceServers: RTCIceServer[] = [];
 	private initialized = false;
 
