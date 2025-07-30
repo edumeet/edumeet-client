@@ -5,6 +5,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { notificationsActions } from '../../store/slices/notificationsSlice';
 import { ServiceContext } from '../../store/store';
 import {
+	deleteLabel,
 	downloadFileLabel,
 	meLabel,
 	saveFileErrorLabel,
@@ -13,6 +14,7 @@ import {
 import { FilesharingFile } from '../../utils/types';
 import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
 import { LocalTorrentFile, LocalWebTorrent } from '../../services/fileService';
+import { clearFile } from '../../store/actions/filesharingActions';
 
 interface ListFilerProps {
 	file: FilesharingFile;
@@ -51,7 +53,7 @@ const ListFile = ({
 
 					if (torrentFile) {
 						setTorrent(torrentFile);
-						// setDone(isMe || Boolean(torrentFile?.done));
+						setDone(isMe || Boolean(torrentFile?.done));
 						setProgress(torrentFile?.progress || 0);
 					}
 				}
@@ -100,14 +102,29 @@ const ListFile = ({
 			}));
 		}
 	};
+	const handleClearFile = (): void => {
+		const magnetURI = file.magnetURI;
+
+		dispatch(clearFile(magnetURI));
+	};
 
 	return (
 		<FileDiv>
-			{ file.started || isMe ?
+			{ file?.started || isMe ?
 				torrent?.files?.map((subFile, index) => (
 					<FileDiv key={index}>
 						<FileInfoDiv>
 							({ isMe ? meLabel() : file.displayName }) { subFile.name }
+							{ done && isMe &&
+								<Button
+									aria-label={deleteLabel()}
+									variant='contained'
+									onClick={handleClearFile}
+									size='small'
+								>
+									{deleteLabel()}
+								</Button>
+							}
 							{ done && !isMe &&
 								<Button
 									aria-label={saveFileLabel()}
