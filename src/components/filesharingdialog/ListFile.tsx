@@ -1,4 +1,4 @@
-import { Button, LinearProgress, styled } from '@mui/material';
+import { Button, ButtonGroup, LinearProgress, styled, Typography } from '@mui/material';
 import { saveAs } from 'file-saver';
 import { useContext, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../store/hooks';
@@ -66,6 +66,8 @@ const ListFile = ({
 		if (torrent) {
 			torrent.on('download', () => {
 				setProgress(torrent.downloaded / torrent.length || 0);
+				if (torrent.downloaded === torrent.length)
+					setDone(true);
 			});
 			torrent.on('done', () => setDone(true));
 
@@ -107,25 +109,41 @@ const ListFile = ({
 
 		dispatch(clearFile(magnetURI));
 	};
+	const handleClearFileLocaly = (): void => {
+		const magnetURI = file.magnetURI;
 
+		fileService.removeFile(magnetURI);
+		setDone(false);
+		setProgress(0);
+		dispatch(roomSessionsActions.updateFile({ ...file, started: false }));
+	};
+	
 	return (
 		<FileDiv>
 			{ file?.started || isMe ?
 				torrent?.files?.map((subFile, index) => (
 					<FileDiv key={index}>
 						<FileInfoDiv>
-							({ isMe ? meLabel() : file.displayName }) { subFile.name }
-							{ done && isMe &&
+							<Typography noWrap={false}
+								sx={{
+									whiteSpace: 'normal', // allow breaking
+									overflowWrap: 'break-word', // break long words
+									wordBreak: 'break-word', // fallback
+									lineHeight: 1.2,
+								}}>({ isMe ? meLabel() : file.displayName }) { subFile.name }</Typography>
+							<ButtonGroup variant="contained" aria-label="Basic button group">
+								{ done && isMe &&
 								<Button
 									aria-label={deleteLabel()}
 									variant='contained'
+									color='error'
 									onClick={handleClearFile}
 									size='small'
 								>
 									{deleteLabel()}
 								</Button>
-							}
-							{ done && !isMe &&
+								}
+								{ done && !isMe &&
 								<Button
 									aria-label={saveFileLabel()}
 									variant='contained'
@@ -134,25 +152,48 @@ const ListFile = ({
 								>
 									{ saveFileLabel() }
 								</Button>
-							}
+								}
+								{ !isMe &&
+								<Button
+									aria-label={deleteLabel()}
+									variant='contained'
+									color='warning'
+									onClick={handleClearFileLocaly}
+									size='small'
+								>
+									{ deleteLabel() }
+								</Button>
+								}
+							</ButtonGroup>							
 						</FileInfoDiv>
 					</FileDiv>
 				))
 				:
 				<FileInfoDiv>
-					{ file.displayName }: 
-					{ new URLSearchParams(file.magnetURI.slice(8)).get('dn') }
+					<Typography noWrap={false}
+						sx={{
+							whiteSpace: 'normal', // allow breaking
+							overflowWrap: 'break-word', // break long words
+							wordBreak: 'break-word', // fallback
+							lineHeight: 1.2,
+						}}>
+						{ file.displayName }: { new URLSearchParams(file.magnetURI.slice(8)).get('dn') }
+					</Typography>
+
 					{ !file.started &&
-						<Button
-							aria-label={downloadFileLabel()}
-							variant='contained'
-							onClick={startTorrent}
-							disabled={startInProgress}
-							size='small'
-						>
-							{ downloadFileLabel() }
-						</Button>
+						<ButtonGroup variant="contained" aria-label="Basic button group">
+							<Button
+								aria-label={downloadFileLabel()}
+								variant='contained'
+								onClick={startTorrent}
+								disabled={startInProgress}
+								size='small'
+							>
+								{ downloadFileLabel() }
+							</Button>
+						</ButtonGroup>
 					}
+					
 				</FileInfoDiv>
 			}
 			{ file.started && !done &&
@@ -161,6 +202,14 @@ const ListFile = ({
 						variant='determinate'
 						value={progress * 100} />
 					<div>{ Math.round(progress * 100) }%</div>
+					<Button
+						aria-label={deleteLabel()}
+						variant='contained'
+						onClick={handleClearFileLocaly}
+						size='small'
+					>
+						{ deleteLabel() }
+					</Button>
 				</>
 			}
 		</FileDiv>
