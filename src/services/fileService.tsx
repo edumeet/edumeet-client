@@ -46,7 +46,7 @@ export class FileService {
 		return new Promise((resolve) => {
 			this.webTorrent?.seed(
 				files,
-				this.tracker ? { announceList: [ [ this.tracker ] ] } : undefined,
+				this.tracker ? { announceList: [ [ this.tracker ] ], private: true } : undefined,
 				(newTorrent) => resolve(newTorrent.magnetURI)
 			);
 		});
