@@ -79,7 +79,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	if (maxFileSize)
 		fileService.maxFileSize = maxFileSize;
 	
-	fileService.iceServers = mediaService.iceServers;
+	// this does nothing 
+	// fileService.iceServers = mediaService.iceServers; 
 
 	batch(() => {
 		
