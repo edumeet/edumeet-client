@@ -7,7 +7,7 @@ import { Logger } from '../../utils/Logger';
 const logger = new Logger('FilesharingMiddleware');
 
 const createFilesharingMiddleware = ({
-	signalingService,
+	signalingService, fileService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createFilesharingMiddleware()');
 
@@ -27,9 +27,20 @@ const createFilesharingMiddleware = ({
 								dispatch(roomSessionsActions.addFile(file));
 								break;
 							}
+							case 'clearFile': {
+								const { magnetURI } = notification.data;
+
+								dispatch(roomSessionsActions.clearFile({ magnetURI }));
+							
+								fileService.removeFile(magnetURI);
+
+								break;
+							}
 
 							case 'moderator:clearFiles': {
 								dispatch(roomSessionsActions.clearFiles());
+
+								fileService.removeFiles();
 
 								break;
 							}

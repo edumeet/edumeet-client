@@ -85,3 +85,24 @@ export const clearFiles = (): AppThunk<Promise<void>> => async (
 		logger.error('clearFiles() [error:%o]', error);
 	}
 };
+
+/**
+ * This thunk action clears the file for everyone.
+ * 
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const clearFile = (magnetURI: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('clearFile()');
+
+	try {
+		await signalingService.sendRequest('clearFile', { magnetURI });
+		
+		dispatch(roomSessionsActions.clearFile({ magnetURI }));
+	} catch (error) {
+		logger.error('clearFile() [error:%o]', error);
+	}
+};

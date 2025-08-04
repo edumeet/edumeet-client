@@ -46,7 +46,7 @@ export class FileService {
 		return new Promise((resolve) => {
 			this.webTorrent?.seed(
 				files,
-				this.tracker ? { announceList: [ [ this.tracker ] ] } : undefined,
+				this.tracker ? { announceList: [ [ this.tracker ] ], private: true } : undefined,
 				(newTorrent) => resolve(newTorrent.magnetURI)
 			);
 		});
@@ -65,4 +65,20 @@ export class FileService {
 			return resolve(this.webTorrent?.add(magnetURI) as LocalWebTorrent);
 		});
 	}
+	public async removeFile(magnetURI: string): Promise<LocalWebTorrent | undefined > {
+		if (!this.initialized) return;
+		if (await this.getTorrent(magnetURI))
+			this.webTorrent?.remove(magnetURI);
+				
+	}
+	
+	public async removeFiles(): Promise<LocalWebTorrent | undefined > {
+		if (!this.initialized) return;
+		if (this.webTorrent?.torrents) {
+			for (const element of this.webTorrent?.torrents) {
+				this.webTorrent?.remove(element);
+			}
+		}
+	}
+
 }
