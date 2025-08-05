@@ -251,17 +251,17 @@ export const updatePreviewWebcam = ({
 			dispatch(meActions.setPreviewWebcamTrackId());
 		}
 
-		const lastSelectedVideoDevice = getState().settings.selectedVideoDevice;
+		const lastSelectedVideoDevice = deviceService.getDeviceId(getState().settings.selectedVideoDevice, 'videoinput');
 
 		let videoOptions = {
-			deviceId: { ideal: deviceId },
+			deviceId: { exact: deviceId },
 			...getVideoConstrains(resolution, aspectRatio),
 			frameRate
 		};
 
 		if (!newDeviceId && lastSelectedVideoDevice) {
 			videoOptions = {
-				deviceId: { ideal: lastSelectedVideoDevice },
+				deviceId: { exact: lastSelectedVideoDevice },
 				...getVideoConstrains(resolution, aspectRatio),
 				frameRate
 			};
