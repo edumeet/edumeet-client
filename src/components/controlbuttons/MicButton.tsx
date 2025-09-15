@@ -17,9 +17,9 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { pauseMic, resumeMic, updateMic } from '../../store/actions/mediaActions';
 import { permissions } from '../../utils/roles';
-import AudioInputChooser from '../devicechooser/AudioInputChooser';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import { Box } from '@mui/material';
+import AudioInputList from '../devicechooser/AudioInputList';
 
 interface MicStateIconProps {
   micState: MediaState;
@@ -96,7 +96,7 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
 				transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
 			>
-				<AudioInputChooser />
+				<AudioInputList />
 			</FloatingMenu>
 		</Box>
 	);

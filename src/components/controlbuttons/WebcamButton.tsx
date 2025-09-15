@@ -17,8 +17,8 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { stopWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
-import VideoInputChooser from '../devicechooser/VideoInputChooser';
 import { Box } from '@mui/material';
+import VideoInputList from '../devicechooser/VideoInputList';
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -78,7 +78,7 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
 				transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
 			>
-				<VideoInputChooser />
+				<VideoInputList />
 			</FloatingMenu>
 		</Box>
 	);
