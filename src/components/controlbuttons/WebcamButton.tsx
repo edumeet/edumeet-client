@@ -9,11 +9,16 @@ import {
 	stopVideoLabel,
 	startVideoLabel
 } from '../translated/translatedComponents';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
+import { useState } from 'react';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { stopWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import { permissions } from '../../utils/roles';
+import FloatingMenu from '../floatingmenu/FloatingMenu';
+import VideoInputChooser from '../devicechooser/VideoInputChooser';
+import { Box } from '@mui/material';
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -34,24 +39,48 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 		webcamTip = startVideoLabel();
 	}
 
-	return (
-		<ControlButton
-			toolTip={webcamTip}
-			onClick={() => {
-				if (webcamState === 'unsupported') return;
+	const [ webcamMoreAnchorEl, setWebcamMoreAnchorEl ] = useState<HTMLElement | null>();
+	const isWebcamMoreOpen = Boolean(webcamMoreAnchorEl);
+	const handleWebcamMoreClose = () => setWebcamMoreAnchorEl(null);
 
-				if (webcamState === 'off') {
-					dispatch(updateWebcam());
-				} else {
-					dispatch(stopWebcam());
-				}
-			}}
-			disabled={webcamState === 'unsupported' || videoInProgress}
-			on={webcamState === 'on'}
-			{ ...props }
-		>
-			{ webcamState === 'on' ? <VideoIcon /> : <VideoOffIcon /> }
-		</ControlButton>
+	return (
+		<Box sx={{ '&:hover .expand-icon': { opacity: 1 } }}>
+			<ControlButton
+				toolTip={webcamTip}
+				onClick={() => {
+					if (webcamState === 'unsupported') return;
+
+					if (webcamState === 'off') {
+						dispatch(updateWebcam());
+					} else {
+						dispatch(stopWebcam());
+					}
+				}}
+				disabled={webcamState === 'unsupported' || videoInProgress}
+				on={webcamState === 'on'}
+				{ ...props }
+			>
+				{ webcamState === 'on' ? <VideoIcon /> : <VideoOffIcon /> }
+				<Box
+					className='expand-icon'
+					sx={{ opacity: 0, position: 'absolute', top: 0, right: '-1vw' }}
+					onClick={(event) => {
+						event.stopPropagation();
+						setWebcamMoreAnchorEl(event?.currentTarget);
+					}}>
+					<ExpandLessIcon />
+				</Box>
+			</ControlButton>
+			<FloatingMenu
+				anchorEl={webcamMoreAnchorEl}
+				open={isWebcamMoreOpen}
+				onClose={handleWebcamMoreClose}
+				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+				transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+			>
+				<VideoInputChooser />
+			</FloatingMenu>
+		</Box>
 	);
 };
 
