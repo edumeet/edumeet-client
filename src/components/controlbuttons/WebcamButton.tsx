@@ -7,7 +7,8 @@ import { MediaState } from '../../utils/types';
 import {
 	videoUnsupportedLabel,
 	stopVideoLabel,
-	startVideoLabel
+	startVideoLabel,
+	backgroundBlurLabel
 } from '../translated/translatedComponents';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import VideoIcon from '@mui/icons-material/Videocam';
@@ -19,6 +20,7 @@ import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import { Box } from '@mui/material';
 import VideoInputList from '../devicechooser/VideoInputList';
+import { BlurButton } from '../settingsdialog/SettingsSwitches';
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -79,6 +81,7 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 				transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
 			>
 				<VideoInputList />
+				<BlurButton/>{ backgroundBlurLabel() }
 			</FloatingMenu>
 		</Box>
 	);
