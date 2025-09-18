@@ -18,7 +18,7 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { stopWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
-import { Box } from '@mui/material';
+import { Box, Divider } from '@mui/material';
 import VideoInputList from '../devicechooser/VideoInputList';
 import { BlurButton } from '../settingsdialog/SettingsSwitches';
 
@@ -81,6 +81,7 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 				transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
 			>
 				<VideoInputList />
+				<Divider/>
 				<BlurButton/>{ backgroundBlurLabel() }
 			</FloatingMenu>
 		</Box>
