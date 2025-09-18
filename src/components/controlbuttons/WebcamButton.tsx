@@ -1,3 +1,4 @@
+import { styled } from '@mui/material/styles';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -19,12 +20,31 @@ import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import { Box } from '@mui/material';
 import VideoInputList from '../devicechooser/VideoInputList';
+import { HoverBox } from './HoverBox';
+
+const WebcamStateIcon = ({ webcamState }: { webcamState: MediaState }): JSX.Element => {
+	const OnIcon = styled(VideoIcon)({ position: 'absolute' });
+
+	const OffIcon = styled(VideoOffIcon)({ position: 'absolute' });
+
+	return webcamState === 'on' ? <OnIcon /> : <OffIcon />;
+};
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasVideoPermission = usePermissionSelector(permissions.SHARE_VIDEO);
 	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
 	const { canSendWebcam, videoInProgress } = useAppSelector((state) => state.me);
+
+	const [ webcamMoreAnchorEl, setWebcamMoreAnchorEl ] = useState<HTMLElement | null>();
+	const isWebcamMoreOpen = Boolean(webcamMoreAnchorEl);
+
+	const [ hover, setHover ] = useState<boolean>(false);
+	const handleHoverOn = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+		event.stopPropagation();
+		setWebcamMoreAnchorEl(event?.currentTarget);
+		setHover(false);
+	};
 
 	let webcamState: MediaState, webcamTip;
 
@@ -39,13 +59,12 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 		webcamTip = startVideoLabel();
 	}
 
-	const [ webcamMoreAnchorEl, setWebcamMoreAnchorEl ] = useState<HTMLElement | null>();
-	const isWebcamMoreOpen = Boolean(webcamMoreAnchorEl);
-	const handleWebcamMoreClose = () => setWebcamMoreAnchorEl(null);
-
 	return (
-		<Box sx={{ '&:hover .expand-icon': { opacity: 1 } }}>
+		<Box
+			onMouseEnter={() => setHover(true)}
+			onMouseLeave={() => setHover(false)}>
 			<ControlButton
+				sx={{ position: 'relative' }}
 				toolTip={webcamTip}
 				onClick={() => {
 					if (webcamState === 'unsupported') return;
@@ -60,26 +79,29 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 				on={webcamState === 'on'}
 				{ ...props }
 			>
-				{ webcamState === 'on' ? <VideoIcon /> : <VideoOffIcon /> }
-				<Box
-					className='expand-icon'
-					sx={{ opacity: 0, position: 'absolute', top: 0, right: '-1vw' }}
-					onClick={(event) => {
-						event.stopPropagation();
-						setWebcamMoreAnchorEl(event?.currentTarget);
-					}}>
+				<WebcamStateIcon webcamState={webcamState} />
+				<HoverBox
+					hovered={hover}
+					onClick={(event) => handleHoverOn(event)}>
 					<ExpandLessIcon />
-				</Box>
+				</HoverBox>
 			</ControlButton>
-			<FloatingMenu
-				anchorEl={webcamMoreAnchorEl}
-				open={isWebcamMoreOpen}
-				onClose={handleWebcamMoreClose}
-				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-				transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-			>
-				<VideoInputList />
-			</FloatingMenu>
+
+			<Box
+				onClick={() => {
+					setHover(false);
+					setWebcamMoreAnchorEl(null);
+				}}>
+				<FloatingMenu
+					anchorEl={webcamMoreAnchorEl}
+					open={isWebcamMoreOpen}
+					onClose={() => setWebcamMoreAnchorEl(null)}
+					anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+					transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				>
+					<VideoInputList />
+				</FloatingMenu>
+			</Box>
 		</Box>
 	);
 };

@@ -1,3 +1,4 @@
+import { styled } from '@mui/material/styles';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -20,14 +21,14 @@ import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import { Box } from '@mui/material';
 import AudioInputList from '../devicechooser/AudioInputList';
+import { HoverBox } from './HoverBox';
 
-interface MicStateIconProps {
-  micState: MediaState;
-  sx?: object;
-}
+const MicStateIcon = ({ micState }: { micState: MediaState }): JSX.Element => {
+	const OnIcon = styled(MicIcon)({ position: 'absolute' });
 
-const MicStateIcon = ({ micState, sx }: MicStateIconProps): JSX.Element => {
-	return micState === 'on' ? <MicIcon sx={ sx } /> : <MicOffIcon sx={ sx } />;
+	const OffIcon = styled(MicOffIcon)({ position: 'absolute' });
+
+	return micState === 'on' ? <OnIcon /> : <OffIcon />;
 };
 
 const MicButton = (props: ControlButtonProps): JSX.Element => {
@@ -36,6 +37,16 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 	const hasAudioPermission = usePermissionSelector(permissions.SHARE_AUDIO);
 	const { canSendMic, audioInProgress } = useAppSelector((state) => state.me);
+
+	const [ micMoreAnchorEl, setMicMoreAnchorEl ] = useState<HTMLElement | null>();
+	const isMicMoreOpen = Boolean(micMoreAnchorEl);
+
+	const [ hover, setHover ] = useState<boolean>(false);
+	const handleHoverOn = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+		event.stopPropagation();
+		setMicMoreAnchorEl(event?.currentTarget);
+		setHover(false);
+	};
 
 	let micState: MediaState, micTip;
 
@@ -53,12 +64,10 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 		micTip = activateAudioLabel();
 	}
 
-	const [ micMoreAnchorEl, setMicMoreAnchorEl ] = useState<HTMLElement | null>();
-	const isMicMoreOpen = Boolean(micMoreAnchorEl);
-	const handleMicMoreClose = () => setMicMoreAnchorEl(null);
-
 	return (
-		<Box sx={{ '&:hover .expand-icon': { opacity: 1 } }}>
+		<Box
+			onMouseEnter={() => setHover(true)}
+			onMouseLeave={() => setHover(false)}>
 			<ControlButton
 				sx={{ position: 'relative' }}
 				toolTip={micTip}
@@ -77,27 +86,29 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				on={micState === 'on'}
 				{...props}
 			>
-				<MicStateIcon sx={{ position: 'absolute' }} micState={micState}/>
-				<Box
-					className='expand-icon'
-					sx={{ opacity: 0, position: 'absolute', top: 0, right: '-1vw' }}
-					onClick={(event) => {
-						event.stopPropagation();
-						setMicMoreAnchorEl(event?.currentTarget);
-					}}>
+				<MicStateIcon micState={micState} />
+				<HoverBox
+					hovered={hover}
+					onClick={(event) => handleHoverOn(event)}>
 					<ExpandLessIcon />
-				</Box>
+				</HoverBox>
 			</ControlButton>
 
-			<FloatingMenu
-				anchorEl={micMoreAnchorEl}
-				open={isMicMoreOpen}
-				onClose={handleMicMoreClose}
-				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-				transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-			>
-				<AudioInputList />
-			</FloatingMenu>
+			<Box
+				onClick={() => {
+					setHover(false);
+					setMicMoreAnchorEl(null);
+				}}>
+				<FloatingMenu
+					anchorEl={micMoreAnchorEl}
+					open={isMicMoreOpen}
+					onClose={() => setMicMoreAnchorEl(null)}
+					anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+					transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				>
+					<AudioInputList />
+				</FloatingMenu>
+			</Box>
 		</Box>
 	);
 };
