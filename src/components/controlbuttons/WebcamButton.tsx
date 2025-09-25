@@ -13,7 +13,7 @@ import {
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { stopWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import { permissions } from '../../utils/roles';
@@ -36,6 +36,9 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
 	const { canSendWebcam, videoInProgress } = useAppSelector((state) => state.me);
 
+	const anchorRef = useRef<HTMLDivElement>(null);
+	const timeout = useRef<NodeJS.Timeout>();
+
 	const [ webcamMoreAnchorEl, setWebcamMoreAnchorEl ] = useState<HTMLElement | null>();
 	const isWebcamMoreOpen = Boolean(webcamMoreAnchorEl);
 
@@ -44,6 +47,14 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 		event.stopPropagation();
 		setWebcamMoreAnchorEl(event?.currentTarget);
 		setHover(false);
+	};
+
+	const handleTouchStart = () => {
+		if (!anchorRef.current) return;
+
+		timeout.current = setTimeout(() => {
+			setWebcamMoreAnchorEl(anchorRef.current);
+		}, 300);
 	};
 
 	let webcamState: MediaState, webcamTip;
@@ -61,6 +72,8 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 
 	return (
 		<Box
+			onTouchStart={handleTouchStart}
+			onTouchEnd={() => timeout.current && clearTimeout(timeout.current)}
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}>
 			<ControlButton
@@ -88,6 +101,7 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 			</ControlButton>
 
 			<Box
+				ref={anchorRef}
 				onClick={() => {
 					setHover(false);
 					setWebcamMoreAnchorEl(null);

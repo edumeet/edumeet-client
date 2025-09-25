@@ -12,7 +12,7 @@ import {
 	unmuteAudioLabel
 } from '../translated/translatedComponents';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
@@ -38,14 +38,25 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const hasAudioPermission = usePermissionSelector(permissions.SHARE_AUDIO);
 	const { canSendMic, audioInProgress } = useAppSelector((state) => state.me);
 
+	const anchorRef = useRef<HTMLDivElement>(null);
+	const timeout = useRef<NodeJS.Timeout>();
+
 	const [ micMoreAnchorEl, setMicMoreAnchorEl ] = useState<HTMLElement | null>();
 	const isMicMoreOpen = Boolean(micMoreAnchorEl);
 
 	const [ hover, setHover ] = useState<boolean>(false);
 	const handleHoverOn = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		event.stopPropagation();
-		setMicMoreAnchorEl(event?.currentTarget);
+		setMicMoreAnchorEl(anchorRef.current);
 		setHover(false);
+	};
+
+	const handleTouchStart = () => {
+		if (!anchorRef.current) return;
+
+		timeout.current = setTimeout(() => {
+			setMicMoreAnchorEl(anchorRef.current);
+		}, 300);
 	};
 
 	let micState: MediaState, micTip;
@@ -66,6 +77,8 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 
 	return (
 		<Box
+			onTouchStart={handleTouchStart}
+			onTouchEnd={() => timeout.current && clearTimeout(timeout.current)}
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}>
 			<ControlButton
@@ -95,6 +108,7 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 			</ControlButton>
 
 			<Box
+				ref={anchorRef}
 				onClick={() => {
 					setHover(false);
 					setMicMoreAnchorEl(null);
