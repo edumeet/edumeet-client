@@ -36,7 +36,9 @@ import GroupRoleTable from '../../components/managementservice/groups/GroupRole'
 import GroupUserTable from '../../components/managementservice/groups/GroupUser';
 import RuleTable from '../../components/managementservice/rules/Rule';
 import RuleIcon from '@mui/icons-material/Rule';
-import { chooseComponentLabel, edumeetManagementClientLabel, groupRolesLabel, groupsLabel, groupUsersLabel, logoutLabel, rolesLabel, roomSettingsLabel, roomsLabel, rulesLabel, tenantSettingsLabel, tenantsLabel, usersLabel } from '../../components/translated/translatedComponents';
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
+import { chooseComponentLabel, defaultSettingsLabel, defaultsLabel, edumeetManagementClientLabel, groupRolesLabel, groupsLabel, groupUsersLabel, logoutLabel, rolesLabel, roomSettingsLabel, roomsLabel, rulesLabel, tenantSettingsLabel, tenantsLabel, usersLabel } from '../../components/translated/translatedComponents';
+import DefaultTable from '../../components/managementservice/defaults/Defaults';
 
 const drawerWidth = 300;
 
@@ -45,7 +47,7 @@ export default function ManagementUI(/* props: Props */) {
 	const dispatch = useAppDispatch();
 
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
-	const username = useAppSelector((state) => state.management.username);
+	const { username, tenantAdmin, tenantOwner, superAdmin } = useAppSelector((state) => state.management);
 
 	const [ mobileOpen, setMobileOpen ] = useState(false);
 
@@ -74,7 +76,19 @@ export default function ManagementUI(/* props: Props */) {
 				} else {
 					dispatch(managamentActions.setUsername(tdata.user.email));
 				}
-				
+				if (tdata.user.email)
+					dispatch(managamentActions.setEmail(tdata.user.email));
+				if (tdata.user.avatar)
+					dispatch(managamentActions.setAvatar(tdata.user.avatar));
+				if (tdata.user.tenantAdmin)
+					dispatch(managamentActions.setTenantAdmin(tdata.user.tenantAdmin));
+				if (tdata.user.tenantOwner)
+					dispatch(managamentActions.setTenantOwner(tdata.user.tenantOwner));
+				if (tdata.user.roles) {
+					dispatch(managamentActions.setSuperAdmin(tdata.user.roles.includes('super-admin')));
+				} else {
+					dispatch(managamentActions.setSuperAdmin(false));
+				}			
 			}
 		});
 	}, [ loggedIn ]);
@@ -87,6 +101,11 @@ export default function ManagementUI(/* props: Props */) {
 					return <div style={{ minWidth: '400px' }}>
 						<SignIn />
 					</div>;
+				case 'default':
+					return <>
+						{defaultSettingsLabel()}
+						<DefaultTable />
+					</>;
 				case 'tenant':
 					return <>
 						{tenantSettingsLabel()}
@@ -168,30 +187,29 @@ export default function ManagementUI(/* props: Props */) {
 
 			<Divider />
 			<List>
-				{/* <ListItem key={'Permissions'} disablePadding onClick={
-					() => setSelectedComponent('permission')
-				}>
-					<ListItemButton >
-						<ListItemIcon>
-							<InfoIcon />
-						</ListItemIcon>
-						<ListItemText primary={'Permissions'} />
-					</ListItemButton>
-				</ListItem> */}
-				<ListItem key={'Tenants'} disablePadding onClick={
-					() => setSelectedComponent('tenant')
-				}>
-					<ListItemButton >
-						<ListItemIcon>
-							<PeopleOutlineIcon />
-						</ListItemIcon>
-						<ListItemText primary={tenantsLabel()} />
-					</ListItemButton>
-				</ListItem>
-				<ListItem key={'Room(s)'} disablePadding onClick={
-					() => setSelectedComponent('room')
-				}>
-					<ListItemButton >
+				{ (tenantOwner || tenantAdmin || superAdmin) && <>
+					<ListItem key={'Tenants'} disablePadding onClick={() => setSelectedComponent('tenant')}>
+						<ListItemButton>
+							<ListItemIcon>
+								<PeopleOutlineIcon />
+							</ListItemIcon>
+							<ListItemText primary={tenantsLabel()} />
+						</ListItemButton>
+					</ListItem>
+					<ListItem key={'Rule(s)'} disablePadding onClick={
+						() => setSelectedComponent('rule')
+					}>
+						<ListItemButton >
+							<ListItemIcon>
+								<RuleIcon />
+							</ListItemIcon>
+							<ListItemText primary={rulesLabel()} />
+						</ListItemButton>
+					</ListItem>
+				</>
+				}
+				<ListItem key={'Room(s)'} disablePadding onClick={() => setSelectedComponent('room')}>
+					<ListItemButton>
 						<ListItemIcon>
 							<MeetingRoomIcon />
 						</ListItemIcon>
@@ -228,14 +246,15 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemText primary={rolesLabel()} />
 					</ListItemButton>
 				</ListItem>
-				<ListItem key={'Rule(s)'} disablePadding onClick={
-					() => setSelectedComponent('rule')
+				
+				<ListItem key={'Default(s)'} disablePadding onClick={
+					() => setSelectedComponent('default')
 				}>
 					<ListItemButton >
 						<ListItemIcon>
-							<RuleIcon />
+							<SettingsApplicationsIcon />
 						</ListItemIcon>
-						<ListItemText primary={rulesLabel()} />
+						<ListItemText primary={defaultsLabel()} />
 					</ListItemButton>
 				</ListItem>
 			</List>

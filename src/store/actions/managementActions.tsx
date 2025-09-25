@@ -43,6 +43,12 @@ export const createRoom = (roomName: string): AppThunk<Promise<void>> => async (
 		}
 	}
 };
+interface PaginatedResult {
+  total: number;
+  limit: number;
+  skip: number;
+  data: unknown[];
+}
 
 export const getData = (serviceName:string): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
@@ -52,10 +58,16 @@ export const getData = (serviceName:string): AppThunk<Promise<object | undefined
 
 	logger.debug('getData() [serviceName:%s]', serviceName);
 
-	let data: object | undefined;
+	let data: PaginatedResult | undefined;
+
+	let tmpdata: PaginatedResult | undefined;
 
 	try {
-		data = await (await managementService).service(serviceName).find(
+		const svc = (await managementService).service(serviceName);
+
+		let increment = 1; 
+
+		const init = await svc.find(
 			{
 				query: {
 					$limit: 9999,
@@ -65,8 +77,28 @@ export const getData = (serviceName:string): AppThunk<Promise<object | undefined
 					}
 				}
 			}
-		);
-	
+		) as PaginatedResult;
+
+		data = init;
+
+		while (init.limit * increment <= init.total) {
+			tmpdata = await svc.find(
+				{
+					query: {
+						$limit: 9999,
+						$skip: init.limit * increment,
+						$sort: {
+							id: 1,
+					
+						}
+					}
+				}
+			) as PaginatedResult;
+			if (data && data.hasOwnProperty('data') && tmpdata && tmpdata.hasOwnProperty('data'))
+				data.data.push(...tmpdata.data);
+			increment++;
+		}
+		
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({

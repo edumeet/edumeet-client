@@ -2,12 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Tenant } from '../../../utils/types';
-import { useAppDispatch } from '../../../store/hooks';
+import { Tenant, TenantOptionTypes } from '../../../utils/types';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import TenantFQDNTable from './TenatnFQDN';
 import TenantOAuthTable from './TenantOAuth';
 import { addNewLabel, applyLabel, authenticationLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
+import { managamentActions } from '../../../store/slices/managementSlice';
 export interface TenantProp {
 	tenantId: number;
 }
@@ -36,7 +37,8 @@ const TenantTable = () => {
 		[],
 	);
 
-	const [ data, setData ] = useState([]);
+	const tenants: TenantOptionTypes = useAppSelector((state) => state.management.tenants);
+	
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ name, setName ] = useState('');
@@ -48,7 +50,7 @@ const TenantTable = () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('tenants')).then((tdata: any) => {
 			if (tdata != undefined) {
-				setData(tdata.data);
+				dispatch(managamentActions.setTenants(tdata.data));
 			}
 			setIsLoading(false);
 
@@ -199,7 +201,7 @@ const TenantTable = () => {
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={tenants} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {}
 			}}
