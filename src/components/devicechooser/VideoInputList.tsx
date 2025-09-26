@@ -19,16 +19,13 @@ const VideoInputList = (): JSX.Element => {
 	const handleDeviceChange = async (deviceId: string): Promise<void> => {
 		if (deviceId) {
 			setSelectedVideoDevice(deviceId);
-		}
-
-		if (webcamEnabled) {
-			dispatch(meActions.setWebcamEnabled(false));
-			await dispatch(updateWebcam({ newDeviceId: deviceId }));
-		} else {
+			if (webcamEnabled) {
+				dispatch(meActions.setWebcamEnabled(false));
+				await dispatch(updateWebcam({ newDeviceId: deviceId }));
+			}
 			dispatch(settingsActions.setSelectedVideoDevice(deviceId));
+			await dispatch(updatePreviewWebcam({ newDeviceId: deviceId }));
 		}
-
-		await dispatch(updatePreviewWebcam({ newDeviceId: deviceId }));
 	};
 
 	useEffect(() => {
