@@ -40,6 +40,9 @@ const basename = window.location.pathname.split('/')
 
 logger.debug('Starting app [baseUrl:%s]', basename);
 
+// Set the page title dynamically from config
+document.title = edumeetConfig.title || 'edumeet';
+
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<>
