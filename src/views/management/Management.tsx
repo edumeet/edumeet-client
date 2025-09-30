@@ -206,6 +206,16 @@ export default function ManagementUI(/* props: Props */) {
 							<ListItemText primary={rulesLabel()} />
 						</ListItemButton>
 					</ListItem>
+					<ListItem key={'Default(s)'} disablePadding onClick={
+						() => setSelectedComponent('default')
+					}>
+					<ListItemButton >
+						<ListItemIcon>
+							<SettingsApplicationsIcon />
+						</ListItemIcon>
+						<ListItemText primary={defaultsLabel()} />
+					</ListItemButton>
+				</ListItem>
 				</>
 				}
 				<ListItem key={'Room(s)'} disablePadding onClick={() => setSelectedComponent('room')}>
@@ -247,16 +257,6 @@ export default function ManagementUI(/* props: Props */) {
 					</ListItemButton>
 				</ListItem>
 				
-				<ListItem key={'Default(s)'} disablePadding onClick={
-					() => setSelectedComponent('default')
-				}>
-					<ListItemButton >
-						<ListItemIcon>
-							<SettingsApplicationsIcon />
-						</ListItemIcon>
-						<ListItemText primary={defaultsLabel()} />
-					</ListItemButton>
-				</ListItem>
 			</List>
 			<Divider />
 		</div >

@@ -16,6 +16,7 @@ export interface TenantProp {
 const TenantTable = () => {
 
 	const dispatch = useAppDispatch();
+	const { superAdmin } = useAppSelector((state) => state.management);
 
 	// eslint-disable-next-line camelcase
 	const columns = useMemo<MRT_ColumnDef<Tenant>[]>(
@@ -122,7 +123,7 @@ const TenantTable = () => {
 	
 	return <>
 		<div>
-			<Button variant="outlined" onClick={() => handleClickOpen()}>
+			<Button variant="outlined" disabled={!superAdmin} onClick={() => handleClickOpen()}>
 				{addNewLabel()}
 			</Button>
 			<hr/>
