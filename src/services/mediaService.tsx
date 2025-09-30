@@ -510,8 +510,6 @@ export class MediaService extends EventEmitter {
 						consumer.observer.once('close', () => this.consumers.delete(consumer.id));
 						consumer.once('transportclose', () => this.changeConsumer(consumer.id, 'close', false));
 
-						if (paused) this.changeConsumer(consumer.id, 'resume', true);
-
 						this.emit('consumerCreated', consumer, paused, consumerPaused, false);
 
 						this.consumerCreationState.delete(id);
