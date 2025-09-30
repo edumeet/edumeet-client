@@ -52,6 +52,31 @@ export default defineConfig({
 						return 'x-date-pickers';
 					}
 					if (
+						id.includes('managementservice')
+					) {
+						return 'managementservice';
+					}
+					if (
+						id.includes('react-dom')
+					) {
+						return 'react-dom';
+					}
+					if (
+						id.includes('fabric')
+					) {
+						return 'fabric';
+					}
+					if (
+						id.includes('browser')
+					) {
+						return 'browser';
+					}
+					if (
+						id.includes('notistack')
+					) {
+						return 'notistack';
+					}
+					if (
 						id.includes('@mui')
 					) {
 						return '@mui';
