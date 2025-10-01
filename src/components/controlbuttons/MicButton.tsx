@@ -21,7 +21,17 @@ import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import { Box } from '@mui/material';
 import AudioInputList from '../devicechooser/AudioInputList';
-import { HoverBox } from './HoverBox';
+import PulsingBadge from '../pulsingbadge/PulsingBadge';
+
+const Container = styled(Box)(() => ({
+	position: 'relative',
+}));
+
+const FloatingBadge = styled(PulsingBadge)(() => ({
+	position: 'absolute',
+	top: 0,
+	right: -1,
+}));
 
 const MicStateIcon = ({ micState }: { micState: MediaState }): JSX.Element => {
 	const OnIcon = styled(MicIcon)({ position: 'absolute' });
@@ -44,11 +54,9 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const [ micMoreAnchorEl, setMicMoreAnchorEl ] = useState<HTMLElement | null>();
 	const isMicMoreOpen = Boolean(micMoreAnchorEl);
 
-	const [ hover, setHover ] = useState<boolean>(false);
-	const handleHoverOn = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+	const handleOpenSelect = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
 		event.stopPropagation();
 		setMicMoreAnchorEl(anchorRef.current);
-		setHover(false);
 	};
 
 	const handleTouchStart = () => {
@@ -76,11 +84,10 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 	}
 
 	return (
-		<Box
+		<Container
 			onTouchStart={handleTouchStart}
-			onTouchEnd={() => timeout.current && clearTimeout(timeout.current)}
-			onMouseEnter={() => setHover(true)}
-			onMouseLeave={() => setHover(false)}>
+			onTouchEnd={() => timeout.current && clearTimeout(timeout.current)}>
+
 			<ControlButton
 				sx={{ position: 'relative' }}
 				toolTip={micTip}
@@ -100,17 +107,16 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				{...props}
 			>
 				<MicStateIcon micState={micState} />
-				<HoverBox
-					hovered={hover}
-					onClick={(event) => handleHoverOn(event)}>
-					<ExpandLessIcon />
-				</HoverBox>
 			</ControlButton>
+
+			<FloatingBadge
+				color='primary'
+				badgeContent={<ExpandLessIcon />}
+				onClick={(event) => handleOpenSelect(event)} />
 
 			<Box
 				ref={anchorRef}
 				onClick={() => {
-					setHover(false);
 					setMicMoreAnchorEl(null);
 				}}>
 				<FloatingMenu
@@ -123,7 +129,7 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 					<AudioInputList />
 				</FloatingMenu>
 			</Box>
-		</Box>
+		</Container>
 	);
 };
 
