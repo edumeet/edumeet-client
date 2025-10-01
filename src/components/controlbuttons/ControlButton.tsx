@@ -13,6 +13,7 @@ export interface ControlButtonProps {
 	offColor?: ButtonColor;
 	disabledColor?: ButtonColor;
 	size?: ButtonSize;
+	sx?: object;
 	// eslint-disable-next-line
 	onClick?: (event?: any) => void;
 	children?: ReactNode;
@@ -30,6 +31,7 @@ const ControlButton = ({
 	disabledColor = 'inherit',
 	size = 'small',
 	onClick,
+	sx,
 	children
 }: ControlButtonProps): JSX.Element => {
 	const Button = ((type === 'fab') ? Fab : IconButton) as React.ElementType;
@@ -41,6 +43,7 @@ const ControlButton = ({
 		>
 			<div>
 				<Button
+					sx={sx}
 					aria-label={toolTip}
 					disabled={disabled}
 					color={disabled ? disabledColor : on ? onColor : offColor}

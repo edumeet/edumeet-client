@@ -44,7 +44,7 @@ const Lobby = (): React.JSX.Element => {
 					<MediaPreview />
 					<AudioInputChooser />
 					{showAudioOutputChooser && <AudioOutputChooser /> }
-					<VideoInputChooser />
+					<VideoInputChooser withBlur />
 					<ChooserDiv>
 						<TextInputField
 							label={yourNameLabel()}
