@@ -540,6 +540,7 @@ const RoomTable = () => {
 					const tfilesharingEnabled=r[14].getValue();
 					const tlocalRecordingEnabled=r[15].getValue();
 					const tbreakoutsEnabled=r[18].getValue();
+					const treactionsEnabled=r[19].getValue();
 
 					if (typeof tid === 'number') {
 						setId(tid);
@@ -621,6 +622,11 @@ const RoomTable = () => {
 						setRaiseHandEnabled(true);
 					} else {
 						setRaiseHandEnabled(false);
+					}
+					if (treactionsEnabled === true) {
+						setReactionsEnabled(true);
+					} else {
+						setReactionsEnabled(false);
 					}
 					if (tfilesharingEnabled === true) {
 						setFilesharingEnabled(true);

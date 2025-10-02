@@ -28,6 +28,7 @@ const GroupRoleTable = () => {
 		'locked': true,
 		'chatEnabled': true,
 		'raiseHandEnabled': true,
+		'reactionsEnabled': true,
 		'filesharingEnabled': true,
 		'groupRoles': [],
 		'localRecordingEnabled': true,
