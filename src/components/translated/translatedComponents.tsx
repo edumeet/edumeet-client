@@ -50,6 +50,11 @@ export const raiseHandLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Raise hand'
 });
 
+export const reactionsLabel = (): string => intl.formatMessage({
+	id: 'tooltip.reactions',
+	defaultMessage: 'Reaction'
+});
+
 export const chatInputLabel = (): string => intl.formatMessage({
 	id: 'label.chatInput',
 	defaultMessage: 'Enter chat message...'
@@ -1070,6 +1075,10 @@ export const chatEnabledLabel = (): string => intl.formatMessage({
 export const raiseHandEnabledLabel = (): string => intl.formatMessage({
 	id: 'label.management.room.raiseHandEnabled',
 	defaultMessage: 'Enable raise hand'
+});
+export const reactionsEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.reactionsEnabled',
+	defaultMessage: 'Enable reactions'
 });
 export const filesharingEnabledLabel = (): string => intl.formatMessage({
 	id: 'label.management.room.filesharingEnabled',

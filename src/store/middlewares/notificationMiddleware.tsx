@@ -67,11 +67,19 @@ const createNotificationMiddleware = ({
 	}) => (next) => (action) => {
 		// Reproduce notification alerts
 		if (getState().settings.notificationSounds) {
-			// Raised hand
 			if (peersActions.updatePeer.match(action)) {
-				const { raisedHand } = action.payload;
+				const { raisedHand, sendReaction } = action.payload;
 
+				// Raised hand
 				if (raisedHand) playNotificationSounds('raisedHand');
+
+				// Reactions
+				if (sendReaction) {
+					// Construct a sound key like 'reactionThumbup' for reactionId "thumbup"
+					const soundKey = `reaction${sendReaction.charAt(0).toUpperCase() + sendReaction.slice(1)}`;
+					
+					playNotificationSounds(soundKey);
+				}
 			}
 
 			// Chat message

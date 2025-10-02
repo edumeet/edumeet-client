@@ -17,6 +17,9 @@ export interface Peer {
 	raisedHandInProgress?: boolean;
 	raisedHand?: boolean;
 	raisedHandTimestamp?: number;
+	sendReactionInProgress?: boolean;
+	sendReaction?: string | null;
+	sendReactionTimestamp?: number;
 	recording?: boolean;
 	transcripts?: Transcript[];
 }
@@ -63,6 +66,9 @@ const peersSlice = createSlice({
 					raisedHandInProgress,
 					raisedHand,
 					raisedHandTimestamp,
+					sendReactionInProgress,
+					sendReaction,
+					sendReactionTimestamp,
 					recording,
 				} = action.payload;
 
@@ -90,6 +96,12 @@ const peersSlice = createSlice({
 					peer.raisedHand = raisedHand;
 				if (raisedHandTimestamp !== undefined)
 					peer.raisedHandTimestamp = raisedHandTimestamp;
+				if (sendReactionInProgress !== undefined)
+					peer.sendReactionInProgress = sendReactionInProgress;
+				if (sendReaction !== undefined)
+					peer.sendReaction = sendReaction;
+				if (sendReactionTimestamp !== undefined)
+					peer.sendReactionTimestamp = sendReactionTimestamp;
 				if (recording !== undefined)
 					peer.recording = recording;
 			}

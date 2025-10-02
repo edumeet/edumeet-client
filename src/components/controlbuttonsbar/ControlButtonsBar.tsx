@@ -19,6 +19,7 @@ import Filesharing from '../menuitems/Filesharing';
 import Recording from '../menuitems/Recording';
 import Drawing from '../menuitems/Drawing';
 import MoreButton from '../controlbuttons/MoreButton';
+import ReactionsButton from '../controlbuttons/ReactionsButton';
 
 interface ContainerProps {
 	height: string;
@@ -40,6 +41,7 @@ const ControlButtonsBar = (): JSX.Element => {
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled); // eslint-disable-line
 	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
+	const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
 
 	const [ participantListAnchorEl, setParticipantAnchorEl ] = useState<HTMLElement | null>();
 	const isParticipantListOpen = Boolean(participantListAnchorEl);
@@ -72,6 +74,7 @@ const ControlButtonsBar = (): JSX.Element => {
 				<WebcamButton offColor='error' toolTipLocation='bottom' />
 				{ !isMobile && <ScreenshareButton toolTipLocation='bottom' /> }
 				{ !isMobile && raiseHandEnabled && <RaiseHandButton toolTipLocation='bottom' /> }
+				{ !isMobile && reactionsEnabled && <ReactionsButton toolTipLocation='bottom' /> }
 				{ !isMobile && <ParticipantsButton toolTipLocation='bottom' onColor='primary' /> }
 				{ isMobile && <ParticipantsButton onClick={(event) => setParticipantAnchorEl(event.currentTarget)} toolTipLocation='bottom' /> }
 				{ !isMobile && chatEnabled && <ChatButton toolTipLocation='bottom' onColor='primary' /> }

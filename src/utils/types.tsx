@@ -107,7 +107,8 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		collectingPeriodInMs: 2000,
 	},
 	imprintUrl: '',
-	privacyUrl: ''
+	privacyUrl: '',
+	reactionsTimeout: 10000
 };
 
 export interface EdumeetConfig {
@@ -157,6 +158,7 @@ export interface EdumeetConfig {
 	clientMontitor: ClientMonitorConfig;
 	imprintUrl: string;
 	privacyUrl: string;
+	reactionsTimeout: number;
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
@@ -407,6 +409,7 @@ export type Room = {
 	locked: boolean,
 	chatEnabled: boolean,
 	raiseHandEnabled: boolean,
+	reactionsEnabled: boolean,
 	filesharingEnabled: boolean,
 	groupRoles?: Array<Roles>,
 	localRecordingEnabled: boolean,
