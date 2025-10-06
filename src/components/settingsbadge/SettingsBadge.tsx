@@ -4,7 +4,8 @@ import { memo } from 'react';
 import PulsingBadge from '../pulsingbadge/PulsingBadge';
 
 interface SettingsBadgeProps {
-	onClick?: () => void;
+    // eslint-disable-next-line
+	onClick?: (event?: any) => void;
 	size?: number;
 	color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
 }
