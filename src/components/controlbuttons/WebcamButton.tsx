@@ -10,7 +10,6 @@ import {
 	stopVideoLabel,
 	startVideoLabel
 } from '../translated/translatedComponents';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
 import { useRef, useState } from 'react';
@@ -20,16 +19,10 @@ import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import { Box } from '@mui/material';
 import VideoInputList from '../devicechooser/VideoInputList';
-import PulsingBadge from '../pulsingbadge/PulsingBadge';
+import SettingsBadge from '../settingsbadge/SettingsBadge';
 
 const Container = styled(Box)(() => ({
 	position: 'relative',
-}));
-
-const FloatingBadge = styled(PulsingBadge)(() => ({
-	position: 'absolute',
-	top: 0,
-	right: -1,
 }));
 
 const WebcamStateIcon = ({ webcamState }: { webcamState: MediaState }): JSX.Element => {
@@ -52,7 +45,6 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const [ webcamMoreAnchorEl, setWebcamMoreAnchorEl ] = useState<HTMLElement | null>();
 	const isWebcamMoreOpen = Boolean(webcamMoreAnchorEl);
 
-    // eslint-disable-next-line
 	const handleOpenSelect = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
 		event.stopPropagation();
 		setWebcamMoreAnchorEl(event?.currentTarget);
@@ -84,15 +76,6 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 			onTouchStart={handleTouchStart}
 			onTouchEnd={() => timeout.current && clearTimeout(timeout.current)}>
 
-			{
-				webcamEnabled && (
-					<FloatingBadge
-						color='primary'
-						badgeContent={<ExpandLessIcon />}
-						onClick={(event) => handleOpenSelect(event)} />
-				)
-			}
-
 			<ControlButton
 				toolTip={webcamTip}
 				onClick={() => {
@@ -110,6 +93,12 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 			>
 				<WebcamStateIcon webcamState={webcamState} />
 			</ControlButton>
+
+			{ webcamEnabled && (
+				<SettingsBadge
+					color='primary'
+					onClick={(event) => handleOpenSelect(event)} />
+			) }
 
 			<Box
 				ref={anchorRef}

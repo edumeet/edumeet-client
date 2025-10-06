@@ -11,7 +11,6 @@ import {
 	muteAudioLabel,
 	unmuteAudioLabel
 } from '../translated/translatedComponents';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useRef, useState } from 'react';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
@@ -21,16 +20,10 @@ import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import { Box } from '@mui/material';
 import AudioInputList from '../devicechooser/AudioInputList';
-import PulsingBadge from '../pulsingbadge/PulsingBadge';
+import SettingsBadge from '../settingsbadge/SettingsBadge';
 
 const Container = styled(Box)(() => ({
 	position: 'relative',
-}));
-
-const FloatingBadge = styled(PulsingBadge)(() => ({
-	position: 'absolute',
-	top: 0,
-	right: -1,
 }));
 
 const MicStateIcon = ({ micState }: { micState: MediaState }): JSX.Element => {
@@ -89,7 +82,6 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 			onTouchEnd={() => timeout.current && clearTimeout(timeout.current)}>
 
 			<ControlButton
-				sx={{ position: 'relative' }}
 				toolTip={micTip}
 				onClick={() => {
 					if (micState === 'unsupported') return;
@@ -109,9 +101,8 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				<MicStateIcon micState={micState} />
 			</ControlButton>
 
-			<FloatingBadge
+			<SettingsBadge
 				color='primary'
-				badgeContent={<ExpandLessIcon />}
 				onClick={(event) => handleOpenSelect(event)} />
 
 			<Box
