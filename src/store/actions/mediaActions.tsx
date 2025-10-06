@@ -137,7 +137,7 @@ export const updatePreviewMic = ({
 
 		const stream = await navigator.mediaDevices.getUserMedia({
 			audio: {
-				deviceId: { ideal: deviceId },
+				deviceId: { exact: deviceId },
 				sampleRate,
 				channelCount,
 				autoGainControl,
@@ -412,7 +412,7 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 			if (!track) {
 				const stream = await navigator.mediaDevices.getUserMedia({
 					audio: {
-						deviceId: { ideal: deviceId },
+						deviceId: { exact: deviceId },
 						sampleRate,
 						channelCount,
 						autoGainControl,
@@ -579,7 +579,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 			if (!track) {
 				const stream = await navigator.mediaDevices.getUserMedia({
 					video: {
-						deviceId: { ideal: deviceId },
+						deviceId: { exact: deviceId },
 						...getVideoConstrains(resolution, aspectRatio),
 						frameRate
 					}
@@ -878,7 +878,7 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 		if (start || replace) {
 			const stream = await navigator.mediaDevices.getUserMedia({
 				video: {
-					deviceId: { ideal: deviceId },
+					deviceId: { exact: deviceId },
 					...getVideoConstrains(resolution, aspectRatio),
 					frameRate,
 				}

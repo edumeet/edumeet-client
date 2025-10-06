@@ -28,18 +28,18 @@ const AudioInputList = (): JSX.Element => {
 
 	return (
 		<>
-			{ audioDevices.length > 1 &&
-					<MenuList>
-						{audioDevices.map((device, index) => (
-							<MenuItem
-								key={index}
-								value={device.deviceId}
-								selected={device.deviceId === selectedAudioDevice}
-								onClick={() => handleDeviceChange(device.deviceId)}>
-								{ device?.label ?? (index + 1) }
-							</MenuItem>
-						))}
-					</MenuList>
+			{ audioDevices.length > 0 &&
+				<MenuList>
+					{audioDevices.map((device, index) => (
+						<MenuItem
+							key={index}
+							value={device.deviceId}
+							selected={device.deviceId === selectedAudioDevice}
+							onClick={() => handleDeviceChange(device.deviceId)}>
+							{ device?.label ?? (index + 1) }
+						</MenuItem>
+					))}
+				</MenuList>
 			}
 		</>
 	);

@@ -1,3 +1,4 @@
+import { styled } from '@mui/material/styles';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -10,8 +11,7 @@ import {
 	muteAudioLabel,
 	unmuteAudioLabel
 } from '../translated/translatedComponents';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
@@ -20,14 +20,18 @@ import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import { Box } from '@mui/material';
 import AudioInputList from '../devicechooser/AudioInputList';
+import SettingsBadge from '../settingsbadge/SettingsBadge';
 
-interface MicStateIconProps {
-  micState: MediaState;
-  sx?: object;
-}
+const Container = styled(Box)(() => ({
+	position: 'relative',
+}));
 
-const MicStateIcon = ({ micState, sx }: MicStateIconProps): JSX.Element => {
-	return micState === 'on' ? <MicIcon sx={ sx } /> : <MicOffIcon sx={ sx } />;
+const MicStateIcon = ({ micState }: { micState: MediaState }): JSX.Element => {
+	const OnIcon = styled(MicIcon)({ position: 'absolute' });
+
+	const OffIcon = styled(MicOffIcon)({ position: 'absolute' });
+
+	return micState === 'on' ? <OnIcon /> : <OffIcon />;
 };
 
 const MicButton = (props: ControlButtonProps): JSX.Element => {
@@ -36,6 +40,25 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 	const hasAudioPermission = usePermissionSelector(permissions.SHARE_AUDIO);
 	const { canSendMic, audioInProgress } = useAppSelector((state) => state.me);
+
+	const anchorRef = useRef<HTMLDivElement>(null);
+	const timeout = useRef<NodeJS.Timeout>();
+
+	const [ micMoreAnchorEl, setMicMoreAnchorEl ] = useState<HTMLElement | null>();
+	const isMicMoreOpen = Boolean(micMoreAnchorEl);
+
+	const handleOpenSelect = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+		event.stopPropagation();
+		setMicMoreAnchorEl(anchorRef.current);
+	};
+
+	const handleTouchStart = () => {
+		if (!anchorRef.current) return;
+
+		timeout.current = setTimeout(() => {
+			setMicMoreAnchorEl(anchorRef.current);
+		}, 300);
+	};
 
 	let micState: MediaState, micTip;
 
@@ -53,14 +76,12 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 		micTip = activateAudioLabel();
 	}
 
-	const [ micMoreAnchorEl, setMicMoreAnchorEl ] = useState<HTMLElement | null>();
-	const isMicMoreOpen = Boolean(micMoreAnchorEl);
-	const handleMicMoreClose = () => setMicMoreAnchorEl(null);
-
 	return (
-		<Box sx={{ '&:hover .expand-icon': { opacity: 1 } }}>
+		<Container
+			onTouchStart={handleTouchStart}
+			onTouchEnd={() => timeout.current && clearTimeout(timeout.current)}>
+
 			<ControlButton
-				sx={{ position: 'relative' }}
 				toolTip={micTip}
 				onClick={() => {
 					if (micState === 'unsupported') return;
@@ -77,28 +98,29 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 				on={micState === 'on'}
 				{...props}
 			>
-				<MicStateIcon sx={{ position: 'absolute' }} micState={micState}/>
-				<Box
-					className='expand-icon'
-					sx={{ opacity: 0, position: 'absolute', top: 0, right: '-1vw' }}
-					onClick={(event) => {
-						event.stopPropagation();
-						setMicMoreAnchorEl(event?.currentTarget);
-					}}>
-					<ExpandLessIcon />
-				</Box>
+				<MicStateIcon micState={micState} />
 			</ControlButton>
 
-			<FloatingMenu
-				anchorEl={micMoreAnchorEl}
-				open={isMicMoreOpen}
-				onClose={handleMicMoreClose}
-				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-				transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-			>
-				<AudioInputList />
-			</FloatingMenu>
-		</Box>
+			<SettingsBadge
+				color='primary'
+				onClick={(event) => handleOpenSelect(event)} />
+
+			<Box
+				ref={anchorRef}
+				onClick={() => {
+					setMicMoreAnchorEl(null);
+				}}>
+				<FloatingMenu
+					anchorEl={micMoreAnchorEl}
+					open={isMicMoreOpen}
+					onClose={() => setMicMoreAnchorEl(null)}
+					anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+					transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				>
+					<AudioInputList />
+				</FloatingMenu>
+			</Box>
+		</Container>
 	);
 };
 

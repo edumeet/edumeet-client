@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { updatePreviewWebcam } from '../../store/actions/mediaActions';
+import { updatePreviewWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -7,18 +7,24 @@ import {
 } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { MenuItem, MenuList } from '@mui/material';
+import { meActions } from '../../store/slices/meSlice';
 
 const VideoInputList = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
 	const videoDevices = useDeviceSelector('videoinput');
+	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
 	const [ selectedVideoDevice, setSelectedVideoDevice ] = useState(videoDevice);
 
-	const handleDeviceChange = (deviceId: string): void => {
+	const handleDeviceChange = async (deviceId: string): Promise<void> => {
 		if (deviceId) {
 			setSelectedVideoDevice(deviceId);
+			if (webcamEnabled) {
+				dispatch(meActions.setWebcamEnabled(false));
+				await dispatch(updateWebcam({ newDeviceId: deviceId }));
+			}
 			dispatch(settingsActions.setSelectedVideoDevice(deviceId));
-			dispatch(updatePreviewWebcam({ newDeviceId: deviceId }));
+			await dispatch(updatePreviewWebcam({ newDeviceId: deviceId }));
 		}
 	};
 
