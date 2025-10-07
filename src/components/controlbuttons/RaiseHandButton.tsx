@@ -40,8 +40,7 @@ const RaiseHandButton = ({
 		sendReactionInProgress
 	} = useAppSelector((state) => state.me);
 
-	// const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
-	const reactionsEnabled = true;
+	const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
 
 	const anchorRef = useRef<HTMLDivElement>(null);
 	const timeout = useRef<NodeJS.Timeout>();
