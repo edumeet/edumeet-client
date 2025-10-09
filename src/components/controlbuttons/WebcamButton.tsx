@@ -8,7 +8,8 @@ import { MediaState } from '../../utils/types';
 import {
 	videoUnsupportedLabel,
 	stopVideoLabel,
-	startVideoLabel
+	startVideoLabel,
+	backgroundBlurLabel
 } from '../translated/translatedComponents';
 import VideoIcon from '@mui/icons-material/Videocam';
 import VideoOffIcon from '@mui/icons-material/VideocamOff';
@@ -17,8 +18,9 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { stopWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import { permissions } from '../../utils/roles';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
-import { Box } from '@mui/material';
+import { Box, Divider } from '@mui/material';
 import VideoInputList from '../devicechooser/VideoInputList';
+import { BlurButton } from '../settingsdialog/SettingsSwitches';
 import SettingsBadge from '../settingsbadge/SettingsBadge';
 
 const Container = styled(Box)(() => ({
@@ -32,6 +34,7 @@ const WebcamStateIcon = ({ webcamState }: { webcamState: MediaState }): JSX.Elem
 
 	return webcamState === 'on' ? <OnIcon /> : <OffIcon />;
 };
+
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -111,6 +114,8 @@ const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 					transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
 				>
 					<VideoInputList />
+					<Divider/>
+					<BlurButton/>{ backgroundBlurLabel() }
 				</FloatingMenu>
 			</Box>
 		</Container>
