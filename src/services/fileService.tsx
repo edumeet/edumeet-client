@@ -4,17 +4,17 @@ import { Logger } from '../utils/Logger';
 const logger = new Logger('FileService');
 
 export type LocalTorrentFile = WebTorrent.TorrentFile & {
-  blob:() => Promise<Blob>;
+	blob: () => Promise<Blob>;
 };
 
 export type LocalWebTorrent = WebTorrent.Torrent & {
-  files?: LocalTorrentFile[];
+	files?: LocalTorrentFile[];
 };
 
 export class FileService {
 	private webTorrent?: WebTorrent.Instance;
 	public tracker?: string;
-	public maxFileSize: number = 100_000_000; 
+	public maxFileSize: number = 100_000_000;
 	public iceServers: RTCIceServer[] = [];
 	private initialized = false;
 
@@ -52,27 +52,27 @@ export class FileService {
 		});
 	}
 
-	public async downloadFile(magnetURI: string): Promise<LocalWebTorrent | undefined > {
+	public async downloadFile(magnetURI: string): Promise<LocalWebTorrent | undefined> {
 		await this.init();
 
 		// Await!
 		const existingTorrent = await this.webTorrent?.get(magnetURI);
-		
+
 		if (existingTorrent)
-			return existingTorrent as LocalWebTorrent; 
+			return existingTorrent as LocalWebTorrent;
 
 		return new Promise((resolve) => {
 			return resolve(this.webTorrent?.add(magnetURI) as LocalWebTorrent);
 		});
 	}
-	public async removeFile(magnetURI: string): Promise<LocalWebTorrent | undefined > {
+
+	public async removeFile(magnetURI: string): Promise<LocalWebTorrent | undefined> {
 		if (!this.initialized) return;
 		if (await this.getTorrent(magnetURI))
 			this.webTorrent?.remove(magnetURI);
-				
 	}
-	
-	public async removeFiles(): Promise<LocalWebTorrent | undefined > {
+
+	public async removeFiles(): Promise<LocalWebTorrent | undefined> {
 		if (!this.initialized) return;
 		if (this.webTorrent?.torrents) {
 			for (const element of this.webTorrent?.torrents) {
