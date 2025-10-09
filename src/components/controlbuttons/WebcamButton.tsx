@@ -29,12 +29,10 @@ const Container = styled(Box)(() => ({
 
 const WebcamStateIcon = ({ webcamState }: { webcamState: MediaState }): JSX.Element => {
 	const OnIcon = styled(VideoIcon)({ position: 'absolute' });
-
 	const OffIcon = styled(VideoOffIcon)({ position: 'absolute' });
 
 	return webcamState === 'on' ? <OnIcon /> : <OffIcon />;
 };
-
 
 const WebcamButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
