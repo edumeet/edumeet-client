@@ -6,7 +6,12 @@ import LoginButton from '../controlbuttons/LoginButton';
 import { loginLabel, logoutLabel } from '../translated/translatedComponents';
 import LogoutButton from '../controlbuttons/LogoutButton';
 import React, { useEffect } from 'react';
-import { checkJWT } from '../../store/actions/permissionsActions';
+import { checkJWT, login, logout } from '../../store/actions/permissionsActions';
+import { styled } from '@mui/material/styles';
+
+const ClickableLabel = styled('span')(() => ({
+  cursor: 'pointer',
+}));
 
 const PrecallTitle = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -32,7 +37,7 @@ const PrecallTitle = (): React.JSX.Element => {
 						{loggedIn ? <LogoutButton
 							type='iconbutton'
 							toolTipLocation='left' /> : <LoginButton type="iconbutton" toolTipLocation='left' />}
-						{loggedIn ? logoutLabel() : loginLabel()}
+						{loggedIn ? <ClickableLabel onClick={() => dispatch(logout())}>{logoutLabel()}</ClickableLabel> : <ClickableLabel onClick={() => dispatch(login())}>{loginLabel()}</ClickableLabel>}
 					</>
 				}
 			</Grid>
