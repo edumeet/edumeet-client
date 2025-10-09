@@ -21,7 +21,7 @@ const MediaSettings = (): JSX.Element => {
 				{showAudioOutputChooser && <AudioOutputChooser /> }
 			</NestedList>
 			<NestedList>
-				<VideoInputChooser withConfirm withVideoBackgroundSelect />
+				<VideoInputChooser withBlur withConfirm withVideoBackground />
 			</NestedList>
 		</List>
 	);

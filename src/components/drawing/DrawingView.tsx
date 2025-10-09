@@ -552,7 +552,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
 		const border = 1;
 		const len = eraserSize * zoom;
 		const pos = (eraserSize / 2) * zoom;
-		const strokeColor = 'black';
+		const strokeColor = bgColor == 'black' ? 'white' : 'black';
 
 		setCanvas((prevState) => {
 			if (prevState) {

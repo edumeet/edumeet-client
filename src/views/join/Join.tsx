@@ -71,8 +71,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 					<MediaPreview startAudio={!audioMuted} startVideo={!videoMuted} stopAudio={false} stopVideo={false} updateSelection />
 					<AudioInputChooser />
 					{ showAudioOutputChooser && <AudioOutputChooser /> }
-					<VideoInputChooser withVideoBackgroundSelect/>
-				
+					<VideoInputChooser withBlur withVideoBackground />
 					<ChooserDiv>
 						<TextInputField
 							label={yourNameLabel()}

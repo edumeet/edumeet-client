@@ -1,3 +1,4 @@
+import { styled } from '@mui/material/styles';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -10,11 +11,28 @@ import {
 	muteAudioLabel,
 	unmuteAudioLabel
 } from '../translated/translatedComponents';
+import { useRef, useState } from 'react';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { pauseMic, resumeMic, updateMic } from '../../store/actions/mediaActions';
 import { permissions } from '../../utils/roles';
+import FloatingMenu from '../floatingmenu/FloatingMenu';
+import { Box } from '@mui/material';
+import AudioInputList from '../devicechooser/AudioInputList';
+import SettingsBadge from '../settingsbadge/SettingsBadge';
+
+const Container = styled(Box)(() => ({
+	position: 'relative',
+}));
+
+const MicStateIcon = ({ micState }: { micState: MediaState }): JSX.Element => {
+	const OnIcon = styled(MicIcon)({ position: 'absolute' });
+
+	const OffIcon = styled(MicOffIcon)({ position: 'absolute' });
+
+	return micState === 'on' ? <OnIcon /> : <OffIcon />;
+};
 
 const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -22,6 +40,25 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 	const hasAudioPermission = usePermissionSelector(permissions.SHARE_AUDIO);
 	const { canSendMic, audioInProgress } = useAppSelector((state) => state.me);
+
+	const anchorRef = useRef<HTMLDivElement>(null);
+	const timeout = useRef<NodeJS.Timeout>();
+
+	const [ micMoreAnchorEl, setMicMoreAnchorEl ] = useState<HTMLElement | null>();
+	const isMicMoreOpen = Boolean(micMoreAnchorEl);
+
+	const handleOpenSelect = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+		event.stopPropagation();
+		setMicMoreAnchorEl(anchorRef.current);
+	};
+
+	const handleTouchStart = () => {
+		if (!anchorRef.current) return;
+
+		timeout.current = setTimeout(() => {
+			setMicMoreAnchorEl(anchorRef.current);
+		}, 300);
+	};
 
 	let micState: MediaState, micTip;
 
@@ -40,25 +77,50 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 	}
 
 	return (
-		<ControlButton
-			toolTip={micTip}
-			onClick={() => {
-				if (micState === 'unsupported') return;
+		<Container
+			onTouchStart={handleTouchStart}
+			onTouchEnd={() => timeout.current && clearTimeout(timeout.current)}>
 
-				if (micState === 'off') {
-					dispatch(updateMic());
-				} else if (micState === 'muted') {
-					dispatch(resumeMic());
-				} else {
-					dispatch(pauseMic());
-				}
-			}}
-			disabled={micState === 'unsupported' || audioInProgress}
-			on={micState === 'on'}
-			{ ...props }
-		>
-			{ micState === 'on' ? <MicIcon /> : <MicOffIcon /> }
-		</ControlButton>
+			<ControlButton
+				toolTip={micTip}
+				onClick={() => {
+					if (micState === 'unsupported') return;
+
+					if (micState === 'off') {
+						dispatch(updateMic());
+					} else if (micState === 'muted') {
+						dispatch(resumeMic());
+					} else {
+						dispatch(pauseMic());
+					}
+				}}
+				disabled={micState === 'unsupported' || audioInProgress}
+				on={micState === 'on'}
+				{...props}
+			>
+				<MicStateIcon micState={micState} />
+			</ControlButton>
+
+			<SettingsBadge
+				color='primary'
+				onClick={(event) => handleOpenSelect(event)} />
+
+			<Box
+				ref={anchorRef}
+				onClick={() => {
+					setMicMoreAnchorEl(null);
+				}}>
+				<FloatingMenu
+					anchorEl={micMoreAnchorEl}
+					open={isMicMoreOpen}
+					onClose={() => setMicMoreAnchorEl(null)}
+					anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+					transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				>
+					<AudioInputList />
+				</FloatingMenu>
+			</Box>
+		</Container>
 	);
 };
 

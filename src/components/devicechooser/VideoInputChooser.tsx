@@ -18,13 +18,15 @@ import { meActions } from '../../store/slices/meSlice';
 import { BlurButton, VideoBackgroundButton } from '../settingsdialog/SettingsSwitches';
 
 interface VideoInputChooserProps {
+	withBlur?: boolean;
 	withConfirm?: boolean;
-	withVideoBackgroundSelect?: boolean;
+	withVideoBackground?: boolean;
 }
 
 const VideoInputChooser = ({
+	withBlur,
 	withConfirm,
-	withVideoBackgroundSelect,
+	withVideoBackground,
 }: VideoInputChooserProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
@@ -71,8 +73,8 @@ const VideoInputChooser = ({
 						disabled={videoDevices.length < 2 || videoInProgress}
 						devices={videoDevices}
 						extraButtons={<>
-							<BlurButton />
-							{ withVideoBackgroundSelect && <VideoBackgroundButton /> }
+							{ withBlur && <BlurButton /> }
+							{ withVideoBackground && <VideoBackgroundButton /> }
 							{ withConfirm && (selectedVideoDevice !== videoDevice) && (
 								<Button
 									style={{ minWidth: 'fit-content' }}
