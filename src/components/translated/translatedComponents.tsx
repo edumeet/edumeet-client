@@ -50,11 +50,6 @@ export const raiseHandLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Raise hand'
 });
 
-export const reactionsLabel = (): string => intl.formatMessage({
-	id: 'tooltip.reactions',
-	defaultMessage: 'Reaction'
-});
-
 export const chatInputLabel = (): string => intl.formatMessage({
 	id: 'label.chatInput',
 	defaultMessage: 'Enter chat message...'

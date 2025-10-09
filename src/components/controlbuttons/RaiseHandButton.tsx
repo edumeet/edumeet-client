@@ -40,6 +40,7 @@ const RaiseHandButton = ({
 		sendReactionInProgress
 	} = useAppSelector((state) => state.me);
 
+	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
 
 	const anchorRef = useRef<HTMLDivElement>(null);
@@ -70,7 +71,7 @@ const RaiseHandButton = ({
 				onClick={() => {
 					dispatch(setRaisedHand(!raisedHand));
 				}}
-				disabled={raisedHandInProgress}
+				disabled={raisedHandInProgress || !raiseHandEnabled}
 				size={size}
 				{ ...props }
 			>
