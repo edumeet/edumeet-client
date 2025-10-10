@@ -57,9 +57,9 @@ const VideoConsumer = ({ consumer, style }: VideoConsumerProps): JSX.Element => 
 	const headless = useAppSelector((state) => state.room.headless);
 	const showStats = useAppSelector((state) => state.ui.showStats);
 
-	useEffect(() => {}, [ peer?.sendReaction, dispatch ]);
+	useEffect(() => {}, [ peer?.reaction, dispatch ]);
 
-	const currentReactionIcon = peer?.sendReaction ? reactionIcons[peer?.sendReaction] : null;
+	const currentReactionIcon = peer?.reaction ? reactionIcons[peer?.reaction] : null;
 
 	return (
 		<VideoBox

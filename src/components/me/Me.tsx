@@ -54,11 +54,11 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 	const showStats = useAppSelector((state) => state.ui.showStats);
 	const micEnabled = useAppSelector((state) => state.me.micEnabled);
 	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
-	const sendReaction = useAppSelector((state) => state.me.sendReaction);
+	const reaction = useAppSelector((state) => state.me.sendReaction);
 
-	useEffect(() => {}, [ sendReaction, dispatch ]);
+	useEffect(() => {}, [ reaction, dispatch ]);
 
-	const currentReactionIcon = sendReaction ? reactionIcons[sendReaction] : null;
+	const currentReactionIcon = reaction ? reactionIcons[reaction] : null;
 
 	return (
 		<>

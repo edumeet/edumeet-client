@@ -86,22 +86,22 @@ export const setRaisedHand = (raisedHand: boolean): AppThunk<Promise<void>> => a
 /**
  * This thunk action sets the reaction state of the client.
  * 
- * @param reactionId - The reaction to send.
+ * @param reaction - The reaction to send.
  * @returns {AppThunk<Promise<void>>} Promise.
  */
-export const setSendReaction = (reactionId: string): AppThunk<Promise<void>> => async (
+export const setSendReaction = (reaction: string): AppThunk<Promise<void>> => async (
 	dispatch,
 	_getState,
 	{ signalingService }
 ): Promise<void> => {
-	logger.debug('setSendReaction() [reactionId:%s]', reactionId);
+	logger.debug('setSendReaction() [reaction:%s]', reaction);
 
 	dispatch(meActions.setSendReactionInProgress(true));
 
 	try {
-		await signalingService.sendRequest('reaction', { reactionId });
+		await signalingService.sendRequest('reaction', { reaction });
 
-		dispatch(meActions.setSendReaction(reactionId));
+		dispatch(meActions.setSendReaction(reaction));
 
 		// Set timeout to clear reaction after specified time
 		window.setTimeout(() => {

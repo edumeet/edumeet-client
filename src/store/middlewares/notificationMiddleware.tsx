@@ -68,15 +68,15 @@ const createNotificationMiddleware = ({
 		// Reproduce notification alerts
 		if (getState().settings.notificationSounds) {
 			if (peersActions.updatePeer.match(action)) {
-				const { raisedHand, sendReaction } = action.payload;
+				const { raisedHand, reaction } = action.payload;
 
 				// Raised hand
 				if (raisedHand) playNotificationSounds('raisedHand');
 
 				// Reactions
-				if (sendReaction) {
-					// Construct a sound key like 'reactionThumbup' for reactionId "thumbup"
-					const soundKey = `reaction${sendReaction.charAt(0).toUpperCase() + sendReaction.slice(1)}`;
+				if (reaction) {
+					// Construct a sound key like 'reactionThumbup' for reaction "thumbup"
+					const soundKey = `reaction${reaction.charAt(0).toUpperCase() + reaction.slice(1)}`;
 					
 					playNotificationSounds(soundKey);
 				}

@@ -73,13 +73,16 @@ const createPeerMiddleware = ({
 							case 'changeDisplayName':
 							case 'changePicture':
 							case 'recording':
-							case 'raisedHand': {
+							case 'raisedHand': 
+							case 'reaction': {
 								const {
 									peerId,
 									displayName,
 									picture,
 									raisedHand,
 									raisedHandTimestamp,
+									reaction,
+									reactionTimestamp,
 									recording,
 								} = notification.data;
 
@@ -90,6 +93,8 @@ const createPeerMiddleware = ({
 										picture,
 										raisedHand,
 										raisedHandTimestamp,
+										reaction,
+										reactionTimestamp,
 										recording,
 									})
 								);
