@@ -8,6 +8,7 @@ import { stopMic, stopScreenSharing, stopWebcam } from '../actions/mediaActions'
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { p2pModeSelector } from '../selectors';
 import { Logger } from '../../utils/Logger';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 const logger = new Logger('PeerMiddleware');
 
@@ -98,6 +99,17 @@ const createPeerMiddleware = ({
 										recording,
 									})
 								);
+
+								if (reaction) {
+									window.setTimeout(() => {
+										dispatch(
+											peersActions.updatePeer({
+												id: peerId,
+												reaction: null,
+											})
+										);
+									}, edumeetConfig.reactionsTimeout || 10000);
+								}
 
 								break;
 							}
