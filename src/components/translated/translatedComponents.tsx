@@ -35,6 +35,11 @@ export const peerJoinedRoomLabel = (displayName: string): string => intl.formatM
 	defaultMessage: '{displayName} joined the room'
 }, { displayName });
 
+export const peerSentReactionLabel = (displayName: string, reaction: string): string => intl.formatMessage({
+	id: 'room.reaction',
+	defaultMessage: '{displayName} reacted with {reaction}'
+}, { displayName, reaction });
+
 export const yourNameLabel = (): string => intl.formatMessage({
 	id: 'label.yourName',
 	defaultMessage: 'Your name'

@@ -87,10 +87,12 @@ const createPeerMiddleware = ({
 									recording,
 								} = notification.data;
 
+								const peer = getState().peers[peerId];
+
 								dispatch(
 									peersActions.updatePeer({
 										id: peerId,
-										displayName,
+										displayName: displayName ?? peer?.displayName,
 										picture,
 										raisedHand,
 										raisedHandTimestamp,
