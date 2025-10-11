@@ -148,6 +148,18 @@ var config = {
 		'finishedCountdownTimer': {
 			'play': '/sounds/notify-countdowntimer.mp3'
 		},
+		'reactionThumbup' : {
+			'play' : '/sounds/notify-thumbup.mp3',
+		},
+		'reactionClap' : {
+			'play' : '/sounds/notify-clap.mp3',
+		},
+		'reactionParty' : {
+			'play' : '/sounds/notify-party.mp3',
+		},
+		'reactionLaugh' : {
+			'play' : '/sounds/notify-laugh.mp3',
+		},
 		'default': {
 			'debounce': 5000,
 			'play': '/sounds/notify.mp3'
@@ -169,6 +181,9 @@ var config = {
 
 	// Privacy notice. If you want to link your privacy notices, please provide a URL in this variable. If it is empty, no link will be shown.
 	privacyUrl: '',
+
+	// Time how long reactions are shown.
+	reactionsTimeout: 10000,
 
 	// Client theme. Take a look at mui theme documentation.
 	theme: {
