@@ -81,17 +81,17 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		'finishedCountdownTimer': {
 			'play': '/sounds/notify-countdowntimer.mp3'
 		},
-		'reactionThumbup' : {
-			'play' : '/sounds/notify-thumbup.mp3',
+		'reactionThumbup': {
+			'play': '/sounds/notify-thumbup.mp3',
 		},
-		'reactionClap' : {
-			'play' : '/sounds/notify-clap.mp3',
+		'reactionClap': {
+			'play': '/sounds/notify-clap.mp3',
 		},
-		'reactionParty' : {
-			'play' : '/sounds/notify-party.mp3',
+		'reactionParty': {
+			'play': '/sounds/notify-party.mp3',
 		},
-		'reactionLaugh' : {
-			'play' : '/sounds/notify-laugh.mp3',
+		'reactionLaugh': {
+			'play': '/sounds/notify-laugh.mp3',
 		},
 		'default': {
 			'debounce': 5000,
