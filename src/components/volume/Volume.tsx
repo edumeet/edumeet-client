@@ -6,6 +6,7 @@ import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import type { Consumer as PeerConsumer } from 'ortc-p2p/src/types';
 import hark from 'hark';
+import { useAppSelector } from '../../store/hooks';
 
 type VolumeBarProps = {
 	small: number;
@@ -22,7 +23,7 @@ const VolumeContainer = styled('div')<VolumeBarProps>(({ theme, small }) => ({
 	alignItems: 'center',
 }));
 
-const VolumeBar = styled('div')<VolumeBarProps>(({ small, volume = 0 }) => ({
+const VolumeBar = styled('div')<VolumeBarProps & { muted: boolean, isMe: boolean }>(({ small, volume = 0, muted = false, isMe = false }) => ({
 	width: small ? 3 : 6,
 	borderRadius: 6,
 	transitionDuration: '0.10s',
@@ -31,22 +32,27 @@ const VolumeBar = styled('div')<VolumeBarProps>(({ small, volume = 0 }) => ({
 		backgroundColor: 'rgba(0, 0, 0, 1)',
 		height: volume * 3,
 	} : {
-		backgroundColor: `rgba(${100 + (20 * volume)}, ${255 - (20 * volume)}, 0, 0.65)`,
+		backgroundColor: muted
+			? (isMe ? 'rgba(250, 250, 250, 0.5)' : `rgba(${100 + (20 * volume)}, ${255 - (20 * volume)}, 0, 0.65)`)
+			: `rgba(${100 + (20 * volume)}, ${255 - (20 * volume)}, 0, 0.65)`,
 		height: `${volume * 10}%`,
 	})
 }));
 
 interface VolumeProps {
 	small?: boolean;
+	me?: boolean;
 	consumer?: StateConsumer;
 }
 
 const Volume = ({
 	small = false,
+	me = false,
 	consumer,
 }: VolumeProps): JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ volume, setVolume ] = useState<number>(0);
+	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 
 	useEffect(() => {
 		let media: Consumer | PeerConsumer | undefined;
@@ -89,7 +95,7 @@ const Volume = ({
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (
 		<VolumeContainer small={small ? 1 : 0}>
-			<VolumeBar volume={volume} small={small ? 1 : 0} />
+			<VolumeBar volume={volume} small={small ? 1 : 0} muted={audioMuted} isMe={me} />
 		</VolumeContainer>
 	);
 };

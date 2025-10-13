@@ -75,7 +75,7 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 						</ReactionIconContainer>
 					)}
 					{ webcamEnabled && <VideoView mirrored={mirroredSelfView} contain={contain} source='webcam' /> }
-					{ micEnabled && <Volume /> }
+					{ micEnabled && <Volume me={true} /> }
 					{ micEnabled && !isMobile && <UnmuteAlert /> }
 
 					<DisplayName disabled={false} displayName={displayName} isMe />

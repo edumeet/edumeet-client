@@ -46,9 +46,9 @@ const StyledMessage = styled('div')<StyledMessageProps>(({ isMe, format, theme }
 }));
 
 const StyledMessageAvatar = styled('div')(({ theme }) => ({
-	dispay: 'flex',
 	width: theme.spacing(6),
 	display: 'flex',
+	flexShrink: 0,
 	justifyContent: 'center',
 	'& img': {
 		borderRadius: '50%',
@@ -62,7 +62,7 @@ const StyledMessageAvatar = styled('div')(({ theme }) => ({
 
 const StyledMessageTime = styled('div')(({ theme }) => ({
 	display: 'flex',
-	alignSelf: 'center',
+	alignSelf: 'flex-start',
 	justifyContent: 'center',
 	fontSize: theme.typography.caption.fontSize,
 	color: theme.palette.text.disabled,
