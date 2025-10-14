@@ -432,7 +432,6 @@ const RoomTable = () => {
 						disabled={nameDisabled}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="description"
 						label={descLabel()}
@@ -453,7 +452,6 @@ const RoomTable = () => {
 						renderInput={(params) => <TextField {...params} label={defaultRoleLabel()} />}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="logo"
 						label={logoLabel()}
@@ -464,7 +462,6 @@ const RoomTable = () => {
 						value={logo}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="background"
 						label={roomBgLabel()}
@@ -475,7 +472,6 @@ const RoomTable = () => {
 						value={background}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="maxActiveVideos"
 						label={maxActiveVideosLabel()}

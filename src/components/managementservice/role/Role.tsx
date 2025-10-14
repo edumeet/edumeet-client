@@ -292,7 +292,6 @@ const RoleTable = () => {
 						value={name}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="description"
 						label={descLabel()}

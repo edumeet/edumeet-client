@@ -227,7 +227,6 @@ const UserTable = () => {
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<TextField
-						autoFocus
 						margin="dense"
 						id="ssoId"
 						label="ssoId"
@@ -249,7 +248,6 @@ const UserTable = () => {
 						renderInput={(params) => <TextField {...params} label="Tenant" />}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="email"
 						label="Email"
@@ -260,7 +258,6 @@ const UserTable = () => {
 						value={email}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="name"
 						label="Name"

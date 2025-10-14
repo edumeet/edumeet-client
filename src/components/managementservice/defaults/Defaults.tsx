@@ -352,7 +352,6 @@ const DefaultTable = () => {
 						</Grid>
 						<Grid size={6}>
 							<TextField
-								autoFocus
 								margin="dense"
 								id="liveNumberLimit"
 								label={'liveNumberLimit'}
@@ -365,7 +364,6 @@ const DefaultTable = () => {
 						</Grid>
 						<Grid size={6}>
 							<TextField
-								autoFocus
 								margin="dense"
 								id="numberLimit"
 								label={'userManagedRoomNumberLimit'}
@@ -379,7 +377,6 @@ const DefaultTable = () => {
 						
 						<Grid size={6}>
 							<TextField
-								autoFocus
 								margin="dense"
 								id="managerManagedRoomNumberLimit"
 								label={'managerManagedRoomNumberLimit'}
@@ -451,7 +448,6 @@ const DefaultTable = () => {
 						<Grid size={8}>
 
 							<TextField
-								autoFocus
 								margin="dense"
 								id="tracker"
 								label={'tracker'}
@@ -464,7 +460,6 @@ const DefaultTable = () => {
 						</Grid>
 						<Grid size={4}>
 							<TextField
-								autoFocus
 								margin="dense"
 								id="maxFileSize"
 								label={'File upload size'}
@@ -479,7 +474,6 @@ const DefaultTable = () => {
 							/>
 						</Grid>
 						<TextField
-							autoFocus
 							margin="dense"
 							id="background"
 							label={'Background Image'}
@@ -490,7 +484,6 @@ const DefaultTable = () => {
 							value={background}
 						/>
 						<TextField
-							autoFocus
 							margin="dense"
 							id="Logo"
 							label={'Logo URL'}

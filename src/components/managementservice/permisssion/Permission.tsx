@@ -146,7 +146,6 @@ const PermissionTable = () => {
 						value={name}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="description"
 						label="description"
