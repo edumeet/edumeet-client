@@ -23,7 +23,7 @@ const PrecallTitle = (): React.JSX.Element => {
 		<Grid container spacing={2}>
 			<Grid size={8}>
 				{logo ?
-					<img alt='Logo' src={logo} /> :
+					<img style={{ maxWidth: '200px', maxHeight: '200px' }} alt='Logo' src={logo} /> :
 					<Typography variant='h5'> {edumeetConfig.title} </Typography>}
 			</Grid>
 			<Grid size={4} style={{ display: 'flex', justifyContent: 'end' }} >
