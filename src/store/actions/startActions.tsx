@@ -11,6 +11,7 @@ import { setRaisedHand } from './meActions';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { Logger } from '../../utils/Logger';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 const logger = new Logger('listenerActions');
 
@@ -279,17 +280,26 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	document.addEventListener('keyup', keyupListener);
 
-	messageListener = async ({ data }: MessageEvent) => {
+	messageListener = async ({ data, origin }: MessageEvent) => {
 		if (data.type === 'edumeet-login') {
-			const { data: token } = data;
+			// validate origin
+			const url = edumeetConfig.managementUrl;
 
-			await (await managementService).authentication.setAccessToken(token);
+			if (url) {
+				const { host, protocol } = new URL(url);
 
-			dispatch(permissionsActions.setToken(token));
-			dispatch(permissionsActions.setLoggedIn(true));
+				if (origin && origin===`${protocol}//${host}`) {
+					const { data: token } = data;
 
-			if (getState().signaling.state === 'connected')
-				await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+					await (await managementService).authentication.setAccessToken(token);
+
+					dispatch(permissionsActions.setToken(token));
+					dispatch(permissionsActions.setLoggedIn(true));
+
+					if (getState().signaling.state === 'connected')
+						await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+				}
+			}
 		}
 	};
 
