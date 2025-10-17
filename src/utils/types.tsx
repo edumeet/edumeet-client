@@ -98,6 +98,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 			'play': '/sounds/notify.mp3'
 		}
 	},
+	reactionsSoundEnabled: false,
 	title: 'edumeet',
 	randomizeOnBlank: true,
 	transcriptionEnabled: true,
@@ -162,6 +163,7 @@ export interface EdumeetConfig {
 	audioPresets: Record<string, AudioPreset>;
 	buttonControlBar: boolean;
 	notificationSounds: Record<NotificationType, NotificationSound>;
+	reactionsSoundEnabled: boolean;
 	title: string;
 	randomizeOnBlank: boolean;
 	transcriptionEnabled: boolean;

@@ -74,7 +74,7 @@ const createNotificationMiddleware = ({
 				if (raisedHand) playNotificationSounds('raisedHand');
 
 				// Reactions
-				if (reaction) {
+				if (reaction && config.reactionsSoundEnabled) {
 					// Construct a sound key like 'reactionThumbup' for reaction "thumbup"
 					const soundKey = `reaction${reaction.charAt(0).toUpperCase() + reaction.slice(1)}`;
 					

@@ -166,6 +166,9 @@ var config = {
 		}
 	},
 
+	// Enable or disable reactions sound notifications
+	reactionsSoundEnabled: false,
+
 	// The title to show if the logo is not specified.
 	title: 'edumeet',
 
