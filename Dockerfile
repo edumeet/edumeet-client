@@ -9,6 +9,8 @@ RUN yarn build
 
 FROM steebchen/nginx-spa:stable
 
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
 COPY --from=builder /app/build /app
 
 EXPOSE 80
