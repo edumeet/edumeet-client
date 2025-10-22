@@ -8,7 +8,7 @@ import { startExtraVideo } from '../../store/actions/mediaActions';
 import ExtraVideoInputChooser from '../devicechooser/ExtraVideoInputChooser';
 import GenericDialog from '../genericdialog/GenericDialog';
 
-const ExtraVideoDialog = (): JSX.Element => {
+const ExtraVideoDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const extraVideoDialogOpen = useAppSelector((state) => state.ui.extraVideoDialogOpen);
 	const videoInProgress = useAppSelector((state) => state.me.videoInProgress);

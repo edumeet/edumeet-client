@@ -31,7 +31,7 @@ const Container = styled(Box)<ContainerProps>(({ height, width }) => ({
 	overflowY: 'auto',
 }));
 
-const ControlButtonsBar = (): JSX.Element => {
+const ControlButtonsBar = (): React.JSX.Element => {
 	const isMobile = useAppSelector(isMobileSelector);
 	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
 	const filesharingEnabled = useAppSelector((state) => state.room.filesharingEnabled);

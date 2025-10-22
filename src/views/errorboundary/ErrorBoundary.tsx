@@ -9,7 +9,7 @@ import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('ErrorBoundary');
 
-const ErrorBoundary = (): JSX.Element => {
+const ErrorBoundary = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const error = useRouteError();
 

@@ -13,7 +13,7 @@ const ChatDiv = styled('div')({
 	overflowY: 'auto',
 });
 
-const Chat = (): JSX.Element => {
+const Chat = (): React.JSX.Element => {
 	const isChatModerator = usePermissionSelector(permissions.MODERATE_CHAT);
 	const canChat = usePermissionSelector(permissions.SEND_CHAT);
 

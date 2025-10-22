@@ -31,7 +31,7 @@ const ControlButton = ({
 	size = 'small',
 	onClick,
 	children
-}: ControlButtonProps): JSX.Element => {
+}: ControlButtonProps): React.JSX.Element => {
 	const Button = ((type === 'fab') ? Fab : IconButton) as React.ElementType;
 
 	return (

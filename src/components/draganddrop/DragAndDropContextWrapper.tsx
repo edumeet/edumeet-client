@@ -29,7 +29,7 @@ type DndContextWrapperProps = {
     setActivePeer: (activePeer: Peer | null) => void;
 }
 
-const DndContextWrapper = ({ children, setShowParticipantsList, setDragOver, draggedPeerIds, setDraggedPeerIds, activePeer, setActivePeer }: DndContextWrapperProps): JSX.Element => {
+const DndContextWrapper = ({ children, setShowParticipantsList, setDragOver, draggedPeerIds, setDraggedPeerIds, activePeer, setActivePeer }: DndContextWrapperProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const participants = useAppSelector(parentParticipantListSelector);
 	const currentRoom = useAppSelector(currentRoomSessionSelector);

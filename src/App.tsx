@@ -27,7 +27,7 @@ interface SnackbarCloseButtonProps {
 
 const SnackbarCloseButton = ({
 	snackbarKey
-}: SnackbarCloseButtonProps): JSX.Element => {
+}: SnackbarCloseButtonProps): React.JSX.Element => {
 	const { closeSnackbar } = useSnackbar();
 
 	return (
@@ -37,7 +37,7 @@ const SnackbarCloseButton = ({
 	);
 };
 
-const App = (): JSX.Element => {
+const App = (): React.JSX.Element => {
 	const roomBackgroundImage = useAppSelector((state) => state.room.backgroundImage);
 	const userBackgroundImage = useAppSelector((state) => state.me.selectedDestop?.imageUrl);
 	const dispatch = useAppDispatch();

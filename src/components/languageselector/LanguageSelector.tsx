@@ -12,7 +12,7 @@ import {
 	selectLanguageLabel
 } from '../translated/translatedComponents';
 
-const LanguageSelector = (): JSX.Element => {
+const LanguageSelector = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const locale = useAppSelector((state) => state.settings.locale);
 	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);

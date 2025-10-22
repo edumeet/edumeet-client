@@ -42,7 +42,7 @@ const DisplayName = ({
 	disabled = true,
 	peerId,
 	isMe,
-}: DisplayNameProps): JSX.Element => {
+}: DisplayNameProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const [ value, setValue ] = useState(displayName);
 	const [ isEditing, setIsEditing ] = useState(false);

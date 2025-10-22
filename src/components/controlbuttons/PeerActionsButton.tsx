@@ -10,7 +10,7 @@ interface PeerActionsButtonProps {
 
 const PeerActionsButton = ({
 	peerId
-}: PeerActionsButtonProps): JSX.Element => {
+}: PeerActionsButtonProps): React.JSX.Element => {
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
 
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);

@@ -16,7 +16,7 @@ import { startRecording, stopRecording } from '../../store/actions/recordingActi
 
 const Recording = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasRecordingPermission = usePermissionSelector(permissions.LOCAL_RECORD_ROOM);
 	const canRecord = useAppSelector((state) => state.me.canRecord);

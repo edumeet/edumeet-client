@@ -73,7 +73,7 @@ const StyledDiv = styled('div')(({ theme }) => ({
 	}
 }));
 
-const ShortcutKeys = (): JSX.Element => {
+const ShortcutKeys = (): React.JSX.Element => {
 	return (
 		<Stack direction='column' spacing={ 2 }>
 			{ shortcuts.map(({ value, label }, index) => (

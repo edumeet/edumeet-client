@@ -13,7 +13,7 @@ import {
 } from '../../store/actions/mediaActions';
 import { meActions } from '../../store/slices/meSlice';
 
-const WebcamPreviewButton = (props: ControlButtonProps): JSX.Element => {
+const WebcamPreviewButton = (props: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
 

@@ -15,7 +15,7 @@ import { startRecording, stopRecording } from '../../store/actions/recordingActi
 
 const RecordButton = (
 	props
-: ControlButtonProps): JSX.Element => {
+: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasRecordingPermission = usePermissionSelector(permissions.LOCAL_RECORD_ROOM);
 	const recording = useAppSelector((state) => state.room.recording);

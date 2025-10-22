@@ -8,7 +8,7 @@ import { notificationsActions } from '../../store/slices/notificationsSlice';
 import { testAudioOutputLabel } from '../translated/translatedComponents';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 
-const TestAudioOutputButton = (): JSX.Element => {
+const TestAudioOutputButton = (): React.JSX.Element => {
 	const audioDevices = useDeviceSelector('audiooutput');
 	const audioInProgress = useAppSelector((state) => state.me.audioInProgress);
 	const dispatch = useAppDispatch();

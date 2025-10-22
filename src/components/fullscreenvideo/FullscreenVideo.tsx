@@ -5,7 +5,7 @@ import MediaControls from '../mediacontrols/MediaControls';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 
-const FullscreenVideo = (): JSX.Element => {
+const FullscreenVideo = (): React.JSX.Element => {
 	const consumer = useAppSelector(fullscreenConsumerSelector);
 
 	return (

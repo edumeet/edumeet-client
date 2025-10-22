@@ -11,7 +11,7 @@ interface ListLobbyPeerProps {
 const ListLobbyPeer = ({
 	peer,
 	canPromote,
-}: ListLobbyPeerProps): JSX.Element => {
+}: ListLobbyPeerProps): React.JSX.Element => {
 	return (
 		<ListItem alignItems='flex-start'>
 			<Typography>{ peer.displayName }</Typography>

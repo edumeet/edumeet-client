@@ -25,7 +25,7 @@ const GhostDiv = styled(Box)(({ }) => ({
 }));
 
 // Pulsing object wrapper to show were peers wil be dropped
-const GhostObject = ({ children }: GhostObjectProps): JSX.Element => {
+const GhostObject = ({ children }: GhostObjectProps): React.JSX.Element => {
 
 	return (
 		<GhostDiv>

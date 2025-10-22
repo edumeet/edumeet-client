@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { selectAudioPresetLabel } from '../translated/translatedComponents';
 
-const AudioPresetSelector = (): JSX.Element => {
+const AudioPresetSelector = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const audioPreset = useAppSelector((state) => state.settings.audioPreset);
 	const audioPresets = useAppSelector((state) => state.settings.audioPresets);

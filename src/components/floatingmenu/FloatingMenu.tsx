@@ -35,7 +35,7 @@ const FloatingMenu = ({
 	open,
 	onClose,
 	children
-}: FloatingMenuProps): JSX.Element => {
+}: FloatingMenuProps): React.JSX.Element => {
 	return (
 		<StyledMenu
 			anchorEl={anchorEl}

@@ -15,7 +15,7 @@ import StopScreenIcon from '@mui/icons-material/StopScreenShare';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { stopScreenSharing, updateScreenSharing } from '../../store/actions/mediaActions';
 
-const ScreenshareButton = (props: ControlButtonProps): JSX.Element => {
+const ScreenshareButton = (props: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasScreenPermission = usePermissionSelector(permissions.SHARE_SCREEN);
 	const screenEnabled = useAppSelector((state) => state.me.screenEnabled);

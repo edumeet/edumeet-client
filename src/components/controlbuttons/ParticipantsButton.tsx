@@ -13,7 +13,7 @@ import PulsingBadge from '../pulsingbadge/PulsingBadge';
 
 const ParticipantsButton = ({
 	...props
-}: ControlButtonProps): JSX.Element => {
+}: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const peersLength = useAppSelector(peersLengthSelector);
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);

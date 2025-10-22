@@ -84,7 +84,7 @@ const MediaControls = ({
 	autoHide = true,
 	pointerEvents = false,
 	children
-}: MediaControlsProps): JSX.Element => {
+}: MediaControlsProps): React.JSX.Element => {
 	let justifyContent = 'center';
 	let alignItems = 'center';
 

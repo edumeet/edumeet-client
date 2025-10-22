@@ -15,7 +15,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 
 const ExtraAudio = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	const {

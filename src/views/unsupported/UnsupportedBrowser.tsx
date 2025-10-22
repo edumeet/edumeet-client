@@ -39,7 +39,7 @@ let dense = false;
 const UnsupportedBrowser = ({
 	platform,
 	webrtcUnavailable,
-}: UnsupportedBrowserProps): JSX.Element => {
+}: UnsupportedBrowserProps): React.JSX.Element => {
 	if (platform !== 'desktop')
 		dense = true;
 

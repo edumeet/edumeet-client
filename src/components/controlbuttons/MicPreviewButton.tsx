@@ -10,7 +10,7 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { updatePreviewMic, stopPreviewMic } from '../../store/actions/mediaActions';
 import { meActions } from '../../store/slices/meSlice';
 
-const MicPreviewButton = (props: ControlButtonProps): JSX.Element => {
+const MicPreviewButton = (props: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);
 

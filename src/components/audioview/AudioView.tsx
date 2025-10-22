@@ -11,7 +11,7 @@ interface AudioViewProps {
 const AudioView = ({
 	consumer,
 	deviceId
-}: AudioViewProps): JSX.Element => {
+}: AudioViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const audioElement = useRef<HTMLMediaElementWithSink>(null);
 

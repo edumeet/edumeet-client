@@ -37,7 +37,7 @@ const FileInfoDiv = styled('div')({
 const ListFile = ({
 	file,
 	isMe,
-}: ListFilerProps): JSX.Element => {
+}: ListFilerProps): React.JSX.Element => {
 	const { fileService } = useContext(ServiceContext);
 	const dispatch = useAppDispatch();
 	const [ torrent, setTorrent ] = useState<LocalWebTorrent | undefined>();

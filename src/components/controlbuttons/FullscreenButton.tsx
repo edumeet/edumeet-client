@@ -13,7 +13,7 @@ interface FullscreenButtonProps extends ControlButtonProps {
 const FullscreenButton = ({
 	fullscreen,
 	...props
-}: FullscreenButtonProps): JSX.Element => {
+}: FullscreenButtonProps): React.JSX.Element => {
 	return (
 		<ControlButton
 			toolTip={fullscreen ?

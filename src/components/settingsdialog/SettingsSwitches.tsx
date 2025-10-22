@@ -21,7 +21,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 import { BackgroundType } from '../../utils/types';
 import { meActions } from '../../store/slices/meSlice';
 
-export const EchoCancellationSwitch = (): JSX.Element => {
+export const EchoCancellationSwitch = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const echoCancellation = useAppSelector((state) => state.settings.echoCancellation);
 
@@ -41,7 +41,7 @@ export const EchoCancellationSwitch = (): JSX.Element => {
 	);
 };
 
-export const AutoGainControlSwitch = (): JSX.Element => {
+export const AutoGainControlSwitch = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const autoGainControl = useAppSelector((state) => state.settings.autoGainControl);
 
@@ -61,7 +61,7 @@ export const AutoGainControlSwitch = (): JSX.Element => {
 	);
 };
 
-export const NoiseSuppressionSwitch = (): JSX.Element => {
+export const NoiseSuppressionSwitch = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const noiseSuppression = useAppSelector((state) => state.settings.noiseSuppression);
 
@@ -81,7 +81,7 @@ export const NoiseSuppressionSwitch = (): JSX.Element => {
 	);
 };
 
-export const OpusDtxSwitch = (): JSX.Element => {
+export const OpusDtxSwitch = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const opusDtx = useAppSelector((state) => state.settings.opusDtx);
 
@@ -101,7 +101,7 @@ export const OpusDtxSwitch = (): JSX.Element => {
 	);
 };
 
-export const OpusFecSwitch = (): JSX.Element => {
+export const OpusFecSwitch = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const opusFec = useAppSelector((state) => state.settings.opusFec);
 
@@ -121,7 +121,7 @@ export const OpusFecSwitch = (): JSX.Element => {
 	);
 };
 
-export const BlurSwitch = (): JSX.Element => {
+export const BlurSwitch = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const blurSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
 	const videoBackgroundEffectType = useAppSelector((state) => state.me.videoBackgroundEffect?.type);
@@ -145,7 +145,7 @@ export const BlurSwitch = (): JSX.Element => {
 	);
 };
 
-export const BlurButton = (): JSX.Element => {
+export const BlurButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const blurSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
 	const videoBackgroundEffectType = useAppSelector((state) => state.me.videoBackgroundEffect?.type);
@@ -169,7 +169,7 @@ export const BlurButton = (): JSX.Element => {
 	);
 };
 
-export const VideoBackgroundButton = (): JSX.Element => {
+export const VideoBackgroundButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const videoBackgroundSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
 	const videoBackgroundEffectType = useAppSelector((state) => state.me.videoBackgroundEffect?.type);

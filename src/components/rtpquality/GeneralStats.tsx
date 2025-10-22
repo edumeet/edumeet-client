@@ -14,7 +14,7 @@ type Stats = {
 	value: string,
 }
 
-const GeneralStats = (): JSX.Element => {
+const GeneralStats = (): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ generalStats, setGeneralStats ] = useState<Stats[]>([]);
 

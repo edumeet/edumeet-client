@@ -5,7 +5,7 @@ import {
 	clearFilesLabel,
 } from '../translated/translatedComponents';
 
-const ClearFilesharingButton = (): JSX.Element => {
+const ClearFilesharingButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	const handleClearFiles = (): void => {

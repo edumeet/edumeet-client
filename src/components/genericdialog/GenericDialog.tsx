@@ -66,7 +66,7 @@ const GenericDialog = ({
 	onClose,
 	maxWidth = 'xs',
 	showFooter = false,
-}: GenericDialogProps): JSX.Element => {
+}: GenericDialogProps): React.JSX.Element => {
 	const infoTooltipEnabled = edumeetConfig.infoTooltipEnabled;
 	const infoTooltipText = edumeetConfig.infoTooltipText;
 	const infoTooltipLink = edumeetConfig.infoTooltipLink;

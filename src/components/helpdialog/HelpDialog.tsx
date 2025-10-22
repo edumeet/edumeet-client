@@ -7,7 +7,7 @@ import ShortcutKeys from './ShortcutKeys';
 import GenericDialog from '../genericdialog/GenericDialog';
 import edumeetConfig from '../../utils/edumeetConfig';
 
-const HelpDialog = (): JSX.Element => {
+const HelpDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const helpOpen = useAppSelector((state) => state.ui.helpOpen);
 

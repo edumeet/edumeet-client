@@ -78,7 +78,7 @@ const ListBreakoutRoom = ({
 	isModerator,
 	dragOver,
 	draggedPeerids,
-}: BreakoutRoomProps): JSX.Element => {
+}: BreakoutRoomProps): React.JSX.Element => {
 	const [ expanded, setExpanded ] = useState(false);
 	const sessionId = useAppSelector((state) => state.me.sessionId);
 	const inSession = room.sessionId === sessionId;

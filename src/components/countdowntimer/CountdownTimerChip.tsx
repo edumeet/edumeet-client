@@ -5,7 +5,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
 import moment from 'moment';
 
-const CountdownTimerChip = (): JSX.Element => {
+const CountdownTimerChip = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const isEnabled = useAppSelector((state) => state.room.countdownTimer.isEnabled);
 	const remainingTime = useAppSelector((state) => state.room.countdownTimer.remainingTime);

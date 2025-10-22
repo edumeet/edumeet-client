@@ -12,7 +12,7 @@ const ChatInputDiv = styled('div')(({ theme }) => ({
 	marginRight: theme.spacing(1),
 }));
 
-const ChatInput = (): JSX.Element => {
+const ChatInput = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const [ message, setMessage ] = useState<string>('');
 

@@ -13,7 +13,7 @@ import UploadImageButton from './UploadFileButton';
 import { RoomBackgroundPreview } from './RoomBackgroundPreview';
 import RoomBackgroundTile from './RoomBackgroundTile';
 
-const BackgroundSelectDialog = (): JSX.Element => {
+const BackgroundSelectDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const backgroundSelectDialogOpen = useAppSelector((state) => state.ui.backgroundSelectDialogOpen);
 	const selectedBackground = useAppSelector((state) => state.me.selectedDestop);

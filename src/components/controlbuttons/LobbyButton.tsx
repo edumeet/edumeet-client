@@ -13,7 +13,7 @@ import { lobbyPeersLengthSelector } from '../../store/selectors';
 
 const LobbyButton = ({
 	...props
-}: ControlButtonProps): JSX.Element => {
+}: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 	const lobbyDialogOpen = useAppSelector((state) => state.ui.lobbyDialogOpen);

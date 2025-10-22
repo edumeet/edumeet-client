@@ -16,7 +16,7 @@ interface StopAudioProps extends MenuItemProps {
 const StopAudio = ({
 	peer,
 	onClick
-}: StopAudioProps): JSX.Element => {
+}: StopAudioProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const { stopAudioInProgress } = peer;
 
