@@ -21,8 +21,8 @@ type ScrollingListComponentProps =
 	Readonly<{ children?: ReactNode }> & Readonly<ScrollingListProps>;
 
 class ScrollingList extends PureComponent<ScrollingListProps> {
-	private readonly wrapperRef: React.RefObject<HTMLDivElement>;
-	private readonly bottomRef: React.RefObject<HTMLDivElement>;
+	private readonly wrapperRef: React.RefObject<HTMLDivElement | null>;
+	private readonly bottomRef: React.RefObject<HTMLDivElement | null>;
 
 	constructor(props: ScrollingListProps) {
 		super(props);
