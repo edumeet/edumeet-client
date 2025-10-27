@@ -9,7 +9,7 @@ import { MenuItemProps } from '../floatingmenu/FloatingMenu';
 
 const Fullscreen = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 
 	const handleToggleFullscreen = () => {
 		if (fscreen.fullscreenElement) {

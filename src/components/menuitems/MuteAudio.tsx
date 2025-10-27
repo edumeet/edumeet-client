@@ -19,7 +19,7 @@ const MuteAudio = ({
 	peer,
 	micConsumer,
 	onClick
-}: MuteAudioProps): JSX.Element => {
+}: MuteAudioProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	const { audioInProgress } = peer;

@@ -17,7 +17,7 @@ const ScrollToBottom = styled(Button)(({ theme }) => ({
 	marginBottom: theme.spacing(1),
 }));
 
-const ChatHistory = (): JSX.Element => {
+const ChatHistory = (): React.JSX.Element => {
 	const chatHistoryRef = useRef<ScrollingList>(null);
 	const chatMessages = useAppSelector(chatMessagesSelector);
 	const [ atBottom, setAtBottom ] = useState(true);

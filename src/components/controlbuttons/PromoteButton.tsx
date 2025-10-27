@@ -18,7 +18,7 @@ const PromoteButton = ({
 	peer,
 	canPromote,
 	...props
-}: PromoteButtonProps): JSX.Element => {
+}: PromoteButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	return (

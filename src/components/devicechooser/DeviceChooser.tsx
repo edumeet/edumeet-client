@@ -37,7 +37,7 @@ const DeviceChooser = ({
 	disabled,
 	devices,
 	extraButtons
-}: DeviceChooserProps): JSX.Element => {
+}: DeviceChooserProps): React.JSX.Element => {
 	const label = devices.length ? devicesLabel : noDevicesLabel;
 	const labelId = new Date().getUTCMilliseconds();
 	

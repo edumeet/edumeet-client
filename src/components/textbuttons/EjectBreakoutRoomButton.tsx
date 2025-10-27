@@ -9,7 +9,7 @@ interface EjectBreakoutRoomButtonProps {
 
 const EjectBreakoutRoomButton = ({
 	sessionId
-}: EjectBreakoutRoomButtonProps): JSX.Element => {
+}: EjectBreakoutRoomButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const updateBreakoutInProgress = useAppSelector((state) => state.room.updateBreakoutInProgress);
 

@@ -16,7 +16,7 @@ interface KickProps extends MenuItemProps {
 const Kick = ({
 	peer,
 	onClick
-}: KickProps): JSX.Element => {
+}: KickProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	const { kickInProgress } = peer;

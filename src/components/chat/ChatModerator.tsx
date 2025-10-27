@@ -10,7 +10,7 @@ const ModeratorDiv = styled('div')(({ theme }) => ({
 	cursor: 'auto',
 }));
 
-const ChatModerator = (): JSX.Element => {
+const ChatModerator = (): React.JSX.Element => {
 	return (
 		<ModeratorDiv>
 			<ClearChatButton />

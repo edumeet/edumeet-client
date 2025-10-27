@@ -12,7 +12,7 @@ import edumeetConfig from '../../utils/edumeetConfig';
 import { startListeners, stopListeners } from '../../store/actions/startActions';
 import { useAppDispatch } from '../../store/hooks';
 
-const LandingPage = (): JSX.Element => {
+const LandingPage = (): React.JSX.Element => {
 	const navigate = useNavigate();
 	const randomizeOnBlank = edumeetConfig.randomizeOnBlank;
 	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomString({ length: 8 }).toLowerCase() : '');

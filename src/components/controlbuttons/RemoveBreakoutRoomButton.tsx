@@ -11,7 +11,7 @@ interface RemoveBreakoutRoomButtonProps extends ControlButtonProps {
 const RemoveBreakoutRoomButton = ({
 	sessionId,
 	...props
-}: RemoveBreakoutRoomButtonProps): JSX.Element => {
+}: RemoveBreakoutRoomButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const createRoomInProgress = useAppSelector((state) => state.room.updateBreakoutInProgress);
 

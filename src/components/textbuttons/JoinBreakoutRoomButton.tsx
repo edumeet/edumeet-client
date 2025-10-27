@@ -19,7 +19,7 @@ const StyledJoinBreakoutRoomButton = styled(Button)(({ theme }) => ({
 
 const JoinBreakoutRoomButton = ({
 	sessionId,
-}: JoinBreakoutRoomButtonProps): JSX.Element => {
+}: JoinBreakoutRoomButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const changeRoomInProgress = useAppSelector((state) => state.room.transitBreakoutRoomInProgress);
 

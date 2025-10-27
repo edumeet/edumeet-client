@@ -12,7 +12,7 @@ interface FullscreenVideoButtonProps extends ControlButtonProps {
 const FullscreenVideoButton = ({
 	consumerId,
 	...props
-}: FullscreenVideoButtonProps): JSX.Element => {
+}: FullscreenVideoButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const fullscreenConsumer = useAppSelector(fullscreenConsumerSelector);
 	const sessionId = useAppSelector((state) => state.me.sessionId);

@@ -7,7 +7,7 @@ interface StateIndicatorsProps {
 	peerId: string;
 }
 
-const StateIndicators = ({ peerId }: StateIndicatorsProps): JSX.Element => {
+const StateIndicators = ({ peerId }: StateIndicatorsProps): React.JSX.Element => {
 	const peer = usePeer(peerId);
 	const { micConsumer } = usePeerConsumers(peerId);
 

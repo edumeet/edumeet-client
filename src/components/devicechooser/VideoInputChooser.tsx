@@ -25,7 +25,7 @@ interface VideoInputChooserProps {
 const VideoInputChooser = ({
 	withConfirm,
 	withVideoBackgroundSelect,
-}: VideoInputChooserProps): JSX.Element => {
+}: VideoInputChooserProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
 	const videoDevices = useDeviceSelector('videoinput');

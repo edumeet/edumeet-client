@@ -11,7 +11,7 @@ import AddVideoIcon from '@mui/icons-material/VideoCall';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import { uiActions } from '../../store/slices/uiSlice';
 
-const ExtraAudioButton = (props: ControlButtonProps): JSX.Element => {
+const ExtraAudioButton = (props: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	const {

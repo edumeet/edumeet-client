@@ -13,7 +13,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 
 const Settings = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const settingsOpen = useAppSelector((state) => state.ui.settingsOpen);
 

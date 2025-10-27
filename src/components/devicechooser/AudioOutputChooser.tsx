@@ -9,7 +9,7 @@ import { settingsActions } from '../../store/slices/settingsSlice';
 import { audioOutputDeviceLabel, noAudioOutputDevicesLabel, selectAudioOutputDeviceLabel } from '../translated/translatedComponents';
 import TestAudioOutputButton from '../audiooutputtest/AudioOutputTest';
 
-const AudioOutputChooser = (): JSX.Element => {
+const AudioOutputChooser = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const audioDevices = useDeviceSelector('audiooutput');
 	const audioInProgress = useAppSelector((state) => state.me.audioInProgress);

@@ -67,7 +67,7 @@ const Stats = ({
 	withPadding = true,
 	autoHide = false,
 	children
-}: StatsProps): JSX.Element => {
+}: StatsProps): React.JSX.Element => {
 	let justifyContent = 'center';
 	let alignItems = 'center';
 

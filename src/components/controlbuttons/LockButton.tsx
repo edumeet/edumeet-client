@@ -15,7 +15,7 @@ import { lock, unlock } from '../../store/actions/permissionsActions';
 
 const LockButton = ({
 	...props
-}: ControlButtonProps): JSX.Element => {
+}: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const locked = useAppSelector((state) => state.permissions.locked);
 	const canChangeLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);

@@ -17,7 +17,7 @@ const StyledSliderBox = styled(Box)(({ theme }) => ({
 
 const AudioGainSlider = ({
 	consumer
-}: AudioGainSliderProps): JSX.Element => {
+}: AudioGainSliderProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const [ audioGain, setAudioGain ] = useState<number>(consumer.audioGain ?? 1.0);
 

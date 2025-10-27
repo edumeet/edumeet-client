@@ -21,7 +21,7 @@ const StyledAlert = styled(Alert)(() => ({
 	}
 }));
 
-const UnmuteAlert = (): JSX.Element => {
+const UnmuteAlert = (): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ speaking, setSpeaking ] = useState(false);
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);

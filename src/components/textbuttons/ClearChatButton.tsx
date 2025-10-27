@@ -5,7 +5,7 @@ import {
 	clearChatLabel,
 } from '../translated/translatedComponents';
 
-const ClearChatButton = (): JSX.Element => {
+const ClearChatButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	const handleClearChat = (): void => {

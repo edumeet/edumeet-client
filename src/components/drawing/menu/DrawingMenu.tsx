@@ -75,7 +75,7 @@ const DrawingMenu = ({
 	handleUndo,
 	handleRedo,
 	handleEraseAll
-}:drawingMenuProps):JSX.Element => {
+}:drawingMenuProps): React.JSX.Element => {
 
 	return (
 		<Grid container

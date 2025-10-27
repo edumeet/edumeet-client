@@ -16,7 +16,7 @@ interface StopVideoProps extends MenuItemProps {
 const StopVideo = ({
 	peer,
 	onClick
-}: StopVideoProps): JSX.Element => {
+}: StopVideoProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const { stopVideoInProgress } = peer;
 

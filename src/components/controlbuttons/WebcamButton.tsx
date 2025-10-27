@@ -15,7 +15,7 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { stopWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import { permissions } from '../../utils/roles';
 
-const WebcamButton = (props: ControlButtonProps): JSX.Element => {
+const WebcamButton = (props: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasVideoPermission = usePermissionSelector(permissions.SHARE_VIDEO);
 	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);

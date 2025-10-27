@@ -11,7 +11,7 @@ import SignIn from './managementsettings/ManagementAdminLoginSettings';
 import List from '@mui/material/List';
 import { managementAdvancedSettingsLabel, managementRoomSettingsLabel } from '../translated/translatedComponents';
 
-const ManagementSettings = (): JSX.Element => {
+const ManagementSettings = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 

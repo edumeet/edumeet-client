@@ -10,7 +10,7 @@ const NestedList = styled(List)(({ theme }) => ({
 	padding: theme.spacing(0, 1.5)
 }));
 
-const MediaSettings = (): JSX.Element => {
+const MediaSettings = (): React.JSX.Element => {
 	const showAudioOutputChooser = useAppSelector(canSelectAudioOutput);
 
 	return (

@@ -16,7 +16,7 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { pauseMic, resumeMic, updateMic } from '../../store/actions/mediaActions';
 import { permissions } from '../../utils/roles';
 
-const MicButton = (props: ControlButtonProps): JSX.Element => {
+const MicButton = (props: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const micEnabled = useAppSelector((state) => state.me.micEnabled);
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);

@@ -5,7 +5,7 @@ import {
 } from '../translated/translatedComponents';
 import { stopAllVideo } from '../../store/actions/peerActions';
 
-const StopAllVideoButton = (): JSX.Element => {
+const StopAllVideoButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const muteAllInProgress = useAppSelector((state) => state.room.muteAllInProgress);
 

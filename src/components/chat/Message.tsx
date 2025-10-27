@@ -105,7 +105,7 @@ const Message = ({
 	text,
 	isMe,
 	format
-}: MessageProps): JSX.Element => {
+}: MessageProps): React.JSX.Element => {
 	const linkRenderer = new marked.Renderer();
 
 	linkRenderer.link = (href, title, linkText) => {

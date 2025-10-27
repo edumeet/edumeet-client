@@ -15,7 +15,7 @@ const ShareLabel = styled('label')(({ theme }) => ({
 	gap: theme.spacing(1),
 }));
 
-const FilesharingDialog = (): JSX.Element => {
+const FilesharingDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const filesharingOpen = useAppSelector((state) => state.ui.filesharingOpen);
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);

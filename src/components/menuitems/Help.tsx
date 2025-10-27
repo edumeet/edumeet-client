@@ -8,7 +8,7 @@ import MoreActions from '../moreactions/MoreActions';
 
 const Help = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const helpOpen = useAppSelector((state) => state.ui.helpOpen);
 

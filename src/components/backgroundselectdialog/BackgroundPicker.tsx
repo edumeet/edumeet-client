@@ -32,7 +32,7 @@ const BackgroundPicker = ({
 	setSelectedBackground,
 	defaultTile,
 	showDefaultTile = true,
-	children }: BackgroundPickerProps): JSX.Element => {
+	children }: BackgroundPickerProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const isMd = useMediaQuery(theme.breakpoints.up('md'));

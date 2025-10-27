@@ -17,7 +17,7 @@ import { permissions } from '../../utils/roles';
 
 const Lock = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const locked = useAppSelector((state) => state.permissions.locked);

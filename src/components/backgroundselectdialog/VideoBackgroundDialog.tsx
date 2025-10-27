@@ -24,7 +24,7 @@ const toSelectedBackgroundFromVideo = (conf: BackgroundConfig | null): SelectedB
 	};
 };
 
-const VideoBackgroundDialog = (): JSX.Element => {
+const VideoBackgroundDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const videoBackgroundDialogOpen = useAppSelector((state) => state.ui.videoBackgroundDialogOpen);
 	const videoBackground = useAppSelector((state) => state.me.videoBackgroundEffect);

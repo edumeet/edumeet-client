@@ -17,7 +17,7 @@ import { permissions } from '../../utils/roles';
 
 const ExtraVideo = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 

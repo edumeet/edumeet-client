@@ -67,7 +67,7 @@ function createInboundStats(trackStats: TrackStats): InboundStats[] {
 const PeerStatsView = ({
 	producerId,
 	consumerId,
-}: PeerStatsViewProps): JSX.Element => {
+}: PeerStatsViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ inboundStats, setInboundStats ] = useState<InboundStats [ ] >([ ]);
 	const [ outboundStats, setOutboundStats ] = useState<OutboundStats [ ] >([ ]);

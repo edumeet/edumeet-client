@@ -38,7 +38,7 @@ const ListHeader = styled(Typography)({
 	fontWeight: 'bolder'
 });
 
-const ParticipantList = (): JSX.Element => {
+const ParticipantList = (): React.JSX.Element => {
 	const breakoutsEnabled = useAppSelector((state) => state.room.breakoutsEnabled);
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const isMobile = useAppSelector(isMobileSelector);

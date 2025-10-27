@@ -10,7 +10,7 @@ import PulsingBadge from '../pulsingbadge/PulsingBadge';
 
 const ChatButton = ({
 	...props
-}: ControlButtonProps): JSX.Element => {
+}: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const unreadMessages = useAppSelector((state) => state.ui.unreadMessages);
 	const chatOpen = useAppSelector((state) => state.ui.chatOpen);

@@ -5,7 +5,7 @@ import {
 } from '../translated/translatedComponents';
 import { stopAllScreenshare } from '../../store/actions/peerActions';
 
-const StopAllScreenshareButton = (): JSX.Element => {
+const StopAllScreenshareButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const muteAllInProgress = useAppSelector((state) => state.room.muteAllInProgress);
 

@@ -4,7 +4,7 @@ import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import hark from 'hark';
 
-const MicVolume = (): JSX.Element => {
+const MicVolume = (): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ volumeLevel, setVolume ] = useState<number>(0);
 

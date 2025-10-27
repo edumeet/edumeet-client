@@ -11,7 +11,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 
 const SettingsButton = ({
 	...props
-}: ControlButtonProps): JSX.Element => {
+}: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const settingsOpen = useAppSelector((state) => state.ui.settingsOpen);
 

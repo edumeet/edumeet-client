@@ -16,7 +16,7 @@ interface StopScreenshareProps extends MenuItemProps {
 const StopScreenshare = ({
 	peer,
 	onClick
-}: StopScreenshareProps): JSX.Element => {
+}: StopScreenshareProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const { stopScreenSharingInProgress } = peer;
 

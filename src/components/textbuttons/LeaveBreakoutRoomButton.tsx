@@ -13,7 +13,7 @@ const StyledLeaveBreakoutRoomButton = styled(Button)(({ theme }) => ({
 	paddingBottom: 0,
 }));
 
-const LeaveBreakoutRoomButton = (): JSX.Element => {
+const LeaveBreakoutRoomButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const changeRoomInProgress = useAppSelector((state) => state.room.transitBreakoutRoomInProgress);
 

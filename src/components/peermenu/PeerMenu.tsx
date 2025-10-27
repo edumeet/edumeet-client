@@ -28,7 +28,7 @@ const PeerMenu = ({
 	peerId,
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	onClick = (): void => {}
-}: PeerMenuProps): JSX.Element => {
+}: PeerMenuProps): React.JSX.Element => {
 	const peer = usePeer(peerId);
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const {

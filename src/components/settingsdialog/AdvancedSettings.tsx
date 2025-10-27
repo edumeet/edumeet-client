@@ -5,7 +5,7 @@ import { audioSettingsLabel, videoSettingsLabel } from '../translated/translated
 import HeadsetMic from '@mui/icons-material/HeadsetMic';
 import Videocam from '@mui/icons-material/Videocam';
 
-const AdvancedSettings = (): JSX.Element => {
+const AdvancedSettings = (): React.JSX.Element => {
 	return (
 		<List>
 			<ListItem>

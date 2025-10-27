@@ -17,7 +17,7 @@ const tabs: SettingsTab[] = [
 	'management'
 ];
 
-const SettingsDialog = (): JSX.Element => {
+const SettingsDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const settingsOpen = useAppSelector((state) => state.ui.settingsOpen);
 	const currentSettingsTab = useAppSelector((state) => state.ui.currentSettingsTab);

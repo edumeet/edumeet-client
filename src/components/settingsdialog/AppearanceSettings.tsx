@@ -19,7 +19,7 @@ import {
 } from '../translated/translatedComponents';
 import LastNSlider from '../lastnslider/LastNSlider';
 
-const AppearanceSettings = (): JSX.Element => {
+const AppearanceSettings = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const {
 		mirroredSelfView,

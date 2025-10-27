@@ -4,7 +4,7 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 const MoreButton = ({
 	size,
 	...props
-}: ControlButtonProps): JSX.Element => {
+}: ControlButtonProps): React.JSX.Element => {
 	return (
 		<ControlButton
 			aria-haspopup

@@ -63,7 +63,7 @@ const Transcription = ({
 	withPadding = true,
 	autoHide = false,
 	children
-}: TranscriptionProps): JSX.Element => {
+}: TranscriptionProps): React.JSX.Element => {
 	let justifyContent = 'center';
 	let alignItems = 'center';
 

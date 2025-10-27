@@ -8,7 +8,7 @@ interface PeerTranscriptionProps {
 
 const PeerTranscription = ({
 	id,
-}: PeerTranscriptionProps): JSX.Element => {
+}: PeerTranscriptionProps): React.JSX.Element => {
 	const transcripts = usePeerTranscripts(id);
 
 	return (

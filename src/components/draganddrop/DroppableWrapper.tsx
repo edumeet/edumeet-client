@@ -6,7 +6,7 @@ type DroppableElementProps = {
 	id: string;
   };
   
-const DroppableWrapper = ({ children, id }: DroppableElementProps): JSX.Element => {
+const DroppableWrapper = ({ children, id }: DroppableElementProps): React.JSX.Element => {
 	const { setNodeRef } = useDroppable({
 		id: id,
 	});

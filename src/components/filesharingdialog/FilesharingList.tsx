@@ -20,7 +20,7 @@ const ListItemLi = styled('li')(({ theme }) => ({
 	}
 }));
 
-const FilesharingList = (): JSX.Element => {
+const FilesharingList = (): React.JSX.Element => {
 	const files = useAppSelector(filesSelector);
 	const meId = useAppSelector((state) => state.me.id);
 

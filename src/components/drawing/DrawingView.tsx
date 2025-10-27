@@ -28,7 +28,7 @@ interface DrawingViewProps {
 	height: number;
 }
 
-const DrawingView = ({ width, height }: DrawingViewProps): JSX.Element => {
+const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
     
 	// drawing setup   

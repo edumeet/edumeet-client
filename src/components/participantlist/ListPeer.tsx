@@ -56,7 +56,7 @@ const PeerAvatar = styled('img')({
 	alignSelf: 'center',
 });
 
-const ListPeer = ({ peer, isModerator }: ListPeerProps): JSX.Element => {
+const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const { micConsumer, webcamConsumer, screenConsumer } = usePeerConsumers(peer.id);
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();

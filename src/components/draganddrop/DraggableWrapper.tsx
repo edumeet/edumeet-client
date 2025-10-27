@@ -7,7 +7,7 @@ type DraggableElementProps = {
 	disabled: boolean;
   };
   
-const DraggableWrapper = ({ children, id, disabled }: DraggableElementProps): JSX.Element => {
+const DraggableWrapper = ({ children, id, disabled }: DraggableElementProps): React.JSX.Element => {
 	const { attributes, listeners, setNodeRef } = useDraggable({
 		id: id,
 		disabled: disabled

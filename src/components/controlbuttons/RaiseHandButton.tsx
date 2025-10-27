@@ -13,7 +13,7 @@ import { setRaisedHand } from '../../store/actions/meActions';
 const RaiseHandButton = ({
 	size,
 	...props
-} : ControlButtonProps): JSX.Element => {
+} : ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const {
 		raisedHand,

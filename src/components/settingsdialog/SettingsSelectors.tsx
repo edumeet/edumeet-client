@@ -30,7 +30,7 @@ interface ResolutionSelectorProps {
 
 export const ResolutionSelector = ({
 	resolutions
-}: ResolutionSelectorProps): JSX.Element => {
+}: ResolutionSelectorProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const resolution = useAppSelector((state) => state.settings.resolution);
 
@@ -71,7 +71,7 @@ interface FrameRateSelectorProps {
 export const FrameRateSelector = ({
 	device,
 	frameRates
-}: FrameRateSelectorProps): JSX.Element => {
+}: FrameRateSelectorProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const frameRate = useAppSelector((state) => {
 		return (device === 'webcam' ? state.settings.frameRate : 
@@ -118,7 +118,7 @@ interface MimeTypeSelectorProps {
 
 export const MimeTypeSelector = ({
 	mimeTypeCapability
-}: MimeTypeSelectorProps): JSX.Element => {
+}: MimeTypeSelectorProps): React.JSX.Element => {
 	const getRecorderSupportedMimeTypes = () => {
 		const mimeTypes: Array<string> = [];
 
@@ -170,7 +170,7 @@ interface SelectorProps {
 
 export const SampleRateSelector = ({
 	data
-}: SelectorProps): JSX.Element => {
+}: SelectorProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const sampleRate = useAppSelector((state) => state.settings.sampleRate);
 
@@ -199,7 +199,7 @@ export const SampleRateSelector = ({
 
 export const ChannelCountSelector = ({
 	data
-}: SelectorProps): JSX.Element => {
+}: SelectorProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const channelCount = useAppSelector((state) => state.settings.channelCount);
 
@@ -228,7 +228,7 @@ export const ChannelCountSelector = ({
 
 export const SampleSizeSelector = ({
 	data
-}: SelectorProps): JSX.Element => {
+}: SelectorProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const sampleSize = useAppSelector((state) => state.settings.sampleSize);
 
@@ -257,7 +257,7 @@ export const SampleSizeSelector = ({
 
 export const OpusPtimeSelector = ({
 	data
-}: SelectorProps): JSX.Element => {
+}: SelectorProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const opusPtime = useAppSelector((state) => state.settings.opusPtime);
 

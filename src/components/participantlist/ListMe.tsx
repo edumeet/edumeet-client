@@ -46,7 +46,7 @@ const MeAvatar = styled('img')({
 	alignSelf: 'center',
 });
 
-const ListMe = (): JSX.Element => {
+const ListMe = (): React.JSX.Element => {
 	const isMobile = useAppSelector(isMobileSelector);
 	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const picture = useAppSelector((state) => state.me.picture);

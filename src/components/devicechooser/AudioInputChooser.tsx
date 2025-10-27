@@ -22,7 +22,7 @@ interface AudioInputChooserProps {
 
 const AudioInputChooser = ({
 	withConfirm
-}: AudioInputChooserProps): JSX.Element => {
+}: AudioInputChooserProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const micEnabled = useAppSelector((state) => state.me.micEnabled);
 	const audioDevices = useDeviceSelector('audioinput');

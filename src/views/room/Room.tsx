@@ -17,7 +17,7 @@ import moment from 'moment';
 
 import { roomActions } from '../../store/slices/roomSlice';
 
-const Room = (): JSX.Element => {
+const Room = (): React.JSX.Element => {
 	useNotifier();
 
 	const [ isFullscreen, setFullscreen ] = useState(false);

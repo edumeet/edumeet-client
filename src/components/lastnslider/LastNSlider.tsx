@@ -11,7 +11,7 @@ const StyledSlider = styled(Box)(({ theme }) => ({
 	paddingBottom: theme.spacing(2),
 }));
 
-const LastNSlider = (): JSX.Element => {
+const LastNSlider = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const lastN = useAppSelector((state) => state.settings.maxActiveVideos);
 	const [ sliderValue, setSliderValue ] = useState<number>(lastN + 1);

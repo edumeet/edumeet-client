@@ -16,7 +16,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 import { permissions } from '../../utils/roles';
 import { stopExtraVideo } from '../../store/actions/mediaActions';
 
-const ExtraVideoButton = (props: ControlButtonProps): JSX.Element => {
+const ExtraVideoButton = (props: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasExtraVideoPermission = usePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
 	const extraVideoEnabled = useAppSelector((state) => state.me.extraVideoEnabled);

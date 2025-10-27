@@ -5,7 +5,7 @@ import {
 } from '../translated/translatedComponents';
 import { muteAll } from '../../store/actions/peerActions';
 
-const MuteAllButton = (): JSX.Element => {
+const MuteAllButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const muteAllInProgress = useAppSelector((state) => state.room.muteAllInProgress);
 

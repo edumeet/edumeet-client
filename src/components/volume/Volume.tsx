@@ -49,7 +49,7 @@ const Volume = ({
 	small = false,
 	me = false,
 	consumer,
-}: VolumeProps): JSX.Element => {
+}: VolumeProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ volume, setVolume ] = useState<number>(0);
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);

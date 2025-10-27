@@ -26,7 +26,7 @@ const TextInputField = ({
 	endAdornment,
 	randomizeOnBlank,
 	...rest
-}: TextInputFieldProps): JSX.Element => {
+}: TextInputFieldProps): React.JSX.Element => {
 	return (
 		<TextField
 			value={value}

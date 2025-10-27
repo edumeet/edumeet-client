@@ -5,7 +5,7 @@ import {
 	closeMeetingLabel,
 } from '../translated/translatedComponents';
 
-const CloseMeetingButton = (): JSX.Element => {
+const CloseMeetingButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const closeMeetingInProgress =
 		useAppSelector((state) => state.room.closeMeetingInProgress);
