@@ -27,6 +27,7 @@ export interface MeState {
 	canShareFiles: boolean;
 	devices: MediaDeviceInfo[];
 	raisedHand: boolean;
+	sendReaction: string | null;
 	escapeMeeting: boolean;
 	audioMuted: boolean;
 	videoMuted: boolean;
@@ -39,6 +40,7 @@ export interface MeState {
 	screenSharingInProgress: boolean;
 	displayNameInProgress: boolean;
 	raisedHandInProgress: boolean;
+	sendReactionInProgress: boolean;
 	escapeMeetingInProgress: boolean;
 	micEnabled: boolean;
 	webcamEnabled: boolean;
@@ -63,6 +65,7 @@ const initialState: MeState = {
 	canTranscribe: false,
 	devices: [],
 	raisedHand: false,
+	sendReaction: null,
 	escapeMeeting: false,
 	audioMuted: edumeetConfig.askForMediaOnJoin ? false : true,
 	videoMuted: edumeetConfig.askForMediaOnJoin ? false : true,
@@ -75,6 +78,7 @@ const initialState: MeState = {
 	screenSharingInProgress: false,
 	displayNameInProgress: false,
 	raisedHandInProgress: false,
+	sendReactionInProgress: false,
 	escapeMeetingInProgress: false,
 	micEnabled: false,
 	webcamEnabled: false,
@@ -134,6 +138,9 @@ const meSlice = createSlice({
 		setRaisedHand: ((state, action: PayloadAction<boolean>) => {
 			state.raisedHand = action.payload;
 		}),
+		setSendReaction: ((state, action: PayloadAction<string|null>) => {
+			state.sendReaction = action.payload;
+		}),
 		setEscapeMeeting: ((state, action: PayloadAction<boolean>) => {
 			state.escapeMeeting = action.payload;
 		}),
@@ -164,6 +171,9 @@ const meSlice = createSlice({
 		}),
 		setRaiseHandInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.raisedHandInProgress = action.payload;
+		}),
+		setSendReactionInProgress: ((state, action: PayloadAction<boolean>) => {
+			state.sendReactionInProgress = action.payload;
 		}),
 		setEscapeMeetingInProgress: ((state, action: PayloadAction<boolean>) => {
 			state.escapeMeetingInProgress = action.payload;

@@ -3,6 +3,7 @@ import { Logger } from '../../utils/Logger';
 import { meActions } from '../slices/meSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 const logger = new Logger('MeActions');
 
@@ -79,6 +80,39 @@ export const setRaisedHand = (raisedHand: boolean): AppThunk<Promise<void>> => a
 		dispatch(meActions.setRaisedHand(!raisedHand));
 	} finally {
 		dispatch(meActions.setRaiseHandInProgress(false));
+	}
+};
+
+/**
+ * This thunk action sets the reaction state of the client.
+ * 
+ * @param reaction - The reaction to send.
+ * @returns {AppThunk<Promise<void>>} Promise.
+ */
+export const setSendReaction = (reaction: string): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ signalingService }
+): Promise<void> => {
+	logger.debug('setSendReaction() [reaction:%s]', reaction);
+
+	dispatch(meActions.setSendReactionInProgress(true));
+
+	try {
+		await signalingService.sendRequest('reaction', { reaction });
+
+		dispatch(meActions.setSendReaction(reaction));
+
+		// Set timeout to clear reaction after specified time
+		window.setTimeout(() => {
+			dispatch(meActions.setSendReaction(null));
+			dispatch(meActions.setSendReactionInProgress(false));
+		}, edumeetConfig.reactionsTimeout || 10000);
+	} catch (error) {
+		logger.error('setSendReaction() [error:"%o"]', error);
+
+		dispatch(meActions.setSendReaction(null));
+		dispatch(meActions.setSendReactionInProgress(false));
 	}
 };
 
