@@ -32,6 +32,7 @@ const createChatMiddleware = ({
 
 							case 'moderator:clearChat': {
 								dispatch(roomSessionsActions.clearChat());
+								dispatch(uiActions.resetUnreadMessages());
 
 								break;
 							}

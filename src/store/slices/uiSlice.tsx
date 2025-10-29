@@ -22,6 +22,7 @@ export interface UiState {
 	chatOpen: boolean;
 	participantListOpen: boolean;
 	drawingOpen: boolean;
+	unseenFiles: number;
 }
 
 type UiUpdate = Partial<Omit<UiState, 'currentSettingsTab'>>;
@@ -42,7 +43,8 @@ const initialState: UiState = {
 	currentSettingsTab: 'media',
 	chatOpen: false,
 	participantListOpen: false,
-	drawingOpen: false
+	drawingOpen: false,
+	unseenFiles: 0,
 };
 
 const uiSlice = createSlice({
@@ -51,8 +53,9 @@ const uiSlice = createSlice({
 	reducers: {
 		setUi: ((state, action: PayloadAction<UiUpdate>) => {
 			const unreadMessages = action.payload.chatOpen ? 0 : state.unreadMessages;
+			const unseenFiles = action.payload.filesharingOpen ? 0 : state.unseenFiles;
 
-			return { ...state, ...action.payload, unreadMessages };
+			return { ...state, ...action.payload, unreadMessages, unseenFiles };
 		}),
 		setCurrentSettingsTab: ((
 			state,
@@ -66,6 +69,12 @@ const uiSlice = createSlice({
 		resetUnreadMessages: ((state) => {
 			state.unreadMessages = 0;
 		}),
+		addToUnseenFiles: ((state) => {
+			state.unseenFiles += 1;
+		}),
+		resetUnseenFiles: ((state) => {
+			state.unseenFiles = 0;		
+		})
 	},
 	extraReducers: (builder) => {
 		builder
