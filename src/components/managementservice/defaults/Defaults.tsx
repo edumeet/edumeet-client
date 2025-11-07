@@ -13,6 +13,10 @@ import { notificationsActions } from '../../../store/slices/notificationsSlice';
 import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import { getTenantName } from '../../../utils/management';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LockIcon from '@mui/icons-material/Lock';
+import BlockIcon from '@mui/icons-material/Block';
+import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
 const DefaultTable = () => {
 	const dispatch = useAppDispatch();
@@ -401,7 +405,7 @@ const DefaultTable = () => {
 							<thead>
 								<tr>
 									<th>Room option state </th>
-									<th>(managed)</th>
+									<th>(managed function override?)</th>
 									<th>(unmanaged)</th>
 									<th>Configuration Lock</th>
 								</tr>
@@ -409,39 +413,39 @@ const DefaultTable = () => {
 							<tbody>
 								<tr>
 									<td>Room locked</td>
-									<td><Checkbox disabled={lockedLock && !superAdmin} checked={lockedManaged} onClick={() => setLockManaged(Boolean(!lockedManaged))} /></td>
+									<td><Checkbox disabled={lockedLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={lockedManaged} onClick={() => setLockManaged(Boolean(!lockedManaged))} /></td>
 									<td><Checkbox disabled={lockedLock && !superAdmin} checked={lockedUnmanaged} onClick={() => setLockUnmanaged(Boolean(!lockedUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checked={lockedLock} onClick={() => setLockLock(Boolean(!lockedLock))} /></td>
+									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={lockedLock} onClick={() => setLockLock(Boolean(!lockedLock))} /></td>
 								</tr>
 								<tr>
 									<td>Raise Hand</td>
-									<td><Checkbox disabled={raiseHandEnabledLock && !superAdmin} checked={raiseHandEnabledManaged} onClick={() => setRaiseHandEnabledManaged(Boolean(!raiseHandEnabledManaged))}/></td>
+									<td><Checkbox disabled={raiseHandEnabledLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={raiseHandEnabledManaged} onClick={() => setRaiseHandEnabledManaged(Boolean(!raiseHandEnabledManaged))}/></td>
 									<td><Checkbox disabled={raiseHandEnabledLock && !superAdmin} checked={raiseHandEnabledUnmanaged} onClick={() => setRaiseHandEnabledUnmanaged(Boolean(!raiseHandEnabledUnmanaged))}/></td>
-									<td><Checkbox disabled={!superAdmin} checked={raiseHandEnabledLock} onClick={() => setRaiseHandEnabledLock(Boolean(!raiseHandEnabledLock))}/></td>
+									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={raiseHandEnabledLock} onClick={() => setRaiseHandEnabledLock(Boolean(!raiseHandEnabledLock))}/></td>
 								</tr>
 								<tr>
 									<td>Local Recording</td>
-									<td><Checkbox disabled={localRecordingEnabledLock && !superAdmin} checked={localRecordingEnabledManaged} onClick={() => setLocalRecordingEnabledManaged(Boolean(!localRecordingEnabledManaged))} /></td>
+									<td><Checkbox disabled={localRecordingEnabledLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={localRecordingEnabledManaged} onClick={() => setLocalRecordingEnabledManaged(Boolean(!localRecordingEnabledManaged))} /></td>
 									<td><Checkbox disabled={localRecordingEnabledLock && !superAdmin} checked={localRecordingEnabledUnmanaged} onClick={() => setLocalRecordingEnabledUnmanaged(Boolean(!localRecordingEnabledUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checked={localRecordingEnabledLock} onClick={() => setLocalRecordingEnabledLock(Boolean(!localRecordingEnabledLock))} /></td>
+									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={localRecordingEnabledLock} onClick={() => setLocalRecordingEnabledLock(Boolean(!localRecordingEnabledLock))} /></td>
 								</tr>
 								<tr>
 									<td>Chat service</td>
-									<td><Checkbox disabled={chatEnabledLock && !superAdmin} checked={chatEnabledManaged} onClick={() => setChatEnabledManaged(Boolean(!chatEnabledManaged))} /></td>
+									<td><Checkbox disabled={chatEnabledLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={chatEnabledManaged} onClick={() => setChatEnabledManaged(Boolean(!chatEnabledManaged))} /></td>
 									<td><Checkbox disabled={chatEnabledLock && !superAdmin} checked={chatEnabledUnmanaged} onClick={() => setChatEnabledUnmanaged(Boolean(!chatEnabledUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checked={chatEnabledLock} onClick={() => setChatEnabledLock(Boolean(!chatEnabledLock))} /></td>
+									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={chatEnabledLock} onClick={() => setChatEnabledLock(Boolean(!chatEnabledLock))} /></td>
 								</tr>
 								<tr>
 									<td>Breakout rooms service</td>
-									<td><Checkbox disabled={breakoutsEnabledLock && !superAdmin} checked={breakoutsEnabledManaged} onClick={() => setBreakoutsEnabledManaged(Boolean(!breakoutsEnabledManaged))} /></td>
+									<td><Checkbox disabled={breakoutsEnabledLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={breakoutsEnabledManaged} onClick={() => setBreakoutsEnabledManaged(Boolean(!breakoutsEnabledManaged))} /></td>
 									<td><Checkbox disabled={breakoutsEnabledLock && !superAdmin} checked={breakoutsEnabledUnmanaged} onClick={() => setBreakoutsEnabledUnmanaged(Boolean(!breakoutsEnabledUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checked={breakoutsEnabledLock} onClick={() => setBreakoutsEnabledLock(Boolean(!breakoutsEnabledLock))} /></td>
+									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={breakoutsEnabledLock} onClick={() => setBreakoutsEnabledLock(Boolean(!breakoutsEnabledLock))} /></td>
 								</tr>
 								<tr>
 									<td>Filesharing service</td>
-									<td><Checkbox disabled={filesharingEnabledLock && !superAdmin} checked={filesharingEnabledManaged} onClick={() => setFilesharingEnabledManaged(Boolean(!filesharingEnabledManaged))} /></td>
+									<td><Checkbox disabled={filesharingEnabledLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={filesharingEnabledManaged} onClick={() => setFilesharingEnabledManaged(Boolean(!filesharingEnabledManaged))} /></td>
 									<td><Checkbox disabled={filesharingEnabledLock && !superAdmin} checked={filesharingEnabledUnmanaged} onClick={() => setFilesharingEnabledUnmanaged(Boolean(!filesharingEnabledUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checked={filesharingEnabledLock} onClick={() => setFilesharingEnabledLock(Boolean(!filesharingEnabledLock))} /></td>
+									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={filesharingEnabledLock} onClick={() => setFilesharingEnabledLock(Boolean(!filesharingEnabledLock))} /></td>
 								</tr>
 							</tbody>
 						</table>
