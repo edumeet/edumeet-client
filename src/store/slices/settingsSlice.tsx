@@ -50,7 +50,7 @@ const initialState: SettingsState = {
 	preferredRecorderMimeType: 'video/webm',
 	maxActiveVideos: 12,
 	hideNonVideo: edumeetConfig.hideNonVideo,
-	hideSelfView: false,
+	hideSelfView: edumeetConfig.hideSelfView,
 	verticalDivide: true,
 	aspectRatio: edumeetConfig.aspectRatio,
 	audioPreset: edumeetConfig.audioPreset,
