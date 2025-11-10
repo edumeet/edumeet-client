@@ -4,6 +4,7 @@ import { memo } from 'react';
 export default memo(styled(Badge)(({ theme }) => ({
 	'& .MuiBadge-badge': {
 		backgroundColor: theme.palette.secondary.main,
+		borderRadius: '50%',
 		'&:after': {
 			position: 'absolute',
 			width: '100%',
