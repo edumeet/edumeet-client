@@ -4,6 +4,7 @@ import { roomActions } from '../slices/roomSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { getTenantFromFqdn } from './managementActions';
 import { Logger } from '../../utils/Logger';
+import { notificationsActions } from '../slices/notificationsSlice';
 
 const logger = new Logger('LoginActions');
 
@@ -16,8 +17,15 @@ export const login = (): AppThunk<Promise<void>> => async (
 
 	const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
 
-	if (!tenantId) return logger.error('login() | no tenant found');
+	if (!tenantId) { 
+		dispatch(notificationsActions.enqueueNotification({
+						message: 'no tenant found',
+						options: { variant: 'error' }
+		}));
+		
+		return logger.error('login() | no tenant found');
 
+	}
 	window.open(`${config.managementUrl}/oauth/tenant?tenantId=${tenantId}`, 'loginWindow');
 };
 
