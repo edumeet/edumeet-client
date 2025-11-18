@@ -17,43 +17,51 @@ export const login = (): AppThunk<Promise<void>> => async (
 
 	const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
 
-	if (!tenantId) { 
+	if (!tenantId) {
 		dispatch(notificationsActions.enqueueNotification({
-						message: 'no tenant found',
-						options: { variant: 'error' }
+			message: 'no tenant found',
+			options: { variant: 'error' }
 		}));
-		
+
 		return logger.error('login() | no tenant found');
 
 	}
 	window.open(`${config.managementUrl}/oauth/tenant?tenantId=${tenantId}`, 'loginWindow');
 };
 
-export const adminLogin = (email: string, password:string): AppThunk<Promise<void>> => async (
+export const adminLogin = (email: string, password: string): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
 	{ signalingService, managementService }
 ): Promise<void> => {
 	logger.debug('adminLogin() [email s%]', email);
 
-	const admin = await (await managementService).authenticate({
-		strategy: 'local',
-		email: email,
-		password: password
-	});
+	try {
+		const admin = await (await managementService).authenticate({
+			strategy: 'local',
+			email: email,
+			password: password
+		});
 
-	if (admin) {
-		const accessToken = admin.accessToken;
+		if (admin) {
+			const accessToken = admin.accessToken;
 
-		if (accessToken) {
-			const authResult = await (await managementService).authenticate({ accessToken, strategy: 'jwt' });
+			if (accessToken) {
+				const authResult = await (await managementService).authenticate({ accessToken, strategy: 'jwt' });
 
-			if (authResult.accessToken === accessToken) {
-				dispatch(permissionsActions.setToken(accessToken));
-				dispatch(permissionsActions.setLoggedIn(true));
+				if (authResult.accessToken === accessToken) {
+					dispatch(permissionsActions.setToken(accessToken));
+					dispatch(permissionsActions.setLoggedIn(true));
+				}
 			}
 		}
+	} catch (error) {
+		dispatch(notificationsActions.enqueueNotification({
+			message: 'Invalid login',
+			options: { variant: 'error' }
+		}));
 	}
+
 	if (getState().signaling.state === 'connected')
 		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
 };
@@ -68,22 +76,22 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 	const accessToken = localStorage.getItem('feathers-jwt');
 	let loggedIn = false;
 
-	/* 	logger.debug('checkJWT() token : %s', accessToken); */	
-	
+	/* 	logger.debug('checkJWT() token : %s', accessToken); */
+
 	if (accessToken) {
 		const authResult = await (await managementService).authenticate({ accessToken, strategy: 'jwt' });
 
 		if (authResult.accessToken === accessToken) {
-			loggedIn=true;
+			loggedIn = true;
 			dispatch(permissionsActions.setToken(accessToken));
 		} else {
 			await (await managementService).authentication.removeAccessToken();
 			dispatch(permissionsActions.setToken());
 		}
 	}
-	
+
 	dispatch(permissionsActions.setLoggedIn(loggedIn));
-	
+
 	if (getState().signaling.state === 'connected')
 		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
 };
