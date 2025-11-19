@@ -44,21 +44,15 @@ const ControlButtonsBar = (): JSX.Element => {
 
 	const [ participantListAnchorEl, setParticipantAnchorEl ] = useState<HTMLElement | null>();
 	const isParticipantListOpen = Boolean(participantListAnchorEl);
-
 	const handleParticipantListClose = () => setParticipantAnchorEl(null);
 
 	const [ chatAnchorEl, setChatAnchorEl ] = useState<HTMLElement | null>();
 	const isChatOpen = Boolean(chatAnchorEl);
-
 	const handleChatClose = () => setChatAnchorEl(null);
 
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
-
-	const handleMoreClose = () => {
-		setMoreAnchorEl(null);
-	};
-
 	const isMoreOpen = Boolean(moreAnchorEl);
+	const handleMoreClose = () => setMoreAnchorEl(null);
 
 	return (
 		<>
@@ -117,7 +111,7 @@ const ControlButtonsBar = (): JSX.Element => {
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
-				{ !isMobile && <Drawing onClick={handleMoreClose} /> } 
+				{ !isMobile && <Drawing onClick={handleMoreClose} /> }
 			</FloatingMenu>
 		</>
 	);
