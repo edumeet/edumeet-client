@@ -14,7 +14,7 @@ import { startTranscription, stopTranscription } from '../../store/actions/media
 
 const Transcription = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const startTranscriptionInProgress = useAppSelector(
 		(state) => state.room.startTranscriptionInProgress);

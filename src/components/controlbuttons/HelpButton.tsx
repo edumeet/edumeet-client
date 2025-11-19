@@ -15,7 +15,7 @@ const HelpContainer = styled(Box)(({ theme }) => ({
 
 const HelpButton = ({
 	...props
-}: ControlButtonProps): JSX.Element => {
+}: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const helpOpen = useAppSelector((state) => state.ui.helpOpen);
 

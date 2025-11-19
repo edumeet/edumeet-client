@@ -17,7 +17,7 @@ import MoreActions from '../moreactions/MoreActions';
 
 const Screenshare = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasScreenPermission = usePermissionSelector(permissions.SHARE_SCREEN);
 

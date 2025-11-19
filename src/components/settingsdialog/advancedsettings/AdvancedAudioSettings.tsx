@@ -23,7 +23,7 @@ const channelCountData: Array<number> = [ 1, 2 ];
 const sampleSizeData: Array<number> = [ 8, 16, 24, 32 ];
 const opusPtimeData: Array<number> = [ 3, 5, 10, 20, 30, 40, 50, 60 ];
 
-const AdvancedAudioSettings = (): JSX.Element => {
+const AdvancedAudioSettings = (): React.JSX.Element => {
 	const [ open, setOpen ] = useState(false);
 
 	const handleClick = () => {

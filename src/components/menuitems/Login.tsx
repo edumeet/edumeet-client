@@ -15,7 +15,7 @@ import { useEffect } from 'react';
 
 const Login = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 
 	const dispatch = useAppDispatch();
 	let loggedIn = useAppSelector((state) => state.permissions.loggedIn);

@@ -38,14 +38,14 @@ const ReactionIconContainer = styled(Box)(({ theme }) => ({
 	fontSize: '2rem',
 }));
 
-const reactionIcons: { [key: string]: JSX.Element } = {
+const reactionIcons: { [key: string]: React.JSX.Element } = {
 	thumbup: <ThumbUpIcon fontSize="inherit" style={{ color: 'white' }} />,
 	clap: <ClapIcon fontSize="inherit" style={{ color: 'white' }} />,
 	party: <PartyIcon fontSize="inherit" style={{ color: 'white' }} />,
 	laugh: <LaughIcon fontSize="inherit" style={{ color: 'white' }} />,
 };
 
-const VideoConsumer = ({ consumer, style }: VideoConsumerProps): JSX.Element => {
+const VideoConsumer = ({ consumer, style }: VideoConsumerProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const { peerId, source } = consumer;
 	const { micConsumer } = usePeerConsumers(peerId);

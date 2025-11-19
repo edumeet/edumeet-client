@@ -54,7 +54,7 @@ const VideoView = ({
 	source,
 	previewTrack,
 	roundedCorners = true
-}: VideoViewProps): JSX.Element => {
+}: VideoViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const videoElement = useRef<HTMLVideoElement>(null);
 	const [ loading, setLoading ] = useState(true);

@@ -15,7 +15,7 @@ import DrawingIcon from '@mui/icons-material/Edit';
 
 const Drawing = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled);
 	const drawingLabel = drawingEnabled ? stopDrawingLabel() : startDrawingLabel();

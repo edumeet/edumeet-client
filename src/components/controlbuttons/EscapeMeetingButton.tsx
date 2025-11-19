@@ -7,7 +7,7 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 const EscapeMeetingButton = ({
 	size,
 	...props
-} : ControlButtonProps): JSX.Element => {
+} : ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const {
 		escapeMeeting,

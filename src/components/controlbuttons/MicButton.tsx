@@ -26,7 +26,7 @@ const Container = styled(Box)(() => ({
 	position: 'relative',
 }));
 
-const MicStateIcon = ({ micState }: { micState: MediaState }): JSX.Element => {
+const MicStateIcon = ({ micState }: { micState: MediaState }): React.JSX.Element => {
 	const OnIcon = styled(MicIcon)({ position: 'absolute' });
 
 	const OffIcon = styled(MicOffIcon)({ position: 'absolute' });
@@ -34,7 +34,7 @@ const MicStateIcon = ({ micState }: { micState: MediaState }): JSX.Element => {
 	return micState === 'on' ? <OnIcon /> : <OffIcon />;
 };
 
-const MicButton = (props: ControlButtonProps): JSX.Element => {
+const MicButton = (props: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const micEnabled = useAppSelector((state) => state.me.micEnabled);
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
@@ -42,7 +42,7 @@ const MicButton = (props: ControlButtonProps): JSX.Element => {
 	const { canSendMic, audioInProgress } = useAppSelector((state) => state.me);
 
 	const anchorRef = useRef<HTMLDivElement>(null);
-	const timeout = useRef<NodeJS.Timeout>();
+	const timeout = useRef<NodeJS.Timeout>(null);
 
 	const [ micMoreAnchorEl, setMicMoreAnchorEl ] = useState<HTMLElement | null>();
 	const isMicMoreOpen = Boolean(micMoreAnchorEl);

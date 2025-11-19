@@ -9,7 +9,7 @@ interface RemoveBreakoutRoomButtonProps {
 
 const RemoveBreakoutRoomButton = ({
 	sessionId
-}: RemoveBreakoutRoomButtonProps): JSX.Element => {
+}: RemoveBreakoutRoomButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const updateBreakoutInProgress = useAppSelector((state) => state.room.updateBreakoutInProgress);
 

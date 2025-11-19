@@ -16,7 +16,7 @@ const ModeratorDiv = styled('div')(({ theme }) => ({
 	gap: theme.spacing(1),
 }));
 
-const BreakoutModerator = (): JSX.Element => {
+const BreakoutModerator = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const [ name, setName ] = useState<string>('');
 

@@ -15,7 +15,7 @@ import PulsingBadge from '../pulsingbadge/PulsingBadge';
 
 const Filesharing = ({
 	onClick
-}: MenuItemProps): JSX.Element => {
+}: MenuItemProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const filesharingOpen = useAppSelector((state) => state.ui.filesharingOpen);
 	const files = useAppSelector(filesLengthSelector);

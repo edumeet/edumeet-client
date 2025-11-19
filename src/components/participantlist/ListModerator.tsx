@@ -14,7 +14,7 @@ const ModeratorDiv = styled('div')(({ theme }) => ({
 	gap: theme.spacing(0.5),
 }));
 
-const ListModerator = (): JSX.Element => {
+const ListModerator = (): React.JSX.Element => {
 	return (
 		<ModeratorDiv>
 			<CloseMeetingButton />

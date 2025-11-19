@@ -47,7 +47,7 @@ const mimeTypeCapability: Record<string, Array<string>> = {
 	'video/x-matroska;codecs=avc1': [ 'Chrome' ]
 };
 
-const AdvancedVideoSettings = (): JSX.Element => {
+const AdvancedVideoSettings = (): React.JSX.Element => {
 	const [ open, setOpen ] = React.useState(false);
 
 	const handleClick = () => {

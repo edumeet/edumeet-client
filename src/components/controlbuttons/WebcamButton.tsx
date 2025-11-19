@@ -27,21 +27,21 @@ const Container = styled(Box)(() => ({
 	position: 'relative',
 }));
 
-const WebcamStateIcon = ({ webcamState }: { webcamState: MediaState }): JSX.Element => {
+const WebcamStateIcon = ({ webcamState }: { webcamState: MediaState }): React.JSX.Element => {
 	const OnIcon = styled(VideoIcon)({ position: 'absolute' });
 	const OffIcon = styled(VideoOffIcon)({ position: 'absolute' });
 
 	return webcamState === 'on' ? <OnIcon /> : <OffIcon />;
 };
 
-const WebcamButton = (props: ControlButtonProps): JSX.Element => {
+const WebcamButton = (props: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const hasVideoPermission = usePermissionSelector(permissions.SHARE_VIDEO);
 	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
 	const { canSendWebcam, videoInProgress } = useAppSelector((state) => state.me);
 
 	const anchorRef = useRef<HTMLDivElement>(null);
-	const timeout = useRef<NodeJS.Timeout>();
+	const timeout = useRef<NodeJS.Timeout>(null);
 
 	const [ webcamMoreAnchorEl, setWebcamMoreAnchorEl ] = useState<HTMLElement | null>();
 	const isWebcamMoreOpen = Boolean(webcamMoreAnchorEl);

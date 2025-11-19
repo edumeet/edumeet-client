@@ -160,7 +160,7 @@ export const useIsActiveSpeaker = (id: string): boolean => {
 type ResultBox<T> = { v: T }
 
 export function useConstant<T>(fn: () => T): T {
-	const ref = useRef<ResultBox<T>>();
+	const ref = useRef<ResultBox<T>>(undefined);
 
 	if (!ref.current)
 		ref.current = { v: fn() };

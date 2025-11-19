@@ -69,7 +69,7 @@ const SideContainer = styled(Paper)<SideContainerProps>(({ theme, height, width 
 	backgroundColor: theme.sideContainerBackgroundColor,
 }));
 
-const MainContent = (): JSX.Element => {
+const MainContent = (): React.JSX.Element => {
 	const [ windowSize, setWindowSize ] = useState(0);
 	const [ horizontal, setHorizontal ] = useState(true);
 

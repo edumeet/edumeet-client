@@ -49,7 +49,7 @@ const Spotlights = ({
 	windowSize,
 	horizontal,
 	videos,
-}: SpotlightsProps): JSX.Element => {
+}: SpotlightsProps): React.JSX.Element => {
 	const theme = useTheme();
 	const peersRef = useRef<HTMLDivElement>(null);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);

@@ -21,7 +21,7 @@ const CountdownTimerDiv = styled('div')(({ theme }) => ({
 	gap: theme.spacing(1),
 }));
 
-const CountdownTimer = () : JSX.Element => {
+const CountdownTimer = () : React.JSX.Element => {
 	const isMobile = useAppSelector(isMobileSelector);
 	const dispatch = useAppDispatch();
 	const isEnabled = useAppSelector((state) => state.room.countdownTimer.isEnabled);

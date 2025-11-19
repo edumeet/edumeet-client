@@ -32,7 +32,7 @@ const StyledSlider = styled(Slider)(() => ({
 	}
 }));
 
-const NoiseSlider = (): JSX.Element => {
+const NoiseSlider = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const micEnabled = useAppSelector((state) => state.me.micEnabled);
 	const noiseThreshold = useAppSelector((state) => state.settings.noiseThreshold);

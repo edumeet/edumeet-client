@@ -32,7 +32,7 @@ const Container = styled(Box)(() => ({
 const RaiseHandButton = ({
 	size,
 	...props
-} : ControlButtonProps): JSX.Element => {
+} : ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const {
 		raisedHand,
@@ -44,7 +44,7 @@ const RaiseHandButton = ({
 	const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
 
 	const anchorRef = useRef<HTMLDivElement>(null);
-	const timeout = useRef<NodeJS.Timeout>();
+	const timeout = useRef<NodeJS.Timeout>(null);
 
 	const [ raiseHandMoreAnchorEl, setRaiseHandMoreAnchorEl ] = useState<HTMLElement | null>();
 	const isRaiseHandMoreOpen = Boolean(raiseHandMoreAnchorEl);

@@ -5,7 +5,7 @@ import Stats from './Stats';
 import { SignalCellularAlt } from '@mui/icons-material';
 import { ClientMonitor } from '@observertc/client-monitor-js/lib/ClientMonitor';
 
-const QualityIndicator = (): JSX.Element => {
+const QualityIndicator = (): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ isDistorted, setDistorted ] = useState<boolean>(false);
 

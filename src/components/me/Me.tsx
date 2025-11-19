@@ -35,7 +35,7 @@ const ReactionIconContainer = styled(Box)(({ theme }) => ({
 	fontSize: '2rem',
 }));
 
-const reactionIcons: { [key: string]: JSX.Element } = {
+const reactionIcons: { [key: string]: React.JSX.Element } = {
 	thumbup: <ThumbUpIcon fontSize="inherit" style={{ color: 'white' }} />,
 	clap: <ClapIcon fontSize="inherit" style={{ color: 'white' }} />,
 	party: <PartyIcon fontSize="inherit" style={{ color: 'white' }} />,

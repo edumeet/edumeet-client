@@ -12,7 +12,7 @@ interface WindowedVideoButtonProps extends ControlButtonProps {
 const WindowedVideoButton = ({
 	consumerId,
 	...props
-}: WindowedVideoButtonProps): JSX.Element => {
+}: WindowedVideoButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const windowedConsumers = useAppSelector(windowedConsumersSelector);
 	const sessionId = useAppSelector((state) => state.me.sessionId);

@@ -25,7 +25,7 @@ const MediaPreview = ({
 	stopAudio = true,
 	stopVideo = true,
 	updateSelection = false
-}: MediaPreviewProps): JSX.Element => {
+}: MediaPreviewProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);

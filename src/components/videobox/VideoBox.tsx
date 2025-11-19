@@ -61,7 +61,7 @@ const VideoBox = ({
 	activeSpeaker,
 	children,
 	roundedCorners = true,
-}: VideoBoxProps): JSX.Element => {
+}: VideoBoxProps): React.JSX.Element => {
 	return (
 		<StyledVideoBox
 			position={position}

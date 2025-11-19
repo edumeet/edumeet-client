@@ -9,7 +9,7 @@ import { permissions } from '../../utils/roles';
 import ListLobbyPeer from './ListLobbyPeer';
 import GenericDialog from '../genericdialog/GenericDialog';
 
-const LobbyDialog = (): JSX.Element => {
+const LobbyDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 	const lobbyPeers = useAppSelector((state) => state.lobbyPeers) as LobbyPeer[];

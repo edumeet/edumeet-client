@@ -7,7 +7,7 @@ import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
 import { useEffect, useState } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 
-const WindowedVideo = (): JSX.Element => {
+const WindowedVideo = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const sessionId = useAppSelector((state) => state.me.sessionId);
 	const consumers = useAppSelector(windowedConsumersSelector);
