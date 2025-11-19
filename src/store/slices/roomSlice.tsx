@@ -37,6 +37,7 @@ export interface RoomState {
 	chatEnabled?: boolean;
 	filesharingEnabled?: boolean;
 	raiseHandEnabled?: boolean;
+	reactionsEnabled?: boolean;
 	localRecordingEnabled?: boolean;
 	videoCodec?: VideoCodec;
 	simulcast?: boolean;
@@ -58,6 +59,7 @@ const initialState: RoomState = {
 	chatEnabled: true,
 	filesharingEnabled: true,
 	raiseHandEnabled: true,
+	reactionsEnabled: true,
 	localRecordingEnabled: true,
 	videoCodec: 'vp8',
 	simulcast: edumeetConfig.simulcast,

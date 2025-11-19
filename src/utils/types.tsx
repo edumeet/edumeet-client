@@ -81,11 +81,24 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		'finishedCountdownTimer': {
 			'play': '/sounds/notify-countdowntimer.mp3'
 		},
+		'reactionThumbup': {
+			'play': '/sounds/notify-thumbup.mp3',
+		},
+		'reactionClap': {
+			'play': '/sounds/notify-clap.mp3',
+		},
+		'reactionParty': {
+			'play': '/sounds/notify-party.mp3',
+		},
+		'reactionLaugh': {
+			'play': '/sounds/notify-laugh.mp3',
+		},
 		'default': {
 			'debounce': 5000,
 			'play': '/sounds/notify.mp3'
 		}
 	},
+	reactionsSoundEnabled: false,
 	title: 'edumeet',
 	randomizeOnBlank: true,
 	transcriptionEnabled: true,
@@ -107,7 +120,8 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		collectingPeriodInMs: 2000,
 	},
 	imprintUrl: '',
-	privacyUrl: ''
+	privacyUrl: '',
+	reactionsTimeout: 10000
 };
 
 export interface EdumeetConfig {
@@ -149,6 +163,7 @@ export interface EdumeetConfig {
 	audioPresets: Record<string, AudioPreset>;
 	buttonControlBar: boolean;
 	notificationSounds: Record<NotificationType, NotificationSound>;
+	reactionsSoundEnabled: boolean;
 	title: string;
 	randomizeOnBlank: boolean;
 	transcriptionEnabled: boolean;
@@ -157,6 +172,7 @@ export interface EdumeetConfig {
 	clientMontitor: ClientMonitorConfig;
 	imprintUrl: string;
 	privacyUrl: string;
+	reactionsTimeout: number;
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {
@@ -188,7 +204,7 @@ export interface AudioPreset {
 	opusMaxPlaybackRate: number;
 }
 
-export type NotificationType = 'default' | 'chatMessage' | 'raisedHand' | 'finishedCountdownTimer';
+export type NotificationType = 'default' | 'chatMessage' | 'raisedHand' | 'finishedCountdownTimer' | 'reactionThumbup' | 'reactionClap' | 'reactionParty' | 'reactionLaugh';
 
 export interface NotificationSound {
 	play: string;
@@ -407,6 +423,7 @@ export type Room = {
 	locked: boolean,
 	chatEnabled: boolean,
 	raiseHandEnabled: boolean,
+	reactionsEnabled: boolean,
 	filesharingEnabled: boolean,
 	groupRoles?: Array<Roles>,
 	localRecordingEnabled: boolean,
