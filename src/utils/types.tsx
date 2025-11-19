@@ -18,6 +18,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	serverHostname: undefined,
 	askForMediaOnJoin: true,
 	hideNonVideo: false,
+	hideSelfView: false,
 	resolution: 'medium',
 	frameRate: 30,
 	screenSharingResolution: 'veryhigh',
@@ -140,6 +141,7 @@ export interface EdumeetConfig {
 	serverHostname?: string;
 	askForMediaOnJoin: boolean;
 	hideNonVideo: boolean;
+	hideSelfView: boolean;
 	resolution: Resolution;
 	frameRate: number;
 	screenSharingResolution: Resolution;
