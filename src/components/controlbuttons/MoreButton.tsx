@@ -6,7 +6,7 @@ import { useAppSelector } from '../../store/hooks';
 const MoreButton = ({
 	size,
 	...props
-}: ControlButtonProps): JSX.Element => {
+}: ControlButtonProps): React.JSX.Element => {
     const unseenFiles = useAppSelector((state) => state.ui.unseenFiles);
 	
 	return (

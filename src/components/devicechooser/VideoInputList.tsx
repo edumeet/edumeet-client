@@ -9,7 +9,7 @@ import { settingsActions } from '../../store/slices/settingsSlice';
 import { MenuItem, MenuList } from '@mui/material';
 import { meActions } from '../../store/slices/meSlice';
 
-const VideoInputList = (): JSX.Element => {
+const VideoInputList = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
 	const videoDevices = useDeviceSelector('videoinput');

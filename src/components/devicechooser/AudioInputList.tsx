@@ -8,7 +8,7 @@ import {
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { MenuItem, MenuList } from '@mui/material';
 
-const AudioInputList = (): JSX.Element => {
+const AudioInputList = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const audioDevices = useDeviceSelector('audioinput');
 	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);

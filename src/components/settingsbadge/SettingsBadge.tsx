@@ -37,7 +37,7 @@ function SettingsBadgeComponent({
 	onClick,
 	size = 20,
 	color = 'primary',
-}: SettingsBadgeProps): JSX.Element {
+}: SettingsBadgeProps): React.JSX.Element {
 	return (
 		<StyledBadge
 			size={size}
