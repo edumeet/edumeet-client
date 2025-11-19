@@ -205,7 +205,6 @@ const RoomTable = () => {
 	const [ description, setDescription ] = useState('');
 	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 	const [ tenantId, setTenantId ] = useState(0);
-	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 	const [ defaultRoleId, setDefaultRoletId ] = useState(0);
 
 	const [ breakoutsEnabled, setBreakoutsEnabled ] = useState(false);
@@ -361,9 +360,7 @@ const RoomTable = () => {
 
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
-		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'rooms')).then(() => {
 				fetchProduct();
 				setOpen(false);

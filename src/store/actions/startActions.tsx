@@ -167,7 +167,9 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 				const locked = getState().permissions.locked;
 
-				locked ? dispatch(unlock()) : dispatch(lock());
+				if (locked) {
+					dispatch(unlock());
+				} else { dispatch(lock()); }
 
 				break;
 			}
@@ -192,7 +194,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const showStats = getState().ui.showStats;
 
 				dispatch(uiActions.setUi({ showStats: !showStats }));
-				
+
 				break;
 			}
 
@@ -288,7 +290,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			if (url) {
 				const { host, protocol } = new URL(url);
 
-				if (origin && origin===`${protocol}//${host}`) {
+				if (origin && origin === `${protocol}//${host}`) {
 					const { data: token } = data;
 
 					await (await managementService).authentication.setAccessToken(token);

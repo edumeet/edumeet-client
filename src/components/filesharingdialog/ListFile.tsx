@@ -91,6 +91,7 @@ const ListFile = ({
 	const saveSubFile = async (saveFile: LocalTorrentFile): Promise<void> => {
 		try {
 			saveAs(await saveFile.blob(), saveFile.name);
+		// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 		} catch (error) {
 			dispatch(notificationsActions.enqueueNotification({
 				message: saveFileErrorLabel(),

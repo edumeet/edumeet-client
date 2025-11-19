@@ -26,7 +26,6 @@ const PeerMenu = ({
 	anchorOrigin = { vertical: 'bottom', horizontal: 'left' },
 	transformOrigin = { vertical: 'top', horizontal: 'left' },
 	peerId,
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	onClick = (): void => {}
 }: PeerMenuProps): React.JSX.Element => {
 	const peer = usePeer(peerId);

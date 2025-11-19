@@ -88,11 +88,16 @@ const MediaControls = ({
 	let justifyContent = 'center';
 	let alignItems = 'center';
 
-	if (horizontalPlacement === 'left') orientation === 'horizontal' ? justifyContent = 'flex-start' : alignItems = 'flex-start';
-	else if (horizontalPlacement === 'right') orientation === 'horizontal' ? justifyContent = 'flex-end' : alignItems = 'flex-end';
+	if (horizontalPlacement === 'left') 
+		if (orientation === 'horizontal') {
+			justifyContent = 'flex-start';
+		} else { alignItems = 'flex-start'; } 
+	else if (horizontalPlacement === 'right') 
+		if (orientation === 'horizontal') { justifyContent = 'flex-end'; } else { alignItems = 'flex-end'; } 
 
-	if (verticalPlacement === 'top') orientation === 'horizontal' ? alignItems = 'flex-start': justifyContent = 'flex-start';
-	else if (verticalPlacement === 'bottom') orientation === 'horizontal' ? alignItems = 'flex-end' : justifyContent = 'flex-end';
+	if (verticalPlacement === 'top') 
+		if (orientation === 'horizontal') { alignItems = 'flex-start'; } else { justifyContent = 'flex-start'; }
+	else if (verticalPlacement === 'bottom') if (orientation === 'horizontal') { alignItems = 'flex-end'; } else { justifyContent = 'flex-end'; }
 
 	return (
 		<MediaControlsDiv

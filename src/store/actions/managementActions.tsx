@@ -19,7 +19,9 @@ export const getTenantFromFqdn = (fqdn: string): AppThunk<Promise<string | undef
 		const { data } = await (await managementService).service('tenantFQDNs').find({ query: { fqdn, $limit: 1 } });
 
 		tenantId = data[0]?.tenantId;
-	} catch (error) { }
+	} catch (error) {
+		logger.error('getTenantFromFqdn  [error:%o]', error);
+	}
 
 	return tenantId;
 };
@@ -327,7 +329,7 @@ export const getUserData = (): AppThunk<Promise<object | undefined>> => async (
 	try {
 		data = await (await managementService).reAuthenticate();
 	} catch (error) {
-
+		logger.error('getUserData [error:%o]', error);
 	}
 
 	return data;
@@ -356,7 +358,9 @@ export const getRoomByName = (name: string): AppThunk<Promise<object | undefined
 				}
 			}
 		);
-	} catch (error) { }
+	} catch (error) { 
+		logger.error('getRoomByName [error:%o]', error);
+	}
 
 	return data;
 };

@@ -5,7 +5,7 @@
  * - in the app/README.md file in the source tree
  */
 
-// eslint-disable-next-line
+ 
 var config = {
 	// If enabled QR code will show at the join dialog
 	qrCodeEnabled: false,

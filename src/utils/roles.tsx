@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars,no-shadow */
 export type Permission = string;
 
 export const permissions: Record<string, Permission> = {

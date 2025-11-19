@@ -25,7 +25,7 @@ export const UploadImageButton = ({ afterImageUploadHook }: UploadFileButtonProp
 			newThumbnail = await dispatch(saveImage(file));
 		}
 
-		newThumbnail && afterImageUploadHook?.(newThumbnail);
+		if (newThumbnail) afterImageUploadHook?.(newThumbnail);
 	};
 
 	return (

@@ -24,7 +24,7 @@ const RecordButton = (
 		<ControlButton
 			toolTip={recording ? stopRecordingLabel() : startRecordingLabel() }
 			onClick={() => {
-				recording ? dispatch(stopRecording()) : dispatch(startRecording());
+				if (recording) { dispatch(stopRecording()); } else { dispatch(startRecording()); }
 			}}
 			disabled={!hasRecordingPermission}
 			{ ...props }

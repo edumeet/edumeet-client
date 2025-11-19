@@ -46,7 +46,7 @@ const BackgroundPicker = ({
 
 		loadThumbnailsOnMount();
 
-		return () => { selectedBackground?.imageUrl && URL.revokeObjectURL(selectedBackground.imageUrl); };
+		if (selectedBackground?.imageUrl) URL.revokeObjectURL(selectedBackground.imageUrl);
 	}, []);
 
 	const handleSelectImage = async (item: ThumbnailItem) => {
@@ -56,7 +56,7 @@ const BackgroundPicker = ({
 		const image = await dispatch(getImage(item.imageName));
 
 		if (image) {
-			selectedBackground?.imageName && URL.revokeObjectURL(selectedBackground.imageName);
+			if (selectedBackground?.imageName) URL.revokeObjectURL(selectedBackground.imageName);
 			const imageUrlRef = URL.createObjectURL(image);
 
 			setSelectedBackground({ imageName: item.imageName, imageUrl: imageUrlRef });

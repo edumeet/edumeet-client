@@ -206,7 +206,6 @@ const RuleTable = () => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'rules')).then(() => {
 				fetchProduct();
 				setOpen(false);

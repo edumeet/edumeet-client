@@ -56,6 +56,8 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 			}
 		}
 	} catch (error) {
+		logger.error('AdminLogin [error:%o]', error);
+
 		dispatch(notificationsActions.enqueueNotification({
 			message: 'Invalid login',
 			options: { variant: 'error' }

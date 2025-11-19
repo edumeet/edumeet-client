@@ -169,7 +169,6 @@ export default function ManagementUI(/* props: Props */) {
 				</ListItem>
 				<ListItem key={'Logout'} disablePadding onClick={
 					async () => {
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						dispatch(logout()).then(() => {
 							window.location.reload();	
 						});
@@ -209,13 +208,13 @@ export default function ManagementUI(/* props: Props */) {
 					<ListItem key={'Default(s)'} disablePadding onClick={
 						() => setSelectedComponent('default')
 					}>
-					<ListItemButton >
-						<ListItemIcon>
-							<SettingsApplicationsIcon />
-						</ListItemIcon>
-						<ListItemText primary={defaultsLabel()} />
-					</ListItemButton>
-				</ListItem>
+						<ListItemButton >
+							<ListItemIcon>
+								<SettingsApplicationsIcon />
+							</ListItemIcon>
+							<ListItemText primary={defaultsLabel()} />
+						</ListItemButton>
+					</ListItem>
 				</>
 				}
 				<ListItem key={'Room(s)'} disablePadding onClick={() => setSelectedComponent('room')}>

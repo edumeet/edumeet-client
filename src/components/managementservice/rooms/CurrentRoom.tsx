@@ -1,5 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
-// eslint-disable-next-line camelcase
+ 
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete } from '@mui/material';
 import { Roles, Room } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
@@ -42,7 +42,6 @@ const CurrentRoomModal = () => {
 	const [ cantPatch ] = useState(false);
 
 	async function fetchProduct() {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		/* dispatch(getData('tenants')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setTenants(tdata.data);

@@ -114,7 +114,6 @@ const TenantFQDNTable = (props: TenantProp) => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'tenantFQDNs')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -126,13 +125,11 @@ const TenantFQDNTable = (props: TenantProp) => {
 
 		// add new data / mod data / error
 		if (id === 0) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(createData({ tenantId: tenantId, description: description, fqdn: fqdn }, 'tenantFQDNs')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
 		} else if (id != 0) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(patchData(id, { name: name, description: description }, 'tenantFQDNs')).then(() => {
 				fetchProduct();
 				setOpen(false);

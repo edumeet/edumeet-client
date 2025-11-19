@@ -29,13 +29,17 @@ const Recording = ({
 			disabled={!hasRecordingPermission || !canRecord}
 			onClick={() => {
 				onClick();
+				if (recording) {
+					dispatch(stopRecording());
+				} else {
+					dispatch(startRecording());
+				}
 
-				recording ? dispatch(stopRecording()) : dispatch(startRecording());
 			}}
 		>
-			{ recording ? <StopIcon /> : <RecordIcon /> }
+			{recording ? <StopIcon /> : <RecordIcon />}
 			<MoreActions>
-				{ recordTip }
+				{recordTip}
 			</MoreActions>
 		</MenuItem>
 	);

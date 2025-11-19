@@ -30,7 +30,7 @@ const Lock = ({
 			onClick={() => {
 				onClick();
 
-				locked ? dispatch(unlock()) : dispatch(lock());
+				if (locked) { dispatch(unlock()); } else { dispatch(lock()); } 
 			}}
 		>
 			{ locked ? <LockIcon /> : <LockOpenIcon /> }

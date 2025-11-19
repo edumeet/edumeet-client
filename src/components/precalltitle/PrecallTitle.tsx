@@ -10,7 +10,7 @@ import { checkJWT, login, logout } from '../../store/actions/permissionsActions'
 import { styled } from '@mui/material/styles';
 
 const ClickableLabel = styled('span')(() => ({
-  cursor: 'pointer',
+	cursor: 'pointer',
 }));
 
 const PrecallTitle = (): React.JSX.Element => {

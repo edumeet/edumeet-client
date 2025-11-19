@@ -174,7 +174,6 @@ const UserTable = () => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'users')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -198,7 +197,6 @@ const UserTable = () => {
 				setOpen(false);
 			});
 		} else if (name != '' && id != 0) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(patchData(id, { 
 				ssoId: ssoId,
 				tenantId: tenantId,
