@@ -35,6 +35,11 @@ export const peerJoinedRoomLabel = (displayName: string): string => intl.formatM
 	defaultMessage: '{displayName} joined the room'
 }, { displayName });
 
+export const peerSentReactionLabel = (displayName: string, reaction: string): string => intl.formatMessage({
+	id: 'room.reaction',
+	defaultMessage: '{displayName} reacted with {reaction}'
+}, { displayName, reaction });
+
 export const yourNameLabel = (): string => intl.formatMessage({
 	id: 'label.yourName',
 	defaultMessage: 'Your name'
@@ -1070,6 +1075,10 @@ export const chatEnabledLabel = (): string => intl.formatMessage({
 export const raiseHandEnabledLabel = (): string => intl.formatMessage({
 	id: 'label.management.room.raiseHandEnabled',
 	defaultMessage: 'Enable raise hand'
+});
+export const reactionsEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.room.reactionsEnabled',
+	defaultMessage: 'Enable reactions'
 });
 export const filesharingEnabledLabel = (): string => intl.formatMessage({
 	id: 'label.management.room.filesharingEnabled',

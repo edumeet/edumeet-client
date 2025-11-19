@@ -62,7 +62,6 @@ const ListFile = ({
 	}, []);
 
 	useEffect(() => {
-		
 		if (torrent) {
 			torrent.on('download', () => {
 				setProgress(torrent.downloaded / torrent.length || 0);
@@ -78,23 +77,18 @@ const ListFile = ({
 				}
 			};
 		}
-		
 	}, [ torrent ]);
 
 	const startTorrent = async (): Promise<void> => {
 		setStartInProgress(true);
-		
 		dispatch(roomSessionsActions.updateFile({ ...file, started: true }));
-
 		const newTorrent = await fileService.downloadFile(file.magnetURI);
 
 		setTorrent(newTorrent);
-
 		setStartInProgress(false);
 	};
 
 	const saveSubFile = async (saveFile: LocalTorrentFile): Promise<void> => {
-
 		try {
 			saveAs(await saveFile.blob(), saveFile.name);
 		} catch (error) {
@@ -104,11 +98,13 @@ const ListFile = ({
 			}));
 		}
 	};
+
 	const handleClearFile = (): void => {
 		const magnetURI = file.magnetURI;
 
 		dispatch(clearFile(magnetURI));
 	};
+
 	const handleClearFileLocaly = (): void => {
 		const magnetURI = file.magnetURI;
 
@@ -117,7 +113,7 @@ const ListFile = ({
 		setProgress(0);
 		dispatch(roomSessionsActions.updateFile({ ...file, started: false }));
 	};
-	
+
 	return (
 		<FileDiv>
 			{ file?.started || isMe ?
@@ -140,7 +136,7 @@ const ListFile = ({
 									onClick={handleClearFile}
 									size='small'
 								>
-									{deleteLabel()}
+									{ deleteLabel() }
 								</Button>
 								}
 								{ done && !isMe &&
@@ -153,7 +149,7 @@ const ListFile = ({
 									{ saveFileLabel() }
 								</Button>
 								}
-								{ !isMe &&
+								{ done && !isMe &&
 								<Button
 									aria-label={deleteLabel()}
 									variant='contained'
@@ -164,7 +160,7 @@ const ListFile = ({
 									{ deleteLabel() }
 								</Button>
 								}
-							</ButtonGroup>							
+							</ButtonGroup>
 						</FileInfoDiv>
 					</FileDiv>
 				))
@@ -193,7 +189,6 @@ const ListFile = ({
 							</Button>
 						</ButtonGroup>
 					}
-					
 				</FileInfoDiv>
 			}
 			{ file.started && !done &&

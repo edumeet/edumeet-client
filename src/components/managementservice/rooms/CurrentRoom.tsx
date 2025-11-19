@@ -4,7 +4,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Roles, Room } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
-import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, raiseHandEnabledLabel, roleLabel, roomBgLabel } from '../../translated/translatedComponents';
+import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roleLabel, roomBgLabel } from '../../translated/translatedComponents';
 
 const CurrentRoomModal = () => {
 	const dispatch = useAppDispatch();
@@ -32,6 +32,7 @@ const CurrentRoomModal = () => {
 	const [ locked, setLocked ] = useState(false);
 	const [ chatEnabled, setChatEnabled ] = useState(false);
 	const [ raiseHandEnabled, setRaiseHandEnabled ] = useState(false);
+	const [ reactionsEnabled, setReactionsEnabled ] = useState(false);
 	const [ filesharingEnabled, setFilesharingEnabled ] = useState(false);
 	const [ localRecordingEnabled, setLocalRecordingEnabled ] = useState(false);
 	
@@ -69,6 +70,7 @@ const CurrentRoomModal = () => {
 				const tlocked=r.locked;
 				const tchatEnabled=r.chatEnabled;
 				const traiseHandEnabled=r.raiseHandEnabled;
+				const treactionsEnabled=r.reactionsEnabled;
 				const tfilesharingEnabled=r.filesharingEnabled;
 				const tlocalRecordingEnabled=r.localRecordingEnabled;
 				const tbreakoutsEnabled=r.breakoutsEnabled;
@@ -156,6 +158,11 @@ const CurrentRoomModal = () => {
 				} else {
 					setRaiseHandEnabled(false);
 				}
+				if (treactionsEnabled === true) {
+					setReactionsEnabled(true);
+				} else {
+					setReactionsEnabled(false);
+				}
 				if (tfilesharingEnabled === true) {
 					setFilesharingEnabled(true);
 				} else {
@@ -229,6 +236,9 @@ const CurrentRoomModal = () => {
 	const handleRaiseHandEnabledChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
 		setRaiseHandEnabled(event.target.checked);
 	};
+	const handleReactionsEnabledChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
+		setReactionsEnabled(event.target.checked);
+	};
 	const handleFilesharingEnabledChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
 		setFilesharingEnabled(event.target.checked);
 	};
@@ -260,6 +270,7 @@ const CurrentRoomModal = () => {
 			locked: locked,
 			chatEnabled: chatEnabled,
 			raiseHandEnabled: raiseHandEnabled,
+			reactionsEnabled: reactionsEnabled,
 			filesharingEnabled: filesharingEnabled,
 			localRecordingEnabled: localRecordingEnabled,
 			breakoutsEnabled: breakoutsEnabled,
@@ -351,6 +362,7 @@ const CurrentRoomModal = () => {
 				<FormControlLabel control={<Checkbox checked={locked} onChange={handleLockedChange} />} label={lockRoomLabel()} />
 				<FormControlLabel control={<Checkbox checked={chatEnabled} onChange={handleChatEnabledChange} />} label={chatEnabledLabel()} />
 				<FormControlLabel control={<Checkbox checked={raiseHandEnabled} onChange={handleRaiseHandEnabledChange} />} label={raiseHandEnabledLabel()} />
+				<FormControlLabel control={<Checkbox checked={reactionsEnabled} onChange={handleReactionsEnabledChange} />} label={reactionsEnabledLabel()} />
 				<FormControlLabel control={<Checkbox checked={filesharingEnabled} onChange={handleFilesharingEnabledChange} />} label={filesharingEnabledLabel()} />
 				<FormControlLabel control={<Checkbox checked={localRecordingEnabled} onChange={handleLocalRecordingEnabledChange} />} label={localRecordingEnabledLabel()} />
 				<FormControlLabel control={<Checkbox checked={breakoutsEnabled} onChange={handleBreakoutsEnabledChange} />} label={breakoutsEnabledLabel()} />

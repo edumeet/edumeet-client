@@ -1,10 +1,13 @@
-import {
-	useAppSelector,
-	usePeer,
-	usePeerConsumers
-} from '../../store/hooks';
+import { useEffect } from 'react';
+import { useAppSelector, usePeer, usePeerConsumers, useAppDispatch } from '../../store/hooks';
 import { activeSpeakerIdSelector, isMobileSelector } from '../../store/selectors';
 import { StateConsumer } from '../../store/slices/consumersSlice';
+import { styled } from '@mui/material/styles';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ClapIcon from '@mui/icons-material/SignLanguage';
+import PartyIcon from '@mui/icons-material/Celebration';
+import LaughIcon from '@mui/icons-material/SentimentVerySatisfied';
+import { Box } from '@mui/material';
 import FullscreenVideoButton from '../controlbuttons/FullscreenVideoButton';
 import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
 import DisplayName from '../displayname/DisplayName';
@@ -20,7 +23,30 @@ interface VideoConsumerProps {
 	style: Record<'width' | 'height', number>
 }
 
-const VideoConsumer = ({ consumer, style }: VideoConsumerProps): React.JSX.Element => {
+const ReactionIconContainer = styled(Box)(({ theme }) => ({
+	position: 'absolute',
+	top: theme.spacing(1),
+	left: '50%',
+	transform: 'translateX(-50%)',
+	zIndex: 10,
+	padding: theme.spacing(0.5),
+	backgroundColor: 'rgba(0, 0, 0, 0.4)',
+	borderRadius: theme.shape.borderRadius,
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+	fontSize: '2rem',
+}));
+
+const reactionIcons: { [key: string]: JSX.Element } = {
+	thumbup: <ThumbUpIcon fontSize="inherit" style={{ color: 'white' }} />,
+	clap: <ClapIcon fontSize="inherit" style={{ color: 'white' }} />,
+	party: <PartyIcon fontSize="inherit" style={{ color: 'white' }} />,
+	laugh: <LaughIcon fontSize="inherit" style={{ color: 'white' }} />,
+};
+
+const VideoConsumer = ({ consumer, style }: VideoConsumerProps): JSX.Element => {
+	const dispatch = useAppDispatch();
 	const { peerId, source } = consumer;
 	const { micConsumer } = usePeerConsumers(peerId);
 	const peer = usePeer(peerId);
@@ -31,6 +57,10 @@ const VideoConsumer = ({ consumer, style }: VideoConsumerProps): React.JSX.Eleme
 	const headless = useAppSelector((state) => state.room.headless);
 	const showStats = useAppSelector((state) => state.ui.showStats);
 
+	useEffect(() => {}, [ peer?.reaction, dispatch ]);
+
+	const currentReactionIcon = peer?.reaction ? reactionIcons[peer?.reaction] : null;
+
 	return (
 		<VideoBox
 			activeSpeaker={activeSpeaker}
@@ -38,6 +68,11 @@ const VideoConsumer = ({ consumer, style }: VideoConsumerProps): React.JSX.Eleme
 			width={style.width}
 			height={style.height}
 		>
+			{currentReactionIcon && (
+				<ReactionIconContainer>
+					{currentReactionIcon}
+				</ReactionIconContainer>
+			)}
 			<VideoView consumer={consumer} contain={contain} />
 			{ micConsumer && <Volume consumer={micConsumer} /> }
 			{ !headless &&

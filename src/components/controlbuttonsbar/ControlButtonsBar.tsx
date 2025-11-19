@@ -40,24 +40,19 @@ const ControlButtonsBar = (): React.JSX.Element => {
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled); // eslint-disable-line
 	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
+	const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
 
 	const [ participantListAnchorEl, setParticipantAnchorEl ] = useState<HTMLElement | null>();
 	const isParticipantListOpen = Boolean(participantListAnchorEl);
-
 	const handleParticipantListClose = () => setParticipantAnchorEl(null);
 
 	const [ chatAnchorEl, setChatAnchorEl ] = useState<HTMLElement | null>();
 	const isChatOpen = Boolean(chatAnchorEl);
-
 	const handleChatClose = () => setChatAnchorEl(null);
 
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
-
-	const handleMoreClose = () => {
-		setMoreAnchorEl(null);
-	};
-
 	const isMoreOpen = Boolean(moreAnchorEl);
+	const handleMoreClose = () => setMoreAnchorEl(null);
 
 	return (
 		<>
@@ -71,7 +66,7 @@ const ControlButtonsBar = (): React.JSX.Element => {
 				<MicButton offColor='error' toolTipLocation='bottom' />
 				<WebcamButton offColor='error' toolTipLocation='bottom' />
 				{ !isMobile && <ScreenshareButton toolTipLocation='bottom' /> }
-				{ !isMobile && raiseHandEnabled && <RaiseHandButton toolTipLocation='bottom' /> }
+				{ !isMobile && (raiseHandEnabled || reactionsEnabled) && <RaiseHandButton toolTipLocation='bottom' /> }
 				{ !isMobile && <ParticipantsButton toolTipLocation='bottom' onColor='primary' /> }
 				{ isMobile && <ParticipantsButton onClick={(event) => setParticipantAnchorEl(event.currentTarget)} toolTipLocation='bottom' /> }
 				{ !isMobile && chatEnabled && <ChatButton toolTipLocation='bottom' onColor='primary' /> }
@@ -116,7 +111,7 @@ const ControlButtonsBar = (): React.JSX.Element => {
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
-				{ !isMobile && <Drawing onClick={handleMoreClose} /> } 
+				{ !isMobile && <Drawing onClick={handleMoreClose} /> }
 			</FloatingMenu>
 		</>
 	);

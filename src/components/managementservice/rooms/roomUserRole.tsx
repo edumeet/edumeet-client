@@ -30,6 +30,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		'locked': true,
 		'chatEnabled': true,
 		'raiseHandEnabled': true,
+		'reactionsEnabled': true,
 		'filesharingEnabled': true,
 		'groupRoles': [],
 		'localRecordingEnabled': true,

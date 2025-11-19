@@ -76,10 +76,8 @@ const AudioInputChooser = ({
 							>
 								{applyLabel()}
 							</Button>
-						
 						)}</>}
 					/>
-					
 				</ChooserDiv>
 			}
 		</>

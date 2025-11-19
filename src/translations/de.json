@@ -159,6 +159,7 @@
   "room.peerChangedDisplayName": "{oldDisplayName} heißt jetzt {displayName}",
   "room.peersInLobby": "Teilnehmer im Warteraum",
   "room.raisedHand": "{displayName} hebt die Hand",
+  "room.reaction": "{displayName} hat mit {reaction} reagiert",
   "room.recordingConsent": "Durch Teilnahme an diesem  Meeting, stimmen Sie zu dass Daten (Audio, Video und Metadaten) Teil dieser Aufnahme oder Ausstrahlung werden",
   "room.recordingConsentAccept": "Akzeptieren",
   "room.recordingConsentDeny": "Ablehnen",
