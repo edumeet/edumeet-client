@@ -342,7 +342,6 @@ const RuleTable = () => {
 						</Select>
 					</FormControl>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="parameter"
 						label="parameter"
@@ -381,7 +380,6 @@ const RuleTable = () => {
 					</Box>
 
 					<TextField
-						autoFocus
 						margin="dense"
 						id="value"
 						label="value"

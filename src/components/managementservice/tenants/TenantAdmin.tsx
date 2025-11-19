@@ -2,27 +2,17 @@ import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
-import { Tenant, TenantOwners, User } from '../../../utils/types';
-import { useAppDispatch } from '../../../store/hooks';
+import { Tenant, TenantOptionTypes, TenantOwners, User } from '../../../utils/types';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { addNewLabel, genericItemDescLabel, manageItemLabel, tenantAdminsLabel, tenantLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
+import { addNewLabel, genericItemDescLabel, manageItemLabel, tenantAdminsLabel, tenantLabel, userLabel } from '../../translated/translatedComponents';
+import { managamentActions } from '../../../store/slices/managementSlice';
+import { getTenantName, getUserEmail } from '../../../utils/management';
 
 const TenantAdminTable = () => {
 	const dispatch = useAppDispatch();
 
-	type TenantOptionTypes = Array<Tenant>
-
-	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
-
-	const getTenantName = (id: string): string => {
-		const t = tenants.find((type) => type.id == parseInt(id));
-
-		if (t && t.name) {
-			return t.name;
-		} else {
-			return `${undefinedLabel()} ${tenantLabel()}`;
-		}
-	};
+	const tenants: TenantOptionTypes = useAppSelector((state) => state.management.tenants);
 
 	type UserTypes = Array<User>
 
@@ -37,16 +27,7 @@ const TenantAdminTable = () => {
 		'tenantAdmin': false,
 		'tenantOwner': false
 	} ]);
-	// nested data is ok, see accessorKeys in ColumnDef below
-	const getUserEmail = (id: string): string => {
-		const t = users.find((type) => type.id == parseInt(id));
 	
-		if (t && t.email) {
-			return t.email;
-		} else {
-			return 'Hidden email';
-		}
-	};
 	// should be memoized or stable
 	// eslint-disable-next-line camelcase
 	const columns = useMemo<MRT_ColumnDef<TenantOwners>[]>(
@@ -59,13 +40,13 @@ const TenantAdminTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
+				Cell: ({ cell }) => getTenantName(tenants, cell.getValue<string>())
 
 			},
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				Cell: ({ cell }) => getUserEmail(cell.getValue<string>())
+				Cell: ({ cell }) => getUserEmail(users, cell.getValue<string>())
 
 			},
 		],
@@ -95,7 +76,7 @@ const TenantAdminTable = () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('tenants')).then((tdata: any) => {
 			if (tdata != undefined) {
-				setTenants(tdata.data);
+				dispatch(managamentActions.setTenants(tdata.data));
 			}
                 
 		});
@@ -235,28 +216,6 @@ const TenantAdminTable = () => {
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
 					/>
-					{/* <TextField
-						autoFocus
-						margin="dense"
-						id="tenantId"
-						label="tenantId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleTenantIdChange}
-						value={tenantId}
-					/>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="userId"
-						label="userId"
-						type="number"
-						required
-						fullWidth
-						onChange={handleUserIdChange}
-						value={userId}
-					/> */}
 
 				</DialogContent>
 				<DialogActions>

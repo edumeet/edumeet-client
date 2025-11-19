@@ -20,6 +20,15 @@ export const defaultLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Default'
 });
 
+export const defaultsLabel = (): string => intl.formatMessage({
+	id: 'label.defaults',
+	defaultMessage: 'Defaults'
+});
+export const defaultSettingsLabel = (): string => intl.formatMessage({
+	id: 'label.defaultSettings',
+	defaultMessage: 'Defaults'
+});
+
 export const joinedRoomLabel = (): string => intl.formatMessage({
 	id: 'room.joined',
 	defaultMessage: 'You have joined the room'
