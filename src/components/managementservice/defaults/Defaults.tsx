@@ -73,7 +73,7 @@ const DefaultTable = () => {
 	const [ maxFileSize, setMaxFileSize ] = useState(0);
 	const [ background, setBackground ] = useState('');
 	const [ logo, setLogo ] = useState('');
-	const [ defaultRoleId, setDefaultRoleId ] = useState(0);
+	const [ defaultRoleId, setDefaultRoleId ] = useState<number|undefined>(0);
 	const [ tenantPermissionLimitRole, setTenantPermissionLimitRole ] = useState(0);
 	
 	const [ defaultRoleIdOption, setDefaultRoleIdOption ] = useState<Roles | undefined>();
@@ -130,10 +130,10 @@ const DefaultTable = () => {
 		setTenantIdOption(undefined);
 		setTenantIdDisabled(false);
 
-		setNumberLimit(0);
-		setLiveNumberLimit(0);
-		setUserManagedRoomNumberLimit(0);
-		setManagerManagedRoomNumberLimit(0);
+		setNumberLimit(100);
+		setLiveNumberLimit(1000);
+		setUserManagedRoomNumberLimit(1000);
+		setManagerManagedRoomNumberLimit(1000);
 		setLockManaged(false);
 		setRaiseHandEnabledManaged(false);
 		setLocalRecordingEnabledManaged(false);
@@ -153,7 +153,7 @@ const DefaultTable = () => {
 		setBreakoutsEnabledLock(false);
 		setFilesharingEnabledLock(false);
 		setTracker('');
-		setMaxFileSize(0);
+		setMaxFileSize(100);
 		setBackground('');
 		setLogo('');
 		setDefaultRoleId(0);
@@ -343,6 +343,7 @@ const DefaultTable = () => {
 						</Grid>
 						<Grid size={6}>
 							<TextField
+								required
 								autoFocus
 								margin="dense"
 								id="numberLimit"
@@ -356,6 +357,7 @@ const DefaultTable = () => {
 						</Grid>
 						<Grid size={6}>
 							<TextField
+								required
 								margin="dense"
 								id="liveNumberLimit"
 								label={'liveNumberLimit'}
@@ -368,6 +370,7 @@ const DefaultTable = () => {
 						</Grid>
 						<Grid size={6}>
 							<TextField
+								required
 								margin="dense"
 								id="numberLimit"
 								label={'userManagedRoomNumberLimit'}
@@ -381,6 +384,7 @@ const DefaultTable = () => {
 						
 						<Grid size={6}>
 							<TextField
+								required
 								margin="dense"
 								id="managerManagedRoomNumberLimit"
 								label={'managerManagedRoomNumberLimit'}
@@ -464,6 +468,7 @@ const DefaultTable = () => {
 						</Grid>
 						<Grid size={4}>
 							<TextField
+								required
 								margin="dense"
 								id="maxFileSize"
 								label={'File upload size'}
@@ -505,7 +510,7 @@ const DefaultTable = () => {
 							onChange={handleDefaultRoleId}
 							value={defaultRoleIdOption}
 							sx={{ marginTop: '8px' }}
-							renderInput={(params) => <TextField {...params} label={'defaultRoleId'} />}
+							renderInput={(params) => <TextField required {...params} label={'defaultRoleId'} />}
 							
 						/>
 						<Autocomplete
@@ -516,7 +521,7 @@ const DefaultTable = () => {
 							onChange={handleTenantPermissionLimitRole}
 							value={tenantPermissionLimitRoleOption}
 							sx={{ marginTop: '8px' }}
-							renderInput={(params) => <TextField {...params} label={'tenantPermissionLimitRole'} />}
+							renderInput={(params) => <TextField required {...params} label={'tenantPermissionLimitRole'} />}
 						/>
 					</Grid>
 					
