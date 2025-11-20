@@ -341,7 +341,7 @@ const DefaultTable = () => {
 								value={numberLimit}
 							/>
 						</Grid>
-						<Grid size={6}>
+						<Grid size={6} visibility={'hidden'}>
 							<TextField
 								required
 								margin="dense"
@@ -553,8 +553,9 @@ const DefaultTable = () => {
 					const d = data.find((dt) => dt.id == tid);
 
 					if (d) {
+						setTenantId(parseInt(d.tenantId));
 						setNumberLimit(parseInt(d.numberLimit));
-						setLiveNumberLimit(parseInt(d.liveNumberLimit));
+						setLiveNumberLimit(parseInt(d.liveNumberLimit)|1000);
 						setUserManagedRoomNumberLimit(parseInt(d.userManagedRoomNumberLimit));
 						setManagerManagedRoomNumberLimit(parseInt(d.managerManagedRoomNumberLimit));
 						setLockUnmanaged(Boolean(d.lockedUnmanaged));
