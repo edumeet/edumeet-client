@@ -32,7 +32,7 @@
 		"file-saver": "^2.0.5",
 		"fscreen": "^1.2.0",
 		"hark": "^1.2.3",
-		"marked": "^9.1.6",
+		"marked": "^10.0.0",
 		"material-react-table": "^3.0.1",
 		"mediasoup-client": "^3.15.6",
 		"moment": "^2.29.4",
@@ -98,7 +98,7 @@
 		"eslint-plugin-import": "^2.32.0",
 		"eslint-plugin-react": "^7.36.1",
 		"rollup-plugin-visualizer": "^6.0.5",
-		"vite": "^7.2.2",
+		"vite": "^7.2.4",
 		"vite-plugin-eslint": "^1.8.1",
 		"vite-tsconfig-paths": "^5.1.4"
 	}
