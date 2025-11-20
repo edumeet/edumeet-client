@@ -3,15 +3,15 @@ import {
 	Box,
 	DialogContent,
 	DialogTitle,
-	Grid,
-	Hidden,
 	List,
 	ListItem,
 	ListItemAvatar,
 	ListItemText,
 	Link,
-	Typography
+	Typography,
+	Grid
 } from '@mui/material';
+
 import WebAssetIcon from '@mui/icons-material/WebAsset';
 import ErrorIcon from '@mui/icons-material/Error';
 import { FormattedMessage } from 'react-intl';
@@ -74,7 +74,7 @@ const UnsupportedBrowser = ({
 						check your settings. Supported browsers:'
 				/>
 				<Grid container spacing={2}>
-					<Grid item xs={12} md={7}>
+					<Grid size={{ xs: 12, md: 7 }} >
 
 						<Box sx={{
 							backgroundColor: 'background.paper'
@@ -101,10 +101,17 @@ const UnsupportedBrowser = ({
 							</List>
 						</Box>
 					</Grid>
-					<Grid item xs={12} md={5}>
-						<Hidden mdDown>
+					<Grid size={{ xs: 12, md: 5 }} >
+						<Box
+							sx={{
+								display: {
+									xs: 'none', // hidden on phones
+									sm: 'block', // visible from small screens up
+								},
+							}}
+						>
 							<ErrorIcon color='error'/>
-						</Hidden>
+						</Box>
 					</Grid>
 				</Grid>
 				<Box display="flex" alignItems="left">

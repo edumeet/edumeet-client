@@ -1,6 +1,6 @@
 import React from 'react';
-import { Divider, Grid2 as Grid, IconButton, Typography } from '@mui/material';
-
+import { Divider, IconButton, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import PanToolIcon from '@mui/icons-material/PanTool';
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';

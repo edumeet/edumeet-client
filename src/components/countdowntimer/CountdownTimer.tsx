@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
-import { IconButton, Grid, styled } from '@mui/material';
+import { IconButton, styled } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { HighlightOff as HighlightOffIcon, Pause as PauseIcon, PlayArrow as PlayArrowIcon } from '@mui/icons-material';
 import moment from 'moment';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -51,13 +52,8 @@ const CountdownTimer = () : React.JSX.Element => {
 
 	return (
 		<CountdownTimerDiv>
-			<Grid 
-				sx={{ flexGrow: '1', justifyContent: 'space-between' }} 
-				container wrap='nowrap' 
-				alignItems='center' >
-
-				{/*  set */}
-				<Grid item xs={8}>
+			<Grid>
+				<Grid >
 					<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="de">
 						<TimePicker
 							label={
@@ -80,7 +76,7 @@ const CountdownTimer = () : React.JSX.Element => {
 				</Grid>
 
 				{/* reset */}
-				<Grid item xs={1}>
+				<Grid size={{ xs: 1 }} >
 					<IconButton
 						aria-label={countdownTimerStartLabel()}
 						sx={{ flexGrow: '1' }}
@@ -96,7 +92,7 @@ const CountdownTimer = () : React.JSX.Element => {
 				</Grid>
 
 				{/* start/stop */}
-				<Grid item xs={1}>
+				<Grid size={{ xs: 8 }}>
 					<IconButton
 						aria-label={ !isStarted ? 
 							countdownTimerStartLabel() : 

@@ -5,7 +5,7 @@ import { loginLabel } from '../translated/translatedComponents';
 import { login } from '../../store/actions/permissionsActions';
 import React from 'react';
 import { Button } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import LoginIcon from '@mui/icons-material/Login';
 import edumeetConfig from '../../utils/edumeetConfig';
 

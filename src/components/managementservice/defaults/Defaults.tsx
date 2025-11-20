@@ -4,7 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Grid2 as Grid, Checkbox, InputAdornment } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Grid, Checkbox, InputAdornment } from '@mui/material';
 import React from 'react';
 import { Groups, Roles, Tenant, TenantOptionTypes, RoleOptionTypes, DefaultOptionTypes, Default } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
