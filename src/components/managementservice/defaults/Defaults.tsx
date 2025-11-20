@@ -10,7 +10,7 @@ import { Groups, Roles, Tenant, TenantOptionTypes, RoleOptionTypes, DefaultOptio
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, reactionsEnabledLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import { getTenantName } from '../../../utils/management';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -51,21 +51,18 @@ const DefaultTable = () => {
 	const [ liveNumberLimit, setLiveNumberLimit ] = useState(0);
 	const [ userManagedRoomNumberLimit, setUserManagedRoomNumberLimit ] = useState(0);
 	const [ managerManagedRoomNumberLimit, setManagerManagedRoomNumberLimit ] = useState(0);
-	const [ lockedManaged, setLockManaged ] = useState(false);
-	const [ raiseHandEnabledManaged, setRaiseHandEnabledManaged ] = useState(false);
-	const [ localRecordingEnabledManaged, setLocalRecordingEnabledManaged ] = useState(false);
 	const [ lockedUnmanaged, setLockUnmanaged ] = useState(false);
 	const [ raiseHandEnabledUnmanaged, setRaiseHandEnabledUnmanaged ] = useState(false);
+	const [ reactionsEnabledUnmanaged, setReactionsEnabledUnmanaged ] = useState(false);
+	
 	const [ localRecordingEnabledUnmanaged, setLocalRecordingEnabledUnmanaged ] = useState(false);
 	const [ lockedLock, setLockLock ] = useState(false);
 	const [ raiseHandEnabledLock, setRaiseHandEnabledLock ] = useState(false);
+	const [ reactionsEnabledLock, setReactionsEnabledLock ] = useState(false);
 	const [ localRecordingEnabledLock, setLocalRecordingEnabledLock ] = useState(false);
 	const [ chatEnabledUnmanaged, setChatEnabledUnmanaged ] = useState(false);
 	const [ breakoutsEnabledUnmanaged, setBreakoutsEnabledUnmanaged ] = useState(false);
 	const [ filesharingEnabledUnmanaged, setFilesharingEnabledUnmanaged ] = useState(false);
-	const [ chatEnabledManaged, setChatEnabledManaged ] = useState(false);
-	const [ breakoutsEnabledManaged, setBreakoutsEnabledManaged ] = useState(false);
-	const [ filesharingEnabledManaged, setFilesharingEnabledManaged ] = useState(false);
 	const [ chatEnabledLock, setChatEnabledLock ] = useState(false);
 	const [ breakoutsEnabledLock, setBreakoutsEnabledLock ] = useState(false);
 	const [ filesharingEnabledLock, setFilesharingEnabledLock ] = useState(false);
@@ -74,10 +71,10 @@ const DefaultTable = () => {
 	const [ background, setBackground ] = useState('');
 	const [ logo, setLogo ] = useState('');
 	const [ defaultRoleId, setDefaultRoleId ] = useState<number|undefined>(0);
-	const [ tenantPermissionLimitRole, setTenantPermissionLimitRole ] = useState(0);
+	// const [ tenantPermissionLimitRole, setTenantPermissionLimitRole ] = useState(0);
 	
 	const [ defaultRoleIdOption, setDefaultRoleIdOption ] = useState<Roles | undefined>();
-	const [ tenantPermissionLimitRoleOption, setTenantPermissionLimitRoleOption ] = useState<Roles | undefined>();
+	// const [ tenantPermissionLimitRoleOption, setTenantPermissionLimitRoleOption ] = useState<Roles | undefined>();
 
 	const [ cantPatch ] = useState(false);
 	const [ cantDelete ] = useState(false);
@@ -134,9 +131,6 @@ const DefaultTable = () => {
 		setLiveNumberLimit(1000);
 		setUserManagedRoomNumberLimit(1000);
 		setManagerManagedRoomNumberLimit(1000);
-		setLockManaged(false);
-		setRaiseHandEnabledManaged(false);
-		setLocalRecordingEnabledManaged(false);
 		setLockUnmanaged(false);
 		setRaiseHandEnabledUnmanaged(false);
 		setLocalRecordingEnabledUnmanaged(false);
@@ -146,9 +140,6 @@ const DefaultTable = () => {
 		setChatEnabledUnmanaged(false);
 		setBreakoutsEnabledUnmanaged(false);
 		setFilesharingEnabledUnmanaged(false);
-		setChatEnabledManaged(false);
-		setBreakoutsEnabledManaged(false);
-		setFilesharingEnabledManaged(false);
 		setChatEnabledLock(false);
 		setBreakoutsEnabledLock(false);
 		setFilesharingEnabledLock(false);
@@ -157,10 +148,10 @@ const DefaultTable = () => {
 		setBackground('');
 		setLogo('');
 		setDefaultRoleId(0);
-		setTenantPermissionLimitRole(0);
+		// setTenantPermissionLimitRole(0);
 
 		setDefaultRoleIdOption(undefined);
-		setTenantPermissionLimitRoleOption(undefined);
+		// setTenantPermissionLimitRoleOption(undefined);
 
 		setOpen(true);
 	};
@@ -223,7 +214,7 @@ const DefaultTable = () => {
 		}
 	};
 
-	const handleTenantPermissionLimitRole = (event: SyntheticEvent<Element, Event>, newValue: Roles) => {
+	/* const handleTenantPermissionLimitRole = (event: SyntheticEvent<Element, Event>, newValue: Roles) => {
 		if (newValue) {
 			if (typeof newValue.id != 'number') {
 				setTenantPermissionLimitRole(parseInt(newValue.id));
@@ -233,7 +224,7 @@ const DefaultTable = () => {
 			
 			// setDefaultRoleIdOption(newValue);
 		}
-	};
+	}; */
 
 	const handleClose = () => {
 		setOpen(false);
@@ -269,21 +260,17 @@ const DefaultTable = () => {
 					liveNumberLimit: liveNumberLimit,
 					userManagedRoomNumberLimit: userManagedRoomNumberLimit,
 					managerManagedRoomNumberLimit: managerManagedRoomNumberLimit,
-					lockedManaged: lockedManaged,
-					raiseHandEnabledManaged: raiseHandEnabledManaged,
-					localRecordingEnabledManaged: localRecordingEnabledManaged,
 					lockedUnmanaged: lockedUnmanaged,
 					raiseHandEnabledUnmanaged: raiseHandEnabledUnmanaged,
+					reactionsEnabledUnmanaged: reactionsEnabledUnmanaged,
 					localRecordingEnabledUnmanaged: localRecordingEnabledUnmanaged,
 					lockedLock: lockedLock,
 					raiseHandEnabledLock: raiseHandEnabledLock,
+					reactionsEnabledLock: reactionsEnabledLock,
 					localRecordingEnabledLock: localRecordingEnabledLock,
 					chatEnabledUnmanaged: chatEnabledUnmanaged,
 					breakoutsEnabledUnmanaged: breakoutsEnabledUnmanaged,
 					filesharingEnabledUnmanaged: filesharingEnabledUnmanaged,
-					chatEnabledManaged: chatEnabledManaged,
-					breakoutsEnabledManaged: breakoutsEnabledManaged,
-					filesharingEnabledManaged: filesharingEnabledManaged,
 					chatEnabledLock: chatEnabledLock,
 					breakoutsEnabledLock: breakoutsEnabledLock,
 					filesharingEnabledLock: filesharingEnabledLock,
@@ -292,7 +279,7 @@ const DefaultTable = () => {
 					background: background,
 					logo: logo,
 					defaultRoleId: defaultRoleId,
-					tenantPermissionLimitRole: tenantPermissionLimitRole
+					// tenantPermissionLimitRole: tenantPermissionLimitRole
 				}, 'defaults')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -408,7 +395,6 @@ const DefaultTable = () => {
 							<thead>
 								<tr>
 									<th>Room option state </th>
-									<th>(managed function override?)</th>
 									<th>(unmanaged)</th>
 									<th>Configuration Lock</th>
 								</tr>
@@ -416,37 +402,36 @@ const DefaultTable = () => {
 							<tbody>
 								<tr>
 									<td>Room locked</td>
-									<td><Checkbox disabled={lockedLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={lockedManaged} onClick={() => setLockManaged(Boolean(!lockedManaged))} /></td>
 									<td><Checkbox disabled={lockedLock && !superAdmin} checked={lockedUnmanaged} onClick={() => setLockUnmanaged(Boolean(!lockedUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={lockedLock} onClick={() => setLockLock(Boolean(!lockedLock))} /></td>
 								</tr>
 								<tr>
 									<td>Raise Hand</td>
-									<td><Checkbox disabled={raiseHandEnabledLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={raiseHandEnabledManaged} onClick={() => setRaiseHandEnabledManaged(Boolean(!raiseHandEnabledManaged))}/></td>
 									<td><Checkbox disabled={raiseHandEnabledLock && !superAdmin} checked={raiseHandEnabledUnmanaged} onClick={() => setRaiseHandEnabledUnmanaged(Boolean(!raiseHandEnabledUnmanaged))}/></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={raiseHandEnabledLock} onClick={() => setRaiseHandEnabledLock(Boolean(!raiseHandEnabledLock))}/></td>
 								</tr>
 								<tr>
+									<td>{reactionsEnabledLabel()}</td>
+									<td><Checkbox disabled={reactionsEnabledLock && !superAdmin} checked={reactionsEnabledUnmanaged} onClick={() => setReactionsEnabledUnmanaged(Boolean(!reactionsEnabledUnmanaged))}/></td>
+									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={reactionsEnabledLock} onClick={() => setReactionsEnabledLock(Boolean(!reactionsEnabledLock))}/></td>
+								</tr>
+								<tr>
 									<td>Local Recording</td>
-									<td><Checkbox disabled={localRecordingEnabledLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={localRecordingEnabledManaged} onClick={() => setLocalRecordingEnabledManaged(Boolean(!localRecordingEnabledManaged))} /></td>
 									<td><Checkbox disabled={localRecordingEnabledLock && !superAdmin} checked={localRecordingEnabledUnmanaged} onClick={() => setLocalRecordingEnabledUnmanaged(Boolean(!localRecordingEnabledUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={localRecordingEnabledLock} onClick={() => setLocalRecordingEnabledLock(Boolean(!localRecordingEnabledLock))} /></td>
 								</tr>
 								<tr>
 									<td>Chat service</td>
-									<td><Checkbox disabled={chatEnabledLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={chatEnabledManaged} onClick={() => setChatEnabledManaged(Boolean(!chatEnabledManaged))} /></td>
 									<td><Checkbox disabled={chatEnabledLock && !superAdmin} checked={chatEnabledUnmanaged} onClick={() => setChatEnabledUnmanaged(Boolean(!chatEnabledUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={chatEnabledLock} onClick={() => setChatEnabledLock(Boolean(!chatEnabledLock))} /></td>
 								</tr>
 								<tr>
 									<td>Breakout rooms service</td>
-									<td><Checkbox disabled={breakoutsEnabledLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={breakoutsEnabledManaged} onClick={() => setBreakoutsEnabledManaged(Boolean(!breakoutsEnabledManaged))} /></td>
 									<td><Checkbox disabled={breakoutsEnabledLock && !superAdmin} checked={breakoutsEnabledUnmanaged} onClick={() => setBreakoutsEnabledUnmanaged(Boolean(!breakoutsEnabledUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={breakoutsEnabledLock} onClick={() => setBreakoutsEnabledLock(Boolean(!breakoutsEnabledLock))} /></td>
 								</tr>
 								<tr>
 									<td>Filesharing service</td>
-									<td><Checkbox disabled={filesharingEnabledLock && !superAdmin} checkedIcon={<ToggleOnIcon />} icon={<BlockIcon />} checked={filesharingEnabledManaged} onClick={() => setFilesharingEnabledManaged(Boolean(!filesharingEnabledManaged))} /></td>
 									<td><Checkbox disabled={filesharingEnabledLock && !superAdmin} checked={filesharingEnabledUnmanaged} onClick={() => setFilesharingEnabledUnmanaged(Boolean(!filesharingEnabledUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={filesharingEnabledLock} onClick={() => setFilesharingEnabledLock(Boolean(!filesharingEnabledLock))} /></td>
 								</tr>
@@ -512,7 +497,7 @@ const DefaultTable = () => {
 							renderInput={(params) => <TextField required {...params} label={'defaultRoleId'} />}
 							
 						/>
-						<Autocomplete
+						{/* 						<Autocomplete
 							options={roles}
 							getOptionLabel={(option) => option.name}
 							fullWidth
@@ -521,7 +506,7 @@ const DefaultTable = () => {
 							value={tenantPermissionLimitRoleOption}
 							sx={{ marginTop: '8px' }}
 							renderInput={(params) => <TextField required {...params} label={'tenantPermissionLimitRole'} />}
-						/>
+						/> */}
 					</Grid>
 					
 				</DialogContent>
@@ -572,9 +557,6 @@ const DefaultTable = () => {
 						setLiveNumberLimit(parseInt(d.liveNumberLimit));
 						setUserManagedRoomNumberLimit(parseInt(d.userManagedRoomNumberLimit));
 						setManagerManagedRoomNumberLimit(parseInt(d.managerManagedRoomNumberLimit));
-						setLockManaged(Boolean(d.lockedManaged));
-						setRaiseHandEnabledManaged(Boolean(d.raiseHandEnabledManaged));
-						setLocalRecordingEnabledManaged(Boolean(d.localRecordingEnabledManaged));
 						setLockUnmanaged(Boolean(d.lockedUnmanaged));
 						setRaiseHandEnabledUnmanaged(Boolean(d.raiseHandEnabledUnmanaged));
 						setLocalRecordingEnabledUnmanaged(Boolean(d.localRecordingEnabledUnmanaged));
@@ -584,9 +566,6 @@ const DefaultTable = () => {
 						setChatEnabledUnmanaged(Boolean(d.chatEnabledUnmanaged));
 						setBreakoutsEnabledUnmanaged(Boolean(d.breakoutsEnabledUnmanaged));
 						setFilesharingEnabledUnmanaged(Boolean(d.filesharingEnabledUnmanaged));
-						setChatEnabledManaged(Boolean(d.chatEnabledManaged));
-						setBreakoutsEnabledManaged(Boolean(d.breakoutsEnabledManaged));
-						setFilesharingEnabledManaged(Boolean(d.filesharingEnabledManaged));
 						setChatEnabledLock(Boolean(d.chatEnabledLock));
 						setBreakoutsEnabledLock(Boolean(d.breakoutsEnabledLock));
 						setFilesharingEnabledLock(Boolean(d.filesharingEnabledLock));
@@ -595,11 +574,12 @@ const DefaultTable = () => {
 						setBackground(d.background || '');
 						setLogo(d.logo || '');
 						setDefaultRoleId(parseInt(d.defaultRoleId));
+						setReactionsEnabledLock(Boolean(d.reactionsEnabledLock));
+						setReactionsEnabledUnmanaged(Boolean(d.reactionsEnabledUnmanaged));
 						// eslint-disable-next-line no-shadow
 						setDefaultRoleIdOption(roles.find((r) => parseInt(d.defaultRoleId)==r.id)|| undefined);
-						setTenantPermissionLimitRole(parseInt(d.tenantPermissionLimitRole));
-						// eslint-disable-next-line no-shadow
-						setTenantPermissionLimitRoleOption(roles.find((r) => parseInt(d.tenantPermissionLimitRole) == r.id)|| undefined);
+						// setTenantPermissionLimitRole(parseInt(d.tenantPermissionLimitRole));
+						// setTenantPermissionLimitRoleOption(roles.find((r) => parseInt(d.tenantPermissionLimitRole) == r.id)|| undefined);
 					}
 					handleClickOpenNoreset();
 

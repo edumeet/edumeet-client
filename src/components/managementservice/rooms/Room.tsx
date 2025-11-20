@@ -518,7 +518,6 @@ const RoomTable = () => {
 				onClick: () => {
 
 					const r = row.getAllCells();
-
 					const tid = r[0].getValue();
 					const tname=r[1].getValue();
 					const tdescription=r[2].getValue();
@@ -530,10 +529,11 @@ const RoomTable = () => {
 					const tlocked=r[11].getValue();
 					const tchatEnabled=r[12].getValue();
 					const traiseHandEnabled=r[13].getValue();
-					const tfilesharingEnabled=r[14].getValue();
-					const tlocalRecordingEnabled=r[15].getValue();
-					const tbreakoutsEnabled=r[18].getValue();
-					const treactionsEnabled=r[19].getValue();
+					const treactionsEnabled=r[14].getValue();
+					const tfilesharingEnabled=r[15].getValue();
+					const tlocalRecordingEnabled=r[16].getValue();
+					
+					const tbreakoutsEnabled=r[19].getValue();
 
 					if (typeof tid === 'number') {
 						setId(tid);
