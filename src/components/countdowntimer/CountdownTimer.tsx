@@ -52,8 +52,8 @@ const CountdownTimer = () : React.JSX.Element => {
 
 	return (
 		<CountdownTimerDiv>
-			<Grid>
-				<Grid >
+			<Grid container>
+				<Grid size={8}>
 					<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="de">
 						<TimePicker
 							label={
@@ -76,7 +76,7 @@ const CountdownTimer = () : React.JSX.Element => {
 				</Grid>
 
 				{/* reset */}
-				<Grid size={{ xs: 1 }} >
+				<Grid size={2} margin={'auto'} textAlign={'center'}>
 					<IconButton
 						aria-label={countdownTimerStartLabel()}
 						sx={{ flexGrow: '1' }}
@@ -92,7 +92,7 @@ const CountdownTimer = () : React.JSX.Element => {
 				</Grid>
 
 				{/* start/stop */}
-				<Grid size={{ xs: 8 }}>
+				<Grid size={2} margin={'auto'} textAlign={'center'}>
 					<IconButton
 						aria-label={ !isStarted ? 
 							countdownTimerStartLabel() : 
