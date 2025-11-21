@@ -67,11 +67,6 @@ export default defineConfig({
 						return 'fabric';
 					}
 					if (
-						id.includes('browser')
-					) {
-						return 'browser';
-					}
-					if (
 						id.includes('notistack')
 					) {
 						return 'notistack';
