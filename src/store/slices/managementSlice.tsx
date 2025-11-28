@@ -44,6 +44,15 @@ const managementSlice = createSlice({
 	name: 'management',
 	initialState,
 	reducers: {
+		clearUser: ((state) => {
+			state.username = '';
+			state.username = '';
+			state.email = '';
+			state.avatar = '';
+			state.tenantAdmin = false;
+			state.tenantOwner = false;
+			state.superAdmin = false;
+		}),
 		setUsername: ((state, action: PayloadAction<string>) => {
 			state.username = action.payload ?? '';
 		}),

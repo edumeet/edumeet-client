@@ -5,6 +5,7 @@ import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { getTenantFromFqdn } from './managementActions';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
+import { managamentActions } from '../slices/managementSlice';
 
 const logger = new Logger('LoginActions');
 
@@ -109,6 +110,8 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	dispatch(permissionsActions.setToken());
 	dispatch(permissionsActions.setLoggedIn(false));
+
+	dispatch(managamentActions.clearUser());
 
 	if (getState().signaling.state === 'connected')
 		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
