@@ -84,7 +84,7 @@ export const getData = (serviceName: string): AppThunk<Promise<object | undefine
 
 		data = init;
 
-		while (init.limit * increment <= init.total) {
+		while (init.limit * increment <= init.total && init.total!=0) {
 			tmpdata = await svc.find(
 				{
 					query: {
