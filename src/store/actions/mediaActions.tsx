@@ -168,6 +168,8 @@ export const updatePreviewMic = ({
 		dispatch(meActions.setPreviewMicTrackId(track.id));
 	} catch (error) {
 		logger.error('updatePreviewMic() [error:%o]', error);
+		deviceService.updateMediaDevices();
+
 	} finally {
 		dispatch(meActions.setAudioInProgress(false));
 	}
