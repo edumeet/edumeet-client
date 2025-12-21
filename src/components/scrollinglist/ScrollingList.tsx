@@ -52,7 +52,6 @@ class ScrollingList extends PureComponent<ScrollingListProps> {
 	}
 
 	componentDidUpdate(
-		// eslint-disable-next-line
 		_previousProps: ScrollingListComponentProps,
 		// eslint-disable-next-line
 		_previousState: any,

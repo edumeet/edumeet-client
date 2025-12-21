@@ -205,7 +205,6 @@ const RoomTable = () => {
 	const [ description, setDescription ] = useState('');
 	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 	const [ tenantId, setTenantId ] = useState(0);
-	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 	const [ defaultRoleId, setDefaultRoletId ] = useState(0);
 
 	const [ breakoutsEnabled, setBreakoutsEnabled ] = useState(false);
@@ -361,9 +360,7 @@ const RoomTable = () => {
 
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
-		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'rooms')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -446,7 +443,6 @@ const RoomTable = () => {
 						disabled={nameDisabled}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="description"
 						label={descLabel()}
@@ -467,7 +463,6 @@ const RoomTable = () => {
 						renderInput={(params) => <TextField {...params} label={defaultRoleLabel()} />}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="logo"
 						label={logoLabel()}
@@ -478,7 +473,6 @@ const RoomTable = () => {
 						value={logo}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="background"
 						label={roomBgLabel()}
@@ -489,7 +483,6 @@ const RoomTable = () => {
 						value={background}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="maxActiveVideos"
 						label={maxActiveVideosLabel()}
@@ -525,7 +518,6 @@ const RoomTable = () => {
 				onClick: () => {
 
 					const r = row.getAllCells();
-
 					const tid = r[0].getValue();
 					const tname=r[1].getValue();
 					const tdescription=r[2].getValue();
@@ -537,10 +529,11 @@ const RoomTable = () => {
 					const tlocked=r[11].getValue();
 					const tchatEnabled=r[12].getValue();
 					const traiseHandEnabled=r[13].getValue();
-					const tfilesharingEnabled=r[14].getValue();
-					const tlocalRecordingEnabled=r[15].getValue();
-					const tbreakoutsEnabled=r[18].getValue();
-					const treactionsEnabled=r[19].getValue();
+					const treactionsEnabled=r[14].getValue();
+					const tfilesharingEnabled=r[15].getValue();
+					const tlocalRecordingEnabled=r[16].getValue();
+					
+					const tbreakoutsEnabled=r[19].getValue();
 
 					if (typeof tid === 'number') {
 						setId(tid);

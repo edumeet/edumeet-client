@@ -61,9 +61,9 @@ export class PerformanceMonitor extends EventEmitter {
 				const statsDuration = statsEndTime - statsStartTime;
 				const timeoutDuration = timeoutExecutionTime - this.timeoutStartTime;
 
-				this.timeoutSamples.push(timeoutDuration) > SAMPLE_WINDOW &&
+				if (this.timeoutSamples.push(timeoutDuration) > SAMPLE_WINDOW)
 					this.timeoutSamples.shift();
-				this.statsSamples.push(statsDuration) > SAMPLE_WINDOW &&
+				if (this.statsSamples.push(statsDuration) > SAMPLE_WINDOW)
 					this.statsSamples.shift();
 
 				let decodeVolatilitySum = 0;
@@ -116,7 +116,7 @@ export class PerformanceMonitor extends EventEmitter {
 						sample.previousTimestamp = timestamp;
 						sample.previousFramesDecoded = framesDecoded;
 						sample.previousTotalDecodeTime = totalDecodeTime;
-						sample.decodeFrameRates.push(decodeFrameRate) > SAMPLE_WINDOW &&
+						if (sample.decodeFrameRates.push(decodeFrameRate) > SAMPLE_WINDOW)
 							sample.decodeFrameRates.shift();
 
 						const meanDecodeFrameRate =
@@ -157,7 +157,7 @@ export class PerformanceMonitor extends EventEmitter {
 				if (decodeVolatilityCount) {
 					const aggregatedDecodeVolatility = decodeVolatilitySum / decodeVolatilityCount;
 
-					this.decodeVolatilitySamples.push(aggregatedDecodeVolatility) > SAMPLE_WINDOW &&
+					if (this.decodeVolatilitySamples.push(aggregatedDecodeVolatility) > SAMPLE_WINDOW)
 						this.decodeVolatilitySamples.shift();
 				}
 

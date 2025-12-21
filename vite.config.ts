@@ -41,22 +41,7 @@ export default defineConfig({
 					) {
 						return '@ortc-p2p';
 					}
-					if (
-						id.includes('material-react-table/dist/index.esm.js')
-					) {
-						return 'material-react-table/dist/index.esm.js';
-					}
-					if (
-						id.includes('x-date-pickers')
-					) {
-						return 'x-date-pickers';
-					}
-					if (
-						id.includes('@mui')
-					) {
-						return '@mui';
-					}
-
+					
 				},
 			},
 		},

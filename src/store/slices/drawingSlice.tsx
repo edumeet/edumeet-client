@@ -1,11 +1,10 @@
-/* eslint-disable indent */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { FabricObject } from 'fabric';
 import { castDraft } from 'immer';
 
 // adds custom prop to fabric objects
 declare module 'fabric' {
-    // eslint-disable-next-line no-shadow
+     
     interface FabricObject {
       id?: number;
     }
@@ -145,8 +144,8 @@ const drawingSlice = createSlice({
 			const { min, max } = state.pencilBrushSizeRange;
 			const curr = state.pencilBrushSize;
 
-			(operation === 'inc' && curr < max) && state.pencilBrushSize++;
-			(operation === 'dec' && curr > min) && state.pencilBrushSize--;
+			if (operation === 'inc' && curr < max) state.pencilBrushSize++;
+			if (operation === 'dec' && curr > min) state.pencilBrushSize--;
 		}),
     
 		setDrawingTextSize: ((state, action: PayloadAction<{ operation: 'inc' | 'dec'}>) => {
@@ -155,8 +154,8 @@ const drawingSlice = createSlice({
 			const { min, max } = state.textSizeRange;
 			const curr = state.textSize;
 
-			(operation === 'inc' && curr < max) && state.textSize++;
-			(operation === 'dec' && curr > min) && state.textSize--;
+			if (operation === 'inc' && curr < max) state.textSize++;
+			if (operation === 'dec' && curr > min) state.textSize--;
 		}),
     
 		setDrawingEraserSize: ((state, action: PayloadAction<{ operation: 'inc' | 'dec'}>) => {
@@ -165,8 +164,8 @@ const drawingSlice = createSlice({
 			const { min, max } = state.eraserSizeRange;
 			const curr = state.eraserSize;
 
-			(operation === 'inc' && curr < max) && state.eraserSize++;
-			(operation === 'dec' && curr > min) && state.eraserSize--;
+			if (operation === 'inc' && curr < max) state.eraserSize++;
+			if (operation === 'dec' && curr > min) state.eraserSize--;
 		}),
 	}
 });

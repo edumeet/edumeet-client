@@ -27,7 +27,7 @@ export const DropZone = ({ afterImageDropHook, children }: UploadFileButtonProps
 			newThumbnail = await dispatch(saveImage(file));
 		}
 
-		newThumbnail && await afterImageDropHook(newThumbnail);
+		if (newThumbnail) await afterImageDropHook(newThumbnail);
 	};
 
 	return (

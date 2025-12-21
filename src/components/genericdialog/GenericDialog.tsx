@@ -3,8 +3,7 @@ import { DialogActions, DialogContent, DialogTitle, Link } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Dialog } from '@mui/material';
 import { memo } from 'react';
-import Grid from '@mui/material/Grid2';
-
+import Grid from '@mui/material/Grid';
 import edumeetConfig from '../../utils/edumeetConfig';
 
 export const RawStyledDialog = memo(styled(Dialog)({

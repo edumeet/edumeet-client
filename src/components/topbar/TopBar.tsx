@@ -1,4 +1,4 @@
-import { AppBar, Box, Chip, Hidden, Popover, Toolbar, Typography, useMediaQuery } from '@mui/material';
+import { AppBar, Box, Chip, Popover, Toolbar, Typography, useMediaQuery } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { useAppSelector, usePermissionSelector } from '../../store/hooks';
@@ -150,11 +150,11 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 				<TopBarDiv grow={1} />
 				<TopBarDiv marginRight={1}>
 					{ someoneIsRecording && <RecordIcon color='error' /> }
-					<Hidden smUp>
+					<Box sx={{ display: { xs: 'block', sm: 'none' } }}>
 						<ControlButton type='iconbutton' onClick={handleClick} >
 							<MoreIcon />
 						</ControlButton>
-					</Hidden>
+					</Box>
 					<Popover
 						id={id}
 						open={open && isSm}
@@ -179,9 +179,9 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 						</StyledBox>
 					</Popover>
 
-					<Hidden smDown>
+					<Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
 						{menuItems}
-					</Hidden>
+					</Box>
 				</TopBarDiv>
 				<TopBarDiv marginRight={1}>
 					<StyledChip size='small' label={ formatDuration(meetingDuration) } />

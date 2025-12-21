@@ -54,7 +54,7 @@ const VideoBackgroundDialog = (): React.JSX.Element => {
 			dispatch(updateVideoSettings());
 		}
 
-		selected?.imageName && dispatch(setVideoBackground(selected.imageName));
+		if (selected?.imageName) dispatch(setVideoBackground(selected.imageName));
 		dispatch(uiActions.setUi({ videoBackgroundDialogOpen: !videoBackgroundDialogOpen }));
 	};
 

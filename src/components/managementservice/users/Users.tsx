@@ -174,7 +174,6 @@ const UserTable = () => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'users')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -198,7 +197,6 @@ const UserTable = () => {
 				setOpen(false);
 			});
 		} else if (name != '' && id != 0) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(patchData(id, { 
 				ssoId: ssoId,
 				tenantId: tenantId,
@@ -227,7 +225,6 @@ const UserTable = () => {
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<TextField
-						autoFocus
 						margin="dense"
 						id="ssoId"
 						label="ssoId"
@@ -249,7 +246,6 @@ const UserTable = () => {
 						renderInput={(params) => <TextField {...params} label="Tenant" />}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="email"
 						label="Email"
@@ -260,7 +256,6 @@ const UserTable = () => {
 						value={email}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="name"
 						label="Name"

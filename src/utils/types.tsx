@@ -325,6 +325,7 @@ export type Tenant = {
 	name: string,
 	description: string
 };
+export type TenantOptionTypes = Array<Tenant>
 
 export type TenantFQDN = {
 	id: number,
@@ -355,6 +356,7 @@ export type User = {
 	tenantAdmin: boolean,
 	tenantOwner: boolean
 };
+export type UserTypes = Array<User>;
 
 export type Roles = {
 	id: number,
@@ -363,6 +365,8 @@ export type Roles = {
 	tenantId: number
 	permissions: Array<Permissions>
 };
+
+export type RoleOptionTypes = Array<Roles>
 
 export type GroupRoles = {
 	id: number,
@@ -456,3 +460,32 @@ export type Rule = {
 	action: string,
 	type: string,
 }
+export type Default = {
+	id: number,
+	tenantId: string, // number,
+	numberLimit: string, // number,
+	liveNumberLimit: string, // number,
+	userManagedRoomNumberLimit: string, // number,
+	managerManagedRoomNumberLimit: string, // number,
+	lockedUnmanaged: boolean | undefined,
+	raiseHandEnabledUnmanaged: boolean | undefined,
+	localRecordingEnabledUnmanaged: boolean | undefined,
+	lockedLock: boolean | undefined,
+	raiseHandEnabledLock: boolean | undefined,
+	localRecordingEnabledLock: boolean | undefined,
+	chatEnabledUnmanaged: boolean | undefined,
+	breakoutsEnabledUnmanaged: boolean | undefined,
+	filesharingEnabledUnmanaged: boolean | undefined,
+	reactionsEnabledLock: boolean | undefined,
+	reactionsEnabledUnmanaged: boolean | undefined,
+	chatEnabledLock: boolean | undefined,
+	breakoutsEnabledLock: boolean | undefined,
+	filesharingEnabledLock: boolean | undefined,
+	tracker: string,
+	maxFileSize: string, // number,
+	background: string,
+	logo: string,
+	defaultRoleId: string, // number,
+	tenantPermissionLimitRole: string, // number,
+}
+export type DefaultOptionTypes = Array<Default>

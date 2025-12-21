@@ -20,9 +20,7 @@ export default function SignIn() {
 
 		if (email && password) {
 			// Authenticate with the local email/password strategy
-			dispatch(adminLogin(email, password)).then(() => {
-				// todo display success/fail
-			});
+			dispatch(adminLogin(email, password));
 		}
 		
 	};
