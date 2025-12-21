@@ -29,7 +29,7 @@ const Lobby = (): React.JSX.Element => {
 
 	const handleDisplayNameChange = () => {
 		dispatch(setDisplayName(
-			(localDisplayName?.trim() ? localDisplayName : localDisplayName?.trim()) ?? 'Guest'
+			(localDisplayName?.trim() ? localDisplayName : localDisplayName?.trim()) || 'Guest'
 		));
 	};
 
