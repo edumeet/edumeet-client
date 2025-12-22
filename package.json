@@ -34,7 +34,7 @@
 		"hark": "^1.2.3",
 		"marked": "^10.0.0",
 		"material-react-table": "^3.0.1",
-		"mediasoup-client": "^3.15.6",
+		"mediasoup-client": "^3.18.3",
 		"moment": "^2.29.4",
 		"native-file-system-adapter": "^3.0.1",
 		"notistack": "^3.0.1",
