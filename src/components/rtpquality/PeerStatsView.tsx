@@ -159,14 +159,14 @@ const PeerStatsView = ({
 				const track = consumer?.track;
 
 				trackId = track?.id;
-				trackKind = track?.kind;
+				trackKind = (track?.kind as 'audio' | 'video' | undefined);
 				trackLabel = track?.label;
 				direction = 'inbound';
 			} else if (source) {
 				const track = mediaService.mediaSenders[source].track;
 
 				trackId = track?.id;
-				trackKind = track?.kind;
+				trackKind = (track?.kind as 'audio' | 'video' | undefined);
 				trackLabel = track?.label;
 				direction = 'outbound';
 			} else if (producerId) {
@@ -179,7 +179,7 @@ const PeerStatsView = ({
 					const track = producer.track;
 
 					trackId = track?.id;
-					trackKind = track?.kind;
+					trackKind = (track?.kind as 'audio' | 'video' | undefined);
 					trackLabel = track?.label;
 					direction = 'outbound';
 
