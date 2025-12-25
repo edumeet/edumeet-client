@@ -4,6 +4,9 @@ import { ServiceContext } from '../../store/store';
 import Stats from './Stats';
 import { TrackStats } from '@observertc/client-monitor-js';
 import { ProducerSource } from '../../utils/types';
+import { Logger } from '../../utils/Logger';
+
+const logger = new Logger('PeerStatsView');
 
 interface PeerStatsViewProps {
 	producerId?: string;
@@ -80,6 +83,9 @@ const PeerStatsView = ({
 		// this runs on mount
 		const monitor = mediaService.monitor;
 
+		logger.debug('Stats init() producerId=%s, consumerId=%s, source=%s',
+			producerId, consumerId, source);
+
 		if (!monitor) {
 			return;
 		}
@@ -112,11 +118,15 @@ const PeerStatsView = ({
 				}
 			}
 
+			logger.debug('Stats trackId=%s', trackId);
+
 			if (!trackId) {
 				return;
 			}
 
 			const trackStats = storage.getTrack(trackId);
+
+			logger.debug('Stats trackStats=%o', trackStats);
 
 			if (!trackStats) {
 				return;
@@ -124,6 +134,8 @@ const PeerStatsView = ({
 
 			if (consumerId) {
 				const newInboundStats = createInboundStats(trackStats);
+
+				logger.debug('Stats newInboundStats=%o', newInboundStats);
 
 				setInboundStats(newInboundStats);
 				setOutboundStats([ ]);
@@ -133,6 +145,8 @@ const PeerStatsView = ({
 			}
 
 			const newOutboundStats = createOutboundStats(trackStats, storage.avgRttInS);
+
+			logger.debug('Stats newOutboundStats=%o', newOutboundStats);
 
 			setOutboundStats(newOutboundStats);
 			setInboundStats([ ]);
