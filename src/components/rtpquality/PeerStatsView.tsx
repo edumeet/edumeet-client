@@ -68,10 +68,10 @@ function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats
 		};
 	};
 
-	const mos = (typeof tm.score === 'number')
-		? tm.score
-		: (typeof tm.calculatedScore?.value === 'number')
-			? tm.calculatedScore.value
+	const mos = (typeof tm.calculatedScore?.value === 'number')
+		? tm.calculatedScore.value
+		: (typeof tm.score === 'number')
+			? tm.score
 			: undefined;
 
 	const result: InboundStats[] = [ ];
