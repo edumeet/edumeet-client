@@ -868,7 +868,7 @@ export class MediaService extends EventEmitter {
 				const monitor = await this.monitor;
 
 				if (monitor)
-					monitor.addSource(transport.handler.pc);;
+					monitor.addSource(transport.handler.pc);
 
 				transport.on('icecandidate', (candidate) => {
 					this.signalingService.notify('candidate', {
