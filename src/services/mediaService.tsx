@@ -775,6 +775,11 @@ export class MediaService extends EventEmitter {
 			iceServers: this.iceServers,
 		});
 
+		const monitor = await this.monitor;
+
+		if (monitor)
+			monitor.collectors.addRTCPeerConnection(transport.handler.pc)
+
 		// eslint-disable-next-line no-shadow
 		transport.on('connect', ({ dtlsParameters }, callback, errback) => {
 			if (!transport) return;
@@ -865,7 +870,7 @@ export class MediaService extends EventEmitter {
 				}
 
 				const monitor = await this.monitor;
-				
+
 				if (monitor)
 					monitor.collectors.addRTCPeerConnection(transport.handler.pc);
 
