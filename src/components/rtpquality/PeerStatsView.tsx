@@ -7,6 +7,7 @@ import { TrackStats } from '@observertc/client-monitor-js';
 interface PeerStatsViewProps {
 	producerId?: string;
 	consumerId?: string;
+	source?: ProducerSource;
 }
 
 type InboundStats = {
@@ -80,42 +81,50 @@ const PeerStatsView = ({
 			return;
 		}
 
-		if (producerId && consumerId) {
+		if ((producerId && consumerId) || (source && consumerId) || (producerId && source)) {
 			return;
 		}
 
 		const storage = monitor.storage;
 
 		const listener = () => {
+			let trackId: string | undefined;
+
 			if (consumerId) {
 				const consumer = mediaService.getConsumer(consumerId);
-				const trackId = consumer?.track?.id;
 
-				if (!trackId) {
-					return;
+				trackId = consumer?.track?.id;
+			} else if (source) {
+				trackId = mediaService.mediaSenders[source].track?.id;
+			} else if (producerId) {
+				for (const sender of Object.values(mediaService.mediaSenders)) {
+					const producer = sender.producer;
+
+					if (!producer || producer.id !== producerId) {
+						continue;
+					}
+					trackId = producer.track?.id;
+
+					break;
 				}
-				const trackStats = storage.getTrack(trackId);
-
-				if (!trackStats) {
-					return;
-				}
-
-				const newInboundStats = createInboundStats(trackStats);
-
-				setInboundStats(newInboundStats);
-				setOutboundStats([ ]);
-
-				return;
 			}
-
-			const trackId = mediaService.previewWebcamTrack?.id;
 
 			if (!trackId) {
 				return;
 			}
+
 			const trackStats = storage.getTrack(trackId);
 
 			if (!trackStats) {
+				return;
+			}
+
+			if (consumerId) {
+				const newInboundStats = createInboundStats(trackStats);
+					
+				setInboundStats(newInboundStats);
+				setOutboundStats([ ]);
+				
 				return;
 			}
 
@@ -131,9 +140,10 @@ const PeerStatsView = ({
 			if (!monitor) {
 				return;
 			}
+
 			monitor.off('stats-collected', listener);
 		};
-	}, [ mediaService, producerId, consumerId, mediaService.previewWebcamTrack, mediaService.monitor ]);
+	}, [ mediaService, producerId, consumerId, source, mediaService.monitor ]);
 
 	return (
 		<Stats
