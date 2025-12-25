@@ -190,13 +190,15 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				break;
 			}
 
+			/*
 			case 'q': {
 				const showStats = getState().ui.showStats;
 
-				// dispatch(uiActions.setUi({ showStats: !showStats }));
+				dispatch(uiActions.setUi({ showStats: !showStats }));
 
 				break;
 			}
+			*/
 
 			case 'r': {
 				const raisedHandInProgress = getState().me.raisedHandInProgress;
