@@ -62,7 +62,17 @@ function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats
 	const tm = trackMonitor as {
 		mappedInboundRtps?: Map<number, unknown>;
 		_inboundRtp?: unknown;
+		score?: number;
+		calculatedScore?: {
+			value?: number;
+		};
 	};
+
+	const mos = (typeof tm.score === 'number')
+		? tm.score
+		: (typeof tm.calculatedScore?.value === 'number')
+			? tm.calculatedScore.value
+			: undefined;
 
 	const result: InboundStats[] = [ ];
 
@@ -78,6 +88,7 @@ function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats
 				ssrc: rtp.ssrc ?? 0,
 				receivedKbps: Math.floor(((rtp.bitrate ?? 0) / 1000)),
 				fractionLoss: Math.round((rtp.fractionLost ?? 0) * 100) / 100,
+				meanOpinionScore: mos,
 			};
 
 			result.push(item);
@@ -97,6 +108,7 @@ function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats
 			ssrc: rtp.ssrc ?? 0,
 			receivedKbps: Math.floor(((rtp.bitrate ?? 0) / 1000)),
 			fractionLoss: Math.round((rtp.fractionLost ?? 0) * 100) / 100,
+			meanOpinionScore: mos,
 		};
 
 		result.push(item);

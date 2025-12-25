@@ -7,7 +7,7 @@ import {
 	raiseHandLabel,
 	showChatLabel,
 	showParticipantsLabel,
-	// showStatsLabel,
+	showStatsLabel,
 	stopVideoLabel,
 	usePTTLabel
 } from '../translated/translatedComponents';
@@ -45,10 +45,10 @@ const shortcuts: Array<{ value: string, label: () => string }> = [ {
 	value: 'C',
 	label: showChatLabel
 },
-// {
-// 	value: 'Q',
-// 	label: showStatsLabel
-// },
+{
+	value: 'Q',
+	label: showStatsLabel
+},
 {
 	value: 'SPACE',
 	label: usePTTLabel
