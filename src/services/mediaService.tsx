@@ -872,7 +872,6 @@ export class MediaService extends EventEmitter {
 				const monitor = await this.monitor;
 
 				if (monitor) {
-					// mediasoup transport handler does have a pc at runtime, but types don't expose it
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					const handler = transport.handler as any;
 					const pc = handler?.pc as RTCPeerConnection | undefined;
