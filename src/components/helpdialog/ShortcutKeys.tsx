@@ -7,7 +7,7 @@ import {
 	raiseHandLabel,
 	showChatLabel,
 	showParticipantsLabel,
-	showStatsLabel,
+	// showStatsLabel,
 	stopVideoLabel,
 	usePTTLabel
 } from '../translated/translatedComponents';
