@@ -122,6 +122,7 @@ function getTrackMonitorByIdOrMatch(
 			direction?: 'inbound' | 'outbound';
 			attachments?: {
 				producerId?: string;
+				consumerId?: string;
 			};
 		} & Record<string, unknown>>;
 	};
