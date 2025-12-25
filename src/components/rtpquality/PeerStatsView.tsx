@@ -74,6 +74,7 @@ const PeerStatsView = ({
 	const { mediaService } = useContext(ServiceContext);
 	const [ inboundStats, setInboundStats ] = useState<InboundStats [ ] >([ ]);
 	const [ outboundStats, setOutboundStats ] = useState<OutboundStats [ ] >([ ]);
+	const [ loading, setLoading ] = useState<boolean>(true);
 
 	useEffect(() => {
 		// this runs on mount
@@ -123,10 +124,11 @@ const PeerStatsView = ({
 
 			if (consumerId) {
 				const newInboundStats = createInboundStats(trackStats);
-					
+
 				setInboundStats(newInboundStats);
 				setOutboundStats([ ]);
-				
+				setLoading(false);
+
 				return;
 			}
 
@@ -134,6 +136,7 @@ const PeerStatsView = ({
 
 			setOutboundStats(newOutboundStats);
 			setInboundStats([ ]);
+			setLoading(false);
 		};
 
 		monitor.on('stats-collected', listener);
@@ -153,6 +156,7 @@ const PeerStatsView = ({
 			horizontalPlacement='left'
 			verticalPlacement='bottom'
 		>
+			{ loading && <div>...</div> }
 			{inboundStats.map((stats, index) => {
 				return (
 					<div key={index + 10}>
