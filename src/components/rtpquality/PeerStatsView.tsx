@@ -81,6 +81,46 @@ function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats
 	return result;
 }
 
+function getTrackMonitorByIdOrMatch(
+	monitor: unknown,
+	trackId: string,
+	kind?: 'audio' | 'video',
+	label?: string,
+	direction?: 'inbound' | 'outbound',
+): unknown | undefined {
+	const m = monitor as {
+		getTrackMonitor?: (trackId: string) => unknown | undefined;
+		tracks?: Array<{
+			trackId?: string;
+			kind?: 'audio' | 'video';
+			direction?: 'inbound' | 'outbound';
+			label?: string;
+		} & Record<string, unknown>>;
+	};
+
+	const direct = m.getTrackMonitor?.(trackId);
+
+	if (direct) return direct;
+
+	const tracks = m.tracks ?? [ ];
+
+	for (const t of tracks) {
+		if (t.trackId && t.trackId === trackId) {
+			return t;
+		}
+	}
+
+	for (const t of tracks) {
+		if (direction && t.direction !== direction) continue;
+		if (kind && t.kind !== kind) continue;
+		if (label && t.label !== label) continue;
+
+		return t;
+	}
+
+	return undefined;
+}
+
 const PeerStatsView = ({
 	producerId,
 	consumerId,
@@ -106,15 +146,29 @@ const PeerStatsView = ({
 			return;
 		}
 
+		setLoading(true);
+
 		const listener = () => {
 			let trackId: string | undefined;
+			let trackKind: 'audio' | 'video' | undefined;
+			let trackLabel: string | undefined;
+			let direction: 'inbound' | 'outbound' | undefined;
 
 			if (consumerId) {
 				const consumer = mediaService.getConsumer(consumerId);
+				const track = consumer?.track;
 
-				trackId = consumer?.track?.id;
+				trackId = track?.id;
+				trackKind = track?.kind;
+				trackLabel = track?.label;
+				direction = 'inbound';
 			} else if (source) {
-				trackId = mediaService.mediaSenders[source].track?.id;
+				const track = mediaService.mediaSenders[source].track;
+
+				trackId = track?.id;
+				trackKind = track?.kind;
+				trackLabel = track?.label;
+				direction = 'outbound';
 			} else if (producerId) {
 				for (const sender of Object.values(mediaService.mediaSenders)) {
 					const producer = sender.producer;
@@ -122,7 +176,12 @@ const PeerStatsView = ({
 					if (!producer || producer.id !== producerId) {
 						continue;
 					}
-					trackId = producer.track?.id;
+					const track = producer.track;
+
+					trackId = track?.id;
+					trackKind = track?.kind;
+					trackLabel = track?.label;
+					direction = 'outbound';
 
 					break;
 				}
@@ -134,7 +193,11 @@ const PeerStatsView = ({
 				return;
 			}
 
-			const trackMonitor = monitor.getTrackMonitor(trackId);
+			const tracksCount = (monitor as unknown as { tracks?: unknown[] }).tracks?.length ?? 0;
+
+			logger.debug('Stats monitor.tracks.length=%s', tracksCount);
+
+			const trackMonitor = getTrackMonitorByIdOrMatch(monitor, trackId, trackKind, trackLabel, direction);
 
 			logger.debug('Stats trackMonitor=%o', trackMonitor);
 
