@@ -777,8 +777,14 @@ export class MediaService extends EventEmitter {
 
 		const monitor = await this.monitor;
 
-		if (monitor)
-			monitor.collectors.addRTCPeerConnection(transport.handler.pc)
+		if (monitor) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const handler = transport.handler as any;
+			const pc = handler?.pc as RTCPeerConnection | undefined;
+
+			if (pc)
+				monitor.collectors.addRTCPeerConnection(pc);
+		}
 
 		// eslint-disable-next-line no-shadow
 		transport.on('connect', ({ dtlsParameters }, callback, errback) => {
@@ -871,14 +877,8 @@ export class MediaService extends EventEmitter {
 
 				const monitor = await this.monitor;
 
-				if (monitor) {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					const handler = transport.handler as any;
-					const pc = handler?.pc as RTCPeerConnection | undefined;
-
-					if (pc)
-						monitor.collectors.addRTCPeerConnection(pc);
-				}
+				if (monitor)
+					monitor.collectors.addRTCPeerConnection(transport.handler.pc);
 
 				transport.on('icecandidate', (candidate) => {
 					this.signalingService.notify('candidate', {
