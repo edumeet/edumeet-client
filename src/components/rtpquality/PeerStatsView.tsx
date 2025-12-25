@@ -75,23 +75,21 @@ const PeerStatsView = ({
 	useEffect(() => {
 		// this runs on mount
 		const monitor = mediaService.monitor;
-		
+
 		if (!monitor) {
 			return;
 		}
-		if (!producerId && !consumerId) {
-			return;
-		} else if (producerId && consumerId) {
+
+		if (producerId && consumerId) {
 			return;
 		}
-		
-		let listener: () => void | undefined;
+
 		const storage = monitor.storage;
-		
-		if (mediaService.previewWebcamTrack) {
-			
-			listener = () => {
-				const trackId = mediaService.previewWebcamTrack?.id;
+
+		const listener = () => {
+			if (consumerId) {
+				const consumer = mediaService.getConsumer(consumerId);
+				const trackId = consumer?.track?.id;
 
 				if (!trackId) {
 					return;
@@ -101,46 +99,41 @@ const PeerStatsView = ({
 				if (!trackStats) {
 					return;
 				}
-					
-				const newOutboundStats = createOutboundStats(trackStats, storage.avgRttInS);
 
-				setOutboundStats(newOutboundStats);
-			};
-			monitor.on('stats-collected', listener);
+				const newInboundStats = createInboundStats(trackStats);
 
-		} else if (consumerId) {
-			const consumer = mediaService.getConsumer(consumerId);
+				setInboundStats(newInboundStats);
+				setOutboundStats([ ]);
 
-			if (consumer) {
-				listener = () => {
-					const trackId = consumer.track?.id;
-
-					if (!trackId) {
-						return;
-					}
-					const trackStats = storage.getTrack(trackId);
-
-					if (!trackStats) {
-						return;
-					}
-
-					const newInboundStats = createInboundStats(trackStats);
-					
-					setInboundStats(newInboundStats);
-				};
-				monitor.on('stats-collected', listener);
+				return;
 			}
-		}
+
+			const trackId = mediaService.previewWebcamTrack?.id;
+
+			if (!trackId) {
+				return;
+			}
+			const trackStats = storage.getTrack(trackId);
+
+			if (!trackStats) {
+				return;
+			}
+
+			const newOutboundStats = createOutboundStats(trackStats, storage.avgRttInS);
+
+			setOutboundStats(newOutboundStats);
+			setInboundStats([ ]);
+		};
+
+		monitor.on('stats-collected', listener);
 
 		return () => {
 			if (!monitor) {
 				return;
 			}
-			if (listener) {
-				monitor.off('stats-collected', listener);
-			}
+			monitor.off('stats-collected', listener);
 		};
-	}, []);
+	}, [ mediaService, producerId, consumerId, mediaService.previewWebcamTrack, mediaService.monitor ]);
 
 	return (
 		<Stats
