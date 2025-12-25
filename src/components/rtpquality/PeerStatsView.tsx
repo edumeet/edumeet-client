@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { ServiceContext } from '../../store/store';
 import Stats from './Stats';
 import { TrackStats } from '@observertc/client-monitor-js';
+import { ProducerSource } from '../../utils/types';
 
 interface PeerStatsViewProps {
 	producerId?: string;
@@ -68,6 +69,7 @@ function createInboundStats(trackStats: TrackStats): InboundStats[] {
 const PeerStatsView = ({
 	producerId,
 	consumerId,
+	source,
 }: PeerStatsViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ inboundStats, setInboundStats ] = useState<InboundStats [ ] >([ ]);
