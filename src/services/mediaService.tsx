@@ -743,9 +743,16 @@ export class MediaService extends EventEmitter {
 
 	public async createTransports(): Promise<void> {
 		await this.mediaReady;
-		
+
 		this.sendTransport = await this.createTransport('createSendTransport');
 		this.recvTransport = await this.createTransport('createRecvTransport');
+
+		const monitor = await this.monitor;
+
+		if (monitor) {
+			monitor.addSource(this.sendTransport);
+			monitor.addSource(this.recvTransport);
+		}
 
 		this.resolveTransportsReady();
 	}
@@ -865,7 +872,7 @@ export class MediaService extends EventEmitter {
 				}
 
 				const monitor = await this.monitor;
-				
+
 				if (monitor)
 					monitor.collectors.addRTCPeerConnection(transport.handler.pc);
 
