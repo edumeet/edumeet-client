@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { ServiceContext } from '../../store/store';
 import Stats from './Stats';
-import { TrackStats } from '@observertc/client-monitor-js';
 import { ProducerSource } from '../../utils/types';
 import { Logger } from '../../utils/Logger';
 
@@ -28,39 +27,52 @@ type OutboundStats = {
 	Fps?: number;
 }
 
-function createOutboundStats(trackStats: TrackStats, avgRttInS?: number): OutboundStats[] {
-	if (trackStats.direction !== 'outbound') return [];
+function createOutboundStatsFromTrackMonitor(trackMonitor: unknown): OutboundStats[] {
+	const tm = trackMonitor as {
+		getOutboundRtps?: () => Array<{
+			ssrc: number;
+			bitrate?: number;
+			framesPerSecond?: number;
+			getRemoteInboundRtp?: () => { roundTripTime?: number } | undefined;
+		}>;
+	};
 
-	const result: OutboundStats[] = [];
+	if (!tm.getOutboundRtps) return [ ];
 
-	for (const outboundRtpEntry of trackStats.outboundRtps()) {
-		
-		const stats = outboundRtpEntry.stats;
+	const result: OutboundStats[] = [ ];
+
+	for (const outboundRtp of tm.getOutboundRtps()) {
 		const item: OutboundStats = {
-			ssrc: stats.ssrc,
-			sendingKbps: Math.floor((outboundRtpEntry.sendingBitrate ?? 0) / 1000),
-			Fps: stats.framesPerSecond,
-			RTT: Math.round(Math.max(0, avgRttInS ?? 0) * 1000),
+			ssrc: outboundRtp.ssrc,
+			sendingKbps: Math.floor(((outboundRtp.bitrate ?? 0) / 1000)),
+			Fps: outboundRtp.framesPerSecond,
+			RTT: Math.round(Math.max(0, outboundRtp.getRemoteInboundRtp?.()?.roundTripTime ?? 0) * 1000),
 		};
-		
+
 		result.push(item);
 	}
 
 	return result;
 }
 
-function createInboundStats(trackStats: TrackStats): InboundStats[] {
-	if (trackStats.direction !== 'inbound') return [];
+function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats[] {
+	const tm = trackMonitor as {
+		getInboundRtps?: () => Array<{
+			ssrc: number;
+			bitrate?: number;
+			fractionLost?: number;
+		}>;
+	};
 
-	const result: InboundStats[] = [];
+	if (!tm.getInboundRtps) return [ ];
 
-	for (const inboundRtpEntry of trackStats.inboundRtps()) {
-		// inboundRtpStats.stats
-		
+	const result: InboundStats[] = [ ];
+
+	for (const inboundRtp of tm.getInboundRtps()) {
 		const item: InboundStats = {
-			ssrc: inboundRtpEntry.stats.ssrc,
-			receivedKbps: Math.floor(((inboundRtpEntry.receivingBitrate ?? 0) / 1000)),
-			fractionLoss: Math.round((inboundRtpEntry.fractionLoss ?? 0) * 100) / 100,
+			ssrc: inboundRtp.ssrc,
+			receivedKbps: Math.floor(((inboundRtp.bitrate ?? 0) / 1000)),
+			fractionLoss: Math.round((inboundRtp.fractionLost ?? 0) * 100) / 100,
 		};
 
 		result.push(item);
@@ -94,8 +106,6 @@ const PeerStatsView = ({
 			return;
 		}
 
-		const storage = monitor.storage;
-
 		const listener = () => {
 			let trackId: string | undefined;
 
@@ -124,33 +134,33 @@ const PeerStatsView = ({
 				return;
 			}
 
-			const trackStats = storage.getTrack(trackId);
+			const trackMonitor = monitor.getTrackMonitor(trackId);
 
-			logger.debug('Stats trackStats=%o', trackStats);
+			logger.debug('Stats trackMonitor=%o', trackMonitor);
 
-			if (!trackStats) {
+			if (!trackMonitor) {
 				return;
 			}
 
+			setLoading(false);
+
 			if (consumerId) {
-				const newInboundStats = createInboundStats(trackStats);
+				const newInboundStats = createInboundStatsFromTrackMonitor(trackMonitor);
 
 				logger.debug('Stats newInboundStats=%o', newInboundStats);
 
 				setInboundStats(newInboundStats);
 				setOutboundStats([ ]);
-				setLoading(false);
 
 				return;
 			}
 
-			const newOutboundStats = createOutboundStats(trackStats, storage.avgRttInS);
+			const newOutboundStats = createOutboundStatsFromTrackMonitor(trackMonitor);
 
 			logger.debug('Stats newOutboundStats=%o', newOutboundStats);
 
 			setOutboundStats(newOutboundStats);
 			setInboundStats([ ]);
-			setLoading(false);
 		};
 
 		monitor.on('stats-collected', listener);

@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { ServiceContext } from '../../store/store';
 import Stats from './Stats';
 import { SignalCellularAlt } from '@mui/icons-material';
-import { ClientMonitor } from '@observertc/client-monitor-js/lib/ClientMonitor';
+import { ClientMonitor } from '@observertc/client-monitor-js';
 
 const QualityIndicator = (): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);

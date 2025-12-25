@@ -136,13 +136,7 @@ export class MediaService extends EventEmitter {
 	public resolveTransportsReady!: () => void;
 	public transportsReady!: ReturnType<typeof safePromise>;
 
-	public _monitor: Promise<ClientMonitor> = (async () => {
-		const { createClientMonitor } = await import('@observertc/client-monitor-js');
-
-		const monitor = createClientMonitor({ collectingPeriodInMs: 5000 });
-
-		return monitor;
-	})();
+	public _monitor: Promise<ClientMonitor> = Promise.resolve(new ClientMonitor({ collectingPeriodInMs: 5000 }));
 
 	constructor(
 		{ signalingService }: { signalingService: SignalingService },
@@ -733,7 +727,7 @@ export class MediaService extends EventEmitter {
 			const monitor = await this.monitor;
 
 			if (monitor)
-				monitor.collectors.addMediasoupDevice(this.mediasoup);
+				monitor.addSource(this.mediasoup);
 		}
 
 		if (!this.mediasoup.loaded) await this.mediasoup.load({ routerRtpCapabilities });
@@ -874,7 +868,7 @@ export class MediaService extends EventEmitter {
 				const monitor = await this.monitor;
 
 				if (monitor)
-					monitor.collectors.addRTCPeerConnection(transport.handler.pc);
+					monitor.addSource(transport.handler.pc);;
 
 				transport.on('icecandidate', (candidate) => {
 					this.signalingService.notify('candidate', {
