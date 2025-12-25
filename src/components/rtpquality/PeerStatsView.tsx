@@ -29,24 +29,27 @@ type OutboundStats = {
 
 function createOutboundStatsFromTrackMonitor(trackMonitor: unknown): OutboundStats[] {
 	const tm = trackMonitor as {
-		getOutboundRtps?: () => Array<{
-			ssrc: number;
-			bitrate?: number;
-			framesPerSecond?: number;
-			getRemoteInboundRtp?: () => { roundTripTime?: number } | undefined;
-		}>;
+		mappedOutboundRtps?: Map<number, unknown>;
 	};
 
-	if (!tm.getOutboundRtps) return [ ];
+	if (!tm.mappedOutboundRtps) return [ ];
 
 	const result: OutboundStats[] = [ ];
 
-	for (const outboundRtp of tm.getOutboundRtps()) {
+	for (const outboundRtp of tm.mappedOutboundRtps.values()) {
+		const rtp = outboundRtp as {
+			ssrc?: number;
+			bitrate?: number;
+			framesPerSecond?: number;
+			roundTripTime?: number;
+			getRemoteInboundRtp?: () => { roundTripTime?: number } | undefined;
+		};
+
 		const item: OutboundStats = {
-			ssrc: outboundRtp.ssrc,
-			sendingKbps: Math.floor(((outboundRtp.bitrate ?? 0) / 1000)),
-			Fps: outboundRtp.framesPerSecond,
-			RTT: Math.round(Math.max(0, outboundRtp.getRemoteInboundRtp?.()?.roundTripTime ?? 0) * 1000),
+			ssrc: rtp.ssrc ?? 0,
+			sendingKbps: Math.floor(((rtp.bitrate ?? 0) / 1000)),
+			Fps: rtp.framesPerSecond,
+			RTT: Math.round(Math.max(0, rtp.getRemoteInboundRtp?.()?.roundTripTime ?? rtp.roundTripTime ?? 0) * 1000),
 		};
 
 		result.push(item);
@@ -57,22 +60,24 @@ function createOutboundStatsFromTrackMonitor(trackMonitor: unknown): OutboundSta
 
 function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats[] {
 	const tm = trackMonitor as {
-		getInboundRtps?: () => Array<{
-			ssrc: number;
-			bitrate?: number;
-			fractionLost?: number;
-		}>;
+		mappedInboundRtps?: Map<number, unknown>;
 	};
 
-	if (!tm.getInboundRtps) return [ ];
+	if (!tm.mappedInboundRtps) return [ ];
 
 	const result: InboundStats[] = [ ];
 
-	for (const inboundRtp of tm.getInboundRtps()) {
+	for (const inboundRtp of tm.mappedInboundRtps.values()) {
+		const rtp = inboundRtp as {
+			ssrc?: number;
+			bitrate?: number;
+			fractionLost?: number;
+		};
+
 		const item: InboundStats = {
-			ssrc: inboundRtp.ssrc,
-			receivedKbps: Math.floor(((inboundRtp.bitrate ?? 0) / 1000)),
-			fractionLoss: Math.round((inboundRtp.fractionLost ?? 0) * 100) / 100,
+			ssrc: rtp.ssrc ?? 0,
+			receivedKbps: Math.floor(((rtp.bitrate ?? 0) / 1000)),
+			fractionLoss: Math.round((rtp.fractionLost ?? 0) * 100) / 100,
 		};
 
 		result.push(item);
@@ -83,37 +88,46 @@ function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats
 
 function getTrackMonitorByIdOrMatch(
 	monitor: unknown,
-	trackId: string,
+	trackId?: string,
 	kind?: 'audio' | 'video',
 	label?: string,
 	direction?: 'inbound' | 'outbound',
+	producerId?: string,
 ): unknown | undefined {
 	const m = monitor as {
-		getTrackMonitor?: (trackId: string) => unknown | undefined;
 		tracks?: Array<{
-			trackId?: string;
-			kind?: 'audio' | 'video';
+			track?: MediaStreamTrack;
 			direction?: 'inbound' | 'outbound';
-			label?: string;
+			attachments?: {
+				producerId?: string;
+			};
 		} & Record<string, unknown>>;
 	};
 
-	const direct = m.getTrackMonitor?.(trackId);
-
-	if (direct) return direct;
-
 	const tracks = m.tracks ?? [ ];
 
-	for (const t of tracks) {
-		if (t.trackId && t.trackId === trackId) {
-			return t;
+	if (producerId) {
+		for (const t of tracks) {
+			if (t.attachments?.producerId === producerId) {
+				return t;
+			}
+		}
+	}
+
+	if (trackId) {
+		for (const t of tracks) {
+			const tTrackId = t.track?.id;
+
+			if (tTrackId && tTrackId === trackId) {
+				return t;
+			}
 		}
 	}
 
 	for (const t of tracks) {
 		if (direction && t.direction !== direction) continue;
-		if (kind && t.kind !== kind) continue;
-		if (label && t.label !== label) continue;
+		if (kind && t.track?.kind !== kind) continue;
+		if (label && t.track?.label !== label) continue;
 
 		return t;
 	}
@@ -189,7 +203,7 @@ const PeerStatsView = ({
 
 			logger.debug('Stats trackId=%s', trackId);
 
-			if (!trackId) {
+			if (!trackId && !producerId) {
 				return;
 			}
 
@@ -197,11 +211,7 @@ const PeerStatsView = ({
 
 			logger.debug('Stats monitor.tracks.length=%s', tracksCount);
 
-			const tracks = (monitor as unknown as { tracks?: unknown[] }).tracks ?? [ ];
-
-			logger.debug('Stats monitor.tracks=%o', tracks);
-
-			const trackMonitor = getTrackMonitorByIdOrMatch(monitor, trackId, trackKind, trackLabel, direction);
+			const trackMonitor = getTrackMonitorByIdOrMatch(monitor, trackId, trackKind, trackLabel, direction, producerId);
 
 			logger.debug('Stats trackMonitor=%o', trackMonitor);
 
