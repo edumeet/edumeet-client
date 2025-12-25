@@ -193,7 +193,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			case 'q': {
 				const showStats = getState().ui.showStats;
 
-				dispatch(uiActions.setUi({ showStats: !showStats }));
+				// dispatch(uiActions.setUi({ showStats: !showStats }));
 
 				break;
 			}
