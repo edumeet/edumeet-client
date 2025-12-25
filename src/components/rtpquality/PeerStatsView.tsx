@@ -61,14 +61,33 @@ function createOutboundStatsFromTrackMonitor(trackMonitor: unknown): OutboundSta
 function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats[] {
 	const tm = trackMonitor as {
 		mappedInboundRtps?: Map<number, unknown>;
+		_inboundRtp?: unknown;
 	};
-
-	if (!tm.mappedInboundRtps) return [ ];
 
 	const result: InboundStats[] = [ ];
 
-	for (const inboundRtp of tm.mappedInboundRtps.values()) {
-		const rtp = inboundRtp as {
+	if (tm.mappedInboundRtps) {
+		for (const inboundRtp of tm.mappedInboundRtps.values()) {
+			const rtp = inboundRtp as {
+				ssrc?: number;
+				bitrate?: number;
+				fractionLost?: number;
+			};
+
+			const item: InboundStats = {
+				ssrc: rtp.ssrc ?? 0,
+				receivedKbps: Math.floor(((rtp.bitrate ?? 0) / 1000)),
+				fractionLoss: Math.round((rtp.fractionLost ?? 0) * 100) / 100,
+			};
+
+			result.push(item);
+		}
+
+		return result;
+	}
+
+	if (tm._inboundRtp) {
+		const rtp = tm._inboundRtp as {
 			ssrc?: number;
 			bitrate?: number;
 			fractionLost?: number;
@@ -81,6 +100,8 @@ function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats
 		};
 
 		result.push(item);
+
+		return result;
 	}
 
 	return result;
@@ -93,6 +114,7 @@ function getTrackMonitorByIdOrMatch(
 	label?: string,
 	direction?: 'inbound' | 'outbound',
 	producerId?: string,
+	consumerId?: string,
 ): unknown | undefined {
 	const m = monitor as {
 		tracks?: Array<{
@@ -105,6 +127,14 @@ function getTrackMonitorByIdOrMatch(
 	};
 
 	const tracks = m.tracks ?? [ ];
+
+	if (consumerId) {
+		for (const t of tracks) {
+			if (t.attachments?.consumerId === consumerId) {
+				return t;
+			}
+		}
+	}
 
 	if (producerId) {
 		for (const t of tracks) {
@@ -211,7 +241,8 @@ const PeerStatsView = ({
 
 			logger.debug('Stats monitor.tracks.length=%s', tracksCount);
 
-			const trackMonitor = getTrackMonitorByIdOrMatch(monitor, trackId, trackKind, trackLabel, direction, producerId);
+			const trackMonitor = getTrackMonitorByIdOrMatch(monitor, trackId, trackKind, trackLabel,
+				direction, producerId, consumerId);
 
 			logger.debug('Stats trackMonitor=%o', trackMonitor);
 
