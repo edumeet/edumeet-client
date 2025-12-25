@@ -197,6 +197,10 @@ const PeerStatsView = ({
 
 			logger.debug('Stats monitor.tracks.length=%s', tracksCount);
 
+			const tracks = (monitor as unknown as { tracks?: unknown[] }).tracks ?? [ ];
+
+			logger.debug('Stats monitor.tracks=%o', tracks);
+
 			const trackMonitor = getTrackMonitorByIdOrMatch(monitor, trackId, trackKind, trackLabel, direction);
 
 			logger.debug('Stats trackMonitor=%o', trackMonitor);
