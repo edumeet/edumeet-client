@@ -60,7 +60,7 @@ const SettingsDialog = (): React.JSX.Element => {
 		<GenericDialog
 			open={settingsOpen}
 			onClose={handleCloseSettings}
-			maxWidth={isMobile ? 'sm' : 'md'}
+			maxWidth={isMobile ? 'sm' : 'sm'}
 			content={
 				<>
 					<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
