@@ -16,7 +16,7 @@ const ClickableLabel = styled('span')(() => ({
 const PrecallTitle = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
-	const logo = useAppSelector((state) => state.room.logo);
+	const logo = useAppSelector((state) => state.room.logo) || edumeetConfig.theme.logo;
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
@@ -28,7 +28,7 @@ const PrecallTitle = (): React.JSX.Element => {
 		<Grid container spacing={2}>
 			<Grid size={8}>
 				{logo ?
-					<img style={{ maxWidth: '200px', maxHeight: '200px' }} alt='Logo' src={logo} /> :
+					<img style={{ height: '32px', maxHeight: '32px', maxWidth: '200px' }} alt='Logo' src={logo} /> :
 					<Typography variant='h5'> {edumeetConfig.title} </Typography>}
 			</Grid>
 			<Grid size={4} style={{ display: 'flex', justifyContent: 'end' }} >

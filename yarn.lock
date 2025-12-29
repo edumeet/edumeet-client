@@ -1737,19 +1737,18 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@observertc/client-monitor-js@^3.11.0":
-  version "3.11.1"
-  resolved "https://registry.yarnpkg.com/@observertc/client-monitor-js/-/client-monitor-js-3.11.1.tgz#5c18af9f6d545ece0a2b8143aa6ffc327bfab8c2"
-  integrity sha512-uMnmYhcnM49/nO7MYc/uLuIV5YzT/LVd/7/EjS6NiuRJ0NspNkth4pRlPsmppoP0uCKdV0AUMVXuRu+Zu25+kQ==
+"@observertc/client-monitor-js@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@observertc/client-monitor-js/-/client-monitor-js-4.1.0.tgz#7ee77085435d5ec67de200d611ad2858dc56786e"
+  integrity sha512-gBmoP3885i4NhvZ2oq4SxUYDsaYOgFoZ1F6elNK+bcTcEojPNZmVe++JxdNhDvDdiUsX18z/VapD9RAFGJ4cKg==
   dependencies:
-    events "^3.3.0"
+    eventemitter3 "^5.0.1"
     ua-parser-js "^1.0.37"
-    uuid "^8.3.2"
 
-"@observertc/samples-encoder@^2.2.12":
-  version "2.2.12"
-  resolved "https://registry.yarnpkg.com/@observertc/samples-encoder/-/samples-encoder-2.2.12.tgz#85345d1ba386cf300b1ba766f201dbab6a878670"
-  integrity sha512-m0L+MZKSTzFT0+nfgro3mAwzioBw+4rDFyZgsRVWZ8MD9jInnXVneRegUlUQCrYIw0O0lWsLR7/UGo9Fj/GJaw==
+"@observertc/samples-encoder@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@observertc/samples-encoder/-/samples-encoder-3.0.0.tgz#f0b8dd43b2141e4ff6c96e1747d041b82932db11"
+  integrity sha512-ToyL+WpYSj4AbCoA96X2+tPfr61pb8doalJiDmBt3E6a4WxZGFx5V7ojL+9ZvztDIEcug6oDr9z6LDFGkx81tQ==
   dependencies:
     "@bufbuild/protobuf" "^1.2.0"
 
@@ -4004,6 +4003,11 @@ event-target-shim@^5.0.0:
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
   integrity sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==
 
+eventemitter3@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-5.0.1.tgz#53f5ffd0a492ac800721bb42c66b841de96423c4"
+  integrity sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==
+
 "events-alias@npm:events@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
@@ -5239,10 +5243,10 @@ math-intrinsics@^1.1.0:
   resolved "https://registry.yarnpkg.com/math-intrinsics/-/math-intrinsics-1.1.0.tgz#a0dd74be81e2aa5c2f27e65ce283605ee4e2b7f9"
   integrity sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==
 
-mediasoup-client@^3.15.6:
-  version "3.18.2"
-  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.18.2.tgz#788e44e206b03f02551074d4ae4894acbfbbe1b4"
-  integrity sha512-UAeBfz60DW1uZh38SbnEvhiwXYs1KVzSt+Xy+CA5DQPx1x5qkXOWVtBuPi27DtejqhseKfcnyJ4xZpr+cgqtiQ==
+mediasoup-client@^3.18.3:
+  version "3.18.3"
+  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.18.3.tgz#62c7fe9bd9c9f16bf3bff0857bd71309a40687fc"
+  integrity sha512-ULypBvw4/2n6sEzhocZue61qtfQ2wvsIsppAikI65E7nh7V7eHajJaYtw432HdYnhryF9eO65rlDSqBmPh26CA==
   dependencies:
     "@types/debug" "^4.1.12"
     "@types/events-alias" "npm:@types/events@^3.0.3"
@@ -7012,11 +7016,6 @@ uuid@^11.1.0:
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-11.1.0.tgz#9549028be1753bb934fc96e2bca09bb4105ae912"
   integrity sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==
-
-uuid@^8.3.2:
-  version "8.3.2"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
-  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 uuid@^9.0.1:
   version "9.0.1"

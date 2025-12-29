@@ -54,6 +54,7 @@ const LogoImg = styled('img')(({ theme }) => ({
 	marginRight: theme.spacing(1),
 	maxWidth: 200,
 	maxHeight: 32,
+	height: 32,
 	[theme.breakpoints.up('sm')]: {
 		display: 'block'
 	}
@@ -77,7 +78,7 @@ const TopBarDiv = styled('div')<TopBarDivProps>(({ theme, gap = 0, grow = 0, mar
 }));
 
 const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): React.JSX.Element => {
-	const logo = useAppSelector((state) => state.room.logo);
+	const logo = useAppSelector((state) => state.room.logo) || edumeetConfig.theme.logo;
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
