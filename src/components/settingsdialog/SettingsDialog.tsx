@@ -1,25 +1,17 @@
-import { Box, Button, Tab, Tabs, useMediaQuery, useTheme } from '@mui/material';
+import { Button, Tab, Tabs, useMediaQuery, useTheme } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { SettingsTab, uiActions } from '../../store/slices/uiSlice';
+import { advancedSettingsLabel, appearanceSettingsLabel, closeLabel, managementSettingsLabel, mediaSettingsLabel } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import PhotoIcon from '@mui/icons-material/Photo';
 import PaletteIcon from '@mui/icons-material/Palette';
 import TuneIcon from '@mui/icons-material/Tune';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { SettingsTab, uiActions } from '../../store/slices/uiSlice';
-import {
-	advancedSettingsLabel,
-	appearanceSettingsLabel,
-	closeLabel,
-	managementSettingsLabel,
-	mediaSettingsLabel
-} from '../translated/translatedComponents';
-
 import MediaSettings from './MediaSettings';
 import AppearanceSettings from './AppearanceSettings';
+import GenericDialog from '../genericdialog/GenericDialog';
 import AdvancedSettings from './AdvancedSettings';
 import MangagementSettings from './ManagementSettings';
-import GenericDialog from '../genericdialog/GenericDialog';
 import edumeetConfig from '../../utils/edumeetConfig';
 
 const tabs: SettingsTab[] = [
@@ -33,27 +25,15 @@ const SettingsDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const settingsOpen = useAppSelector((state) => state.ui.settingsOpen);
 	const currentSettingsTab = useAppSelector((state) => state.ui.currentSettingsTab);
-	const closeButtonDisabled = useAppSelector(
-		(state) => state.me.videoInProgress || state.me.audioInProgress
-	);
+	const closeButtonDisabled = useAppSelector((state) => state.me.videoInProgress || state.me.audioInProgress);
 
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 	const handleCloseSettings = (): void => {
-		dispatch(
-			uiActions.setUi({
-				settingsOpen: !settingsOpen
-			})
-		);
-	};
-
-	const handleTabChange = (_event: React.SyntheticEvent, value: number): void => {
-		const nextTab = tabs[value];
-
-		if ((!edumeetConfig.loginEnabled && nextTab !== 'management') || edumeetConfig.loginEnabled) {
-			dispatch(uiActions.setCurrentSettingsTab(nextTab));
-		}
+		dispatch(uiActions.setUi({
+			settingsOpen: !settingsOpen
+		}));
 	};
 
 	return (
@@ -63,49 +43,40 @@ const SettingsDialog = (): React.JSX.Element => {
 			maxWidth='sm'
 			content={
 				<>
-					<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-						<Tabs
-							value={tabs.indexOf(currentSettingsTab)}
-							onChange={handleTabChange}
-							variant={isMobile ? 'scrollable' : 'fullWidth'}
-							scrollButtons={isMobile ? 'auto' : false}
-							allowScrollButtonsMobile
-							centered={false}
-						>
-							{isMobile ? (
-								<>
-									<Tab
-										icon={<PhotoIcon />}
-										aria-label={mediaSettingsLabel()}
-									/>
-									<Tab
-										icon={<PaletteIcon />}
-										aria-label={appearanceSettingsLabel()}
-									/>
-									<Tab
-										icon={<TuneIcon />}
-										aria-label={advancedSettingsLabel()}
-									/>
-									{edumeetConfig.loginEnabled && (
-										<Tab
-											icon={<AdminPanelSettingsIcon />}
-											aria-label={managementSettingsLabel()}
-										/>
-									)}
-								</>
-							) : (
-								<>
-									<Tab label={mediaSettingsLabel()} />
-									<Tab label={appearanceSettingsLabel()} />
-									<Tab label={advancedSettingsLabel()} />
-									{edumeetConfig.loginEnabled && (
-										<Tab label={managementSettingsLabel()} />
-									)}
-								</>
-							)}
-						</Tabs>
-					</Box>
-
+					<Tabs
+						value={tabs.indexOf(currentSettingsTab)}
+						onChange={(_event, value) => {
+							if ((!edumeetConfig.loginEnabled && tabs[value] !== 'management') || edumeetConfig.loginEnabled) {
+								dispatch(uiActions.setCurrentSettingsTab(tabs[value]));
+							}
+						}}
+						centered
+						scrollButtons='auto'
+						allowScrollButtonsMobile
+					>
+						<Tab
+							label={isMobile ? undefined : mediaSettingsLabel()}
+							icon={isMobile ? <PhotoIcon /> : undefined}
+							aria-label={mediaSettingsLabel()}
+						/>
+						<Tab
+							label={isMobile ? undefined : appearanceSettingsLabel()}
+							icon={isMobile ? <PaletteIcon /> : undefined}
+							aria-label={appearanceSettingsLabel()}
+						/>
+						<Tab
+							label={isMobile ? undefined : advancedSettingsLabel()}
+							icon={isMobile ? <TuneIcon /> : undefined}
+							aria-label={advancedSettingsLabel()}
+						/>
+						{edumeetConfig.loginEnabled && (
+							<Tab
+								label={isMobile ? undefined : managementSettingsLabel()}
+								icon={isMobile ? <AdminPanelSettingsIcon /> : undefined}
+								aria-label={managementSettingsLabel()}
+							/>
+						)}
+					</Tabs>
 					{currentSettingsTab === 'media' && <MediaSettings />}
 					{currentSettingsTab === 'appearance' && <AppearanceSettings />}
 					{currentSettingsTab === 'advanced' && <AdvancedSettings />}
