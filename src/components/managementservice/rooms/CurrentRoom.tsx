@@ -382,7 +382,7 @@ const CurrentRoomModal = () => {
 				disabled={isLoadingRoomExists}
 				onClick={roomExists ? handleOpen : handleCreateRoom}
 			>
-				{isLoadingRoomExists ? '' : (roomExists ? editRoomLabel() : claimRoomLabel())}
+				{isLoadingRoomExists ? '...' : (roomExists ? editRoomLabel() : claimRoomLabel())}
 			</Button>
 		</div>
 	</>;
