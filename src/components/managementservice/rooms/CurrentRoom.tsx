@@ -15,6 +15,8 @@ const CurrentRoomModal = () => {
 
 	type RoleTypes = Array<Roles>
 
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+
 	const [ roomExists, setRoomExists ] = useState(false);
 	const [ roles, setRoles ] = useState<RoleTypes>([ { 'description': 'Test', 'id': 1, 'name': 'Test', 'tenantId': 1, 'permissions': [] } ]);
 	const [ id, setId ] = useState(0);
@@ -35,7 +37,7 @@ const CurrentRoomModal = () => {
 	const [ reactionsEnabled, setReactionsEnabled ] = useState(false);
 	const [ filesharingEnabled, setFilesharingEnabled ] = useState(false);
 	const [ localRecordingEnabled, setLocalRecordingEnabled ] = useState(false);
-	
+
 	/* const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>(); */
 	const [ defaultRoleIdOption, setDefaultRoleIdOption ] = useState<Roles | undefined>();
 
@@ -177,9 +179,9 @@ const CurrentRoomModal = () => {
 				} else {
 					setBreakoutsEnabled(false);
 				}
-	
+
 				setOpen(true);
-            
+
 			});
 		});
 
@@ -193,10 +195,12 @@ const CurrentRoomModal = () => {
 	}
 
 	useEffect(() => {
+		if (!loggedIn) return;
+
 		// fetchProduct();
 		checkRoomExists();
-	}, []);
-	
+	}, [ loggedIn ]);
+
 	const [ open, setOpen ] = useState(false);
 
 	const handleNameChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -373,7 +377,7 @@ const CurrentRoomModal = () => {
 			</DialogActions>
 		</Dialog>
 		<div style={{ margin: 'auto', textAlign: 'center' }}>
-			<Button onClick={ roomExists ? handleOpen : handleCreateRoom}>{ roomExists ? editRoomLabel():claimRoomLabel()}</Button>				
+			<Button onClick={ roomExists ? handleOpen : handleCreateRoom}>{ roomExists ? editRoomLabel():claimRoomLabel()}</Button>
 		</div>
 	</>;
 };
