@@ -17,9 +17,9 @@ import {
 
 import MediaSettings from './MediaSettings';
 import AppearanceSettings from './AppearanceSettings';
-import GenericDialog from '../genericdialog/GenericDialog';
 import AdvancedSettings from './AdvancedSettings';
 import MangagementSettings from './ManagementSettings';
+import GenericDialog from '../genericdialog/GenericDialog';
 import edumeetConfig from '../../utils/edumeetConfig';
 
 const tabs: SettingsTab[] = [
@@ -60,7 +60,8 @@ const SettingsDialog = (): React.JSX.Element => {
 		<GenericDialog
 			open={settingsOpen}
 			onClose={handleCloseSettings}
-			maxWidth={isMobile ? 'sm' : 'sm'}
+			maxWidth='sm'
+			fullWidth
 			content={
 				<>
 					<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -73,29 +74,45 @@ const SettingsDialog = (): React.JSX.Element => {
 							centered={false}
 						>
 							<Tab
-								icon={<PhotoIcon />}
-								iconPosition='start'
-								label={isMobile ? undefined : mediaSettingsLabel()}
-								aria-label={mediaSettingsLabel()}
+								{...(isMobile
+									? {
+											icon: <PhotoIcon />,
+											'aria-label': mediaSettingsLabel()
+										}
+									: {
+											label: mediaSettingsLabel()
+										})}
 							/>
 							<Tab
-								icon={<PaletteIcon />}
-								iconPosition='start'
-								label={isMobile ? undefined : appearanceSettingsLabel()}
-								aria-label={appearanceSettingsLabel()}
+								{...(isMobile
+									? {
+											icon: <PaletteIcon />,
+											'aria-label': appearanceSettingsLabel()
+										}
+									: {
+											label: appearanceSettingsLabel()
+										})}
 							/>
 							<Tab
-								icon={<TuneIcon />}
-								iconPosition='start'
-								label={isMobile ? undefined : advancedSettingsLabel()}
-								aria-label={advancedSettingsLabel()}
+								{...(isMobile
+									? {
+											icon: <TuneIcon />,
+											'aria-label': advancedSettingsLabel()
+										}
+									: {
+											label: advancedSettingsLabel()
+										})}
 							/>
 							{edumeetConfig.loginEnabled && (
 								<Tab
-									icon={<AdminPanelSettingsIcon />}
-									iconPosition='start'
-									label={isMobile ? undefined : managementSettingsLabel()}
-									aria-label={managementSettingsLabel()}
+									{...(isMobile
+										? {
+												icon: <AdminPanelSettingsIcon />,
+												'aria-label': managementSettingsLabel()
+											}
+										: {
+												label: managementSettingsLabel()
+											})}
 								/>
 							)}
 						</Tabs>
