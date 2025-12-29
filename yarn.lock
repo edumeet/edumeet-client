@@ -5239,10 +5239,10 @@ math-intrinsics@^1.1.0:
   resolved "https://registry.yarnpkg.com/math-intrinsics/-/math-intrinsics-1.1.0.tgz#a0dd74be81e2aa5c2f27e65ce283605ee4e2b7f9"
   integrity sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==
 
-mediasoup-client@^3.15.6:
-  version "3.18.2"
-  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.18.2.tgz#788e44e206b03f02551074d4ae4894acbfbbe1b4"
-  integrity sha512-UAeBfz60DW1uZh38SbnEvhiwXYs1KVzSt+Xy+CA5DQPx1x5qkXOWVtBuPi27DtejqhseKfcnyJ4xZpr+cgqtiQ==
+mediasoup-client@^3.18.3:
+  version "3.18.3"
+  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.18.3.tgz#62c7fe9bd9c9f16bf3bff0857bd71309a40687fc"
+  integrity sha512-ULypBvw4/2n6sEzhocZue61qtfQ2wvsIsppAikI65E7nh7V7eHajJaYtw432HdYnhryF9eO65rlDSqBmPh26CA==
   dependencies:
     "@types/debug" "^4.1.12"
     "@types/events-alias" "npm:@types/events@^3.0.3"
