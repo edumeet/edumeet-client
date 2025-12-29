@@ -51,8 +51,9 @@ const SettingsDialog = (): React.JSX.Element => {
 							}
 						}}
 						centered
-						scrollButtons='auto'
-						allowScrollButtonsMobile
+						variant={isMobile ? 'scrollable' : 'standard'}
+						scrollButtons={isMobile ? 'auto' : false}
+						allowScrollButtonsMobile={isMobile}
 					>
 						<Tab
 							label={isMobile ? undefined : mediaSettingsLabel()}
