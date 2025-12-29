@@ -61,7 +61,6 @@ const SettingsDialog = (): React.JSX.Element => {
 			open={settingsOpen}
 			onClose={handleCloseSettings}
 			maxWidth='sm'
-			fullWidth
 			content={
 				<>
 					<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
