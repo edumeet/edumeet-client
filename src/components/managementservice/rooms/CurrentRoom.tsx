@@ -16,7 +16,7 @@ const CurrentRoomModal = () => {
 
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
-	const [roomExists, setRoomExists] = useState<boolean | null>(null);
+	const [ roomExists, setRoomExists ] = useState<boolean | null>(null);
 	const [ roles, setRoles ] = useState<RoleTypes>([ { 'description': 'Test', 'id': 1, 'name': 'Test', 'tenantId': 1, 'permissions': [] } ]);
 	const [ id, setId ] = useState(0);
 	const [ name, setName ] = useState('');
@@ -193,7 +193,7 @@ const CurrentRoomModal = () => {
 		});
 	}
 
-	const isLoadingRoomExists = roomExists === null
+	const isLoadingRoomExists = roomExists === null;
 
 	useEffect(() => {
 		if (!loggedIn) return;
