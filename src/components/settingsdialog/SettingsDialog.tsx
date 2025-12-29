@@ -38,7 +38,7 @@ const SettingsDialog = (): React.JSX.Element => {
 	);
 
 	const theme = useTheme();
-	const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 	const handleCloseSettings = (): void => {
 		dispatch(
@@ -60,17 +60,17 @@ const SettingsDialog = (): React.JSX.Element => {
 		<GenericDialog
 			open={settingsOpen}
 			onClose={handleCloseSettings}
-			maxWidth='sm'
+			maxWidth={isMobile ? 'sm' : 'md'}
 			content={
 				<>
 					<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
 						<Tabs
 							value={tabs.indexOf(currentSettingsTab)}
 							onChange={handleTabChange}
-							variant={isMobile ? 'scrollable' : 'standard'}
+							variant={isMobile ? 'scrollable' : 'fullWidth'}
 							scrollButtons={isMobile ? 'auto' : false}
 							allowScrollButtonsMobile
-							centered={!isMobile}
+							centered={false}
 						>
 							<Tab
 								icon={<PhotoIcon />}
