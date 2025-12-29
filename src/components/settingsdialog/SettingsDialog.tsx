@@ -72,47 +72,36 @@ const SettingsDialog = (): React.JSX.Element => {
 							allowScrollButtonsMobile
 							centered={false}
 						>
-							<Tab
-								{...(isMobile
-									? {
-											icon: <PhotoIcon />,
-											'aria-label': mediaSettingsLabel()
-										}
-									: {
-											label: mediaSettingsLabel()
-										})}
-							/>
-							<Tab
-								{...(isMobile
-									? {
-											icon: <PaletteIcon />,
-											'aria-label': appearanceSettingsLabel()
-										}
-									: {
-											label: appearanceSettingsLabel()
-										})}
-							/>
-							<Tab
-								{...(isMobile
-									? {
-											icon: <TuneIcon />,
-											'aria-label': advancedSettingsLabel()
-										}
-									: {
-											label: advancedSettingsLabel()
-										})}
-							/>
-							{edumeetConfig.loginEnabled && (
-								<Tab
-									{...(isMobile
-										? {
-												icon: <AdminPanelSettingsIcon />,
-												'aria-label': managementSettingsLabel()
-											}
-										: {
-												label: managementSettingsLabel()
-											})}
-								/>
+							{isMobile ? (
+								<>
+									<Tab
+										icon={<PhotoIcon />}
+										aria-label={mediaSettingsLabel()}
+									/>
+									<Tab
+										icon={<PaletteIcon />}
+										aria-label={appearanceSettingsLabel()}
+									/>
+									<Tab
+										icon={<TuneIcon />}
+										aria-label={advancedSettingsLabel()}
+									/>
+									{edumeetConfig.loginEnabled && (
+										<Tab
+											icon={<AdminPanelSettingsIcon />}
+											aria-label={managementSettingsLabel()}
+										/>
+									)}
+								</>
+							) : (
+								<>
+									<Tab label={mediaSettingsLabel()} />
+									<Tab label={appearanceSettingsLabel()} />
+									<Tab label={advancedSettingsLabel()} />
+									{edumeetConfig.loginEnabled && (
+										<Tab label={managementSettingsLabel()} />
+									)}
+								</>
 							)}
 						</Tabs>
 					</Box>
