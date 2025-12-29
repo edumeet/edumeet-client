@@ -31,7 +31,7 @@ const StyledChip = styled(Chip)({
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
 	backgroundColor: theme.appBarColor,
-	color: theme.appBarTextColor || theme.appBarIconColor || 'inherit',
+	color: theme.appBarTextColor,
 	...(theme.appBarFloating && {
 		top: 4,
 		left: 4,
@@ -44,10 +44,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 		paddingRight: theme.spacing(1),
 	},
 	'& .MuiIconButton-root': {
-		color: theme.appBarIconColor || theme.appBarTextColor || 'inherit',
+		color: theme.appBarIconColor,
 	},
 	'& .MuiSvgIcon-root': {
-		color: theme.appBarIconColor || theme.appBarTextColor || 'inherit',
+		color: theme.appBarIconColor,
 	}
 }));
 const StyledBox = styled(Box)(() => ({

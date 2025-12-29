@@ -5,6 +5,8 @@ declare module '@mui/material/styles' {
 		backgroundImage?: string;
 		background?: string;
 		appBarColor: string;
+		appBarTextColor: string;
+		appBarIconColor: string;
 		appBarFloating: boolean;
 		logo: string;
 		activeSpeakerBorder: string;
@@ -20,6 +22,8 @@ declare module '@mui/material/styles' {
 		backgroundImage?: string;
 		background?: string;
 		appBarColor?: string;
+		appBarTextColor?: string;
+		appBarIconColor?: string;
 		appBarFloating?: boolean;
 		logo?: string;
 		activeSpeakerBorder?: string;
