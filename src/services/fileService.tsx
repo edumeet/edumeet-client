@@ -29,7 +29,6 @@ export class FileService {
 
 		const mod = await import('webtorrent');
 
-		// @types/webtorrent is often CommonJS-shaped, while bundlers may provide ESM default.
 		const Ctor =
 			(mod as unknown as { default?: WebTorrentConstructor }).default
 			|| (mod as unknown as WebTorrentConstructor);
@@ -117,7 +116,10 @@ export class FileService {
 
 	public async getTorrent(magnetURI: string) {
 		for (const client of this.getAllClients()) {
-			const torrent = client.get(magnetURI) as WebTorrent.Torrent | undefined;
+			// @types/webtorrent declares get() as Promise<void | Torrent> in some versions,
+			// but in practice it returns Torrent | null/undefined synchronously.
+			const torrent = client.get(magnetURI) as unknown as WebTorrent.Torrent | undefined;
+
 			if (torrent) return torrent as LocalWebTorrent;
 		}
 
@@ -167,7 +169,7 @@ export class FileService {
 
 	public async removeFile(magnetURI: string): Promise<void> {
 		for (const client of this.getAllClients()) {
-			const torrent = client.get(magnetURI);
+			const torrent = client.get(magnetURI) as unknown as WebTorrent.Torrent | undefined;
 			if (!torrent) continue;
 
 			client.remove(magnetURI);
