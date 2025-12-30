@@ -14,7 +14,7 @@ const CloseMeetingButton = (): React.JSX.Element => {
 	const closeMeetingInProgress =
 		useAppSelector((state) => state.room.closeMeetingInProgress);
 
-	const [confirmOpen, setConfirmOpen] = useState(false);
+	const [ confirmOpen, setConfirmOpen ] = useState(false);
 
 	const handleOpenConfirm = (): void => {
 		setConfirmOpen(true);

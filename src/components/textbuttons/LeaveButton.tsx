@@ -12,7 +12,7 @@ import { leaveRoom } from '../../store/actions/roomActions';
 
 const LeaveButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
-	const [confirmOpen, setConfirmOpen] = useState(false);
+	const [ confirmOpen, setConfirmOpen ] = useState(false);
 
 	const handleOpenConfirm = (): void => {
 		setConfirmOpen(true);
