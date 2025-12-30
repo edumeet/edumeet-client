@@ -81,10 +81,6 @@ const ListFile = ({
 
 	const startTorrent = async (): Promise<void> => {
 		setStartInProgress(true);
-		setTorrent(undefined);
-		setDone(false);
-		setProgress(0);
-
 		dispatch(roomSessionsActions.updateFile({ ...file, started: true }));
 		const newTorrent = await fileService.downloadFile(file.magnetURI);
 
