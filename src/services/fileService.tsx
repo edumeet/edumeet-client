@@ -40,6 +40,20 @@ export class FileService {
 		});
 	}
 
+	public async reinitWithIceServers(iceServers: RTCIceServer[]) {
+
+		this.iceServers = iceServers;
+
+		if (this.webTorrent) {
+			// destroy/cleanup existing torrents
+			this.webTorrent.destroy?.();
+			this.webTorrent = undefined;
+			this.initialized = false;
+		}
+
+		await this.init();
+	}
+
 	public async sendFiles(files: FileList): Promise<string> {
 		await this.init();
 
