@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { updatePreviewMic } from '../../store/actions/mediaActions';
+import { updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
