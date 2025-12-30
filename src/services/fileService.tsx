@@ -31,6 +31,8 @@ export class FileService {
 
 		const Torrent = await import('webtorrent');
 
+		logger.debug('iceServers used=%o', this.iceServers);
+
 		this.webTorrent = new Torrent.default({
 			tracker: {
 				rtcConfig: {
