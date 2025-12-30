@@ -1,8 +1,7 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
- 
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete } from '@mui/material';
 import { Roles, Room } from '../../../utils/types';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
 import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roleLabel, roomBgLabel } from '../../translated/translatedComponents';
 
@@ -15,7 +14,9 @@ const CurrentRoomModal = () => {
 
 	type RoleTypes = Array<Roles>
 
-	const [ roomExists, setRoomExists ] = useState(false);
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+
+	const [ roomExists, setRoomExists ] = useState<boolean | null>(null);
 	const [ roles, setRoles ] = useState<RoleTypes>([ { 'description': 'Test', 'id': 1, 'name': 'Test', 'tenantId': 1, 'permissions': [] } ]);
 	const [ id, setId ] = useState(0);
 	const [ name, setName ] = useState('');
@@ -35,7 +36,7 @@ const CurrentRoomModal = () => {
 	const [ reactionsEnabled, setReactionsEnabled ] = useState(false);
 	const [ filesharingEnabled, setFilesharingEnabled ] = useState(false);
 	const [ localRecordingEnabled, setLocalRecordingEnabled ] = useState(false);
-	
+
 	/* const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>(); */
 	const [ defaultRoleIdOption, setDefaultRoleIdOption ] = useState<Roles | undefined>();
 
@@ -177,9 +178,9 @@ const CurrentRoomModal = () => {
 				} else {
 					setBreakoutsEnabled(false);
 				}
-	
+
 				setOpen(true);
-            
+
 			});
 		});
 
@@ -192,11 +193,15 @@ const CurrentRoomModal = () => {
 		});
 	}
 
+	const isLoadingRoomExists = roomExists === null;
+
 	useEffect(() => {
+		if (!loggedIn) return;
+
 		// fetchProduct();
 		checkRoomExists();
-	}, []);
-	
+	}, [ loggedIn ]);
+
 	const [ open, setOpen ] = useState(false);
 
 	const handleNameChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -373,7 +378,12 @@ const CurrentRoomModal = () => {
 			</DialogActions>
 		</Dialog>
 		<div style={{ margin: 'auto', textAlign: 'center' }}>
-			<Button onClick={ roomExists ? handleOpen : handleCreateRoom}>{ roomExists ? editRoomLabel():claimRoomLabel()}</Button>				
+			<Button
+				disabled={isLoadingRoomExists}
+				onClick={roomExists ? handleOpen : handleCreateRoom}
+			>
+				{isLoadingRoomExists ? '...' : (roomExists ? editRoomLabel() : claimRoomLabel())}
+			</Button>
 		</div>
 	</>;
 };

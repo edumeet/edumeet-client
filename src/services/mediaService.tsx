@@ -230,7 +230,7 @@ export class MediaService extends EventEmitter {
 
 						this.iceServers = iceServers;
 
-						fileService.iceServers = iceServers;
+						fileService.reinitWithIceServers(iceServers);
 
 						const { rtpCapabilities, sctpCapabilities } = await this.receiveRouterRtpCapabilities(routerRtpCapabilities);
 
@@ -259,6 +259,8 @@ export class MediaService extends EventEmitter {
 						const { iceServers } = notification.data;
 
 						this.iceServers = iceServers;
+
+						fileService.reinitWithIceServers(iceServers);
 
 						break;
 					}

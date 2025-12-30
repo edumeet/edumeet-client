@@ -416,6 +416,7 @@ export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
 					const { data: token } = data;
 
 					await (await managementService).authentication.setAccessToken(token);
+					await (await managementService).reAuthenticate();
 
 					dispatch(permissionsActions.setToken(token));
 					dispatch(permissionsActions.setLoggedIn(true));

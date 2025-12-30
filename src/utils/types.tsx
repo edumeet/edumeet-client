@@ -102,10 +102,13 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	reactionsSoundEnabled: false,
 	title: 'edumeet',
 	randomizeOnBlank: true,
+	keepRoomNameOnLeave: true,
 	transcriptionEnabled: true,
 	theme: {
 		background: 'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
 		appBarColor: 'rgba(0, 0, 0, 0.4)',
+		appBarTextColor: 'rgba(255, 255, 255, 1.0)',
+		appBarIconColor: 'rgba(255, 255, 255, 1.0)',
 		appBarFloating: true,
 		logo: 'images/logo.edumeet.svg',
 		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
@@ -168,6 +171,7 @@ export interface EdumeetConfig {
 	reactionsSoundEnabled: boolean;
 	title: string;
 	randomizeOnBlank: boolean;
+	keepRoomNameOnLeave: boolean;
 	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;

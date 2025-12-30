@@ -71,13 +71,18 @@ const App = (): React.JSX.Element => {
 	useEffect(() => {
 		if (roomState ==='left') {
 			dispatch(roomActions.setState('new'));
-			navigate('/');
+
+			if (id && edumeetConfig.keepRoomNameOnLeave)
+				navigate(`/${id}`);
+			else
+				navigate('/');
+
 			setTimeout(() => {
 				window.location.reload();
 			}, 0);
 		}
-	}, [ roomState ]);
-			
+	}, [ roomState, id, edumeetConfig.keepRoomNameOnLeave ]);
+
 	/**
 	 * Detect WebGL-support.
 	 */
