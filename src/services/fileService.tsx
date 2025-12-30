@@ -11,7 +11,7 @@ export type LocalWebTorrent = WebTorrent.Torrent & {
 	files?: LocalTorrentFile[];
 };
 
-type WebTorrentConstructor = new (_opts?: WebTorrent.Options) => WebTorrent.Instance;
+type WebTorrentConstructor = typeof WebTorrent;
 
 export class FileService {
 	private activeClient?: WebTorrent.Instance;
@@ -116,8 +116,6 @@ export class FileService {
 
 	public async getTorrent(magnetURI: string) {
 		for (const client of this.getAllClients()) {
-			// @types/webtorrent declares get() as Promise<void | Torrent> in some versions,
-			// but in practice it returns Torrent | null/undefined synchronously.
 			const torrent = client.get(magnetURI) as unknown as WebTorrent.Torrent | undefined;
 
 			if (torrent) return torrent as LocalWebTorrent;
