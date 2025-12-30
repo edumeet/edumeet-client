@@ -166,13 +166,19 @@ export class FileService {
 	}
 
 	public async removeFile(magnetURI: string): Promise<void> {
+		const removals: Promise<void>[] = [];
+
 		for (const client of this.getAllClients()) {
 			const torrent = client.get(magnetURI) as unknown as WebTorrent.Torrent | undefined;
 
 			if (!torrent) continue;
 
-			client.remove(magnetURI);
+			removals.push(new Promise((resolve) => {
+				client.remove(magnetURI, { destroyStore: true }, () => resolve());
+			}));
 		}
+
+		await Promise.all(removals);
 
 		this.scheduleLegacyCleanup();
 	}

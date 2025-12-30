@@ -81,6 +81,10 @@ const ListFile = ({
 
 	const startTorrent = async (): Promise<void> => {
 		setStartInProgress(true);
+		setTorrent(undefined);
+		setDone(false);
+		setProgress(0);
+
 		dispatch(roomSessionsActions.updateFile({ ...file, started: true }));
 		const newTorrent = await fileService.downloadFile(file.magnetURI);
 
@@ -106,13 +110,20 @@ const ListFile = ({
 		dispatch(clearFile(magnetURI));
 	};
 
-	const handleClearFileLocaly = (): void => {
+	const handleClearFileLocaly = async (): Promise<void> => {
 		const magnetURI = file.magnetURI;
 
-		fileService.removeFile(magnetURI);
-		setDone(false);
-		setProgress(0);
-		dispatch(roomSessionsActions.updateFile({ ...file, started: false }));
+		setStartInProgress(true);
+
+		try {
+			await fileService.removeFile(magnetURI);
+		} finally {
+			setTorrent(undefined);
+			setDone(false);
+			setProgress(0);
+			dispatch(roomSessionsActions.updateFile({ ...file, started: false }));
+			setStartInProgress(false);
+		}
 	};
 
 	return (
@@ -155,7 +166,7 @@ const ListFile = ({
 									aria-label={deleteLabel()}
 									variant='contained'
 									color='warning'
-									onClick={handleClearFileLocaly}
+									onClick={() => void handleClearFileLocaly()}
 									size='small'
 								>
 									{ deleteLabel() }
@@ -201,7 +212,7 @@ const ListFile = ({
 					<Button
 						aria-label={deleteLabel()}
 						variant='contained'
-						onClick={handleClearFileLocaly}
+						onClick={() => void handleClearFileLocaly()}
 						size='small'
 					>
 						{ deleteLabel() }
