@@ -102,7 +102,7 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 export const logout = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, managementService }
+	{ signalingService, managementService, config }
 ): Promise<void> => {
 	logger.debug('logout()');
 
