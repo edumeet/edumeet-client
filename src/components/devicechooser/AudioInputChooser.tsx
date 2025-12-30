@@ -53,7 +53,7 @@ const AudioInputChooser = ({
 
 	useEffect(() => {
 		if (!withConfirm) setSelectedAudioDevice(audioDevice);
-	}, [ audioDevice ]);
+	}, [ audioDevice, withConfirm ]);
 
 	return (
 		<>

@@ -19,6 +19,7 @@ const AudioInputList = (): React.JSX.Element => {
 			setSelectedAudioDevice(deviceId);
 			dispatch(settingsActions.setSelectedAudioDevice(deviceId));
 			dispatch(updatePreviewMic({ newDeviceId: deviceId }));
+			dispatch(updateMic({ newDeviceId: deviceId }));
 		}
 	};
 
