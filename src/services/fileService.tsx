@@ -11,7 +11,7 @@ export type LocalWebTorrent = WebTorrent.Torrent & {
 	files?: LocalTorrentFile[];
 };
 
-type WebTorrentConstructor = new (opts?: WebTorrent.Options) => WebTorrent.Instance;
+type WebTorrentConstructor = new (_opts?: WebTorrent.Options) => WebTorrent.Instance;
 
 export class FileService {
 	private activeClient?: WebTorrent.Instance;
@@ -170,6 +170,7 @@ export class FileService {
 	public async removeFile(magnetURI: string): Promise<void> {
 		for (const client of this.getAllClients()) {
 			const torrent = client.get(magnetURI) as unknown as WebTorrent.Torrent | undefined;
+
 			if (!torrent) continue;
 
 			client.remove(magnetURI);
