@@ -12,55 +12,130 @@ export type LocalWebTorrent = WebTorrent.Torrent & {
 };
 
 export class FileService {
-	private webTorrent?: WebTorrent.Instance;
+	private activeClient?: WebTorrent.Instance;
+	private legacyClients: WebTorrent.Instance[] = [];
+	private TorrentCtor?: typeof import('webtorrent').default;
+	private watchedLegacyClients = new WeakSet<WebTorrent.Instance>();
+	private legacyCleanupTimer?: number;
+
 	public tracker?: string;
 	public maxFileSize: number = 100_000_000;
 	public iceServers: RTCIceServer[] = [];
-	private initialized = false;
 
 	public async getTorrent(magnetURI: string) {
-		return this.webTorrent?.get(magnetURI) || undefined;
+		for (const client of this.getAllClients()) {
+			const torrent = client.get(magnetURI);
+			if (torrent) return torrent as LocalWebTorrent;
+		}
+
+		return undefined;
 	}
 
-	private async init(): Promise<void> {
-		if (this.initialized) return;
-
-		logger.debug('init()');
-
-		this.initialized = true;
+	private async getCtor() {
+		if (this.TorrentCtor) return this.TorrentCtor;
 
 		const Torrent = await import('webtorrent');
+		this.TorrentCtor = Torrent.default;
 
-		logger.debug('iceServers used=%o', this.iceServers);
+		return this.TorrentCtor;
+	}
 
-		this.webTorrent = new Torrent.default({
+	private async createClient(iceServers: RTCIceServer[]): Promise<WebTorrent.Instance> {
+		const Ctor = await this.getCtor();
+
+		logger.debug('createClient() iceServers used=%o', iceServers);
+
+		return new Ctor({
 			tracker: {
 				rtcConfig: {
-					iceServers: this.iceServers,
-				}
+					iceServers,
+				},
 			},
 		});
 	}
 
-	public async reinitWithIceServers(iceServers: RTCIceServer[]) {
+	private async init(): Promise<void> {
+		if (this.activeClient) return;
 
-		this.iceServers = iceServers;
+		logger.debug('init()');
 
-		if (this.webTorrent) {
-			// destroy/cleanup existing torrents
-			this.webTorrent.destroy?.();
-			this.webTorrent = undefined;
-			this.initialized = false;
+		this.activeClient = await this.createClient(this.iceServers);
+	}
+
+	private getAllClients(): WebTorrent.Instance[] {
+		const clients: WebTorrent.Instance[] = [];
+
+		if (this.activeClient) clients.push(this.activeClient);
+		if (this.legacyClients.length) clients.push(...this.legacyClients);
+
+		return clients;
+	}
+
+	private scheduleLegacyCleanup(): void {
+		if (this.legacyCleanupTimer) return;
+
+		this.legacyCleanupTimer = window.setTimeout(() => {
+			this.legacyCleanupTimer = undefined;
+			this.gcLegacyClients();
+		}, 0);
+	}
+
+	private trackLegacyClient(client: WebTorrent.Instance): void {
+		if (this.watchedLegacyClients.has(client)) return;
+
+		this.watchedLegacyClients.add(client);
+
+		const attachTorrentListeners = (torrent: WebTorrent.Torrent) => {
+			torrent.on('done', () => this.scheduleLegacyCleanup());
+			torrent.on('error', () => this.scheduleLegacyCleanup());
+			torrent.on('close', () => this.scheduleLegacyCleanup());
+		};
+
+		for (const torrent of client.torrents || []) {
+			attachTorrentListeners(torrent);
 		}
 
-		await this.init();
+		client.on('torrent', (torrent: WebTorrent.Torrent) => {
+			attachTorrentListeners(torrent);
+		});
+
+		this.scheduleLegacyCleanup();
+	}
+
+	private gcLegacyClients(): void {
+		const stillNeeded: WebTorrent.Instance[] = [];
+
+		for (const client of this.legacyClients) {
+			if (client.torrents?.length) {
+				stillNeeded.push(client);
+				continue;
+			}
+
+			client.destroy?.();
+		}
+
+		this.legacyClients = stillNeeded;
+	}
+
+	public async reinitWithIceServers(iceServers: RTCIceServer[]) {
+		this.iceServers = iceServers;
+
+		if (this.activeClient) {
+			this.trackLegacyClient(this.activeClient);
+			this.legacyClients.push(this.activeClient);
+			this.activeClient = undefined;
+		}
+
+		this.activeClient = await this.createClient(this.iceServers);
+
+		this.scheduleLegacyCleanup();
 	}
 
 	public async sendFiles(files: FileList): Promise<string> {
 		await this.init();
 
 		return new Promise((resolve) => {
-			this.webTorrent?.seed(
+			this.activeClient?.seed(
 				files,
 				this.tracker ? { announceList: [ [ this.tracker ] ], private: true } : undefined,
 				(newTorrent) => resolve(newTorrent.magnetURI)
@@ -71,30 +146,38 @@ export class FileService {
 	public async downloadFile(magnetURI: string): Promise<LocalWebTorrent | undefined> {
 		await this.init();
 
-		// Await!
-		const existingTorrent = await this.webTorrent?.get(magnetURI);
+		const existingTorrent = await this.getTorrent(magnetURI);
 
 		if (existingTorrent)
 			return existingTorrent as LocalWebTorrent;
 
 		return new Promise((resolve) => {
-			return resolve(this.webTorrent?.add(magnetURI) as LocalWebTorrent);
+			this.activeClient?.add(magnetURI, (torrent) => {
+				resolve(torrent as LocalWebTorrent);
+			});
 		});
 	}
 
-	public async removeFile(magnetURI: string): Promise<LocalWebTorrent | undefined> {
-		if (!this.initialized) return;
-		if (await this.getTorrent(magnetURI))
-			this.webTorrent?.remove(magnetURI);
+	public async removeFile(magnetURI: string): Promise<void> {
+		for (const client of this.getAllClients()) {
+			const torrent = client.get(magnetURI);
+			if (!torrent) continue;
+
+			client.remove(magnetURI);
+		}
+
+		this.scheduleLegacyCleanup();
 	}
 
-	public async removeFiles(): Promise<LocalWebTorrent | undefined> {
-		if (!this.initialized) return;
-		if (this.webTorrent?.torrents) {
-			for (const element of this.webTorrent?.torrents) {
-				this.webTorrent?.remove(element);
+	public async removeFiles(): Promise<void> {
+		for (const client of this.getAllClients()) {
+			const torrents = client.torrents ? [ ...client.torrents ] : [];
+
+			for (const torrent of torrents) {
+				client.remove(torrent);
 			}
 		}
-	}
 
+		this.scheduleLegacyCleanup();
+	}
 }
