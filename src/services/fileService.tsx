@@ -11,10 +11,12 @@ export type LocalWebTorrent = WebTorrent.Torrent & {
 	files?: LocalTorrentFile[];
 };
 
+type WebTorrentConstructor = new (opts?: WebTorrent.Options) => WebTorrent.Instance;
+
 export class FileService {
 	private activeClient?: WebTorrent.Instance;
 	private legacyClients: WebTorrent.Instance[] = [];
-	private TorrentCtor?: typeof import('webtorrent').default;
+	private TorrentCtor?: WebTorrentConstructor;
 	private watchedLegacyClients = new WeakSet<WebTorrent.Instance>();
 	private legacyCleanupTimer?: number;
 
@@ -22,22 +24,19 @@ export class FileService {
 	public maxFileSize: number = 100_000_000;
 	public iceServers: RTCIceServer[] = [];
 
-	public async getTorrent(magnetURI: string) {
-		for (const client of this.getAllClients()) {
-			const torrent = client.get(magnetURI);
-			if (torrent) return torrent as LocalWebTorrent;
-		}
-
-		return undefined;
-	}
-
-	private async getCtor() {
+	private async getCtor(): Promise<WebTorrentConstructor> {
 		if (this.TorrentCtor) return this.TorrentCtor;
 
-		const Torrent = await import('webtorrent');
-		this.TorrentCtor = Torrent.default;
+		const mod = await import('webtorrent');
 
-		return this.TorrentCtor;
+		// @types/webtorrent is often CommonJS-shaped, while bundlers may provide ESM default.
+		const Ctor =
+			(mod as unknown as { default?: WebTorrentConstructor }).default
+			|| (mod as unknown as WebTorrentConstructor);
+
+		this.TorrentCtor = Ctor;
+
+		return Ctor;
 	}
 
 	private async createClient(iceServers: RTCIceServer[]): Promise<WebTorrent.Instance> {
@@ -88,7 +87,6 @@ export class FileService {
 		const attachTorrentListeners = (torrent: WebTorrent.Torrent) => {
 			torrent.on('done', () => this.scheduleLegacyCleanup());
 			torrent.on('error', () => this.scheduleLegacyCleanup());
-			torrent.on('close', () => this.scheduleLegacyCleanup());
 		};
 
 		for (const torrent of client.torrents || []) {
@@ -115,6 +113,15 @@ export class FileService {
 		}
 
 		this.legacyClients = stillNeeded;
+	}
+
+	public async getTorrent(magnetURI: string) {
+		for (const client of this.getAllClients()) {
+			const torrent = client.get(magnetURI) as WebTorrent.Torrent | undefined;
+			if (torrent) return torrent as LocalWebTorrent;
+		}
+
+		return undefined;
 	}
 
 	public async reinitWithIceServers(iceServers: RTCIceServer[]) {
