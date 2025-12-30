@@ -106,6 +106,8 @@ export const logout = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('logout()');
 
+	const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
+
 	await (await managementService).authentication.removeAccessToken();
 
 	dispatch(permissionsActions.setToken());
@@ -115,6 +117,10 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	if (getState().signaling.state === 'connected')
 		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
+
+	if (tenantId) {
+		window.open(`${config.managementUrl}/auth/logout?tenantId=${tenantId}`, 'logoutWindow');
+	}
 };
 
 export const lock = (): AppThunk<Promise<void>> => async (
