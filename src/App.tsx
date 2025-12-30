@@ -72,7 +72,7 @@ const App = (): React.JSX.Element => {
 		if (roomState ==='left') {
 			dispatch(roomActions.setState('new'));
 
-			if (edumeetConfig.keepRoomNameOnLeave)
+			if (id && edumeetConfig.keepRoomNameOnLeave)
 				navigate(`/${id}`);
 			else
 				navigate('/');
