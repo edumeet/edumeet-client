@@ -81,11 +81,15 @@ const ListFile = ({
 
 	const startTorrent = async (): Promise<void> => {
 		setStartInProgress(true);
-		dispatch(roomSessionsActions.updateFile({ ...file, started: true }));
-		const newTorrent = await fileService.downloadFile(file.magnetURI);
 
-		setTorrent(newTorrent);
-		setStartInProgress(false);
+		try {
+			const newTorrent = await fileService.downloadFile(file.magnetURI);
+
+			setTorrent(newTorrent);
+			dispatch(roomSessionsActions.updateFile({ ...file, started: true }));
+		} finally {
+			setStartInProgress(false);
+		}
 	};
 
 	const saveSubFile = async (saveFile: LocalTorrentFile): Promise<void> => {
