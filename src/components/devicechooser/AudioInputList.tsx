@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { updateMic } from '../../store/actions/mediaActions';
+import { updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -19,6 +19,7 @@ const AudioInputList = (): React.JSX.Element => {
 			setSelectedAudioDevice(deviceId);
 			dispatch(settingsActions.setSelectedAudioDevice(deviceId));
 			dispatch(updateMic({ newDeviceId: deviceId }));
+			dispatch(updatePreviewMic({ newDeviceId: deviceId }));
 		}
 	};
 
