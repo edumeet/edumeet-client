@@ -20,11 +20,21 @@ interface GenericDialogProps {
 	onClose?: () => void;
 	maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 	showFooter?: boolean;
+	usePrecallTheme?: boolean;
 }
 
-const StyledPrecallDialog = styled(RawStyledDialog)(({ theme }) => ({
+const StyledPrecallDialog = styled(RawStyledDialog, {
+	shouldForwardProp: (prop) => prop !== 'usePrecallTheme',
+})<{ usePrecallTheme?: boolean }>(({ theme, usePrecallTheme }) => ({
 	'& .MuiDialog-paper': {
 		padding: theme.spacing(0),
+		...(usePrecallTheme ? {
+			backgroundColor: theme.precallTitleColor,
+			color: theme.precallTitleTextColor,
+			'& .MuiIconButton-root, & .MuiSvgIcon-root': {
+				color: theme.precallTitleIconColor,
+			},
+		} : {}),
 	},
 }));
 
@@ -65,6 +75,7 @@ const GenericDialog = ({
 	onClose,
 	maxWidth = 'xs',
 	showFooter = false,
+	usePrecallTheme = false,
 }: GenericDialogProps): React.JSX.Element => {
 	const infoTooltipEnabled = edumeetConfig.infoTooltipEnabled;
 	const infoTooltipText = edumeetConfig.infoTooltipText;
@@ -72,7 +83,7 @@ const GenericDialog = ({
 	const infoTooltipDesc = edumeetConfig.infoTooltipDesc;
 	
 	return (
-		<StyledPrecallDialog open={open} onClose={onClose} maxWidth={maxWidth}>
+		<StyledPrecallDialog open={open} onClose={onClose} maxWidth={maxWidth} usePrecallTheme={usePrecallTheme}>
 			<StyledDialogTitle>
 				{ title }
 			</StyledDialogTitle>
