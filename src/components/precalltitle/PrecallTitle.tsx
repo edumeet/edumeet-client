@@ -38,7 +38,7 @@ const PrecallTitle = (): React.JSX.Element => {
 
 	return (
 		<PrecallTitleRoot container spacing={2}>
-			<Grid size={8}>
+			<Grid size={8} style={{ display: 'flex', alignItems: 'center' }}>
 				{logo ? (
 					<img
 						style={{ height: '32px', maxHeight: '32px', maxWidth: '200px' }}
