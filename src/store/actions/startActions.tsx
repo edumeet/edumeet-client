@@ -3,7 +3,7 @@ import { meActions } from '../slices/meSlice';
 import { DevicesUpdated } from '../../services/deviceService';
 import { activeSpeakerIdSelector, makePermissionSelector } from '../selectors';
 import { permissions } from '../../utils/roles';
-import { stopMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
+import { pauseMic, resumeMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { permissionsActions } from '../slices/permissionsSlice';
@@ -103,19 +103,20 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case 'm': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress, micEnabled, audioMuted, canSendMic } = getState().me;
 
 				if (audioInProgress) return;
 
 				const hasAudioPermission = audioPermissionSelector(getState());
-				const canSendMic = getState().me.canSendMic;
 
 				if (!hasAudioPermission || !canSendMic) return;
 
-				if (getState().me.micEnabled) {
-					dispatch(stopMic());
-				} else {
+				if (!micEnabled) {
 					dispatch(updateMic());
+				} else if (audioMuted) {
+					dispatch(resumeMic());
+				} else {
+					dispatch(pauseMic());
 				}
 
 				break;
@@ -219,17 +220,16 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			}
 
 			case ' ': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress, micEnabled, audioMuted, canSendMic } = getState().me;
 
 				if (audioInProgress) return;
 
 				const hasAudioPermission = audioPermissionSelector(getState());
-				const canSendMic = getState().me.canSendMic;
 
 				if (!hasAudioPermission || !canSendMic) return;
 
-				if (!getState().me.micEnabled) {
-					dispatch(updateMic());
+				if (micEnabled && audioMuted) {
+					dispatch(resumeMic());
 				}
 
 				break;
@@ -258,17 +258,16 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case ' ': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress, micEnabled, audioMuted, canSendMic } = getState().me;
 
 				if (audioInProgress) return;
 
 				const hasAudioPermission = audioPermissionSelector(getState());
-				const canSendMic = getState().me.canSendMic;
 
 				if (!hasAudioPermission || !canSendMic) return;
 
-				if (getState().me.micEnabled) {
-					dispatch(stopMic());
+				if (micEnabled && !audioMuted) {
+					dispatch(pauseMic());
 				}
 
 				break;

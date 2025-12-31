@@ -3,10 +3,12 @@ import { useContext, useEffect, useState } from 'react';
 import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import hark from 'hark';
+import { useAppSelector } from '../../store/hooks';
 
 const MicVolume = (): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ volumeLevel, setVolume ] = useState<number>(0);
+	const previewMicTrackId = useAppSelector((state) => state.me.previewMicTrackId);
 
 	useEffect(() => {
 		let volumeWatcher: VolumeWatcher | undefined;
@@ -36,7 +38,7 @@ const MicVolume = (): React.JSX.Element => {
 		return () => {
 			volumeWatcher?.off('volumeChange', onVolumeChange);
 		};
-	}, [ mediaService.previewMicTrack ]);
+	}, [ previewMicTrackId ]);
 
 	return (
 		<LinearProgress color='success' variant="determinate" value={volumeLevel} />

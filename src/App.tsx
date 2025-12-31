@@ -70,8 +70,6 @@ const App = (): React.JSX.Element => {
 
 	useEffect(() => {
 		if (roomState ==='left') {
-			dispatch(roomActions.setState('new'));
-
 			if (id && edumeetConfig.keepRoomNameOnLeave)
 				navigate(`/${id}`);
 			else
