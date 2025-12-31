@@ -8,6 +8,9 @@ declare module '@mui/material/styles' {
 		appBarTextColor: string;
 		appBarIconColor: string;
 		appBarFloating: boolean;
+		precallTitleColor: string;
+		precallTitleTextColor: string;
+		precallTitleIconColor: string;
 		logo: string;
 		activeSpeakerBorder: string;
 		videoBackroundColor: string;
@@ -25,6 +28,9 @@ declare module '@mui/material/styles' {
 		appBarTextColor?: string;
 		appBarIconColor?: string;
 		appBarFloating?: boolean;
+		precallTitleColor?: string;
+		precallTitleTextColor?: string;
+		precallTitleIconColor?: string;
 		logo?: string;
 		activeSpeakerBorder?: string;
 		videoBackroundColor?: string;
