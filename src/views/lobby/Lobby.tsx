@@ -38,7 +38,7 @@ const Lobby = (): React.JSX.Element => {
 
 	return (
 		<GenericDialog
-			usePrecallTheme={true}
+			precallTitleBackground={true}
 			title={ <PrecallTitle /> }
 			content={
 				<>

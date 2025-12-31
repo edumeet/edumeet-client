@@ -20,29 +20,29 @@ interface GenericDialogProps {
 	onClose?: () => void;
 	maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 	showFooter?: boolean;
-	usePrecallTheme?: boolean;
+	precallTitleBackground?: boolean;
 }
 
-const StyledPrecallDialog = styled(RawStyledDialog, {
-	shouldForwardProp: (prop) => prop !== 'usePrecallTheme',
-})<{ usePrecallTheme?: boolean }>(({ theme, usePrecallTheme }) => ({
+const StyledPrecallDialog = styled(RawStyledDialog)(({ theme }) => ({
 	'& .MuiDialog-paper': {
 		padding: theme.spacing(0),
-		...(usePrecallTheme ? {
-			backgroundColor: theme.precallTitleColor,
-			color: theme.precallTitleTextColor,
-			'& .MuiIconButton-root, & .MuiSvgIcon-root': {
-				color: theme.precallTitleIconColor,
-			},
-		} : {}),
 	},
 }));
 
-const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
+const StyledDialogTitle = styled(DialogTitle, {
+	shouldForwardProp: (prop) => prop !== 'precallTitleBackground',
+})<{ precallTitleBackground?: boolean }>(({ theme, precallTitleBackground }) => ({
 	paddingTop: theme.spacing(1),
 	paddingBottom: theme.spacing(1),
 	paddingLeft: theme.spacing(2),
 	paddingRight: theme.spacing(2),
+	...(precallTitleBackground ? {
+		backgroundColor: theme.precallTitleColor,
+		color: theme.precallTitleTextColor,
+		'& .MuiIconButton-root, & .MuiSvgIcon-root': {
+			color: theme.precallTitleIconColor,
+		},
+	} : {}),
 }));
 
 const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
@@ -75,7 +75,7 @@ const GenericDialog = ({
 	onClose,
 	maxWidth = 'xs',
 	showFooter = false,
-	usePrecallTheme = false,
+	precallTitleBackground = false,
 }: GenericDialogProps): React.JSX.Element => {
 	const infoTooltipEnabled = edumeetConfig.infoTooltipEnabled;
 	const infoTooltipText = edumeetConfig.infoTooltipText;
@@ -83,8 +83,8 @@ const GenericDialog = ({
 	const infoTooltipDesc = edumeetConfig.infoTooltipDesc;
 	
 	return (
-		<StyledPrecallDialog open={open} onClose={onClose} maxWidth={maxWidth} usePrecallTheme={usePrecallTheme}>
-			<StyledDialogTitle>
+		<StyledPrecallDialog open={open} onClose={onClose} maxWidth={maxWidth}>
+			<StyledDialogTitle precallTitleBackground={precallTitleBackground}>
 				{ title }
 			</StyledDialogTitle>
 			<StyledDialogContent style={{ paddingTop: 5 }}>

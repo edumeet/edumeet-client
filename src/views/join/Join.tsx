@@ -65,7 +65,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 	return (
 		<GenericDialog
 			showFooter={true}
-			usePrecallTheme={true}
+			precallTitleBackground={true}
 			title={ <PrecallTitle /> }
 			content={
 				<>
