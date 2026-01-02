@@ -45,7 +45,8 @@ const UserTable = () => {
 			},
 			{
 				accessorKey: 'email',
-				header: 'email'
+				header: 'email',
+				Cell: ({ cell }) => (cell.getValue<string>() ? String(cell.getValue<string>()) : 'Hidden email')
 			},
 			{
 				accessorKey: 'name',

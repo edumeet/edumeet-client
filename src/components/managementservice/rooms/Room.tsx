@@ -4,7 +4,7 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete } from '@mui/material';
 import React from 'react';
 import { GroupRoles, Roles, Room, RoomOwners, Tenant, User } from '../../../utils/types';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppDispatch } from '../../../store/hooks';
 import { createRoomWithParams, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import RoomOwnerTable from './RoomOwner';
 import RoomUserRoleTable from './roomUserRole';
@@ -16,9 +16,6 @@ export interface RoomProp {
 
 const RoomTable = () => {
 	const dispatch = useAppDispatch();
-
-	const { tenantAdmin, tenantOwner, superAdmin } = useAppSelector((state) => state.management);
-	const isAdmin = tenantAdmin || tenantOwner || superAdmin;
 
 	type TenantOptionTypes = Array<Tenant>
 
@@ -505,9 +502,7 @@ const RoomTable = () => {
 					
 					{ id !=0 && <>
 						<RoomOwnerTable roomId={id} />
-						{ isAdmin &&
-							<RoomUserRoleTable roomId={id} />
-						}
+						<RoomUserRoleTable roomId={id} />
 					</>}
 					
 				</DialogContent>
