@@ -78,7 +78,7 @@ const UserTable = () => {
 		[ tenants ],
 	);
 
-	const [ data, setData ] = useState([]);
+	const [ data, setData ] = useState<User[]>([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ ssoId, setSsoId ] = useState('');
@@ -284,10 +284,10 @@ const UserTable = () => {
 				</DialogActions>
 			</Dialog>
 		</div>
-		<MaterialReactTable
+		<MaterialReactTable<User>
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
-					const u = row.original as any;
+					const u = row.original;
 
 					setId(typeof u.id === 'number' ? u.id : parseInt(String(u.id)));
 					setSsoId(typeof u.ssoId === 'string' ? u.ssoId : '');
@@ -312,14 +312,14 @@ const UserTable = () => {
 						setTenantIdOption(undefined);
 					}
 
-					setTenantAdmin(!!u.tenantAdmin);
-					setTenantOwner(!!u.tenantOwner);
+					setTenantAdmin(Boolean(u.tenantAdmin));
+					setTenantOwner(Boolean(u.tenantOwner));
 
 					handleClickOpenNoreset();
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={data}
 			initialState={{
 				columnVisibility: {
 					avatar: false,
