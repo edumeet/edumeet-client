@@ -202,36 +202,6 @@ const UserTable = () => {
 		}
 	};
 
-	const addUser2 = async () => {
-
-		// add new data / mod data / error
-		if (name != '' && id === 0) {
-
-			dispatch(createData({ 
-				ssoId: ssoId,
-				tenantId: tenantId,
-				email: email,
-				name: name,
-				avatar: avatar
-			}, 'users')).then(() => {
-				fetchProduct();
-				setOpen(false);
-			});
-		} else if (name != '' && id != 0) {
-			dispatch(patchData(id, { 
-				ssoId: ssoId,
-				tenantId: tenantId,
-				email: email,
-				name: name,
-				avatar: avatar
-			}, 'users')).then(() => {
-				fetchProduct();
-				setOpen(false);
-			});
-		}
-
-	};
-
 	return <>
 		<div>
 			{ false &&
