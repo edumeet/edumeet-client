@@ -182,8 +182,16 @@ const UserTable = () => {
 	};
 
 	const addUser = async () => {
-		// only edit with limited fields
-		if (name != '' && id != 0) {
+		// only edit with limited fields createData will not work
+		if (name != '' && id === 0) {
+			dispatch(createData({ 
+				name: name,
+				avatar: avatar
+			}, 'users')).then(() => {
+				fetchProduct();
+				setOpen(false);
+			});
+		} else if (name != '' && id != 0) {
 			dispatch(patchData(id, { 
 				name: name,
 				avatar: avatar
@@ -194,13 +202,43 @@ const UserTable = () => {
 		}
 	};
 
+	const addUser2 = async () => {
+
+		// add new data / mod data / error
+		if (name != '' && id === 0) {
+
+			dispatch(createData({ 
+				ssoId: ssoId,
+				tenantId: tenantId,
+				email: email,
+				name: name,
+				avatar: avatar
+			}, 'users')).then(() => {
+				fetchProduct();
+				setOpen(false);
+			});
+		} else if (name != '' && id != 0) {
+			dispatch(patchData(id, { 
+				ssoId: ssoId,
+				tenantId: tenantId,
+				email: email,
+				name: name,
+				avatar: avatar
+			}, 'users')).then(() => {
+				fetchProduct();
+				setOpen(false);
+			});
+		}
+
+	};
+
 	return <>
 		<div>
-			{/*
-			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				{addNewLabel()}
-			</Button>
-			*/}
+			{ false &&
+				<Button variant="outlined" onClick={() => handleClickOpen()}>
+					{addNewLabel()}
+				</Button>
+			}
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
 				<DialogTitle>{manageItemLabel()}</DialogTitle>
@@ -268,7 +306,9 @@ const UserTable = () => {
 
 				</DialogContent>
 				<DialogActions>
-					{/* <Button onClick={delUser} color='warning'>{deleteLabel()}</Button> */}
+					{ false &&
+						<Button onClick={delUser} color='warning'>{deleteLabel()}</Button>
+					}
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
 					<Button onClick={addUser} disabled={name.trim() === ''}>{applyLabel()}</Button>
 				</DialogActions>
