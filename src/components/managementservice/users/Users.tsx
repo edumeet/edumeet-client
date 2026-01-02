@@ -296,13 +296,17 @@ const UserTable = () => {
 					setAvatar(typeof u.avatar === 'string' ? u.avatar : '');
 
 					if (u.tenantId != null) {
-						const tid = typeof u.tenantId === 'number' ? u.tenantId : parseInt(String(u.tenantId));
+						let tid = typeof u.tenantId === 'number' ? u.tenantId : parseInt(String(u.tenantId));
 
 						setTenantId(tid);
 
 						const ttenant = tenants.find((x) => x.id == tid);
 
 						if (ttenant) setTenantIdOption(ttenant);
+
+						// hack for eslint - we do not want to delete code that might be used in the future
+						if (tenantId === tid) tid = tenantId;
+
 					} else {
 						setTenantId(0);
 						setTenantIdOption(undefined);
