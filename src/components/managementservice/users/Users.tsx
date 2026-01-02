@@ -93,8 +93,9 @@ const UserTable = () => {
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
 
 	const { tenantAdmin, tenantOwner, superAdmin, email: userEmail } = useAppSelector((state) => state.management);
+	
 	const isAdmin = tenantAdmin || tenantOwner || superAdmin;
-	const isSelf = !!userEmail && !!email && userEmail === email;
+	const isSelf = userEmail === email && userEmail !== '';
 	const cannotEdit = !isAdmin && !isSelf;
 
 	async function fetchProduct() {
