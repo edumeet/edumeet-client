@@ -659,6 +659,7 @@ const RoomTable = () => {
 					raiseHandEnabled: false,
 					filesharingEnabled: false,
 					localRecordingEnabled: false,
+					reactionsEnabled: false,
 				}
 			}}
 			state={{ isLoading }}

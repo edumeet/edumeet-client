@@ -48,6 +48,7 @@ export default function ManagementUI(/* props: Props */) {
 
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const { username, tenantAdmin, tenantOwner, superAdmin } = useAppSelector((state) => state.management);
+	const canManageTenant = tenantOwner || tenantAdmin || superAdmin;
 
 	const [ mobileOpen, setMobileOpen ] = useState(false);
 
@@ -186,7 +187,7 @@ export default function ManagementUI(/* props: Props */) {
 
 			<Divider />
 			<List>
-				{ (tenantOwner || tenantAdmin || superAdmin) && <>
+				{canManageTenant && (
 					<ListItem key={'Tenants'} disablePadding onClick={() => setSelectedComponent('tenant')}>
 						<ListItemButton>
 							<ListItemIcon>
@@ -195,6 +196,8 @@ export default function ManagementUI(/* props: Props */) {
 							<ListItemText primary={tenantsLabel()} />
 						</ListItemButton>
 					</ListItem>
+				)}
+				{canManageTenant && (
 					<ListItem key={'Rule(s)'} disablePadding onClick={
 						() => setSelectedComponent('rule')
 					}>
@@ -205,6 +208,8 @@ export default function ManagementUI(/* props: Props */) {
 							<ListItemText primary={rulesLabel()} />
 						</ListItemButton>
 					</ListItem>
+				)}
+				{canManageTenant && (
 					<ListItem key={'Default(s)'} disablePadding onClick={
 						() => setSelectedComponent('default')
 					}>
@@ -215,8 +220,7 @@ export default function ManagementUI(/* props: Props */) {
 							<ListItemText primary={defaultsLabel()} />
 						</ListItemButton>
 					</ListItem>
-				</>
-				}
+				)}
 				<ListItem key={'Room(s)'} disablePadding onClick={() => setSelectedComponent('room')}>
 					<ListItemButton>
 						<ListItemIcon>
@@ -235,16 +239,18 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemText primary={usersLabel()} />
 					</ListItemButton>
 				</ListItem>
-				<ListItem key={'Group(s)'} disablePadding onClick={
-					() => setSelectedComponent('group')
-				}>
-					<ListItemButton >
-						<ListItemIcon>
-							<SupervisorAccountIcon />
-						</ListItemIcon>
-						<ListItemText primary={groupsLabel()} />
-					</ListItemButton>
-				</ListItem>
+				{canManageTenant && (
+					<ListItem key={'Group(s)'} disablePadding onClick={
+						() => setSelectedComponent('group')
+					}>
+						<ListItemButton >
+							<ListItemIcon>
+								<SupervisorAccountIcon />
+							</ListItemIcon>
+							<ListItemText primary={groupsLabel()} />
+						</ListItemButton>
+					</ListItem>
+				)}
 				<ListItem key={'Role(s)'} disablePadding onClick={
 					() => setSelectedComponent('role')
 				}>

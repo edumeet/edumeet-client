@@ -182,25 +182,9 @@ const UserTable = () => {
 	};
 
 	const addUser = async () => {
-
-		// add new data / mod data / error
-		if (name != '' && id === 0) {
-
-			dispatch(createData({ 
-				ssoId: ssoId,
-				tenantId: tenantId,
-				email: email,
-				name: name,
-				avatar: avatar
-			}, 'users')).then(() => {
-				fetchProduct();
-				setOpen(false);
-			});
-		} else if (name != '' && id != 0) {
+		// only edit with limited fields
+		if (name != '' && id != 0) {
 			dispatch(patchData(id, { 
-				ssoId: ssoId,
-				tenantId: tenantId,
-				email: email,
 				name: name,
 				avatar: avatar
 			}, 'users')).then(() => {
@@ -208,14 +192,15 @@ const UserTable = () => {
 				setOpen(false);
 			});
 		}
-
 	};
 
 	return <>
 		<div>
+			{/*
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
 				{addNewLabel()}
 			</Button>
+			*/}
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
 				<DialogTitle>{manageItemLabel()}</DialogTitle>
@@ -233,6 +218,7 @@ const UserTable = () => {
 						fullWidth
 						onChange={handleSsoIdChange}
 						value={ssoId}
+						disabled
 					/>
 					<Autocomplete
 						options={tenants}
@@ -243,6 +229,7 @@ const UserTable = () => {
 						onChange={handleTenantIdChange}
 						value={tenantIdOption}
 						sx={{ marginTop: '8px' }}
+						disabled
 						renderInput={(params) => <TextField {...params} label="Tenant" />}
 					/>
 					<TextField
@@ -254,6 +241,7 @@ const UserTable = () => {
 						fullWidth
 						onChange={handleEmailChange}
 						value={email}
+						disabled
 					/>
 					<TextField
 						margin="dense"
@@ -280,85 +268,40 @@ const UserTable = () => {
 
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delUser} color='warning'>{deleteLabel()}</Button>
+					{/* <Button onClick={delUser} color='warning'>{deleteLabel()}</Button> */}
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
-					<Button onClick={addUser}>{applyLabel()}</Button>
+					<Button onClick={addUser} disabled={name.trim() === ''}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
 		<MaterialReactTable
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
+					const u = row.original as any;
 
-					const r = row.getAllCells();
+					setId(typeof u.id === 'number' ? u.id : parseInt(String(u.id)));
+					setSsoId(typeof u.ssoId === 'string' ? u.ssoId : '');
+					setEmail(typeof u.email === 'string' ? u.email : '');
+					setName(typeof u.name === 'string' ? u.name : '');
+					setAvatar(typeof u.avatar === 'string' ? u.avatar : '');
 
-					const tid = r[0].getValue();
-					const tssoId=r[1].getValue();
-					const ttenantId=r[2].getValue();
-					const temail=r[3].getValue();
-					const tname=r[4].getValue();
-					const tavatar=r[5].getValue();
-					// const troles=r[6].getValue();
-					// const ttenantAdmin=r[7].getValue();
-					// const ttenantOwner=r[8].getValue();
-	
-					if (typeof tid === 'number') {
-						setId(tid);
-					} else if (typeof tid == 'string') {
-						setId(parseInt(tid));
-					}
+					if (u.tenantId != null) {
+						const tid = typeof u.tenantId === 'number' ? u.tenantId : parseInt(String(u.tenantId));
 
-					if (typeof tssoId === 'string') {
-						setSsoId(tssoId);
-					} else {
-						setSsoId('');
-					}
-					if (typeof ttenantId === 'number') {
-						const ttenant = tenants.find((x) => x.id == ttenantId);
+						setTenantId(tid);
 
-						if (ttenant) {
-							setTenantIdOption(ttenant);
-						}
-						setTenantId(ttenantId);
-					} else if (typeof ttenantId === 'string') {
-						const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
+						const ttenant = tenants.find((x) => x.id == tid);
 
-						if (ttenant) {
-							setTenantIdOption(ttenant);
-						}
-						setTenantId(parseInt(ttenantId));
+						if (ttenant) setTenantIdOption(ttenant);
 					} else {
 						setTenantId(0);
+						setTenantIdOption(undefined);
 					}
-					if (typeof temail === 'string') {
-						setEmail(temail);
-					} else {
-						setEmail('');
-					}
-					if (typeof tname === 'string') {
-						setName(tname);
-					} else {
-						setName('');
-					}
-					if (typeof tavatar === 'string') {
-						setAvatar(tavatar);
-					} else {
-						setAvatar('');
-					}
-					// todo roles
-					/* if (ttenantAdmin === true) {
-						setTenantAdmin(true);
-					} else {
-						setTenantAdmin(false);
-					}
-					if (ttenantOwner === true) {
-						setTenantOwner(true);
-					} else {
-						setTenantOwner(false);
-					} */
+
+					setTenantAdmin(!!u.tenantAdmin);
+					setTenantOwner(!!u.tenantOwner);
 
 					handleClickOpenNoreset();
-
 				}
 			})}
 			columns={columns}

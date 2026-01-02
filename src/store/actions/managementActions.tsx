@@ -202,6 +202,7 @@ export const getDataByRoomId = (roomId: string | number, serviceName: string): A
 			{
 				query: {
 					roomId: roomId,
+					$limit: 9999,
 					$sort: {
 						id: 1
 					}
