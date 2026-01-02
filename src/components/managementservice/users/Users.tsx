@@ -50,7 +50,8 @@ const UserTable = () => {
 			},
 			{
 				accessorKey: 'name',
-				header: nameLabel()
+				header: nameLabel(),
+				Cell: ({ cell }) => (cell.getValue<string>() ? String(cell.getValue<string>()) : 'Hidden name')
 			},
 			{
 				accessorKey: 'avatar',

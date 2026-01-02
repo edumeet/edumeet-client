@@ -83,7 +83,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'undefined user';
+			return 'Hidden email';
 		}
 	};
 
