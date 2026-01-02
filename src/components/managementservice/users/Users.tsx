@@ -3,7 +3,7 @@ import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Checkbox, FormControlLabel, Autocomplete } from '@mui/material';
 import { Tenant, User } from '../../../utils/types';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, nameLabel, noLabel, rolesLabel, tenantAdminLabel, tenantLabel, tenantOwnerLabel, undefinedLabel, yesLabel } from '../../translated/translatedComponents';
 
@@ -88,9 +88,14 @@ const UserTable = () => {
 	const [ email, setEmail ] = useState('');
 	const [ name, setName ] = useState('');
 	const [ avatar, setAvatar ] = useState('');
-	const [ tenantAdmin, setTenantAdmin ] = useState(false);
-	const [ tenantOwner, setTenantOwner ] = useState(false);
+	const [ tenantAdminBox, setTenantAdminBox ] = useState(false);
+	const [ tenantOwnerBox, setTenantOwnerBox ] = useState(false);
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
+
+	const { tenantAdmin, tenantOwner, superAdmin, email: userEmail } = useAppSelector((state) => state.management);
+	const isAdmin = tenantAdmin || tenantOwner || superAdmin;
+	const isSelf = !!userEmail && !!email && userEmail === email;
+	const cannotEdit = !isAdmin && !isSelf;
 
 	async function fetchProduct() {
 
@@ -130,8 +135,8 @@ const UserTable = () => {
 		setEmail('');
 		setName('');
 		setAvatar('');
-		setTenantAdmin(false);
-		setTenantOwner(false);
+		setTenantAdminBox(false);
+		setTenantOwnerBox(false);
 		setOpen(true);
 	};
 
@@ -161,10 +166,10 @@ const UserTable = () => {
 		setAvatar(event.target.value);
 	};
 	const handleTenantAdminChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
-		setTenantAdmin(event.target.checked);
+		setTenantAdminBox(event.target.checked);
 	};
 	const handleTenantOwnerChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
-		setTenantOwner(event.target.checked);
+		setTenantOwnerBox(event.target.checked);
 	};
 
 	const handleClose = () => {
@@ -262,6 +267,7 @@ const UserTable = () => {
 						fullWidth
 						onChange={handleNameChange}
 						value={name}
+						disabled={cannotEdit}
 					/>
 					<TextField
 						margin="dense"
@@ -271,10 +277,11 @@ const UserTable = () => {
 						fullWidth
 						onChange={handleAvatarChange}
 						value={avatar}
+						disabled={cannotEdit}
 					/>
 					{/* roles */}
-					<FormControlLabel control={<Checkbox disabled checked={tenantAdmin} onChange={handleTenantAdminChange} />} label="tenantAdmin" />
-					<FormControlLabel control={<Checkbox disabled checked={tenantOwner} onChange={handleTenantOwnerChange} />} label="tenantOwner" />
+					<FormControlLabel control={<Checkbox disabled checked={tenantAdminBox} onChange={handleTenantAdminChange} />} label="tenantAdmin" />
+					<FormControlLabel control={<Checkbox disabled checked={tenantOwnerBox} onChange={handleTenantOwnerChange} />} label="tenantOwner" />
 
 				</DialogContent>
 				<DialogActions>
@@ -282,7 +289,7 @@ const UserTable = () => {
 						<Button onClick={delUser} color='warning'>{deleteLabel()}</Button>
 					}
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
-					<Button onClick={addUser} disabled={name.trim() === ''}>{applyLabel()}</Button>
+					<Button onClick={addUser} disabled={cannotEdit || name.trim() === ''}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -314,8 +321,8 @@ const UserTable = () => {
 						setTenantIdOption(undefined);
 					}
 
-					setTenantAdmin(Boolean(u.tenantAdmin));
-					setTenantOwner(Boolean(u.tenantOwner));
+					setTenantAdminBox(Boolean(u.tenantAdmin));
+					setTenantOwnerBox(Boolean(u.tenantOwner));
 
 					handleClickOpenNoreset();
 				}
