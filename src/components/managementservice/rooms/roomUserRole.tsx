@@ -299,6 +299,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	const getUserLabel = (u: User): string => {
 		if (u?.email) return `${u.id} - ${u.email}`;
+
 		return String(u?.id ?? '');
 	};
 
