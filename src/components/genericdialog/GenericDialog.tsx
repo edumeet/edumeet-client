@@ -20,6 +20,7 @@ interface GenericDialogProps {
 	onClose?: () => void;
 	maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 	showFooter?: boolean;
+	precallTitleBackground?: boolean;
 }
 
 const StyledPrecallDialog = styled(RawStyledDialog)(({ theme }) => ({
@@ -28,11 +29,20 @@ const StyledPrecallDialog = styled(RawStyledDialog)(({ theme }) => ({
 	},
 }));
 
-const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
+const StyledDialogTitle = styled(DialogTitle, {
+	shouldForwardProp: (prop) => prop !== 'precallTitleBackground',
+})<{ precallTitleBackground?: boolean }>(({ theme, precallTitleBackground }) => ({
 	paddingTop: theme.spacing(1),
 	paddingBottom: theme.spacing(1),
 	paddingLeft: theme.spacing(2),
 	paddingRight: theme.spacing(2),
+	...(precallTitleBackground ? {
+		backgroundColor: theme.precallTitleColor,
+		color: theme.precallTitleTextColor,
+		'& .MuiIconButton-root, & .MuiSvgIcon-root': {
+			color: theme.precallTitleIconColor,
+		},
+	} : {}),
 }));
 
 const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
@@ -65,6 +75,7 @@ const GenericDialog = ({
 	onClose,
 	maxWidth = 'xs',
 	showFooter = false,
+	precallTitleBackground = false,
 }: GenericDialogProps): React.JSX.Element => {
 	const infoTooltipEnabled = edumeetConfig.infoTooltipEnabled;
 	const infoTooltipText = edumeetConfig.infoTooltipText;
@@ -73,7 +84,7 @@ const GenericDialog = ({
 	
 	return (
 		<StyledPrecallDialog open={open} onClose={onClose} maxWidth={maxWidth}>
-			<StyledDialogTitle>
+			<StyledDialogTitle precallTitleBackground={precallTitleBackground}>
 				{ title }
 			</StyledDialogTitle>
 			<StyledDialogContent style={{ paddingTop: 5 }}>

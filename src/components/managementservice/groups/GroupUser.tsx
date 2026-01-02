@@ -204,6 +204,12 @@ const GroupUserTable = () => {
 
 	};
 
+	const getUserLabel = (u: User): string => {
+		if (u?.email) return `${u.id} - ${u.email}`;
+
+		return String(u?.id ?? '');
+	};
+
 	return <>
 		<div>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
@@ -230,7 +236,7 @@ const GroupUserTable = () => {
 					/>
 					<Autocomplete
 						options={users}
-						getOptionLabel={(option) => option.email}
+						getOptionLabel={(option) => getUserLabel(option)}
 						fullWidth
 						disableClearable
 						readOnly={userIdDisabled}

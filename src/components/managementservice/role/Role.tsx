@@ -15,6 +15,7 @@ const RoleTable = () => {
 
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
 	const { tenantAdmin, tenantOwner, superAdmin } = useAppSelector((state) => state.management);
+	const cannotEdit = !tenantAdmin && !tenantOwner && !superAdmin;
 
 	const getTenantName = (id: string): string => {
 		const t = tenants.find((type) => type.id == parseInt(id));
@@ -254,7 +255,7 @@ const RoleTable = () => {
 		<Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
 			{Object.entries(permissions).map(([ key, value ]) =>
 				<FormControlLabel
-					disabled={checkedDisabled || (!tenantAdmin && !tenantOwner && !superAdmin) }
+					disabled={checkedDisabled || cannotEdit }
 					key={`${key}uniqe`}
 					control={<Checkbox checked={checked[parseInt(key)]}
 						onChange={(event) => handleChangeMod(event, parseInt(key))
@@ -269,7 +270,7 @@ const RoleTable = () => {
 
 	return <>
 		<div>
-			<Button variant="outlined" disabled={ !tenantAdmin && !tenantOwner && !superAdmin } onClick={() => handleClickOpen()}>
+			<Button variant="outlined" disabled={ cannotEdit } onClick={() => handleClickOpen()}>
 				{addNewLabel()}
 			</Button>
 			<hr />
@@ -290,6 +291,7 @@ const RoleTable = () => {
 						fullWidth
 						onChange={handleNameChange}
 						value={name}
+						disabled={cannotEdit}
 					/>
 					<TextField
 						margin="dense"
@@ -299,6 +301,7 @@ const RoleTable = () => {
 						fullWidth
 						onChange={handleDescriptionChange}
 						value={description}
+						disabled={cannotEdit}
 					/>
 					<Autocomplete
 						options={tenants}
@@ -309,6 +312,7 @@ const RoleTable = () => {
 						onChange={handleTenantIdChange}
 						value={tenantIdOption}
 						sx={{ marginTop: '8px' }}
+						disabled={cannotEdit}
 						renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
 					/>
 					<div>
@@ -316,7 +320,7 @@ const RoleTable = () => {
 							label="All permissions"
 							control={
 								<Checkbox
-									disabled={checkedDisabled || (!tenantAdmin && !tenantOwner && !superAdmin) }
+									disabled={checkedDisabled || cannotEdit }
 									checked={checked.every((num) => num === true)}
 									indeterminate={checked.some((num) => num === true) && checked.some((num) => num === false)}
 									onChange={handleChange1}
@@ -327,9 +331,9 @@ const RoleTable = () => {
 					</div>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} disabled={cantDelete || (!tenantAdmin && !tenantOwner && !superAdmin) } color='warning'>{deleteLabel()}</Button>
+					<Button onClick={delTenant} disabled={cantDelete || cannotEdit } color='warning'>{deleteLabel()}</Button>
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
-					<Button onClick={addTenant} disabled={cantPatch || (!tenantAdmin && !tenantOwner && !superAdmin) }>{applyLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch || cannotEdit }>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
