@@ -7,7 +7,7 @@
  * Notes:
  * - You can override only what you need. Unspecified keys fall back to built-in defaults.
  * - `theme` is merged into the app's Material UI theme (ThemeOptions), so you can override
- *   any MUI theme option (e.g. `palette.primary.main`).
+ *	 any MUI theme option (e.g. `palette.primary.main`).
  */
 
 var config = {
@@ -161,39 +161,39 @@ var config = {
 	 * Each preset defines WebRTC audio constraints and OPUS encoder settings.
 	 */
 	audioPresets: {
-	  // Default preset for meetings
-	  conference: {
-	    autoGainControl: true,
-	    echoCancellation: true,
-	    noiseSuppression: true,
+		// Default preset for meetings
+		conference: {
+			autoGainControl: true,
+			echoCancellation: true,
+			noiseSuppression: true,
 
-	    sampleRate: 48000,
-	    channelCount: 1,
-	    sampleSize: 16,
+			sampleRate: 48000,
+			channelCount: 1,
+			sampleSize: 16,
 
-	    opusStereo: false,
-	    opusDtx: false,
-	    opusFec: true,
-	    opusPtime: 20,
-	    opusMaxPlaybackRate: 48000
-	  },
+			opusStereo: false,
+			opusDtx: false,
+			opusFec: true,
+			opusPtime: 20,
+			opusMaxPlaybackRate: 48000
+		},
 
-	  // Example: low-bandwidth preset
-	  low: {
-	    autoGainControl: true,
-	    echoCancellation: true,
-	    noiseSuppression: true,
+		// Example: low-bandwidth preset
+		low: {
+			autoGainControl: true,
+			echoCancellation: true,
+			noiseSuppression: true,
 
-	    sampleRate: 16000,
-	    channelCount: 1,
-	    sampleSize: 16,
+			sampleRate: 16000,
+			channelCount: 1,
+			sampleSize: 16,
 
-	    opusStereo: false,
-	    opusDtx: true,
-	    opusFec: true,
-	    opusPtime: 20,
-	    opusMaxPlaybackRate: 16000
-	  }
+			opusStereo: false,
+			opusDtx: true,
+			opusFec: true,
+			opusPtime: 20,
+			opusMaxPlaybackRate: 16000
+		}
 	},
 
 	/**
@@ -225,16 +225,16 @@ var config = {
 	 * Notification sound configuration.
 	 */
 	notificationSounds: {
-	  // Enable/disable all notification sounds
-	  enabled: true
+		// Enable/disable all notification sounds
+		enabled: true
 	},
 
 	/**
 	 * ObserverRTC client-monitor configuration (if you use it).
 	 */
 	clientMontitor: {
-	  // enabled: false,
-	  // configUrl: ''
+		// enabled: false,
+		// configUrl: ''
 	},
 
 	/**
@@ -248,95 +248,95 @@ var config = {
 	 * This object is merged into the app's Material UI theme (ThemeOptions).
 	 * You can override standard MUI theme fields, for example:
 	 *
-	 *   palette: {
-	 *     primary: { main: '#1976d2' } // palette-primary-main
-	 *   }
+	 *	 palette: {
+	 *		 primary: { main: '#1976d2' } // palette-primary-main
+	 *	 }
 	 */
 	theme: {
-	  /**
-	   * Background can be a CSS color/gradient.
-	   */
-	  background:
-	    'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
+		/**
+		 * Background can be a CSS color/gradient.
+		 */
+		background:
+			'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
 
-	  /**
-	   * Optional background image URL. If set, it is used as the page background image.
-	   */
-	  backgroundImage: undefined,
+		/**
+		 * Optional background image URL. If set, it is used as the page background image.
+		 */
+		backgroundImage: undefined,
 
-	  /**
-	   * App bar background color.
-	   */
-	  appBarColor: 'rgba(0, 0, 0, 0.4)',
+		/**
+		 * App bar background color.
+		 */
+		appBarColor: 'rgba(0, 0, 0, 0.4)',
 
-	  /**
-	   * (4.2+) App bar text color.
-	   */
-	  appBarTextColor: 'rgba(255, 255, 255, 1.0)',
+		/**
+		 * (4.2+) App bar text color.
+		 */
+		appBarTextColor: 'rgba(255, 255, 255, 1.0)',
 
-	  /**
-	   * (4.2+) App bar icon color.
-	   */
-	  appBarIconColor: 'rgba(255, 255, 255, 1.0)',
+		/**
+		 * (4.2+) App bar icon color.
+		 */
+		appBarIconColor: 'rgba(255, 255, 255, 1.0)',
 
-	  /**
-	   * Whether the app bar floats over the content.
-	   */
-	  appBarFloating: true,
+		/**
+		 * Whether the app bar floats over the content.
+		 */
+		appBarFloating: true,
 
-	  /**
-	   * (4.2+) Pre-call title background color.
-	   */
-	  precallTitleColor: 'rgba(255, 255, 255, 1.0)',
+		/**
+		 * (4.2+) Pre-call title background color.
+		 */
+		precallTitleColor: 'rgba(255, 255, 255, 1.0)',
 
-	  /**
-	   * (4.2+) Pre-call title text color.
-	   */
-	  precallTitleTextColor: 'rgba(0, 0, 0, 1.0)',
+		/**
+		 * (4.2+) Pre-call title text color.
+		 */
+		precallTitleTextColor: 'rgba(0, 0, 0, 1.0)',
 
-	  /**
-	   * (4.2+) Pre-call title icon color.
-	   */
-	  precallTitleIconColor: 'rgba(0, 0, 0, 1.0)',
+		/**
+		 * (4.2+) Pre-call title icon color.
+		 */
+		precallTitleIconColor: 'rgba(0, 0, 0, 1.0)',
 
-	  /**
-	   * Logo image URL.
-	   */
-	  logo: 'images/logo.edumeet.svg',
+		/**
+		 * Logo image URL.
+		 */
+		logo: 'images/logo.edumeet.svg',
 
-	  /**
-	   * Border style for the active speaker tile.
-	   */
-	  activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
+		/**
+		 * Border style for the active speaker tile.
+		 */
+		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
 
-	  /**
-	   * Background color for video tiles.
-	   * (typo kept for compatibility: videoBackroundColor)
-	   */
-	  videoBackroundColor: 'rgba(49, 49, 49, 0.9)',
+		/**
+		 * Background color for video tiles.
+		 * (typo kept for compatibility: videoBackroundColor)
+		 */
+		videoBackroundColor: 'rgba(49, 49, 49, 0.9)',
 
-	  /**
-	   * Fallback avatar image URL.
-	   */
-	  videoAvatarImage: 'images/buddy.svg',
+		/**
+		 * Fallback avatar image URL.
+		 */
+		videoAvatarImage: 'images/buddy.svg',
 
-	  /**
-	   * Border radius used across the UI.
-	   */
-	  roundedness: 10,
+		/**
+		 * Border radius used across the UI.
+		 */
+		roundedness: 10,
 
-	  /**
-	   * Side panel item colors and container background.
-	   */
-	  sideContentItemColor: 'rgba(255, 255, 255, 0.4)',
-	  sideContentItemDarkColor: 'rgba(150, 150, 150, 0.4)',
-	  sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
+		/**
+		 * Side panel item colors and container background.
+		 */
+		sideContentItemColor: 'rgba(255, 255, 255, 0.4)',
+		sideContentItemDarkColor: 'rgba(150, 150, 150, 0.4)',
+		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 
-	  /**
-	   * Example MUI theme override (uncomment to use):
-	   */
-	  // palette: {
-	  //   primary: { main: '#1976d2' } // palette-primary-main
-	  // }
+		/**
+		 * Example MUI theme override (uncomment to use):
+		 */
+		// palette: {
+		//	 primary: { main: '#1976d2' } // palette-primary-main
+		// }
 	}
 };
