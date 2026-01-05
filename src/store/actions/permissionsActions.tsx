@@ -37,7 +37,9 @@ async function handleUpdateTokenError(
 	logger.error('%s updateToken failed [error: %o]', actionName, e);
 
 	if (t === 'expired' || t === 'invalid') {
-		await (dispatch as unknown as (_: unknown) => Promise<unknown>)(expireToken());
+
+		// eslint-disable-next-line no-unused-vars
+		await (dispatch as unknown as (a: unknown) => Promise<unknown>)(expireToken());
 
 		return true;
 	}
