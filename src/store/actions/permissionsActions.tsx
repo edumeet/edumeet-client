@@ -56,8 +56,10 @@ function scheduleRefresh(token: string, refreshNow: () => void): void {
 	}, delay);
 }
 
-function scheduleRefreshForToken(token: string, dispatch: (_action: unknown) => void): void {
-	scheduleRefresh(token, () => { dispatch(refreshTokenNow()); });
+function scheduleRefreshForToken(token: string, dispatch: unknown): void {
+	scheduleRefresh(token, () => {
+		(dispatch as (thunk: unknown) => unknown)(refreshTokenNow());
+	});
 }
 
 export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
