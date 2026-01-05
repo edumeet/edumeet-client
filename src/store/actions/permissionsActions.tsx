@@ -56,12 +56,6 @@ function scheduleRefresh(token: string, refreshNow: () => void): void {
 	}, delay);
 }
 
-function scheduleRefreshForToken(token: string, dispatch: unknown): void {
-	scheduleRefresh(token, () => {
-		(dispatch as (thunk: unknown) => unknown)(refreshTokenNow());
-	});
-}
-
 export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
@@ -88,7 +82,7 @@ export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
 		if (getState().signaling.state === 'connected')
 			await signalingService.sendRequest('updateToken', { token: newToken });
 
-		scheduleRefreshForToken(newToken, dispatch);
+		scheduleRefresh(newToken, () => { dispatch(refreshTokenNow()); });
 	} catch (e) {
 		logger.error('refreshTokenNow failed [error: %o]', e);
 
@@ -169,7 +163,7 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 				if (authResult.accessToken === accessToken) {
 					dispatch(permissionsActions.setToken(accessToken));
 					dispatch(permissionsActions.setLoggedIn(true));
-					scheduleRefreshForToken(accessToken, dispatch);
+					scheduleRefresh(accessToken, () => { dispatch(refreshTokenNow()); });
 				}
 			}
 		}
@@ -205,7 +199,7 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 			if (authResult.accessToken === accessToken) {
 				loggedIn = true;
 				dispatch(permissionsActions.setToken(accessToken));
-				scheduleRefreshForToken(accessToken, dispatch);
+				scheduleRefresh(accessToken, () => { dispatch(refreshTokenNow()); });
 			} else {
 				clearRefreshTimer();
 				dispatch(permissionsActions.setToken());
