@@ -167,6 +167,15 @@ const createRoomMiddleware = ({
 
 							break;
 						}
+
+						case 'reconnectKey': {
+							const { reconnectKey } = notification.data;
+
+							dispatch(meActions.setReconnectKey(reconnectKey));
+
+							break;
+						}
+
 					}
 				} catch (error) {
 					logger.error('error on signalService "notification" event [error:%o]', error);

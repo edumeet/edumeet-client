@@ -49,6 +49,7 @@ export interface MeState {
 	extraVideoEnabled: boolean;
 	extraAudioEnabled: boolean;
 	videoBackgroundEffect: BackgroundConfig | null;
+	reconnectKey: string | undefined;
 }
 
 const initialState: MeState = {
@@ -87,6 +88,7 @@ const initialState: MeState = {
 	extraVideoEnabled: false,
 	extraAudioEnabled: false,
 	videoBackgroundEffect: null,
+	reconnectKey: undefined,
 };
 
 const meSlice = createSlice({
@@ -206,6 +208,9 @@ const meSlice = createSlice({
 			state.videoBackgroundEffect = {
 				type: BackgroundType.NONE
 			};
+		}),
+		setReconnectKey: ((state, action: PayloadAction<string | undefined>) => {
+			state.reconnectKey = action.payload;
 		}),
 	},
 	extraReducers: (builder) => {

@@ -29,8 +29,9 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		const peerId = getState().me.id;
 		const token = getState().permissions.token;
 		const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
+		const reconnectKey = getState().me.reconnectKey;
 
-		const url = getSignalingUrl(peerId, encodedRoomId, tenantId, token);
+		const url = getSignalingUrl(peerId, encodedRoomId, tenantId, token, reconnectKey);
 	
 		dispatch(signalingActions.setUrl(url));
 		dispatch(signalingActions.connect());
