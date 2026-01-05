@@ -34,8 +34,7 @@ function clearRefreshTimer(): void {
 	}
 }
 
-function scheduleRefresh(token: string, refreshNow: () => void): void
-{
+function scheduleRefresh(token: string, refreshNow: () => void): void {
 	const expMs = getJwtExpMs(token);
 
 	if (!expMs)
@@ -46,20 +45,17 @@ function scheduleRefresh(token: string, refreshNow: () => void): void
 
 	clearRefreshTimer();
 
-	if (delay <= 0)
-	{
+	if (delay <= 0) {
 		refreshNow();
 		return;
 	}
 
-	refreshTimer = setTimeout(() =>
-	{
+	refreshTimer = setTimeout(() => {
 		refreshNow();
 	}, delay);
 }
 
-function scheduleRefreshForToken(token: string, dispatch: (action: unknown) => unknown): void
-{
+function scheduleRefreshForToken(token: string, dispatch: (action: unknown) => unknown): void {
 	scheduleRefresh(token, () => { dispatch(refreshTokenNow()); });
 }
 
