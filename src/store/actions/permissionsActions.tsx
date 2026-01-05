@@ -63,8 +63,11 @@ function scheduleRefresh(token: string, dispatch: any): void
 	}, delay);
 }
 
-export const refreshTokenNow = () => async (dispatch: any, getState: any, { managementService, signalingService }: any) =>
-{
+export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ managementService, signalingService }
+): Promise<void> => {
 	const token = getState()?.permissions?.token;
 
 	// No token -> nothing to refresh
@@ -92,13 +95,18 @@ export const refreshTokenNow = () => async (dispatch: any, getState: any, { mana
 	}
 	catch (e)
 	{
-		// Refresh failed -> silent downgrade to guest
-		dispatch(expireToken());
+		logger.error('refreshTokenNow failed [error: %o]', e);
+
+		// Refresh failed -> downgrade to guest
+		await dispatch(expireToken());
 	}
 };
 
-export const expireToken = () => async (dispatch: any, getState: any, { managementService, signalingService }: any) =>
-{
+export const expireToken = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ managementService, signalingService }
+): Promise<void> => {
 	clearRefreshTimer();
 
 	try
@@ -112,7 +120,6 @@ export const expireToken = () => async (dispatch: any, getState: any, { manageme
 
 		try
 		{
-			// fallback
 			localStorage.removeItem('feathers-jwt');
 		}
 		catch (e2)
