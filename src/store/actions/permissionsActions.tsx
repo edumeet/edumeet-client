@@ -81,7 +81,13 @@ function scheduleRefresh(token: string, refreshNow: () => void): void {
 	clearRefreshTimer();
 
 	if (delay <= 0) {
-		refreshNow();
+		// Avoid tight refresh loops if the token is already close to expiry
+		// Try again soon with a small backoff.
+		const minDelayMs = 30 * 1000;
+
+		refreshTimer = setTimeout(() => {
+			refreshNow();
+		}, minDelayMs);
 
 		return;
 	}
