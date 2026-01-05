@@ -6,15 +6,15 @@ import { getTenantFromFqdn } from './managementActions';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { managamentActions } from '../slices/managementSlice';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 const logger = new Logger('LoginActions');
 
-let refreshTimer: any;
+let refreshTimer: ReturnType<typeof setTimeout> | undefined;
 
 function getJwtExpMs(token: string): number | undefined {
 	try {
-		const decoded: any = jwtDecode(token);
+		const decoded = jwtDecode<JwtPayload>(token);
 
 		if (typeof decoded?.exp !== 'number')
 			return undefined;
@@ -34,7 +34,8 @@ function clearRefreshTimer(): void {
 	}
 }
 
-function scheduleRefresh(token: string, dispatch: any): void {
+function scheduleRefresh(token: string, refreshNow: () => void): void
+{
 	const expMs = getJwtExpMs(token);
 
 	if (!expMs)
@@ -45,15 +46,21 @@ function scheduleRefresh(token: string, dispatch: any): void {
 
 	clearRefreshTimer();
 
-	if (delay <= 0) {
-		dispatch(refreshTokenNow());
-
+	if (delay <= 0)
+	{
+		refreshNow();
 		return;
 	}
 
-	refreshTimer = setTimeout(() => {
-		dispatch(refreshTokenNow());
+	refreshTimer = setTimeout(() =>
+	{
+		refreshNow();
 	}, delay);
+}
+
+function scheduleRefreshForToken(token: string, dispatch: (action: unknown) => unknown): void
+{
+	scheduleRefresh(token, () => { dispatch(refreshTokenNow()); });
 }
 
 export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
@@ -83,7 +90,7 @@ export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
 		if (getState().signaling.state === 'connected')
 			await signalingService.sendRequest('updateToken', { token: newToken });
 
-		scheduleRefresh(newToken, dispatch);
+		scheduleRefreshForToken(newToken, dispatch);
 	} catch (e) {
 		logger.error('refreshTokenNow failed [error: %o]', e);
 
@@ -164,7 +171,7 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 				if (authResult.accessToken === accessToken) {
 					dispatch(permissionsActions.setToken(accessToken));
 					dispatch(permissionsActions.setLoggedIn(true));
-					scheduleRefresh(accessToken, dispatch);
+					scheduleRefreshForToken(accessToken, dispatch);
 				}
 			}
 		}
@@ -200,7 +207,7 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 			if (authResult.accessToken === accessToken) {
 				loggedIn = true;
 				dispatch(permissionsActions.setToken(accessToken));
-				scheduleRefresh(accessToken, dispatch);
+				scheduleRefreshForToken(accessToken, dispatch);
 			} else {
 				clearRefreshTimer();
 				dispatch(permissionsActions.setToken());
