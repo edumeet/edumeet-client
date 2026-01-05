@@ -22,6 +22,7 @@ function getJwtExpMs(token: string): number | undefined {
 		return decoded.exp * 1000;
 	} catch (e) {
 		logger.error('getJwtExpMs could not decode token [error: %o]', e);
+
 		return undefined;
 	}
 }
@@ -46,6 +47,7 @@ function scheduleRefresh(token: string, dispatch: any): void {
 
 	if (delay <= 0) {
 		dispatch(refreshTokenNow());
+
 		return;
 	}
 
