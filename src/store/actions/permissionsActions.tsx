@@ -14,17 +14,14 @@ let refreshTimer: any;
 
 function getJwtExpMs(token: string): number | undefined
 {
-	try
-	{
+	try {
 		const decoded: any = jwtDecode(token);
 
 		if (typeof decoded?.exp !== 'number')
 			return undefined;
 
 		return decoded.exp * 1000;
-	}
-	catch (e)
-	{
+	} catch (e) {
 		logger.error('getJwtExpMs could not decode token [error: %o]', e);
 		return undefined;
 	}
@@ -32,8 +29,7 @@ function getJwtExpMs(token: string): number | undefined
 
 function clearRefreshTimer(): void
 {
-	if (refreshTimer)
-	{
+	if (refreshTimer) {
 		clearTimeout(refreshTimer);
 		refreshTimer = undefined;
 	}
@@ -51,14 +47,12 @@ function scheduleRefresh(token: string, dispatch: any): void
 
 	clearRefreshTimer();
 
-	if (delay <= 0)
-	{
+	if (delay <= 0) {
 		dispatch(refreshTokenNow());
 		return;
 	}
 
-	refreshTimer = setTimeout(() =>
-	{
+	refreshTimer = setTimeout(() => {
 		dispatch(refreshTokenNow());
 	}, delay);
 }
@@ -74,8 +68,7 @@ export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
 	if (!token)
 		return;
 
-	try
-	{
+	try {
 		const svc = await managementService;
 
 		const authResult: any = await svc.reAuthenticate();
@@ -92,9 +85,7 @@ export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
 			await signalingService.sendRequest('updateToken', { token: newToken });
 
 		scheduleRefresh(newToken, dispatch);
-	}
-	catch (e)
-	{
+	} catch (e) {
 		logger.error('refreshTokenNow failed [error: %o]', e);
 
 		// Refresh failed -> downgrade to guest
@@ -109,21 +100,15 @@ export const expireToken = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	clearRefreshTimer();
 
-	try
-	{
+	try {
 		const svc = await managementService;
 		await svc.authentication.removeAccessToken();
-	}
-	catch (e)
-	{
+	} catch (e) {
 		logger.error('removeAccessToken failed, will try fallback [error: %o]', e);
 
-		try
-		{
+		try {
 			localStorage.removeItem('feathers-jwt');
-		}
-		catch (e2)
-		{
+		} catch (e2) {
 			logger.error('removing of feathers-jwt from localStorage failed [error: %o]', e2);
 		}
 	}
@@ -222,9 +207,11 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 				await (await managementService).authentication.removeAccessToken();
 			}
 		} catch (e) {
+			logger.error('checkJWT authenticate failed [error: %o]', e)
+
 			clearRefreshTimer();
 			dispatch(permissionsActions.setToken());
-			await (await managementService).authentication.removeAccessToken().catch((e: unknown) => logger.error('removeAccessToken failed [error: %o]', e));
+			await (await managementService).authentication.removeAccessToken().catch((e2: unknown) => logger.error('removeAccessToken failed [error: %o]', e2));
 		}
 	} else {
 		clearRefreshTimer();
