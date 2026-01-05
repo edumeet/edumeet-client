@@ -6,8 +6,127 @@ import { getTenantFromFqdn } from './managementActions';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { managamentActions } from '../slices/managementSlice';
+import { jwtDecode } from 'jwt-decode';
 
 const logger = new Logger('LoginActions');
+
+let refreshTimer: any;
+
+function getJwtExpMs(token: string): number | undefined
+{
+	try
+	{
+		const decoded: any = jwtDecode(token);
+
+		if (typeof decoded?.exp !== 'number')
+			return undefined;
+
+		return decoded.exp * 1000;
+	}
+	catch (e)
+	{
+		logger.error('getJwtExpMs could not decode token [error: %o]', e);
+		return undefined;
+	}
+}
+
+function clearRefreshTimer(): void
+{
+	if (refreshTimer)
+	{
+		clearTimeout(refreshTimer);
+		refreshTimer = undefined;
+	}
+}
+
+function scheduleRefresh(token: string, dispatch: any): void
+{
+	const expMs = getJwtExpMs(token);
+
+	if (!expMs)
+		return;
+
+	const refreshBeforeMs = 5 * 60 * 1000;
+	const delay = expMs - Date.now() - refreshBeforeMs;
+
+	clearRefreshTimer();
+
+	if (delay <= 0)
+	{
+		dispatch(refreshTokenNow());
+		return;
+	}
+
+	refreshTimer = setTimeout(() =>
+	{
+		dispatch(refreshTokenNow());
+	}, delay);
+}
+
+export const refreshTokenNow = () => async (dispatch: any, getState: any, { managementService, signalingService }: any) =>
+{
+	const token = getState()?.permissions?.token;
+
+	// No token -> nothing to refresh
+	if (!token)
+		return;
+
+	try
+	{
+		const svc = await managementService;
+
+		const authResult: any = await svc.reAuthenticate();
+		const newToken: string | undefined = authResult?.accessToken;
+
+		if (!newToken)
+			throw new Error('No accessToken from reAuthenticate');
+
+		await svc.authentication.setAccessToken(newToken);
+
+		dispatch(permissionsActions.setToken(newToken));
+
+		if (getState().signaling.state === 'connected')
+			await signalingService.sendRequest('updateToken', { token: newToken });
+
+		scheduleRefresh(newToken, dispatch);
+	}
+	catch (e)
+	{
+		// Refresh failed -> silent downgrade to guest
+		dispatch(expireToken());
+	}
+};
+
+export const expireToken = () => async (dispatch: any, getState: any, { managementService, signalingService }: any) =>
+{
+	clearRefreshTimer();
+
+	try
+	{
+		const svc = await managementService;
+		await svc.authentication.removeAccessToken();
+	}
+	catch (e)
+	{
+		logger.error('removeAccessToken failed, will try fallback [error: %o]', e);
+
+		try
+		{
+			// fallback
+			localStorage.removeItem('feathers-jwt');
+		}
+		catch (e2)
+		{
+			logger.error('removing of feathers-jwt from localStorage failed [error: %o]', e2);
+		}
+	}
+
+	dispatch(permissionsActions.setToken());
+	dispatch(permissionsActions.setLoggedIn(false));
+
+	if (getState().signaling.state === 'connected')
+		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
+};
 
 export const login = (): AppThunk<Promise<void>> => async (
 	dispatch,
@@ -35,7 +154,7 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 	getState,
 	{ signalingService, managementService }
 ): Promise<void> => {
-	logger.debug('adminLogin() [email s%]', email);
+	logger.debug('adminLogin() [email %s]', email);
 
 	try {
 		const admin = await (await managementService).authenticate({
@@ -53,6 +172,7 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 				if (authResult.accessToken === accessToken) {
 					dispatch(permissionsActions.setToken(accessToken));
 					dispatch(permissionsActions.setLoggedIn(true));
+					scheduleRefresh(accessToken, dispatch);
 				}
 			}
 		}
@@ -82,15 +202,25 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 	/* 	logger.debug('checkJWT() token : %s', accessToken); */
 
 	if (accessToken) {
-		const authResult = await (await managementService).authenticate({ accessToken, strategy: 'jwt' });
+		try {
+			const authResult = await (await managementService).authenticate({ accessToken, strategy: 'jwt' });
 
-		if (authResult.accessToken === accessToken) {
-			loggedIn = true;
-			dispatch(permissionsActions.setToken(accessToken));
-		} else {
-			await (await managementService).authentication.removeAccessToken();
+			if (authResult.accessToken === accessToken) {
+				loggedIn = true;
+				dispatch(permissionsActions.setToken(accessToken));
+				scheduleRefresh(accessToken, dispatch);
+			} else {
+				clearRefreshTimer();
+				dispatch(permissionsActions.setToken());
+				await (await managementService).authentication.removeAccessToken();
+			}
+		} catch (e) {
+			clearRefreshTimer();
 			dispatch(permissionsActions.setToken());
+			await (await managementService).authentication.removeAccessToken().catch((e) => logger.error('removeAccessToken failed [error: %o]', e));
 		}
+	} else {
+		clearRefreshTimer();
 	}
 
 	dispatch(permissionsActions.setLoggedIn(loggedIn));
@@ -105,6 +235,8 @@ export const logout = (): AppThunk<Promise<void>> => async (
 	{ signalingService, managementService, config }
 ): Promise<void> => {
 	logger.debug('logout()');
+
+	clearRefreshTimer();
 
 	const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
 
