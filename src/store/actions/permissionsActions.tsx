@@ -36,9 +36,9 @@ async function handleUpdateTokenError(
 
 	logger.error('%s updateToken failed [error: %o]', actionName, e);
 
-	if (t === 'expired' || t === 'invalid')
-	{
-		await (dispatch as unknown as (a: unknown) => Promise<unknown>)(expireToken());
+	if (t === 'expired' || t === 'invalid') {
+		await (dispatch as unknown as (_: unknown) => Promise<unknown>)(expireToken());
+
 		return true;
 	}
 
@@ -112,14 +112,10 @@ export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
 
 		dispatch(permissionsActions.setToken(newToken));
 
-		if (getState().signaling.state === 'connected')
-		{
-			try
-			{
+		if (getState().signaling.state === 'connected') {
+			try {
 				await signalingService.sendRequest('updateToken', { token: newToken });
-			}
-			catch (e)
-			{
+			} catch (e) {
 				const handled = await handleUpdateTokenError(e, dispatch, 'refreshTokenNow');
 
 				if (handled)
@@ -223,10 +219,8 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 		}));
 	}
 
-	if (getState().signaling.state === 'connected')
-	{
-		await signalingService.sendRequest('updateToken').catch(async (e: unknown) =>
-		{
+	if (getState().signaling.state === 'connected') {
+		await signalingService.sendRequest('updateToken').catch(async (e: unknown) => {
 			await handleUpdateTokenError(e, dispatch, 'adminLogin');
 		});
 	}
@@ -270,10 +264,8 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 
 	dispatch(permissionsActions.setLoggedIn(loggedIn));
 
-	if (getState().signaling.state === 'connected')
-	{
-		await signalingService.sendRequest('updateToken').catch(async (e: unknown) =>
-		{
+	if (getState().signaling.state === 'connected') {
+		await signalingService.sendRequest('updateToken').catch(async (e: unknown) => {
 			await handleUpdateTokenError(e, dispatch, 'checkJWT');
 		});
 	}
