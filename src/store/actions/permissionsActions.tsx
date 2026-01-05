@@ -12,8 +12,7 @@ const logger = new Logger('LoginActions');
 
 let refreshTimer: any;
 
-function getJwtExpMs(token: string): number | undefined
-{
+function getJwtExpMs(token: string): number | undefined {
 	try {
 		const decoded: any = jwtDecode(token);
 
@@ -27,16 +26,14 @@ function getJwtExpMs(token: string): number | undefined
 	}
 }
 
-function clearRefreshTimer(): void
-{
+function clearRefreshTimer(): void {
 	if (refreshTimer) {
 		clearTimeout(refreshTimer);
 		refreshTimer = undefined;
 	}
 }
 
-function scheduleRefresh(token: string, dispatch: any): void
-{
+function scheduleRefresh(token: string, dispatch: any): void {
 	const expMs = getJwtExpMs(token);
 
 	if (!expMs)
@@ -102,6 +99,7 @@ export const expireToken = (): AppThunk<Promise<void>> => async (
 
 	try {
 		const svc = await managementService;
+
 		await svc.authentication.removeAccessToken();
 	} catch (e) {
 		logger.error('removeAccessToken failed, will try fallback [error: %o]', e);
@@ -207,7 +205,7 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 				await (await managementService).authentication.removeAccessToken();
 			}
 		} catch (e) {
-			logger.error('checkJWT authenticate failed [error: %o]', e)
+			logger.error('checkJWT authenticate failed [error: %o]', e);
 
 			clearRefreshTimer();
 			dispatch(permissionsActions.setToken());
