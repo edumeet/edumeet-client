@@ -56,7 +56,7 @@ function scheduleRefresh(token: string, refreshNow: () => void): void {
 	}, delay);
 }
 
-function scheduleRefreshForToken(token: string, dispatch: (action: unknown) => unknown): void {
+function scheduleRefreshForToken(token: string, dispatch: (_action: unknown) => void): void {
 	scheduleRefresh(token, () => { dispatch(refreshTokenNow()); });
 }
 
@@ -73,9 +73,8 @@ export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
 
 	try {
 		const svc = await managementService;
-
-		const authResult: any = await svc.reAuthenticate();
-		const newToken: string | undefined = authResult?.accessToken;
+		const authResult = await svc.reAuthenticate() as unknown;
+		const newToken = (authResult as { accessToken?: string } | null | undefined)?.accessToken;
 
 		if (!newToken)
 			throw new Error('No accessToken from reAuthenticate');
