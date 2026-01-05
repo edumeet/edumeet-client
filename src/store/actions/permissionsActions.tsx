@@ -224,7 +224,7 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 		} catch (e) {
 			clearRefreshTimer();
 			dispatch(permissionsActions.setToken());
-			await (await managementService).authentication.removeAccessToken().catch((e) => logger.error('removeAccessToken failed [error: %o]', e));
+			await (await managementService).authentication.removeAccessToken().catch((e: unknown) => logger.error('removeAccessToken failed [error: %o]', e));
 		}
 	} else {
 		clearRefreshTimer();
