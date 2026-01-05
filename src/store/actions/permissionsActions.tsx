@@ -47,6 +47,7 @@ function scheduleRefresh(token: string, refreshNow: () => void): void {
 
 	if (delay <= 0) {
 		refreshNow();
+
 		return;
 	}
 
