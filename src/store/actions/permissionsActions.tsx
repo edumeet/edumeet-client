@@ -3,6 +3,7 @@ import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { getTenantFromFqdn } from './managementActions';
+import { syncSignalingUrl } from './signalingUrlActions';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { managamentActions } from '../slices/managementSlice';
@@ -119,6 +120,7 @@ export const refreshTokenNow = (): AppThunk<Promise<void>> => async (
 		await svc.authentication.setAccessToken(newToken);
 
 		dispatch(permissionsActions.setToken(newToken));
+		dispatch(syncSignalingUrl({ token: newToken }));
 
 		if (getState().signaling.state === 'connected') {
 			try {
@@ -165,6 +167,7 @@ export const expireToken = (): AppThunk<Promise<void>> => async (
 
 	dispatch(permissionsActions.setToken());
 	dispatch(permissionsActions.setLoggedIn(false));
+	dispatch(syncSignalingUrl({ token: null }));
 
 	if (getState().signaling.state === 'connected')
 		await signalingService.sendRequest('updateToken').catch((e: unknown) => logger.error('updateToken request failed [error: %o]', e));
@@ -214,6 +217,7 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 				if (authResult.accessToken === accessToken) {
 					dispatch(permissionsActions.setToken(accessToken));
 					dispatch(permissionsActions.setLoggedIn(true));
+					dispatch(syncSignalingUrl({ token: accessToken }));
 					scheduleRefresh(accessToken, () => { dispatch(refreshTokenNow()); });
 				}
 			}
@@ -253,10 +257,12 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 			if (authResult.accessToken === accessToken) {
 				loggedIn = true;
 				dispatch(permissionsActions.setToken(accessToken));
+				dispatch(syncSignalingUrl({ token: accessToken }));
 				scheduleRefresh(accessToken, () => { dispatch(refreshTokenNow()); });
 			} else {
 				clearRefreshTimer();
 				dispatch(permissionsActions.setToken());
+				dispatch(syncSignalingUrl({ token: null }));
 				await (await managementService).authentication.removeAccessToken();
 			}
 		} catch (e) {
@@ -264,6 +270,7 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 
 			clearRefreshTimer();
 			dispatch(permissionsActions.setToken());
+			dispatch(syncSignalingUrl({ token: null }));
 			await (await managementService).authentication.removeAccessToken().catch((e2: unknown) => logger.error('removeAccessToken failed [error: %o]', e2));
 		}
 	} else {
@@ -294,6 +301,7 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	dispatch(permissionsActions.setToken());
 	dispatch(permissionsActions.setLoggedIn(false));
+	dispatch(syncSignalingUrl({ token: null }));
 
 	dispatch(managamentActions.clearUser());
 

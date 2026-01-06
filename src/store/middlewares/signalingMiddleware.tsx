@@ -51,14 +51,15 @@ const createSignalingMiddleware = ({
 			signalingService.once('close', () => {
 				dispatch(leaveRoom());
 			});
-				
-			const { url } = getState().signaling;
 
 			(async () => {
-				const socketConnection = await RoomServerConnection.create({ url });
+				const socketConnection = await RoomServerConnection.create({
+					getUrl: () => getState().signaling.url
+				});
 
 				signalingService.addConnection(socketConnection);
 			})();
+
 		}
 
 		if (signalingActions.disconnect.match(action)) {

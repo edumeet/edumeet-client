@@ -29,32 +29,49 @@ const logger = new Logger('RoomServerConnection');
 
 export class RoomServerConnection extends EventEmitter {
 	public id?: string;
+	public closed = false;
 
-	public static async create({ url }: { url: string}): Promise<RoomServerConnection> {
+	private socket: Socket<ClientServerEvents, ServerClientEvents>;
+	private getUrl: () => string;
+
+	public static async create({
+		getUrl
+	}: {
+		getUrl: () => string
+	}): Promise<RoomServerConnection> {
+		const url = getUrl();
+
 		logger.debug('create() [url:%s]', url);
-	
+
 		const { io } = await import('socket.io-client');
 
 		const socket = io(url, {
 			transports: [ 'websocket', 'polling' ],
 			rejectUnauthorized: true,
 			closeOnBeforeunload: false,
-			reconnection: false
+
+			reconnection: true,
+			reconnectionAttempts: Infinity,
+			reconnectionDelay: 500,
+			reconnectionDelayMax: 5000,
+			timeout: 10000
 		});
-	
-		return new RoomServerConnection(socket);
+
+		return new RoomServerConnection(socket, getUrl);
 	}
 
-	public closed = false;
-	private socket: Socket<ClientServerEvents, ServerClientEvents>;
-
-	constructor(socket: Socket<ClientServerEvents, ServerClientEvents>) {
+	constructor(
+		socket: Socket<ClientServerEvents, ServerClientEvents>,
+		getUrl: () => string
+	) {
 		super();
 
 		logger.debug('constructor()');
 
 		this.socket = socket;
+		this.getUrl = getUrl;
 		this.id = socket.id;
+
 		this.handleSocket();
 	}
 
@@ -65,8 +82,8 @@ export class RoomServerConnection extends EventEmitter {
 
 		if (this.socket.connected)
 			this.socket.disconnect();
-		this.socket.io.off();
 
+		this.socket.io.off();
 		this.socket.removeAllListeners();
 
 		this.emit('close');
@@ -82,13 +99,17 @@ export class RoomServerConnection extends EventEmitter {
 		return new Promise((resolve, reject) => {
 			if (!this.socket) {
 				reject('No socket connection');
-			} else {
-				this.socket.timeout(1500).emit('request', socketMessage, (timeout, serverError, response) => {
-					if (timeout) reject(new SocketTimeoutError('Request timed out'));
-					else if (serverError) reject(serverError);
-					else resolve(response);
-				});
+				return;
 			}
+
+			this.socket.timeout(8000).emit('request', socketMessage, (timeout, serverError, response) => {
+				if (timeout)
+					reject(new SocketTimeoutError('Request timed out'));
+				else if (serverError)
+					reject(serverError);
+				else
+					resolve(response);
+			});
 		});
 	}
 
@@ -102,8 +123,9 @@ export class RoomServerConnection extends EventEmitter {
 				if (error instanceof SocketTimeoutError) {
 					logger.warn('sendRequest() timeout, retrying [attempt: %s]', tries + 1);
 					this.emit('error', new Error('Socket timeout'));
-				} else
+				} else {
 					throw error;
+				}
 			}
 		}
 	}
@@ -114,15 +136,14 @@ export class RoomServerConnection extends EventEmitter {
 		this.socket.on('connect', () => {
 			logger.debug('handleSocket() connected');
 
-			if (this.socket.recovered) {
+			if (this.socket.recovered)
 				this.emit('reconnected');
-			} else {
+			else
 				this.emit('connect');
-			}
 		});
 
-		this.socket.once('disconnect', () => {
-			logger.debug('socket disconnected');
+		this.socket.on('disconnect', (reason: string) => {
+			logger.debug('socket disconnected [reason:%s]', reason);
 		});
 
 		this.socket.on('notification', (notification) => {
@@ -146,7 +167,24 @@ export class RoomServerConnection extends EventEmitter {
 
 		// Listen and re-transmit events from manager.
 		this.socket.io.on('error', (error: Error) => {
-			this.emit('error', (error));
+			this.emit('error', error);
+		});
+
+		this.socket.io.on('reconnect', (attempt: number) => {
+			logger.debug('reconnect success [attempt:%s]', attempt);
+		});
+
+		this.socket.io.on('reconnect_error', (error: Error) => {
+			logger.warn('reconnect_error [error:%o]', error);
+		});
+
+		this.socket.io.on('reconnect_attempt', () => {
+			const nextUrl = this.getUrl();
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(this.socket.io as any).uri = nextUrl;
+
+			logger.debug('reconnect_attempt -> updated uri [uri:%s]', nextUrl);
 		});
 	}
 }

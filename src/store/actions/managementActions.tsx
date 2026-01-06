@@ -2,6 +2,7 @@ import edumeetConfig from '../../utils/edumeetConfig';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
+import { syncSignalingUrl } from './signalingUrlActions';
 import { AppThunk } from '../store';
 
 const logger = new Logger('ManagementActions');
@@ -421,6 +422,7 @@ export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
 
 					dispatch(permissionsActions.setToken(token));
 					dispatch(permissionsActions.setLoggedIn(true));
+					dispatch(syncSignalingUrl({ token }));
 
 					if (getState().signaling.state === 'connected')
 						await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));

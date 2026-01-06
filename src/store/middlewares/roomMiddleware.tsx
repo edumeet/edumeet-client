@@ -5,6 +5,7 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
+import { syncSignalingUrl } from '../actions/signalingUrlActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { meActions } from '../slices/meSlice';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
@@ -172,6 +173,7 @@ const createRoomMiddleware = ({
 							const { reconnectKey } = notification.data;
 
 							dispatch(meActions.setReconnectKey(reconnectKey));
+							dispatch(syncSignalingUrl({ reconnectKey: reconnectKey ?? null }));
 
 							break;
 						}

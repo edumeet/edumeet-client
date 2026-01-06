@@ -4,6 +4,7 @@ import { DevicesUpdated } from '../../services/deviceService';
 import { activeSpeakerIdSelector, makePermissionSelector } from '../selectors';
 import { permissions } from '../../utils/roles';
 import { pauseMic, resumeMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
+import { syncSignalingUrl } from '../actions/signalingUrlActions';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { permissionsActions } from '../slices/permissionsSlice';
@@ -297,6 +298,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 					dispatch(permissionsActions.setToken(token));
 					dispatch(permissionsActions.setLoggedIn(true));
+					dispatch(syncSignalingUrl({ token }));
 
 					if (getState().signaling.state === 'connected')
 						await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
