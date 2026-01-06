@@ -99,6 +99,7 @@ export class RoomServerConnection extends EventEmitter {
 		return new Promise((resolve, reject) => {
 			if (!this.socket) {
 				reject('No socket connection');
+
 				return;
 			}
 
