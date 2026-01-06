@@ -33,10 +33,14 @@ const logger = new Logger('MediaMiddleware');
  */
 const createMediaMiddleware = ({
 	mediaService,
+	signalingService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
 	const transcriptTimeouts = new Map<string, number>();
+
+	let wiredSignalingReconnect = false;
+	let mediaRecoveryRunning = false;
 
 	const middleware: Middleware = ({
 		dispatch, getState
@@ -47,6 +51,43 @@ const createMediaMiddleware = ({
 		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
 				mediaService.init();
+
+				if (!wiredSignalingReconnect) {
+					wiredSignalingReconnect = true;
+
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					(signalingService as any).on('reconnected', async () => {
+						const state = getState();
+
+						// Only recover if we're still in a room
+						if (state.room.state !== 'joined')
+							return;
+
+						if (mediaRecoveryRunning)
+							return;
+
+						mediaRecoveryRunning = true;
+
+						logger.warn('signaling reconnected -> recreating media transports');
+
+						try {
+							await mediaService.recreateTransports();
+
+							const after = getState();
+
+							// Re-produce local media if it should be enabled
+							if (after.me.micEnabled && !after.me.audioMuted)
+								dispatch(updateMic());
+
+							if (after.me.webcamEnabled && !after.me.videoMuted)
+								dispatch(updateWebcam());
+						} catch (error) {
+							logger.error('media recovery failed [error:%o]', error);
+						} finally {
+							mediaRecoveryRunning = false;
+						}
+					});
+				}
 			}
 
 			if (roomActions.setState.match(action) && action.payload === 'joined') {

@@ -8,6 +8,7 @@ import { List } from '../utils/List';
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface SignalingService {
 	on(event: 'connected', listener: () => void): this;
+	on(event: 'reconnected', listener: () => void): this;
 	on(event: 'error', listener: (error: Error) => void): this;
 	on(event: 'close', listener: () => void): this;
 	on(event: 'notification', listener: InboundNotification): this;
@@ -88,6 +89,11 @@ export class SignalingService extends EventEmitter {
 				this.connected = false;
 
 			this.emit('close');
+		});
+
+		connection.on('reconnected', () => {
+			logger.debug('socket reconnected event');
+			this.emit('reconnected');
 		});
 	}
 
