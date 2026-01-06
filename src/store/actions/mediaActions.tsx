@@ -12,7 +12,7 @@ const logger = new Logger('MediaActions');
 
 type MediaKind = 'camera' | 'microphone' | 'screen';
 
-// eslint-disable-next-line no-unused-var
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function showMediaErrorToast(
 	dispatch: (...args: unknown[]) => unknown,
 	error: unknown,
