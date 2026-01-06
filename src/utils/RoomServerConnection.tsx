@@ -121,8 +121,8 @@ export class RoomServerConnection extends EventEmitter {
 			}
 		});
 
-		this.socket.once('disconnect', () => {
-			logger.debug('socket disconnected');
+		this.socket.once('disconnect', (reason) => {
+			logger.debug('socket disconnected [reason:%s]', reason);
 		});
 
 		this.socket.on('notification', (notification) => {
