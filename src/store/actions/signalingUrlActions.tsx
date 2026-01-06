@@ -43,9 +43,15 @@ export const syncSignalingUrl = ({
 
 		nextUrl = u.toString();
 	} catch {
+		logger.error('syncSignalingUrl() failed to update URL [error: %o]', error);
+
 		return;
 	}
 
-	if (nextUrl !== currentUrl)
+	if (nextUrl !== currentUrl) {
 		dispatch(signalingActions.setUrl(nextUrl));
+		logger.debug('syncSignalingUrl() updated signaling URL [old: %s], [new: %s]', currentUrl, nextUrl);
+	} else {
+		logger.debug('syncSignalingUrl() signaling URL stays same [url: %s]', currentUrl);
+	}
 };
