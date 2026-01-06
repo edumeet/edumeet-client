@@ -13,9 +13,6 @@ import {
 	updateMic,
 	updateWebcam,
 	updateScreenSharing,
-	updateScreenAudio,
-	updateExtraVideo,
-	updateExtraAudio
 } from '../actions/mediaActions';
 import { ProducerSource } from '../../utils/types';
 import { Logger } from '../../utils/Logger';
@@ -97,22 +94,6 @@ const createMediaMiddleware = ({
 								// Use your actual action name for screenshare update
 								// In edumeet it’s commonly updateScreenSharing() or updateScreenShare()
 								dispatch(updateScreenSharing());
-							}
-
-							// Screen share (audio)
-							if (after.me.screenAudioEnabled) {
-								// Use your actual action name for screen audio
-								dispatch(updateScreenAudio());
-							}
-
-							// Extra video
-							if (after.me.extraVideoEnabled) {
-								dispatch(updateExtraVideo());
-							}
-
-							// Extra audio
-							if (after.me.extraAudioEnabled) {
-								dispatch(updateExtraAudio());
 							}
 
 						} catch (error) {
