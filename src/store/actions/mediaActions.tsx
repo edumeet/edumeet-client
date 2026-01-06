@@ -13,7 +13,7 @@ const logger = new Logger('MediaActions');
 type MediaKind = 'camera' | 'microphone' | 'screen';
 
 function showMediaErrorToast(
-	dispatch: (action: unknown) => unknown,
+	dispatch: (...args: unknown[]) => unknown,
 	error: unknown,
 	kind: MediaKind
 ): boolean {
@@ -43,7 +43,9 @@ function showMediaErrorToast(
 		const obj = error as Record<string, unknown>;
 
 		if (typeof obj.name === 'string') name = obj.name;
+
 		if (typeof obj.message === 'string') message = obj.message;
+
 		if (typeof obj.constraint === 'string') constraint = obj.constraint;
 	}
 
@@ -70,6 +72,7 @@ function showMediaErrorToast(
 	// Device/capture busy or cannot start
 	if (name === 'NotReadableError' || name === 'TrackStartError') {
 		const what = kind === 'microphone' ? 'Microphone' : kind === 'camera' ? 'Camera' : 'Screen sharing';
+
 		enqueueToast(`${what} is already in use or could not start.`, 'error');
 
 		return true;
@@ -78,6 +81,7 @@ function showMediaErrorToast(
 	// No device / no sources
 	if (name === 'NotFoundError') {
 		const what = kind === 'microphone' ? 'microphone' : kind === 'camera' ? 'camera' : 'screen source';
+
 		enqueueToast(`No ${what} found.`, 'error');
 
 		return true;
@@ -86,6 +90,7 @@ function showMediaErrorToast(
 	// Constraints can’t be satisfied (often stale deviceId)
 	if (name === 'OverconstrainedError') {
 		const details = constraint ? ` (constraint: ${constraint})` : '';
+
 		enqueueToast(`Selected device/settings can’t be satisfied. Try selecting a different device.${details}`, 'error');
 
 		return true;
