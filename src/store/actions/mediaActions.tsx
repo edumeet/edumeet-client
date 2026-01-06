@@ -6,8 +6,107 @@ import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { Logger } from '../../utils/Logger';
 import { ImageKeys } from '../../services/clientImageService';
+import { notificationsActions } from '../slices/notificationsSlice';
 
 const logger = new Logger('MediaActions');
+
+type MediaDeviceLabel = 'Camera' | 'Microphone' | 'Screen' | 'Extra video';
+
+function showMediaCaptureErrorToast(
+	dispatch: any,
+	error: unknown,
+	deviceLabel: MediaDeviceLabel
+) {
+	const e = error as any;
+	const name = e?.name as string | undefined;
+	const msg = String(e?.message ?? '');
+
+	// User cancelled / denied
+	if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+		const text =
+			deviceLabel === 'Screen'
+				? 'Screen sharing was cancelled or blocked.'
+				: `${deviceLabel} permission was denied. Please allow access in your browser settings.`;
+
+		dispatch(
+			notificationsActions.enqueueNotification({
+				message: text,
+				options: { variant: 'error' }
+			})
+		);
+		return true;
+	}
+
+	// Common when cancelling screen picker in some browsers
+	if (deviceLabel === 'Screen' && name === 'AbortError') {
+		dispatch(
+			notificationsActions.enqueueNotification({
+				message: 'Screen sharing was cancelled.',
+				options: { variant: 'info' }
+			})
+		);
+		return true;
+	}
+
+	// Device/capture busy or cannot start
+	if (name === 'NotReadableError' || name === 'TrackStartError') {
+		const text =
+			deviceLabel === 'Screen'
+				? 'Could not start screen sharing. Try again or restart the browser.'
+				: `${deviceLabel} is already in use by another app or browser tab.`;
+
+		dispatch(
+			notificationsActions.enqueueNotification({
+				message: text,
+				options: { variant: 'error' }
+			})
+		);
+		return true;
+	}
+
+	// No device / no sources
+	if (name === 'NotFoundError') {
+		const text =
+			deviceLabel === 'Screen'
+				? 'No screen/window source was available for sharing.'
+				: `No ${deviceLabel.toLowerCase()} device was found. Plug one in or enable it in your OS settings.`;
+
+		dispatch(
+			notificationsActions.enqueueNotification({
+				message: text,
+				options: { variant: 'error' }
+			})
+		);
+		return true;
+	}
+
+	// Constraints can't be satisfied (mostly getUserMedia)
+	if (name === 'OverconstrainedError') {
+		const constraint = String(e?.constraint ?? '');
+		const details = constraint ? ` (constraint: ${constraint})` : '';
+
+		dispatch(
+			notificationsActions.enqueueNotification({
+				message: `${deviceLabel} settings can’t be satisfied. Try selecting a different device.${details}`,
+				options: { variant: 'error' }
+			})
+		);
+		return true;
+	}
+
+	// Fallback
+	if (msg) {
+		dispatch(
+			notificationsActions.enqueueNotification({
+				message: `${deviceLabel} error: ${msg}`,
+				options: { variant: 'error' }
+			})
+		);
+		return true;
+	}
+
+	return false;
+}
 
 interface UpdateDeviceOptions {
 	newDeviceId?: string;
@@ -168,6 +267,8 @@ export const updatePreviewMic = ({
 		dispatch(meActions.setPreviewMicTrackId(track.id));
 	} catch (error) {
 		logger.error('updatePreviewMic() [error:%o]', error);
+		showMediaCaptureErrorToast(dispatch, error, 'Microphone');
+
 		deviceService.updateMediaDevices();
 
 	} finally {
@@ -300,6 +401,7 @@ export const updatePreviewWebcam = ({
 		dispatch(meActions.setPreviewWebcamTrackId(track.id));
 	} catch (error) {
 		logger.error('updatePreviewWebcam() [error:%o]', error);
+		showMediaCaptureErrorToast(dispatch, error, 'Camera');
 	} finally {
 		dispatch(meActions.setVideoInProgress(false));
 	}
@@ -471,6 +573,7 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 		dispatch(meActions.setMicEnabled(true));
 	} catch (error) {
 		logger.error('updateMic() [error:%o]', error);
+		showMediaCaptureErrorToast(dispatch, error, 'Microphone');
 	} finally {
 		dispatch(meActions.setAudioInProgress(false));
 	}
@@ -649,6 +752,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 		dispatch(meActions.setWebcamEnabled(true));
 	} catch (error) {
 		logger.error('updateWebcam() [error:%o]', error);
+		showMediaCaptureErrorToast(dispatch, error, 'Camera');
 	} finally {
 		dispatch(meActions.setVideoInProgress(false));
 	}
@@ -822,6 +926,7 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 		}
 	} catch (error) {
 		logger.error('updateScreenSharing() [error:%o]', error);
+		showMediaCaptureErrorToast(dispatch, error, 'Screen');
 	} finally {
 		dispatch(meActions.setScreenSharingInProgress(false));
 	}
@@ -930,6 +1035,7 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 		dispatch(meActions.setExtraVideoEnabled(true));
 	} catch (error) {
 		logger.error('startExtraVideo() [error:%o]', error);
+		showMediaCaptureErrorToast(dispatch, error, 'Extra video');
 	} finally {
 		dispatch(meActions.setVideoInProgress(false));
 	}
