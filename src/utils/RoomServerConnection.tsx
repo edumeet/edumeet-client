@@ -106,6 +106,8 @@ export class RoomServerConnection extends EventEmitter {
 					throw error;
 			}
 		}
+
+		this.emit('close');
 	}
 
 	private handleSocket(): void {
