@@ -9,7 +9,14 @@ import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { meActions } from '../slices/meSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { batch } from 'react-redux';
-import { updateMic, updateWebcam } from '../actions/mediaActions';
+import {
+	updateMic,
+	updateWebcam,
+	updateScreenSharing,
+	updateScreenAudio,
+	updateExtraVideo,
+	updateExtraAudio
+} from '../actions/mediaActions';
 import { ProducerSource } from '../../utils/types';
 import { Logger } from '../../utils/Logger';
 
@@ -75,12 +82,39 @@ const createMediaMiddleware = ({
 
 							const after = getState();
 
-							// Re-produce local media if it should be enabled
-							if (after.me.micEnabled && !after.me.audioMuted)
+							// Mic
+							if (after.me.micEnabled) {
 								dispatch(updateMic());
+							}
 
-							if (after.me.webcamEnabled && !after.me.videoMuted)
+							// Webcam
+							if (after.me.webcamEnabled) {
 								dispatch(updateWebcam());
+							}
+
+							// Screen share (video)
+							if (after.me.screenEnabled) {
+								// Use your actual action name for screenshare update
+								// In edumeet it’s commonly updateScreenSharing() or updateScreenShare()
+								dispatch(updateScreenSharing());
+							}
+
+							// Screen share (audio)
+							if (after.me.screenAudioEnabled) {
+								// Use your actual action name for screen audio
+								dispatch(updateScreenAudio());
+							}
+
+							// Extra video
+							if (after.me.extraVideoEnabled) {
+								dispatch(updateExtraVideo());
+							}
+
+							// Extra audio
+							if (after.me.extraAudioEnabled) {
+								dispatch(updateExtraAudio());
+							}
+
 						} catch (error) {
 							logger.error('media recovery failed [error:%o]', error);
 						} finally {
