@@ -223,7 +223,6 @@ export class MediaService extends EventEmitter {
 		logger.warn('recreateTransports() done');
 	}
 
-
 	public close(): void {
 		logger.debug('close()');
 
