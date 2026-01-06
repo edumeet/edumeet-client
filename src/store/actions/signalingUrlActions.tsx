@@ -42,7 +42,7 @@ export const syncSignalingUrl = ({
 		}
 
 		nextUrl = u.toString();
-	} catch {
+	} catch (error) {
 		logger.error('syncSignalingUrl() failed to update URL [error: %o]', error);
 
 		return;
