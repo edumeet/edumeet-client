@@ -80,7 +80,7 @@ export const p2pModeSelector = createSelector(
  * @param {string} kind - The kind of devices to return.
  * @returns {Selector<MediaDevice[]>} Selector that returns the subset of devices.
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+ 
 export const makeDevicesSelector = (kind: MediaDeviceKind, excludedDeviceId?: string) => {
 	return createSelector(
 		devicesSelector,

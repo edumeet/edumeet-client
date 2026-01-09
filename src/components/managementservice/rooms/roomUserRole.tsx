@@ -4,7 +4,7 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
 import { Roles, Room, User, UsersRoles } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, /* getDataByRoomId, */ patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByRoomId, patchData } from '../../../store/actions/managementActions';
 import { RoomProp } from './Room';
 import { userLabel } from '../../translated/translatedComponents';
 
@@ -52,7 +52,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	]);
 
 	const getRoleName = (id: string): string => {
-		const t = roles.find((type) => type.id === parseInt(id));
+		const t = roles.find((type) => type.id == parseInt(id));
 	
 		if (t && t.name) {
 			return t.name;
@@ -78,19 +78,19 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	]);
 
 	const getUserName = (id: string): string => {
-		const t = users.find((type) => type.id === parseInt(id));
+		const t = users.find((type) => type.id == parseInt(id));
 	
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'undefined user';
+			return 'Hidden email';
 		}
 	};
 
 	// nested data is ok, see accessorKeys in ColumnDef below
 	
 	const getRoomName = (id: string): string => {
-		const t = rooms.find((type) => type.id === parseInt(id));
+		const t = rooms.find((type) => type.id == parseInt(id));
 	
 		if (t && t.name) {
 			return t.name;
@@ -182,10 +182,10 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getData('roomUserRoles')).then((tdata: any) => {
+		dispatch(getDataByRoomId(roomId, 'roomUserRoles')).then((tdata: any) => {
 			
 			if (tdata != undefined) {
-				setData(tdata.data);
+				setData(tdata.data ?? tdata);
 			}
 			setIsLoading(false);
         
@@ -197,7 +197,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		// By moving this function inside the effect, we can clearly see the values it uses.
 		setIsLoading(true);
 		fetchProduct();
-	}, []);
+	}, [ roomId ]);
 
 	const [ open, setOpen ] = useState(false);
 
@@ -265,7 +265,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'roomUserRoles')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -298,6 +297,12 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	};
 
+	const getUserLabel = (u: User): string => {
+		if (u?.email) return `${u.id} - ${u.email}`;
+
+		return String(u?.id ?? '');
+	};
+
 	return <>
 		<div>
 			<h4>Room-User roles</h4>
@@ -314,7 +319,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					<input type="hidden" name="id" value={id} />
 					<Autocomplete
 						options={users}
-						getOptionLabel={(option) => option.email}
+						getOptionLabel={(option) => getUserLabel(option)}
 						fullWidth
 						disableClearable
 						readOnly={userIdOptionDisabled}

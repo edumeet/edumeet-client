@@ -5,8 +5,8 @@ import { clearCanvas, setDrawingBgColor, updateCanvasState } from '../../store/a
 
 import { Canvas, FabricObject, ImageFormat, IText, PencilBrush, util } from 'fabric';
 import { EraserBrush, isTransparent } from '@erase2d/fabric';
-import { Box, Divider, Grid2 as Grid, IconButton, Typography } from '@mui/material';
-
+import { Box, Divider, IconButton, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import PanToolIcon from '@mui/icons-material/PanTool';
 import DrawIcon from '@mui/icons-material/Draw';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
@@ -264,7 +264,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 							
-							foundObject && modifyObject(foundObject, enlivenObject, prevState);
+							if (foundObject) modifyObject(foundObject, enlivenObject, prevState);
 
 							const actionIds = new Set(pastActions.map((act) => act.object.id));
 
@@ -280,7 +280,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 
-							foundObject && prevState.remove(foundObject);
+							if (foundObject) prevState.remove(foundObject);
 
 						} else if (updateAction.status == 'editing') {
 
@@ -742,7 +742,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 						if (lastAction.status === 'added') {    
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 
-							foundObject && prevState.remove(foundObject);
+							if (foundObject) prevState.remove(foundObject);
 							dispatch(updateCanvasState({ object: lastAction.object, status: 'removed' }));
 							
 						// revert changes to object
@@ -892,7 +892,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 						} else if (nextAction.status === 'removed') {
 							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
 
-							foundObject && prevState.remove(foundObject);
+							if (foundObject) prevState.remove(foundObject);
 							dispatch(updateCanvasState({ object: nextAction.object, status: 'removed' }));
 						}
         

@@ -4,7 +4,7 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, FormControlLabel, Checkbox, Box } from '@mui/material';
 import React from 'react';
 import { Roles, Tenant, Permissions, RolePermissions } from '../../../utils/types';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
 
@@ -14,6 +14,8 @@ const RoleTable = () => {
 	type TenantOptionTypes = Array<Tenant>
 
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
+	const { tenantAdmin, tenantOwner, superAdmin } = useAppSelector((state) => state.management);
+	const cannotEdit = !tenantAdmin && !tenantOwner && !superAdmin;
 
 	const getTenantName = (id: string): string => {
 		const t = tenants.find((type) => type.id == parseInt(id));
@@ -161,7 +163,7 @@ const RoleTable = () => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 			dispatch(deleteData(id, 'roles')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -253,7 +255,7 @@ const RoleTable = () => {
 		<Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
 			{Object.entries(permissions).map(([ key, value ]) =>
 				<FormControlLabel
-					disabled={checkedDisabled}
+					disabled={checkedDisabled || cannotEdit }
 					key={`${key}uniqe`}
 					control={<Checkbox checked={checked[parseInt(key)]}
 						onChange={(event) => handleChangeMod(event, parseInt(key))
@@ -268,7 +270,7 @@ const RoleTable = () => {
 
 	return <>
 		<div>
-			<Button variant="outlined" onClick={() => handleClickOpen()}>
+			<Button variant="outlined" disabled={ cannotEdit } onClick={() => handleClickOpen()}>
 				{addNewLabel()}
 			</Button>
 			<hr />
@@ -289,9 +291,9 @@ const RoleTable = () => {
 						fullWidth
 						onChange={handleNameChange}
 						value={name}
+						disabled={cannotEdit}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="description"
 						label={descLabel()}
@@ -299,6 +301,7 @@ const RoleTable = () => {
 						fullWidth
 						onChange={handleDescriptionChange}
 						value={description}
+						disabled={cannotEdit}
 					/>
 					<Autocomplete
 						options={tenants}
@@ -309,6 +312,7 @@ const RoleTable = () => {
 						onChange={handleTenantIdChange}
 						value={tenantIdOption}
 						sx={{ marginTop: '8px' }}
+						disabled={cannotEdit}
 						renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
 					/>
 					<div>
@@ -316,7 +320,7 @@ const RoleTable = () => {
 							label="All permissions"
 							control={
 								<Checkbox
-									disabled={checkedDisabled}
+									disabled={checkedDisabled || cannotEdit }
 									checked={checked.every((num) => num === true)}
 									indeterminate={checked.some((num) => num === true) && checked.some((num) => num === false)}
 									onChange={handleChange1}
@@ -327,9 +331,9 @@ const RoleTable = () => {
 					</div>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} disabled={cantDelete} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={delTenant} disabled={cantDelete || cannotEdit } color='warning'>{deleteLabel()}</Button>
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch || cannotEdit }>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>

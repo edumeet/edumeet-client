@@ -68,19 +68,27 @@ const Transcription = ({
 	let alignItems = 'center';
 
 	if (horizontalPlacement === 'left') {
-		orientation === 'horizontal' ?
-			justifyContent = 'flex-start' : alignItems = 'flex-start';
+		if (orientation === 'horizontal') { justifyContent = 'flex-start'; } else { alignItems = 'flex-start'; }
 	} else if (horizontalPlacement === 'right') {
-		orientation === 'horizontal' ?
-			justifyContent = 'flex-end' : alignItems = 'flex-end';
+		if (orientation === 'horizontal') {
+			justifyContent = 'flex-end';
+		} else {
+			alignItems = 'flex-end';
+		}
 	}
 
 	if (verticalPlacement === 'top') {
-		orientation === 'horizontal' ?
-			alignItems = 'flex-start': justifyContent = 'flex-start';
+		if (orientation === 'horizontal') {
+			alignItems = 'flex-start';
+		} else {
+			justifyContent = 'flex-start';
+		}
 	} else if (verticalPlacement === 'bottom') {
-		orientation === 'horizontal' ?
-			alignItems = 'flex-end' : justifyContent = 'flex-end';
+		if (orientation === 'horizontal') {
+			alignItems = 'flex-end';
+		} else {
+			justifyContent = 'flex-end';
+		}
 	}
 
 	return (

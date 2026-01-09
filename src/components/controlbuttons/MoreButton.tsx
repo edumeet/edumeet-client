@@ -7,7 +7,7 @@ const MoreButton = ({
 	size,
 	...props
 }: ControlButtonProps): React.JSX.Element => {
-    const unseenFiles = useAppSelector((state) => state.ui.unseenFiles);
+	const unseenFiles = useAppSelector((state) => state.ui.unseenFiles);
 	
 	return (
 		<ControlButton

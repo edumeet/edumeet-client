@@ -136,13 +136,7 @@ export class MediaService extends EventEmitter {
 	public resolveTransportsReady!: () => void;
 	public transportsReady!: ReturnType<typeof safePromise>;
 
-	public _monitor: Promise<ClientMonitor> = (async () => {
-		const { createClientMonitor } = await import('@observertc/client-monitor-js');
-
-		const monitor = createClientMonitor({ collectingPeriodInMs: 5000 });
-
-		return monitor;
-	})();
+	public _monitor: Promise<ClientMonitor> = Promise.resolve(new ClientMonitor({ collectingPeriodInMs: 5000 }));
 
 	constructor(
 		{ signalingService }: { signalingService: SignalingService },
@@ -236,7 +230,7 @@ export class MediaService extends EventEmitter {
 
 						this.iceServers = iceServers;
 
-						fileService.iceServers = iceServers;
+						fileService.reinitWithIceServers(iceServers);
 
 						const { rtpCapabilities, sctpCapabilities } = await this.receiveRouterRtpCapabilities(routerRtpCapabilities);
 
@@ -265,6 +259,8 @@ export class MediaService extends EventEmitter {
 						const { iceServers } = notification.data;
 
 						this.iceServers = iceServers;
+
+						fileService.reinitWithIceServers(iceServers);
 
 						break;
 					}
@@ -733,7 +729,7 @@ export class MediaService extends EventEmitter {
 			const monitor = await this.monitor;
 
 			if (monitor)
-				monitor.collectors.addMediasoupDevice(this.mediasoup);
+				monitor.addSource(this.mediasoup);
 		}
 
 		if (!this.mediasoup.loaded) await this.mediasoup.load({ routerRtpCapabilities });
@@ -743,9 +739,16 @@ export class MediaService extends EventEmitter {
 
 	public async createTransports(): Promise<void> {
 		await this.mediaReady;
-		
+
 		this.sendTransport = await this.createTransport('createSendTransport');
 		this.recvTransport = await this.createTransport('createRecvTransport');
+
+		const monitor = await this.monitor;
+
+		if (monitor) {
+			monitor.addSource(this.sendTransport);
+			monitor.addSource(this.recvTransport);
+		}
 
 		this.resolveTransportsReady();
 	}
@@ -865,9 +868,9 @@ export class MediaService extends EventEmitter {
 				}
 
 				const monitor = await this.monitor;
-				
+
 				if (monitor)
-					monitor.collectors.addRTCPeerConnection(transport.handler.pc);
+					monitor.addSource(transport.handler.pc);
 
 				transport.on('icecandidate', (candidate) => {
 					this.signalingService.notify('candidate', {

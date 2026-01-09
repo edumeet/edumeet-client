@@ -62,7 +62,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'undefined user';
+			return 'Hidden email';
 		}
 	};
 
@@ -74,7 +74,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined room';
+			return 'Undefined room';
 		}
 	};
 
@@ -234,6 +234,12 @@ const RoomOwnerTable = (props: RoomProp) => {
 
 	};
 
+	const getUserLabel = (u: User): string => {
+		if (u?.email) return `${u.id} - ${u.email}`;
+
+		return String(u?.id ?? '');
+	};
+
 	return <>
 		<div>
 			<h4>Room owners</h4>
@@ -261,7 +267,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 					/> */}
 					<Autocomplete
 						options={users}
-						getOptionLabel={(option) => option.email}
+						getOptionLabel={(option) => getUserLabel(option)}
 						fullWidth
 						disableClearable
 						readOnly={userIdOptionDisabled}

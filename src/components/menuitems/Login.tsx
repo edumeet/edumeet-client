@@ -34,7 +34,7 @@ const Login = ({
 			aria-label={loginButtonLabel}
 			onClick={() => {
 				onClick();
-				loggedIn ? dispatch(logout()) : dispatch(login());
+				if (loggedIn) { dispatch(logout()); } else { dispatch(login()); }
 			}}
 		>
 			<AccountCircle />

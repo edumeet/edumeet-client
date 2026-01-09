@@ -3,7 +3,7 @@ import { meActions } from '../slices/meSlice';
 import { DevicesUpdated } from '../../services/deviceService';
 import { activeSpeakerIdSelector, makePermissionSelector } from '../selectors';
 import { permissions } from '../../utils/roles';
-import { stopMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
+import { pauseMic, resumeMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { permissionsActions } from '../slices/permissionsSlice';
@@ -11,6 +11,7 @@ import { setRaisedHand } from './meActions';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { Logger } from '../../utils/Logger';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 const logger = new Logger('listenerActions');
 
@@ -102,19 +103,20 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case 'm': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress, micEnabled, audioMuted, canSendMic } = getState().me;
 
 				if (audioInProgress) return;
 
 				const hasAudioPermission = audioPermissionSelector(getState());
-				const canSendMic = getState().me.canSendMic;
 
 				if (!hasAudioPermission || !canSendMic) return;
 
-				if (getState().me.micEnabled) {
-					dispatch(stopMic());
-				} else {
+				if (!micEnabled) {
 					dispatch(updateMic());
+				} else if (audioMuted) {
+					dispatch(resumeMic());
+				} else {
+					dispatch(pauseMic());
 				}
 
 				break;
@@ -166,7 +168,9 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 				const locked = getState().permissions.locked;
 
-				locked ? dispatch(unlock()) : dispatch(lock());
+				if (locked) {
+					dispatch(unlock());
+				} else { dispatch(lock()); }
 
 				break;
 			}
@@ -191,7 +195,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				const showStats = getState().ui.showStats;
 
 				dispatch(uiActions.setUi({ showStats: !showStats }));
-				
+
 				break;
 			}
 
@@ -216,17 +220,16 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			}
 
 			case ' ': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress, micEnabled, audioMuted, canSendMic } = getState().me;
 
 				if (audioInProgress) return;
 
 				const hasAudioPermission = audioPermissionSelector(getState());
-				const canSendMic = getState().me.canSendMic;
 
 				if (!hasAudioPermission || !canSendMic) return;
 
-				if (!getState().me.micEnabled) {
-					dispatch(updateMic());
+				if (micEnabled && audioMuted) {
+					dispatch(resumeMic());
 				}
 
 				break;
@@ -255,17 +258,16 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 		switch (key) {
 			case ' ': {
-				const audioInProgress = getState().me.audioInProgress;
+				const { audioInProgress, micEnabled, audioMuted, canSendMic } = getState().me;
 
 				if (audioInProgress) return;
 
 				const hasAudioPermission = audioPermissionSelector(getState());
-				const canSendMic = getState().me.canSendMic;
 
 				if (!hasAudioPermission || !canSendMic) return;
 
-				if (getState().me.micEnabled) {
-					dispatch(stopMic());
+				if (micEnabled && !audioMuted) {
+					dispatch(pauseMic());
 				}
 
 				break;
@@ -279,17 +281,27 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	document.addEventListener('keyup', keyupListener);
 
-	messageListener = async ({ data }: MessageEvent) => {
+	messageListener = async ({ data, origin }: MessageEvent) => {
 		if (data.type === 'edumeet-login') {
-			const { data: token } = data;
+			// validate origin
+			const url = edumeetConfig.managementUrl;
 
-			await (await managementService).authentication.setAccessToken(token);
+			if (url) {
+				const { host, protocol } = new URL(url);
 
-			dispatch(permissionsActions.setToken(token));
-			dispatch(permissionsActions.setLoggedIn(true));
+				if (origin && origin === `${protocol}//${host}`) {
+					const { data: token } = data;
 
-			if (getState().signaling.state === 'connected')
-				await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+					await (await managementService).authentication.setAccessToken(token);
+					await (await managementService).reAuthenticate();
+
+					dispatch(permissionsActions.setToken(token));
+					dispatch(permissionsActions.setLoggedIn(true));
+
+					if (getState().signaling.state === 'connected')
+						await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+				}
+			}
 		}
 	};
 

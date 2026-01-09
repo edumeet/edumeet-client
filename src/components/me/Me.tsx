@@ -79,7 +79,7 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 					{ micEnabled && !isMobile && <UnmuteAlert /> }
 
 					<DisplayName disabled={false} displayName={displayName} isMe />
-					{ !isMobile && showStats && <PeerStatsView /> }
+					{ !isMobile && showStats && <PeerStatsView source='webcam' /> }
 					<QualityIndicator />
 
 				</VideoBox>

@@ -1,3 +1,4 @@
+import edumeetConfig from '../../utils/edumeetConfig';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
@@ -18,7 +19,9 @@ export const getTenantFromFqdn = (fqdn: string): AppThunk<Promise<string | undef
 		const { data } = await (await managementService).service('tenantFQDNs').find({ query: { fqdn, $limit: 1 } });
 
 		tenantId = data[0]?.tenantId;
-	} catch (error) {}
+	} catch (error) {
+		logger.error('getTenantFromFqdn  [error:%o]', error);
+	}
 
 	return tenantId;
 };
@@ -43,8 +46,14 @@ export const createRoom = (roomName: string): AppThunk<Promise<void>> => async (
 		}
 	}
 };
+interface PaginatedResult {
+	total: number;
+	limit: number;
+	skip: number;
+	data: unknown[];
+}
 
-export const getData = (serviceName:string): AppThunk<Promise<object | undefined>> => async (
+export const getData = (serviceName: string): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,
 	{ managementService }
@@ -52,21 +61,47 @@ export const getData = (serviceName:string): AppThunk<Promise<object | undefined
 
 	logger.debug('getData() [serviceName:%s]', serviceName);
 
-	let data: object | undefined;
+	let data: PaginatedResult | undefined;
+
+	let tmpdata: PaginatedResult | undefined;
 
 	try {
-		data = await (await managementService).service(serviceName).find(
+		const svc = (await managementService).service(serviceName);
+
+		let increment = 1;
+
+		const init = await svc.find(
 			{
 				query: {
 					$limit: 9999,
 					$sort: {
 						id: 1,
-					
+
 					}
 				}
 			}
-		);
-	
+		) as PaginatedResult;
+
+		data = init;
+
+		while (init.limit * increment <= init.total && init.total!=0) {
+			tmpdata = await svc.find(
+				{
+					query: {
+						$limit: 9999,
+						$skip: init.limit * increment,
+						$sort: {
+							id: 1,
+
+						}
+					}
+				}
+			) as PaginatedResult;
+			if (data && data.hasOwnProperty('data') && tmpdata && tmpdata.hasOwnProperty('data'))
+				data.data.push(...tmpdata.data);
+			increment++;
+		}
+
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
@@ -79,7 +114,7 @@ export const getData = (serviceName:string): AppThunk<Promise<object | undefined
 	return data;
 };
 
-export const getDataByID = (id:string|number, serviceName:string): AppThunk<Promise<object | undefined>> => async (
+export const getDataByID = (id: string | number, serviceName: string): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,
 	{ managementService }
@@ -98,12 +133,12 @@ export const getDataByID = (id:string|number, serviceName:string): AppThunk<Prom
 					$limit: 9999,
 					$sort: {
 						id: 1,
-						
+
 					}
 				}
 			}
 		);
-	
+
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
@@ -115,7 +150,7 @@ export const getDataByID = (id:string|number, serviceName:string): AppThunk<Prom
 
 	return data;
 };
-export const getDataByTenantID = (id:string|number, serviceName:string): AppThunk<Promise<object | undefined>> => async (
+export const getDataByTenantID = (id: string | number, serviceName: string): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,
 	{ managementService }
@@ -138,7 +173,7 @@ export const getDataByTenantID = (id:string|number, serviceName:string): AppThun
 				}
 			}
 		);
-	
+
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
@@ -151,7 +186,7 @@ export const getDataByTenantID = (id:string|number, serviceName:string): AppThun
 	return data;
 };
 
-export const getDataByRoomId = (roomId:string|number, serviceName:string): AppThunk<Promise<object | undefined>> => async (
+export const getDataByRoomId = (roomId: string | number, serviceName: string): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,
 	{ managementService }
@@ -167,13 +202,14 @@ export const getDataByRoomId = (roomId:string|number, serviceName:string): AppTh
 			{
 				query: {
 					roomId: roomId,
+					$limit: 9999,
 					$sort: {
 						id: 1
 					}
 				}
 			}
 		);
-	
+
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
@@ -186,7 +222,7 @@ export const getDataByRoomId = (roomId:string|number, serviceName:string): AppTh
 	return data;
 };
 
-export const deleteData = (id : number, serviceName:string): AppThunk<Promise<object | undefined>> => async (
+export const deleteData = (id: number, serviceName: string): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,
 	{ managementService }
@@ -218,7 +254,7 @@ export const deleteData = (id : number, serviceName:string): AppThunk<Promise<ob
 	return data;
 };
 
-export const createData = (params : object, serviceName:string): AppThunk<Promise<object | undefined>> => async (
+export const createData = (params: object, serviceName: string): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,
 	{ managementService }
@@ -249,7 +285,7 @@ export const createData = (params : object, serviceName:string): AppThunk<Promis
 	return data;
 };
 
-export const patchData = (id : number, params : object, serviceName : string): AppThunk<Promise<object | undefined>> => async (
+export const patchData = (id: number, params: object, serviceName: string): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,
 	{ managementService }
@@ -294,7 +330,7 @@ export const getUserData = (): AppThunk<Promise<object | undefined>> => async (
 	try {
 		data = await (await managementService).reAuthenticate();
 	} catch (error) {
-		
+		logger.error('getUserData [error:%o]', error);
 	}
 
 	return data;
@@ -305,13 +341,13 @@ export const getRoomByName = (name: string): AppThunk<Promise<object | undefined
 	_getState,
 	{ managementService }
 ): Promise<object | undefined> => {
-	
+
 	logger.debug('getRooms()');
-	
+
 	let data: object | undefined;
-	
-	const serviceName='rooms';
-	
+
+	const serviceName = 'rooms';
+
 	try {
 		data = await (await managementService).service(serviceName).find(
 			{
@@ -323,12 +359,14 @@ export const getRoomByName = (name: string): AppThunk<Promise<object | undefined
 				}
 			}
 		);
-	} catch (error) {}
-	
+	} catch (error) { 
+		logger.error('getRoomByName [error:%o]', error);
+	}
+
 	return data;
 };
 
-export const createRoomWithParams = (params : object): AppThunk<Promise<object | undefined>> => async (
+export const createRoomWithParams = (params: object): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,
 	{ managementService }
@@ -338,20 +376,20 @@ export const createRoomWithParams = (params : object): AppThunk<Promise<object |
 
 	let data: object | undefined;
 
-	const serviceName='rooms';
+	const serviceName = 'rooms';
 
 	try {
 		data = await (await managementService).service(serviceName).create(
 			params
 		);
-	
+
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
 				message: `Creation unsuccessful: ${error.toString()}`,
 				options: { variant: 'error' }
 			}));
-		}			
+		}
 	}
 
 	return data;
@@ -367,17 +405,28 @@ export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('startMGMTListeners()');
 
-	messageListener = async ({ data }: MessageEvent) => {
+	messageListener = async ({ data, origin }: MessageEvent) => {
 		if (data.type === 'edumeet-login') {
-			const { data: token } = data;
+			// validate origin
+			const url = edumeetConfig.managementUrl;
 
-			await (await managementService).authentication.setAccessToken(token);
+			if (url) {
+				const { host, protocol } = new URL(url);
 
-			dispatch(permissionsActions.setToken(token));
-			dispatch(permissionsActions.setLoggedIn(true));
+				if (origin && origin === `${protocol}//${host}`) {
+					const { data: token } = data;
 
-			if (getState().signaling.state === 'connected')
-				await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+					await (await managementService).authentication.setAccessToken(token);
+					await (await managementService).reAuthenticate();
+
+					dispatch(permissionsActions.setToken(token));
+					dispatch(permissionsActions.setLoggedIn(true));
+
+					if (getState().signaling.state === 'connected')
+						await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+				}
+			}
+
 		}
 	};
 

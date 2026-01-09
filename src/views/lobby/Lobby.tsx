@@ -29,7 +29,7 @@ const Lobby = (): React.JSX.Element => {
 
 	const handleDisplayNameChange = () => {
 		dispatch(setDisplayName(
-			(localDisplayName?.trim() ? localDisplayName : localDisplayName?.trim()) ?? 'Guest'
+			(localDisplayName?.trim() ? localDisplayName : localDisplayName?.trim()) || 'Guest'
 		));
 	};
 
@@ -38,6 +38,7 @@ const Lobby = (): React.JSX.Element => {
 
 	return (
 		<GenericDialog
+			precallTitleBackground={true}
 			title={ <PrecallTitle /> }
 			content={
 				<>

@@ -349,5 +349,7 @@
   "label.management.room.breakoutsEnabled": "Włącz pokoje grupowe",
   "label.management.room.owners": "Właściciele",
   "label.management.tenantAdmin": "Administrator instytucji",
-  "settings.selectVideoBackground": "Wybierz tło wideo"
+  "settings.selectVideoBackground": "Wybierz tło wideo",
+  "room.reaction": null,
+  "label.management.room.reactionsEnabled": null
 }

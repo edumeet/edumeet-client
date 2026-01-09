@@ -108,6 +108,7 @@ export class ClientImageService {
 			const fileHandle = await this.imagesDirHandle.getFileHandle(name, { create: false });
 
 			return await fileHandle.getFile();
+		// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 		} catch (NotFoundError) {
 			logger.warn(`File ${name} not found.`);
 

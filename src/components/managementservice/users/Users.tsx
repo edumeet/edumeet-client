@@ -3,7 +3,7 @@ import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Checkbox, FormControlLabel, Autocomplete } from '@mui/material';
 import { Tenant, User } from '../../../utils/types';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, nameLabel, noLabel, rolesLabel, tenantAdminLabel, tenantLabel, tenantOwnerLabel, undefinedLabel, yesLabel } from '../../translated/translatedComponents';
 
@@ -45,11 +45,13 @@ const UserTable = () => {
 			},
 			{
 				accessorKey: 'email',
-				header: 'email'
+				header: 'email',
+				Cell: ({ cell }) => (cell.getValue<string>() ? String(cell.getValue<string>()) : 'Hidden email')
 			},
 			{
 				accessorKey: 'name',
-				header: nameLabel()
+				header: nameLabel(),
+				Cell: ({ cell }) => (cell.getValue<string>() ? String(cell.getValue<string>()) : 'Hidden name')
 			},
 			{
 				accessorKey: 'avatar',
@@ -78,7 +80,7 @@ const UserTable = () => {
 		[ tenants ],
 	);
 
-	const [ data, setData ] = useState([]);
+	const [ data, setData ] = useState<User[]>([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ ssoId, setSsoId ] = useState('');
@@ -86,9 +88,15 @@ const UserTable = () => {
 	const [ email, setEmail ] = useState('');
 	const [ name, setName ] = useState('');
 	const [ avatar, setAvatar ] = useState('');
-	const [ tenantAdmin, setTenantAdmin ] = useState(false);
-	const [ tenantOwner, setTenantOwner ] = useState(false);
+	const [ tenantAdminBox, setTenantAdminBox ] = useState(false);
+	const [ tenantOwnerBox, setTenantOwnerBox ] = useState(false);
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
+
+	const { tenantAdmin, tenantOwner, superAdmin, email: userEmail } = useAppSelector((state) => state.management);
+	
+	const isAdmin = tenantAdmin || tenantOwner || superAdmin;
+	const isSelf = userEmail === email && userEmail !== '';
+	const cannotEdit = !isAdmin && !isSelf;
 
 	async function fetchProduct() {
 
@@ -128,8 +136,8 @@ const UserTable = () => {
 		setEmail('');
 		setName('');
 		setAvatar('');
-		setTenantAdmin(false);
-		setTenantOwner(false);
+		setTenantAdminBox(false);
+		setTenantOwnerBox(false);
 		setOpen(true);
 	};
 
@@ -159,10 +167,10 @@ const UserTable = () => {
 		setAvatar(event.target.value);
 	};
 	const handleTenantAdminChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
-		setTenantAdmin(event.target.checked);
+		setTenantAdminBox(event.target.checked);
 	};
 	const handleTenantOwnerChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
-		setTenantOwner(event.target.checked);
+		setTenantOwnerBox(event.target.checked);
 	};
 
 	const handleClose = () => {
@@ -174,7 +182,6 @@ const UserTable = () => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'users')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -183,14 +190,9 @@ const UserTable = () => {
 	};
 
 	const addUser = async () => {
-
-		// add new data / mod data / error
+		// only edit with limited fields createData will not work
 		if (name != '' && id === 0) {
-
 			dispatch(createData({ 
-				ssoId: ssoId,
-				tenantId: tenantId,
-				email: email,
 				name: name,
 				avatar: avatar
 			}, 'users')).then(() => {
@@ -198,11 +200,7 @@ const UserTable = () => {
 				setOpen(false);
 			});
 		} else if (name != '' && id != 0) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(patchData(id, { 
-				ssoId: ssoId,
-				tenantId: tenantId,
-				email: email,
 				name: name,
 				avatar: avatar
 			}, 'users')).then(() => {
@@ -210,14 +208,15 @@ const UserTable = () => {
 				setOpen(false);
 			});
 		}
-
 	};
 
 	return <>
 		<div>
-			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				{addNewLabel()}
-			</Button>
+			{ false &&
+				<Button variant="outlined" onClick={() => handleClickOpen()}>
+					{addNewLabel()}
+				</Button>
+			}
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
 				<DialogTitle>{manageItemLabel()}</DialogTitle>
@@ -227,7 +226,6 @@ const UserTable = () => {
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<TextField
-						autoFocus
 						margin="dense"
 						id="ssoId"
 						label="ssoId"
@@ -236,6 +234,7 @@ const UserTable = () => {
 						fullWidth
 						onChange={handleSsoIdChange}
 						value={ssoId}
+						disabled
 					/>
 					<Autocomplete
 						options={tenants}
@@ -246,10 +245,10 @@ const UserTable = () => {
 						onChange={handleTenantIdChange}
 						value={tenantIdOption}
 						sx={{ marginTop: '8px' }}
+						disabled
 						renderInput={(params) => <TextField {...params} label="Tenant" />}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="email"
 						label="Email"
@@ -258,9 +257,9 @@ const UserTable = () => {
 						fullWidth
 						onChange={handleEmailChange}
 						value={email}
+						disabled
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="name"
 						label="Name"
@@ -269,6 +268,7 @@ const UserTable = () => {
 						fullWidth
 						onChange={handleNameChange}
 						value={name}
+						disabled={cannotEdit}
 					/>
 					<TextField
 						margin="dense"
@@ -278,96 +278,58 @@ const UserTable = () => {
 						fullWidth
 						onChange={handleAvatarChange}
 						value={avatar}
+						disabled={cannotEdit}
 					/>
 					{/* roles */}
-					<FormControlLabel control={<Checkbox disabled checked={tenantAdmin} onChange={handleTenantAdminChange} />} label="tenantAdmin" />
-					<FormControlLabel control={<Checkbox disabled checked={tenantOwner} onChange={handleTenantOwnerChange} />} label="tenantOwner" />
+					<FormControlLabel control={<Checkbox disabled checked={tenantAdminBox} onChange={handleTenantAdminChange} />} label="tenantAdmin" />
+					<FormControlLabel control={<Checkbox disabled checked={tenantOwnerBox} onChange={handleTenantOwnerChange} />} label="tenantOwner" />
 
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delUser} color='warning'>{deleteLabel()}</Button>
+					{ false &&
+						<Button onClick={delUser} color='warning'>{deleteLabel()}</Button>
+					}
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
-					<Button onClick={addUser}>{applyLabel()}</Button>
+					<Button onClick={addUser} disabled={cannotEdit || name.trim() === ''}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
-		<MaterialReactTable
+		<MaterialReactTable<User>
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
+					const u = row.original;
 
-					const r = row.getAllCells();
+					setId(typeof u.id === 'number' ? u.id : parseInt(String(u.id)));
+					setSsoId(typeof u.ssoId === 'string' ? u.ssoId : '');
+					setEmail(typeof u.email === 'string' ? u.email : '');
+					setName(typeof u.name === 'string' ? u.name : '');
+					setAvatar(typeof u.avatar === 'string' ? u.avatar : '');
 
-					const tid = r[0].getValue();
-					const tssoId=r[1].getValue();
-					const ttenantId=r[2].getValue();
-					const temail=r[3].getValue();
-					const tname=r[4].getValue();
-					const tavatar=r[5].getValue();
-					// const troles=r[6].getValue();
-					// const ttenantAdmin=r[7].getValue();
-					// const ttenantOwner=r[8].getValue();
-	
-					if (typeof tid === 'number') {
-						setId(tid);
-					} else if (typeof tid == 'string') {
-						setId(parseInt(tid));
-					}
+					if (u.tenantId != null) {
+						let tid = typeof u.tenantId === 'number' ? u.tenantId : parseInt(String(u.tenantId));
 
-					if (typeof tssoId === 'string') {
-						setSsoId(tssoId);
-					} else {
-						setSsoId('');
-					}
-					if (typeof ttenantId === 'number') {
-						const ttenant = tenants.find((x) => x.id == ttenantId);
+						setTenantId(tid);
 
-						if (ttenant) {
-							setTenantIdOption(ttenant);
-						}
-						setTenantId(ttenantId);
-					} else if (typeof ttenantId === 'string') {
-						const ttenant = tenants.find((x) => x.id === parseInt(ttenantId));
+						const ttenant = tenants.find((x) => x.id == tid);
 
-						if (ttenant) {
-							setTenantIdOption(ttenant);
-						}
-						setTenantId(parseInt(ttenantId));
+						if (ttenant) setTenantIdOption(ttenant);
+
+						// hack for eslint - we do not want to delete code that might be used in the future
+						if (tenantId === tid) tid = tenantId;
+
 					} else {
 						setTenantId(0);
+						setTenantIdOption(undefined);
 					}
-					if (typeof temail === 'string') {
-						setEmail(temail);
-					} else {
-						setEmail('');
-					}
-					if (typeof tname === 'string') {
-						setName(tname);
-					} else {
-						setName('');
-					}
-					if (typeof tavatar === 'string') {
-						setAvatar(tavatar);
-					} else {
-						setAvatar('');
-					}
-					// todo roles
-					/* if (ttenantAdmin === true) {
-						setTenantAdmin(true);
-					} else {
-						setTenantAdmin(false);
-					}
-					if (ttenantOwner === true) {
-						setTenantOwner(true);
-					} else {
-						setTenantOwner(false);
-					} */
+
+					setTenantAdminBox(Boolean(u.tenantAdmin));
+					setTenantOwnerBox(Boolean(u.tenantOwner));
 
 					handleClickOpenNoreset();
-
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={data}
 			initialState={{
 				columnVisibility: {
 					avatar: false,

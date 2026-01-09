@@ -102,11 +102,17 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	reactionsSoundEnabled: false,
 	title: 'edumeet',
 	randomizeOnBlank: true,
+	keepRoomNameOnLeave: true,
 	transcriptionEnabled: true,
 	theme: {
 		background: 'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
 		appBarColor: 'rgba(0, 0, 0, 0.4)',
+		appBarTextColor: 'rgba(255, 255, 255, 1.0)',
+		appBarIconColor: 'rgba(255, 255, 255, 1.0)',
 		appBarFloating: true,
+		precallTitleColor: 'rgba(255, 255, 255, 1.0)',
+		precallTitleTextColor: 'rgba(0, 0, 0, 1.0)',
+		precallTitleIconColor: 'rgba(0, 0, 0, 1.0)',
 		logo: 'images/logo.edumeet.svg',
 		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
 		videoBackroundColor: 'rgba(49, 49, 49, 0.9)',
@@ -168,6 +174,7 @@ export interface EdumeetConfig {
 	reactionsSoundEnabled: boolean;
 	title: string;
 	randomizeOnBlank: boolean;
+	keepRoomNameOnLeave: boolean;
 	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
@@ -325,6 +332,7 @@ export type Tenant = {
 	name: string,
 	description: string
 };
+export type TenantOptionTypes = Array<Tenant>
 
 export type TenantFQDN = {
 	id: number,
@@ -355,6 +363,7 @@ export type User = {
 	tenantAdmin: boolean,
 	tenantOwner: boolean
 };
+export type UserTypes = Array<User>;
 
 export type Roles = {
 	id: number,
@@ -363,6 +372,8 @@ export type Roles = {
 	tenantId: number
 	permissions: Array<Permissions>
 };
+
+export type RoleOptionTypes = Array<Roles>
 
 export type GroupRoles = {
 	id: number,
@@ -456,3 +467,32 @@ export type Rule = {
 	action: string,
 	type: string,
 }
+export type Default = {
+	id: number,
+	tenantId: string, // number,
+	numberLimit: string, // number,
+	liveNumberLimit: string, // number,
+	userManagedRoomNumberLimit: string, // number,
+	managerManagedRoomNumberLimit: string, // number,
+	lockedUnmanaged: boolean | undefined,
+	raiseHandEnabledUnmanaged: boolean | undefined,
+	localRecordingEnabledUnmanaged: boolean | undefined,
+	lockedLock: boolean | undefined,
+	raiseHandEnabledLock: boolean | undefined,
+	localRecordingEnabledLock: boolean | undefined,
+	chatEnabledUnmanaged: boolean | undefined,
+	breakoutsEnabledUnmanaged: boolean | undefined,
+	filesharingEnabledUnmanaged: boolean | undefined,
+	reactionsEnabledLock: boolean | undefined,
+	reactionsEnabledUnmanaged: boolean | undefined,
+	chatEnabledLock: boolean | undefined,
+	breakoutsEnabledLock: boolean | undefined,
+	filesharingEnabledLock: boolean | undefined,
+	tracker: string,
+	maxFileSize: string, // number,
+	background: string,
+	logo: string,
+	defaultRoleId: string, // number,
+	tenantPermissionLimitRole: string, // number,
+}
+export type DefaultOptionTypes = Array<Default>

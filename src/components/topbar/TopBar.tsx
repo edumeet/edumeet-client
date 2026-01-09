@@ -1,4 +1,4 @@
-import { AppBar, Box, Chip, Hidden, Popover, Toolbar, Typography, useMediaQuery } from '@mui/material';
+import { AppBar, Box, Chip, Popover, Toolbar, Typography, useMediaQuery } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { useAppSelector, usePermissionSelector } from '../../store/hooks';
@@ -31,6 +31,7 @@ const StyledChip = styled(Chip)({
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
 	backgroundColor: theme.appBarColor,
+	color: theme.appBarTextColor,
 	...(theme.appBarFloating && {
 		top: 4,
 		left: 4,
@@ -41,6 +42,12 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 		minHeight: 40,
 		paddingLeft: theme.spacing(1),
 		paddingRight: theme.spacing(1),
+	},
+	'& .MuiIconButton-root': {
+		color: theme.appBarIconColor,
+	},
+	'& .MuiSvgIcon-root': {
+		color: theme.appBarIconColor,
 	}
 }));
 const StyledBox = styled(Box)(() => ({
@@ -54,6 +61,7 @@ const LogoImg = styled('img')(({ theme }) => ({
 	marginRight: theme.spacing(1),
 	maxWidth: 200,
 	maxHeight: 32,
+	height: 32,
 	[theme.breakpoints.up('sm')]: {
 		display: 'block'
 	}
@@ -77,7 +85,7 @@ const TopBarDiv = styled('div')<TopBarDivProps>(({ theme, gap = 0, grow = 0, mar
 }));
 
 const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): React.JSX.Element => {
-	const logo = useAppSelector((state) => state.room.logo);
+	const logo = useAppSelector((state) => state.room.logo) || edumeetConfig.theme.logo;
 	const canLock = usePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 	const canPromote = usePermissionSelector(permissions.PROMOTE_PEER);
 	const loginEnabled = useAppSelector((state) => state.permissions.loginEnabled);
@@ -150,11 +158,11 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 				<TopBarDiv grow={1} />
 				<TopBarDiv marginRight={1}>
 					{ someoneIsRecording && <RecordIcon color='error' /> }
-					<Hidden smUp>
+					<Box sx={{ display: { xs: 'block', sm: 'none' } }}>
 						<ControlButton type='iconbutton' onClick={handleClick} >
 							<MoreIcon />
 						</ControlButton>
-					</Hidden>
+					</Box>
 					<Popover
 						id={id}
 						open={open && isSm}
@@ -179,9 +187,9 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 						</StyledBox>
 					</Popover>
 
-					<Hidden smDown>
+					<Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
 						{menuItems}
-					</Hidden>
+					</Box>
 				</TopBarDiv>
 				<TopBarDiv marginRight={1}>
 					<StyledChip size='small' label={ formatDuration(meetingDuration) } />

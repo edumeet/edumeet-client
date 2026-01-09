@@ -171,7 +171,6 @@ const TenantOwnerTable = () => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'tenantOwners')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -205,6 +204,12 @@ const TenantOwnerTable = () => {
 
 	};
 
+	const getUserLabel = (u: User): string => {
+		if (u?.email) return `${u.id} - ${u.email}`;
+
+		return String(u?.id ?? '');
+	};
+
 	return <>
 		<div>
 			<h4>{tenantOwnersLabel()}</h4>
@@ -221,7 +226,7 @@ const TenantOwnerTable = () => {
 					<input type="hidden" name="id" value={id} />
 					<Autocomplete
 						options={users}
-						getOptionLabel={(option) => option.email}
+						getOptionLabel={(option) => getUserLabel(option)}
 						fullWidth
 						disableClearable
 						readOnly={userIdOptionDisabled}

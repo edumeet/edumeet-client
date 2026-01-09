@@ -88,7 +88,6 @@ const PermissionTable = () => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'permissions')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -146,7 +145,6 @@ const PermissionTable = () => {
 						value={name}
 					/>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="description"
 						label="description"

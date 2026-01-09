@@ -50,7 +50,7 @@ import { FileService } from '../services/fileService';
 import roomSessionsSlice from './slices/roomSessionsSlice';
 import type { Application } from '@feathersjs/feathers/lib';
 import { EffectsService } from '../services/effectsService';
-import { createClientMonitor } from '@observertc/client-monitor-js';
+import { ClientMonitor } from '@observertc/client-monitor-js';
 import createEffectsMiddleware from './middlewares/effectsMiddleware';
 import { ClientImageService } from '../services/clientImageService';
 
@@ -82,7 +82,7 @@ const persistConfig = {
 	stateReconciler: autoMergeLevel2,
 	whitelist: [ 'settings' ]
 };
-const monitor = edumeetConfig.clientMontitor ? createClientMonitor(edumeetConfig.clientMontitor) : undefined;
+const monitor = edumeetConfig.clientMontitor ? new ClientMonitor(edumeetConfig.clientMontitor) : undefined;
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
 const managementService = (async () => {

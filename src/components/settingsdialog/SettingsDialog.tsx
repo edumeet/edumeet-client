@@ -1,8 +1,12 @@
-import { Button, Tab, Tabs } from '@mui/material';
+import { Button, Tab, Tabs, useMediaQuery, useTheme } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SettingsTab, uiActions } from '../../store/slices/uiSlice';
 import { advancedSettingsLabel, appearanceSettingsLabel, closeLabel, managementSettingsLabel, mediaSettingsLabel } from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
+import PhotoIcon from '@mui/icons-material/Photo';
+import PaletteIcon from '@mui/icons-material/Palette';
+import TuneIcon from '@mui/icons-material/Tune';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import MediaSettings from './MediaSettings';
 import AppearanceSettings from './AppearanceSettings';
 import GenericDialog from '../genericdialog/GenericDialog';
@@ -23,6 +27,9 @@ const SettingsDialog = (): React.JSX.Element => {
 	const currentSettingsTab = useAppSelector((state) => state.ui.currentSettingsTab);
 	const closeButtonDisabled = useAppSelector((state) => state.me.videoInProgress || state.me.audioInProgress);
 
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
 	const handleCloseSettings = (): void => {
 		dispatch(uiActions.setUi({
 			settingsOpen: !settingsOpen
@@ -39,25 +46,42 @@ const SettingsDialog = (): React.JSX.Element => {
 					<Tabs
 						value={tabs.indexOf(currentSettingsTab)}
 						onChange={(_event, value) => {
-							if ((!edumeetConfig.loginEnabled && tabs[value]!=='management') || edumeetConfig.loginEnabled) {
+							if ((!edumeetConfig.loginEnabled && tabs[value] !== 'management') || edumeetConfig.loginEnabled) {
 								dispatch(uiActions.setCurrentSettingsTab(tabs[value]));
-							} 
-						}
-						}
+							}
+						}}
 						centered
-						scrollButtons="auto"
-						allowScrollButtonsMobile
+						variant={isMobile ? 'scrollable' : 'standard'}
+						scrollButtons={isMobile ? 'auto' : false}
+						allowScrollButtonsMobile={isMobile}
 					>
-						<Tab label={mediaSettingsLabel()} />
-						<Tab label={appearanceSettingsLabel()} />
-						<Tab label={advancedSettingsLabel()} />
-						{ edumeetConfig.loginEnabled && <Tab label={managementSettingsLabel()}/> } 
+						<Tab
+							label={isMobile ? undefined : mediaSettingsLabel()}
+							icon={isMobile ? <PhotoIcon /> : undefined}
+							aria-label={mediaSettingsLabel()}
+						/>
+						<Tab
+							label={isMobile ? undefined : appearanceSettingsLabel()}
+							icon={isMobile ? <PaletteIcon /> : undefined}
+							aria-label={appearanceSettingsLabel()}
+						/>
+						<Tab
+							label={isMobile ? undefined : advancedSettingsLabel()}
+							icon={isMobile ? <TuneIcon /> : undefined}
+							aria-label={advancedSettingsLabel()}
+						/>
+						{edumeetConfig.loginEnabled && (
+							<Tab
+								label={isMobile ? undefined : managementSettingsLabel()}
+								icon={isMobile ? <AdminPanelSettingsIcon /> : undefined}
+								aria-label={managementSettingsLabel()}
+							/>
+						)}
 					</Tabs>
-					{ currentSettingsTab === 'media' && <MediaSettings /> }
-					{ currentSettingsTab === 'appearance' && <AppearanceSettings /> }
-					{ currentSettingsTab === 'advanced' && <AdvancedSettings /> }
-					{ currentSettingsTab === 'management' && <MangagementSettings /> }
-
+					{currentSettingsTab === 'media' && <MediaSettings />}
+					{currentSettingsTab === 'appearance' && <AppearanceSettings />}
+					{currentSettingsTab === 'advanced' && <AdvancedSettings />}
+					{currentSettingsTab === 'management' && <MangagementSettings />}
 				</>
 			}
 			actions={
@@ -68,7 +92,7 @@ const SettingsDialog = (): React.JSX.Element => {
 					size='small'
 					disabled={closeButtonDisabled}
 				>
-					{ closeLabel()}
+					{closeLabel()}
 				</Button>
 			}
 		/>

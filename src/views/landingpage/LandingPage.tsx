@@ -36,6 +36,7 @@ const LandingPage = (): React.JSX.Element => {
 		<StyledBackground>
 			<GenericDialog
 				showFooter={true}
+				precallTitleBackground={true}
 				title={ <PrecallTitle /> }
 				content={
 					<Container style={{ textAlign: 'center' }}>

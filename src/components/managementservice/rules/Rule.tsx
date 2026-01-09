@@ -4,7 +4,7 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel, Box } from '@mui/material';
 import React from 'react';
 import { Groups, Rule, Tenant } from '../../../utils/types';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
 
@@ -14,6 +14,7 @@ const RuleTable = () => {
 	type TenantOptionTypes = Array<Tenant>
 
 	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
+	const { superAdmin } = useAppSelector((state) => state.management);
 
 	const getTenantName = (id: string): string => {
 		const t = tenants.find((type) => type.id == parseInt(id));
@@ -206,7 +207,6 @@ const RuleTable = () => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(deleteData(id, 'rules')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -342,7 +342,6 @@ const RuleTable = () => {
 						</Select>
 					</FormControl>
 					<TextField
-						autoFocus
 						margin="dense"
 						id="parameter"
 						label="parameter"
@@ -381,7 +380,6 @@ const RuleTable = () => {
 					</Box>
 
 					<TextField
-						autoFocus
 						margin="dense"
 						id="value"
 						label="value"
@@ -410,7 +408,7 @@ const RuleTable = () => {
 								<MenuItem value={'groupUsers'}>Make user group member</MenuItem>
 								<MenuItem value={'tenantOwners'}>Make user tenant owner</MenuItem>
 								<MenuItem value={'tenantAdmins'}>Make user tenant admin</MenuItem>
-								<MenuItem value={'superAdmin'}>Make user super admin</MenuItem>
+								<MenuItem value={'superAdmin'} disabled={!superAdmin}>Make user super admin</MenuItem>
 							</Select>
 						</FormControl>
 						{action=='groupUsers' && 

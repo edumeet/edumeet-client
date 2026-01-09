@@ -1,212 +1,342 @@
 /**
- * Edumeet App Configuration
+ * eduMEET client configuration (example) — 4.2+
  *
- * The configuration documentation is available also:
- * - in the app/README.md file in the source tree
+ * This file is loaded by the browser (public/config/config.example.js) and must define
+ * a single global `config` object (window.config).
+ *
+ * Notes:
+ * - You can override only what you need. Unspecified keys fall back to built-in defaults.
+ * - `theme` is merged into the app's Material UI theme (ThemeOptions), so you can override
+ *	 any MUI theme option (e.g. `palette.primary.main`).
  */
 
-// eslint-disable-next-line
 var config = {
-	// If enabled QR code will show at the join dialog
-	qrCodeEnabled: false,
-	// If enabled countdownTimer will be enabled in the room.
-	countdownTimerEnabled: false,
-	// If enabled a Tooltip will show at the landing page and join dialog bottom
-	infoTooltipEnabled: false,
-	infoTooltipText: 'Tooltip text',
-	infoTooltipLink: '',
-	infoTooltipDesc: 'Tooltip desc ... Lorem ipsum',
-	// Location of management service.
-	managementUrl: 'http://localhost:3030',
-	// Location of the privacy files.
-	imprintUrl: '',
-	privacyUrl: '',
+	/**
+	 * If true, the user must authenticate before joining.
+	 */
+	loginEnabled: false,
 
-	loginImageURL: '',
-	// If ability to log in is enabled.
-	loginEnabled: true,
+	/**
+	 * Optional: management service URL (used by some deployments).
+	 * Leave undefined to disable.
+	 */
+	managementUrl: undefined,
 
-	// The development server listening port.
+	/**
+	 * Room-server websocket port used in development builds.
+	 */
 	developmentPort: 8443,
 
-	// The production server listening port.
+	/**
+	 * Room-server websocket port used in production builds.
+	 */
 	productionPort: 443,
 
-	// If the server component runs on a different host than the app you can specify the host name.
-	serverHostname: '',
+	/**
+	 * Optional: room-server hostname if it runs on a different host than the client.
+	 * Leave undefined to use the current host.
+	 */
+	serverHostname: undefined,
 
-	// Join dialog defaults to ask for media, this can be disabled by setting this to false.
+	/**
+	 * When leaving a room, keep the room name in the URL (handy for re-joining).
+	 */
+	keepRoomNameOnLeave: true,
+
+	/**
+	 * Ask for camera/microphone permissions on join.
+	 */
 	askForMediaOnJoin: true,
 
-	// Don't show the participant tile if the user has no video
-	hideNonVideo: false,
-
-	// The default video camera capture resolution.
+	/**
+	 * Default webcam capture resolution: low | medium | high | veryhigh | ultra
+	 */
 	resolution: 'medium',
 
-	// The default video camera capture framerate.
+	/**
+	 * Default webcam capture framerate (fps).
+	 */
 	frameRate: 30,
 
-	// The default screen sharing resolution.
+	/**
+	 * Default screen sharing resolution: low | medium | high | veryhigh | ultra
+	 */
 	screenSharingResolution: 'veryhigh',
 
-	// The default screen sharing framerate.
+	/**
+	 * Default screen sharing framerate (fps).
+	 */
 	screenSharingFrameRate: 5,
 
-	// Video aspect ratio.
-	aspectRatio: 1.778,
-
-	// Enable or disable simulcast for webcam video.
+	/**
+	 * Enable/disable simulcast for webcam video.
+	 */
 	simulcast: true,
 
-	// Enable or disable simulcast for screen sharing video.
+	/**
+	 * Enable/disable simulcast for screen sharing video.
+	 */
 	simulcastSharing: false,
 
-	// Auto gain control enabled.
-	autoGainControl: true,
-
-	// Echo cancellation enabled.
-	echoCancellation: true,
-
-	// Noise suppression enabled.
-	noiseSuppression: true,
-
-	// The audio sample rate.
-	sampleRate: 48000,
-
-	// The audio channels count.
-	channelCount: 1,
-
-	// The audio sample size count.
-	sampleSize: 16,
-
-	// If OPUS FEC stereo be enabled.
-	opusStereo: false,
-
-	// If OPUS DTX should be enabled.
-	opusDtx: true,
-
-	// If OPUS FEC should be enabled.
-	opusFec: true,
-
-	// The OPUS packet time.
-	opusPtime: 20,
-
-	// The OPUS playback rate.
-	opusMaxPlaybackRate: 48000,
-
-	// The audio preset
-	audioPreset: 'conference',
-
-	// The audio presets.
-	audioPresets: {
-		'conference': {
-			'name': 'Conference audio',
-			'autoGainControl': true,
-			'echoCancellation': true,
-			'noiseSuppression': true,
-			'sampleRate': 48000,
-			'channelCount': 1,
-			'sampleSize': 16,
-			'opusStereo': false,
-			'opusDtx': true,
-			'opusFec': true,
-			'opusPtime': 20,
-			'opusMaxPlaybackRate': 48000
-		},
-		'hifi': {
-			'name': 'HiFi streaming',
-			'autoGainControl': false,
-			'echoCancellation': false,
-			'noiseSuppression': false,
-			'sampleRate': 48000,
-			'channelCount': 2,
-			'sampleSize': 16,
-			'opusStereo': true,
-			'opusDtx': false,
-			'opusFec': true,
-			'opusPtime': 60,
-			'opusMaxPlaybackRate': 48000
-		}
-	},
-
-	// If true, the media control buttons will be shown in separate control bar, not in the ME container.
-	buttonControlBar: true,
-
-	// It sets the notifications sounds.
-	// Valid keys are: 'parkedPeer', 'parkedPeers', 'raisedHand', 
-	// 'chatMessage', 'sendFile', 'newPeer' and 'default'.
-	// Not defining a key is equivalent to using the default notification sound.
-	// Setting 'play' to null disables the sound notification.
-	notificationSounds: {
-		'chatMessage': {
-			'play': '/sounds/notify-chat.mp3'
-		},
-		'raisedHand': {
-			'play': '/sounds/notify-hand.mp3'
-		},
-		'finishedCountdownTimer': {
-			'play': '/sounds/notify-countdowntimer.mp3'
-		},
-		'reactionThumbup' : {
-			'play' : '/sounds/notify-thumbup.mp3',
-		},
-		'reactionClap' : {
-			'play' : '/sounds/notify-clap.mp3',
-		},
-		'reactionParty' : {
-			'play' : '/sounds/notify-party.mp3',
-		},
-		'reactionLaugh' : {
-			'play' : '/sounds/notify-laugh.mp3',
-		},
-		'default': {
-			'debounce': 5000,
-			'play': '/sounds/notify.mp3'
-		}
-	},
-
-	// Enable or disable reactions sound notifications
-	reactionsSoundEnabled: false,
-
-	// The title to show if the logo is not specified.
-	title: 'edumeet',
-
-	// If true, a random room name will be generated when the input field is blank;
-	// otherwise, it will remain empty and users will have to enter a room name.
-	randomizeOnBlank: true,
-
-	// Enable or disable transcription.
+	/**
+	 * Enable/disable transcription UI.
+	 */
 	transcriptionEnabled: true,
 
-	// Imprint. If you want to link your imprint, please provide a URL in this variable. If it is empty, no link will be shown.
-	imprintUrl: '',
+	/**
+	 * Randomize the room name when it is blank.
+	 */
+	randomizeOnBlank: true,
 
-	// Privacy notice. If you want to link your privacy notices, please provide a URL in this variable. If it is empty, no link will be shown.
+	/**
+	 * Optional: enable QR code display in UI.
+	 */
+	qrCodeEnabled: false,
+
+	/**
+	 * Optional: enable countdown timer in UI.
+	 */
+	countdownTimerEnabled: false,
+
+	/**
+	 * Optional: enable "info" tooltip in UI.
+	 */
+	infoTooltipEnabled: false,
+
+	/**
+	 * Optional: info tooltip title/description/link (used when infoTooltipEnabled is true).
+	 */
+	infoTooltipText: '',
+	infoTooltipDesc: '',
+	infoTooltipLink: '',
+
+	/**
+	 * Optional: show imprint/privacy links (blank hides them).
+	 */
+	imprintUrl: '',
 	privacyUrl: '',
 
-	// Time how long reactions are shown.
+	/**
+	 * Optional: login page image URL (blank disables).
+	 */
+	loginImageURL: '',
+
+	/**
+	 * Optional: hide participants without video.
+	 */
+	hideNonVideo: false,
+
+	/**
+	 * Optional: hide local self view.
+	 */
+	hideSelfView: false,
+
+	/**
+	 * Optional: enable reactions sound effects.
+	 */
+	reactionsSoundEnabled: false,
+
+	/**
+	 * Optional: time (ms) reactions remain visible.
+	 */
 	reactionsTimeout: 10000,
 
-	// Client theme. Take a look at mui theme documentation.
-	theme: {
-		palette: {
-			primary: {
-				main: '#313131',
-			}
+	/**
+	 * Optional: enable redux action logging (debug).
+	 */
+	reduxLoggingEnabled: false,
+
+	/**
+	 * Optional: enable p2p mode if supported by deployment.
+	 */
+	p2penabled: false,
+
+	/**
+	 * Audio preset name to use by default. Must exist in `audioPresets`.
+	 */
+	audioPreset: 'conference',
+
+	/**
+	 * Audio presets.
+	 * Each preset defines WebRTC audio constraints and OPUS encoder settings.
+	 */
+	audioPresets: {
+		// Default preset for meetings
+		conference: {
+			autoGainControl: true,
+			echoCancellation: true,
+			noiseSuppression: true,
+
+			sampleRate: 48000,
+			channelCount: 1,
+			sampleSize: 16,
+
+			opusStereo: false,
+			opusDtx: false,
+			opusFec: true,
+			opusPtime: 20,
+			opusMaxPlaybackRate: 48000
 		},
-		// The page background image URL
-		backgroundImage: 'images/background.jpg',
-		appBarColor: '#313131', // AppBar background color
-		appBarFloating: true, // If true, the AppBar will be moved in a bit from the top and sides of the page
-		// If not null, it shows the logo loaded from the specified URL, otherwise it shows the title.
+
+		// Example: low-bandwidth preset
+		low: {
+			autoGainControl: true,
+			echoCancellation: true,
+			noiseSuppression: true,
+
+			sampleRate: 16000,
+			channelCount: 1,
+			sampleSize: 16,
+
+			opusStereo: false,
+			opusDtx: true,
+			opusFec: true,
+			opusPtime: 20,
+			opusMaxPlaybackRate: 16000
+		}
+	},
+
+	/**
+	 * Global audio constraint defaults (used by the currently selected preset).
+	 * You typically don't need to override these if you use audioPresets.
+	 */
+	autoGainControl: true,
+	echoCancellation: true,
+	noiseSuppression: true,
+	sampleRate: 48000,
+	channelCount: 1,
+	sampleSize: 16,
+
+	/**
+	 * OPUS defaults (used by the currently selected preset).
+	 */
+	opusStereo: false,
+	opusDtx: false,
+	opusFec: true,
+	opusPtime: 20,
+	opusMaxPlaybackRate: 48000,
+
+	/**
+	 * Optional: noise threshold used by parts of the UI.
+	 */
+	noiseThreshold: 0.2,
+
+	/**
+	 * Notification sound configuration.
+	 */
+	notificationSounds: {
+		// Enable/disable all notification sounds
+		enabled: true
+	},
+
+	/**
+	 * ObserverRTC client-monitor configuration (if you use it).
+	 */
+	clientMontitor: {
+		// enabled: false,
+		// configUrl: ''
+	},
+
+	/**
+	 * Document/UI title.
+	 */
+	title: 'edumeet',
+
+	/**
+	 * Theme/UI configuration (4.2+).
+	 *
+	 * This object is merged into the app's Material UI theme (ThemeOptions).
+	 * You can override standard MUI theme fields, for example:
+	 *
+	 *	 palette: {
+	 *		 primary: { main: '#1976d2' } // palette-primary-main
+	 *	 }
+	 */
+	theme: {
+		/**
+		 * Background can be a CSS color/gradient.
+		 */
+		background:
+			'linear-gradient(135deg, rgba(1,42,74,1) 0%, rgba(1,58,99,1) 50%, rgba(1,73,124,1) 100%)',
+
+		/**
+		 * Optional background image URL. If set, it is used as the page background image.
+		 */
+		backgroundImage: undefined,
+
+		/**
+		 * App bar background color.
+		 */
+		appBarColor: 'rgba(0, 0, 0, 0.4)',
+
+		/**
+		 * (4.2+) App bar text color.
+		 */
+		appBarTextColor: 'rgba(255, 255, 255, 1.0)',
+
+		/**
+		 * (4.2+) App bar icon color.
+		 */
+		appBarIconColor: 'rgba(255, 255, 255, 1.0)',
+
+		/**
+		 * Whether the app bar floats over the content.
+		 */
+		appBarFloating: true,
+
+		/**
+		 * (4.2+) Pre-call title background color.
+		 */
+		precallTitleColor: 'rgba(255, 255, 255, 1.0)',
+
+		/**
+		 * (4.2+) Pre-call title text color.
+		 */
+		precallTitleTextColor: 'rgba(0, 0, 0, 1.0)',
+
+		/**
+		 * (4.2+) Pre-call title icon color.
+		 */
+		precallTitleIconColor: 'rgba(0, 0, 0, 1.0)',
+
+		/**
+		 * Logo image URL.
+		 */
 		logo: 'images/logo.edumeet.svg',
+
+		/**
+		 * Border style for the active speaker tile.
+		 */
 		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',
+
+		/**
+		 * Background color for video tiles.
+		 * (typo kept for compatibility: videoBackroundColor)
+		 */
 		videoBackroundColor: 'rgba(49, 49, 49, 0.9)',
+
+		/**
+		 * Fallback avatar image URL.
+		 */
 		videoAvatarImage: 'images/buddy.svg',
+
+		/**
+		 * Border radius used across the UI.
+		 */
+		roundedness: 10,
+
+		/**
+		 * Side panel item colors and container background.
+		 */
 		sideContentItemColor: 'rgba(255, 255, 255, 0.4)',
 		sideContentItemDarkColor: 'rgba(150, 150, 150, 0.4)',
-		roundedness: 10, // Rounded corners on the various elements
-	},
-	reduxLoggingEnabled: false
+		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
+
+		/**
+		 * Example MUI theme override (uncomment to use):
+		 */
+		// palette: {
+		//	 primary: { main: '#1976d2' } // palette-primary-main
+		// }
+	}
 };

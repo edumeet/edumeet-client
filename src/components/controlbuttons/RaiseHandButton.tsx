@@ -20,9 +20,9 @@ import { setSendReaction } from '../../store/actions/meActions';
 
 const reactionTypes = [
 	{ id: 'laugh', icon: <LaughIcon fontSize="small" /> },
-    { id: 'party', icon: <PartyIcon fontSize="small" /> },
-    { id: 'clap', icon: <ClapIcon fontSize="small" /> },
-    { id: 'thumbup', icon: <ThumbUpIcon fontSize="small" /> },
+	{ id: 'party', icon: <PartyIcon fontSize="small" /> },
+	{ id: 'clap', icon: <ClapIcon fontSize="small" /> },
+	{ id: 'thumbup', icon: <ThumbUpIcon fontSize="small" /> },
 ];
 
 const Container = styled(Box)(() => ({
@@ -96,16 +96,16 @@ const RaiseHandButton = ({
 				>
 					<Divider/>
 					{reactionTypes.map((reaction) => (
-					<MenuItem
-						key={reaction.id}
-						onClick={() => {
-							dispatch(setSendReaction(reaction.id));
-						}}
-						disabled={sendReactionInProgress}
-					>
-						{reaction.icon}
-					</MenuItem>
-				))}
+						<MenuItem
+							key={reaction.id}
+							onClick={() => {
+								dispatch(setSendReaction(reaction.id));
+							}}
+							disabled={sendReactionInProgress}
+						>
+							{reaction.icon}
+						</MenuItem>
+					))}
 				</FloatingMenu>
 			</Box>
 		</Container>

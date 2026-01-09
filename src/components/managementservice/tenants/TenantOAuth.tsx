@@ -28,7 +28,6 @@ const TenantOAuthTable = (props: TenantProp) => {
 		}
 	};
 
-	// eslint-disable-next-line camelcase
 	const columns = useMemo<MRT_ColumnDef<TenantOAuth>[]>(
 		() => [
 
@@ -174,6 +173,8 @@ const TenantOAuthTable = (props: TenantProp) => {
 					setAuthorizeUrl(json.authorization_endpoint);
 				if (json.userinfo_endpoint!=null)
 					setProfileUrl(json.userinfo_endpoint);
+				if (json.end_session_endpoint!=null)
+					setEndSession(json.end_session_endpoint);
 
 			}
 		})
@@ -229,7 +230,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 		// add new data / mod data / error
 		// eslint-disable-next-line no-alert
 		if (id != 0 && confirm('Are you sure?')) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 			dispatch(deleteData(id, 'tenantOAuths')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -251,7 +252,9 @@ const TenantOAuthTable = (props: TenantProp) => {
 				'profile_url': profileUrl,
 				'redirect_uri': redirect,
 				'scope': scope,
-				'scope_delimiter': scopeDelimeter
+				'scope_delimiter': scopeDelimeter,
+				'end_session_endpoint': end_session_endpoint,
+				'name_parameter': name_parameter
 			}, 'tenantOAuths')).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -265,7 +268,10 @@ const TenantOAuthTable = (props: TenantProp) => {
 				'profile_url': profileUrl,
 				'redirect_uri': redirect,
 				'scope': scope,
-				'scope_delimiter': scopeDelimeter }, 'tenantOAuths')).then(() => {
+				'scope_delimiter': scopeDelimeter,
+				'end_session_endpoint': end_session_endpoint,
+				'name_parameter': name_parameter
+			}, 'tenantOAuths')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
