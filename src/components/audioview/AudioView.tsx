@@ -41,7 +41,7 @@ const AudioView = ({
 				audioElement.current.onpause = null;
 			}
 		};
-	}, [ deviceId, consumer.id, ]);
+	}, [ deviceId, consumer.id ]);
 
 	useEffect(() => {
 		const { audioGain } = consumer;
