@@ -80,7 +80,7 @@ const RootComponent = (): React.JSX.Element => {
 	}
 };
 
-const container = document.getElementById('root') as HTMLElement;
+const container = document.getElementById('edumeet') as HTMLElement;
 const root = createRoot(container);
 
 const render = (): void => {
@@ -110,16 +110,11 @@ const render = (): void => {
 
 render();
 
-let lastLocale = store.getState().settings?.locale && store.getState().settings?.locale?.trim() !== ''
-	? store.getState().settings.locale
-	: 'en';
+let lastLocale = store.getState().settings?.locale;
 
 store.subscribe(() => {
 	const state = store.getState();
-	const currentLocale =
-		state.settings?.locale && state.settings.locale.trim() !== ''
-			? state.settings.locale
-			: 'en';
+	const currentLocale = state.settings?.locale;
 
 	if (currentLocale !== lastLocale) {
 		lastLocale = currentLocale;
