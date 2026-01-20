@@ -1033,6 +1033,10 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 				track = await effectsService.applyEffect(track, videoBackgroundEffect);
 			}
 
+			if (!track) throw new Error('no webcam track after effect');
+
+			dispatch(meActions.setExtraVideoTrackId(track.id));
+
 			if (mediaService.mediaSenders['extravideo'].running) {
 				if (mediaService.mediaSenders['extravideo'].track)
 					effectsService.stop(mediaService.mediaSenders['extravideo'].track.id);
@@ -1081,6 +1085,7 @@ export const stopExtraVideo = (): AppThunk<void> => (
 	effectsService.stop(mediaService.mediaSenders['extravideo'].track?.id);
 	mediaService.mediaSenders['extravideo'].stop();
 	dispatch(meActions.setExtraVideoEnabled(false));
+	dispatch(meActions.setExtraVideoTrackId(undefined));
 };
 
 /**

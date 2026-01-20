@@ -6,6 +6,7 @@ import { ServiceContext } from '../../store/store';
 import { ResolutionWatcher } from '../../utils/resolutionWatcher';
 import type { Consumer as PeerConsumer } from 'ortc-p2p/src/types';
 import { ProducerSource } from '../../utils/types';
+import { useAppSelector } from '../../store/hooks';
 
 interface VideoViewProps {
 	mirrored?: boolean;
@@ -59,13 +60,15 @@ const VideoView = ({
 	const videoElement = useRef<HTMLVideoElement>(null);
 	const [ loading, setLoading ] = useState(true);
 
+	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);
+	const extraVideoTrackId = useAppSelector((state) => state.me.extraVideoTrackId);
+	const consumerId = consumer?.id;
+
 	const previewTrackId =
-		previewTrack ? mediaService.previewWebcamTrack?.id : undefined;
+		previewTrack ? previewWebcamTrackId : undefined;
 
 	const senderTrackId =
-		source ? mediaService.mediaSenders[source].track?.id : undefined;
-
-	const consumerId = consumer?.id;
+		source === 'extravideo' ? extraVideoTrackId : undefined;
 
 	useEffect(() => {
 		let media: Consumer | PeerConsumer | undefined;
@@ -75,8 +78,8 @@ const VideoView = ({
 			track = mediaService.previewWebcamTrack;
 		else if (source)
 			track = mediaService.mediaSenders[source].track;
-		else if (consumer)
-			media = mediaService.getConsumer(consumer.id);
+		else if (consumerId)
+			media = mediaService.getConsumer(consumerId);
 
 		if (media)
 			({ track } = media);
