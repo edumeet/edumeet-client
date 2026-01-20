@@ -622,20 +622,50 @@ export const resumeMic = (): AppThunk<void> => (
  */
 export const updateVideoSettings = (settings: VideoSettings = {}): AppThunk<Promise<void>> => async (
 	dispatch,
-	getState
+	getState,
+	{ mediaService, effectsService }
 ) => {
 	logger.debug('updateVideoSettings()');
 
 	const webcamEnabled = getState().me.webcamEnabled;
 	const havePreviewWebcam = Boolean(getState().me.previewWebcamTrackId);
+	const extraVideoEnabled = getState().me.extraVideoEnabled;
+
+	let extraVideoDeviceId: string | undefined;
+
+	if (extraVideoEnabled) {
+		const senderTrack = mediaService.mediaSenders['extravideo'].track;
+
+		if (senderTrack) {
+			const inputTrack = effectsService.effectTracks.get(senderTrack.id)?.inputTrack;
+
+			try {
+				const trackSettings = (inputTrack ?? senderTrack).getSettings() as MediaTrackSettings;
+				extraVideoDeviceId = trackSettings.deviceId;
+			} catch (error) {
+				logger.warn('updateVideoSettings() could not read extra video deviceId', error);
+			}
+		}
+	}
 
 	dispatch(settingsActions.updateSettings(settings));
 	dispatch(meActions.setWebcamEnabled(false));
 	dispatch(stopPreviewWebcam());
 	dispatch(stopWebcam());
 
-	if (webcamEnabled) await dispatch(updateWebcam());
-	if (havePreviewWebcam) await dispatch(updatePreviewWebcam());
+	if (extraVideoEnabled) {
+		dispatch(stopExtraVideo());
+	}
+
+	if (webcamEnabled)
+		await dispatch(updateWebcam());
+
+	if (havePreviewWebcam)
+		await dispatch(updatePreviewWebcam());
+
+	if (extraVideoEnabled && extraVideoDeviceId) {
+		await dispatch(startExtraVideo({ newDeviceId: extraVideoDeviceId }));
+	}
 };
 
 /**
