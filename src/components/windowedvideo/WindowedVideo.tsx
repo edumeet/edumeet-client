@@ -13,7 +13,6 @@ const WindowedVideo = (): React.JSX.Element => {
 	const sessionId = useAppSelector((state) => state.me.sessionId);
 	const consumers = useAppSelector(windowedConsumersSelector);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
-	const contain = useAppSelector((state) => state.settings.videoContainEnabled);
 
 	const [ consumersToRender, setConsumersToRender ] = useState<StateConsumer[]>(consumers);
 
@@ -59,10 +58,10 @@ const WindowedVideo = (): React.JSX.Element => {
 								sx={{
 									display: 'flex',
 									width: '100%',
-									height: 'auto'
+									height: '100%',
 								}}
 							>
-								<VideoView consumer={consumer} contain={contain} roundedCorners={false} />
+								<VideoView consumer={consumer} contain roundedCorners={false} />
 							</VideoBox>
 						</Box>
 					</Box>
