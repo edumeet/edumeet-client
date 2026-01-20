@@ -34,4 +34,3 @@ export const setLocale = (locale?: string): AppThunk<Promise<void>> => async (
 	dispatch(settingsActions.setLocale(newLocale));
 	dispatch(roomActions.updateRoom({ localeInProgress: false }));
 };
-
