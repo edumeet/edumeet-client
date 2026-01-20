@@ -136,12 +136,10 @@ export class MediaService extends EventEmitter {
 	public resolveTransportsReady!: () => void;
 	public transportsReady!: ReturnType<typeof safePromise>;
 
-	public _monitor: Promise<ClientMonitor> = Promise.resolve(new ClientMonitor({ collectingPeriodInMs: 5000 }));
-
 	constructor(
 		{ signalingService }: { signalingService: SignalingService },
 		// eslint-disable-next-line no-unused-vars
-		public readonly monitor?: ClientMonitor,		
+		public readonly monitor?: ClientMonitor,
 	) {
 		super();
 
