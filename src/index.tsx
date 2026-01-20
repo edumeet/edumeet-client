@@ -114,7 +114,10 @@ let lastLocale = store.getState().settings?.locale;
 
 store.subscribe(() => {
 	const state = store.getState();
-	const currentLocale = state.settings?.locale;
+	const currentLocale =
+		state.settings?.locale && state.settings.locale.trim() !== ''
+			? state.settings.locale
+			: 'en';
 
 	if (currentLocale !== lastLocale) {
 		lastLocale = currentLocale;
