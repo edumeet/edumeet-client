@@ -1006,6 +1006,7 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 			aspectRatio,
 			resolution,
 			frameRate,
+			applyEffectsToExtraVideo,
 		} = getState().settings;
 
 		const deviceId = deviceService.getDeviceId(newDeviceId, 'videoinput');
@@ -1029,7 +1030,11 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 
 			const { videoBackgroundEffect } = getState().me;
 
-			if (videoBackgroundEffect && videoBackgroundEffect?.type !== BackgroundType.NONE) {
+			if (
+				applyEffectsToExtraVideo &&
+				videoBackgroundEffect &&
+				videoBackgroundEffect.type !== BackgroundType.NONE
+			) {
 				track = await effectsService.applyEffect(track, videoBackgroundEffect);
 			}
 
