@@ -22,17 +22,16 @@ export const setLocale = (locale?: string): AppThunk<Promise<void>> => async (
 
 	let newLocale: string;
 
-	if (locale)
+	if (locale) {
 		newLocale = await loadLocale(locale);
-	else {
-		const oldLocale = getState().settings.locale;
+	} else {
+		const storedLocale = getState().settings.locale;
 
-		if (!oldLocale)
-			return;
-		
-		// Workaround to trigger rerender with new locale
-		dispatch(settingsActions.setLocale(''));
-		newLocale = await loadLocale(oldLocale);
+		// If stored locale is empty or undefined, fall back to English
+		const fallbackLocale =
+			storedLocale && storedLocale.trim() !== '' ? storedLocale : 'en';
+
+		newLocale = await loadLocale(fallbackLocale);
 	}
 
 	dispatch(settingsActions.setLocale(newLocale));

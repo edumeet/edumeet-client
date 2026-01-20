@@ -72,7 +72,7 @@ export const localeList = [
 	{
 		name: 'Kazakh',
 		file: 'kk',
-		locale: [ 'kk', 'kk-kz	' ]
+		locale: [ 'kk', 'kk-kz' ]
 	},
 	{
 		name: 'Latvian',

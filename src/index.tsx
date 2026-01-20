@@ -84,19 +84,44 @@ const container = document.getElementById('edumeet');
  
 const root = createRoot(container!);
 
-root.render(
-	<>
-		<CssBaseline />
-		<Provider store={store}>
-			<PersistGate persistor={persistor}>
-				<ThemeProvider theme={theme}>
-					<RawIntlProvider value={intl}>
-						<ServiceContext.Provider value={{ mediaService, fileService }}>
-							<RootComponent />
-						</ServiceContext.Provider>
-					</RawIntlProvider>
-				</ThemeProvider>
-			</PersistGate>
-		</Provider>
-	</>
+const root = ReactDOM.createRoot(
+	document.getElementById('root') as HTMLElement
 );
+
+const render = (): void => {
+	const state = store.getState();
+	const locale = state.settings?.locale && state.settings.locale.trim() !== ''
+		? state.settings.locale
+		: 'en';
+
+	root.render(
+		<>
+			<CssBaseline />
+			<Provider store={store}>
+				<PersistGate persistor={persistor}>
+					<ThemeProvider theme={theme}>
+						<RawIntlProvider value={intl} key={locale}>
+							<ServiceContext.Provider value={{ mediaService, fileService }}>
+								<RootComponent />
+							</ServiceContext.Provider>
+						</RawIntlProvider>
+					</ThemeProvider>
+				</PersistGate>
+			</Provider>
+		</>
+	);
+};
+
+render();
+
+let lastLocale = store.getState().settings?.locale;
+
+store.subscribe(() => {
+	const state = store.getState();
+	const currentLocale = state.settings?.locale;
+
+	if (currentLocale !== lastLocale) {
+		lastLocale = currentLocale;
+		render();
+	}
+});
