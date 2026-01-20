@@ -97,15 +97,106 @@ const createMediaMiddleware = ({
 
 				// Server has changed the state of a Consumer/Producer, update the store.
 				mediaService.on('consumerClosed', (consumer) => {
-					dispatch(consumersActions.removeConsumer({ consumerId: consumer.id }));
+					const consumerId = consumer.id;
+
+					const before = getState().consumers.find((c) => c.id === consumerId);
+
+					logger.debug({
+						consumerId,
+						peerId: consumer.appData.peerId,
+						kind: consumer.kind,
+						beforeRemotePaused: before?.remotePaused,
+						beforeLocalPaused: before?.localPaused
+					}, 'mediaMiddleware: consumerClosed (before)');
+
+					dispatch(consumersActions.removeConsumer({ consumerId }));
+
+					const after = getState().consumers.find((c) => c.id === consumerId);
+
+					logger.debug({
+						consumerId,
+						afterExists: Boolean(after)
+					}, 'mediaMiddleware: consumerClosed (after)');
 				});
 
 				mediaService.on('consumerPaused', (consumer) => {
-					dispatch(consumersActions.setConsumerPaused({ consumerId: consumer.id, local: false }));
+					const consumerId = consumer.id;
+
+					const before = getState().consumers.find((c) => c.id === consumerId);
+
+					logger.debug({
+						consumerId,
+						peerId: consumer.appData.peerId,
+						kind: consumer.kind,
+						producerPaused: consumer.appData.producerPaused,
+						expectedProducerPaused: true,
+						beforeRemotePaused: before?.remotePaused,
+						beforeLocalPaused: before?.localPaused
+					}, 'mediaMiddleware: consumerPaused (before)');
+
+					dispatch(consumersActions.setConsumerPaused({ consumerId, local: false }));
+
+					const after = getState().consumers.find((c) => c.id === consumerId);
+
+					logger.debug({
+						consumerId,
+						afterRemotePaused: after?.remotePaused,
+						afterLocalPaused: after?.localPaused
+					}, 'mediaMiddleware: consumerPaused (after)');
+
+					if (!after) {
+						logger.warn({
+							consumerId,
+							peerId: consumer.appData.peerId
+						}, 'mediaMiddleware: consumerPaused but consumer not found in store');
+					} else if (after.remotePaused !== true) {
+						logger.warn({
+							consumerId,
+							peerId: consumer.appData.peerId,
+							remotePaused: after.remotePaused,
+							producerPaused: consumer.appData.producerPaused
+						}, 'mediaMiddleware: remotePaused mismatch after consumerPaused');
+					}
 				});
 
 				mediaService.on('consumerResumed', (consumer) => {
-					dispatch(consumersActions.setConsumerResumed({ consumerId: consumer.id, local: false }));
+					const consumerId = consumer.id;
+
+					const before = getState().consumers.find((c) => c.id === consumerId);
+
+					logger.debug({
+						consumerId,
+						peerId: consumer.appData.peerId,
+						kind: consumer.kind,
+						producerPaused: consumer.appData.producerPaused,
+						expectedProducerPaused: false,
+						beforeRemotePaused: before?.remotePaused,
+						beforeLocalPaused: before?.localPaused
+					}, 'mediaMiddleware: consumerResumed (before)');
+
+					dispatch(consumersActions.setConsumerResumed({ consumerId, local: false }));
+
+					const after = getState().consumers.find((c) => c.id === consumerId);
+
+					logger.debug({
+						consumerId,
+						afterRemotePaused: after?.remotePaused,
+						afterLocalPaused: after?.localPaused
+					}, 'mediaMiddleware: consumerResumed (after)');
+
+					if (!after) {
+						logger.warn({
+							consumerId,
+							peerId: consumer.appData.peerId
+						}, 'mediaMiddleware: consumerResumed but consumer not found in store');
+					} else if (after.remotePaused !== false) {
+						logger.warn({
+							consumerId,
+							peerId: consumer.appData.peerId,
+							remotePaused: after.remotePaused,
+							producerPaused: consumer.appData.producerPaused
+						}, 'mediaMiddleware: remotePaused mismatch after consumerResumed');
+					}
 				});
 
 				mediaService.on('mediaClosed', (source) => {

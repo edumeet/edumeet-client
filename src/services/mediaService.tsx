@@ -506,6 +506,16 @@ export class MediaService extends EventEmitter {
 						consumer.observer.once('close', () => this.consumers.delete(consumer.id));
 						consumer.once('transportclose', () => this.changeConsumer(consumer.id, 'close', false));
 
+						logger.debug({
+							consumerId: consumer.id,
+							peerId,
+							kind,
+							producerId,
+							source,
+							producerPaused: consumer.appData.producerPaused,
+							paused,
+						}, 'MediaService: newConsumer created');
+
 						if (paused) this.changeConsumer(consumer.id, 'resume', true);
 
 						this.emit('consumerCreated', consumer, paused, consumerPaused, false);
@@ -585,12 +595,33 @@ export class MediaService extends EventEmitter {
 								if (notification.method === 'consumerPaused') consumerCreationState.paused = true;
 								if (notification.method === 'consumerResumed') consumerCreationState.paused = false;
 
+								logger.debug({
+									method: notification.method,
+									consumerId,
+									paused: consumerCreationState.paused,
+									closed: consumerCreationState.closed
+								}, 'MediaService: pending consumer state update (no consumer yet)');
+
 								return;
 							}
 
+							logger.warn({
+								method: notification.method,
+								consumerId
+							}, 'MediaService: consumer state notification for unknown consumer and no pending state');
+
 							return;
 						}
-	
+
+						logger.debug({
+							method: notification.method,
+							consumerId,
+							peerId: consumer.appData.peerId,
+							kind: consumer.kind,
+							producerId: consumer.producerId,
+							producerPaused: consumer.appData.producerPaused
+						}, 'MediaService: consumer state notification');
+
 						this.changeConsumer(consumerId, changeEvent[notification.method] as MediaChange, false);
 
 						break;
@@ -679,7 +710,16 @@ export class MediaService extends EventEmitter {
 			} else {
 				this.signalingService.notify(`${change}Consumer`, { consumerId: consumer.id });
 			}
-		} else if (!local) {
+		} else {
+			logger.debug({
+				consumerId,
+				change,
+				peerId: consumer.appData.peerId,
+				kind: consumer.kind,
+				producerId: consumer.producerId,
+				oldProducerPaused: consumer.appData.producerPaused
+			}, 'MediaService: remote consumer change');
+
 			this.emit(`consumer${changeEvent[change]}`, consumer);
 		}
 
@@ -689,6 +729,12 @@ export class MediaService extends EventEmitter {
 			consumer?.[`${change}`]();
 		} else {
 			consumer.appData.producerPaused = change === 'pause';
+
+			logger.debug({
+				consumerId,
+				change,
+				newProducerPaused: consumer.appData.producerPaused
+			}, 'MediaService: updated producerPaused flag');
 		}
 	}
 
