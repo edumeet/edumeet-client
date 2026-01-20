@@ -1093,6 +1093,52 @@ export const stopExtraVideo = (): AppThunk<void> => (
 	dispatch(meActions.setExtraVideoTrackId(undefined));
 };
 
+export const updateExtraVideoEffects = (enabled: boolean): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService, effectsService }
+) => {
+	logger.debug('updateExtraVideoEffects() [enabled:%s]', enabled);
+
+	dispatch(meActions.setVideoInProgress(true));
+
+	const extraVideoEnabled = getState().me.extraVideoEnabled;
+
+	let extraVideoDeviceId: string | undefined;
+
+	try {
+		if (extraVideoEnabled) {
+			const senderTrack = mediaService.mediaSenders['extravideo'].track;
+
+			if (senderTrack) {
+				const inputTrack = effectsService.effectTracks.get(senderTrack.id)?.inputTrack;
+
+				try {
+					const trackSettings = (inputTrack ?? senderTrack).getSettings() as MediaTrackSettings;
+
+					extraVideoDeviceId = trackSettings.deviceId;
+				} catch (error) {
+					logger.warn('updateExtraVideoEffects() could not read extra video deviceId', error);
+				}
+			}
+		}
+
+		dispatch(settingsActions.updateSettings({ applyEffectsToExtraVideo: enabled }));
+
+		if (extraVideoEnabled) {
+			dispatch(stopExtraVideo());
+
+			if (extraVideoDeviceId) {
+				await dispatch(startExtraVideo({ newDeviceId: extraVideoDeviceId }));
+			} else {
+				logger.warn('updateExtraVideoEffects() no extraVideoDeviceId, cannot restart extravideo');
+			}
+		}
+	} finally {
+		dispatch(meActions.setVideoInProgress(false));
+	}
+};
+
 /**
  * Loads user's video background from persistent storage into memory.
  * This is needed since image has to be loaded in the same security context in order to not be blocked.

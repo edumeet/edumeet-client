@@ -2,6 +2,7 @@ import { Button, FormControlLabel, Switch, Tooltip } from '@mui/material';
 import {
 	updateVideoSettings,
 	updateAudioSettings,
+	updateExtraVideoEffects,
 } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
@@ -214,7 +215,7 @@ export const ExtraVideoEffectsSwitch = (): React.JSX.Element => {
 					color='primary'
 					checked={ applyEffectsToExtraVideo }
 					onChange={(event): void => {
-						dispatch(updateVideoSettings({ applyEffectsToExtraVideo: event.target.checked }));
+						dispatch(updateExtraVideoEffects(event.target.checked));
 					}}
 					disabled={extraVideoEffectsSwitchDisabled}
 				/>
