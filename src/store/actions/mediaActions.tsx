@@ -641,6 +641,7 @@ export const updateVideoSettings = (settings: VideoSettings = {}): AppThunk<Prom
 
 			try {
 				const trackSettings = (inputTrack ?? senderTrack).getSettings() as MediaTrackSettings;
+
 				extraVideoDeviceId = trackSettings.deviceId;
 			} catch (error) {
 				logger.warn('updateVideoSettings() could not read extra video deviceId', error);
