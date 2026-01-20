@@ -59,6 +59,14 @@ const VideoView = ({
 	const videoElement = useRef<HTMLVideoElement>(null);
 	const [ loading, setLoading ] = useState(true);
 
+	const previewTrackId =
+		previewTrack ? mediaService.previewWebcamTrack?.id : undefined;
+
+	const senderTrackId =
+		source ? mediaService.mediaSenders[source].track?.id : undefined;
+
+	const consumerId = consumer?.id;
+
 	useEffect(() => {
 		let media: Consumer | PeerConsumer | undefined;
 		let track: MediaStreamTrack | null = null;
@@ -76,7 +84,6 @@ const VideoView = ({
 		if (!track || !videoElement.current) return;
 
 		const stream = new MediaStream();
-		
 		stream.addTrack(track);
 		videoElement.current.srcObject = stream;
 
@@ -92,17 +99,25 @@ const VideoView = ({
 				videoElement.current.onpause = null;
 			}
 		};
-	}, []);
+	}, [
+		previewTrack,
+		source,
+		consumerId,
+		previewTrackId,
+		senderTrackId,
+	]);
 
 	useEffect(() => {
-		if (!consumer) return;
+		if (!consumerId) return;
 
-		const actualConsumer = mediaService.getConsumer(consumer.id);
+		const actualConsumer = mediaService.getConsumer(consumerId);
 
 		const resolutionWatcher = actualConsumer?.appData.resolutionWatcher as ResolutionWatcher | undefined;
 		const resolutionReporter = resolutionWatcher?.createResolutionReporter();
 
-		if (!resolutionReporter || !videoElement.current) return;
+		const currentVideoElement = videoElement.current;
+
+		if (!resolutionReporter || !currentVideoElement) return;
 
 		const resizeObserver = new ResizeObserver((entries) => {
 			const { contentRect: { width, height } } = entries[0];
@@ -110,13 +125,13 @@ const VideoView = ({
 			resolutionReporter.updateResolution({ width, height });
 		});
 
-		resizeObserver.observe(videoElement.current);
+		resizeObserver.observe(currentVideoElement);
 
 		return () => {
 			resizeObserver.disconnect();
 			resolutionReporter.close();
 		};
-	}, []);
+	}, [ consumerId ]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (
