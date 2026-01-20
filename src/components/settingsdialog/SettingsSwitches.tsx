@@ -201,3 +201,25 @@ export const VideoBackgroundButton = (): React.JSX.Element => {
 		
 	);
 };
+
+export const ExtraVideoEffectsSwitch = (): React.JSX.Element => {
+	const dispatch = useAppDispatch();
+	const extraVideoEffectsSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
+	const applyEffectsToExtraVideo = useAppSelector((state) => state.settings.applyEffectsToExtraVideo);
+
+	return (
+		<FormControlLabel
+			control={
+				<Switch
+					color='primary'
+					checked={ applyEffectsToExtraVideo }
+					onChange={(event): void => {
+						dispatch(updateVideoSettings({ applyEffectsToExtraVideo: event.target.checked }));
+					}}
+					disabled={extraVideoEffectsSwitchDisabled}
+				/>
+			}
+			label='Apply background effects to extra video'
+		/>
+	);
+};
