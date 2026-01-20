@@ -446,6 +446,7 @@ export class MediaService extends EventEmitter {
 								...appData,
 								peerId,
 								producerPaused,
+								producerId,
 							},
 						});
 
@@ -548,6 +549,7 @@ export class MediaService extends EventEmitter {
 							appData: {
 								...appData,
 								peerId,
+								dataProducerId,
 							},
 						});
 
@@ -618,7 +620,7 @@ export class MediaService extends EventEmitter {
 							consumerId,
 							peerId: consumer.appData.peerId,
 							kind: consumer.kind,
-							producerId: consumer.producerId,
+							producerId: consumer.appData.producerId,
 							producerPaused: consumer.appData.producerPaused
 						}, 'MediaService: consumer state notification');
 
@@ -716,7 +718,7 @@ export class MediaService extends EventEmitter {
 				change,
 				peerId: consumer.appData.peerId,
 				kind: consumer.kind,
-				producerId: consumer.producerId,
+				producerId: consumer.appData.producerId,
 				oldProducerPaused: consumer.appData.producerPaused
 			}, 'MediaService: remote consumer change');
 
