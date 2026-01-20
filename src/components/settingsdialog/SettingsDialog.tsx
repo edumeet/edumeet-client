@@ -28,6 +28,9 @@ const SettingsDialog = (): React.JSX.Element => {
 	const closeButtonDisabled = useAppSelector((state) => state.me.videoInProgress || state.me.audioInProgress);
 	const locale = useAppSelector((state) => state.settings.locale);
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const dummy = locale; // force re-render when locale changes
+
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
