@@ -28,16 +28,43 @@ const WindowedVideo = (): React.JSX.Element => {
 					onClose={() => dispatch(roomSessionsActions.removeWindowedConsumer({ sessionId, consumerId: consumer.id }))}
 					aspectRatio={aspectRatio}
 				>
-					<VideoBox
-						roundedCorners={false}
+					{/* Full window container */}
+					<Box
 						sx={{
+							width: '100vw',
+							height: '100vh',
 							display: 'flex',
-							width: '100%',
-							height: 'auto'
+							alignItems: 'center',
+							justifyContent: 'center',
+							bgcolor: 'black',
 						}}
 					>
-						<VideoView consumer={consumer} contain={contain} roundedCorners={false} />
-					</VideoBox>
+						{/* Fixed-aspect-ratio box */}
+						<Box
+							sx={{
+								position: 'relative',
+								width: '100%',
+								height: '100%',
+								maxWidth: '100%',
+								maxHeight: '100%',
+								aspectRatio: aspectRatio,
+							}}
+						>
+							<VideoBox
+								roundedCorners={false}
+								position='relative'
+								width='100%'
+								height='100%'
+								sx={{
+									display: 'flex',
+									width: '100%',
+									height: 'auto'
+								}}
+							>
+								<VideoView consumer={consumer} contain={contain} roundedCorners={false} />
+							</VideoBox>
+						</Box>
+					</Box>
 				</SeparateWindow>
 			))}
 		</>
