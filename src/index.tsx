@@ -80,19 +80,15 @@ const RootComponent = (): React.JSX.Element => {
 	}
 };
 
-const container = document.getElementById('edumeet');
- 
-const root = createRoot(container!);
-
-const root = ReactDOM.createRoot(
-	document.getElementById('root') as HTMLElement
-);
+const container = document.getElementById('root') as HTMLElement;
+const root = createRoot(container);
 
 const render = (): void => {
 	const state = store.getState();
-	const locale = state.settings?.locale && state.settings.locale.trim() !== ''
-		? state.settings.locale
-		: 'en';
+	const locale =
+		state.settings?.locale && state.settings.locale.trim() !== ''
+			? state.settings.locale
+			: 'en';
 
 	root.render(
 		<>
