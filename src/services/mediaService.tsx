@@ -788,14 +788,6 @@ export class MediaService extends EventEmitter {
 
 		this.sendTransport = await this.createTransport('createSendTransport');
 		this.recvTransport = await this.createTransport('createRecvTransport');
-
-		const monitor = await this.monitor;
-
-		if (monitor) {
-			monitor.addSource(this.sendTransport);
-			monitor.addSource(this.recvTransport);
-		}
-
 		this.resolveTransportsReady();
 	}
 
