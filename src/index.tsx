@@ -110,7 +110,9 @@ const render = (): void => {
 
 render();
 
-let lastLocale = store.getState().settings?.locale;
+let lastLocale = state.settings?.locale && state.settings.locale.trim() !== ''
+	? state.settings.locale
+	: 'en';
 
 store.subscribe(() => {
 	const state = store.getState();
