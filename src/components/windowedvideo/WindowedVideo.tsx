@@ -6,6 +6,7 @@ import SeparateWindow from '../separatewindow/SeparateWindow';
 import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
 import { useEffect, useState } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
+import { Box } from '@mui/material';
 
 const WindowedVideo = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
