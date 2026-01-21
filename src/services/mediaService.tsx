@@ -547,7 +547,7 @@ export class MediaService extends EventEmitter {
 							appData: {
 								...appData,
 								peerId,
-								dataProducerId,
+								producerId: dataProducerId,
 							},
 						});
 
