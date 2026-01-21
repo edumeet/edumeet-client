@@ -192,6 +192,7 @@
   "settings.cantSelectCamera": "Nije moguće odabrati kameru",
   "settings.channelCount": "Broj zvučnih kanala",
   "settings.echoCancellation": "Poništavanje jeke",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": "Omogući OPUS detalje(potrebno osvježavanje stranice)",
   "settings.frameRate": "Brzina osvježavanja",
   "settings.hiddenControls": "Upravljanje skriveno",

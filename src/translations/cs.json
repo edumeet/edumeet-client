@@ -192,6 +192,7 @@
   "settings.cantSelectCamera": "Není možné vybrat video zařízení",
   "settings.channelCount": null,
   "settings.echoCancellation": "Zrušení ozvěny",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": null,
   "settings.frameRate": "Počet snímků Vašeho videa",
   "settings.hiddenControls": "Skryté ovládací prvky médií",

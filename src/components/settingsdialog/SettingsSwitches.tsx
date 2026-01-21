@@ -12,7 +12,8 @@ import {
 	enableOpusDtxLabel,
 	enableOpusFecLabel,
 	noiseSuppressionLabel,
-	selectVideoBackgroundLabel
+	selectVideoBackgroundLabel,
+	enableBackgroundEffectsOnExtraVideoLabel
 } from '../translated/translatedComponents';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
 import BlurOffIcon from '@mui/icons-material/BlurOff';
@@ -220,7 +221,7 @@ export const ExtraVideoEffectsSwitch = (): React.JSX.Element => {
 					disabled={extraVideoEffectsSwitchDisabled}
 				/>
 			}
-			label='Apply background effects to extra video'
+			label={ enableBackgroundEffectsOnExtraVideoLabel() }
 		/>
 	);
 };

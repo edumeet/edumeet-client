@@ -193,6 +193,7 @@
   "settings.cantSelectCamera": "Kann Videogerät nicht aktivieren",
   "settings.channelCount": null,
   "settings.echoCancellation": "Echounterdrückung",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": "Hintergrundeffekte für zusätzliches Video aktivieren",
   "settings.enableOpusDetails": null,
   "settings.frameRate": "Wähle eine Video-Bildfrequenz",
   "settings.hiddenControls": "Medienwerkzeugleiste automatisch ausblenden",

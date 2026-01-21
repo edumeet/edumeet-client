@@ -192,6 +192,7 @@
   "settings.cantSelectCamera": " कैमरे का चयन करने में असमर्थ",
   "settings.channelCount": null,
   "settings.echoCancellation": " गूंज रद्द",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": null,
   "settings.frameRate": "अपने वीडियो फ्रेम की स्पष्टता चुनें",
   "settings.hiddenControls": "अदृश्य मीडिया नियंत्रण",

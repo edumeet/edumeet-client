@@ -192,6 +192,7 @@
   "settings.cantSelectCamera": "Impossibile selezionare dispositivo video",
   "settings.channelCount": "Seleziona il numero di canali audio",
   "settings.echoCancellation": "Cancellazione echo",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": "Abilita i dettagli di OPUS (richiede il ricaricamento della pagina)",
   "settings.frameRate": "Seleziona frame rate",
   "settings.hiddenControls": "Controlli media nascosti",

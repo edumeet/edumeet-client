@@ -192,6 +192,7 @@
   "settings.cantSelectCamera": "Video aygıtı seçilemiyor",
   "settings.channelCount": null,
   "settings.echoCancellation": "Yankı giderme",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": null,
   "settings.frameRate": "Video kare hızını ayarla",
   "settings.hiddenControls": "Gizli medya kontrolleri",

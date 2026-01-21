@@ -192,6 +192,7 @@
   "settings.cantSelectCamera": "Неможливо вибрати відеопристрій",
   "settings.channelCount": null,
   "settings.echoCancellation": "Видалення відлуння",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": null,
   "settings.frameRate": "Виберіть частоту кадрів відео",
   "settings.hiddenControls": "Приховані засоби медіа",
