@@ -203,7 +203,6 @@ const RoomTable = () => {
 	const [ name, setName ] = useState('');
 	const [ nameDisabled, setNameDisabled ] = useState(false);
 	const [ description, setDescription ] = useState('');
-	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 	const [ tenantId, setTenantId ] = useState(0);
 	const [ defaultRoleId, setDefaultRoletId ] = useState(0);
 
@@ -621,6 +620,7 @@ const RoomTable = () => {
 						setTenantId(parsedTenantId);
 					} else if (typeof ttenantId === 'number') {
 						const ttenant = tenants.find((x) => x.id === ttenantId);
+
 						if (ttenant) {
 							setTenantIdOption(ttenant);
 						}
