@@ -413,7 +413,7 @@ const RoomTable = () => {
 
 		} else if (name != '' && id != 0) {
 			const obj : Room= {
-				tenantId: tenantId,
+				// tenantId: tenantId,
 				description: description,
 				logo: logo,
 				background: background,
@@ -434,7 +434,6 @@ const RoomTable = () => {
 				fetchProduct();
 				setOpen(false);
 			});
-            
 		}
 
 	};
