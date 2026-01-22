@@ -219,7 +219,7 @@ const RoomTable = () => {
 	const [ filesharingEnabled, setFilesharingEnabled ] = useState(false);
 	const [ localRecordingEnabled, setLocalRecordingEnabled ] = useState(false);
 
-	/* 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>(); */	
+	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
 	
 	const [ defaultRoleIdOption, setDefaultRoleIdOption ] = useState<Roles | undefined>();
 
@@ -280,9 +280,19 @@ const RoomTable = () => {
 		setNameDisabled(false);
 		setName('');
 		setDescription('');
-		setTenantId(0);
 
-		/* 		setTenantIdOption(undefined); */
+		// tenant selectable on add
+		if (tenants.length === 1) {
+			const onlyTenant = tenants[0];
+			const onlyTenantId = Number(onlyTenant.id);
+
+			setTenantId(onlyTenantId);
+			setTenantIdOption(onlyTenant);
+		} else {
+			setTenantId(0);
+			setTenantIdOption(undefined);
+		}
+
 		setDefaultRoletId(0);
 		setDefaultRoleIdOption(undefined);
 		setLogo('');
@@ -309,6 +319,17 @@ const RoomTable = () => {
 	};
 	const handleDescriptionChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
 		setDescription(event.target.value);
+	};
+
+	const handleTenantIdChange = (event: SyntheticEvent<Element, Event>, newValue: Tenant) => {
+		if (newValue) {
+			if (typeof newValue.id != 'number') {
+				setTenantId(parseInt(newValue.id as unknown as string));
+			} else {
+				setTenantId(newValue.id);
+			}
+			setTenantIdOption(newValue);
+		}
 	};
 
 	const handleDefaultRoleIdChange = (event: SyntheticEvent<Element, Event>, newValue: Roles) => {
@@ -373,6 +394,7 @@ const RoomTable = () => {
 		// add new data / mod data / error
 		if (name != '' && id == 0) {
 			dispatch(createRoomWithParams({ 
+				tenantId: tenantId,
 				name: name,
 				description: description,
 				logo: logo,
@@ -392,6 +414,7 @@ const RoomTable = () => {
 
 		} else if (name != '' && id != 0) {
 			const obj : Room= {
+				tenantId: tenantId,
 				description: description,
 				logo: logo,
 				background: background,
@@ -430,6 +453,19 @@ const RoomTable = () => {
 						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
+					{tenants.length > 1 && (
+						<Autocomplete
+							options={tenants}
+							getOptionLabel={(option) => option.name}
+							fullWidth
+							disableClearable
+							onChange={handleTenantIdChange}
+							value={tenantIdOption || null}
+							readOnly={id !== 0} // tenant not changeable on edit
+							sx={{ marginTop: '8px' }}
+							renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
+						/>
+					)}
 					<TextField
 						autoFocus
 						margin="dense"
@@ -576,13 +612,22 @@ const RoomTable = () => {
 					}
 					if (typeof ttenantId === 'string') {
 
-						/* const ttenant = tenants.find((x) => x.id === parseInt(ttenantId)); */
-						/* if (ttenant) {
+						const parsedTenantId = parseInt(ttenantId);
+						const ttenant = tenants.find((x) => x.id === parsedTenantId);
+
+						if (ttenant) {
 							setTenantIdOption(ttenant);
-						} */
-						setTenantId(parseInt(ttenantId));
+						}
+						setTenantId(parsedTenantId);
+					} else if (typeof ttenantId === 'number') {
+						const ttenant = tenants.find((x) => x.id === ttenantId);
+						if (ttenant) {
+							setTenantIdOption(ttenant);
+						}
+						setTenantId(ttenantId);
 					} else {
 						setTenantId(0);
+						setTenantIdOption(undefined);
 					}
 
 					if (typeof tlogo === 'string') {
