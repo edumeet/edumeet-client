@@ -122,9 +122,18 @@ const DefaultTable = () => {
 	// ADD NEW
 	const handleOpen = () => {
 		setId(0);
-		// try to get current tenantId
-		setTenantId(0);
-		setTenantIdOption(undefined);
+
+		if (tenants.length === 1) {
+			const onlyTenant = tenants[0];
+			const onlyTenantId = Number(onlyTenant.id);
+
+			setTenantId(onlyTenantId);
+			setTenantIdOption(onlyTenant);
+		} else {
+			setTenantId(0);
+			setTenantIdOption(undefined);
+		}
+
 		setTenantIdDisabled(false);
 
 		setNumberLimit(100);
