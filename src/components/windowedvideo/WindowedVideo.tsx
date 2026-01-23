@@ -6,7 +6,6 @@ import SeparateWindow from '../separatewindow/SeparateWindow';
 import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
 import { useEffect, useState } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
-import { Box } from '@mui/material';
 
 const WindowedVideo = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -28,43 +27,19 @@ const WindowedVideo = (): React.JSX.Element => {
 					onClose={() => dispatch(roomSessionsActions.removeWindowedConsumer({ sessionId, consumerId: consumer.id }))}
 					aspectRatio={aspectRatio}
 				>
-					{/* Full window container */}
-					<Box
+					<VideoBox
+						roundedCorners={false}
+						position='relative'
+						width='100%'
+						height='100%'
 						sx={{
-							width: '100vw',
-							height: '100vh',
 							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							bgcolor: 'black',
+							width: '100%',
+							height: '100%',
 						}}
 					>
-						{/* Fixed-aspect-ratio box */}
-						<Box
-							sx={{
-								position: 'relative',
-								width: '100%',
-								height: '100%',
-								maxWidth: '100%',
-								maxHeight: '100%',
-								aspectRatio: aspectRatio,
-							}}
-						>
-							<VideoBox
-								roundedCorners={false}
-								position='relative'
-								width='100%'
-								height='100%'
-								sx={{
-									display: 'flex',
-									width: '100%',
-									height: '100%',
-								}}
-							>
-								<VideoView consumer={consumer} contain roundedCorners={false} />
-							</VideoBox>
-						</Box>
-					</Box>
+						<VideoView consumer={consumer} contain roundedCorners={false} />
+					</VideoBox>
 				</SeparateWindow>
 			))}
 		</>
