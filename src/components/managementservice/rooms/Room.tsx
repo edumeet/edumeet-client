@@ -281,12 +281,13 @@ const RoomTable = () => {
 		setDescription('');
 
 		// tenant selectable on add
-		if (tenants.length === 1) {
-			const onlyTenant = tenants[0];
-			const onlyTenantId = Number(onlyTenant.id);
+		if (tenants.length > 0) {
+			// always align with what Autocomplete shows: first tenant
+			const firstTenant = tenants[0];
+			const firstTenantId = Number(firstTenant.id);
 
-			setTenantId(onlyTenantId);
-			setTenantIdOption(onlyTenant);
+			setTenantId(firstTenantId);
+			setTenantIdOption(firstTenant);
 		} else {
 			setTenantId(0);
 			setTenantIdOption(undefined);
@@ -458,7 +459,7 @@ const RoomTable = () => {
 							fullWidth
 							disableClearable
 							onChange={handleTenantIdChange}
-							value={tenantIdOption ?? null}
+							value={tenantIdOption}
 							readOnly={id !== 0} // tenant not changeable on edit
 							sx={{ marginTop: '8px' }}
 							renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
