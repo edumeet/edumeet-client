@@ -29,13 +29,10 @@ const WindowedVideo = (): React.JSX.Element => {
 				>
 					<VideoBox
 						roundedCorners={false}
-						position='relative'
-						width='100%'
-						height='100%'
 						sx={{
 							display: 'flex',
 							width: '100%',
-							height: '100%',
+							height: '100%'
 						}}
 					>
 						<VideoView consumer={consumer} contain roundedCorners={false} />
