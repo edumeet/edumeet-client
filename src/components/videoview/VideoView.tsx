@@ -6,6 +6,7 @@ import { ServiceContext } from '../../store/store';
 import { ResolutionWatcher } from '../../utils/resolutionWatcher';
 import type { Consumer as PeerConsumer } from 'ortc-p2p/src/types';
 import { ProducerSource } from '../../utils/types';
+import { useAppSelector } from '../../store/hooks';
 
 interface VideoViewProps {
 	mirrored?: boolean;
@@ -59,6 +60,16 @@ const VideoView = ({
 	const videoElement = useRef<HTMLVideoElement>(null);
 	const [ loading, setLoading ] = useState(true);
 
+	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);
+	const extraVideoTrackId = useAppSelector((state) => state.me.extraVideoTrackId);
+	const consumerId = consumer?.id;
+
+	const previewTrackId =
+		previewTrack ? previewWebcamTrackId : undefined;
+
+	const senderTrackId =
+		source === 'extravideo' ? extraVideoTrackId : undefined;
+
 	useEffect(() => {
 		let media: Consumer | PeerConsumer | undefined;
 		let track: MediaStreamTrack | null = null;
@@ -67,8 +78,8 @@ const VideoView = ({
 			track = mediaService.previewWebcamTrack;
 		else if (source)
 			track = mediaService.mediaSenders[source].track;
-		else if (consumer)
-			media = mediaService.getConsumer(consumer.id);
+		else if (consumerId)
+			media = mediaService.getConsumer(consumerId);
 
 		if (media)
 			({ track } = media);
@@ -76,7 +87,7 @@ const VideoView = ({
 		if (!track || !videoElement.current) return;
 
 		const stream = new MediaStream();
-		
+
 		stream.addTrack(track);
 		videoElement.current.srcObject = stream;
 
@@ -92,17 +103,25 @@ const VideoView = ({
 				videoElement.current.onpause = null;
 			}
 		};
-	}, []);
+	}, [
+		previewTrack,
+		source,
+		consumerId,
+		previewTrackId,
+		senderTrackId,
+	]);
 
 	useEffect(() => {
-		if (!consumer) return;
+		if (!consumerId) return;
 
-		const actualConsumer = mediaService.getConsumer(consumer.id);
+		const actualConsumer = mediaService.getConsumer(consumerId);
 
 		const resolutionWatcher = actualConsumer?.appData.resolutionWatcher as ResolutionWatcher | undefined;
 		const resolutionReporter = resolutionWatcher?.createResolutionReporter();
 
-		if (!resolutionReporter || !videoElement.current) return;
+		const currentVideoElement = videoElement.current;
+
+		if (!resolutionReporter || !currentVideoElement) return;
 
 		const resizeObserver = new ResizeObserver((entries) => {
 			const { contentRect: { width, height } } = entries[0];
@@ -110,13 +129,13 @@ const VideoView = ({
 			resolutionReporter.updateResolution({ width, height });
 		});
 
-		resizeObserver.observe(videoElement.current);
+		resizeObserver.observe(currentVideoElement);
 
 		return () => {
 			resizeObserver.disconnect();
 			resolutionReporter.close();
 		};
-	}, []);
+	}, [ consumerId ]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (

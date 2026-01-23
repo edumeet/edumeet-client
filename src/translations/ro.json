@@ -192,6 +192,7 @@
   "settings.cantSelectCamera": "Încercarea de a selecta dispozitivul video a eșuat",
   "settings.channelCount": null,
   "settings.echoCancellation": null,
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": null,
   "settings.frameRate": null,
   "settings.hiddenControls": null,

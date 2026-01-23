@@ -194,6 +194,7 @@
   "settings.cantSelectCamera": "Kunne ikke vælge kamera",
   "settings.channelCount": "Vælg antal lydkanaler",
   "settings.echoCancellation": "Echodæmpning",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": "Vis OPUS-detaljer(kræver genindlæsning af siden)",
   "settings.frameRate": "Vælg billedfrekvens for video",
   "settings.hiddenControls": "Skjulte mediekontroller",

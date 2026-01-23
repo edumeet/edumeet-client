@@ -2,6 +2,7 @@ import { Button, FormControlLabel, Switch, Tooltip } from '@mui/material';
 import {
 	updateVideoSettings,
 	updateAudioSettings,
+	updateExtraVideoEffects,
 } from '../../store/actions/mediaActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
@@ -11,7 +12,8 @@ import {
 	enableOpusDtxLabel,
 	enableOpusFecLabel,
 	noiseSuppressionLabel,
-	selectVideoBackgroundLabel
+	selectVideoBackgroundLabel,
+	enableBackgroundEffectsOnExtraVideoLabel
 } from '../translated/translatedComponents';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
 import BlurOffIcon from '@mui/icons-material/BlurOff';
@@ -199,5 +201,27 @@ export const VideoBackgroundButton = (): React.JSX.Element => {
 			</span>
 		</Tooltip>
 		
+	);
+};
+
+export const ExtraVideoEffectsSwitch = (): React.JSX.Element => {
+	const dispatch = useAppDispatch();
+	const extraVideoEffectsSwitchDisabled = useAppSelector((state) => state.me.videoInProgress);
+	const applyEffectsToExtraVideo = useAppSelector((state) => state.settings.applyEffectsToExtraVideo);
+
+	return (
+		<FormControlLabel
+			control={
+				<Switch
+					color='primary'
+					checked={ applyEffectsToExtraVideo }
+					onChange={(event): void => {
+						dispatch(updateExtraVideoEffects(event.target.checked));
+					}}
+					disabled={extraVideoEffectsSwitchDisabled}
+				/>
+			}
+			label={ enableBackgroundEffectsOnExtraVideoLabel() }
+		/>
 	);
 };

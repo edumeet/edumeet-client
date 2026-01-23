@@ -195,6 +195,7 @@
   "settings.cantSelectCamera": "Kan ikke velge videoenhet",
   "settings.channelCount": "Antall kanaler",
   "settings.echoCancellation": "Echokansellering",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": "Aktiver opus detaljer",
   "settings.frameRate": "Velg bildefrekvens",
   "settings.hiddenControls": "Skjul media knapper",

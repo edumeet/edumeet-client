@@ -195,6 +195,7 @@
   "settings.cantSelectCamera": "Nie można wybrać urządzenia wideo",
   "settings.channelCount": "Wybierz liczbę kanałów audio",
   "settings.echoCancellation": "Usuń echo",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": "Włącz efekty tła dla dodatkowego wideo",
   "settings.enableOpusDetails": "Włącz szczegóły OPUS (wymagane ponowne załadowanie strony)",
   "settings.frameRate": "Liczba klatek na sekundę",
   "settings.hiddenControls": "Pokaż ikony po najechaniu myszką",

@@ -622,20 +622,51 @@ export const resumeMic = (): AppThunk<void> => (
  */
 export const updateVideoSettings = (settings: VideoSettings = {}): AppThunk<Promise<void>> => async (
 	dispatch,
-	getState
+	getState,
+	{ mediaService, effectsService }
 ) => {
 	logger.debug('updateVideoSettings()');
 
 	const webcamEnabled = getState().me.webcamEnabled;
 	const havePreviewWebcam = Boolean(getState().me.previewWebcamTrackId);
+	const extraVideoEnabled = getState().me.extraVideoEnabled;
+
+	let extraVideoDeviceId: string | undefined;
+
+	if (extraVideoEnabled) {
+		const senderTrack = mediaService.mediaSenders['extravideo'].track;
+
+		if (senderTrack) {
+			const inputTrack = effectsService.effectTracks.get(senderTrack.id)?.inputTrack;
+
+			try {
+				const trackSettings = (inputTrack ?? senderTrack).getSettings() as MediaTrackSettings;
+
+				extraVideoDeviceId = trackSettings.deviceId;
+			} catch (error) {
+				logger.warn('updateVideoSettings() could not read extra video deviceId', error);
+			}
+		}
+	}
 
 	dispatch(settingsActions.updateSettings(settings));
 	dispatch(meActions.setWebcamEnabled(false));
 	dispatch(stopPreviewWebcam());
 	dispatch(stopWebcam());
 
-	if (webcamEnabled) await dispatch(updateWebcam());
-	if (havePreviewWebcam) await dispatch(updatePreviewWebcam());
+	if (extraVideoEnabled) {
+		dispatch(stopExtraVideo());
+	}
+
+	if (webcamEnabled)
+		await dispatch(updateWebcam());
+
+	if (havePreviewWebcam)
+		await dispatch(updatePreviewWebcam());
+
+	if (extraVideoEnabled && extraVideoDeviceId) {
+		await dispatch(startExtraVideo({ newDeviceId: extraVideoDeviceId }));
+	}
 };
 
 /**
@@ -975,6 +1006,7 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 			aspectRatio,
 			resolution,
 			frameRate,
+			applyEffectsToExtraVideo,
 		} = getState().settings;
 
 		const deviceId = deviceService.getDeviceId(newDeviceId, 'videoinput');
@@ -998,9 +1030,17 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 
 			const { videoBackgroundEffect } = getState().me;
 
-			if (videoBackgroundEffect && videoBackgroundEffect?.type !== BackgroundType.NONE) {
+			if (
+				applyEffectsToExtraVideo &&
+				videoBackgroundEffect &&
+				videoBackgroundEffect.type !== BackgroundType.NONE
+			) {
 				track = await effectsService.applyEffect(track, videoBackgroundEffect);
 			}
+
+			if (!track) throw new Error('no webcam track after effect');
+
+			dispatch(meActions.setExtraVideoTrackId(track.id));
 
 			if (mediaService.mediaSenders['extravideo'].running) {
 				if (mediaService.mediaSenders['extravideo'].track)
@@ -1050,6 +1090,53 @@ export const stopExtraVideo = (): AppThunk<void> => (
 	effectsService.stop(mediaService.mediaSenders['extravideo'].track?.id);
 	mediaService.mediaSenders['extravideo'].stop();
 	dispatch(meActions.setExtraVideoEnabled(false));
+	dispatch(meActions.setExtraVideoTrackId(undefined));
+};
+
+export const updateExtraVideoEffects = (enabled: boolean): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService, effectsService }
+) => {
+	logger.debug('updateExtraVideoEffects() [enabled:%s]', enabled);
+
+	dispatch(meActions.setVideoInProgress(true));
+
+	const extraVideoEnabled = getState().me.extraVideoEnabled;
+
+	let extraVideoDeviceId: string | undefined;
+
+	try {
+		if (extraVideoEnabled) {
+			const senderTrack = mediaService.mediaSenders['extravideo'].track;
+
+			if (senderTrack) {
+				const inputTrack = effectsService.effectTracks.get(senderTrack.id)?.inputTrack;
+
+				try {
+					const trackSettings = (inputTrack ?? senderTrack).getSettings() as MediaTrackSettings;
+
+					extraVideoDeviceId = trackSettings.deviceId;
+				} catch (error) {
+					logger.warn('updateExtraVideoEffects() could not read extra video deviceId', error);
+				}
+			}
+		}
+
+		dispatch(settingsActions.updateSettings({ applyEffectsToExtraVideo: enabled }));
+
+		if (extraVideoEnabled) {
+			dispatch(stopExtraVideo());
+
+			if (extraVideoDeviceId) {
+				await dispatch(startExtraVideo({ newDeviceId: extraVideoDeviceId }));
+			} else {
+				logger.warn('updateExtraVideoEffects() no extraVideoDeviceId, cannot restart extravideo');
+			}
+		}
+	} finally {
+		dispatch(meActions.setVideoInProgress(false));
+	}
 };
 
 /**

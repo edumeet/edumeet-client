@@ -207,6 +207,7 @@
 	"settings.containVideo": "Uncrop my video",
 	"settings.currentlySelected": "Currently selected",
 	"settings.echoCancellation": "Echo cancellation",
+	"settings.enableBackgroundEffectsOnExtraVideoLabel": "Enable background effects on extra video",
 	"settings.enableOpusDetails": "Enable OPUS details (page reload required)",
 	"settings.frameRate": "Select your video frame rate",
 	"settings.hiddenControls": "Hidden media controls",

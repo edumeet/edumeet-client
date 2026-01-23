@@ -122,9 +122,20 @@ const DefaultTable = () => {
 	// ADD NEW
 	const handleOpen = () => {
 		setId(0);
-		// try to get current tenantId
-		setTenantId(0);
-		setTenantIdOption(undefined);
+
+		// tenant selectable on add
+		if (tenants.length > 0) {
+			// always align with what Autocomplete shows: first tenant
+			const firstTenant = tenants[0];
+			const firstTenantId = Number(firstTenant.id);
+
+			setTenantId(firstTenantId);
+			setTenantIdOption(firstTenant);
+		} else {
+			setTenantId(0);
+			setTenantIdOption(undefined);
+		}
+
 		setTenantIdDisabled(false);
 
 		setNumberLimit(100);

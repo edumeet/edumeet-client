@@ -383,6 +383,11 @@ export const createRoomWithParams = (params: object): AppThunk<Promise<object | 
 			params
 		);
 
+		dispatch(notificationsActions.enqueueNotification({
+			message: 'Creation successfull',
+			options: { variant: 'success' }
+		}));
+
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({

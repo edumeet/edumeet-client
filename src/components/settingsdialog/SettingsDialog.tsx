@@ -26,6 +26,7 @@ const SettingsDialog = (): React.JSX.Element => {
 	const settingsOpen = useAppSelector((state) => state.ui.settingsOpen);
 	const currentSettingsTab = useAppSelector((state) => state.ui.currentSettingsTab);
 	const closeButtonDisabled = useAppSelector((state) => state.me.videoInProgress || state.me.audioInProgress);
+	const locale = useAppSelector((state) => state.settings.locale);
 
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -42,7 +43,7 @@ const SettingsDialog = (): React.JSX.Element => {
 			onClose={handleCloseSettings}
 			maxWidth='sm'
 			content={
-				<>
+				<div data-locale={locale}>
 					<Tabs
 						value={tabs.indexOf(currentSettingsTab)}
 						onChange={(_event, value) => {
@@ -82,7 +83,7 @@ const SettingsDialog = (): React.JSX.Element => {
 					{currentSettingsTab === 'appearance' && <AppearanceSettings />}
 					{currentSettingsTab === 'advanced' && <AdvancedSettings />}
 					{currentSettingsTab === 'management' && <MangagementSettings />}
-				</>
+				</div>
 			}
 			actions={
 				<Button

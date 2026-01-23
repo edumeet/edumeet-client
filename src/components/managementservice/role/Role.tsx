@@ -122,7 +122,19 @@ const RoleTable = () => {
 		setId(0);
 		setName('');
 		setDescription('');
-		setTenantId(0);
+
+		// ensure UI selection and tenantId are in sync
+		if (tenants.length > 0) {
+			const firstTenant = tenants[0];
+			const firstTenantId = Number(firstTenant.id);
+
+			setTenantId(firstTenantId);
+			setTenantIdOption(firstTenant);
+		} else {
+			setTenantId(0);
+			setTenantIdOption(undefined);
+		}
+
 		setCantDelete(true);
 		setChecked(new Array(permissions.length).fill(false));
 		setCheckedDisabled(true);
