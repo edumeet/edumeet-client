@@ -122,7 +122,18 @@ const RoleTable = () => {
 		setId(0);
 		setName('');
 		setDescription('');
-		setTenantId(0);
+
+		if (tenants.length === 1) {
+			const onlyTenant = tenants[0];
+			const onlyTenantId = Number(onlyTenant.id);
+
+			setTenantId(onlyTenantId);
+			setTenantIdOption(onlyTenant);
+		} else {
+			setTenantId(0);
+			setTenantIdOption(undefined);
+		}
+
 		setCantDelete(true);
 		setChecked(new Array(permissions.length).fill(false));
 		setCheckedDisabled(true);
@@ -310,7 +321,7 @@ const RoleTable = () => {
 						disableClearable
 						id="combo-box-demo"
 						onChange={handleTenantIdChange}
-						value={tenantIdOption}
+						value={tenantIdOption ?? null}
 						sx={{ marginTop: '8px' }}
 						disabled={cannotEdit}
 						renderInput={(params) => <TextField {...params} label={tenantLabel()} />}

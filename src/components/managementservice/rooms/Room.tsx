@@ -458,7 +458,7 @@ const RoomTable = () => {
 							fullWidth
 							disableClearable
 							onChange={handleTenantIdChange}
-							value={tenantIdOption}
+							value={tenantIdOption ?? null}
 							readOnly={id !== 0} // tenant not changeable on edit
 							sx={{ marginTop: '8px' }}
 							renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
