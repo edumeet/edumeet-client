@@ -108,6 +108,8 @@ const DndContextWrapper = ({ children, setShowParticipantsList, setDragOver, dra
 			draggedPeerIds.forEach((peerId) => {
 				dispatch(moveToBreakoutRoom(peerId, roomId));
 			});
+		} else {
+			setShowParticipantsList(participants);
 		}
 
 		// Reset when drag has ended

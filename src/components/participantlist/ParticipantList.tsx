@@ -104,22 +104,22 @@ const ParticipantList = (): React.JSX.Element => {
 									</Flipped>
 								))}
 							</Flipper>
-							{createPortal(
-								<DragOverlay modifiers={[ restrictToWindowEdges ]}>
-									{activePeer ? (
-										draggedPeerIds.length > 1 ? (
-											<PulsingBadge color='primary' badgeContent={draggedPeerIds.length} sx={{ display: 'block' }}>
-												<ListPeer peer={activePeer} isModerator={isModerator}/>
-											</PulsingBadge>
-										) : (
-											<ListPeer peer={activePeer} isModerator={isModerator}/>
-										)
-									) : null}
-								</DragOverlay>,
-								document.body
-							)}
 						</>
 					}
+					{createPortal(
+						<DragOverlay modifiers={[ restrictToWindowEdges ]}>
+							{activePeer ? (
+								draggedPeerIds.length > 1 ? (
+									<PulsingBadge color='primary' badgeContent={draggedPeerIds.length} sx={{ display: 'block' }}>
+										<ListPeer peer={activePeer} isModerator={isModerator}/>
+									</PulsingBadge>
+								) : (
+									<ListPeer peer={activePeer} isModerator={isModerator}/>
+								)
+							) : null}
+						</DragOverlay>,
+						document.body
+					)}
 				</DroppableWrapper>
 			</DndContextWrapper>
 		</ParticipantListDiv>
