@@ -247,7 +247,7 @@ export const moveToBreakoutRoom = (peerId: string, sessionId: string, oldSession
 		} = await signalingService.sendRequest('moveToBreakoutRoom', { roomSessionId: sessionId, roomPeerId: peerId });
 
 		batch(() => {
-			dispatch(peersActions.setPeerSessionId({ id: peerId, sessionId, oldSessionId }));
+			// dispatch(peersActions.setPeerSessionId({ id: peerId, sessionId, oldSessionId }));
 			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		});
