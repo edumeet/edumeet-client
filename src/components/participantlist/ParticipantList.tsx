@@ -4,7 +4,7 @@ import {
 	useAppSelector,
 	usePermissionSelector
 } from '../../store/hooks';
-import { breakoutRoomsSelector, inParentRoomSelector, isMobileSelector, parentParticipantListSelector, parentRoomSessionIdSelector } from '../../store/selectors';
+import { breakoutRoomsSelector, inParentRoomSelector, isMobileSelector, parentParticipantListSelector, parentRoomSessionIdSelector, peersArraySelector } from '../../store/selectors';
 import { permissions } from '../../utils/roles';
 import {
 	breakoutRoomsLabel,
@@ -27,6 +27,7 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import PulsingBadge from '../pulsingbadge/PulsingBadge';
 import DroppableWrapper from '../draganddrop/DroppableWrapper';
 import DraggableWrapper from '../draganddrop/DraggableWrapper';
+import GhostObject from '../draganddrop/GhostObject';
 
 const ParticipantListDiv = styled(Box)(({ theme }) => ({
 	width: '100%',
@@ -52,6 +53,8 @@ const ParticipantList = (): React.JSX.Element => {
 	const [ activePeer, setActivePeer ] = useState<Peer | null>(null);
 	const [ showParticipantsList, setShowParticipantsList ] = useState<Peer[]>(participants);
 	const [ dragOver, setDragOver ] = useState<string>('');
+	const mainDragExpand = dragOver === parentSessionId ? true : false;
+	const showGhosts = (useAppSelector(peersArraySelector)).filter((peer) => draggedPeerIds.includes(peer.id));
 
 	// Ensure showParticipantsList is updated when new peer has joined/left
 	useEffect(() => {
@@ -92,6 +95,13 @@ const ParticipantList = (): React.JSX.Element => {
 					<ListHeader>
 						{participantsLabel()}
 					</ListHeader>
+					{ mainDragExpand ? (
+						showGhosts.map((peer) => (
+							<GhostObject key={peer.id}>
+								<ListPeer key={peer.id} peer={peer} isModerator={isModerator} />
+							</GhostObject>
+						))
+					) : null }
 					{ (inParent || participants.length > 0) &&
 						<>
 							{inParent && <ListMe />}
