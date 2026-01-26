@@ -110,7 +110,7 @@ const ParticipantList = (): React.JSX.Element => {
 						<Box sx={{ py: 4 }} />
 					}
 					{createPortal(
-						<DragOverlay modifiers={[ restrictToWindowEdges ]}>
+						<DragOverlay modifiers={[ restrictToWindowEdges ]} dropAnimation={null}>
 							{activePeer ? (
 								draggedPeerIds.length > 1 ? (
 									<PulsingBadge color='primary' badgeContent={draggedPeerIds.length} sx={{ display: 'block' }}>
