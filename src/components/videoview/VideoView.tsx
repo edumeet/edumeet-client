@@ -84,6 +84,14 @@ const VideoView = ({
 
 		if (media) ({ track } = media);
 
+		console.log('[VideoView] effect', {
+			consumerId,
+			localPaused: consumer?.localPaused,
+			remotePaused: consumer?.remotePaused,
+			hasMedia: !!media,
+			hasTrack: !!track,
+		});
+
 		if (!track || !currentVideoElement) return;
 
 		const stream = new MediaStream();
