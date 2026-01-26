@@ -88,7 +88,7 @@ const ParticipantList = (): React.JSX.Element => {
 					</Flipper>
 				</>
 				}
-				<DroppableWrapper id={parentSessionId}>
+				<DroppableWrapper id={parentSessionId!}>
 					<ListHeader>
 						{participantsLabel()}
 					</ListHeader>
