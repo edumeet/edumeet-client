@@ -80,7 +80,8 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 				{ peer.raisedHand &&
 					<IconButton
 						disabled={!isModerator || peer.raisedHandInProgress}
-						onClick={(): void => {
+						onClick={(event): void => {
+							event.stopPropagation();
 							dispatch(lowerPeerHand(peer.id));
 						}}
 						size='small'
@@ -95,7 +96,14 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 					{ hasAudio && /* <StyledChip disabled label={ */ <MicUnMutedIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
 				</StyledIcons>
 				{ micConsumer && <Volume consumer={micConsumer} small /> }
-				<MoreButton onClick={(event) => setMoreAnchorEl(event.currentTarget)} type='iconbutton' size='small' />
+				<MoreButton
+					onClick={(event): void  => {
+						event.stopPropagation();
+						setMoreAnchorEl(event.currentTarget);
+					}}
+					type='iconbutton'
+					size='small'
+				/>
 			</PeerDiv>
 			{ shouldShow && <PeerMenu anchorEl={moreAnchorEl} peerId={peer.id} onClick={handleMenuClose} /> }
 		</>
