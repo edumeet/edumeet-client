@@ -97,7 +97,7 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 				</StyledIcons>
 				{ micConsumer && <Volume consumer={micConsumer} small /> }
 				<MoreButton
-					onClick={(event): void  => {
+					onClick={(event): void => {
 						event.stopPropagation();
 						setMoreAnchorEl(event.currentTarget);
 					}}

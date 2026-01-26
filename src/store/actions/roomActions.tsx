@@ -237,6 +237,7 @@ export const moveToBreakoutRoom = (peerId: string, sessionId: string, oldSession
 	{ signalingService }
 ): Promise<void> => {
 	logger.debug('moveToBreakoutRoom()');
+	logger.debug('moveToBreakoutRoom() oldSessionId: %s', oldSessionId);
 
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
 
