@@ -7,9 +7,6 @@ import { ResolutionWatcher } from '../../utils/resolutionWatcher';
 import type { Consumer as PeerConsumer } from 'ortc-p2p/src/types';
 import { ProducerSource } from '../../utils/types';
 import { useAppSelector } from '../../store/hooks';
-import { Logger } from '../../utils/Logger';
-
-const logger = new Logger('VideoView');
 
 interface VideoViewProps {
 	mirrored?: boolean;
@@ -86,15 +83,6 @@ const VideoView = ({
 			media = mediaService.getConsumer(consumerId);
 
 		if (media) ({ track } = media);
-
-		if (consumerId)
-			logger.debug('[VideoView] effect', {
-				consumerId,
-				localPaused: consumer?.localPaused,
-				remotePaused: consumer?.remotePaused,
-				hasMedia: Boolean(media),
-				hasTrack: Boolean(track),
-			});
 
 		if (!track || !currentVideoElement) return;
 
