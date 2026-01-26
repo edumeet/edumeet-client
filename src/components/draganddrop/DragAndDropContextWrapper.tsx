@@ -106,7 +106,7 @@ const DndContextWrapper = ({ children, setShowParticipantsList, setDragOver, dra
 		// Drop peer if peer is over a new breakout room
 		if (roomId !== activePeer?.sessionId && draggedPeerIds) {
 			draggedPeerIds.forEach((peerId) => {
-				dispatch(moveToBreakoutRoom(peerId, roomId, currentRoom.sessionId));
+				dispatch(moveToBreakoutRoom(peerId, roomId));
 			});
 		}
     
