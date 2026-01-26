@@ -221,9 +221,21 @@ export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
 
 	try {
-		const { sessionId } = await signalingService.sendRequest('leaveBreakoutRoom');
+		const {
+			sessionId,
+			chatHistory,
+			fileHistory
+		} = await signalingService.sendRequest('leaveBreakoutRoom');
 
-		dispatch(meActions.setSessionId(sessionId));
+		batch(() => {
+			dispatch(meActions.setSessionId(sessionId));
+
+			if (chatHistory)
+				dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+
+			if (fileHistory)
+				dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+		});
 	} catch (error) {
 		logger.error('leaveBreakoutRoom() [error:%o]', error);
 	} finally {

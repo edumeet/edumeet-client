@@ -161,9 +161,21 @@ const createRoomMiddleware = ({
 						}
 
 						case 'sessionIdChanged': {
-							const { sessionId } = notification.data;
+							const {
+								sessionId,
+								chatHistory,
+								fileHistory
+							} = notification.data;
 
-							dispatch(meActions.setSessionId(sessionId));
+							batch(() => {
+								dispatch(meActions.setSessionId(sessionId));
+
+								if (chatHistory)
+									dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+
+								if (fileHistory)
+									dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+							});
 
 							break;
 						}
