@@ -241,18 +241,7 @@ export const moveToBreakoutRoom = (peerId: string, sessionId: string): AppThunk<
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
 
 	try {
-		const {
-			chatHistory,
-			fileHistory,
-		} = await signalingService.sendRequest('moveToBreakoutRoom', { roomSessionId: sessionId, roomPeerId: peerId });
-
-		/*
-		batch(() => {
-			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
-			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-		});
-		*/
-
+		await signalingService.sendRequest('moveToBreakoutRoom', { roomSessionId: sessionId, roomPeerId: peerId });
 	} catch (error) {
 		logger.error('moveToBreakoutRoom() [error:%o]', error);
 	} finally {
