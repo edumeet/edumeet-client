@@ -106,6 +106,9 @@ const ParticipantList = (): React.JSX.Element => {
 							</Flipper>
 						</>
 					}
+					{ (!inParent && participants.length === 0 && draggedPeerIds.length > 0) &&
+						<Box sx={{ py: 4 }} />
+					}
 					{createPortal(
 						<DragOverlay modifiers={[ restrictToWindowEdges ]}>
 							{activePeer ? (
