@@ -182,12 +182,12 @@ const createRoomMiddleware = ({
 							const lostVideo = getState().me.lostVideo;
 
 							if (lostAudio) {
-								dispatch(meActions.setLostAudio(false));
+								dispatch(setLostAudio(false));
 								dispatch(updateMic());
 							}
 
 							if (lostVideo) {
-								dispatch(meActions.setLostVideo(false));
+								dispatch(setLostVideo(false));
 								dispatch(updateWebcam());
 							}
 
