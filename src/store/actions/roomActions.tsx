@@ -213,7 +213,7 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 
 export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 	dispatch,
-	_getState,
+	getState,
 	{ signalingService }
 ): Promise<void> => {
 	logger.debug('leaveBreakoutRoom()');
