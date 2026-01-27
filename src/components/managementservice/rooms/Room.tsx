@@ -297,7 +297,7 @@ const RoomTable = () => {
 		setDefaultRoleIdOption(undefined);
 		setLogo('');
 		setBackground('');
-		setMaxActiveVideos(0);
+		setMaxActiveVideos(12);
 		setLocked(true);
 		setChatEnabled(true);
 		setRaiseHandEnabled(true);
