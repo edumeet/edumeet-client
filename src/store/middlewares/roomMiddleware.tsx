@@ -177,6 +177,13 @@ const createRoomMiddleware = ({
 									dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 							});
 
+							const state = getState();
+							const audioMuted = state.me.audioMuted;
+							const videoMuted = state.me.videoMuted;
+
+							if (!audioMuted) dispatch(updateMic());
+							if (!videoMuted) dispatch(updateWebcam());
+
 							break;
 						}
 					}
