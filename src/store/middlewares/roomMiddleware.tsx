@@ -4,7 +4,7 @@ import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
-import { setDisplayName, setPicture } from '../actions/meActions';
+import { setDisplayName, setPicture, setLostAudio, setLostVideo } from '../actions/meActions';
 import { updateMic, updateWebcam } from '../actions/mediaActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { meActions } from '../slices/meSlice';
@@ -178,11 +178,18 @@ const createRoomMiddleware = ({
 									dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 							});
 
-							const audioMuted = getState().me.audioMuted;
-							const videoMuted = getState().me.videoMuted;
+							const lostAudio = getState().me.lostAudio;
+							const lostVideo = getState().me.lostVideo;
 
-							if (!audioMuted) dispatch(updateMic());
-							if (!videoMuted) dispatch(updateWebcam());
+							if (lostAudio) {
+								dispatch(meActions.setLostAudio(false));
+								dispatch(updateMic());
+							}
+
+							if (lostVideo) {
+								dispatch(meActions.setLostVideo(false));
+								dispatch(updateWebcam());
+							}
 
 							break;
 						}
