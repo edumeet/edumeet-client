@@ -20,7 +20,16 @@ const AudioView = ({
 
 	useEffect(() => {
 		const mediaConsumer = mediaService.getConsumer(consumer.id);
-		const element = audioElement.current;
+		const currentAudioElement = audioElement.current;
+
+		if (!currentAudioElement) {
+			logger.warn({
+				consumerId: consumer.id,
+				peerId: consumer.peerId
+			}, 'AudioView: audio element ref not ready');
+
+			return;
+		}
 
 		if (!mediaConsumer) {
 			logger.warn({
@@ -42,15 +51,6 @@ const AudioView = ({
 			return;
 		}
 
-		if (!element) {
-			logger.warn({
-				consumerId: consumer.id,
-				peerId: consumer.peerId
-			}, 'AudioView: audio element ref not ready');
-
-			return;
-		}
-
 		const { audioGain } = consumer;
 
 		logger.debug({
@@ -61,12 +61,12 @@ const AudioView = ({
 		}, 'AudioView: attaching track to audio element');
 
 		if (audioGain !== undefined)
-			element.volume = audioGain;
+			currentAudioElement.volume = audioGain;
 
 		const stream = new MediaStream();
 
 		stream.addTrack(track);
-		element.srcObject = stream;
+		currentAudioElement.srcObject = stream;
 
 		if (deviceId) {
 			// same behavior as before, just wrapped with a log
@@ -75,7 +75,8 @@ const AudioView = ({
 				peerId: consumer.peerId,
 				deviceId
 			}, 'AudioView: setting sinkId');
-			element.setSinkId(deviceId);
+
+			currentAudioElement.setSinkId(deviceId);
 		}
 
 		return () => {
@@ -84,25 +85,24 @@ const AudioView = ({
 				peerId: consumer.peerId
 			}, 'AudioView: cleanup');
 
-			if (audioElement.current) {
-				audioElement.current.srcObject = null;
-				audioElement.current.onplay = null;
-				audioElement.current.onpause = null;
+			if (currentAudioElement) {
+				currentAudioElement.srcObject = null;
 			}
 		};
 	}, [ deviceId, consumer.id ]);
 
 	useEffect(() => {
 		const { audioGain } = consumer;
+		const currentAudioElement = audioElement.current;
 
-		if (audioGain !== undefined && audioElement.current) {
+		if (audioGain !== undefined && currentAudioElement) {
 			logger.debug({
 				consumerId: consumer.id,
 				peerId: consumer.peerId,
 				audioGain
 			}, 'AudioView: updating audioGain');
 
-			audioElement.current.volume = audioGain;
+			currentAudioElement.volume = audioGain;
 		}
 	}, [ consumer.audioGain ]);
 

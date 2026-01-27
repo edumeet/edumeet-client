@@ -5,6 +5,7 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
+import { updateMic, updateWebcam } from '../actions/mediaActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { meActions } from '../slices/meSlice';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
@@ -161,9 +162,34 @@ const createRoomMiddleware = ({
 						}
 
 						case 'sessionIdChanged': {
-							const { sessionId } = notification.data;
+							const {
+								sessionId,
+								chatHistory,
+								fileHistory
+							} = notification.data;
 
-							dispatch(meActions.setSessionId(sessionId));
+							batch(() => {
+								dispatch(meActions.setSessionId(sessionId));
+
+								if (chatHistory)
+									dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+
+								if (fileHistory)
+									dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+							});
+
+							const lostAudio = getState().me.lostAudio;
+							const lostVideo = getState().me.lostVideo;
+
+							if (lostAudio) {
+								dispatch(meActions.setLostAudio(false));
+								dispatch(updateMic());
+							}
+
+							if (lostVideo) {
+								dispatch(meActions.setLostVideo(false));
+								dispatch(updateWebcam());
+							}
 
 							break;
 						}

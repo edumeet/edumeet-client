@@ -4,7 +4,7 @@ import {
 	useAppSelector,
 	usePermissionSelector
 } from '../../store/hooks';
-import { breakoutRoomsSelector, inParentRoomSelector, isMobileSelector, parentParticipantListSelector } from '../../store/selectors';
+import { breakoutRoomsSelector, inParentRoomSelector, isMobileSelector, parentParticipantListSelector, parentRoomSessionIdSelector, peersArraySelector } from '../../store/selectors';
 import { permissions } from '../../utils/roles';
 import {
 	breakoutRoomsLabel,
@@ -27,6 +27,7 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import PulsingBadge from '../pulsingbadge/PulsingBadge';
 import DroppableWrapper from '../draganddrop/DroppableWrapper';
 import DraggableWrapper from '../draganddrop/DraggableWrapper';
+import GhostObject from '../draganddrop/GhostObject';
 
 const ParticipantListDiv = styled(Box)(({ theme }) => ({
 	width: '100%',
@@ -47,10 +48,13 @@ const ParticipantList = (): React.JSX.Element => {
 	const canChangeRoom = usePermissionSelector(permissions.CHANGE_ROOM);
 	const rooms = useAppSelector(breakoutRoomsSelector);
 	const inParent = useAppSelector(inParentRoomSelector);
+	const parentSessionId = useAppSelector(parentRoomSessionIdSelector);
 	const [ draggedPeerIds, setDraggedPeerIds ] = useState<string[]>([]);
 	const [ activePeer, setActivePeer ] = useState<Peer | null>(null);
 	const [ showParticipantsList, setShowParticipantsList ] = useState<Peer[]>(participants);
 	const [ dragOver, setDragOver ] = useState<string>('');
+	const mainDragExpand = dragOver === parentSessionId ? true : false;
+	const showGhosts = (useAppSelector(peersArraySelector)).filter((peer) => draggedPeerIds.includes(peer.id));
 
 	// Ensure showParticipantsList is updated when new peer has joined/left
 	useEffect(() => {
@@ -87,24 +91,37 @@ const ParticipantList = (): React.JSX.Element => {
 					</Flipper>
 				</>
 				}
-				{ (inParent || participants.length > 0) &&
-				<>
+				<DroppableWrapper id={parentSessionId!}>
 					<ListHeader>
-						{ participantsLabel() }
+						{participantsLabel()}
 					</ListHeader>
-					{ inParent && <ListMe /> }
-					<Flipper flipKey={showParticipantsList}>
-						{ showParticipantsList.map((peer) => (
-							<Flipped key={peer.id} flipId={peer.id}>
-								<DraggableWrapper key={peer.id} id={peer.id} disabled={!isModerator || isMobile}>
-									<ListPeer key={peer.id} peer={peer} isModerator={isModerator} />
-								</DraggableWrapper>
-							</Flipped>
-						)) }
-					</Flipper>
+					{ mainDragExpand ? (
+						showGhosts.map((peer) => (
+							<GhostObject key={peer.id}>
+								<ListPeer key={peer.id} peer={peer} isModerator={isModerator} />
+							</GhostObject>
+						))
+					) : null }
+					{ (inParent || participants.length > 0) &&
+						<>
+							{inParent && <ListMe />}
+							<Flipper flipKey={showParticipantsList}>
+								{showParticipantsList.map((peer) => (
+									<Flipped key={peer.id} flipId={peer.id}>
+										<DraggableWrapper key={peer.id} id={peer.id} disabled={!isModerator || isMobile}>
+											<ListPeer key={peer.id} peer={peer} isModerator={isModerator} />
+										</DraggableWrapper>
+									</Flipped>
+								))}
+							</Flipper>
+						</>
+					}
+					{ (!inParent && participants.length === 0 && draggedPeerIds.length > 0) &&
+						<Box sx={{ py: 4 }} />
+					}
 					{createPortal(
-						<DragOverlay modifiers={[ restrictToWindowEdges ]}>
-							{activePeer? (
+						<DragOverlay modifiers={[ restrictToWindowEdges ]} dropAnimation={null}>
+							{activePeer ? (
 								draggedPeerIds.length > 1 ? (
 									<PulsingBadge color='primary' badgeContent={draggedPeerIds.length} sx={{ display: 'block' }}>
 										<ListPeer peer={activePeer} isModerator={isModerator}/>
@@ -116,8 +133,7 @@ const ParticipantList = (): React.JSX.Element => {
 						</DragOverlay>,
 						document.body
 					)}
-				</>
-				}
+				</DroppableWrapper>
 			</DndContextWrapper>
 		</ParticipantListDiv>
 	);

@@ -59,10 +59,8 @@ const VideoView = ({
 	const { mediaService } = useContext(ServiceContext);
 	const videoElement = useRef<HTMLVideoElement>(null);
 	const [ loading, setLoading ] = useState(true);
-
 	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);
 	const extraVideoTrackId = useAppSelector((state) => state.me.extraVideoTrackId);
-	const consumerId = consumer?.id;
 
 	const previewTrackId =
 		previewTrack ? previewWebcamTrackId : undefined;
@@ -71,6 +69,9 @@ const VideoView = ({
 		source === 'extravideo' ? extraVideoTrackId : undefined;
 
 	useEffect(() => {
+		const consumerId = consumer?.id;
+		const currentVideoElement = videoElement.current;
+
 		let media: Consumer | PeerConsumer | undefined;
 		let track: MediaStreamTrack | null = null;
 
@@ -81,44 +82,44 @@ const VideoView = ({
 		else if (consumerId)
 			media = mediaService.getConsumer(consumerId);
 
-		if (media)
-			({ track } = media);
+		if (media) ({ track } = media);
 
-		if (!track || !videoElement.current) return;
+		if (!track || !currentVideoElement) return;
 
 		const stream = new MediaStream();
 
 		stream.addTrack(track);
-		videoElement.current.srcObject = stream;
+		currentVideoElement.srcObject = stream;
 
-		if (videoElement.current.readyState >= videoElement.current.HAVE_METADATA)
+		if (currentVideoElement.readyState >= currentVideoElement.HAVE_METADATA)
 			setLoading(false);
 		else
-			videoElement.current.oncanplay = () => setLoading(false);
+			currentVideoElement.oncanplay = () => setLoading(false);
 
 		return () => {
-			if (videoElement.current) {
-				videoElement.current.srcObject = null;
-				videoElement.current.onplay = null;
-				videoElement.current.onpause = null;
+			if (currentVideoElement) {
+				currentVideoElement.srcObject = null;
+				currentVideoElement.oncanplay = null;
 			}
 		};
 	}, [
 		previewTrack,
 		source,
-		consumerId,
+		consumer?.id,
+		consumer?.localPaused,
+		consumer?.remotePaused,
 		previewTrackId,
 		senderTrackId,
 	]);
 
 	useEffect(() => {
+		const consumerId = consumer?.id;
+
 		if (!consumerId) return;
 
 		const actualConsumer = mediaService.getConsumer(consumerId);
-
 		const resolutionWatcher = actualConsumer?.appData.resolutionWatcher as ResolutionWatcher | undefined;
 		const resolutionReporter = resolutionWatcher?.createResolutionReporter();
-
 		const currentVideoElement = videoElement.current;
 
 		if (!resolutionReporter || !currentVideoElement) return;
@@ -135,7 +136,7 @@ const VideoView = ({
 			resizeObserver.disconnect();
 			resolutionReporter.close();
 		};
-	}, [ consumerId ]);
+	}, [ consumer?.id ]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (
