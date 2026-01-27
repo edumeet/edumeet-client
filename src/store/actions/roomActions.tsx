@@ -221,6 +221,9 @@ export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
 
 	try {
+		const audioMuted = getState().me.audioMuted;
+		const videoMuted = getState().me.videoMuted;
+
 		const {
 			sessionId,
 			chatHistory,
@@ -236,6 +239,9 @@ export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 			if (fileHistory)
 				dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		});
+
+		if (!audioMuted) dispatch(updateMic());
+		if (!videoMuted) dispatch(updateWebcam());
 	} catch (error) {
 		logger.error('leaveBreakoutRoom() [error:%o]', error);
 	} finally {
