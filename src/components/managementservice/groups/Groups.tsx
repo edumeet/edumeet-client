@@ -102,12 +102,21 @@ const GroupTable = () => {
 		setName('');
 		setDescription('');
 		setDescriptionDisabled(true);
-		// try to get current tenantId
-		// TODO
-		setTenantId(0);
-		setTenantIdOption(undefined);
 
-		setTenantIdDisabled(true);
+		// keep Autocomplete UI and tenantId in sync (same idea as roles/rooms)
+		if (tenants.length > 0) {
+			const firstTenant = tenants[0];
+			const firstTenantId = Number(firstTenant.id);
+
+			setTenantId(firstTenantId);
+			setTenantIdOption(firstTenant);
+		} else {
+			setTenantId(0);
+			setTenantIdOption(undefined);
+		}
+
+		// setTenantIdDisabled(true);
+		setTenantIdDisabled(false);
 		setOpen(true);
 	};
 	

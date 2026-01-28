@@ -214,7 +214,7 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 
 export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 	dispatch,
-	_getState,
+	getState,
 	{ signalingService }
 ): Promise<void> => {
 	logger.debug('leaveBreakoutRoom()');
@@ -222,9 +222,27 @@ export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
 
 	try {
-		const { sessionId } = await signalingService.sendRequest('leaveBreakoutRoom');
+		const audioMuted = getState().me.audioMuted;
+		const videoMuted = getState().me.videoMuted;
 
-		dispatch(meActions.setSessionId(sessionId));
+		const {
+			sessionId,
+			chatHistory,
+			fileHistory
+		} = await signalingService.sendRequest('leaveBreakoutRoom');
+
+		batch(() => {
+			dispatch(meActions.setSessionId(sessionId));
+
+			if (chatHistory)
+				dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+
+			if (fileHistory)
+				dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+		});
+
+		if (!audioMuted) dispatch(updateMic());
+		if (!videoMuted) dispatch(updateWebcam());
 	} catch (error) {
 		logger.error('leaveBreakoutRoom() [error:%o]', error);
 	} finally {
@@ -232,7 +250,7 @@ export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 	}
 };
 
-export const moveToBreakoutRoom = (peerId: string, sessionId: string, oldSessionId: string): AppThunk<Promise<void>> => async (
+export const moveToBreakoutRoom = (peerId: string, sessionId: string): AppThunk<Promise<void>> => async (
 	dispatch,
 	_getState,
 	{ signalingService }
@@ -242,17 +260,7 @@ export const moveToBreakoutRoom = (peerId: string, sessionId: string, oldSession
 	dispatch(roomActions.updateRoom({ transitBreakoutRoomInProgress: true }));
 
 	try {
-		const {
-			chatHistory,
-			fileHistory,
-		} = await signalingService.sendRequest('moveToBreakoutRoom', { roomSessionId: sessionId, roomPeerId: peerId });
-
-		batch(() => {
-			dispatch(peersActions.setPeerSessionId({ id: peerId, sessionId, oldSessionId }));
-			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
-			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-		});
-
+		await signalingService.sendRequest('moveToBreakoutRoom', { roomSessionId: sessionId, roomPeerId: peerId });
 	} catch (error) {
 		logger.error('moveToBreakoutRoom() [error:%o]', error);
 	} finally {

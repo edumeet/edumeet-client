@@ -269,6 +269,7 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 			logger.error('checkJWT authenticate failed [error: %o]', e);
 
 			clearRefreshTimer();
+
 			dispatch(permissionsActions.setToken());
 			dispatch(syncSignalingUrl({ token: null }));
 			await (await managementService).authentication.removeAccessToken().catch((e2: unknown) => logger.error('removeAccessToken failed [error: %o]', e2));
@@ -302,6 +303,8 @@ export const logout = (): AppThunk<Promise<void>> => async (
 	dispatch(permissionsActions.setToken());
 	dispatch(permissionsActions.setLoggedIn(false));
 	dispatch(syncSignalingUrl({ token: null }));
+
+	dispatch(managamentActions.clearUser());
 
 	dispatch(managamentActions.clearUser());
 

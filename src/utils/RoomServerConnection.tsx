@@ -129,6 +129,9 @@ export class RoomServerConnection extends EventEmitter {
 				}
 			}
 		}
+
+		// if failed 3 times exit meeting
+		this.emit('close');
 	}
 
 	private handleSocket(): void {

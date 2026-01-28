@@ -192,6 +192,7 @@
   "settings.cantSelectCamera": "Невозможно выбрать видеоустройство",
   "settings.channelCount": null,
   "settings.echoCancellation": "Подавление эха",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": null,
   "settings.frameRate": "Выберите частоту кадров видео",
   "settings.hiddenControls": "Скрытые элементы управления мультимедиа",

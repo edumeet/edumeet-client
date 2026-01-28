@@ -6,6 +6,7 @@ import { ServiceContext } from '../../store/store';
 import { ResolutionWatcher } from '../../utils/resolutionWatcher';
 import type { Consumer as PeerConsumer } from 'ortc-p2p/src/types';
 import { ProducerSource } from '../../utils/types';
+import { useAppSelector } from '../../store/hooks';
 
 interface VideoViewProps {
 	mirrored?: boolean;
@@ -58,8 +59,19 @@ const VideoView = ({
 	const { mediaService } = useContext(ServiceContext);
 	const videoElement = useRef<HTMLVideoElement>(null);
 	const [ loading, setLoading ] = useState(true);
+	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);
+	const extraVideoTrackId = useAppSelector((state) => state.me.extraVideoTrackId);
+
+	const previewTrackId =
+		previewTrack ? previewWebcamTrackId : undefined;
+
+	const senderTrackId =
+		source === 'extravideo' ? extraVideoTrackId : undefined;
 
 	useEffect(() => {
+		const consumerId = consumer?.id;
+		const currentVideoElement = videoElement.current;
+
 		let media: Consumer | PeerConsumer | undefined;
 		let track: MediaStreamTrack | null = null;
 
@@ -67,42 +79,50 @@ const VideoView = ({
 			track = mediaService.previewWebcamTrack;
 		else if (source)
 			track = mediaService.mediaSenders[source].track;
-		else if (consumer)
-			media = mediaService.getConsumer(consumer.id);
+		else if (consumerId)
+			media = mediaService.getConsumer(consumerId);
 
-		if (media)
-			({ track } = media);
+		if (media) ({ track } = media);
 
-		if (!track || !videoElement.current) return;
+		if (!track || !currentVideoElement) return;
 
 		const stream = new MediaStream();
-		
-		stream.addTrack(track);
-		videoElement.current.srcObject = stream;
 
-		if (videoElement.current.readyState >= videoElement.current.HAVE_METADATA)
+		stream.addTrack(track);
+		currentVideoElement.srcObject = stream;
+
+		if (currentVideoElement.readyState >= currentVideoElement.HAVE_METADATA)
 			setLoading(false);
 		else
-			videoElement.current.oncanplay = () => setLoading(false);
+			currentVideoElement.oncanplay = () => setLoading(false);
 
 		return () => {
-			if (videoElement.current) {
-				videoElement.current.srcObject = null;
-				videoElement.current.onplay = null;
-				videoElement.current.onpause = null;
+			if (currentVideoElement) {
+				currentVideoElement.srcObject = null;
+				currentVideoElement.oncanplay = null;
 			}
 		};
-	}, []);
+	}, [
+		previewTrack,
+		source,
+		consumer?.id,
+		consumer?.localPaused,
+		consumer?.remotePaused,
+		previewTrackId,
+		senderTrackId,
+	]);
 
 	useEffect(() => {
-		if (!consumer) return;
+		const consumerId = consumer?.id;
 
-		const actualConsumer = mediaService.getConsumer(consumer.id);
+		if (!consumerId) return;
 
+		const actualConsumer = mediaService.getConsumer(consumerId);
 		const resolutionWatcher = actualConsumer?.appData.resolutionWatcher as ResolutionWatcher | undefined;
 		const resolutionReporter = resolutionWatcher?.createResolutionReporter();
+		const currentVideoElement = videoElement.current;
 
-		if (!resolutionReporter || !videoElement.current) return;
+		if (!resolutionReporter || !currentVideoElement) return;
 
 		const resizeObserver = new ResizeObserver((entries) => {
 			const { contentRect: { width, height } } = entries[0];
@@ -110,13 +130,13 @@ const VideoView = ({
 			resolutionReporter.updateResolution({ width, height });
 		});
 
-		resizeObserver.observe(videoElement.current);
+		resizeObserver.observe(currentVideoElement);
 
 		return () => {
 			resizeObserver.disconnect();
 			resolutionReporter.close();
 		};
-	}, []);
+	}, [ consumer?.id ]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (

@@ -1,10 +1,26 @@
+import { useEffect } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { audioConsumerSelector } from '../../store/selectors';
 import AudioView from '../audioview/AudioView';
+import { Logger } from '../../utils/Logger';
+
+const logger = new Logger('AudioPeers');
 
 const AudioPeers = (): React.JSX.Element => {
 	const micConsumers = useAppSelector(audioConsumerSelector);
 	const deviceId = useAppSelector((state) => state.settings.selectedAudioOutputDevice);
+
+	useEffect(() => {
+		micConsumers.forEach((consumer) => {
+			logger.debug({
+				consumerId: consumer.id,
+				peerId: consumer.peerId,
+				kind: consumer.kind,
+				localPaused: consumer.localPaused,
+				remotePaused: consumer.remotePaused
+			}, 'AudioPeers: consumer render state');
+		});
+	}, [ micConsumers ]);
 
 	return (
 		<div>

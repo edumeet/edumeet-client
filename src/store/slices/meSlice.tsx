@@ -47,6 +47,7 @@ export interface MeState {
 	screenEnabled: boolean;
 	screenAudioEnabled: boolean;
 	extraVideoEnabled: boolean;
+	extraVideoTrackId?: string;
 	extraAudioEnabled: boolean;
 	videoBackgroundEffect: BackgroundConfig | null;
 	reconnectKey: string | undefined;
@@ -86,6 +87,7 @@ const initialState: MeState = {
 	screenEnabled: false,
 	screenAudioEnabled: false,
 	extraVideoEnabled: false,
+	extraVideoTrackId: undefined,
 	extraAudioEnabled: false,
 	videoBackgroundEffect: null,
 	reconnectKey: undefined,
@@ -197,6 +199,9 @@ const meSlice = createSlice({
 		}),
 		setExtraVideoEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.extraVideoEnabled = action.payload;
+		}),
+		setExtraVideoTrackId: ((state, action: PayloadAction<string | undefined>) => {
+			state.extraVideoTrackId = action.payload;
 		}),
 		setExtraAudioEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.extraAudioEnabled = action.payload;

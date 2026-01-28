@@ -189,11 +189,15 @@ export const currentlySelectedLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Currently Selected'
 });
 
-export const hideNoVideoParticipantsLabel =
-	(): string => intl.formatMessage({
-		id: 'settings.hideNoVideoParticipants',
-		defaultMessage: 'Hide participants with no video'
-	});
+export const hideNoVideoParticipantsLabel = (): string => intl.formatMessage({
+	id: 'settings.hideNoVideoParticipants',
+	defaultMessage: 'Hide participants with no video'
+});
+
+export const enableBackgroundEffectsOnExtraVideoLabel = (): string => intl.formatMessage({
+	id: 'settings.enableBackgroundEffectsOnExtraVideoLabel',
+	defaultMessage: 'Enable background effects on extra video'
+});
 
 export const addVideoLabel = (): string => intl.formatMessage({
 	id: 'label.addVideo',

@@ -20,7 +20,7 @@ const CurrentRoomModal = () => {
 	const [ roles, setRoles ] = useState<RoleTypes>([ { 'description': 'Test', 'id': 1, 'name': 'Test', 'tenantId': 1, 'permissions': [] } ]);
 	const [ id, setId ] = useState(0);
 	const [ name, setName ] = useState('');
-	const nameDisabled =false;
+	const nameDisabled = true;
 	const [ description, setDescription ] = useState('');
 	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 	const [ tenantId, setTenantId ] = useState(0);
@@ -55,7 +55,7 @@ const CurrentRoomModal = () => {
 				setRoles(tdat.data);
 			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch(getRoomByName(window.location.pathname.substring(1))).then((tdata: any) => {
+			dispatch(getRoomByName(window.location.pathname.substring(1).toLowerCase())).then((tdata: any) => {
 			
 				const r = tdata.data[0] as Room;
 
@@ -188,7 +188,7 @@ const CurrentRoomModal = () => {
 
 	function checkRoomExists() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getRoomByName(window.location.pathname.substring(1))).then((tdata: any) => {
+		dispatch(getRoomByName(window.location.pathname.substring(1).toLowerCase())).then((tdata: any) => {
 			setRoomExists(tdata.total===1);
 		});
 	}
@@ -259,7 +259,7 @@ const CurrentRoomModal = () => {
 		fetchProduct();
 	};
 	const handleCreateRoom = () => {
-		dispatch(createRoom(window.location.pathname.substring(1))).then(() => {
+		dispatch(createRoom(window.location.pathname.substring(1).toLowerCase())).then(() => {
 			checkRoomExists();
 		});
 	};

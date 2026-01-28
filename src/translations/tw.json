@@ -192,6 +192,7 @@
   "settings.cantSelectCamera": "無法選擇此視訊來源",
   "settings.channelCount": null,
   "settings.echoCancellation": "抑制回音",
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": null,
   "settings.frameRate": null,
   "settings.hiddenControls": "隱藏控制按鈕",

@@ -18,6 +18,7 @@ import {
 	videoContainLabel,
 } from '../translated/translatedComponents';
 import LastNSlider from '../lastnslider/LastNSlider';
+import { ExtraVideoEffectsSwitch } from './SettingsSwitches';
 
 const AppearanceSettings = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -110,6 +111,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 				}
 				label={ videoContainLabel() }
 			/>
+			<ExtraVideoEffectsSwitch />
 		</FormGroup>
 	);
 };

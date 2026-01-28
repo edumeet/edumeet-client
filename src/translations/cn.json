@@ -193,6 +193,7 @@
   "settings.cantSelectCamera": "无法选择视频设备",
   "settings.channelCount": null,
   "settings.echoCancellation": null,
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": null,
   "settings.frameRate": null,
   "settings.hiddenControls": null,

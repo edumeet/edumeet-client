@@ -36,6 +36,7 @@ export interface SettingsState {
 	notificationSounds: boolean;
 	locale?: string;
 	videoContainEnabled?: boolean;
+	applyEffectsToExtraVideo: boolean;
 }
 
 type SettingsUpdate = Partial<SettingsState>;
@@ -69,6 +70,7 @@ const initialState: SettingsState = {
 	opusMaxPlaybackRate: edumeetConfig.opusMaxPlaybackRate,
 	notificationSounds: true,
 	locale: detect(),
+	applyEffectsToExtraVideo: false,
 };
 
 const settingsSlice = createSlice({

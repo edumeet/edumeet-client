@@ -192,6 +192,7 @@
   "settings.cantSelectCamera": "Impossible de sélectionner votre caméra",
   "settings.channelCount": null,
   "settings.echoCancellation": null,
+  "settings.enableBackgroundEffectsOnExtraVideoLabel": null,
   "settings.enableOpusDetails": null,
   "settings.frameRate": null,
   "settings.hiddenControls": null,

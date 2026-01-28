@@ -2,6 +2,9 @@ import { useContext, useEffect, useRef } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 import { ServiceContext } from '../../store/store';
 import { HTMLMediaElementWithSink } from '../../utils/types';
+import { Logger } from '../../utils/Logger';
+
+const logger = new Logger('AudioView');
 
 interface AudioViewProps {
 	consumer: StateConsumer;
@@ -16,38 +19,91 @@ const AudioView = ({
 	const audioElement = useRef<HTMLMediaElementWithSink>(null);
 
 	useEffect(() => {
-		const { track } = mediaService.getConsumer(consumer.id) ?? {};
+		const mediaConsumer = mediaService.getConsumer(consumer.id);
+		const currentAudioElement = audioElement.current;
 
-		if (!track || !audioElement?.current) return;
+		if (!currentAudioElement) {
+			logger.warn({
+				consumerId: consumer.id,
+				peerId: consumer.peerId
+			}, 'AudioView: audio element ref not ready');
+
+			return;
+		}
+
+		if (!mediaConsumer) {
+			logger.warn({
+				consumerId: consumer.id,
+				peerId: consumer.peerId
+			}, 'AudioView: mediaService consumer not found');
+
+			return;
+		}
+
+		const { track } = mediaConsumer;
+
+		if (!track) {
+			logger.warn({
+				consumerId: consumer.id,
+				peerId: consumer.peerId
+			}, 'AudioView: no track on mediaService consumer');
+
+			return;
+		}
 
 		const { audioGain } = consumer;
 
+		logger.debug({
+			consumerId: consumer.id,
+			peerId: consumer.peerId,
+			deviceId: deviceId ?? 'default',
+			audioGain
+		}, 'AudioView: attaching track to audio element');
+
 		if (audioGain !== undefined)
-			audioElement.current.volume = audioGain;
+			currentAudioElement.volume = audioGain;
 
 		const stream = new MediaStream();
 
 		stream.addTrack(track);
-		audioElement.current.srcObject = stream;
+		currentAudioElement.srcObject = stream;
 
 		if (deviceId) {
-			audioElement.current.setSinkId(deviceId);
+			// same behavior as before, just wrapped with a log
+			logger.debug({
+				consumerId: consumer.id,
+				peerId: consumer.peerId,
+				deviceId
+			}, 'AudioView: setting sinkId');
+
+			currentAudioElement.setSinkId(deviceId);
 		}
 
 		return () => {
-			if (audioElement.current) {
-				audioElement.current.srcObject = null;
-				audioElement.current.onplay = null;
-				audioElement.current.onpause = null;
+			logger.debug({
+				consumerId: consumer.id,
+				peerId: consumer.peerId
+			}, 'AudioView: cleanup');
+
+			if (currentAudioElement) {
+				currentAudioElement.srcObject = null;
 			}
 		};
-	}, [ deviceId ]);
+	}, [ deviceId, consumer.id ]);
 
 	useEffect(() => {
 		const { audioGain } = consumer;
+		const currentAudioElement = audioElement.current;
 
-		if (audioGain !== undefined && audioElement.current)
-			audioElement.current.volume = audioGain;
+		if (audioGain !== undefined && currentAudioElement) {
+			logger.debug({
+				consumerId: consumer.id,
+				peerId: consumer.peerId,
+				audioGain
+			}, 'AudioView: updating audioGain');
+
+			currentAudioElement.volume = audioGain;
+		}
 	}, [ consumer.audioGain ]);
 
 	return (
