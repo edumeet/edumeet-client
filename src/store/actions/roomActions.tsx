@@ -87,8 +87,11 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
 		dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
+		dispatch(peersActions.clearPeers());
 		dispatch(peersActions.addPeers(peers));
+		dispatch(lobbyPeersActions.clearLobbyPeers());
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
+		dispatch(roomSessionsActions.clearRoomSessions());
 		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(roomActions.joinCountdownTimer(countdownTimer));
@@ -103,6 +106,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 			drawingActions.disableDrawing()
 		);
 
+		dispatch(drawingActions.resetDrawing());
 		dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
 		dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
 	});
@@ -276,14 +280,4 @@ export const closeMeeting = (): AppThunk<void> => (
 	logger.debug('closeMeeting()');
 
 	signalingService.notify('moderator:closeMeeting');
-};
-
-export const resetRoomForRejoin = (): AppThunk => (dispatch) => {
-	batch(() => {
-		dispatch(peersActions.clearPeers());
-		dispatch(lobbyPeersActions.clearLobbyPeers());
-		dispatch(roomSessionsActions.clearRoomSessions());
-		dispatch(drawingActions.resetDrawing());
-		// optionally: permissions reset, unread counters, etc.
-	});
 };
