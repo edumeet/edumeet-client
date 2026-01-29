@@ -44,7 +44,9 @@ const permissionsSlice = createSlice({
 			state.permissions = action.payload;
 		}),
 		addPermission: ((state, action: PayloadAction<Permission>) => {
-			state.permissions.push(action.payload);
+			if (!state.permissions.includes(action.payload)) {
+				state.permissions.push(action.payload);
+			}
 		}),
 		removePermission: ((state, action: PayloadAction<Permission>) => {
 			state.permissions = state.permissions.filter((p) => p !== action.payload);
