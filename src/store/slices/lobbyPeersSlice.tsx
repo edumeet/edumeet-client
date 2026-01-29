@@ -16,10 +16,11 @@ const lobbyPeersSlice = createSlice({
 	name: 'lobbyPeers',
 	initialState,
 	reducers: {
+		clearLobbyPeers: () => initialState,
 		addPeers: ((state, action: PayloadAction<LobbyPeer[]>) => {
 			const existingIds = new Set(state.map((peer) => peer.id));
 			const newPeers = action.payload.filter((peer) => !existingIds.has(peer.id));
-  
+
 			return [ ...state, ...newPeers ];
 		}),
 		addPeer: ((state, action: PayloadAction<LobbyPeer>) => {

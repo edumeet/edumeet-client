@@ -32,6 +32,7 @@ const peersSlice = createSlice({
 	name: 'peers',
 	initialState,
 	reducers: {
+		clearPeers: () => initialState,
 		addPeer: ((state, action: PayloadAction<Peer>) => {
 			state[action.payload.id] = action.payload;
 		}),

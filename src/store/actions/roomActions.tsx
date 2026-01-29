@@ -277,3 +277,13 @@ export const closeMeeting = (): AppThunk<void> => (
 
 	signalingService.notify('moderator:closeMeeting');
 };
+
+export const resetRoomForRejoin = (): AppThunk => (dispatch) => {
+	batch(() => {
+		dispatch(peersActions.clearPeers());
+		dispatch(lobbyPeersActions.clearLobbyPeers());
+		dispatch(roomSessionsActions.clearRoomSessions());
+		dispatch(drawingActions.resetDrawing());
+		// optionally: permissions reset, unread counters, etc.
+	});
+};
