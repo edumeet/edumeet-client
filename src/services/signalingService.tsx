@@ -9,6 +9,7 @@ import { List } from '../utils/List';
 export declare interface SignalingService {
 	on(event: 'connected', listener: () => void): this;
 	on(event: 'reconnected', listener: () => void): this;
+	on(event: 'reconnecting', listener: () => void): this;
 	on(event: 'error', listener: (error: Error) => void): this;
 	on(event: 'close', listener: () => void): this;
 	on(event: 'notification', listener: InboundNotification): this;
@@ -85,14 +86,22 @@ export class SignalingService extends EventEmitter {
 			logger.debug('socket close event');
 			this.connections.remove(connection);
 
-			if (this.connections.length === 0)
+			if (this.connections.length === 0) {
 				this.connected = false;
-
-			this.emit('close');
+				this.emit('close');
+			}
 		});
 
 		connection.on('reconnected', () => {
 			logger.debug('socket reconnected event');
+
+			this.emit('reconnected');
+		});
+
+		connection.on('reconnecting', () => {
+			logger.debug('socket reconnecting event');
+
+			this.emit('reconnecting');
 		});
 	}
 

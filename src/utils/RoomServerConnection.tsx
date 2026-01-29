@@ -194,6 +194,8 @@ export class RoomServerConnection extends EventEmitter {
 			this.socket.io.opts.query = query;
 
 			logger.debug('reconnect_attempt -> updated query [url:%s, query:%o]', nextUrl, query);
+
+			this.emit('reconnecting');
 		});
 	}
 }
