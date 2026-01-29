@@ -4426,7 +4426,7 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
-h264-profile-level-id@^2.0.0, h264-profile-level-id@^2.3.1:
+h264-profile-level-id@^2.0.0, h264-profile-level-id@^2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/h264-profile-level-id/-/h264-profile-level-id-2.3.2.tgz#1990cb16479756072db96e947315b361b36d2cbf"
   integrity sha512-hnq1UDlw7WGJV6GCr/g7wnkHYUjdAY2bis9rgn2JqSdQS2WfVvnt1ZE9g8nTguracodf5LLKZOwURsDN49YtBQ==
@@ -5241,10 +5241,10 @@ math-intrinsics@^1.1.0:
   resolved "https://registry.yarnpkg.com/math-intrinsics/-/math-intrinsics-1.1.0.tgz#a0dd74be81e2aa5c2f27e65ce283605ee4e2b7f9"
   integrity sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==
 
-mediasoup-client@^3.18.3:
-  version "3.18.3"
-  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.18.3.tgz#62c7fe9bd9c9f16bf3bff0857bd71309a40687fc"
-  integrity sha512-ULypBvw4/2n6sEzhocZue61qtfQ2wvsIsppAikI65E7nh7V7eHajJaYtw432HdYnhryF9eO65rlDSqBmPh26CA==
+mediasoup-client@^3.18.4:
+  version "3.18.4"
+  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.18.4.tgz#570ff0136eaadd26fac832fa50b534a40f5f3995"
+  integrity sha512-Y+nEwaUIDJkpqtl48cIC2TWhNv01NmUt1XwkYP7bdhsinik/sMeORVUZsmWeDnEuEbfDP+RwV2O2K3TpkYV5GA==
   dependencies:
     "@types/debug" "^4.1.12"
     "@types/events-alias" "npm:@types/events@^3.0.3"
@@ -5252,7 +5252,7 @@ mediasoup-client@^3.18.3:
     debug "^4.4.3"
     events-alias "npm:events@^3.3.0"
     fake-mediastreamtrack "^2.2.1"
-    h264-profile-level-id "^2.3.1"
+    h264-profile-level-id "^2.3.2"
     sdp-transform "^3.0.0"
     supports-color "^10.2.2"
 
