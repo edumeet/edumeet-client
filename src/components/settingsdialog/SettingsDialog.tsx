@@ -31,9 +31,6 @@ const SettingsDialog = (): React.JSX.Element => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-	const theme = useTheme();
-	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
 	const handleCloseSettings = (): void => {
 		dispatch(uiActions.setUi({
 			settingsOpen: !settingsOpen
