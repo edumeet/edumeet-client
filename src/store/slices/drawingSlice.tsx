@@ -76,6 +76,7 @@ const drawingSlice = createSlice({
 	name: 'drawing',
 	initialState,
 	reducers: {
+		resetDrawing: () => initialState,
 		enableDrawing: ((state) => {
 			state.drawingEnabled = true;
 		}),

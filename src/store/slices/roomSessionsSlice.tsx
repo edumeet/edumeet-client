@@ -33,7 +33,7 @@ const roomSessionsSlice = createSlice({
 	name: 'roomSessions',
 	initialState,
 	reducers: {
-		clearRoomSessions: () => initialRoomSessionsState,
+		clearRoomSessions: () => initialState,
 		addRoomSession: ((state, action: PayloadAction<RoomSession>) => {
 			const newSession = { ...initialRoomSession, ...action.payload };
 
