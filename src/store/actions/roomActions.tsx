@@ -84,14 +84,12 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	// fileService.iceServers = mediaService.iceServers; 
 
 	batch(() => {
-		
 		dispatch(permissionsActions.setLocked(Boolean(locked)));
 		dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
 		dispatch(peersActions.clearPeers());
 		dispatch(peersActions.addPeers(peers));
 		dispatch(lobbyPeersActions.clearLobbyPeers());
 		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
-		dispatch(roomSessionsActions.clearRoomSessions());
 		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 		dispatch(roomActions.joinCountdownTimer(countdownTimer));
