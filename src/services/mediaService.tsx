@@ -182,45 +182,6 @@ export class MediaService extends EventEmitter {
 		this.createTransports().catch((error) => logger.error('error on creating transports [error:%o]', error));
 	}
 
-	public async recreateTransports(): Promise<void> {
-		logger.warn('recreateTransports()');
-
-		// Make sure mediasoup/device + iceServers setup has happened
-		// (createTransports() already waits for mediaReady)
-		await this.mediaReady;
-
-		// Close current transports (this closes consumers/producers underneath)
-		try {
-			this.sendTransport?.close();
-		} catch (error) {
-			logger.debug('recreateTransports() closing sendTransport failed [error:%o]', error);
-		}
-
-		try {
-			this.recvTransport?.close();
-		} catch (error) {
-			logger.debug('recreateTransports() closing recvTransport failed [error:%o]', error);
-		}
-
-		this.sendTransport = undefined;
-		this.recvTransport = undefined;
-
-		// Reset transportsReady so anyone awaiting it will wait for the new transports
-		try {
-			this.rejectTransportsReady?.(new Error('Transports are being recreated'));
-		} catch {}
-
-		this.transportsReady = safePromise(new Promise<void>((resolve, reject) => {
-			this.resolveTransportsReady = resolve;
-			this.rejectTransportsReady = reject;
-		}));
-
-		// Recreate using your existing implementation (this will call resolveTransportsReady())
-		await this.createTransports();
-
-		logger.warn('recreateTransports() done');
-	}
-
 	public close(): void {
 		logger.debug('close()');
 

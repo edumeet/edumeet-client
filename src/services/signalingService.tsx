@@ -93,7 +93,6 @@ export class SignalingService extends EventEmitter {
 
 		connection.on('reconnected', () => {
 			logger.debug('socket reconnected event');
-			this.emit('reconnected');
 		});
 	}
 

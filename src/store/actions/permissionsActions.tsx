@@ -306,8 +306,6 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	dispatch(managamentActions.clearUser());
 
-	dispatch(managamentActions.clearUser());
-
 	if (getState().signaling.state === 'connected')
 		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
 

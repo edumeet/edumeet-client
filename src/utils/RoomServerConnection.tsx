@@ -185,8 +185,7 @@ export class RoomServerConnection extends EventEmitter {
 		this.socket.io.on('reconnect_attempt', () => {
 			const nextUrl = this.getUrl();
 
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			(this.socket.io as any).uri = nextUrl;
+			this.socket.io.uri = nextUrl;
 
 			logger.debug('reconnect_attempt -> updated uri [uri:%s]', nextUrl);
 		});
