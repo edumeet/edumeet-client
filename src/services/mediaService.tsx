@@ -221,9 +221,11 @@ export class MediaService extends EventEmitter {
 
 	private handleSignaling(): void {
 		this.signalingService.on('reconnected', () => {
-			logger.debug('reconnected - resetting');
+			logger.debug('reconnected - closing and resetting');
 
+			this.close();
 			this.reset();
+			this.emit('lostMediaServer');
 		});
 		this.signalingService.on('request', async (request, respond, reject) => {
 			try {
