@@ -2,7 +2,7 @@ import { Middleware } from '@reduxjs/toolkit';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
-import { joinRoom, leaveRoom } from '../actions/roomActions';
+import { joinRoom, leaveRoom, rejoinRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
 import { syncSignalingUrl } from '../actions/signalingUrlActions';
