@@ -113,6 +113,18 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	if (!getState().me.videoMuted) dispatch(updateWebcam());
 };
 
+export const rejoinRoom = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService }
+) => {
+	// 1) now the server has created the new peer and is about to join it
+	await mediaService.recreateTransports();  // this will send createWebRtcTransport consuming:true
+
+	// 2) then join, which will publish mic/webcam once
+	await dispatch(joinRoom());
+};
+
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
 	dispatch
 ): Promise<void> => {

@@ -76,7 +76,15 @@ const createRoomMiddleware = ({
 								}));
 
 								dispatch(roomActions.setState('joined'));
-								dispatch(joinRoom());
+
+								const state = getState();
+								const isRejoin = state.room.state === 'joined';
+
+								if (isRejoin) {
+									dispatch(rejoinRoom());
+								} else {
+									dispatch(joinRoom());
+								}
 							});
 
 							break;

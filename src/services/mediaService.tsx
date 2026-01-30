@@ -220,13 +220,6 @@ export class MediaService extends EventEmitter {
 	}
 
 	private handleSignaling(): void {
-		this.signalingService.on('reconnected', () => {
-			logger.debug('reconnected - closing and resetting');
-
-			this.close();
-			this.reset();
-			this.emit('lostMediaServer');
-		});
 		this.signalingService.on('request', async (request, respond, reject) => {
 			try {
 				switch (request.method) {
@@ -310,7 +303,7 @@ export class MediaService extends EventEmitter {
 						const transport = await this.getPeerTransport(peerId, direction === 'send' ? 'recv' : 'send');
 
 						await transport.addIceCandidate({ candidate });
-						
+
 						break;
 					}
 
