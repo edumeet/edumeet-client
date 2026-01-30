@@ -791,6 +791,54 @@ export class MediaService extends EventEmitter {
 		this.resolveTransportsReady();
 	}
 
+	public async recreateTransports(): Promise<void> {
+		logger.warn('recreateTransports()');
+
+		// Make sure mediasoup Device + iceServers are initialized.
+		// (createTransports() also waits for mediaReady, but if someone calls
+		// recreateTransports() very early we still want to guard.)
+		await this.mediaReady;
+
+		// 1) Close current transports (this also closes all producers/consumers
+		// underneath via mediasoup events).
+		try {
+			this.sendTransport?.close();
+		} catch (error) {
+			logger.error('recreateTransports() closing sendTransport failed [error:%o]', error);
+		}
+
+		try {
+			this.recvTransport?.close();
+		} catch (error) {
+			logger.error('recreateTransports() closing recvTransport failed [error:%o]', error);
+		}
+
+		// Clear references so we never accidentally use dead transports.
+		this.sendTransport = undefined;
+		this.recvTransport = undefined;
+
+		// 2) Reset the "transportsReady" promise so any code awaiting it
+		// will block until the *new* transports are fully created.
+		try {
+			this.rejectTransportsReady?.(new Error('Transports are being recreated'));
+		} catch {
+			logger.error('recreateTransports() recreate failed');
+		}
+
+		this.transportsReady = safePromise(
+			new Promise<void>((resolve, reject) => {
+				this.resolveTransportsReady = resolve;
+				this.rejectTransportsReady = reject;
+			})
+		);
+
+		// 3) Create new send/recv transports just like on first join.
+		// This will call resolveTransportsReady() once both are ready.
+		await this.createTransports();
+
+		logger.debug('recreateTransports() done');
+	}
+
 	private async createTransport(creator: 'createSendTransport' | 'createRecvTransport'): Promise<Transport> {
 		if (!this.mediasoup) throw new Error('mediasoup not initialized');
 

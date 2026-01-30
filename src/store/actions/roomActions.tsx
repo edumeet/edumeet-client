@@ -119,7 +119,7 @@ export const rejoinRoom = (): AppThunk<Promise<void>> => async (
 	{ mediaService }
 ) => {
 	// 1) now the server has created the new peer and is about to join it
-	await mediaService.createTransports();
+	await mediaService.recreateTransports();
 
 	// 2) then join, which will publish mic/webcam once
 	await dispatch(joinRoom());
