@@ -211,15 +211,15 @@ const RoleTable = () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(getData('rolePermissions')).then((rp: any) => {
 				checked.forEach(async (element, index) => {
-					
-					const c = rp.data.filter((x: RolePermissions) => x.permissionId == index+1 && x.roleId==id);
+
+					const c = rp.data.filter((x: RolePermissions) => x.permissionId == permissions[index].id && x.roleId==id);
 
 					if ((c.length === 0) === element) {
 	
 						if (element) {
 							dispatch(createData({ 
 								roleId: id,
-								permissionId: index+1
+								permissionId: permissions[index].id
 							}, 'rolePermissions')).then(() => {
 								fetchProduct();
 								setOpen(false);
@@ -399,8 +399,16 @@ const RoleTable = () => {
 						const a = new Array(permissions.length).fill(false);
 
 						rp.data.forEach((element: RolePermissions) => {
-							if (element.roleId == tid)
-								a[parseInt(element.permissionId.toString())-1] = true;
+							if (element.roleId == tid) {
+								const permid = parseInt(element.permissionId.toString());
+
+								for (const [ i, value ] of permissions.entries()) {
+									// console.log(`${i}: ${value}`);
+									if (value.id== permid)
+										a[i] = true;
+								}
+								
+							}
 						});
 				
 						setChecked(a);
