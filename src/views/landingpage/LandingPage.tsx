@@ -21,9 +21,9 @@ const LandingPage = (): React.JSX.Element => {
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
 	const qrCodeEnabled = edumeetConfig.qrCodeEnabled;
-	
+
 	const dispatch = useAppDispatch();
-	
+
 	useEffect(() => {
 		dispatch(startListeners());
 
@@ -31,6 +31,12 @@ const LandingPage = (): React.JSX.Element => {
 			dispatch(stopListeners());
 		};
 	}, [ dispatch ]);
+
+	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);
+
+	if (localeInProgress) {
+		return null;
+	}
 
 	return (
 		<StyledBackground>
