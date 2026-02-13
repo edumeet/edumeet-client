@@ -11,7 +11,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
 import edumeetConfig from './utils/edumeetConfig';
 import { intl } from './utils/intlManager';
-import { useAppDispatch } from './store/hooks';
+import { useAppDispatch, useAppSelector } from './store/hooks';
 import { setLocale } from './store/actions/localeActions';
 import { CssBaseline } from '@mui/material';
 import { Logger } from './utils/Logger';
@@ -76,7 +76,9 @@ const RootComponent = (): React.JSX.Element => {
 
 		return (<Suspense><UnsupportedBrowser platform={device.platform} webrtcUnavailable /></Suspense>);
 	} else {
-		return (<RouterProvider router={router} />);
+		const locale = useAppSelector((state) => state.settings.locale);
+
+		return (<RouterProvider router={router} key={locale} />);
 	}
 };
 
