@@ -10,7 +10,7 @@ import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { QRCode } from 'react-qrcode-logo';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { startListeners, stopListeners } from '../../store/actions/startActions';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch } from '../../store/hooks';
 
 const LandingPage = (): React.JSX.Element => {
 	const navigate = useNavigate();
@@ -21,12 +21,9 @@ const LandingPage = (): React.JSX.Element => {
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
 	const qrCodeEnabled = edumeetConfig.qrCodeEnabled;
-
+	
 	const dispatch = useAppDispatch();
-	const locale = useAppSelector((state) => state.settings.locale);
-
-	void locale;
-
+	
 	useEffect(() => {
 		dispatch(startListeners());
 

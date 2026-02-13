@@ -16,7 +16,7 @@ export const setLocale = (locale?: string): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
 ): Promise<void> => {
-	logger.debug('setLocale() [message:"%s"]', locale);
+	logger.debug('setLocale() [message: "%s"]', locale);
 
 	dispatch(roomActions.updateRoom({ localeInProgress: true }));
 
@@ -26,10 +26,15 @@ export const setLocale = (locale?: string): AppThunk<Promise<void>> => async (
 		newLocale = await loadLocale(locale);
 	} else {
 		// If persisted locale is empty or undefined, fall back to 'en'
-		const oldLocale = getState().settings.locale || 'en';
 
-		newLocale = await loadLocale(oldLocale);
+		const storeLocale = getState().settings.locale;
+
+		logger.debug('setLocale() [store locale: "%s"]', storeLocale);
+
+		newLocale = await loadLocale(storeLocale || 'en');
 	}
+
+	logger.debug('setLocale() [setting locale to: "%s"]', newLocale);
 
 	dispatch(settingsActions.setLocale(newLocale));
 	dispatch(roomActions.updateRoom({ localeInProgress: false }));
