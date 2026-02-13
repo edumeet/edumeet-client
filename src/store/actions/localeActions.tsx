@@ -1,5 +1,5 @@
 import { Logger } from '../../utils/Logger';
-import { loadLocale } from '../../utils/intlManager';
+import { loadLocale, intl } from '../../utils/intlManager';
 import { roomActions } from '../slices/roomSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { AppThunk } from '../store';
@@ -35,6 +35,7 @@ export const setLocale = (locale?: string): AppThunk<Promise<void>> => async (
 	}
 
 	logger.debug('setLocale() [setting locale to: "%s"]', newLocale);
+	logger.debug('setLocale() [intl to: "%o"]', intl);
 
 	dispatch(settingsActions.setLocale(newLocale));
 	dispatch(roomActions.updateRoom({ localeInProgress: false }));
