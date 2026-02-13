@@ -52,7 +52,7 @@ const router = createBrowserRouter(
 					<Management />
 				</SnackbarProvider>
 			</Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
-			
+
 			<Route path='/:id' element={<Suspense><App /></Suspense>} errorElement={<Suspense><ErrorBoundary /></Suspense>} />
 		</>
 	), { basename }
@@ -69,17 +69,27 @@ const RootComponent = (): React.JSX.Element => {
 
 	useEffect(() => {
 		dispatch(setLocale());
-	}, []);
+	}, [ dispatch ]);
 
 	if (unsupportedBrowser || webrtcUnavailable) {
 		logger.error('Your browser is not supported [deviceInfo:%o]', device);
 
 		return (<Suspense><UnsupportedBrowser platform={device.platform} webrtcUnavailable /></Suspense>);
 	} else {
-		const locale = useAppSelector((state) => state.settings.locale);
-
-		return (<RouterProvider router={router} key={locale} />);
+		return (<RouterProvider router={router} />);
 	}
+};
+
+const AppShell = (): React.JSX.Element => {
+	const locale = useAppSelector((state) => state.settings.locale);
+
+	return (
+		<RawIntlProvider value={intl} key={locale}>
+			<ServiceContext.Provider value={{ mediaService, fileService }}>
+				<RootComponent />
+			</ServiceContext.Provider>
+		</RawIntlProvider>
+	);
 };
 
 const container = document.getElementById('edumeet');
@@ -92,11 +102,7 @@ root.render(
 		<Provider store={store}>
 			<PersistGate persistor={persistor}>
 				<ThemeProvider theme={theme}>
-					<RawIntlProvider value={intl}>
-						<ServiceContext.Provider value={{ mediaService, fileService }}>
-							<RootComponent />
-						</ServiceContext.Provider>
-					</RawIntlProvider>
+					<AppShell />
 				</ThemeProvider>
 			</PersistGate>
 		</Provider>
