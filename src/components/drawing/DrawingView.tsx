@@ -23,6 +23,9 @@ import { FabricAction } from '../../store/slices/drawingSlice';
 import DownloadCanvasButton from './menu/DownloadCanvasButton';
 import { isMobileSelector } from '../../store/selectors';
 
+type ErasableObject = FabricObject & {
+  erasable?: boolean;
+};
 interface DrawingViewProps {
 	width: number;
 	height: number;
@@ -77,7 +80,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 	const pastActions = useAppSelector((state) => state.drawing.history.past);
 	const futureActions = useAppSelector((state) => state.drawing.history.future);
 	const updateAction = useAppSelector((state) => state.drawing.updateAction);
-	const addedObjectsRef = useRef<FabricObject[]>([]);
+	const addedObjectsRef = useRef<ErasableObject[]>([]);
 
 	/* create canvas object */
 	useEffect(() => {
@@ -93,10 +96,10 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 			setCanvas((prevState) => {
 				if (prevState) {
 					
-					const handleObjectEvent = (status: 'added' | 'modified' | 'removed') => (obj: {target: FabricObject}) => {	
+					const handleObjectEvent = (status: 'added' | 'modified' | 'removed') => (obj: {target: ErasableObject}) => {	
 						if (actionRef.current === null) {
 					
-							const object = obj.target as FabricObject;
+							const object = obj.target as ErasableObject;
 
 							object.erasable = Object.hasOwn(object, 'text') ? false : true;
 							object.id = object.id ?? Date.now();
@@ -106,7 +109,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 						}
 					};
 
-					const handleObjectMove = (status: 'editing' | 'lock') => (obj: {target: FabricObject}) => {
+					const handleObjectMove = (status: 'editing' | 'lock') => (obj: {target: ErasableObject}) => {
 						const object = obj.target;
 
 						dispatch(updateCanvasState({ object: object.toObject(), status }));
@@ -242,8 +245,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 				if (updateAction) {
 
 					const updating = util.enlivenObjects([ updateAction.object ]).then((objects) => {
-						const uO = objects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
-						const enlivenObject : FabricObject = uO[0];
+						const uO = objects.filter((obj) => obj instanceof FabricObject) as ErasableObject[];
+						const enlivenObject : ErasableObject = uO[0];
 						const textObject = Object.hasOwn(enlivenObject, 'text');
 						
 						if (updateAction.status == 'added') {
@@ -262,7 +265,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 						} else if (updateAction.status == 'modified') {
 
-							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							const foundObject = prevState.getObjects().find((curr: ErasableObject) => curr.id === enlivenObject.id);
 							
 							if (foundObject) modifyObject(foundObject, enlivenObject, prevState);
 
@@ -278,13 +281,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 						} else if (updateAction.status == 'removed') {
 
-							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							const foundObject = prevState.getObjects().find((curr: ErasableObject) => curr.id === enlivenObject.id);
 
 							if (foundObject) prevState.remove(foundObject);
 
 						} else if (updateAction.status == 'editing') {
 
-							prevState.getObjects().forEach((curr: FabricObject) => {
+							prevState.getObjects().forEach((curr: ErasableObject) => {
 								if (curr.id === enlivenObject.id) {
 									curr.selectable = false;
 									curr.set({ angle: enlivenObject.angle, width: enlivenObject.width, height: enlivenObject.height, scaleX: enlivenObject.scaleX, scaleY: enlivenObject.scaleY, dirty: true });
@@ -296,7 +299,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 							});
 
 						} else if (updateAction.status == 'lock') {
-							prevState.getObjects().forEach((curr: FabricObject) => {
+							prevState.getObjects().forEach((curr: ErasableObject) => {
 								if (curr.id === enlivenObject.id) {
 									curr.selectable = false;
 								}
@@ -332,7 +335,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 					const initiating = util.enlivenObjects(actionsObj).then((objects) => {
 						actionRef.current = 'update';
 
-						const iO = objects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
+						const iO = objects.filter((obj) => obj instanceof FabricObject) as ErasableObject[];
 
 						iO.forEach((iObject) => {
 							if (!Object.hasOwn(iObject, 'text')) {
@@ -698,8 +701,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 		});
 	};
 
-	const modifyObject = (oldObject: FabricObject, newObject: FabricObject, prevState: Canvas) => {
-		// In case the object is an IText we need to typecast as getObjects() returns a FabricObject. 
+	const modifyObject = (oldObject: ErasableObject, newObject: ErasableObject, prevState: Canvas) => {
+		// In case the object is an IText we need to typecast as getObjects() returns a ErasableObject. 
 		// At the time of writing this there is no Canvas method to get IText objects from the canvas.
 		if (Object.hasOwn(oldObject, 'text') && Object.hasOwn(newObject, 'text')) {
 			const oldTextbox = oldObject as IText;
@@ -734,13 +737,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 					// Creates a fabric instance of an object
 					const undoing = util.enlivenObjects([ lastAction.object ]).then((objects) => {
 
-						const lA = objects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
-						const enlivenObject : FabricObject = lA[0];
+						const lA = objects.filter((obj) => obj instanceof FabricObject) as ErasableObject[];
+						const enlivenObject : ErasableObject = lA[0];
 						const textObject = Object.hasOwn(enlivenObject, 'text');
 
 						// remove added object
 						if (lastAction.status === 'added') {    
-							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							const foundObject = prevState.getObjects().find((curr: ErasableObject) => curr.id === enlivenObject.id);
 
 							if (foundObject) prevState.remove(foundObject);
 							dispatch(updateCanvasState({ object: lastAction.object, status: 'removed' }));
@@ -751,14 +754,14 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 							// Filter all actions with the same object id and get the object's previous state which is the second newest object
 							const FilteredActions = pastActions.filter((obj: FabricAction) => obj.object.id == enlivenObject.id);
 							const prevAction = FilteredActions.length >= 2 ? FilteredActions[FilteredActions.length - 2] : undefined;
-							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							const foundObject = prevState.getObjects().find((curr: ErasableObject) => curr.id === enlivenObject.id);
 							
 							if (prevAction !== undefined) {
 								const _undoing = util.enlivenObjects([ prevAction.object ]).then((prevObjects) => {
 									actionRef.current = 'undo';
 
-									const _objs = prevObjects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
-									const _enlivenObject : FabricObject & { id?: number } = _objs[0];
+									const _objs = prevObjects.filter((obj) => obj instanceof FabricObject) as ErasableObject[];
+									const _enlivenObject : ErasableObject & { id?: number } = _objs[0];
 
 									if (foundObject && foundObject.id === _enlivenObject.id) {
 										modifyObject(foundObject, _enlivenObject, prevState);
@@ -775,13 +778,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 								});
 
 							} else { // Undo case for modify of object other users have created
-								const addedObject = addedObjectsRef.current.find((obj: FabricObject) => obj.id === enlivenObject.id);
+								const addedObject = addedObjectsRef.current.find((obj: ErasableObject) => obj.id === enlivenObject.id);
 
 								const _undoing = util.enlivenObjects([ addedObject ]).then((added) => {
 									actionRef.current = 'undo';
 
-									const _objs = added.filter((obj) => obj instanceof FabricObject) as FabricObject[];
-									const _enlivenObject : FabricObject & { id?: number } = _objs[0];
+									const _objs = added.filter((obj) => obj instanceof FabricObject) as ErasableObject[];
+									const _enlivenObject : ErasableObject & { id?: number } = _objs[0];
 								
 									if (foundObject && foundObject.id === _enlivenObject.id) {
 										modifyObject(foundObject, _enlivenObject, prevState);
@@ -801,7 +804,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 						// add removed object
 						} else if (lastAction.status === 'removed') {
-							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							const foundObject = prevState.getObjects().find((curr: ErasableObject) => curr.id === enlivenObject.id);
 
 							// Ensure object does not already exist on canvas before adding it back
 							if (!foundObject) {
@@ -848,15 +851,15 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 					
 					const redoing = util.enlivenObjects([ nextAction.object ]).then((objects) => {
 
-						const nA = objects.filter((obj) => obj instanceof FabricObject) as FabricObject[];
-						const enlivenObject : FabricObject = nA[0];
+						const nA = objects.filter((obj) => obj instanceof FabricObject) as ErasableObject[];
+						const enlivenObject : ErasableObject = nA[0];
 						const textObject = Object.hasOwn(enlivenObject, 'text');
         
 						// Add object
 						if (nextAction.status === 'added') {  
 							const FilteredActions = pastActions.filter((obj: FabricAction) => obj.object.id == enlivenObject.id);
 							const prevAction = FilteredActions.length >= 2 ? FilteredActions[FilteredActions.length - 2] : undefined;
-							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							const foundObject = prevState.getObjects().find((curr: ErasableObject) => curr.id === enlivenObject.id);
 
 							if (prevAction !== undefined) {
 								enlivenObject.clipPath = prevAction.object.clipPath;
@@ -878,7 +881,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 							// revert changes to object
 						} else if (nextAction.status === 'modified') {
 
-							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							const foundObject = prevState.getObjects().find((curr: ErasableObject) => curr.id === enlivenObject.id);
 							
 							if (foundObject && foundObject.id === enlivenObject.id) {
 								modifyObject(foundObject, enlivenObject, prevState);
@@ -890,7 +893,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 							
 							// Remove object
 						} else if (nextAction.status === 'removed') {
-							const foundObject = prevState.getObjects().find((curr: FabricObject) => curr.id === enlivenObject.id);
+							const foundObject = prevState.getObjects().find((curr: ErasableObject) => curr.id === enlivenObject.id);
 
 							if (foundObject) prevState.remove(foundObject);
 							dispatch(updateCanvasState({ object: nextAction.object, status: 'removed' }));

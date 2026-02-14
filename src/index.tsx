@@ -69,7 +69,7 @@ const RootComponent = (): React.JSX.Element => {
 
 	useEffect(() => {
 		dispatch(setLocale());
-	}, []);
+	}, [ dispatch ]);
 
 	if (unsupportedBrowser || webrtcUnavailable) {
 		logger.error('Your browser is not supported [deviceInfo:%o]', device);
