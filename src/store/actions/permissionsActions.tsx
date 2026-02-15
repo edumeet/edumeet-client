@@ -49,7 +49,7 @@ const computeRefreshDelayMs = (
 		const lifetimeMs = expMs - iatMs;
 
 		if (lifetimeMs > 0) {
-			const refreshAtMs = iatMs + lifetimeMs * fraction;
+			const refreshAtMs = iatMs + (lifetimeMs * fraction);
 			const delayMs = refreshAtMs - Date.now();
 
 			if (delayMs < minDelayMs) {
