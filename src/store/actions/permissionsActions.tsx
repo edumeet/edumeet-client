@@ -29,7 +29,6 @@ const computeRefreshDelayMs = (token: string, fraction = 0.8): number | undefine
 	const exp = payload.exp;
 	const iat = payload.iat;
 
-
 	if (typeof exp !== 'number' || typeof iat !== 'number') {
 		return undefined;
 	}
@@ -42,7 +41,7 @@ const computeRefreshDelayMs = (token: string, fraction = 0.8): number | undefine
 		return undefined;
 	}
 
-	const refreshAtMs = iatMs + lifetimeMs * fraction;
+	const refreshAtMs = iatMs + (lifetimeMs * fraction);
 	const delayMs = refreshAtMs - Date.now();
 
 	if (delayMs <= 0) {
@@ -190,6 +189,8 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 			dispatch(permissionsActions.setToken(token));
 			dispatch(startTokenRefresh(token));
 		} catch (error) {
+			logger.error('checkJWT authenticate failed [error: %o]', error);
+
 			await (await managementService).authentication.removeAccessToken();
 
 			loggedIn = false;
