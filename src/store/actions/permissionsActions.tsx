@@ -16,42 +16,62 @@ type JwtPayload = {
 };
 
 let refreshTimeout: number | undefined;
+let lastRefreshAt = 0;
 
 const clearTokenRefreshTimeout = (): void => {
+	logger.debug('clearTokenRefreshTimeout');
+
 	if (refreshTimeout) {
 		window.clearTimeout(refreshTimeout);
 		refreshTimeout = undefined;
 	}
 };
 
-const computeRefreshDelayMs = (token: string, fraction = 0.8): number | undefined => {
+const computeRefreshDelayMs = (
+	token: string,
+	fraction = 0.8,
+	minDelayMs = 10_000,
+	expiryBufferMs = 15_000
+): number | undefined => {
 	const payload = jwtDecode<JwtPayload>(token);
+
 	const exp = payload.exp;
 	const iat = payload.iat;
 
-	if (typeof exp !== 'number' || typeof iat !== 'number') {
+	if (typeof exp !== 'number') {
 		return undefined;
 	}
 
 	const expMs = exp * 1000;
-	const iatMs = iat * 1000;
-	const lifetimeMs = expMs - iatMs;
 
-	if (lifetimeMs <= 0) {
-		return undefined;
+	if (typeof iat === 'number') {
+		const iatMs = iat * 1000;
+		const lifetimeMs = expMs - iatMs;
+
+		if (lifetimeMs > 0) {
+			const refreshAtMs = iatMs + lifetimeMs * fraction;
+			const delayMs = refreshAtMs - Date.now();
+
+			if (delayMs < minDelayMs) {
+				return minDelayMs;
+			}
+
+			return delayMs;
+		}
 	}
 
-	const refreshAtMs = iatMs + (lifetimeMs * fraction);
-	const delayMs = refreshAtMs - Date.now();
+	const delayMs = (expMs - expiryBufferMs) - Date.now();
 
-	if (delayMs <= 0) {
-		return 0;
+	if (delayMs < minDelayMs) {
+		return minDelayMs;
 	}
 
 	return delayMs;
 };
 
 export const stopTokenRefresh = (): AppThunk<void> => () => {
+	logger.debug('stopTokenRefresh');
+
 	clearTokenRefreshTimeout();
 };
 
@@ -60,6 +80,8 @@ export const startTokenRefresh = (token?: string): AppThunk<void> => (
 	getState,
 	{ signalingService, managementService }
 ): void => {
+	logger.debug('startTokenRefresh');
+
 	clearTokenRefreshTimeout();
 
 	if (!token) return;
@@ -68,11 +90,23 @@ export const startTokenRefresh = (token?: string): AppThunk<void> => (
 
 	if (delayMs === undefined) return;
 
+	logger.debug('startTokenRefresh - setTimeout [delayMs = %s]', delayMs);
+
 	refreshTimeout = window.setTimeout(async () => {
 		try {
 			const current = getState().permissions.token;
 
 			if (!current || current !== token) return;
+
+			const now = Date.now();
+
+			if (now - lastRefreshAt < 5_000) {
+				dispatch(startTokenRefresh(token));
+
+				return;
+			}
+
+			lastRefreshAt = now;
 
 			logger.debug('startTokenRefresh - trying to refresh [old token: %s]', token);
 
@@ -83,13 +117,28 @@ export const startTokenRefresh = (token?: string): AppThunk<void> => (
 
 			logger.debug('startTokenRefresh - got new token [new token: %s]', newToken);
 
-			dispatch(permissionsActions.setToken(newToken));
+			const payload = jwtDecode<JwtPayload>(newToken);
 
-			if (getState().signaling.state === 'connected') {
-				await signalingService.sendRequest('updateToken', { token: newToken });
+			logger.debug(
+				'startTokenRefresh - new token times [iat: %s exp: %s now: %s]',
+				payload.iat,
+				payload.exp,
+				Math.floor(Date.now() / 1000)
+			);
+
+			if (newToken !== token) {
+				dispatch(permissionsActions.setToken(newToken));
+
+				if (getState().signaling.state === 'connected') {
+					await signalingService.sendRequest('updateToken', { token: newToken });
+				}
+
+				dispatch(startTokenRefresh(newToken));
+			} else {
+				logger.warn('startTokenRefresh - new token equals old token');
+
+				dispatch(startTokenRefresh(token));
 			}
-
-			dispatch(startTokenRefresh(newToken));
 		} catch (error) {
 			clearTokenRefreshTimeout();
 
