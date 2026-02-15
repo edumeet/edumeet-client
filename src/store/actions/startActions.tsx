@@ -7,6 +7,7 @@ import { pauseMic, resumeMic, stopWebcam, updateMic, updateWebcam } from './medi
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock } from './permissionsActions';
 import { permissionsActions } from '../slices/permissionsSlice';
+import { startTokenRefresh } from './permissionsActions';
 import { setRaisedHand } from './meActions';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
@@ -296,6 +297,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 					await (await managementService).reAuthenticate();
 
 					dispatch(permissionsActions.setToken(token));
+					dispatch(startTokenRefresh(token));
 					dispatch(permissionsActions.setLoggedIn(true));
 
 					if (getState().signaling.state === 'connected')

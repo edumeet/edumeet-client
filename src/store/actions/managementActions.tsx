@@ -2,6 +2,7 @@ import edumeetConfig from '../../utils/edumeetConfig';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
+import { startTokenRefresh } from './permissionsActions';
 import { AppThunk } from '../store';
 
 const logger = new Logger('ManagementActions');
@@ -425,6 +426,7 @@ export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
 					await (await managementService).reAuthenticate();
 
 					dispatch(permissionsActions.setToken(token));
+					dispatch(startTokenRefresh(token));
 					dispatch(permissionsActions.setLoggedIn(true));
 
 					if (getState().signaling.state === 'connected')
