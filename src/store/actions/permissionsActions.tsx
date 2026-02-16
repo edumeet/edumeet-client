@@ -42,6 +42,12 @@ const computeRefreshDelayMs = (
 		return undefined;
 	}
 
+	const now = Math.floor(Date.now() / 1000);
+
+	if (exp <= now) {
+		return undefined;
+	}
+
 	const expMs = exp * 1000;
 
 	if (typeof iat === 'number') {
@@ -67,6 +73,19 @@ const computeRefreshDelayMs = (
 	}
 
 	return delayMs;
+};
+
+const isTokenExpired = (token: string, skewSeconds = 5): boolean => {
+	const payload = jwtDecode<JwtPayload>(token);
+	const exp = payload.exp;
+
+	if (typeof exp !== 'number') {
+		return true;
+	}
+
+	const now = Math.floor(Date.now() / 1000);
+
+	return exp <= (now + skewSeconds);
 };
 
 export const stopTokenRefresh = (): AppThunk<void> => () => {
@@ -98,6 +117,17 @@ export const startTokenRefresh = (token?: string): AppThunk<void> => (
 
 			if (!current || current !== token) return;
 
+			if (isTokenExpired(token)) {
+				logger.warn('startTokenRefresh - token already expired, stopping refresh and logging out');
+
+				clearTokenRefreshTimeout();
+
+				dispatch(permissionsActions.setLoggedIn(false));
+				dispatch(permissionsActions.setToken());
+
+				return;
+			}
+
 			const now = Date.now();
 
 			if (now - lastRefreshAt < 5_000) {
@@ -108,14 +138,18 @@ export const startTokenRefresh = (token?: string): AppThunk<void> => (
 
 			lastRefreshAt = now;
 
-			logger.debug('startTokenRefresh - trying to refresh [old token: %s]', token);
+			logger.debug('startTokenRefresh - trying to refresh');
 
-			const authResult = await (await managementService).reAuthenticate();
+			const authResult = await (await managementService).authenticate({
+				strategy: 'jwt-refresh',
+				accessToken: token
+			});
+
 			const newToken = authResult?.accessToken;
 
 			if (!newToken || typeof newToken !== 'string') return;
 
-			logger.debug('startTokenRefresh - got new token [new token: %s]', newToken);
+			logger.debug('startTokenRefresh - got new token');
 
 			const payload = jwtDecode<JwtPayload>(newToken);
 
@@ -127,6 +161,8 @@ export const startTokenRefresh = (token?: string): AppThunk<void> => (
 			);
 
 			if (newToken !== token) {
+				logger.debug('startTokenRefresh - setting new token');
+
 				dispatch(permissionsActions.setToken(newToken));
 
 				if (getState().signaling.state === 'connected') {
@@ -142,7 +178,7 @@ export const startTokenRefresh = (token?: string): AppThunk<void> => (
 		} catch (error) {
 			clearTokenRefreshTimeout();
 
-			logger.warn('startTokenRefresh - failed to refresh token [error: %s]', error);
+			logger.warn('startTokenRefresh - failed to refresh token [error: %o]', error);
 		}
 	}, delayMs);
 };
