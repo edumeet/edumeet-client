@@ -140,11 +140,7 @@ export const startTokenRefresh = (token?: string): AppThunk<void> => (
 
 			logger.debug('startTokenRefresh - trying to refresh');
 
-			const authResult = await (await managementService).authenticate({
-				strategy: 'jwt-refresh',
-				accessToken: token
-			});
-
+			const authResult = await (await managementService).reAuthenticate(true);
 			const newToken = authResult?.accessToken;
 
 			if (!newToken || typeof newToken !== 'string') return;
