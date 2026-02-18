@@ -10,13 +10,14 @@ import edumeetConfig from './edumeetConfig';
  */
 export const getSignalingUrl = (peerId: string, roomId: string, token: string | undefined): string => {
 	const hostname = edumeetConfig.serverHostname || window.location.hostname;
+	const tenantFqdn = encodeURIComponent(window.location.hostname);
 	const port = import.meta.env.PROD ? edumeetConfig.productionPort : edumeetConfig.developmentPort;
 
 	let tokenParam = '';
 
 	if (token) tokenParam = `&token=${token}`;
 
-	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}${tokenParam}`;
+	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}&tenantFqdn=${tenantFqdn}${tokenParam}`;
 };
 
 export class SocketTimeoutError extends Error {
