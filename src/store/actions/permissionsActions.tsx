@@ -26,8 +26,9 @@ export const login = (): AppThunk<Promise<void>> => async (
 
 		return logger.error('login() | no tenant found');
 
+	} else {
+		window.open(`${config.managementUrl}/oauth/tenant?tenantId=${tenantId}`, 'loginWindow');
 	}
-	window.open(`${config.managementUrl}/oauth/tenant?tenantId=${tenantId}`, 'loginWindow');
 };
 
 export const adminLogin = (email: string, password: string): AppThunk<Promise<void>> => async (
@@ -138,10 +139,19 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	dispatch(managamentActions.clearUser());
 
-	if (getState().signaling.state === 'connected')
+	if (getState().signaling.state === 'connected') {
 		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
+	}
 
-	if (tenantId) {
+	if (!tenantId) {
+		dispatch(notificationsActions.enqueueNotification({
+			message: 'no tenant found',
+			options: { variant: 'error' }
+		}));
+
+		return logger.error('logout() | no tenant found');
+
+	} else {
 		window.open(`${config.managementUrl}/auth/logout?tenantId=${tenantId}`, 'logoutWindow');
 	}
 };
