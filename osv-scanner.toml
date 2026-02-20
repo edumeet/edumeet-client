@@ -1,0 +1,3 @@
+[[IgnoredVulns]]
+id = "CVE-2024-29415"
+reason = "Your reason for ignoring this vulnerability"
