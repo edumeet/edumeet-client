@@ -6,6 +6,7 @@ import { getTenantFromFqdn } from './managementActions';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { managamentActions } from '../slices/managementSlice';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 const logger = new Logger('LoginActions');
 
@@ -89,25 +90,38 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 	let token: string | undefined;
 
 	if (accessToken) {
+		const management = await managementService;
+
+		let expired = true;
+
 		try {
-			const authResult = await (await managementService).authenticate({ accessToken, strategy: 'jwt' });
-
-			if (authResult?.accessToken === accessToken) {
-				token = accessToken;
-				loggedIn = true;
-			} else {
-				token = undefined;
-				loggedIn = false;
-
-				await (await managementService).authentication.removeAccessToken();
-			}
+			const { exp } = jwtDecode<JwtPayload>(accessToken);
+			expired = !exp || exp <= Math.floor(Date.now() / 1000);
 		} catch (error) {
-			logger.error('checkJWT authenticate failed [error: %o]', error);
+			logger.warn('Invalid JWT format, treating as expired', error);
+		}
 
+		if (expired) {
 			token = undefined;
 			loggedIn = false;
 
-			await (await managementService).authentication.removeAccessToken();
+			await management.authentication.removeAccessToken();
+		} else {
+			try {
+				// feathers does not issue a new token on authenticate, so we do not need to store it
+				await management.authenticate({ accessToken, strategy: 'jwt' });
+
+				token = accessToken;
+				loggedIn = true;
+
+			} catch (error) {
+				logger.error('checkJWT authenticate failed [error: %o]', error);
+
+				token = undefined;
+				loggedIn = false;
+
+				await management.authentication.removeAccessToken();
+			}
 		}
 	} else {
 		token = undefined;
