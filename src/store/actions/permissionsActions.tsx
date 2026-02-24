@@ -96,6 +96,7 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 
 		try {
 			const { exp } = jwtDecode<JwtPayload>(accessToken);
+
 			expired = !exp || exp <= Math.floor(Date.now() / 1000);
 		} catch (error) {
 			logger.warn('checkJWT() - Invalid JWT format, treating as expired', error);
