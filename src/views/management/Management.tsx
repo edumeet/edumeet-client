@@ -168,7 +168,7 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemText primary={username} />
 					</ListItemButton>
 				</ListItem>
-				<ListItem key={'Logout'} disablePadding onClick={
+				{ loggedIn && <ListItem key={'Logout'} disablePadding onClick={
 					async () => {
 						dispatch(logout()).then(() => {
 							window.location.reload();	
@@ -182,6 +182,7 @@ export default function ManagementUI(/* props: Props */) {
 						<ListItemText primary={logoutLabel()} />
 					</ListItemButton>
 				</ListItem>
+				}
 
 			</List>
 
