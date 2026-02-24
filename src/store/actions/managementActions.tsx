@@ -30,7 +30,7 @@ const handleAuthError = (error: unknown): AppThunk<Promise<void>> => async (
 };
 
 export const getTenantFromFqdn = (fqdn: string): AppThunk<Promise<string | undefined>> => async (
-	_dispatch,
+	dispatch,
 	_getState,
 	{ managementService }
 ): Promise<string | undefined> => {
@@ -350,7 +350,7 @@ export const patchData = (id: number, params: object, serviceName: string): AppT
 };
 
 export const getUserData = (): AppThunk<Promise<object | undefined>> => async (
-	_dispatch,
+	dispatch,
 	_getState,
 	{ managementService }
 ): Promise<object | undefined> => {
@@ -370,7 +370,7 @@ export const getUserData = (): AppThunk<Promise<object | undefined>> => async (
 };
 
 export const getRoomByName = (name: string): AppThunk<Promise<object | undefined>> => async (
-	_dispatch,
+	dispatch,
 	_getState,
 	{ managementService }
 ): Promise<object | undefined> => {
