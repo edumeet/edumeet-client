@@ -52,7 +52,7 @@ const SettingsDialog = (): React.JSX.Element => {
 		if (!managementVisible && currentSettingsTab === 'management') {
 			dispatch(uiActions.setCurrentSettingsTab('media'));
 		}
-	}, [managementVisible, currentSettingsTab, dispatch]);
+	}, [ managementVisible, currentSettingsTab, dispatch ]);
 
 	// Derive current tab index from visibleTabs; clamp to 0 if somehow invalid
 	const tabIndex = visibleTabs.indexOf(currentSettingsTab);
