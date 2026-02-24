@@ -63,6 +63,13 @@ const CurrentRoomModal = () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(getRoomByName(window.location.pathname.substring(1).toLowerCase())).then((tdata: any) => {
 
+				if (!tdata) {
+					setManagementConnectionError(true);
+					logger.warn('fetchProduct() error calling getRoomByName');
+
+					return;
+				}
+
 				const r = tdata.data[0] as Room;
 
 				const tid = r.id;
@@ -187,11 +194,7 @@ const CurrentRoomModal = () => {
 
 				setOpen(true);
 
-			})
-				.catch((error) => {
-					setManagementConnectionError(true);
-					logger.warn('fetchProduct() error calling getRoomByName [error: %o]', error);
-				});
+			});
 		});
 
 	}
@@ -199,13 +202,14 @@ const CurrentRoomModal = () => {
 	function checkRoomExists() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getRoomByName(window.location.pathname.substring(1).toLowerCase())).then((tdata: any) => {
-			setRoomExists(tdata?.total === 1);
-			setManagementConnectionError(false);
-		})
-			.catch((error) => {
+			if (tdata) {
+				setRoomExists(tdata?.total === 1);
+				setManagementConnectionError(false);
+			} else {
 				setManagementConnectionError(true);
-				logger.warn('checkRoomExists() error calling getRoomByName [error: %o]', error);
-			});
+				logger.warn('checkRoomExists() error calling getRoomByName');
+			}
+		});
 	}
 
 	const isLoadingRoomExists = roomExists === null;
@@ -276,11 +280,7 @@ const CurrentRoomModal = () => {
 	const handleCreateRoom = () => {
 		dispatch(createRoom(window.location.pathname.substring(1).toLowerCase())).then(() => {
 			checkRoomExists();
-		})
-			.catch((error) => {
-				setManagementConnectionError(true);
-				logger.warn('handleCreateRoom() error calling createRoom [error: %o]', error);
-			});
+		});
 	};
 
 	const addTenant = async () => {
