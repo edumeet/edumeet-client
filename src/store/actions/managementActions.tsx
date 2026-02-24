@@ -11,21 +11,21 @@ const handleAuthError = (error: unknown): AppThunk<Promise<void>> => async (
 	getState,
 	{ managementService, signalingService }
 ): Promise<void> => {
-		if (typeof error === 'object' && error !== null &&
-			'code' in error && (error as { code?: number }).code === 401) {
-			logger.error('401 NotAuthenticated or JWT expired - logging out');
+	if (typeof error === 'object' && error !== null &&
+		'code' in error && (error as { code?: number }).code === 401) {
+		logger.error('401 NotAuthenticated or JWT expired - logging out');
 
-			await (await managementService).authentication.removeAccessToken();
+		await (await managementService).authentication.removeAccessToken();
 
-			dispatch(permissionsActions.setToken());
-			dispatch(permissionsActions.setLoggedIn(false));
-			dispatch(managamentActions.clearUser());
+		dispatch(permissionsActions.setToken());
+		dispatch(permissionsActions.setLoggedIn(false));
+		dispatch(managamentActions.clearUser());
 
-			if (getState().signaling.state === 'connected') {
-				await signalingService.sendRequest('updateToken', { token: undefined })
-					.catch((e) => logger.error('updateToken request failed [error: %o]', e));
-			}
+		if (getState().signaling.state === 'connected') {
+			await signalingService.sendRequest('updateToken', { token: undefined })
+				.catch((e) => logger.error('updateToken request failed [error: %o]', e));
 		}
+	}
 };
 
 export const getTenantFromFqdn = (fqdn: string): AppThunk<Promise<string | undefined>> => async (
