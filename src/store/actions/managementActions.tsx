@@ -2,6 +2,7 @@ import edumeetConfig from '../../utils/edumeetConfig';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
+import { managamentActions } from '../slices/managementSlice';
 import { AppThunk } from '../store';
 
 const logger = new Logger('ManagementActions');
