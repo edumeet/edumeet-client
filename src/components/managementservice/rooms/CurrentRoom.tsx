@@ -187,7 +187,11 @@ const CurrentRoomModal = () => {
 
 				setOpen(true);
 
-			});
+			})
+				.catch((error) => {
+					setManagementConnectionError(true);
+					logger.warn('fetchProduct() error calling getRoomByName [error: %o]', error);
+				});
 		});
 
 	}
@@ -200,7 +204,7 @@ const CurrentRoomModal = () => {
 		})
 			.catch((error) => {
 				setManagementConnectionError(true);
-				logger.warn('checkRoomExists() error getting room using getRoomByName [error: %o]', error);
+				logger.warn('checkRoomExists() error calling getRoomByName [error: %o]', error);
 			});
 	}
 
@@ -272,7 +276,11 @@ const CurrentRoomModal = () => {
 	const handleCreateRoom = () => {
 		dispatch(createRoom(window.location.pathname.substring(1).toLowerCase())).then(() => {
 			checkRoomExists();
-		});
+		})
+			.catch((error) => {
+				setManagementConnectionError(true);
+				logger.warn('handleCreateRoom() error calling createRoom [error: %o]', error);
+			});
 	};
 
 	const addTenant = async () => {
