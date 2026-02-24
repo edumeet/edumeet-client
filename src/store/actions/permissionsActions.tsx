@@ -98,16 +98,20 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 			const { exp } = jwtDecode<JwtPayload>(accessToken);
 			expired = !exp || exp <= Math.floor(Date.now() / 1000);
 		} catch (error) {
-			logger.warn('Invalid JWT format, treating as expired', error);
+			logger.warn('checkJWT() - Invalid JWT format, treating as expired', error);
 		}
 
 		if (expired) {
+			logger.debug('checkJWT() - JWT expired');
+
 			token = undefined;
 			loggedIn = false;
 
 			await management.authentication.removeAccessToken();
 		} else {
 			try {
+				logger.debug('checkJWT() - JWT valid, running authenticate strategy: jwt');
+
 				// feathers does not issue a new token on authenticate, so we do not need to store it
 				await management.authenticate({ accessToken, strategy: 'jwt' });
 
@@ -115,7 +119,7 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 				loggedIn = true;
 
 			} catch (error) {
-				logger.error('checkJWT authenticate failed [error: %o]', error);
+				logger.error('checkJWT() - authenticate failed [error: %o]', error);
 
 				token = undefined;
 				loggedIn = false;
