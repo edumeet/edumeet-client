@@ -197,7 +197,8 @@ const CurrentRoomModal = () => {
 		dispatch(getRoomByName(window.location.pathname.substring(1).toLowerCase())).then((tdata: any) => {
 			setRoomExists(tdata?.total === 1);
 			dispatch(setManagementConnectionError(false));
-		}).catch((error) => {
+		})
+		.catch((error) => {
 			dispatch(setManagementConnectionError(true));
 			logger.warn('checkRoomExists() error getting room using getRoomByName [error: %o]', error);
 		});
