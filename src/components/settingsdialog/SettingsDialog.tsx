@@ -27,6 +27,7 @@ const SettingsDialog = (): React.JSX.Element => {
 	const currentSettingsTab = useAppSelector((state) => state.ui.currentSettingsTab);
 	const closeButtonDisabled = useAppSelector((state) => state.me.videoInProgress || state.me.audioInProgress);
 	const locale = useAppSelector((state) => state.settings.locale);
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -71,7 +72,7 @@ const SettingsDialog = (): React.JSX.Element => {
 							icon={isMobile ? <TuneIcon /> : undefined}
 							aria-label={advancedSettingsLabel()}
 						/>
-						{edumeetConfig.loginEnabled && (
+						{edumeetConfig.loginEnabled && loggedIn && (
 							<Tab
 								label={isMobile ? undefined : managementSettingsLabel()}
 								icon={isMobile ? <AdminPanelSettingsIcon /> : undefined}
