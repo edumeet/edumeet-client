@@ -6,6 +6,16 @@ import { AppThunk } from '../store';
 
 const logger = new Logger('ManagementActions');
 
+const handleAuthError = (code: number | undefined): void => {
+	if (code === 401) {
+		logger.error('401 NotAuthenticated or JWT expired');
+
+		// 🔐 401 BLOCK
+		// your custom logic here
+		// e.g. redirect, logout, refresh token, etc.
+	}
+};
+
 export const getTenantFromFqdn = (fqdn: string): AppThunk<Promise<string | undefined>> => async (
 	_dispatch,
 	_getState,
@@ -21,6 +31,7 @@ export const getTenantFromFqdn = (fqdn: string): AppThunk<Promise<string | undef
 		tenantId = data[0]?.tenantId;
 	} catch (error) {
 		logger.error('getTenantFromFqdn  [error:%o]', error);
+		handleAuthError(error.code);
 	}
 
 	return tenantId;
