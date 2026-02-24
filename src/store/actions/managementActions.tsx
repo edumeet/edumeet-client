@@ -6,14 +6,26 @@ import { AppThunk } from '../store';
 
 const logger = new Logger('ManagementActions');
 
-const handleAuthError = (code: number | undefined): void => {
-	if (code === 401) {
-		logger.error('401 NotAuthenticated or JWT expired');
+const handleAuthError = (error: unknown): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ managementService, signalingService }
+): Promise<void> => {
+		if (typeof error === 'object' && error !== null &&
+			'code' in error && (error as { code?: number }).code === 401) {
+			logger.error('401 NotAuthenticated or JWT expired - logging out');
 
-		// 🔐 401 BLOCK
-		// your custom logic here
-		// e.g. redirect, logout, refresh token, etc.
-	}
+			await (await managementService).authentication.removeAccessToken();
+
+			dispatch(permissionsActions.setToken());
+			dispatch(permissionsActions.setLoggedIn(false));
+			dispatch(managamentActions.clearUser());
+
+			if (getState().signaling.state === 'connected') {
+				await signalingService.sendRequest('updateToken', { token: undefined })
+					.catch((e) => logger.error('updateToken request failed [error: %o]', e));
+			}
+		}
 };
 
 export const getTenantFromFqdn = (fqdn: string): AppThunk<Promise<string | undefined>> => async (
@@ -31,7 +43,7 @@ export const getTenantFromFqdn = (fqdn: string): AppThunk<Promise<string | undef
 		tenantId = data[0]?.tenantId;
 	} catch (error) {
 		logger.error('getTenantFromFqdn  [error:%o]', error);
-		handleAuthError(error.code);
+		dispatch(handleAuthError(error));
 	}
 
 	return tenantId;
@@ -55,8 +67,10 @@ export const createRoom = (roomName: string): AppThunk<Promise<void>> => async (
 				options: { variant: 'error' }
 			}));
 		}
+		dispatch(handleAuthError(error));
 	}
 };
+
 interface PaginatedResult {
 	total: number;
 	limit: number;
@@ -120,6 +134,7 @@ export const getData = (serviceName: string): AppThunk<Promise<object | undefine
 				options: { variant: 'error' }
 			}));
 		}
+		dispatch(handleAuthError(error));
 	}
 
 	return data;
@@ -136,7 +151,6 @@ export const getDataByID = (id: string | number, serviceName: string): AppThunk<
 	let data: object | undefined;
 
 	try {
-
 		data = await (await managementService).service(serviceName).find(
 			{
 				query: {
@@ -157,6 +171,7 @@ export const getDataByID = (id: string | number, serviceName: string): AppThunk<
 				options: { variant: 'error' }
 			}));
 		}
+		dispatch(handleAuthError(error));
 	}
 
 	return data;
@@ -192,6 +207,7 @@ export const getDataByTenantID = (id: string | number, serviceName: string): App
 				options: { variant: 'error' }
 			}));
 		}
+		dispatch(handleAuthError(error));
 	}
 
 	return data;
@@ -228,6 +244,7 @@ export const getDataByRoomId = (roomId: string | number, serviceName: string): A
 				options: { variant: 'error' }
 			}));
 		}
+		dispatch(handleAuthError(error));
 	}
 
 	return data;
@@ -259,6 +276,7 @@ export const deleteData = (id: number, serviceName: string): AppThunk<Promise<ob
 				options: { variant: 'error' }
 			}));
 		}
+		dispatch(handleAuthError(error));
 
 	}
 
@@ -291,6 +309,7 @@ export const createData = (params: object, serviceName: string): AppThunk<Promis
 				options: { variant: 'error' }
 			}));
 		}
+		dispatch(handleAuthError(error));
 	}
 
 	return data;
@@ -323,6 +342,7 @@ export const patchData = (id: number, params: object, serviceName: string): AppT
 				options: { variant: 'error' }
 			}));
 		}
+		dispatch(handleAuthError(error));
 	}
 
 	return data;
@@ -342,6 +362,7 @@ export const getUserData = (): AppThunk<Promise<object | undefined>> => async (
 		data = await (await managementService).reAuthenticate();
 	} catch (error) {
 		logger.error('getUserData [error:%o]', error);
+		dispatch(handleAuthError(error));
 	}
 
 	return data;
@@ -372,6 +393,7 @@ export const getRoomByName = (name: string): AppThunk<Promise<object | undefined
 		);
 	} catch (error) { 
 		logger.error('getRoomByName [error:%o]', error);
+		dispatch(handleAuthError(error));
 	}
 
 	return data;
@@ -406,6 +428,7 @@ export const createRoomWithParams = (params: object): AppThunk<Promise<object | 
 				options: { variant: 'error' }
 			}));
 		}
+		dispatch(handleAuthError(error));
 	}
 
 	return data;

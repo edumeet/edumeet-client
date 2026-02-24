@@ -56,6 +56,7 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 		} else {
 			dispatch(permissionsActions.setToken());
 			dispatch(permissionsActions.setLoggedIn(false));
+			dispatch(managamentActions.clearUser());
 		}
 	} catch (error) {
 		logger.error('AdminLogin [error:%o]', error);
@@ -64,6 +65,7 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 
 		dispatch(permissionsActions.setToken());
 		dispatch(permissionsActions.setLoggedIn(false));
+		dispatch(managamentActions.clearUser());
 
 		dispatch(notificationsActions.enqueueNotification({
 			message: 'Invalid login',
@@ -155,7 +157,6 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	dispatch(permissionsActions.setToken());
 	dispatch(permissionsActions.setLoggedIn(false));
-
 	dispatch(managamentActions.clearUser());
 
 	if (getState().signaling.state === 'connected') {
