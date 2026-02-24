@@ -194,11 +194,10 @@ const CurrentRoomModal = () => {
 
 	function checkRoomExists() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getRoomByName(window.location.pathname.substring(1).toLowerCase()))
-			.then((tdata: any) => {
-				setRoomExists(tdata?.total === 1);
-				dispatch(setManagementConnectionError(false));
-			})
+		dispatch(getRoomByName(window.location.pathname.substring(1).toLowerCase())).then((tdata: any) => {
+			setRoomExists(tdata?.total === 1);
+			dispatch(setManagementConnectionError(false));
+		})
 			.catch((error) => {
 				dispatch(setManagementConnectionError(true));
 				logger.warn('checkRoomExists() error getting room using getRoomByName [error: %o]', error);
