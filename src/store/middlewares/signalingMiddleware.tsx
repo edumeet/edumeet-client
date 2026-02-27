@@ -52,10 +52,10 @@ const createSignalingMiddleware = ({
 				dispatch(leaveRoom());
 			});
 				
-			const { url } = getState().signaling;
-
 			(async () => {
-				const socketConnection = await RoomServerConnection.create({ url });
+				const socketConnection = await RoomServerConnection.create({
+					getUrl: () => getState().signaling.url
+				});
 
 				signalingService.addConnection(socketConnection);
 			})();

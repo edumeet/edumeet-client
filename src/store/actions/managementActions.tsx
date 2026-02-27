@@ -3,6 +3,7 @@ import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { managamentActions } from '../slices/managementSlice';
+import { updateLoginState } from './permissionsActions';
 import { AppThunk } from '../store';
 
 const logger = new Logger('ManagementActions');
@@ -18,14 +19,7 @@ const handleAuthError = (error: unknown): AppThunk<Promise<void>> => async (
 
 		await (await managementService).authentication.removeAccessToken();
 
-		dispatch(permissionsActions.setToken());
-		dispatch(permissionsActions.setLoggedIn(false));
-		dispatch(managamentActions.clearUser());
-
-		if (getState().signaling.state === 'connected') {
-			await signalingService.sendRequest('updateToken', { token: undefined })
-				.catch((e) => logger.error('updateToken request failed [error: %o]', e));
-		}
+		dispatch(updateLoginState());
 	}
 };
 
@@ -459,11 +453,7 @@ export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
 					await (await managementService).authentication.setAccessToken(token);
 					await (await managementService).reAuthenticate();
 
-					dispatch(permissionsActions.setToken(token));
-					dispatch(permissionsActions.setLoggedIn(true));
-
-					if (getState().signaling.state === 'connected')
-						await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+					dispatch(updateLoginState(token));
 				}
 			}
 

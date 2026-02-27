@@ -5,7 +5,7 @@ import { activeSpeakerIdSelector, makePermissionSelector } from '../selectors';
 import { permissions } from '../../utils/roles';
 import { pauseMic, resumeMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
 import { uiActions } from '../slices/uiSlice';
-import { lock, unlock } from './permissionsActions';
+import { lock, unlock, updateLoginState } from './permissionsActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { setRaisedHand } from './meActions';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
@@ -295,11 +295,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 					await (await managementService).authentication.setAccessToken(token);
 					await (await managementService).reAuthenticate();
 
-					dispatch(permissionsActions.setToken(token));
-					dispatch(permissionsActions.setLoggedIn(true));
-
-					if (getState().signaling.state === 'connected')
-						await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+					dispatch(updateLoginState(token));
 				}
 			}
 		}

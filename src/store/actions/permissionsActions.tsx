@@ -8,7 +8,7 @@ import { notificationsActions } from '../slices/notificationsSlice';
 import { managamentActions } from '../slices/managementSlice';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
-const logger = new Logger('LoginActions');
+const logger = new Logger('PermissionsActions');
 
 export const login = (): AppThunk<Promise<void>> => async (
 	dispatch,
@@ -49,33 +49,16 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 		});
 
 		token = auth?.accessToken;
-
-		if (token) {
-			dispatch(permissionsActions.setToken(token));
-			dispatch(permissionsActions.setLoggedIn(true));
-		} else {
-			dispatch(permissionsActions.setToken());
-			dispatch(permissionsActions.setLoggedIn(false));
-			dispatch(managamentActions.clearUser());
-		}
+		dispatch(updateLoginState(token));
 	} catch (error) {
 		logger.error('AdminLogin [error:%o]', error);
 
-		token = undefined;
-
-		dispatch(permissionsActions.setToken());
-		dispatch(permissionsActions.setLoggedIn(false));
-		dispatch(managamentActions.clearUser());
+		dispatch(updateLoginState());
 
 		dispatch(notificationsActions.enqueueNotification({
 			message: 'Invalid login',
 			options: { variant: 'error' }
 		}));
-	}
-
-	if (getState().signaling.state === 'connected') {
-		await signalingService.sendRequest('updateToken', { token })
-			.catch((e) => logger.error('updateToken request failed [error: %o]', e));
 	}
 };
 
@@ -88,7 +71,6 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 
 	const accessToken = localStorage.getItem('feathers-jwt');
 
-	let loggedIn = false;
 	let token: string | undefined;
 
 	if (accessToken) {
@@ -108,7 +90,6 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 			logger.debug('checkJWT() - JWT expired');
 
 			token = undefined;
-			loggedIn = false;
 
 			await management.authentication.removeAccessToken();
 		} else {
@@ -119,29 +100,20 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 				await management.authenticate({ accessToken, strategy: 'jwt' });
 
 				token = accessToken;
-				loggedIn = true;
 
 			} catch (error) {
 				logger.error('checkJWT() - authenticate failed [error: %o]', error);
 
 				token = undefined;
-				loggedIn = false;
 
 				await management.authentication.removeAccessToken();
 			}
 		}
 	} else {
 		token = undefined;
-		loggedIn = false;
 	}
 
-	dispatch(permissionsActions.setToken(token));
-	dispatch(permissionsActions.setLoggedIn(loggedIn));
-
-	if (getState().signaling.state === 'connected') {
-		await signalingService.sendRequest('updateToken', { token })
-			.catch((e) => logger.error('updateToken request failed [error: %o]', e));
-	}
+	dispatch(updateLoginState(token));
 };
 
 export const logout = (): AppThunk<Promise<void>> => async (
@@ -155,13 +127,7 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	await (await managementService).authentication.removeAccessToken();
 
-	dispatch(permissionsActions.setToken());
-	dispatch(permissionsActions.setLoggedIn(false));
-	dispatch(managamentActions.clearUser());
-
-	if (getState().signaling.state === 'connected') {
-		await signalingService.sendRequest('updateToken').catch((e) => logger.error('updateToken request failed [error: %o]', e));
-	}
+	dispatch(updateLoginState());
 
 	if (!tenantId) {
 		dispatch(notificationsActions.enqueueNotification({
@@ -253,5 +219,56 @@ export const promotePeers = (): AppThunk<Promise<void>> => async (
 		dispatch(
 			roomActions.updateRoom({ lobbyPeersPromotionInProgress: false })
 		);
+	}
+};
+
+export const updateLoginState = (inputToken?: string): AppThunk<void> => (
+	dispatch,
+	getState
+): void => {
+	logger.debug('updateLoginState()');
+
+	const token = inputToken && inputToken.length > 0 ? inputToken : undefined;
+	const currentUrl = getState().signaling.url;
+
+	let nextUrl: string | undefined = currentUrl;
+
+	try {
+		if (currentUrl) {
+			const currentUrlObject = new URL(currentUrl);
+
+			if (token) {
+				currentUrlObject.searchParams.set('token', token);
+			} else {
+				currentUrlObject.searchParams.delete('token');
+			}
+
+			nextUrl = currentUrlObject.toString();
+		}
+	} catch (error) {
+		logger.warn('updateLoginState() failed to parse URL [error: %o]', error);
+	}
+
+	if (token) {
+		logger.debug('updateLoginState() setting token and loggedIn=true');
+		dispatch(permissionsActions.setToken(token));
+		dispatch(permissionsActions.setLoggedIn(true));
+	} else {
+		logger.debug('updateLoginState() removing token and loggedIn=false');
+		dispatch(permissionsActions.setToken());
+		dispatch(permissionsActions.setLoggedIn(false));
+		dispatch(managamentActions.clearUser());
+	}
+
+	if (nextUrl && nextUrl !== currentUrl) {
+		dispatch(signalingActions.setUrl(nextUrl));
+		logger.debug('updateLoginState() updated signaling URL [old: %s], [new: %s]', currentUrl, nextUrl);
+	} else {
+		logger.debug('updateLoginState() signaling URL stays the same');
+	}
+
+	if (getState().signaling.state === 'connected') {
+		void signalingService.sendRequest('updateToken', { token })
+			.catch((e) => logger.error('updateToken request failed [error: %o]', e));
 	}
 };

@@ -5,21 +5,20 @@ import edumeetConfig from './edumeetConfig';
  * 
  * @param peerId - The id of this client.
  * @param roomId - The id of the room.
+ * @param reconnectKey - The reconnectKey of the client.
  * @param token - The token of the user.
  * @returns {string} The url of the signaling server.
  */
-export const getSignalingUrl = (peerId: string, roomId: string, token: string | undefined): string => {
+export const getSignalingUrl = (peerId: string, roomId: string, reconnectKey: string, token: string | undefined): string => {
 	const hostname = edumeetConfig.serverHostname || window.location.hostname;
 	const tenantFqdn = encodeURIComponent(window.location.hostname);
 	const port = import.meta.env.PROD ? edumeetConfig.productionPort : edumeetConfig.developmentPort;
-	const reconnectKey = crypto.randomUUID();
-	const reconnectKeyParam = `&reconnectKey=${reconnectKey}`;
 
 	let tokenParam = '';
 
 	if (token) tokenParam = `&token=${token}`;
 
-	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}&tenantFqdn=${tenantFqdn}${tokenParam}${reconnectKeyParam}`;
+	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}&reconnectKey=${reconnectKey}&tenantFqdn=${tenantFqdn}${tokenParam}${reconnectKeyParam}`;
 };
 
 export class SocketTimeoutError extends Error {
