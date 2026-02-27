@@ -440,7 +440,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 							onClick={handleResolveUserByEmail}
 							disabled={isResolvingUser || userEmailInput.trim() === ''}
 						>
-							{'Next'}
+							{'SELECT'}
 						</Button>
 					</Box>
 					<Autocomplete
