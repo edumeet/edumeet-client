@@ -6,6 +6,7 @@ import { getTenantFromFqdn } from './managementActions';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { managamentActions } from '../slices/managementSlice';
+import { signalingActions } from '../slices/signalingSlice';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 const logger = new Logger('PermissionsActions');
