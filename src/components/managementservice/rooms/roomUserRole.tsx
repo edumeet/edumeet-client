@@ -350,10 +350,10 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					setUserResolveError('Could not resolve user in list.');
 				}
 			})
-				.catch(() => {
-					setIsResolvingUser(false);
-					setUserResolveError('Error resolving user.');
-				});
+			.catch(() => {
+				setIsResolvingUser(false);
+				setUserResolveError('Error resolving user.');
+			});
 	};
 
 	/* const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
