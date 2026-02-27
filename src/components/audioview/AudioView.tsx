@@ -68,15 +68,48 @@ const AudioView = ({
 		stream.addTrack(track);
 		currentAudioElement.srcObject = stream;
 
-		if (deviceId) {
-			// same behavior as before, just wrapped with a log
+		if (deviceId && deviceId !== 'default') {
 			logger.debug({
 				consumerId: consumer.id,
 				peerId: consumer.peerId,
 				deviceId
-			}, 'AudioView: setting sinkId');
+			}, 'AudioView: attempting setSinkId');
 
-			currentAudioElement.setSinkId(deviceId);
+			// runtime feature detection, regardless of TS typings
+			const elementWithSink = currentAudioElement as unknown as {
+				setSinkId?: (deviceId: string) => Promise<void>;
+			};
+
+			if (typeof elementWithSink.setSinkId === 'function') {
+				elementWithSink.setSinkId(deviceId)
+					.then(() => {
+						logger.debug({
+							consumerId: consumer.id,
+							peerId: consumer.peerId,
+							deviceId
+						}, 'AudioView: setSinkId succeeded');
+					})
+					.catch((error: unknown) => {
+						logger.warn({
+							consumerId: consumer.id,
+							peerId: consumer.peerId,
+							deviceId,
+							error
+						}, 'AudioView: setSinkId FAILED');
+					});
+			} else {
+				logger.warn({
+					consumerId: consumer.id,
+					peerId: consumer.peerId,
+					deviceId
+				}, 'AudioView: setSinkId not supported on this browser');
+			}
+		} else {
+			logger.debug({
+				consumerId: consumer.id,
+				peerId: consumer.peerId,
+				deviceId: deviceId ?? 'default'
+			}, 'AudioView: using default output device (no setSinkId)');
 		}
 
 		return () => {
