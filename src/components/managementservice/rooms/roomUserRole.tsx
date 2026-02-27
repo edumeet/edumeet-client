@@ -104,7 +104,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	const columns = useMemo<MRT_ColumnDef<UsersRoles>[]>(
 		() => [
 			{
-				accessorKey: 'id',
+                accessorKey: 'id',
 				header: '#'
 			},
 			{
@@ -148,7 +148,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	const [ cantPatch, setCantPatch ] = useState(true);
 	const [ cantDelete ] = useState(false);
-	const [ userIdOption, setUserIdOption ] = useState<User | undefined>(undefined);
 	const [ roleIdOption, setRoleIdOption ] = useState<Roles | undefined>();
 
 	/* const [ roomIdOption, setRoomIdOption ] = useState<Room | undefined>(); */
@@ -208,7 +207,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		setRoleId(0);
 
 		/* setRoomId(0); */
-		setUserIdOption(undefined);
 		setRoleIdOption(undefined);
 
 		setUserEmailInput('');
@@ -234,17 +232,19 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		setOpen(true);
 	};
 
-	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User) => {
-		if (newValue) {
-			if (typeof newValue.id != 'number') {
-				setUserId(parseInt(newValue.id));
-			} else {
-				setUserId(newValue.id);
-			}
-			setUserIdOption(newValue);
-			setCantPatch(false);
+	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User | null) => {
+		if (!newValue) {
+			return;
 		}
+
+		if (typeof newValue.id != 'number') {
+			setUserId(parseInt(newValue.id));
+		} else {
+			setUserId(newValue.id);
+		}
+		setCantPatch(false);
 	};
+
 	const handleRoleIdChange = (event: SyntheticEvent<Element, Event>, newValue: Roles) => {
 		if (newValue) {
 			if (typeof newValue.id != 'number') {
@@ -295,7 +295,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 				if (list.length === 0) {
 					setUserId(0);
-					setUserIdOption(undefined);
 					setUserResolveError('No user found with this email.');
 
 					return;
@@ -313,24 +312,19 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 				if (!existing) {
 					setUserId(0);
-					setUserIdOption(undefined);
-					setUserResolveError(
-						'User found but not available in list.'
-					);
+					setUserResolveError('User found but not available in list.');
 
 					return;
 				}
 
-				const updatedUser: User = {
-					...existing,
-					email,
-				};
-
-				// update users array
+				// update email in users list
 				setUsers((prev) => {
 					return prev.map((u) => {
 						if (getUserNumericId(u) === idNumber) {
-							return updatedUser;
+							return {
+								...u,
+								email,
+							};
 						}
 
 						return u;
@@ -338,7 +332,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				});
 
 				setUserId(idNumber);
-				setUserIdOption(updatedUser);
 				setCantPatch(false);
 			})
 			.catch(() => {
@@ -401,6 +394,8 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		return `${u.id} - Hidden email`;
 	};
 
+	const selectedUser = users.find((u) => getUserNumericId(u) === userId) ?? null;
+
 	return <>
 		<div>
 			<h4>Room-User roles</h4>
@@ -435,7 +430,8 @@ const RoomUserRoleTable = (props: RoomProp) => {
 							variant="outlined"
 							sx={{ alignSelf: 'flex-start' }}
 							onClick={handleResolveUserByEmail}
-							disabled={isResolvingUser || userEmailInput.trim() === ''}>
+							disabled={isResolvingUser || userEmailInput.trim() === ''}
+						>
 							{'SELECT'}
 						</Button>
 					</Box>
@@ -456,7 +452,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						disableClearable
 						readOnly={userIdOptionDisabled}
 						onChange={handleUserIdChange}
-						value={userIdOption}
+						value={selectedUser}
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="User" />}
 					/>
@@ -498,22 +494,11 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					}
 
 					if (typeof tuserId === 'number') {
-						const tuser = users.find((x) => x.id == tuserId);
-
-						if (tuser) {
-							setUserIdOption(tuser);
-						}
 						setUserId(tuserId);
 					} else if (typeof tuserId === 'string') {
-						const tuser = users.find((x) => x.id == parseInt(tuserId));
-
-						if (tuser) {
-							setUserIdOption(tuser);
-						}
 						setUserId(parseInt(tuserId));
 					} else {
 						setUserId(0);
-						setUserIdOption(undefined);
 					}
 					
 					if (typeof troleId === 'number') {
