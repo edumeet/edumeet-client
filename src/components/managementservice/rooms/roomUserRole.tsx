@@ -308,7 +308,8 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			});
 
 			setCantPatch(false);
-		}).catch(() => {
+		})
+		.catch(() => {
 			setIsResolvingUser(false);
 			setUserResolveError('Error resolving user.');
 		});
