@@ -229,6 +229,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		setUserIdOptionDisabled(true);
 		setRoleIdOptionDisabled(true);
 
+		setUserEmailInput('');
 		setUserResolveError(null);
 
 		/* setRoomIdOptionDisabled(true); */
