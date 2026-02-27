@@ -1,10 +1,10 @@
-import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { SyntheticEvent, useEffect, useMemo, useState, ChangeEvent } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, Box } from '@mui/material';
 import { Roles, Room, User, UsersRoles } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, getDataByRoomId, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByRoomId, patchData, getUserByEmail } from '../../../store/actions/managementActions';
 import { RoomProp } from './Room';
 import { userLabel } from '../../translated/translatedComponents';
 
@@ -157,6 +157,10 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	/* const [ roomIdOptionDisabled, setRoomIdOptionDisabled ] = useState(true); */
 
+	const [ userEmailInput, setUserEmailInput ] = useState('');
+	const [ isResolvingUser, setIsResolvingUser ] = useState(false);
+	const [ userResolveError, setUserResolveError ] = useState<string | null>(null);
+
 	async function fetchProduct() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('users')).then((tdata: any) => {
@@ -170,7 +174,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			if (tdata != undefined) {
 				setRooms(tdata.data);
 			}
-           
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -178,7 +181,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			if (tdata != undefined) {
 				setRoles(tdata.data);
 			}
-           
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -188,7 +190,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				setData(tdata.data ?? tdata);
 			}
 			setIsLoading(false);
-        
 		});
 
 	}
@@ -210,6 +211,9 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		setUserIdOption(undefined);
 		setRoleIdOption(undefined);
 
+		setUserEmailInput('');
+		setUserResolveError(null);
+
 		/* setRoomIdOption(undefined); */
 		setUserIdOptionDisabled(false);
 		setRoleIdOptionDisabled(false);
@@ -224,6 +228,8 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		setUserIdOptionDisabled(true);
 		setRoleIdOptionDisabled(true);
 
+		setUserResolveError(null);
+
 		/* setRoomIdOptionDisabled(true); */
 		setOpen(true);
 	};
@@ -236,6 +242,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				setUserId(newValue.id);
 			}
 			setUserIdOption(newValue);
+			setCantPatch(false);
 		}
 	};
 	const handleRoleIdChange = (event: SyntheticEvent<Element, Event>, newValue: Roles) => {
@@ -247,6 +254,64 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			}
 			setRoleIdOption(newValue);
 		}
+	};
+
+	const handleUserEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setUserEmailInput(event.target.value);
+		setUserResolveError(null);
+	};
+
+	const handleResolveUserByEmail = () => {
+		const email = userEmailInput.trim();
+
+		if (!email) return;
+
+		setIsResolvingUser(true);
+		setUserResolveError(null);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch(getUserByEmail(email)).then((tdata: any) => {
+			setIsResolvingUser(false);
+
+			if (!tdata) {
+				setUserId(0);
+				setUserIdOption(undefined);
+				setUserResolveError('No user found with this email.');
+
+				return;
+			}
+
+			const list = (tdata as { data?: unknown[] }).data ?? tdata;
+
+			if (!Array.isArray(list) || list.length === 0) {
+				setUserId(0);
+				setUserIdOption(undefined);
+				setUserResolveError('No user found with this email.');
+
+				return;
+			}
+
+			const user = list[0] as User;
+			const idValue =
+				typeof user.id === 'number'
+					? user.id
+					: parseInt(String(user.id), 10);
+
+			setUserId(idValue);
+			setUserIdOption(user);
+
+			// Add user to dropdown list if not present
+			setUsers((prev) => {
+				const exists = prev.some((u) => u.id === idValue);
+
+				return exists ? prev : [ ...prev, user ];
+			});
+
+			setCantPatch(false);
+		}).catch(() => {
+			setIsResolvingUser(false);
+			setUserResolveError('Error resolving user.');
+		});
 	};
 
 	/* const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
@@ -320,6 +385,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					<Autocomplete
 						options={users}
 						getOptionLabel={(option) => getUserLabel(option)}
+						isOptionEqualToValue={(option, value) => option.id === value.id}
 						fullWidth
 						disableClearable
 						readOnly={userIdOptionDisabled}
@@ -328,6 +394,25 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="User" />}
 					/>
+					<Box sx={{ display: 'flex' }}>
+						<TextField
+							label="User email"
+							fullWidth
+							sx={{ marginTop: '8px', marginRight: '8px' }}
+							value={userEmailInput}
+							onChange={handleUserEmailChange}
+							error={userResolveError !== null}
+							helperText={userResolveError ?? ''}
+						/>
+						<Button
+							variant="outlined"
+							sx={{ marginTop: '8px' }}
+							onClick={handleResolveUserByEmail}
+							disabled={isResolvingUser || userEmailInput.trim() === ''}
+						>
+							{isResolvingUser ? 'Next…' : 'Next'}
+						</Button>
+					</Box>
 					<Autocomplete
 						options={roles}
 						getOptionLabel={(option) => option.name}

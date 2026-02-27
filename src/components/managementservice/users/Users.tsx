@@ -67,7 +67,6 @@ const UserTable = () => {
 				filterVariant: 'checkbox',
 				Cell: ({ cell }) =>
 					(cell.getValue() === true ? yesLabel() : noLabel()),
-                
 			},
 			{
 				accessorKey: 'tenantOwner',

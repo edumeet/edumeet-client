@@ -427,6 +427,43 @@ export const createRoomWithParams = (params: object): AppThunk<Promise<object | 
 	return data;
 };
 
+export const getUserByEmail = (email: string): AppThunk<Promise<object | undefined>> => async (
+	dispatch,
+	_getState,
+	{ managementService }
+): Promise<object | undefined> => {
+
+	logger.debug('getUserByEmail() [email:%s]', email);
+
+	let data: object | undefined;
+
+	const serviceName = 'users';
+
+	try {
+		data = await (await managementService).service(serviceName).find(
+			{
+				query: {
+					email: email,
+					$limit: 1,
+					$sort: {
+						id: 1
+					}
+				}
+			}
+		) as PaginatedResult;
+	} catch (error) {
+		if (error instanceof Error) {
+			dispatch(notificationsActions.enqueueNotification({
+				message: `Failed to get user by email: ${error.toString()}`,
+				options: { variant: 'error' }
+			}));
+		}
+		dispatch(handleAuthError(error));
+	}
+
+	return data;
+};
+
 // eslint-disable-next-line no-unused-vars
 let messageListener: (event: MessageEvent) => void;
 
