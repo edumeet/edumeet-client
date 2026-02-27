@@ -307,48 +307,35 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						? first.id
 						: parseInt(String(first.id), 10);
 
-				const exists = users.some(
+				const existing = users.find(
 					(u) => getUserNumericId(u) === idNumber
 				);
 
-				if (!exists) {
+				if (!existing) {
 					setUserId(0);
 					setUserIdOption(undefined);
-					setUserResolveError('User found but not available in list.');
+					setUserResolveError(
+						'User found but not available in list.'
+					);
 
 					return;
 				}
 
+				const updatedUser: User = {
+					...existing,
+					email,
+				};
+
+				// update users array
+				setUsers((prev) =>
+					prev.map((u) =>
+						getUserNumericId(u) === idNumber ? updatedUser : u
+					)
+				);
+
 				setUserId(idNumber);
-
-				let selectedUser: User | null = null;
-
-				setUsers((prev) => {
-					const updated = prev.map((u) => {
-						if (getUserNumericId(u) !== idNumber) {
-							return u;
-						}
-
-						const withEmail: User = {
-							...u,
-							email,
-						};
-
-						selectedUser = withEmail;
-
-						return withEmail;
-					});
-
-					return updated;
-				});
-
-				if (selectedUser) {
-					setUserIdOption(selectedUser);
-					setCantPatch(false);
-				} else {
-					setUserIdOption(undefined);
-					setUserResolveError('Could not resolve user in list.');
-				}
+				setUserIdOption(updatedUser);
+				setCantPatch(false);
 			})
 			.catch(() => {
 				setIsResolvingUser(false);
@@ -424,22 +411,27 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						These are the parameters that you can change.
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
-					<Box sx={{ display: 'flex' }}>
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'flex-start',
+							marginTop: '8px',
+						}}
+					>
 						<TextField
 							label="User email"
 							fullWidth
-							sx={{ marginTop: '8px', marginRight: '8px' }}
+							sx={{ marginRight: '8px' }}
 							value={userEmailInput}
 							onChange={handleUserEmailChange}
 							error={userResolveError !== null}
 							helperText={userResolveError ?? ''}
-						/>
+					/>
 						<Button
 							variant="outlined"
-							sx={{ marginTop: '8px' }}
+							sx={{ alignSelf: 'flex-start' }}
 							onClick={handleResolveUserByEmail}
-							disabled={isResolvingUser || userEmailInput.trim() === ''}
-						>
+							disabled={isResolvingUser || userEmailInput.trim() === ''}>
 							{'SELECT'}
 						</Button>
 					</Box>
