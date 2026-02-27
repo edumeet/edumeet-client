@@ -425,12 +425,13 @@ const RoomUserRoleTable = (props: RoomProp) => {
 							onChange={handleUserEmailChange}
 							error={userResolveError !== null}
 							helperText={userResolveError ?? ''}
+							disabled={cantPatch}
 						/>
 						<Button
 							variant="outlined"
 							sx={{ alignSelf: 'flex-start' }}
 							onClick={handleResolveUserByEmail}
-							disabled={isResolvingUser || userEmailInput.trim() === ''}
+							disabled={cantPatch || isResolvingUser || userEmailInput.trim() === ''}
 						>
 							{'SELECT'}
 						</Button>
@@ -450,6 +451,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						}}
 						fullWidth
 						disableClearable
+						disabled={cantPatch}
 						readOnly={userIdOptionDisabled}
 						onChange={handleUserIdChange}
 						value={selectedUser}
@@ -461,6 +463,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						getOptionLabel={(option) => option.name}
 						fullWidth
 						disableClearable
+						disabled={cantPatch}
 						readOnly={roleIdOptionDisabled}
 						onChange={handleRoleIdChange}
 						value={roleIdOption}
