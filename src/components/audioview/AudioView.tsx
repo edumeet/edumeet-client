@@ -77,7 +77,8 @@ const AudioView = ({
 
 			// runtime feature detection, regardless of TS typings
 			const elementWithSink = currentAudioElement as unknown as {
-				setSinkId?: (_deviceId: string) => Promise<void>;
+				// eslint-disable-next-line no-unused-vars
+				setSinkId?: (deviceId: string) => Promise<void>;
 			};
 
 			if (typeof elementWithSink.setSinkId === 'function') {
