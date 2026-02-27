@@ -148,7 +148,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	const [ cantPatch, setCantPatch ] = useState(true);
 	const [ cantDelete ] = useState(false);
-	const [ userIdOption, setUserIdOption ] = useState<User | undefined>();
+	const [ userIdOption, setUserIdOption ] = useState<User | null>(null);
 	const [ roleIdOption, setRoleIdOption ] = useState<Roles | undefined>();
 
 	/* const [ roomIdOption, setRoomIdOption ] = useState<Room | undefined>(); */
@@ -295,7 +295,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 				if (list.length === 0) {
 					setUserId(0);
-					setUserIdOption(undefined);
+					setUserIdOption(null);
 					setUserResolveError('No user found with this email.');
 
 					return;
@@ -307,48 +307,53 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						? first.id
 						: parseInt(String(first.id), 10);
 
-				// Must already exist in users list
-				const existing = users.find(
+				const exists = users.some(
 					(u) => getUserNumericId(u) === idNumber
 				);
 
-				if (!existing) {
+				if (!exists) {
 					setUserId(0);
-					setUserIdOption(undefined);
-					setUserResolveError(
-						'User found but not available in list.'
-					);
+					setUserIdOption(null);
+					setUserResolveError('User found but not available in list.');
 
 					return;
 				}
 
-				// Update email inside users list
-				setUsers((prev) =>
-					prev.map((u) => {
+				setUserId(idNumber);
+
+				let selectedUser: User | null = null;
+
+				setUsers((prev) => {
+					const updated = prev.map((u) => {
 						if (getUserNumericId(u) !== idNumber) {
 							return u;
 						}
 
-						return {
+						const withEmail: User = {
 							...u,
 							email,
 						};
-					})
-				);
 
-				// Update selection
-				setUserId(idNumber);
-				setUserIdOption({
-					...existing,
-					email,
+						selectedUser = withEmail;
+
+						return withEmail;
+					});
+
+					return updated;
 				});
 
-				setCantPatch(false);
+				if (selectedUser) {
+					setUserIdOption(selectedUser);
+					setCantPatch(false);
+				} else {
+					setUserIdOption(null);
+					setUserResolveError('Could not resolve user in list.');
+				}
 			})
-			.catch(() => {
-				setIsResolvingUser(false);
-				setUserResolveError('Error resolving user.');
-			});
+				.catch(() => {
+					setIsResolvingUser(false);
+					setUserResolveError('Error resolving user.');
+				});
 	};
 
 	/* const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
