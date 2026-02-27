@@ -160,6 +160,8 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	const [ isResolvingUser, setIsResolvingUser ] = useState(false);
 	const [ userResolveError, setUserResolveError ] = useState<string | null>(null);
 
+	const [ selectedUser, setSelectedUser ] = useState<User | null>(null);
+
 	async function fetchProduct() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('users')).then((tdata: any) => {
@@ -204,6 +206,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	const handleClickOpen = () => {
 		setId(0);
 		setUserId(0);
+		setSelectedUser(null);
 		setRoleId(0);
 
 		/* setRoomId(0); */
@@ -242,6 +245,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		} else {
 			setUserId(newValue.id);
 		}
+		setSelectedUser(newValue);
 		setCantPatch(false);
 	};
 
@@ -295,6 +299,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 				if (list.length === 0) {
 					setUserId(0);
+					setSelectedUser(null);
 					setUserResolveError('No user found with this email.');
 
 					return;
@@ -312,6 +317,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 				if (!existing) {
 					setUserId(0);
+					setSelectedUser(null);
 					setUserResolveError('User found but not available in list.');
 
 					return;
@@ -331,7 +337,10 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					});
 				});
 
+				const updatedUser: User = { ...existing, email };
+
 				setUserId(idNumber);
+				setSelectedUser(updatedUser);
 				setCantPatch(false);
 			})
 			.catch(() => {
@@ -394,8 +403,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		return `${u.id} - Hidden email`;
 	};
 
-	const selectedUser = users.find((u) => getUserNumericId(u) === userId);
-
 	return <>
 		<div>
 			<h4>Room-User roles</h4>
@@ -454,7 +461,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						disabled={cantPatch}
 						readOnly={userIdOptionDisabled}
 						onChange={handleUserIdChange}
-						value={selectedUser}
+						value={selectedUser ?? null}
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="User" />}
 					/>
@@ -485,8 +492,8 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					const r = row.getAllCells();
 
 					const tid = r[0].getValue();
-					const tuserId=r[1].getValue();
-					const troleId=r[2].getValue();
+					const tuserId = r[1].getValue();
+					const troleId = r[2].getValue();
 
 					/* const troomId=r[3].getValue(); */
 
@@ -496,14 +503,20 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						setId(parseInt(tid));
 					}
 
+					let numericUserId = 0;
+
 					if (typeof tuserId === 'number') {
-						setUserId(tuserId);
+						numericUserId = tuserId;
 					} else if (typeof tuserId === 'string') {
-						setUserId(parseInt(tuserId));
-					} else {
-						setUserId(0);
+						numericUserId = parseInt(tuserId);
 					}
-					
+
+					setUserId(numericUserId);
+
+					const existingUser = users.find((u) => getUserNumericId(u) === numericUserId) || null;
+
+					setSelectedUser(existingUser);
+
 					if (typeof troleId === 'number') {
 						const troles = roles.find((x) => x.id == troleId);
 
