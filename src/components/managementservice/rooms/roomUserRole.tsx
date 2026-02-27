@@ -267,7 +267,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	const handleResolveUserByEmail = () => {
 		const email = userEmailInput.trim();
-
 		if (!email) return;
 
 		setIsResolvingUser(true);
@@ -277,7 +276,23 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			.then((tdata: unknown) => {
 				setIsResolvingUser(false);
 
-				if (!tdata) {
+				let list: Array<{ id: string | number }> = [];
+
+				if (Array.isArray(tdata)) {
+					list = tdata as Array<{ id: string | number }>;
+				} else if (
+					tdata &&
+					typeof tdata === 'object' &&
+					'data' in tdata
+				) {
+					const dataField = (tdata as { data?: unknown }).data;
+
+					if (Array.isArray(dataField)) {
+						list = dataField as Array<{ id: string | number }>;
+					}
+				}
+
+				if (list.length === 0) {
 					setUserId(0);
 					setUserIdOption(undefined);
 					setUserResolveError('No user found with this email.');
@@ -285,58 +300,46 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					return;
 				}
 
-				const list =
-					(tdata as { data?: unknown[] }).data ?? tdata;
+				const first = list[0];
+				const idNumber =
+					typeof first.id === 'number'
+						? first.id
+						: parseInt(String(first.id), 10);
 
-				if (!Array.isArray(list) || list.length === 0) {
+				// Must already exist in users list
+				const existing = users.find(
+					(u) => getUserNumericId(u) === idNumber
+				);
+
+				if (!existing) {
 					setUserId(0);
 					setUserIdOption(undefined);
-					setUserResolveError('No user found with this email.');
-
-					return;
-				}
-
-				const fetchedUser = list[0] as User;
-				const idValue =
-					typeof fetchedUser.id === 'number'
-						? fetchedUser.id
-						: parseInt(String(fetchedUser.id), 10);
-
-				setUserId(idValue);
-
-				setUsers((prev) => {
-					const exists = prev.some(
-						(u) => getUserNumericId(u) === idValue
+					setUserResolveError(
+						'User found but not available in list.'
 					);
 
-					let newUsers: User[];
+					return;
+				}
 
-					if (exists) {
-						// Replace existing stub user with full fetched user
-						newUsers = prev.map((u) => {
-							if (getUserNumericId(u) === idValue) {
-								return fetchedUser;
-							}
-
+				// Update email inside users list
+				setUsers((prev) =>
+					prev.map((u) => {
+						if (getUserNumericId(u) !== idNumber) {
 							return u;
-						});
-					} else {
-						newUsers = [ ...prev, fetchedUser ];
-					}
+						}
 
-					// Ensure Autocomplete value references
-					// the exact object inside options
-					const selected = newUsers.find(
-						(u) => getUserNumericId(u) === idValue
-					);
+						return {
+							...u,
+							email,
+						};
+					})
+				);
 
-					if (selected) {
-						setUserIdOption(selected);
-					} else {
-						setUserIdOption(undefined);
-					}
-
-					return newUsers;
+				// Update selection
+				setUserId(idNumber);
+				setUserIdOption({
+					...existing,
+					email,
 				});
 
 				setCantPatch(false);
@@ -398,7 +401,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	const getUserLabel = (u: User): string => {
 		if (u?.email) return `${u.id} - ${u.email}`;
 
-		return String(u?.id ?? '');
+		return `${u.id} - Hidden email`;
 	};
 
 	return <>
