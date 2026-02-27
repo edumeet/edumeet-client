@@ -298,7 +298,14 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					: parseInt(String(user.id), 10);
 
 			setUserId(idValue);
-			setUserIdOption(user);
+
+			const existing = users.find((u) => u.id === idValue);
+
+			if (existing) {
+				setUserIdOption(existing);
+			} else {
+				setUserIdOption(user);
+			}
 
 			// Add user to dropdown list if not present
 			setUsers((prev) => {
@@ -386,7 +393,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					<Autocomplete
 						options={users}
 						getOptionLabel={(option) => getUserLabel(option)}
-						isOptionEqualToValue={(option, value) => option.id === value.id}
+						isOptionEqualToValue={(option, value) => value !== null && option.id === value.id}
 						fullWidth
 						disableClearable
 						readOnly={userIdOptionDisabled}
@@ -411,7 +418,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 							onClick={handleResolveUserByEmail}
 							disabled={isResolvingUser || userEmailInput.trim() === ''}
 						>
-							{isResolvingUser ? 'Next…' : 'Next'}
+							{'Next'}
 						</Button>
 					</Box>
 					<Autocomplete
