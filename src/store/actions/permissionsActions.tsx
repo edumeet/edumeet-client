@@ -35,7 +35,7 @@ export const login = (): AppThunk<Promise<void>> => async (
 export const adminLogin = (email: string, password: string): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, managementService }
+	{ managementService }
 ): Promise<void> => {
 	logger.debug('adminLogin() [email: %s]', email);
 
@@ -65,7 +65,7 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 export const checkJWT = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, managementService }
+	{ managementService }
 ): Promise<void> => {
 	logger.debug('checkJWT()');
 
@@ -119,7 +119,7 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 export const logout = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, managementService, config }
+	{ managementService, config }
 ): Promise<void> => {
 	logger.debug('logout()');
 

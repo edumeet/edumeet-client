@@ -1,8 +1,6 @@
 import edumeetConfig from '../../utils/edumeetConfig';
 import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
-import { permissionsActions } from '../slices/permissionsSlice';
-import { managamentActions } from '../slices/managementSlice';
 import { updateLoginState } from './permissionsActions';
 import { AppThunk } from '../store';
 
@@ -11,7 +9,7 @@ const logger = new Logger('ManagementActions');
 const handleAuthError = (error: unknown): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ managementService, signalingService }
+	{ managementService }
 ): Promise<void> => {
 	if (typeof error === 'object' && error !== null &&
 		'code' in error && (error as { code?: number }).code === 401) {
@@ -435,7 +433,7 @@ let messageListener: (event: MessageEvent) => void;
 export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ signalingService, managementService }
+	{ managementService }
 ): Promise<void> => {
 	logger.debug('startMGMTListeners()');
 

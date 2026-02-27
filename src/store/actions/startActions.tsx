@@ -6,7 +6,6 @@ import { permissions } from '../../utils/roles';
 import { pauseMic, resumeMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock, updateLoginState } from './permissionsActions';
-import { permissionsActions } from '../slices/permissionsSlice';
 import { setRaisedHand } from './meActions';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
@@ -30,7 +29,7 @@ let speakerDetectionInterval: NodeJS.Timeout | undefined;
 export const startListeners = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ mediaService, signalingService, deviceService, managementService }
+	{ mediaService, deviceService, managementService }
 ): Promise<void> => {
 	logger.debug('startListeners()');
 
