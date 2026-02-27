@@ -327,11 +327,15 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				};
 
 				// update users array
-				setUsers((prev) =>
-					prev.map((u) =>
-						getUserNumericId(u) === idNumber ? updatedUser : u
-					)
-				);
+				setUsers((prev) => {
+					return prev.map((u) => {
+						if (getUserNumericId(u) === idNumber) {
+							return updatedUser;
+						}
+
+						return u;
+					});
+				});
 
 				setUserId(idNumber);
 				setUserIdOption(updatedUser);
@@ -426,7 +430,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 							onChange={handleUserEmailChange}
 							error={userResolveError !== null}
 							helperText={userResolveError ?? ''}
-					/>
+						/>
 						<Button
 							variant="outlined"
 							sx={{ alignSelf: 'flex-start' }}
