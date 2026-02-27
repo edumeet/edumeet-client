@@ -267,6 +267,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	const handleResolveUserByEmail = () => {
 		const email = userEmailInput.trim();
+
 		if (!email) return;
 
 		setIsResolvingUser(true);
