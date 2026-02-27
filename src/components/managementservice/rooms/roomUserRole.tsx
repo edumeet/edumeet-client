@@ -148,7 +148,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	const [ cantPatch, setCantPatch ] = useState(true);
 	const [ cantDelete ] = useState(false);
-	const [ userIdOption, setUserIdOption ] = useState<User | null>(null);
+	const [ userIdOption, setUserIdOption ] = useState<User | undefined>(undefined);
 	const [ roleIdOption, setRoleIdOption ] = useState<Roles | undefined>();
 
 	/* const [ roomIdOption, setRoomIdOption ] = useState<Room | undefined>(); */
@@ -295,7 +295,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 				if (list.length === 0) {
 					setUserId(0);
-					setUserIdOption(null);
+					setUserIdOption(undefined);
 					setUserResolveError('No user found with this email.');
 
 					return;
@@ -313,7 +313,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 				if (!exists) {
 					setUserId(0);
-					setUserIdOption(null);
+					setUserIdOption(undefined);
 					setUserResolveError('User found but not available in list.');
 
 					return;
@@ -346,7 +346,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					setUserIdOption(selectedUser);
 					setCantPatch(false);
 				} else {
-					setUserIdOption(null);
+					setUserIdOption(undefined);
 					setUserResolveError('Could not resolve user in list.');
 				}
 			})
