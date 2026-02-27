@@ -18,7 +18,7 @@ export const getSignalingUrl = (peerId: string, roomId: string, reconnectKey: st
 
 	if (token) tokenParam = `&token=${token}`;
 
-	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}&reconnectKey=${reconnectKey}&tenantFqdn=${tenantFqdn}${tokenParam}${reconnectKeyParam}`;
+	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}&reconnectKey=${reconnectKey}&tenantFqdn=${tenantFqdn}${tokenParam}`;
 };
 
 export class SocketTimeoutError extends Error {

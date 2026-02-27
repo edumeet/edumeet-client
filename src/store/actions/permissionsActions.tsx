@@ -222,10 +222,11 @@ export const promotePeers = (): AppThunk<Promise<void>> => async (
 	}
 };
 
-export const updateLoginState = (inputToken?: string): AppThunk<void> => (
+export const updateLoginState = (inputToken?: string): AppThunk<void> => async (
 	dispatch,
-	getState
-): void => {
+	getState,
+	{ signalingService }
+): Promise<void> => {
 	logger.debug('updateLoginState()');
 
 	const token = inputToken && inputToken.length > 0 ? inputToken : undefined;
@@ -268,7 +269,7 @@ export const updateLoginState = (inputToken?: string): AppThunk<void> => (
 	}
 
 	if (getState().signaling.state === 'connected') {
-		void signalingService.sendRequest('updateToken', { token })
-			.catch((e) => logger.error('updateToken request failed [error: %o]', e));
+		await signalingService.sendRequest('updateToken', { token })
+			.catch((error) => logger.error('updateToken request failed [error: %o]', error));
 	}
 };
