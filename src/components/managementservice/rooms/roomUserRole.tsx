@@ -309,10 +309,10 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 			setCantPatch(false);
 		})
-		.catch(() => {
-			setIsResolvingUser(false);
-			setUserResolveError('Error resolving user.');
-		});
+			.catch(() => {
+				setIsResolvingUser(false);
+				setUserResolveError('Error resolving user.');
+			});
 	};
 
 	/* const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
