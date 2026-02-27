@@ -104,7 +104,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	const columns = useMemo<MRT_ColumnDef<UsersRoles>[]>(
 		() => [
 			{
-                accessorKey: 'id',
+				accessorKey: 'id',
 				header: '#'
 			},
 			{
