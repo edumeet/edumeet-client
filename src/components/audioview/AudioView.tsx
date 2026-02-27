@@ -77,7 +77,7 @@ const AudioView = ({
 
 			// runtime feature detection, regardless of TS typings
 			const elementWithSink = currentAudioElement as unknown as {
-				setSinkId?: (deviceId: string) => Promise<void>;
+				setSinkId?: (_deviceId: string) => Promise<void>;
 			};
 
 			if (typeof elementWithSink.setSinkId === 'function') {
