@@ -461,7 +461,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						disabled={cantPatch}
 						readOnly={userIdOptionDisabled}
 						onChange={handleUserIdChange}
-						value={selectedUser ?? null}
+						value={selectedUser as User}
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="User" />}
 					/>
