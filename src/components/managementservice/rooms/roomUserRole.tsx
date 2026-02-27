@@ -273,24 +273,26 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		setIsResolvingUser(true);
 		setUserResolveError(null);
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getUserByEmail(email))
-			.then((tdata: any) => {
+			.then((tdata: unknown) => {
 				setIsResolvingUser(false);
 
 				if (!tdata) {
 					setUserId(0);
 					setUserIdOption(undefined);
 					setUserResolveError('No user found with this email.');
+
 					return;
 				}
 
-				const list = (tdata as { data?: unknown[] }).data ?? tdata;
+				const list =
+					(tdata as { data?: unknown[] }).data ?? tdata;
 
 				if (!Array.isArray(list) || list.length === 0) {
 					setUserId(0);
 					setUserIdOption(undefined);
 					setUserResolveError('No user found with this email.');
+
 					return;
 				}
 
@@ -311,11 +313,13 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 					if (exists) {
 						// Replace existing stub user with full fetched user
-						newUsers = prev.map((u) =>
-							getUserNumericId(u) === idValue
-								? fetchedUser
-								: u
-						);
+						newUsers = prev.map((u) => {
+							if (getUserNumericId(u) === idValue) {
+								return fetchedUser;
+							}
+
+							return u;
+						});
 					} else {
 						newUsers = [ ...prev, fetchedUser ];
 					}
