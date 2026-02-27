@@ -394,7 +394,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		return `${u.id} - Hidden email`;
 	};
 
-	const selectedUser = users.find((u) => getUserNumericId(u) === userId) ?? null;
+	const selectedUser = users.find((u) => getUserNumericId(u) === userId);
 
 	return <>
 		<div>
