@@ -274,51 +274,69 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		setUserResolveError(null);
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch(getUserByEmail(email)).then((tdata: any) => {
-			setIsResolvingUser(false);
+		dispatch(getUserByEmail(email))
+			.then((tdata: any) => {
+				setIsResolvingUser(false);
 
-			if (!tdata) {
-				setUserId(0);
-				setUserIdOption(undefined);
-				setUserResolveError('No user found with this email.');
+				if (!tdata) {
+					setUserId(0);
+					setUserIdOption(undefined);
+					setUserResolveError('No user found with this email.');
+					return;
+				}
 
-				return;
-			}
+				const list = (tdata as { data?: unknown[] }).data ?? tdata;
 
-			const list = (tdata as { data?: unknown[] }).data ?? tdata;
+				if (!Array.isArray(list) || list.length === 0) {
+					setUserId(0);
+					setUserIdOption(undefined);
+					setUserResolveError('No user found with this email.');
+					return;
+				}
 
-			if (!Array.isArray(list) || list.length === 0) {
-				setUserId(0);
-				setUserIdOption(undefined);
-				setUserResolveError('No user found with this email.');
+				const fetchedUser = list[0] as User;
+				const idValue =
+					typeof fetchedUser.id === 'number'
+						? fetchedUser.id
+						: parseInt(String(fetchedUser.id), 10);
 
-				return;
-			}
+				setUserId(idValue);
 
-			const user = list[0] as User;
-			const idValue =
-				typeof user.id === 'number'
-					? user.id
-					: parseInt(String(user.id), 10);
+				setUsers((prev) => {
+					const exists = prev.some(
+						(u) => getUserNumericId(u) === idValue
+					);
 
-			setUserId(idValue);
+					let newUsers: User[];
 
-			const existing = users.find((u) => getUserNumericId(u) === idValue);
+					if (exists) {
+						// Replace existing stub user with full fetched user
+						newUsers = prev.map((u) =>
+							getUserNumericId(u) === idValue
+								? fetchedUser
+								: u
+						);
+					} else {
+						newUsers = [ ...prev, fetchedUser ];
+					}
 
-			if (existing) {
-				setUserIdOption(existing);
-			} else {
-				setUserIdOption(user);
-			}
+					// Ensure Autocomplete value references
+					// the exact object inside options
+					const selected = newUsers.find(
+						(u) => getUserNumericId(u) === idValue
+					);
 
-			setUsers((prev) => {
-				const exists = prev.some((u) => getUserNumericId(u) === idValue);
+					if (selected) {
+						setUserIdOption(selected);
+					} else {
+						setUserIdOption(undefined);
+					}
 
-				return exists ? prev : [ ...prev, user ];
-			});
+					return newUsers;
+				});
 
-			setCantPatch(false);
-		})
+				setCantPatch(false);
+			})
 			.catch(() => {
 				setIsResolvingUser(false);
 				setUserResolveError('Error resolving user.');
@@ -393,6 +411,25 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						These are the parameters that you can change.
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
+					<Box sx={{ display: 'flex' }}>
+						<TextField
+							label="User email"
+							fullWidth
+							sx={{ marginTop: '8px', marginRight: '8px' }}
+							value={userEmailInput}
+							onChange={handleUserEmailChange}
+							error={userResolveError !== null}
+							helperText={userResolveError ?? ''}
+						/>
+						<Button
+							variant="outlined"
+							sx={{ marginTop: '8px' }}
+							onClick={handleResolveUserByEmail}
+							disabled={isResolvingUser || userEmailInput.trim() === ''}
+						>
+							{'Next'}
+						</Button>
+					</Box>
 					<Autocomplete
 						options={users}
 						getOptionLabel={(option) => getUserLabel(option)}
@@ -414,25 +451,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="User" />}
 					/>
-					<Box sx={{ display: 'flex' }}>
-						<TextField
-							label="User email"
-							fullWidth
-							sx={{ marginTop: '8px', marginRight: '8px' }}
-							value={userEmailInput}
-							onChange={handleUserEmailChange}
-							error={userResolveError !== null}
-							helperText={userResolveError ?? ''}
-						/>
-						<Button
-							variant="outlined"
-							sx={{ marginTop: '8px' }}
-							onClick={handleResolveUserByEmail}
-							disabled={isResolvingUser || userEmailInput.trim() === ''}
-						>
-							{'Next'}
-						</Button>
-					</Box>
 					<Autocomplete
 						options={roles}
 						getOptionLabel={(option) => option.name}
