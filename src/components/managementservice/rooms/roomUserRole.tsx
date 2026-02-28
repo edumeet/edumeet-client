@@ -95,7 +95,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined room';
+			return 'Undefined room';
 		}
 	};
 
