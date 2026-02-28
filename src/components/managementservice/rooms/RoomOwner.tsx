@@ -428,11 +428,19 @@ const RoomOwnerTable = (props: RoomProp) => {
 
 					/* const troomId=r[1].getValue(); */
 					const tuserId=r[2].getValue();
-					
+
 					if (typeof tid === 'number') {
 						setId(tid);
 					} else if (typeof tid == 'string') {
 						setId(parseInt(tid));
+					}
+
+					let numericUserId = 0;
+
+					if (typeof tuserId === 'number') {
+						numericUserId = tuserId;
+					} else if (typeof tuserId === 'string') {
+						numericUserId = parseInt(tuserId);
 					}
 
 					setUserId(numericUserId);
