@@ -83,7 +83,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'Hidden email';
+			return `${id} - Hidden email`;
 		}
 	};
 
@@ -169,7 +169,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				setUsers(tdata.data);
 			}
 		});
-		
+
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('rooms')).then((tdata: any) => {
 			if (tdata != undefined) {
