@@ -12,13 +12,14 @@ const AudioPeers = (): React.JSX.Element => {
 
 	useEffect(() => {
 		micConsumers.forEach((consumer) => {
-			logger.debug({
-				consumerId: consumer.id,
-				peerId: consumer.peerId,
-				kind: consumer.kind,
-				localPaused: consumer.localPaused,
-				remotePaused: consumer.remotePaused
-			}, 'AudioPeers: consumer render state');
+			logger.debug('AudioPeers: consumer render state %O',
+				{
+					consumerId: consumer.id,
+					peerId: consumer.peerId,
+					kind: consumer.kind,
+					localPaused: consumer.localPaused,
+					remotePaused: consumer.remotePaused
+				});
 		});
 	}, [ micConsumers ]);
 
