@@ -107,7 +107,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 	const [ data, setData ] = useState([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
-	const [ cantPatch, setcantPatch ] = useState(true);
+	const [ cantPatch, setCantPatch ] = useState(true);
 	const [ userIdOptionDisabled, setUserIdOptionDisabled ] = useState(true);
 
 	/* const [ roomIdOptionDisabled, setRoomIdOptionDisabled ] = useState(true); */
@@ -169,7 +169,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 		setUserIdOptionDisabled(false);
 
 		/* setRoomIdOptionDisabled(false); */
-		setcantPatch(false);
+		setCantPatch(false);
 		setOpen(true);
 	};
 
@@ -180,7 +180,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 		setUserResolveError(null);
 
 		/* setRoomIdOptionDisabled(true); */
-		setcantPatch(true);
+		setCantPatch(true);
 		setOpen(true);
 	};
 
