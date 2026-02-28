@@ -449,8 +449,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 
 					setSelectedUser(existingUser);
 
-					
-					/* 					if (typeof troomId === 'string') {
+					/* if (typeof troomId === 'string') {
 						const troom = rooms.find((x) => x.id === parseInt(troomId));
 
 						if (troom) {
