@@ -65,7 +65,7 @@ const RoomTable = () => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'Hidden email';
+			return `${id} - Hidden email`;
 		}
 	};
 

@@ -157,115 +157,127 @@ export default function ManagementUI(/* props: Props */) {
 				<ListItem style={{ justifyContent: 'center' }} >
 					<img src='/images/logo.edumeet.svg' alt='logo' />
 				</ListItem>
-			
-				<ListItem key={'{username}'} disablePadding onClick={
-					() => { if (!loggedIn) { setSelectedComponent('login'); } }
-				}>
-					<ListItemButton>
-						<ListItemIcon>
-							<PersonOutlineIcon/>
-						</ListItemIcon>
-						<ListItemText primary={username} />
-					</ListItemButton>
-				</ListItem>
-				<ListItem key={'Logout'} disablePadding onClick={
-					async () => {
-						dispatch(logout()).then(() => {
-							window.location.reload();	
-						});
-					}
-				}>
-					<ListItemButton>
-						<ListItemIcon>
-							<LogoutIcon />
-						</ListItemIcon>
-						<ListItemText primary={logoutLabel()} />
-					</ListItemButton>
-				</ListItem>
-
 			</List>
 
-			<Divider />
-			<List>
-				{canManageTenant && (
-					<ListItem key={'Tenants'} disablePadding onClick={() => setSelectedComponent('tenant')}>
+			{ loggedIn && <>
+				<List>
+					<ListItem key={'{username}'} disablePadding onClick={
+						() => { if (!loggedIn) { setSelectedComponent('login'); } }
+					}>
 						<ListItemButton>
 							<ListItemIcon>
-								<PeopleOutlineIcon />
+								<PersonOutlineIcon/>
 							</ListItemIcon>
-							<ListItemText primary={tenantsLabel()} />
+							<ListItemText primary={username} />
 						</ListItemButton>
 					</ListItem>
-				)}
-				{canManageTenant && (
-					<ListItem key={'Rule(s)'} disablePadding onClick={
-						() => setSelectedComponent('rule')
+					<ListItem key={'Logout'} disablePadding onClick={
+						async () => {
+							dispatch(logout()).then(() => {
+								window.location.reload();	
+							});
+						}
+					}>
+						<ListItemButton>
+							<ListItemIcon>
+								<LogoutIcon />
+							</ListItemIcon>
+							<ListItemText primary={logoutLabel()} />
+						</ListItemButton>
+					</ListItem>
+				</List>
+
+				<Divider />
+
+				<List>
+					{canManageTenant && (
+						<ListItem key={'Tenants'} disablePadding onClick={() => setSelectedComponent('tenant')}>
+							<ListItemButton>
+								<ListItemIcon>
+									<PeopleOutlineIcon />
+								</ListItemIcon>
+								<ListItemText primary={tenantsLabel()} />
+							</ListItemButton>
+						</ListItem>
+					)}
+					{canManageTenant && (
+						<ListItem key={'Rule(s)'} disablePadding onClick={
+							() => setSelectedComponent('rule')
+						}>
+							<ListItemButton >
+								<ListItemIcon>
+									<RuleIcon />
+								</ListItemIcon>
+								<ListItemText primary={rulesLabel()} />
+							</ListItemButton>
+						</ListItem>
+					)}
+					{canManageTenant && (
+						<ListItem key={'Default(s)'} disablePadding onClick={
+							() => setSelectedComponent('default')
+						}>
+							<ListItemButton >
+								<ListItemIcon>
+									<SettingsApplicationsIcon />
+								</ListItemIcon>
+								<ListItemText primary={defaultsLabel()} />
+							</ListItemButton>
+						</ListItem>
+					)}
+					<ListItem key={'Room(s)'} disablePadding onClick={() => setSelectedComponent('room')}>
+						<ListItemButton>
+							<ListItemIcon>
+								<MeetingRoomIcon />
+							</ListItemIcon>
+							<ListItemText primary={roomsLabel()} />
+						</ListItemButton>
+					</ListItem>
+					<ListItem key={'User(s)'} disablePadding onClick={
+						() => setSelectedComponent('user')
 					}>
 						<ListItemButton >
 							<ListItemIcon>
-								<RuleIcon />
+								<PersonSearchIcon />
 							</ListItemIcon>
-							<ListItemText primary={rulesLabel()} />
+							<ListItemText primary={usersLabel()} />
 						</ListItemButton>
 					</ListItem>
-				)}
-				{canManageTenant && (
-					<ListItem key={'Default(s)'} disablePadding onClick={
-						() => setSelectedComponent('default')
+					{canManageTenant && (
+						<ListItem key={'Group(s)'} disablePadding onClick={
+							() => setSelectedComponent('group')
+						}>
+							<ListItemButton >
+								<ListItemIcon>
+									<SupervisorAccountIcon />
+								</ListItemIcon>
+								<ListItemText primary={groupsLabel()} />
+							</ListItemButton>
+						</ListItem>
+					)}
+					<ListItem key={'Role(s)'} disablePadding onClick={
+						() => setSelectedComponent('role')
 					}>
 						<ListItemButton >
 							<ListItemIcon>
-								<SettingsApplicationsIcon />
+								<AdminPanelSettingsIcon />
 							</ListItemIcon>
-							<ListItemText primary={defaultsLabel()} />
+							<ListItemText primary={rolesLabel()} />
 						</ListItemButton>
 					</ListItem>
-				)}
-				<ListItem key={'Room(s)'} disablePadding onClick={() => setSelectedComponent('room')}>
-					<ListItemButton>
-						<ListItemIcon>
-							<MeetingRoomIcon />
-						</ListItemIcon>
-						<ListItemText primary={roomsLabel()} />
-					</ListItemButton>
-				</ListItem>
-				<ListItem key={'User(s)'} disablePadding onClick={
-					() => setSelectedComponent('user')
-				}>
-					<ListItemButton >
-						<ListItemIcon>
-							<PersonSearchIcon />
-						</ListItemIcon>
-						<ListItemText primary={usersLabel()} />
-					</ListItemButton>
-				</ListItem>
-				{canManageTenant && (
-					<ListItem key={'Group(s)'} disablePadding onClick={
-						() => setSelectedComponent('group')
-					}>
-						<ListItemButton >
-							<ListItemIcon>
-								<SupervisorAccountIcon />
-							</ListItemIcon>
-							<ListItemText primary={groupsLabel()} />
-						</ListItemButton>
-					</ListItem>
-				)}
-				<ListItem key={'Role(s)'} disablePadding onClick={
-					() => setSelectedComponent('role')
-				}>
-					<ListItemButton >
-						<ListItemIcon>
-							<AdminPanelSettingsIcon />
-						</ListItemIcon>
-						<ListItemText primary={rolesLabel()} />
-					</ListItemButton>
-				</ListItem>
-				
-			</List>
-			<Divider />
+					
+				</List>
+
+				<Divider />
+			</>
+			}
 		</div >
 	);
+
+	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);
+
+	if (localeInProgress) {
+		return null;
+	}
 
 	return (
 		<Box sx={{ display: 'flex', flex: 1, marginRight: { sm: '0px' } }}>

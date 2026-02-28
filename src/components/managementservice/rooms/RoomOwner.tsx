@@ -1,10 +1,10 @@
-import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { SyntheticEvent, useEffect, useMemo, useState, ChangeEvent } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, Box } from '@mui/material';
 import { Room, RoomOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, getDataByRoomId, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByRoomId, patchData, getUserByEmail } from '../../../store/actions/managementActions';
 import { RoomProp } from './Room';
 import { userLabel } from '../../translated/translatedComponents';
 
@@ -62,7 +62,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'Hidden email';
+			return `${id} - Hidden email`;
 		}
 	};
 
@@ -107,14 +107,19 @@ const RoomOwnerTable = (props: RoomProp) => {
 	const [ data, setData ] = useState([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
-	const [ cantPatch, setcantPatch ] = useState(false);
-	const [ userIdOption, setUserIdOption ] = useState<User | undefined>();
+	const [ cantPatch, setCantPatch ] = useState(true);
 	const [ userIdOptionDisabled, setUserIdOptionDisabled ] = useState(true);
 
 	/* const [ roomIdOptionDisabled, setRoomIdOptionDisabled ] = useState(true); */
 	/* const [ roomIdOption, setRoomIdOption ] = useState<Room | undefined>(); */
 	
 	const [ userId, setUserId ] = useState(0);
+
+	const [ userEmailInput, setUserEmailInput ] = useState('');
+	const [ isResolvingUser, setIsResolvingUser ] = useState(false);
+	const [ userResolveError, setUserResolveError ] = useState<string | null>(null);
+
+	const [ selectedUser, setSelectedUser ] = useState<User | null>(null);
 
 	async function fetchProduct() {
 
@@ -123,7 +128,6 @@ const RoomOwnerTable = (props: RoomProp) => {
 			if (tdata != undefined) {
 				setUsers(tdata.data);
 			}
-           
 		});
 		
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -131,7 +135,6 @@ const RoomOwnerTable = (props: RoomProp) => {
 			if (tdata != undefined) {
 				setRooms(tdata.data);
 			}
-           
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -140,7 +143,6 @@ const RoomOwnerTable = (props: RoomProp) => {
 				setData(tdata.data);
 			}
 			setIsLoading(false);
-        
 		});
 
 	}
@@ -158,21 +160,27 @@ const RoomOwnerTable = (props: RoomProp) => {
 
 		/* setRoomId(0); */
 		setUserId(0);
-		setUserIdOption(undefined);
+		setSelectedUser(null);
+
+		setUserEmailInput('');
+		setUserResolveError(null);
 
 		/* setRoomIdOption(undefined); */
 		setUserIdOptionDisabled(false);
 
 		/* setRoomIdOptionDisabled(false); */
-		setcantPatch(false);
+		setCantPatch(false);
 		setOpen(true);
 	};
 
 	const handleClickOpenNoreset = () => {
 		setUserIdOptionDisabled(true);
 
+		setUserEmailInput('');
+		setUserResolveError(null);
+
 		/* setRoomIdOptionDisabled(true); */
-		setcantPatch(true);
+		setCantPatch(true);
 		setOpen(true);
 	};
 
@@ -183,8 +191,97 @@ const RoomOwnerTable = (props: RoomProp) => {
 			} else {
 				setUserId(newValue.id);
 			}
-			setUserIdOption(newValue);
+			setSelectedUser(newValue);
 		}
+	};
+
+	const handleUserEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setUserEmailInput(event.target.value);
+		setUserResolveError(null);
+	};
+
+	const getUserNumericId = (u: User): number => {
+		return typeof u.id === 'number' ? u.id : parseInt(String(u.id), 10);
+	};
+
+	const handleResolveUserByEmail = () => {
+		const email = userEmailInput.trim();
+
+		if (!email) return;
+
+		setIsResolvingUser(true);
+		setUserResolveError(null);
+
+		dispatch(getUserByEmail(email))
+			.then((tdata: unknown) => {
+				setIsResolvingUser(false);
+
+				let list: Array<{ id: string | number }> = [];
+
+				if (Array.isArray(tdata)) {
+					list = tdata as Array<{ id: string | number }>;
+				} else if (
+					tdata &&
+					typeof tdata === 'object' &&
+					'data' in tdata
+				) {
+					const dataField = (tdata as { data?: unknown }).data;
+
+					if (Array.isArray(dataField)) {
+						list = dataField as Array<{ id: string | number }>;
+					}
+				}
+
+				if (list.length === 0) {
+					setUserId(0);
+					setSelectedUser(null);
+					setUserResolveError('No user found with this email.');
+
+					return;
+				}
+
+				const first = list[0];
+				const idNumber =
+					typeof first.id === 'number'
+						? first.id
+						: parseInt(String(first.id), 10);
+
+				const existing = users.find(
+					(u) => getUserNumericId(u) === idNumber
+				);
+
+				if (!existing) {
+					setUserId(0);
+					setSelectedUser(null);
+					setUserResolveError('User found but not available in list.');
+
+					return;
+				}
+
+				// update email in users list
+				setUsers((prev) => {
+					return prev.map((u) => {
+						if (getUserNumericId(u) === idNumber) {
+							return {
+								...u,
+								email,
+							};
+						}
+
+						return u;
+					});
+				});
+
+				const updatedUser: User = { ...existing, email };
+
+				setUserId(idNumber);
+				setSelectedUser(updatedUser);
+				setCantPatch(false);
+			})
+			.catch(() => {
+				setIsResolvingUser(false);
+				setUserResolveError('Error resolving user.');
+			});
 	};
 
 	/* const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
@@ -237,7 +334,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 	const getUserLabel = (u: User): string => {
 		if (u?.email) return `${u.id} - ${u.email}`;
 
-		return String(u?.id ?? '');
+		return `${u.id} - Hidden email`;
 	};
 
 	return <>
@@ -265,14 +362,51 @@ const RoomOwnerTable = (props: RoomProp) => {
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="Room" />}
 					/> */}
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'flex-start',
+							marginTop: '8px',
+						}}
+					>
+						<TextField
+							label="User email"
+							fullWidth
+							sx={{ marginRight: '8px' }}
+							value={userEmailInput}
+							onChange={handleUserEmailChange}
+							error={userResolveError !== null}
+							helperText={userResolveError ?? ''}
+							disabled={cantPatch}
+						/>
+						<Button
+							variant="outlined"
+							sx={{ alignSelf: 'flex-start' }}
+							onClick={handleResolveUserByEmail}
+							disabled={cantPatch || isResolvingUser || userEmailInput.trim() === ''}
+						>
+							{'SELECT'}
+						</Button>
+					</Box>
 					<Autocomplete
 						options={users}
 						getOptionLabel={(option) => getUserLabel(option)}
+						isOptionEqualToValue={(option, value) => {
+							if (value === null || value === undefined) {
+								return false;
+							}
+
+							const optionId = getUserNumericId(option);
+							const valueId = getUserNumericId(value);
+
+							return optionId === valueId;
+						}}
 						fullWidth
 						disableClearable
+						disabled={cantPatch}
 						readOnly={userIdOptionDisabled}
 						onChange={handleUserIdChange}
-						value={userIdOption}
+						value={selectedUser as User}
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="User" />}
 					/>
@@ -294,33 +428,28 @@ const RoomOwnerTable = (props: RoomProp) => {
 
 					/* const troomId=r[1].getValue(); */
 					const tuserId=r[2].getValue();
-					
+
 					if (typeof tid === 'number') {
 						setId(tid);
 					} else if (typeof tid == 'string') {
 						setId(parseInt(tid));
 					}
 
+					let numericUserId = 0;
+
 					if (typeof tuserId === 'number') {
-						const tuser = users.find((x) => x.id == tuserId);
-
-						if (tuser) {
-							setUserIdOption(tuser);
-						}
-						setUserId(tuserId);
+						numericUserId = tuserId;
 					} else if (typeof tuserId === 'string') {
-						const tuser = users.find((x) => x.id == parseInt(tuserId));
-
-						if (tuser) {
-							setUserIdOption(tuser);
-						}
-						setUserId(parseInt(tuserId));
-					} else {
-						setUserId(0);
-						setUserIdOption(undefined);
+						numericUserId = parseInt(tuserId);
 					}
-					
-					/* 					if (typeof troomId === 'string') {
+
+					setUserId(numericUserId);
+
+					const existingUser = users.find((u) => getUserNumericId(u) === numericUserId) || null;
+
+					setSelectedUser(existingUser);
+
+					/* if (typeof troomId === 'string') {
 						const troom = rooms.find((x) => x.id === parseInt(troomId));
 
 						if (troom) {

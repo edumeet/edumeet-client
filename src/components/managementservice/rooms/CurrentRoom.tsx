@@ -4,6 +4,9 @@ import { Roles, Room } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
 import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roleLabel, roomBgLabel } from '../../translated/translatedComponents';
+import { Logger } from '../../../utils/Logger';
+
+const logger = new Logger('CurrentRoom');
 
 const CurrentRoomModal = () => {
 	const dispatch = useAppDispatch();
@@ -37,6 +40,8 @@ const CurrentRoomModal = () => {
 	const [ filesharingEnabled, setFilesharingEnabled ] = useState(false);
 	const [ localRecordingEnabled, setLocalRecordingEnabled ] = useState(false);
 
+	const [ managementConnectionError, setManagementConnectionError ] = useState(false);
+
 	/* const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>(); */
 	const [ defaultRoleIdOption, setDefaultRoleIdOption ] = useState<Roles | undefined>();
 
@@ -54,9 +59,17 @@ const CurrentRoomModal = () => {
 			if (tdat != undefined) {
 				setRoles(tdat.data);
 			}
+
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch(getRoomByName(window.location.pathname.substring(1).toLowerCase())).then((tdata: any) => {
-			
+
+				if (!tdata) {
+					setManagementConnectionError(true);
+					logger.warn('fetchProduct() error calling getRoomByName');
+
+					return;
+				}
+
 				const r = tdata.data[0] as Room;
 
 				const tid = r.id;
@@ -189,7 +202,13 @@ const CurrentRoomModal = () => {
 	function checkRoomExists() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getRoomByName(window.location.pathname.substring(1).toLowerCase())).then((tdata: any) => {
-			setRoomExists(tdata.total===1);
+			if (tdata) {
+				setRoomExists(tdata?.total === 1);
+				setManagementConnectionError(false);
+			} else {
+				setManagementConnectionError(true);
+				logger.warn('checkRoomExists() error calling getRoomByName');
+			}
 		});
 	}
 
@@ -379,7 +398,7 @@ const CurrentRoomModal = () => {
 		</Dialog>
 		<div style={{ margin: 'auto', textAlign: 'center' }}>
 			<Button
-				disabled={isLoadingRoomExists}
+				disabled={isLoadingRoomExists || managementConnectionError }
 				onClick={roomExists ? handleOpen : handleCreateRoom}
 			>
 				{isLoadingRoomExists ? '...' : (roomExists ? editRoomLabel() : claimRoomLabel())}

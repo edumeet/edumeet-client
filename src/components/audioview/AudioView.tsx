@@ -23,19 +23,21 @@ const AudioView = ({
 		const currentAudioElement = audioElement.current;
 
 		if (!currentAudioElement) {
-			logger.warn({
-				consumerId: consumer.id,
-				peerId: consumer.peerId
-			}, 'AudioView: audio element ref not ready');
+			logger.warn('AudioView: audio element ref not ready %O',
+				{
+					consumerId: consumer.id,
+					peerId: consumer.peerId
+				});
 
 			return;
 		}
 
 		if (!mediaConsumer) {
-			logger.warn({
-				consumerId: consumer.id,
-				peerId: consumer.peerId
-			}, 'AudioView: mediaService consumer not found');
+			logger.warn('AudioView: mediaService consumer not found %O',
+				{
+					consumerId: consumer.id,
+					peerId: consumer.peerId
+				});
 
 			return;
 		}
@@ -43,22 +45,24 @@ const AudioView = ({
 		const { track } = mediaConsumer;
 
 		if (!track) {
-			logger.warn({
-				consumerId: consumer.id,
-				peerId: consumer.peerId
-			}, 'AudioView: no track on mediaService consumer');
+			logger.warn('AudioView: no track on mediaService consumer %O',
+				{
+					consumerId: consumer.id,
+					peerId: consumer.peerId
+				});
 
 			return;
 		}
 
 		const { audioGain } = consumer;
 
-		logger.debug({
-			consumerId: consumer.id,
-			peerId: consumer.peerId,
-			deviceId: deviceId ?? 'default',
-			audioGain
-		}, 'AudioView: attaching track to audio element');
+		logger.debug('AudioView: attaching track to audio element %O',
+			{
+				consumerId: consumer.id,
+				peerId: consumer.peerId,
+				deviceId: deviceId ?? 'default',
+				audioGain
+			});
 
 		if (audioGain !== undefined)
 			currentAudioElement.volume = audioGain;
@@ -68,22 +72,62 @@ const AudioView = ({
 		stream.addTrack(track);
 		currentAudioElement.srcObject = stream;
 
-		if (deviceId) {
-			// same behavior as before, just wrapped with a log
-			logger.debug({
-				consumerId: consumer.id,
-				peerId: consumer.peerId,
-				deviceId
-			}, 'AudioView: setting sinkId');
+		if (deviceId && deviceId !== 'default') {
+			logger.debug('AudioView: attempting setSinkId %O',
+				{
+					consumerId: consumer.id,
+					peerId: consumer.peerId,
+					deviceId
+				});
 
-			currentAudioElement.setSinkId(deviceId);
+			// runtime feature detection, regardless of TS typings
+			const elementWithSink = currentAudioElement as unknown as {
+				// eslint-disable-next-line no-unused-vars
+				setSinkId?: (deviceId: string) => Promise<void>;
+			};
+
+			if (typeof elementWithSink.setSinkId === 'function') {
+				elementWithSink.setSinkId(deviceId)
+					.then(() => {
+						logger.debug('AudioView: setSinkId succeeded %O',
+							{
+								consumerId: consumer.id,
+								peerId: consumer.peerId,
+								deviceId
+							});
+					})
+					.catch((error: unknown) => {
+						logger.warn('AudioView: setSinkId FAILED %O',
+							{
+								consumerId: consumer.id,
+								peerId: consumer.peerId,
+								deviceId,
+								error
+							});
+					});
+			} else {
+				logger.warn('AudioView: setSinkId not supported on this browser %O',
+					{
+						consumerId: consumer.id,
+						peerId: consumer.peerId,
+						deviceId
+					});
+			}
+		} else {
+			logger.debug('AudioView: using default output device (no setSinkId) %O',
+				{
+					consumerId: consumer.id,
+					peerId: consumer.peerId,
+					deviceId: deviceId ?? 'default'
+				});
 		}
 
 		return () => {
-			logger.debug({
-				consumerId: consumer.id,
-				peerId: consumer.peerId
-			}, 'AudioView: cleanup');
+			logger.debug('AudioView: cleanup %O',
+				{
+					consumerId: consumer.id,
+					peerId: consumer.peerId
+				});
 
 			if (currentAudioElement) {
 				currentAudioElement.srcObject = null;
@@ -96,11 +140,12 @@ const AudioView = ({
 		const currentAudioElement = audioElement.current;
 
 		if (audioGain !== undefined && currentAudioElement) {
-			logger.debug({
-				consumerId: consumer.id,
-				peerId: consumer.peerId,
-				audioGain
-			}, 'AudioView: updating audioGain');
+			logger.debug('AudioView: updating audioGain %O',
+				{
+					consumerId: consumer.id,
+					peerId: consumer.peerId,
+					audioGain
+				});
 
 			currentAudioElement.volume = audioGain;
 		}

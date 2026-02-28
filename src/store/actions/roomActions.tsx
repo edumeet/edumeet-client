@@ -24,11 +24,13 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 	dispatch(roomActions.updateRoom({ joinInProgress: true }));
 
 	try {
+		const state = getState();
+		const peerId = state.me.id;
+		const reconnectKey = state.me.reconnectKey;
+		const token = state.permissions.token;
 		const encodedRoomId = encodeURIComponent(roomId);
-		const peerId = getState().me.id;
-		const token = getState().permissions.token;
 
-		const url = getSignalingUrl(peerId, encodedRoomId, token);
+		const url = getSignalingUrl(peerId, encodedRoomId, reconnectKey, token);
 
 		dispatch(signalingActions.setUrl(url));
 		dispatch(signalingActions.connect());

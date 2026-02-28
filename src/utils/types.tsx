@@ -293,11 +293,6 @@ export interface BackgroundEffectPipeline {
 	cleanup: () => void;
 }
 
-export interface Dimensions {
-	width: number,
-	height: number
-}
-
 export const BackgroundType = {
 	NONE: 'none',
 	BLUR: 'blur',
@@ -320,11 +315,6 @@ export interface BackgroundPipelineOptions {
 	backend: TFLite,
 	segmentation: Dimensions,
 	backgroundConfig?: BackgroundConfig
-}
-
-export interface HTMLMediaElementWithSink extends HTMLMediaElement {
-	// eslint-disable-next-line no-unused-vars
-	setSinkId(deviceId: string): Promise<void>
 }
 
 export type Tenant = {

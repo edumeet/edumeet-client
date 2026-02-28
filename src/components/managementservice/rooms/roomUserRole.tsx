@@ -1,10 +1,10 @@
-import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { SyntheticEvent, useEffect, useMemo, useState, ChangeEvent } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, Box } from '@mui/material';
 import { Roles, Room, User, UsersRoles } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, getDataByRoomId, patchData } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByRoomId, patchData, getUserByEmail } from '../../../store/actions/managementActions';
 import { RoomProp } from './Room';
 import { userLabel } from '../../translated/translatedComponents';
 
@@ -83,7 +83,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'Hidden email';
+			return `${id} - Hidden email`;
 		}
 	};
 
@@ -95,7 +95,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined room';
+			return 'Undefined room';
 		}
 	};
 
@@ -148,7 +148,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	const [ cantPatch, setCantPatch ] = useState(true);
 	const [ cantDelete ] = useState(false);
-	const [ userIdOption, setUserIdOption ] = useState<User | undefined>();
 	const [ roleIdOption, setRoleIdOption ] = useState<Roles | undefined>();
 
 	/* const [ roomIdOption, setRoomIdOption ] = useState<Room | undefined>(); */
@@ -157,6 +156,12 @@ const RoomUserRoleTable = (props: RoomProp) => {
 
 	/* const [ roomIdOptionDisabled, setRoomIdOptionDisabled ] = useState(true); */
 
+	const [ userEmailInput, setUserEmailInput ] = useState('');
+	const [ isResolvingUser, setIsResolvingUser ] = useState(false);
+	const [ userResolveError, setUserResolveError ] = useState<string | null>(null);
+
+	const [ selectedUser, setSelectedUser ] = useState<User | null>(null);
+
 	async function fetchProduct() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('users')).then((tdata: any) => {
@@ -164,13 +169,12 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				setUsers(tdata.data);
 			}
 		});
-		
+
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('rooms')).then((tdata: any) => {
 			if (tdata != undefined) {
 				setRooms(tdata.data);
 			}
-           
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -178,7 +182,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			if (tdata != undefined) {
 				setRoles(tdata.data);
 			}
-           
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -188,7 +191,6 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				setData(tdata.data ?? tdata);
 			}
 			setIsLoading(false);
-        
 		});
 
 	}
@@ -204,11 +206,14 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	const handleClickOpen = () => {
 		setId(0);
 		setUserId(0);
+		setSelectedUser(null);
 		setRoleId(0);
 
 		/* setRoomId(0); */
-		setUserIdOption(undefined);
 		setRoleIdOption(undefined);
+
+		setUserEmailInput('');
+		setUserResolveError(null);
 
 		/* setRoomIdOption(undefined); */
 		setUserIdOptionDisabled(false);
@@ -224,20 +229,27 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		setUserIdOptionDisabled(true);
 		setRoleIdOptionDisabled(true);
 
+		setUserEmailInput('');
+		setUserResolveError(null);
+
 		/* setRoomIdOptionDisabled(true); */
 		setOpen(true);
 	};
 
-	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User) => {
-		if (newValue) {
-			if (typeof newValue.id != 'number') {
-				setUserId(parseInt(newValue.id));
-			} else {
-				setUserId(newValue.id);
-			}
-			setUserIdOption(newValue);
+	const handleUserIdChange = (event: SyntheticEvent<Element, Event>, newValue: User | null) => {
+		if (!newValue) {
+			return;
 		}
+
+		if (typeof newValue.id != 'number') {
+			setUserId(parseInt(newValue.id));
+		} else {
+			setUserId(newValue.id);
+		}
+		setSelectedUser(newValue);
+		setCantPatch(false);
 	};
+
 	const handleRoleIdChange = (event: SyntheticEvent<Element, Event>, newValue: Roles) => {
 		if (newValue) {
 			if (typeof newValue.id != 'number') {
@@ -247,6 +259,95 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			}
 			setRoleIdOption(newValue);
 		}
+	};
+
+	const handleUserEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setUserEmailInput(event.target.value);
+		setUserResolveError(null);
+	};
+
+	const getUserNumericId = (u: User): number => {
+		return typeof u.id === 'number' ? u.id : parseInt(String(u.id), 10);
+	};
+
+	const handleResolveUserByEmail = () => {
+		const email = userEmailInput.trim();
+
+		if (!email) return;
+
+		setIsResolvingUser(true);
+		setUserResolveError(null);
+
+		dispatch(getUserByEmail(email))
+			.then((tdata: unknown) => {
+				setIsResolvingUser(false);
+
+				let list: Array<{ id: string | number }> = [];
+
+				if (Array.isArray(tdata)) {
+					list = tdata as Array<{ id: string | number }>;
+				} else if (
+					tdata &&
+					typeof tdata === 'object' &&
+					'data' in tdata
+				) {
+					const dataField = (tdata as { data?: unknown }).data;
+
+					if (Array.isArray(dataField)) {
+						list = dataField as Array<{ id: string | number }>;
+					}
+				}
+
+				if (list.length === 0) {
+					setUserId(0);
+					setSelectedUser(null);
+					setUserResolveError('No user found with this email.');
+
+					return;
+				}
+
+				const first = list[0];
+				const idNumber =
+					typeof first.id === 'number'
+						? first.id
+						: parseInt(String(first.id), 10);
+
+				const existing = users.find(
+					(u) => getUserNumericId(u) === idNumber
+				);
+
+				if (!existing) {
+					setUserId(0);
+					setSelectedUser(null);
+					setUserResolveError('User found but not available in list.');
+
+					return;
+				}
+
+				// update email in users list
+				setUsers((prev) => {
+					return prev.map((u) => {
+						if (getUserNumericId(u) === idNumber) {
+							return {
+								...u,
+								email,
+							};
+						}
+
+						return u;
+					});
+				});
+
+				const updatedUser: User = { ...existing, email };
+
+				setUserId(idNumber);
+				setSelectedUser(updatedUser);
+				setCantPatch(false);
+			})
+			.catch(() => {
+				setIsResolvingUser(false);
+				setUserResolveError('Error resolving user.');
+			});
 	};
 
 	/* const handleRoomIdChange = (event: SyntheticEvent<Element, Event>, newValue: Room) => {
@@ -300,7 +401,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	const getUserLabel = (u: User): string => {
 		if (u?.email) return `${u.id} - ${u.email}`;
 
-		return String(u?.id ?? '');
+		return `${u.id} - Hidden email`;
 	};
 
 	return <>
@@ -317,14 +418,51 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						These are the parameters that you can change.
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'flex-start',
+							marginTop: '8px',
+						}}
+					>
+						<TextField
+							label="User email"
+							fullWidth
+							sx={{ marginRight: '8px' }}
+							value={userEmailInput}
+							onChange={handleUserEmailChange}
+							error={userResolveError !== null}
+							helperText={userResolveError ?? ''}
+							disabled={cantPatch}
+						/>
+						<Button
+							variant="outlined"
+							sx={{ alignSelf: 'flex-start' }}
+							onClick={handleResolveUserByEmail}
+							disabled={cantPatch || isResolvingUser || userEmailInput.trim() === ''}
+						>
+							{'SELECT'}
+						</Button>
+					</Box>
 					<Autocomplete
 						options={users}
 						getOptionLabel={(option) => getUserLabel(option)}
+						isOptionEqualToValue={(option, value) => {
+							if (value === null || value === undefined) {
+								return false;
+							}
+
+							const optionId = getUserNumericId(option);
+							const valueId = getUserNumericId(value);
+
+							return optionId === valueId;
+						}}
 						fullWidth
 						disableClearable
+						disabled={cantPatch}
 						readOnly={userIdOptionDisabled}
 						onChange={handleUserIdChange}
-						value={userIdOption}
+						value={selectedUser as User}
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label="User" />}
 					/>
@@ -333,6 +471,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						getOptionLabel={(option) => option.name}
 						fullWidth
 						disableClearable
+						disabled={cantPatch}
 						readOnly={roleIdOptionDisabled}
 						onChange={handleRoleIdChange}
 						value={roleIdOption}
@@ -354,8 +493,8 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					const r = row.getAllCells();
 
 					const tid = r[0].getValue();
-					const tuserId=r[1].getValue();
-					const troleId=r[2].getValue();
+					const tuserId = r[1].getValue();
+					const troleId = r[2].getValue();
 
 					/* const troomId=r[3].getValue(); */
 
@@ -365,25 +504,20 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						setId(parseInt(tid));
 					}
 
+					let numericUserId = 0;
+
 					if (typeof tuserId === 'number') {
-						const tuser = users.find((x) => x.id == tuserId);
-
-						if (tuser) {
-							setUserIdOption(tuser);
-						}
-						setUserId(tuserId);
+						numericUserId = tuserId;
 					} else if (typeof tuserId === 'string') {
-						const tuser = users.find((x) => x.id == parseInt(tuserId));
-
-						if (tuser) {
-							setUserIdOption(tuser);
-						}
-						setUserId(parseInt(tuserId));
-					} else {
-						setUserId(0);
-						setUserIdOption(undefined);
+						numericUserId = parseInt(tuserId);
 					}
-					
+
+					setUserId(numericUserId);
+
+					const existingUser = users.find((u) => getUserNumericId(u) === numericUserId) || null;
+
+					setSelectedUser(existingUser);
+
 					if (typeof troleId === 'number') {
 						const troles = roles.find((x) => x.id == troleId);
 

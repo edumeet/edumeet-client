@@ -29,8 +29,18 @@ const logger = new Logger('RoomServerConnection');
 
 export class RoomServerConnection extends EventEmitter {
 	public id?: string;
+	public closed = false;
 
-	public static async create({ url }: { url: string}): Promise<RoomServerConnection> {
+	private socket: Socket<ClientServerEvents, ServerClientEvents>;
+	private getUrl: () => string;
+
+	public static async create({
+		getUrl
+	}: {
+		getUrl: () => string
+	}): Promise<RoomServerConnection> {
+		const url = getUrl();
+
 		logger.debug('create() [url:%s]', url);
 	
 		const { io } = await import('socket.io-client');
@@ -41,19 +51,17 @@ export class RoomServerConnection extends EventEmitter {
 			closeOnBeforeunload: false,
 			reconnection: false
 		});
-	
-		return new RoomServerConnection(socket);
+
+		return new RoomServerConnection(socket, getUrl);
 	}
 
-	public closed = false;
-	private socket: Socket<ClientServerEvents, ServerClientEvents>;
-
-	constructor(socket: Socket<ClientServerEvents, ServerClientEvents>) {
+	constructor(socket: Socket<ClientServerEvents, ServerClientEvents>, getUrl: () => string) {
 		super();
 
 		logger.debug('constructor()');
 
 		this.socket = socket;
+		this.getUrl = getUrl;
 		this.id = socket.id;
 		this.handleSocket();
 	}
@@ -63,8 +71,10 @@ export class RoomServerConnection extends EventEmitter {
 
 		this.closed = true;
 
-		if (this.socket.connected)
+		if (this.socket.connected) {
 			this.socket.disconnect();
+		}
+
 		this.socket.io.off();
 
 		this.socket.removeAllListeners();

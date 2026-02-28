@@ -1,7 +1,13 @@
 import { Button, Tab, Tabs, useMediaQuery, useTheme } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SettingsTab, uiActions } from '../../store/slices/uiSlice';
-import { advancedSettingsLabel, appearanceSettingsLabel, closeLabel, managementSettingsLabel, mediaSettingsLabel } from '../translated/translatedComponents';
+import {
+	advancedSettingsLabel,
+	appearanceSettingsLabel,
+	closeLabel,
+	managementSettingsLabel,
+	mediaSettingsLabel
+} from '../translated/translatedComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import PhotoIcon from '@mui/icons-material/Photo';
 import PaletteIcon from '@mui/icons-material/Palette';
@@ -13,6 +19,7 @@ import GenericDialog from '../genericdialog/GenericDialog';
 import AdvancedSettings from './AdvancedSettings';
 import MangagementSettings from './ManagementSettings';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { useEffect } from 'react';
 
 const tabs: SettingsTab[] = [
 	'media',
@@ -27,9 +34,29 @@ const SettingsDialog = (): React.JSX.Element => {
 	const currentSettingsTab = useAppSelector((state) => state.ui.currentSettingsTab);
 	const closeButtonDisabled = useAppSelector((state) => state.me.videoInProgress || state.me.audioInProgress);
 	const locale = useAppSelector((state) => state.settings.locale);
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+	// Is the management tab actually allowed to be shown?
+	const managementVisible = edumeetConfig.loginEnabled && loggedIn;
+
+	// Only include management tab if it is actually visible
+	const visibleTabs: SettingsTab[] = managementVisible
+		? tabs
+		: tabs.filter((tab) => tab !== 'management');
+
+	// If management becomes hidden while selected, move user to another tab
+	useEffect(() => {
+		if (!managementVisible && currentSettingsTab === 'management') {
+			dispatch(uiActions.setCurrentSettingsTab('media'));
+		}
+	}, [ managementVisible, currentSettingsTab, dispatch ]);
+
+	// Derive current tab index from visibleTabs; clamp to 0 if somehow invalid
+	const tabIndex = visibleTabs.indexOf(currentSettingsTab);
+	const safeTabIndex = tabIndex === -1 ? 0 : tabIndex;
 
 	const handleCloseSettings = (): void => {
 		dispatch(uiActions.setUi({
@@ -45,11 +72,9 @@ const SettingsDialog = (): React.JSX.Element => {
 			content={
 				<div data-locale={locale}>
 					<Tabs
-						value={tabs.indexOf(currentSettingsTab)}
+						value={safeTabIndex}
 						onChange={(_event, value) => {
-							if ((!edumeetConfig.loginEnabled && tabs[value] !== 'management') || edumeetConfig.loginEnabled) {
-								dispatch(uiActions.setCurrentSettingsTab(tabs[value]));
-							}
+							dispatch(uiActions.setCurrentSettingsTab(visibleTabs[value]));
 						}}
 						centered
 						variant={isMobile ? 'scrollable' : 'standard'}
@@ -71,7 +96,7 @@ const SettingsDialog = (): React.JSX.Element => {
 							icon={isMobile ? <TuneIcon /> : undefined}
 							aria-label={advancedSettingsLabel()}
 						/>
-						{edumeetConfig.loginEnabled && (
+						{managementVisible && (
 							<Tab
 								label={isMobile ? undefined : managementSettingsLabel()}
 								icon={isMobile ? <AdminPanelSettingsIcon /> : undefined}

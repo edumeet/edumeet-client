@@ -9,6 +9,7 @@ import { BackgroundConfig, BackgroundType } from '../../utils/types';
 
 export interface MeState {
 	id: string;
+	reconnectKey: string;
 	selectedDestop: {
 		imageName: string,
 		imageUrl: string
@@ -54,6 +55,7 @@ export interface MeState {
 
 const initialState: MeState = {
 	id: uuid(),
+	reconnectKey: uuid(),
 	selectedDestop: null,
 	thumbnailList: [],
 	sessionId: 'temp',
@@ -96,7 +98,7 @@ const meSlice = createSlice({
 	initialState,
 	reducers: {
 		resetMe: ((state) => {
-			return { ...initialState, id: uuid(), browser: state.browser, devices: state.devices };
+			return { ...initialState, id: uuid(), reconnectKey: uuid(), browser: state.browser, devices: state.devices };
 		}),
 		setMe: ((state, action: PayloadAction<string>) => {
 			state.id = action.payload;
@@ -217,7 +219,7 @@ const meSlice = createSlice({
 		builder
 			.addCase(roomActions.setState, (state, action) => {
 				if (action.payload === 'left')
-					return { ...initialState, id: uuid(), browser: state.browser, devices: state.devices };
+					return { ...initialState, id: uuid(), reconnectKey: uuid(), browser: state.browser, devices: state.devices };
 			});
 	}
 });

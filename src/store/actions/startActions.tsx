@@ -5,8 +5,7 @@ import { activeSpeakerIdSelector, makePermissionSelector } from '../selectors';
 import { permissions } from '../../utils/roles';
 import { pauseMic, resumeMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
 import { uiActions } from '../slices/uiSlice';
-import { lock, unlock } from './permissionsActions';
-import { permissionsActions } from '../slices/permissionsSlice';
+import { lock, unlock, updateLoginState } from './permissionsActions';
 import { setRaisedHand } from './meActions';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
@@ -30,7 +29,7 @@ let speakerDetectionInterval: NodeJS.Timeout | undefined;
 export const startListeners = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ mediaService, signalingService, deviceService, managementService }
+	{ mediaService, deviceService, managementService }
 ): Promise<void> => {
 	logger.debug('startListeners()');
 
@@ -295,11 +294,7 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 					await (await managementService).authentication.setAccessToken(token);
 					await (await managementService).reAuthenticate();
 
-					dispatch(permissionsActions.setToken(token));
-					dispatch(permissionsActions.setLoggedIn(true));
-
-					if (getState().signaling.state === 'connected')
-						await signalingService.sendRequest('updateToken', { token }).catch((e) => logger.error('updateToken request failed [error: %o]', e));
+					dispatch(updateLoginState(token));
 				}
 			}
 		}
