@@ -108,7 +108,6 @@ const RoomOwnerTable = (props: RoomProp) => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ cantPatch, setcantPatch ] = useState(true);
-	const [ userIdOption, setUserIdOption ] = useState<User | undefined>();
 	const [ userIdOptionDisabled, setUserIdOptionDisabled ] = useState(true);
 
 	/* const [ roomIdOptionDisabled, setRoomIdOptionDisabled ] = useState(true); */
@@ -161,7 +160,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 
 		/* setRoomId(0); */
 		setUserId(0);
-		setUserIdOption(undefined);
+		setSelectedUser(null);
 
 		setUserEmailInput('');
 		setUserResolveError(null);
@@ -192,7 +191,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 			} else {
 				setUserId(newValue.id);
 			}
-			setUserIdOption(newValue);
+			setSelectedUser(newValue);
 		}
 	};
 
@@ -436,24 +435,12 @@ const RoomOwnerTable = (props: RoomProp) => {
 						setId(parseInt(tid));
 					}
 
-					if (typeof tuserId === 'number') {
-						const tuser = users.find((x) => x.id == tuserId);
+					setUserId(numericUserId);
 
-						if (tuser) {
-							setUserIdOption(tuser);
-						}
-						setUserId(tuserId);
-					} else if (typeof tuserId === 'string') {
-						const tuser = users.find((x) => x.id == parseInt(tuserId));
+					const existingUser = users.find((u) => getUserNumericId(u) === numericUserId) || null;
 
-						if (tuser) {
-							setUserIdOption(tuser);
-						}
-						setUserId(parseInt(tuserId));
-					} else {
-						setUserId(0);
-						setUserIdOption(undefined);
-					}
+					setSelectedUser(existingUser);
+
 					
 					/* 					if (typeof troomId === 'string') {
 						const troom = rooms.find((x) => x.id === parseInt(troomId));
