@@ -72,7 +72,7 @@ const AudioView = ({
 		stream.addTrack(track);
 		currentAudioElement.srcObject = stream;
 
-		if (deviceId && deviceId !== 'default') {
+		if (deviceId) {
 			logger.debug('AudioView: attempting setSinkId %O',
 				{
 					consumerId: consumer.id,
