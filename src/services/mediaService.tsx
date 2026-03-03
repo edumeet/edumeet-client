@@ -230,7 +230,7 @@ export class MediaService extends EventEmitter {
 
 						fileService.reinitWithIceServers(iceServers);
 
-						const { rtpCapabilities, sctpCapabilities } = await this.receiveRouterRtpCapabilities(routerRtpCapabilities);
+						const { recvRtpCapabilities: rtpCapabilities, sctpCapabilities } = await this.receiveRouterRtpCapabilities(routerRtpCapabilities);
 
 						respond({ rtpCapabilities, sctpCapabilities });
 
@@ -693,8 +693,12 @@ export class MediaService extends EventEmitter {
 		};
 	}
 
-	get rtpCapabilities(): RtpCapabilities | undefined {
-		return this.mediasoup?.rtpCapabilities;
+	get recvRtpCapabilities(): RtpCapabilities | undefined {
+		return this.mediasoup?.recvRtpCapabilities;
+	}
+
+	get sendRtpCapabilities(): RtpCapabilities | undefined {
+		return this.mediasoup?.sendRtpCapabilities;
 	}
 
 	public changeConsumer(consumerId: string, change: MediaChange, local = true): void {
