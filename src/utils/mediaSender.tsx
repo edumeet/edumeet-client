@@ -307,7 +307,7 @@ export class MediaSender extends EventEmitter {
 
 		const producer = await this.mediaService.sendTransport.produce({
 			...producerOptions,
-			codec: this.mediaService.mediasoup?.rtpCapabilities.codecs?.find((c) => c.mimeType.toLowerCase() === this.codec)
+			codec: this.mediaService.sendRtpCapabilities?.codecs?.find((c) => c.mimeType.toLowerCase() === this.codec)
 		});
 
 		const pauseListener = () => this.signalingService.notify('pauseProducer', { producerId: producer.id });
