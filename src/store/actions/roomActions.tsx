@@ -135,10 +135,9 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('reconnectRoom()');
 
-	// 1. Clear stale peer/media state. On long disconnect the server closes the peer and sends
-	//    roomReady (not peerReconnected), so we must clear sessions here ourselves.
+	// 1. Clear stale peer/media state — room sessions are cleared atomically in peerReconnected
+	//    (short disconnect) or in roomReady (long disconnect, see roomMiddleware).
 	batch(() => {
-		dispatch(roomSessionsActions.removeAllRoomSessions());
 		dispatch(peersActions.removeAllPeers());
 		dispatch(consumersActions.removeAllConsumers());
 		dispatch(lobbyPeersActions.removeAllPeers());

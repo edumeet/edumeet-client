@@ -52,6 +52,9 @@ const createRoomMiddleware = ({
 							} = notification.data;
 
 							batch(() => {
+								// Clear any stale sessions from a prior long-disconnect reconnect
+								// where the server closed the peer and sends roomReady again.
+								dispatch(roomSessionsActions.removeAllRoomSessions());
 								dispatch(roomSessionsActions.addRoomSession({
 									sessionId,
 									creationTimestamp,
