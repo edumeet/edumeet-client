@@ -117,7 +117,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	if (lostVideo) dispatch(meActions.setLostVideo(false));
 
 	if (lostAudio || !getState().me.audioMuted) dispatch(updateMic());
-	if (lostVideo || !getState().me.videoMuted) dispatch(updateWebcam());
+	if (lostVideo || (getState().me.webcamEnabled && !getState().me.videoMuted)) dispatch(updateWebcam());
 	if (getState().me.extraVideoEnabled) dispatch(startExtraVideo());
 };
 
