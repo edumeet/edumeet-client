@@ -4,7 +4,7 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomServerConnectionError } from '../../components/translated/translatedComponents';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { RoomServerConnection } from '../../utils/RoomServerConnection';
-import { leaveRoom } from '../actions/roomActions';
+import { leaveRoom, reconnectRoom } from '../actions/roomActions';
 import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('SignalingMiddleware');
@@ -41,6 +41,23 @@ const createSignalingMiddleware = ({
 				dispatch(signalingActions.connected());
 			});
 
+			signalingService.on('reconnecting', (attempt) => {
+				logger.debug('reconnecting [attempt:%d]', attempt);
+
+				dispatch(signalingActions.reconnecting());
+				dispatch(notificationsActions.enqueueNotification({
+					message: `Connection lost. Reconnecting (attempt ${attempt})...`,
+					options: { variant: 'warning' }
+				}));
+			});
+
+			signalingService.on('reconnected', () => {
+				logger.debug('reconnected');
+
+				dispatch(signalingActions.reconnected());
+				dispatch(reconnectRoom());
+			});
+
 			signalingService.on('error', (error) => {
 				dispatch(notificationsActions.enqueueNotification({
 					message: roomServerConnectionError(error.message),
@@ -51,7 +68,7 @@ const createSignalingMiddleware = ({
 			signalingService.once('close', () => {
 				dispatch(leaveRoom());
 			});
-				
+
 			(async () => {
 				const socketConnection = await RoomServerConnection.create({
 					getUrl: () => getState().signaling.url

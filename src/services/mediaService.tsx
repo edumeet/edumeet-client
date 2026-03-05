@@ -161,7 +161,7 @@ export class MediaService extends EventEmitter {
 		this.handleSignaling();
 	}
 
-	private reset(): void {
+	public reset(): void {
 		this.mediasoup = undefined;
 		this.iceServers = [];
 

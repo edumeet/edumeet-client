@@ -9,6 +9,7 @@ import { signalingActions } from '../slices/signalingSlice';
 import { AppThunk, fileService } from '../store';
 import { updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
+import { consumersActions } from '../slices/consumersSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { Logger } from '../../utils/Logger';
 import { stopListeners } from './startActions';
@@ -116,6 +117,35 @@ export const leaveRoom = (): AppThunk<Promise<void>> => async (
 	logger.debug('leaveRoom()');
 	dispatch(stopListeners());
 	dispatch(signalingActions.disconnect());
+};
+
+export const reconnectRoom = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ mediaService }
+): Promise<void> => {
+	logger.debug('reconnectRoom()');
+
+	// 1. Clear stale Redux state — server will repopulate via roomReady + join response.
+	batch(() => {
+		dispatch(peersActions.removeAllPeers());
+		dispatch(consumersActions.removeAllConsumers());
+		dispatch(lobbyPeersActions.removeAllPeers());
+		dispatch(roomSessionsActions.removeAllRoomSessions());
+	});
+
+	// 2. Remove mediaMiddleware listeners added on setState('joined') so they are
+	//    not duplicated when roomReady fires setState('joined') again after reconnect.
+	mediaService.removeAllListeners();
+
+	// 3. Close stale transports; consumers clean up internally via transportclose.
+	mediaService.close();
+
+	// 4. Reset media state: rejects old promises, creates fresh mediaReady /
+	//    transportsReady promise chain, and begins awaiting the server's
+	//    mediaConfiguration request which will arrive after the server
+	//    recognises the peer by peerId + reconnectKey in the URL query params.
+	mediaService.reset();
 };
 
 export const createBreakoutRoom = (name: string): AppThunk<Promise<void>> => async (

@@ -206,14 +206,17 @@ const roomSessionsSlice = createSlice({
 			}
 		}),
 		clearFile: ((state, action: PayloadAction<{ magnetURI: string }>) => {
-			
+
 			for (const roomSession of Object.values(state)) {
-				
+
 				roomSession.fileHistory = roomSession.fileHistory.filter((item: FilesharingFile) => {
 					return (!(action.payload.magnetURI == item.magnetURI));
 				}) as FilesharingFile[] ?? [];
 			}
-			
+
+		}),
+		removeAllRoomSessions: (() => {
+			return initialState;
 		}),
 	},
 	extraReducers: (builder) => {
