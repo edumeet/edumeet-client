@@ -803,6 +803,7 @@ export const stopWebcam = (): AppThunk<void> => (
 	mediaService.mediaSenders['webcam'].stop();
 	dispatch(meActions.setWebcamEnabled(false));
 	dispatch(meActions.setWebcamTrackId(undefined));
+	dispatch(meActions.setVideoMuted(true));
 };
 
 /**
