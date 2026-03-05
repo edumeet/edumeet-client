@@ -568,6 +568,7 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 			});
 		}
 
+		dispatch(meActions.setMicTrackId(mediaService.mediaSenders['mic'].track?.id));
 		dispatch(meActions.setAudioMuted(false));
 		dispatch(meActions.setMicEnabled(true));
 	} catch (error) {
@@ -587,6 +588,7 @@ export const stopMic = (): AppThunk<void> => (
 
 	mediaService.mediaSenders['mic'].stop();
 	dispatch(meActions.setMicEnabled(false));
+	dispatch(meActions.setMicTrackId(undefined));
 	dispatch(meActions.setAudioMuted(true));
 };
 

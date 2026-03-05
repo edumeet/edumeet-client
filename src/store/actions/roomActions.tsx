@@ -6,8 +6,8 @@ import { permissionsActions } from '../slices/permissionsSlice';
 import { roomActions } from '../slices/roomSlice';
 import { drawingActions } from '../slices/drawingSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { AppThunk, fileService } from '../store';
-import { updateMic, updateWebcam } from './mediaActions';
+import { AppThunk, fileService, RootState } from '../store';
+import { startExtraVideo, updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { consumersActions } from '../slices/consumersSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
@@ -118,6 +118,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 
 	if (lostAudio || !getState().me.audioMuted) dispatch(updateMic());
 	if (lostVideo || !getState().me.videoMuted) dispatch(updateWebcam());
+	if (getState().me.extraVideoEnabled) dispatch(startExtraVideo());
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
@@ -130,7 +131,7 @@ export const leaveRoom = (): AppThunk<Promise<void>> => async (
 
 export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 	dispatch,
-	_getState,
+	getState: () => RootState,
 	{ mediaService }
 ): Promise<void> => {
 	logger.debug('reconnectRoom()');
@@ -148,6 +149,11 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 	for (const sender of Object.values(mediaService.mediaSenders)) {
 		sender.stop();
 	}
+
+	// Screen sharing cannot be auto-restarted (requires user gesture via getDisplayMedia).
+	// Clear the enabled flags so the UI reflects the actual stopped state.
+	if (getState().me.screenEnabled) dispatch(meActions.setScreenEnabled(false));
+	if (getState().me.screenAudioEnabled) dispatch(meActions.setScreenAudioEnabled(false));
 
 	// 3. Close stale transports.
 	mediaService.close();
