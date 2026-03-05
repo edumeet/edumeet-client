@@ -107,8 +107,17 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
 	});
 	
-	if (!getState().me.audioMuted) dispatch(updateMic());
-	if (!getState().me.videoMuted) dispatch(updateWebcam());
+	// On long-disconnect reconnect, producerClosed may have fired before joinRoom runs,
+	// setting audioMuted/videoMuted=true and lostAudio/lostVideo=true. Clear the lost
+	// flags and restart media regardless of muted state (mirrors peerReconnected logic).
+	const lostAudio = getState().me.lostAudio;
+	const lostVideo = getState().me.lostVideo;
+
+	if (lostAudio) dispatch(meActions.setLostAudio(false));
+	if (lostVideo) dispatch(meActions.setLostVideo(false));
+
+	if (lostAudio || !getState().me.audioMuted) dispatch(updateMic());
+	if (lostVideo || !getState().me.videoMuted) dispatch(updateWebcam());
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
@@ -126,8 +135,10 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('reconnectRoom()');
 
-	// 1. Clear stale peer/media state — room sessions are cleared atomically in peerReconnected.
+	// 1. Clear stale peer/media state. On long disconnect the server closes the peer and sends
+	//    roomReady (not peerReconnected), so we must clear sessions here ourselves.
 	batch(() => {
+		dispatch(roomSessionsActions.removeAllRoomSessions());
 		dispatch(peersActions.removeAllPeers());
 		dispatch(consumersActions.removeAllConsumers());
 		dispatch(lobbyPeersActions.removeAllPeers());
