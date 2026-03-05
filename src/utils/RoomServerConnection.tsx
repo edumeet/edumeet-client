@@ -39,6 +39,7 @@ export declare interface RoomServerConnection {
 	on(event: 'notification', listener: (notification: SocketMessage) => void): this;
 	on(event: 'request', listener: (request: SocketMessage, respond: (data: unknown) => void, reject: (error: unknown) => void) => void): this;
 	once(event: 'close', listener: () => void): this;
+	once(event: 'reconnected', listener: () => void): this;
 }
 /* eslint-enable no-unused-vars */
 
@@ -140,8 +141,21 @@ export class RoomServerConnection extends EventEmitter {
 			}
 		}
 
-		// if failed 3 times exit meeting
-		this.emit('close');
+		// All 3 attempts failed. If socket.io is reconnecting, wait for it to
+		// finish and then retry — the socket was simply down during those attempts.
+		// If reconnect_failed fires instead, 'close' is emitted and we reject.
+		if (this.isReconnecting) {
+			logger.debug('sendRequest() waiting for reconnect before retrying [request: %o]', request);
+
+			await new Promise<void>((resolve, reject) => {
+				this.once('reconnected', resolve);
+				this.once('close', () => reject(new Error('Connection closed during reconnect')));
+			});
+
+			return this.sendRequestOnWire(request);
+		}
+
+		throw new SocketTimeoutError('sendRequest() - All attempts timed out');
 	}
 
 	private handleSocket(): void {
