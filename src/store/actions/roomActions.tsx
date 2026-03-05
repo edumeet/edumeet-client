@@ -126,12 +126,11 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('reconnectRoom()');
 
-	// 1. Clear stale peer/media state — repopulated by the peerReconnected notification.
+	// 1. Clear stale peer/media state — room sessions are cleared atomically in peerReconnected.
 	batch(() => {
 		dispatch(peersActions.removeAllPeers());
 		dispatch(consumersActions.removeAllConsumers());
 		dispatch(lobbyPeersActions.removeAllPeers());
-		dispatch(roomSessionsActions.removeAllRoomSessions());
 	});
 
 	// 2. Remove mediaMiddleware listeners so they are not duplicated after reconnect.

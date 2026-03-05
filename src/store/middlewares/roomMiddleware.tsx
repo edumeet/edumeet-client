@@ -179,6 +179,7 @@ const createRoomMiddleware = ({
 							} = notification.data;
 
 							batch(() => {
+								dispatch(roomSessionsActions.removeAllRoomSessions());
 								dispatch(roomSessionsActions.addRoomSession({
 									sessionId,
 									creationTimestamp,
