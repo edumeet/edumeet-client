@@ -69,7 +69,7 @@ const VideoView = ({
 	const senderTrackId =
 		source === 'extravideo' ? extraVideoTrackId :
 			source === 'webcam' ? webcamTrackId :
-			undefined;
+				undefined;
 
 	useEffect(() => {
 		const consumerId = consumer?.id;
