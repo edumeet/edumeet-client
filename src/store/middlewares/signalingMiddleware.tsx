@@ -59,10 +59,12 @@ const createSignalingMiddleware = ({
 			});
 
 			signalingService.on('error', (error) => {
-				dispatch(notificationsActions.enqueueNotification({
-					message: roomServerConnectionError(error.message),
-					options: { variant: 'error' }
-				}));
+				if (getState().signaling.state !== 'reconnecting') {
+					dispatch(notificationsActions.enqueueNotification({
+						message: roomServerConnectionError(error.message),
+						options: { variant: 'error' }
+					}));
+				}
 			});
 
 			signalingService.once('close', () => {
