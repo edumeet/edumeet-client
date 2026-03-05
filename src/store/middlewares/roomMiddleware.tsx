@@ -170,6 +170,7 @@ const createRoomMiddleware = ({
 						case 'peerReconnected': {
 							const {
 								sessionId,
+								roomSessionId,
 								creationTimestamp,
 								peers,
 								chatHistory,
@@ -181,10 +182,14 @@ const createRoomMiddleware = ({
 								countdownTimer,
 							} = notification.data;
 
+							// roomSessionId is the main room's sessionId;
+							// sessionId is the peer's current session (may differ if in a breakout room).
+							const mainSessionId = roomSessionId ?? sessionId;
+
 							batch(() => {
 								dispatch(roomSessionsActions.removeAllRoomSessions());
 								dispatch(roomSessionsActions.addRoomSession({
-									sessionId,
+									sessionId: mainSessionId,
 									creationTimestamp,
 									parent: true,
 									...initialRoomSession,
@@ -193,8 +198,8 @@ const createRoomMiddleware = ({
 								dispatch(peersActions.addPeers(peers));
 								dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 								dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
-								dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
-								dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+								dispatch(roomSessionsActions.addMessages({ sessionId: mainSessionId, messages: chatHistory }));
+								dispatch(roomSessionsActions.addFiles({ sessionId: mainSessionId, files: fileHistory }));
 								dispatch(permissionsActions.setLocked(Boolean(locked)));
 								dispatch(roomActions.joinCountdownTimer(countdownTimer));
 								dispatch(countdownTimer.isStarted ?

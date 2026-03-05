@@ -45,6 +45,7 @@ export interface MeState {
 	escapeMeetingInProgress: boolean;
 	micEnabled: boolean;
 	webcamEnabled: boolean;
+	webcamTrackId?: string;
 	screenEnabled: boolean;
 	screenAudioEnabled: boolean;
 	extraVideoEnabled: boolean;
@@ -85,6 +86,7 @@ const initialState: MeState = {
 	escapeMeetingInProgress: false,
 	micEnabled: false,
 	webcamEnabled: false,
+	webcamTrackId: undefined,
 	screenEnabled: false,
 	screenAudioEnabled: false,
 	extraVideoEnabled: false,
@@ -190,6 +192,9 @@ const meSlice = createSlice({
 		}),
 		setWebcamEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.webcamEnabled = action.payload;
+		}),
+		setWebcamTrackId: ((state, action: PayloadAction<string | undefined>) => {
+			state.webcamTrackId = action.payload;
 		}),
 		setScreenEnabled: ((state, action: PayloadAction<boolean>) => {
 			state.screenEnabled = action.payload;

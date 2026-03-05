@@ -61,12 +61,15 @@ const VideoView = ({
 	const [ loading, setLoading ] = useState(true);
 	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);
 	const extraVideoTrackId = useAppSelector((state) => state.me.extraVideoTrackId);
+	const webcamTrackId = useAppSelector((state) => state.me.webcamTrackId);
 
 	const previewTrackId =
 		previewTrack ? previewWebcamTrackId : undefined;
 
 	const senderTrackId =
-		source === 'extravideo' ? extraVideoTrackId : undefined;
+		source === 'extravideo' ? extraVideoTrackId :
+		source === 'webcam' ? webcamTrackId :
+		undefined;
 
 	useEffect(() => {
 		const consumerId = consumer?.id;
