@@ -165,53 +165,53 @@ const createRoomMiddleware = ({
 						}
 
 						case 'peerReconnected': {
-						const {
-							sessionId,
-							creationTimestamp,
-							peers,
-							chatHistory,
-							fileHistory,
-							locked,
-							breakoutRooms,
-							lobbyPeers,
-							drawing,
-							countdownTimer,
-						} = notification.data;
-
-						batch(() => {
-							dispatch(roomSessionsActions.addRoomSession({
+							const {
 								sessionId,
 								creationTimestamp,
-								parent: true,
-								...initialRoomSession,
-							}));
-							dispatch(meActions.setSessionId(sessionId));
-							dispatch(peersActions.addPeers(peers));
-							dispatch(lobbyPeersActions.addPeers(lobbyPeers));
-							dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
-							dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
-							dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-							dispatch(permissionsActions.setLocked(Boolean(locked)));
-							dispatch(roomActions.joinCountdownTimer(countdownTimer));
-							dispatch(countdownTimer.isStarted ?
-								roomActions.startCountdownTimer() :
-								roomActions.stopCountdownTimer()
-							);
-							dispatch(drawing.isEnabled ?
-								drawingActions.enableDrawing() :
-								drawingActions.disableDrawing()
-							);
-							dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
-							dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
-						});
+								peers,
+								chatHistory,
+								fileHistory,
+								locked,
+								breakoutRooms,
+								lobbyPeers,
+								drawing,
+								countdownTimer,
+							} = notification.data;
 
-						if (!getState().me.audioMuted) dispatch(updateMic());
-						if (!getState().me.videoMuted) dispatch(updateWebcam());
+							batch(() => {
+								dispatch(roomSessionsActions.addRoomSession({
+									sessionId,
+									creationTimestamp,
+									parent: true,
+									...initialRoomSession,
+								}));
+								dispatch(meActions.setSessionId(sessionId));
+								dispatch(peersActions.addPeers(peers));
+								dispatch(lobbyPeersActions.addPeers(lobbyPeers));
+								dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
+								dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+								dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+								dispatch(permissionsActions.setLocked(Boolean(locked)));
+								dispatch(roomActions.joinCountdownTimer(countdownTimer));
+								dispatch(countdownTimer.isStarted ?
+									roomActions.startCountdownTimer() :
+									roomActions.stopCountdownTimer()
+								);
+								dispatch(drawing.isEnabled ?
+									drawingActions.enableDrawing() :
+									drawingActions.disableDrawing()
+								);
+								dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
+								dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
+							});
 
-						break;
-					}
+							if (!getState().me.audioMuted) dispatch(updateMic());
+							if (!getState().me.videoMuted) dispatch(updateWebcam());
 
-					case 'sessionIdChanged': {
+							break;
+						}
+
+						case 'sessionIdChanged': {
 							const {
 								sessionId,
 								chatHistory,
