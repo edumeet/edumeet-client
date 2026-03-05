@@ -133,10 +133,16 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(lobbyPeersActions.removeAllPeers());
 	});
 
-	// 2. Close stale transports.
+	// 2. Stop all active senders so they restart cleanly after rejoin.
+	//    local=true (default) suppresses mediaClosed — avoids setting audioMuted/videoMuted here.
+	for (const sender of Object.values(mediaService.mediaSenders)) {
+		sender.stop();
+	}
+
+	// 3. Close stale transports.
 	mediaService.close();
 
-	// 3. Reset media state; server will send mediaConfiguration via assignRouter.
+	// 4. Reset media state; server will send mediaConfiguration via assignRouter.
 	mediaService.reset();
 };
 
