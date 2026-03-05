@@ -66,8 +66,7 @@ const VideoView = ({
 	const previewTrackId =
 		previewTrack ? previewWebcamTrackId : undefined;
 
-	const senderTrackId =
-		source === 'extravideo' ? extraVideoTrackId :
+	const senderTrackId = source === 'extravideo' ? extraVideoTrackId :
 		source === 'webcam' ? webcamTrackId :
 		undefined;
 
