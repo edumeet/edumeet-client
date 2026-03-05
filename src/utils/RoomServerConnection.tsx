@@ -148,10 +148,9 @@ export class RoomServerConnection extends EventEmitter {
 		logger.debug('handleSocket()');
 
 		this.socket.on('connect', () => {
-			logger.debug('handleSocket() connected [recovered:%s, reconnecting:%s]',
-				this.socket.recovered, this.isReconnecting);
+			logger.debug('handleSocket() connected [reconnecting:%s]', this.isReconnecting);
 
-			if (this.socket.recovered || this.isReconnecting) {
+			if (this.isReconnecting) {
 				this.isReconnecting = false;
 				this.id = this.socket.id;
 				this.emit('reconnected');

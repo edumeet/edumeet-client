@@ -142,9 +142,8 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 	mediaService.close();
 
 	// 4. Reset media state: rejects old promises, creates fresh mediaReady /
-	//    transportsReady promise chain, and begins awaiting the server's
-	//    mediaConfiguration request which will arrive after the server
-	//    recognises the peer by peerId + reconnectKey in the URL query params.
+	//    transportsReady promise chain ready for the server's mediaConfiguration
+	//    request which arrives after the server sends roomReady to the new peer.
 	mediaService.reset();
 };
 
