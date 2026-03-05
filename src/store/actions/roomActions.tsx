@@ -126,7 +126,7 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('reconnectRoom()');
 
-	// 1. Clear stale Redux state — server will repopulate via roomReady + join response.
+	// 1. Clear stale peer/media state — repopulated by the peerReconnected notification.
 	batch(() => {
 		dispatch(peersActions.removeAllPeers());
 		dispatch(consumersActions.removeAllConsumers());
@@ -134,16 +134,13 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(roomSessionsActions.removeAllRoomSessions());
 	});
 
-	// 2. Remove mediaMiddleware listeners added on setState('joined') so they are
-	//    not duplicated when roomReady fires setState('joined') again after reconnect.
+	// 2. Remove mediaMiddleware listeners so they are not duplicated after reconnect.
 	mediaService.removeAllListeners();
 
-	// 3. Close stale transports; consumers clean up internally via transportclose.
+	// 3. Close stale transports.
 	mediaService.close();
 
-	// 4. Reset media state: rejects old promises, creates fresh mediaReady /
-	//    transportsReady promise chain ready for the server's mediaConfiguration
-	//    request which arrives after the server sends roomReady to the new peer.
+	// 4. Reset media state; server will send mediaConfiguration via assignRouter.
 	mediaService.reset();
 };
 
