@@ -133,13 +133,10 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(lobbyPeersActions.removeAllPeers());
 	});
 
-	// 2. Remove mediaMiddleware listeners so they are not duplicated after reconnect.
-	mediaService.removeAllListeners();
-
-	// 3. Close stale transports.
+	// 2. Close stale transports.
 	mediaService.close();
 
-	// 4. Reset media state; server will send mediaConfiguration via assignRouter.
+	// 3. Reset media state; server will send mediaConfiguration via assignRouter.
 	mediaService.reset();
 };
 

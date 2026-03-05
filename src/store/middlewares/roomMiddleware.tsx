@@ -206,8 +206,14 @@ const createRoomMiddleware = ({
 								dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
 							});
 
-							if (!getState().me.audioMuted) dispatch(updateMic());
-							if (!getState().me.videoMuted) dispatch(updateWebcam());
+							const lostAudio = getState().me.lostAudio;
+							const lostVideo = getState().me.lostVideo;
+
+							if (lostAudio) dispatch(meActions.setLostAudio(false));
+							if (lostVideo) dispatch(meActions.setLostVideo(false));
+
+							if (lostAudio || !getState().me.audioMuted) dispatch(updateMic());
+							if (lostVideo || !getState().me.videoMuted) dispatch(updateWebcam());
 
 							break;
 						}
