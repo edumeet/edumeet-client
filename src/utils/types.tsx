@@ -8,6 +8,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	infoTooltipEnabled: false,
 	infoTooltipText: '',
 	infoTooltipLink: '',
+	infoTooltipLinkNewWindow: false,
 	infoTooltipDesc: '',
 	managementUrl: undefined,
 	loginImageURL: '',
@@ -137,6 +138,7 @@ export interface EdumeetConfig {
 	infoTooltipEnabled: boolean;
 	infoTooltipText?: string;
 	infoTooltipLink?: string;
+	infoTooltipLinkNewWindow: boolean;
 	infoTooltipDesc?: string;
 	managementUrl?: string;
 	loginImageURL?: string;
