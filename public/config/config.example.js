@@ -109,6 +109,7 @@ var config = {
 	infoTooltipText: '',
 	infoTooltipDesc: '',
 	infoTooltipLink: '',
+	infoTooltipLinkNewWindow: false,
 
 	/**
 	 * Optional: show imprint/privacy links (blank hides them).

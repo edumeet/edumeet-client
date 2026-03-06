@@ -80,6 +80,7 @@ const GenericDialog = ({
 	const infoTooltipEnabled = edumeetConfig.infoTooltipEnabled;
 	const infoTooltipText = edumeetConfig.infoTooltipText;
 	const infoTooltipLink = edumeetConfig.infoTooltipLink;
+	const infoTooltipLinkNewWindow = edumeetConfig.infoTooltipLinkNewWindow;
 	const infoTooltipDesc = edumeetConfig.infoTooltipDesc;
 	
 	return (
@@ -97,7 +98,7 @@ const GenericDialog = ({
 			{infoTooltipEnabled && showFooter && <StyledDialogFooter>
 				<Grid container>
 					<Grid size={12} textAlign={'center'}>
-						{infoTooltipLink!='' ? <Link href={infoTooltipLink}>{ infoTooltipText }</Link> : infoTooltipText }
+						{infoTooltipLink!='' ? <Link href={infoTooltipLink} target={infoTooltipLinkNewWindow ? '_blank' : '_self'}>{ infoTooltipText }</Link> : infoTooltipText }
 					</Grid>
 					{infoTooltipDesc!='' && <Grid size={12} textAlign={'justify'}>
 						{ infoTooltipDesc }
