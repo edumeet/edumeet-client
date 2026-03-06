@@ -53,6 +53,7 @@ const Volume = ({
 	const { mediaService } = useContext(ServiceContext);
 	const [ volume, setVolume ] = useState<number>(0);
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
+	const micTrackId = useAppSelector((state) => state.me.micTrackId);
 
 	useEffect(() => {
 		let media: Consumer | PeerConsumer | undefined;
@@ -90,7 +91,7 @@ const Volume = ({
 		return () => {
 			volumeWatcher?.off('volumeChange', onVolumeChange);
 		};
-	}, [ consumer, mediaService.previewMicTrack ]);
+	}, [ consumer, mediaService.previewMicTrack, micTrackId ]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (

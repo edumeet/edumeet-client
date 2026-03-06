@@ -7,8 +7,9 @@ import { roomActions } from '../slices/roomSlice';
 import { drawingActions } from '../slices/drawingSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppThunk, fileService } from '../store';
-import { updateMic, updateWebcam } from './mediaActions';
+import { startExtraVideo, updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
+import { consumersActions } from '../slices/consumersSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { Logger } from '../../utils/Logger';
 import { stopListeners } from './startActions';
@@ -106,8 +107,18 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
 	});
 	
-	if (!getState().me.audioMuted) dispatch(updateMic());
-	if (!getState().me.videoMuted) dispatch(updateWebcam());
+	// On long-disconnect reconnect, producerClosed may have fired before joinRoom runs,
+	// setting audioMuted/videoMuted=true and lostAudio/lostVideo=true. Clear the lost
+	// flags and restart media regardless of muted state (mirrors peerReconnected logic).
+	const lostAudio = getState().me.lostAudio;
+	const lostVideo = getState().me.lostVideo;
+
+	if (lostAudio) dispatch(meActions.setLostAudio(false));
+	if (lostVideo) dispatch(meActions.setLostVideo(false));
+
+	if (lostAudio || !getState().me.audioMuted) dispatch(updateMic());
+	if (lostVideo || !getState().me.videoMuted) dispatch(updateWebcam());
+	if (getState().me.extraVideoEnabled) dispatch(startExtraVideo());
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
@@ -116,6 +127,39 @@ export const leaveRoom = (): AppThunk<Promise<void>> => async (
 	logger.debug('leaveRoom()');
 	dispatch(stopListeners());
 	dispatch(signalingActions.disconnect());
+};
+
+export const reconnectRoom = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	getState,
+	{ mediaService }
+): Promise<void> => {
+	logger.debug('reconnectRoom()');
+
+	// 1. Clear stale peer/media state — room sessions are cleared atomically in peerReconnected
+	//    (short disconnect) or in roomReady (long disconnect, see roomMiddleware).
+	batch(() => {
+		dispatch(peersActions.removeAllPeers());
+		dispatch(consumersActions.removeAllConsumers());
+		dispatch(lobbyPeersActions.removeAllPeers());
+	});
+
+	// 2. Stop all active senders so they restart cleanly after rejoin.
+	//    local=true (default) suppresses mediaClosed — avoids setting audioMuted/videoMuted here.
+	for (const sender of Object.values(mediaService.mediaSenders)) {
+		sender.stop();
+	}
+
+	// Screen sharing cannot be auto-restarted (requires user gesture via getDisplayMedia).
+	// Clear the enabled flags so the UI reflects the actual stopped state.
+	if (getState().me.screenEnabled) dispatch(meActions.setScreenEnabled(false));
+	if (getState().me.screenAudioEnabled) dispatch(meActions.setScreenAudioEnabled(false));
+
+	// 3. Close stale transports.
+	mediaService.close();
+
+	// 4. Reset media state; server will send mediaConfiguration via assignRouter.
+	mediaService.reset();
 };
 
 export const createBreakoutRoom = (name: string): AppThunk<Promise<void>> => async (

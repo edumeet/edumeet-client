@@ -568,6 +568,7 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 			});
 		}
 
+		dispatch(meActions.setMicTrackId(mediaService.mediaSenders['mic'].track?.id));
 		dispatch(meActions.setAudioMuted(false));
 		dispatch(meActions.setMicEnabled(true));
 	} catch (error) {
@@ -587,6 +588,7 @@ export const stopMic = (): AppThunk<void> => (
 
 	mediaService.mediaSenders['mic'].stop();
 	dispatch(meActions.setMicEnabled(false));
+	dispatch(meActions.setMicTrackId(undefined));
 	dispatch(meActions.setAudioMuted(true));
 };
 
@@ -749,6 +751,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 				effectsService.stop(mediaService.mediaSenders['webcam'].track?.id);
 
 				await mediaService.mediaSenders['webcam'].replaceTrack(track);
+				dispatch(meActions.setWebcamTrackId(mediaService.mediaSenders['webcam'].track?.id));
 			} else if (config.simulcast) {
 				const encodings = getEncodings(width, height);
 
@@ -778,6 +781,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 			});
 		}
 
+		dispatch(meActions.setWebcamTrackId(mediaService.mediaSenders['webcam'].track?.id));
 		dispatch(meActions.setVideoMuted(false));
 		dispatch(meActions.setWebcamEnabled(true));
 	} catch (error) {
@@ -798,6 +802,8 @@ export const stopWebcam = (): AppThunk<void> => (
 	effectsService.stop(mediaService.mediaSenders['webcam'].track?.id);
 	mediaService.mediaSenders['webcam'].stop();
 	dispatch(meActions.setWebcamEnabled(false));
+	dispatch(meActions.setWebcamTrackId(undefined));
+	dispatch(meActions.setVideoMuted(true));
 };
 
 /**

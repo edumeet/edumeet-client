@@ -138,13 +138,13 @@ export const currentRoomSessionSelector = createSelector(
  */
 export const sessionIdSpotlightsSelector = createSelector(
 	currentRoomSessionSelector,
-	(roomSession) => roomSession.spotlights
+	(roomSession) => roomSession?.spotlights ?? []
 );
 
 export const sessionIdSpotlightedConsumerSelector = createSelector(
 	currentRoomSessionSelector,
 	consumersSelect,
-	(roomSession, consumers) => consumers.filter((c) => roomSession.spotlights.includes(c.id))
+	(roomSession, consumers) => consumers.filter((c) => roomSession?.spotlights?.includes(c.id))
 );
 
 const consumerSelectedPeerIdsSelector = createSelector(
@@ -163,6 +163,7 @@ export const spotlightPeersSelector = createSelector(
 	currentRoomSessionSelector,
 	consumerSelectedPeerIdsSelector,
 	(maxActiveVideos, roomSession, consumerSelectedPeerIds) => {
+		if (!roomSession) return [];
 		const { spotlights, selectedPeers } = roomSession;
 		const uniqueSet = Array.from(new Set([ ...consumerSelectedPeerIds, ...selectedPeers, ...spotlights ]));
 
@@ -603,7 +604,7 @@ export const makeIsActiveSpeakerSelector = (id: string): Selector<boolean> => {
 		sessionIdSelector,
 		roomSessionsSelect,
 		(sessionId, roomSessions) => {
-			return roomSessions[sessionId].activeSpeakerId === id;
+			return roomSessions[sessionId]?.activeSpeakerId === id;
 		}
 	);
 };

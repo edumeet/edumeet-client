@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type SignalingConnectionState = 'new' | 'connecting' | 'connected' | 'disconnected';
+export type SignalingConnectionState = 'new' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
 export interface SignalingState {
 	state: SignalingConnectionState;
@@ -20,6 +20,12 @@ const signalingSlice = createSlice({
 			state.state = 'connecting';
 		}),
 		connected: ((state) => {
+			state.state = 'connected';
+		}),
+		reconnecting: ((state) => {
+			state.state = 'reconnecting';
+		}),
+		reconnected: ((state) => {
 			state.state = 'connected';
 		}),
 		disconnect: ((state) => {
