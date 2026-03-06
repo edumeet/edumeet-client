@@ -6,7 +6,7 @@ import { permissionsActions } from '../slices/permissionsSlice';
 import { roomActions } from '../slices/roomSlice';
 import { drawingActions } from '../slices/drawingSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { AppThunk, fileService, RootState } from '../store';
+import { AppThunk, fileService } from '../store';
 import { startExtraVideo, updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { consumersActions } from '../slices/consumersSlice';
@@ -131,7 +131,7 @@ export const leaveRoom = (): AppThunk<Promise<void>> => async (
 
 export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 	dispatch,
-	getState: () => RootState,
+	getState,
 	{ mediaService }
 ): Promise<void> => {
 	logger.debug('reconnectRoom()');
