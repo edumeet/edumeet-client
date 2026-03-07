@@ -94,6 +94,12 @@ var config = {
 	qrCodeEnabled: false,
 
 	/**
+	 * Enable/disable personal room dropdown
+	 */
+	roomDropdownEnabled: false,
+
+
+	/**
 	 * Optional: enable countdown timer in UI.
 	 */
 	countdownTimerEnabled: false,

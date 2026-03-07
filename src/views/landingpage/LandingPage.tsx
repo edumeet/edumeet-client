@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Box, Link, Typography } from '@mui/material';
+import { Button, Container, Box, Link, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
@@ -11,18 +11,23 @@ import { QRCode } from 'react-qrcode-logo';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { startListeners, stopListeners } from '../../store/actions/startActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { getData } from '../../store/actions/managementActions';
 
 const LandingPage = (): React.JSX.Element | null => {
 	const navigate = useNavigate();
 	const randomizeOnBlank = edumeetConfig.randomizeOnBlank;
 	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomString({ length: 8 }).toLowerCase() : '');
+	const [ rooms, setRooms ] = useState<Array<{ id: number; name: string }>>([]);
+	
 	const onClicked = () => navigate(`/${roomId}`);
 
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
 	const qrCodeEnabled = edumeetConfig.qrCodeEnabled;
+	const roomDropdownEnabled = edumeetConfig.roomDropdownEnabled;
 
 	const dispatch = useAppDispatch();
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	useEffect(() => {
 		dispatch(startListeners());
@@ -32,7 +37,51 @@ const LandingPage = (): React.JSX.Element | null => {
 		};
 	}, [ dispatch ]);
 
+	useEffect(() => {
+		if (!roomDropdownEnabled || !loggedIn) return;
+
+		dispatch(getData('rooms')).then((roomsData) => {
+			if (roomsData && roomsData.data) {
+				setRooms(roomsData.data);
+			}
+		});
+	}, [ roomDropdownEnabled, loggedIn ]);
+
 	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);
+
+	const handleRoomSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
+		const selectedValue = event.target.value as string;
+
+		setRoomId(selectedValue);
+	};
+
+	const handleDropdownOpen = () => {
+		dispatch(getData('rooms')).then((roomsData) => {
+			if (roomsData && roomsData.data) {
+				setRooms(roomsData.data);
+			}
+		});
+	};
+
+	useEffect(() => {
+		if (!roomDropdownEnabled || !loggedIn) return;
+
+		const handleVisibilityChange = () => {
+			if (!document.hidden) {
+				dispatch(getData('rooms')).then((roomsData) => {
+					if (roomsData && roomsData.data) {
+						setRooms(roomsData.data);
+					}
+				});
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+		
+		return () => {
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
+	}, [ roomDropdownEnabled, loggedIn, dispatch ]);
 
 	if (localeInProgress) {
 		return null;
@@ -47,16 +96,36 @@ const LandingPage = (): React.JSX.Element | null => {
 				content={
 					<Container style={{ textAlign: 'center' }}>
 						{qrCodeEnabled && <QRCode value={`${window.location.protocol}//${window.location.hostname }/${roomId}`} />}
-						<TextInputField
-							label={roomNameLabel()}
-							value={roomId}
-							setValue={setRoomId}
-							onEnter={onClicked}
-							randomizeOnBlank={randomizeOnBlank}
-							autoFocus
-						/>
+						{roomDropdownEnabled && loggedIn && rooms.length > 0 ? (
+							<FormControl fullWidth margin="normal">
+								<InputLabel id="room-select-label">{roomNameLabel()}</InputLabel>
+								<Select
+									labelId="room-select-label"
+									id="room-select"
+									value={roomId}
+									label={roomNameLabel()}
+									onChange={handleRoomSelect}
+									onOpen={handleDropdownOpen}
+									autoFocus
+								>
+									{rooms.map((room) => (
+										<MenuItem key={room.id} value={room.name}>
+											{room.name}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						) : (
+							<TextInputField
+								label={roomNameLabel()}
+								value={roomId}
+								setValue={setRoomId}
+								onEnter={onClicked}
+								randomizeOnBlank={randomizeOnBlank}
+								autoFocus
+							/>
+						)}
 					</Container>
-
 				}
 				actions={
 					<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
