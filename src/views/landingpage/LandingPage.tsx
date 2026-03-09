@@ -36,7 +36,7 @@ const LandingPage = (): React.JSX.Element | null => {
 			setActiveEntryTab(1);
 		}
 
-		if (!loggedIn) {
+		if (!loggedIn || rooms.length == 0) {
 			setActiveEntryTab(0);
 		}
 	}, [ roomDropdownEnabled, loggedIn, rooms ]);
