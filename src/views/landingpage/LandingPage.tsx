@@ -30,6 +30,18 @@ const LandingPage = (): React.JSX.Element | null => {
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	useEffect(() => {
+		if (!roomDropdownEnabled) return;
+
+		if (loggedIn && rooms.length > 0) {
+			setActiveEntryTab(1);
+		}
+
+		if (!loggedIn) {
+			setActiveEntryTab(0);
+		}
+	}, [ roomDropdownEnabled, loggedIn, rooms ]);
+
+	useEffect(() => {
 		dispatch(startListeners());
 
 		return () => {
