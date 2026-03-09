@@ -108,27 +108,29 @@ const LandingPage = (): React.JSX.Element | null => {
 				content={
 					<Container style={{ textAlign: 'center' }}>
 						{qrCodeEnabled && <QRCode value={`${window.location.protocol}//${window.location.hostname }/${roomId}`} />}
-						<Tabs
-							value={activeEntryTab}
-							onChange={(_event, value) => {
-								setActiveEntryTab(value);
-							}}
-							centered
-						>
-							<Tab label="Enter room name" aria-label="Enter room name" />
-							{roomDropdownEnabled && loggedIn && rooms.length > 0 && (
+						{roomDropdownEnabled && loggedIn && rooms.length > 0 && (
+							<Tabs
+								value={activeEntryTab}
+								onChange={(_event, value) => {
+									setActiveEntryTab(value);
+								}}
+								centered={false}
+							>
+								<Tab label="Enter room name" aria-label="Enter room name" />
 								<Tab label="Select from my rooms" aria-label="Select from my rooms" />
-							)}
-						</Tabs>
+							</Tabs>
+						)}
 						{activeEntryTab === 0 && (
-							<TextInputField
-								label={roomNameLabel()}
-								value={roomId}
-								setValue={setRoomId}
-								onEnter={onClicked}
-								randomizeOnBlank={randomizeOnBlank}
-								autoFocus
-							/>
+							<Box sx={{ pt: 2 }}>
+								<TextInputField
+									label={roomNameLabel()}
+									value={roomId}
+									setValue={setRoomId}
+									onEnter={onClicked}
+									randomizeOnBlank={randomizeOnBlank}
+									autoFocus
+								/>
+							</Box>
 						)}
 						{activeEntryTab === 1 && roomDropdownEnabled && loggedIn && rooms.length > 0 && (
 							<FormControl fullWidth margin="normal">
@@ -141,6 +143,7 @@ const LandingPage = (): React.JSX.Element | null => {
 									onChange={handleRoomSelect}
 									onOpen={handleDropdownOpen}
 									autoFocus
+									style={{ textAlign: 'left' }}
 								>
 									{rooms.map((room) => (
 										<MenuItem key={room.id} value={room.name}>{room.name}</MenuItem>
