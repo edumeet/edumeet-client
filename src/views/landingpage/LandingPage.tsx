@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Box, Link, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
-import randomString from 'random-string';
+import { Button, Container, Box, Link, Typography, MenuItem, Select, InputLabel, FormControl, Tab, Tabs } from '@mui/material'; import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
@@ -18,6 +17,7 @@ const LandingPage = (): React.JSX.Element | null => {
 	const randomizeOnBlank = edumeetConfig.randomizeOnBlank;
 	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomString({ length: 8 }).toLowerCase() : '');
 	const [ rooms, setRooms ] = useState<Array<{ id: number; name: string }>>([]);
+	const [ activeEntryTab, setActiveEntryTab ] = useState(0);
 	
 	const onClicked = () => navigate(`/${roomId}`);
 
@@ -96,7 +96,29 @@ const LandingPage = (): React.JSX.Element | null => {
 				content={
 					<Container style={{ textAlign: 'center' }}>
 						{qrCodeEnabled && <QRCode value={`${window.location.protocol}//${window.location.hostname }/${roomId}`} />}
-						{roomDropdownEnabled && loggedIn && rooms.length > 0 ? (
+						<Tabs
+							value={activeEntryTab}
+							onChange={(_event, value) => {
+								setActiveEntryTab(value);
+							}}
+							centered
+						>
+							<Tab label="Enter room name" aria-label="Enter room name" />
+							{roomDropdownEnabled && loggedIn && rooms.length > 0 && (
+								<Tab label="Select from my rooms" aria-label="Select from my rooms" />
+							)}
+						</Tabs>
+						{activeEntryTab === 0 && (
+							<TextInputField
+								label={roomNameLabel()}
+								value={roomId}
+								setValue={setRoomId}
+								onEnter={onClicked}
+								randomizeOnBlank={randomizeOnBlank}
+								autoFocus
+							/>
+						)}
+						{activeEntryTab === 1 && roomDropdownEnabled && loggedIn && rooms.length > 0 && (
 							<FormControl fullWidth margin="normal">
 								<InputLabel id="room-select-label">{roomNameLabel()}</InputLabel>
 								<Select
@@ -109,21 +131,10 @@ const LandingPage = (): React.JSX.Element | null => {
 									autoFocus
 								>
 									{rooms.map((room) => (
-										<MenuItem key={room.id} value={room.name}>
-											{room.name}
-										</MenuItem>
+										<MenuItem key={room.id} value={room.name}>{room.name}</MenuItem>
 									))}
 								</Select>
 							</FormControl>
-						) : (
-							<TextInputField
-								label={roomNameLabel()}
-								value={roomId}
-								setValue={setRoomId}
-								onEnter={onClicked}
-								randomizeOnBlank={randomizeOnBlank}
-								autoFocus
-							/>
 						)}
 					</Container>
 				}
