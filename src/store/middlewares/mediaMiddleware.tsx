@@ -69,7 +69,6 @@ const createMediaMiddleware = ({
 					};
 
 					dispatch(consumersActions.addConsumer(stateConsumer));
-
 				});
 
 				mediaService.on('transcriptionStarted', () => {
