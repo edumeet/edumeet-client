@@ -70,18 +70,6 @@ const createMediaMiddleware = ({
 
 					dispatch(consumersActions.addConsumer(stateConsumer));
 
-					if (consumer.kind === 'video') {
-						consumer.track.addEventListener('unmute', async () => {
-							const stats = await consumer.getStats();
-
-							for (const report of stats.values()) {
-								if (report.type === 'inbound-rtp') {
-									logger.debug('consumerCreated video [peerId:%s, source:%s] %o', consumer.appData.peerId, consumer.appData.source, { width: report.frameWidth, height: report.frameHeight, fps: report.framesPerSecond });
-									break;
-								}
-							}
-						}, { once: true });
-					}
 				});
 
 				mediaService.on('transcriptionStarted', () => {
