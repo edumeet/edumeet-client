@@ -11,7 +11,7 @@
  */
 
 import EventEmitter from 'events';
-import { EffectTrack } from '../utils/effectbackground/EffectTrack';
+import type { EffectTrack } from '../utils/effectbackground/EffectTrack';
 import { Logger } from '../utils/Logger';
 import { timeoutPromise } from '../utils/timeoutPromise';
 import { BackgroundConfig } from '../utils/types';
@@ -69,7 +69,7 @@ export class EffectsService extends EventEmitter {
 		if (!this.model) this.model = await this.createModel();
 
 		if (!AppliedEffectTrack) ({ EffectTrack: AppliedEffectTrack } = await import('../utils/effectbackground/EffectTrack'));
-		const effectTrack = EffectTrack.createTrack(MLBackend, this.model, track, this.webGLSupport, backgroundConfig);
+		const effectTrack = AppliedEffectTrack.createTrack(MLBackend, this.model, track, this.webGLSupport, backgroundConfig);
 
 		this.effectTracks.set(effectTrack.outputTrack.id, effectTrack);
 
