@@ -74,10 +74,6 @@ const createMediaMiddleware = ({
 						const { width, height, frameRate, aspectRatio } = consumer.track.getSettings();
 
 						logger.debug('consumerCreated video [peerId:%s, source:%s] %o', consumer.appData.peerId, consumer.appData.source, { width, height, frameRate, aspectRatio });
-
-						consumer.on('layerschange', (layers) => {
-							logger.debug('consumerLayersChange [peerId:%s, source:%s] %o', consumer.appData.peerId, consumer.appData.source, layers);
-						});
 					}
 				});
 
