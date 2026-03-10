@@ -69,6 +69,16 @@ const createMediaMiddleware = ({
 					};
 
 					dispatch(consumersActions.addConsumer(stateConsumer));
+
+					if (consumer.kind === 'video') {
+						const { width, height, frameRate, aspectRatio } = consumer.track.getSettings();
+
+						logger.debug('consumerCreated video [peerId:%s, source:%s] %o', consumer.appData.peerId, consumer.appData.source, { width, height, frameRate, aspectRatio });
+
+						consumer.on('layerschange', (layers) => {
+							logger.debug('consumerLayersChange [peerId:%s, source:%s] %o', consumer.appData.peerId, consumer.appData.source, layers);
+						});
+					}
 				});
 
 				mediaService.on('transcriptionStarted', () => {
