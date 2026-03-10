@@ -369,6 +369,8 @@ export const updatePreviewWebcam = ({
 			};
 		}
 
+		logger.debug('updatePreviewWebcam() getUserMedia constraints %o', { video: videoOptions });
+
 		const stream = await navigator.mediaDevices.getUserMedia({
 			video: videoOptions
 		});
@@ -377,10 +379,12 @@ export const updatePreviewWebcam = ({
 
 		if (!track) throw new Error('no webcam track');
 
-		if (updateSelection) {
-			const { deviceId: trackDeviceId } = track.getSettings();
+		const { deviceId: gotDeviceId, width: gotWidth, height: gotHeight, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode } = track.getSettings();
 
-			dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
+		logger.debug('updatePreviewWebcam() getUserMedia actual track %o', { deviceId: gotDeviceId, width: gotWidth, height: gotHeight, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode });
+
+		if (updateSelection) {
+			dispatch(settingsActions.setSelectedVideoDevice(gotDeviceId));
 		}
 
 		const { videoBackgroundEffect } = getState().me;
@@ -714,12 +718,16 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 			if (start) track = mediaService.previewWebcamTrack;
 
 			if (!track) {
+				const videoConstraints = {
+					deviceId: { exact: deviceId },
+					...getVideoConstrains(resolution, aspectRatio),
+					frameRate
+				};
+
+				logger.debug('updateWebcam() getUserMedia constraints %o', { video: videoConstraints });
+
 				const stream = await navigator.mediaDevices.getUserMedia({
-					video: {
-						deviceId: { exact: deviceId },
-						...getVideoConstrains(resolution, aspectRatio),
-						frameRate
-					}
+					video: videoConstraints
 				});
 
 				([ track ] = stream.getVideoTracks());
@@ -731,6 +739,12 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 
 			const isPreview = track === mediaService.previewWebcamTrack;
 			const inputTrack = effectsService.effectTracks.get(track.id)?.inputTrack;
+
+			{
+				const { deviceId: gotDeviceId, width: gotWidth, height: gotHeight, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode } = (inputTrack ?? track).getSettings();
+
+				logger.debug('updateWebcam() getUserMedia actual track %o', { deviceId: gotDeviceId, width: gotWidth, height: gotHeight, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode, usedPreviewTrack: isPreview });
+			}
 
 			const { deviceId: trackDeviceId, width, height } = inputTrack?.getSettings() ?? track.getSettings();
 
@@ -1020,19 +1034,25 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 		if (!deviceId) logger.warn('no extravideo device');
 
 		if (start || replace) {
+			const videoConstraints = {
+				deviceId: { exact: deviceId },
+				...getVideoConstrains(resolution, aspectRatio),
+				frameRate,
+			};
+
+			logger.debug('startExtraVideo() getUserMedia constraints %o', { video: videoConstraints });
+
 			const stream = await navigator.mediaDevices.getUserMedia({
-				video: {
-					deviceId: { exact: deviceId },
-					...getVideoConstrains(resolution, aspectRatio),
-					frameRate,
-				}
+				video: videoConstraints
 			});
 
 			([ track ] = stream.getVideoTracks());
 
 			if (!track) throw new Error('no webcam track');
 
-			const { width, height } = track.getSettings();
+			const { deviceId: gotDeviceId, width, height, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode } = track.getSettings();
+
+			logger.debug('startExtraVideo() getUserMedia actual track %o', { deviceId: gotDeviceId, width, height, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode });
 
 			const { videoBackgroundEffect } = getState().me;
 
