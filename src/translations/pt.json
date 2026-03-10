@@ -288,9 +288,6 @@
   "label.countdownTimer.stop": null,
   "label.countdownTimer.set": null,
   "label.countdownTimer.finished": null,
-  "tooltip.coundowntimer.start": null,
-  "tooltip.coundowntimer.stop": null,
-  "tooltip.coundowntimer.pause": null,
   "label.management": null,
   "label.managementTenantSettings": null,
   "label.managementRoomSettings": null,
@@ -352,5 +349,8 @@
   "label.management.room.localRecordingEnabled": null,
   "label.management.room.breakoutsEnabled": null,
   "label.management.room.owners": null,
-  "label.management.tenantAdmin": null
+  "label.management.tenantAdmin": null,
+  "tooltip.countdowntimer.start": null,
+  "tooltip.countdowntimer.stop": null,
+  "tooltip.countdowntimer.pause": null
 }
