@@ -71,10 +71,15 @@ const createMediaMiddleware = ({
 					dispatch(consumersActions.addConsumer(stateConsumer));
 
 					if (consumer.kind === 'video') {
-						consumer.track.addEventListener('unmute', () => {
-							const { width, height, frameRate, aspectRatio } = consumer.track.getSettings();
+						consumer.track.addEventListener('unmute', async () => {
+							const stats = await consumer.getStats();
 
-							logger.debug('consumerCreated video [peerId:%s, source:%s] %o', consumer.appData.peerId, consumer.appData.source, { width, height, frameRate, aspectRatio });
+							for (const report of stats.values()) {
+								if (report.type === 'inbound-rtp') {
+									logger.debug('consumerCreated video [peerId:%s, source:%s] %o', consumer.appData.peerId, consumer.appData.source, { width: report.frameWidth, height: report.frameHeight, fps: report.framesPerSecond });
+									break;
+								}
+							}
 						}, { once: true });
 					}
 				});
