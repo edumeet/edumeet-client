@@ -654,7 +654,7 @@ export const updateVideoSettings = (settings: VideoSettings = {}): AppThunk<Prom
 	dispatch(settingsActions.updateSettings(settings));
 	dispatch(meActions.setWebcamEnabled(false));
 	dispatch(stopPreviewWebcam());
-	dispatch(stopWebcam());
+	if (webcamEnabled) dispatch(stopWebcam());
 
 	if (extraVideoEnabled) {
 		dispatch(stopExtraVideo());
