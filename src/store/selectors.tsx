@@ -31,7 +31,14 @@ const recordingSelector: Selector<boolean | undefined> = (state) => state.room.r
 
 export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
 
-export const isSinkIdSupported = (): boolean => 'setSinkId' in HTMLAudioElement.prototype;
+export const isSinkIdSupported = (): boolean => {
+	if (!('setSinkId' in HTMLAudioElement.prototype)) return false;
+
+	// Firefox has setSinkId in the prototype but it is broken (bugzilla #1849108).
+	// Only trust it on Chromium-based browsers (Chrome, Edge, Opera, etc.).
+
+	return /Chrome\//.test(navigator.userAgent);
+};
 
 export const canSelectAudioOutput: Selector<boolean> = () => isSinkIdSupported();
 
