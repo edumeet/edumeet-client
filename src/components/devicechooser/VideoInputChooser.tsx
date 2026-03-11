@@ -71,8 +71,8 @@ const VideoInputChooser = ({
 				disabled={videoDevices.length < 2 || videoInProgress}
 				devices={videoDevices}
 				extraButtons={<>
-					{ withBlur && <BlurButton disabled={videoDevices.length < 2 || videoInProgress} /> }
-					{ withVideoBackground && <VideoBackgroundButton disabled={videoDevices.length < 2 || videoInProgress} /> }
+					{ withBlur && <BlurButton disabled={videoDevices.length === 0 || videoInProgress} /> }
+					{ withVideoBackground && <VideoBackgroundButton disabled={videoDevices.length === 0 || videoInProgress} /> }
 					{ withConfirm && (selectedVideoDevice !== videoDevice) && (
 						<Button
 							style={{ minWidth: 'fit-content' }}

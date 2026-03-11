@@ -153,15 +153,17 @@ export const BlurButton = ({ disabled }: { disabled?: boolean } = {}): React.JSX
 	const videoBackgroundEffectType = useAppSelector((state) => state.me.videoBackgroundEffect?.type);
 	const blurEnabled = videoBackgroundEffectType === BackgroundType.BLUR;
 
+	const isDisabled = disabled || blurSwitchDisabled;
+
 	return (
-		<Tooltip title={ backgroundBlurLabel() } disableInteractive>
+		<Tooltip title={ isDisabled ? '' : backgroundBlurLabel() } disableInteractive>
 			<span>
 				<Button
 					onClick={() => {
 						dispatch(meActions.setVideoBackgroundEffect({ type: blurEnabled ? BackgroundType.NONE : BackgroundType.BLUR }));
 						dispatch(updateVideoSettings());
 					}}
-					disabled={disabled || blurSwitchDisabled}>
+					disabled={isDisabled}>
 					{!blurEnabled && <BlurOnIcon />}
 					{blurEnabled && <BlurOffIcon />}
 				</Button>
@@ -188,13 +190,15 @@ export const VideoBackgroundButton = ({ disabled }: { disabled?: boolean } = {})
 		}
 	};
 
+	const isDisabled = disabled || videoBackgroundSwitchDisabled;
+
 	return (
-		<Tooltip title={ selectVideoBackgroundLabel() } disableInteractive>
+		<Tooltip title={ isDisabled ? '' : selectVideoBackgroundLabel() } disableInteractive>
 			<span>
 				{backgroundEnabled}
 				<Button
 					onClick={handleClick}
-					disabled={disabled || videoBackgroundSwitchDisabled}>
+					disabled={isDisabled}>
 					{!backgroundEnabled && <ImageIcon />}
 					{backgroundEnabled && <HideImageIcon />}
 				</Button>
