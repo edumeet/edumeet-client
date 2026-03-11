@@ -206,14 +206,17 @@ const roomSessionsSlice = createSlice({
 			}
 		}),
 		clearFile: ((state, action: PayloadAction<{ magnetURI: string }>) => {
-			
+
 			for (const roomSession of Object.values(state)) {
-				
+
 				roomSession.fileHistory = roomSession.fileHistory.filter((item: FilesharingFile) => {
 					return (!(action.payload.magnetURI == item.magnetURI));
 				}) as FilesharingFile[] ?? [];
 			}
-			
+
+		}),
+		removeAllRoomSessions: (() => {
+			return initialState;
 		}),
 	},
 	extraReducers: (builder) => {
@@ -227,8 +230,8 @@ const roomSessionsSlice = createSlice({
 				for (const peer of action.payload) {
 					const roomSession = state[peer.sessionId];
 
-					if (!roomSession?.spotlights.includes(peer.id))
-						roomSession?.spotlights.push(peer.id);
+					if (!roomSession?.spotlights?.includes(peer.id))
+						roomSession?.spotlights?.push(peer.id);
 				}
 			})
 			.addCase(peersActions.setPeerSessionId, (state, action) => {

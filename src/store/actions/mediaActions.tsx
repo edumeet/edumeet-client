@@ -369,6 +369,8 @@ export const updatePreviewWebcam = ({
 			};
 		}
 
+		logger.debug('updatePreviewWebcam() getUserMedia constraints %o', { video: videoOptions });
+
 		const stream = await navigator.mediaDevices.getUserMedia({
 			video: videoOptions
 		});
@@ -377,10 +379,12 @@ export const updatePreviewWebcam = ({
 
 		if (!track) throw new Error('no webcam track');
 
-		if (updateSelection) {
-			const { deviceId: trackDeviceId } = track.getSettings();
+		const { deviceId: gotDeviceId, width: gotWidth, height: gotHeight, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode } = track.getSettings();
 
-			dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
+		logger.debug('updatePreviewWebcam() getUserMedia actual track %o', { deviceId: gotDeviceId, width: gotWidth, height: gotHeight, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode });
+
+		if (updateSelection) {
+			dispatch(settingsActions.setSelectedVideoDevice(gotDeviceId));
 		}
 
 		const { videoBackgroundEffect } = getState().me;
@@ -568,6 +572,7 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 			});
 		}
 
+		dispatch(meActions.setMicTrackId(mediaService.mediaSenders['mic'].track?.id));
 		dispatch(meActions.setAudioMuted(false));
 		dispatch(meActions.setMicEnabled(true));
 	} catch (error) {
@@ -587,6 +592,7 @@ export const stopMic = (): AppThunk<void> => (
 
 	mediaService.mediaSenders['mic'].stop();
 	dispatch(meActions.setMicEnabled(false));
+	dispatch(meActions.setMicTrackId(undefined));
 	dispatch(meActions.setAudioMuted(true));
 };
 
@@ -652,7 +658,7 @@ export const updateVideoSettings = (settings: VideoSettings = {}): AppThunk<Prom
 	dispatch(settingsActions.updateSettings(settings));
 	dispatch(meActions.setWebcamEnabled(false));
 	dispatch(stopPreviewWebcam());
-	dispatch(stopWebcam());
+	if (webcamEnabled) dispatch(stopWebcam());
 
 	if (extraVideoEnabled) {
 		dispatch(stopExtraVideo());
@@ -712,12 +718,16 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 			if (start) track = mediaService.previewWebcamTrack;
 
 			if (!track) {
+				const videoConstraints = {
+					deviceId: { exact: deviceId },
+					...getVideoConstrains(resolution, aspectRatio),
+					frameRate
+				};
+
+				logger.debug('updateWebcam() getUserMedia constraints %o', { video: videoConstraints });
+
 				const stream = await navigator.mediaDevices.getUserMedia({
-					video: {
-						deviceId: { exact: deviceId },
-						...getVideoConstrains(resolution, aspectRatio),
-						frameRate
-					}
+					video: videoConstraints
 				});
 
 				([ track ] = stream.getVideoTracks());
@@ -729,6 +739,12 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 
 			const isPreview = track === mediaService.previewWebcamTrack;
 			const inputTrack = effectsService.effectTracks.get(track.id)?.inputTrack;
+
+			{
+				const { deviceId: gotDeviceId, width: gotWidth, height: gotHeight, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode } = (inputTrack ?? track).getSettings();
+
+				logger.debug('updateWebcam() getUserMedia actual track %o', { deviceId: gotDeviceId, width: gotWidth, height: gotHeight, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode, usedPreviewTrack: isPreview });
+			}
 
 			const { deviceId: trackDeviceId, width, height } = inputTrack?.getSettings() ?? track.getSettings();
 
@@ -749,6 +765,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 				effectsService.stop(mediaService.mediaSenders['webcam'].track?.id);
 
 				await mediaService.mediaSenders['webcam'].replaceTrack(track);
+				dispatch(meActions.setWebcamTrackId(mediaService.mediaSenders['webcam'].track?.id));
 			} else if (config.simulcast) {
 				const encodings = getEncodings(width, height);
 
@@ -778,6 +795,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 			});
 		}
 
+		dispatch(meActions.setWebcamTrackId(mediaService.mediaSenders['webcam'].track?.id));
 		dispatch(meActions.setVideoMuted(false));
 		dispatch(meActions.setWebcamEnabled(true));
 	} catch (error) {
@@ -798,6 +816,8 @@ export const stopWebcam = (): AppThunk<void> => (
 	effectsService.stop(mediaService.mediaSenders['webcam'].track?.id);
 	mediaService.mediaSenders['webcam'].stop();
 	dispatch(meActions.setWebcamEnabled(false));
+	dispatch(meActions.setWebcamTrackId(undefined));
+	dispatch(meActions.setVideoMuted(true));
 };
 
 /**
@@ -1014,19 +1034,25 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 		if (!deviceId) logger.warn('no extravideo device');
 
 		if (start || replace) {
+			const videoConstraints = {
+				deviceId: { exact: deviceId },
+				...getVideoConstrains(resolution, aspectRatio),
+				frameRate,
+			};
+
+			logger.debug('startExtraVideo() getUserMedia constraints %o', { video: videoConstraints });
+
 			const stream = await navigator.mediaDevices.getUserMedia({
-				video: {
-					deviceId: { exact: deviceId },
-					...getVideoConstrains(resolution, aspectRatio),
-					frameRate,
-				}
+				video: videoConstraints
 			});
 
 			([ track ] = stream.getVideoTracks());
 
 			if (!track) throw new Error('no webcam track');
 
-			const { width, height } = track.getSettings();
+			const { deviceId: gotDeviceId, width, height, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode } = track.getSettings();
+
+			logger.debug('startExtraVideo() getUserMedia actual track %o', { deviceId: gotDeviceId, width, height, frameRate: gotFrameRate, aspectRatio: gotAspectRatio, facingMode: gotFacingMode });
 
 			const { videoBackgroundEffect } = getState().me;
 

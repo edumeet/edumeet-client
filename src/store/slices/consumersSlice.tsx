@@ -56,6 +56,9 @@ const consumersSlice = createSlice({
 					consumer.remotePaused = false;
 			}
 		}),
+		removeAllConsumers: (() => {
+			return [];
+		}),
 	},
 	extraReducers: (builder) => {
 		builder

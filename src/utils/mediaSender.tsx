@@ -332,6 +332,9 @@ export class MediaSender extends EventEmitter {
 		producer.observer.on('pause', pauseListener);
 		producer.observer.on('resume', resumeListener);
 
+		// Re-apply pause if it was requested during the await sendTransport.produce() gap
+		if (this.paused) this.producer.pause();
+
 		return producer;
 	}
 
