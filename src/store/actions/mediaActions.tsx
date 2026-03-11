@@ -70,8 +70,13 @@ function showMediaErrorToast(
 		return true;
 	}
 
-	// Device/capture busy or cannot start
-	if (name === 'NotReadableError' || name === 'TrackStartError') {
+	// Device/capture busy or cannot start.
+	// Firefox throws AbortError (message: "Starting video/audio input failed")
+	// where Chrome/Edge throw NotReadableError.
+	if (
+		name === 'NotReadableError' || name === 'TrackStartError' ||
+		(name === 'AbortError' && kind !== 'screen')
+	) {
 		const what = kind === 'microphone' ? 'Microphone' : kind === 'camera' ? 'Camera' : 'Screen sharing';
 
 		enqueueToast(`${what} is already in use or could not start.`, 'error');

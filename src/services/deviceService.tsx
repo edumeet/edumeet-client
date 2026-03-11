@@ -32,10 +32,16 @@ export class DeviceService extends EventEmitter {
 		let newDevices: MediaDevice[];
 
 		try {
+			const rawDevices = await navigator.mediaDevices.enumerateDevices();
+
+			logger.debug('updateMediaDevices() raw [count:%d, devices:%o]', rawDevices.length, rawDevices);
+
 			const devicesList =
-				(await navigator.mediaDevices.enumerateDevices())
+				rawDevices
 					.filter((d) => d.deviceId)
 					.map((d) => ({ deviceId: d.deviceId, kind: d.kind, label: d.label }));
+
+			logger.debug('updateMediaDevices() filtered [count:%d]', devicesList.length);
 
 			if (devicesList.length === 0)
 				return;
