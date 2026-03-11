@@ -31,11 +31,9 @@ const recordingSelector: Selector<boolean | undefined> = (state) => state.room.r
 
 export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
 
-export const canSelectAudioOutput: Selector<boolean> = (state) => {
-	const { name, version } = state.me.browser;
+export const isSinkIdSupported = (): boolean => 'setSinkId' in HTMLAudioElement.prototype;
 
-	return name === 'chrome' && Number.parseInt(version) >= 110 && 'setSinkId' in HTMLAudioElement.prototype;
-};
+export const canSelectAudioOutput: Selector<boolean> = () => isSinkIdSupported();
 
 /**
  * Returns the peers as an array.

@@ -6,6 +6,7 @@ import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { roomActions } from '../slices/roomSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { HTMLMediaElementWithSink } from '../../utils/types';
+import { isSinkIdSupported } from '../selectors';
 import { settingsActions } from '../slices/settingsSlice';
 import { Logger } from '../../utils/Logger';
 
@@ -56,15 +57,24 @@ const createNotificationMiddleware = ({
 
 	const attachAudioOutput = (deviceId: string) => {
 		Object.values(soundAlerts).forEach((alert) => {
-			alert.audio.setSinkId(deviceId).catch((e) => logger.error(e));
+			if (isSinkIdSupported())
+				alert.audio.setSinkId(deviceId).catch((e) => logger.error(e));
 		});
 	};
+
+	let initialSinkApplied = false;
 
 	const middleware: Middleware = ({
 		getState
 	}: {
 		getState: () => RootState
 	}) => (next) => (action) => {
+		if (!initialSinkApplied) {
+			initialSinkApplied = true;
+			const deviceId = getState().settings.selectedAudioOutputDevice;
+
+			if (deviceId) attachAudioOutput(deviceId);
+		}
 		// Reproduce notification alerts
 		if (getState().settings.notificationSounds) {
 			if (peersActions.updatePeer.match(action)) {
