@@ -32,10 +32,17 @@ export class DeviceService extends EventEmitter {
 		let newDevices: MediaDevice[];
 
 		try {
-			const devicesList =
-				(await navigator.mediaDevices.enumerateDevices())
-					.filter((d) => d.deviceId)
-					.map((d) => ({ deviceId: d.deviceId, kind: d.kind, label: d.label }));
+			const rawDevices = await navigator.mediaDevices.enumerateDevices();
+
+			// Firefox withholds the deviceId of a device that is currently in use
+			// by another application, returning an empty string instead. We assign a
+			// synthetic ID so those devices still appear in the chooser. The synthetic
+			// ID is never passed to getUserMedia — see getDeviceId().
+			const devicesList = rawDevices.map((d, i) => ({
+				deviceId: d.deviceId || `unavailable-${d.kind}-${i}`,
+				kind: d.kind,
+				label: d.label,
+			}));
 
 			if (devicesList.length === 0)
 				return;
@@ -71,6 +78,12 @@ export class DeviceService extends EventEmitter {
 		if (!device)
 			device = this.devices.find((d) => d.kind === kind);
 
-		return device?.deviceId;
+		const resolvedId = device?.deviceId;
+
+		// Synthetic IDs are not real browser device IDs — skip the deviceId
+		// constraint so getUserMedia falls back to the browser default.
+		if (resolvedId?.startsWith('unavailable-')) return undefined;
+
+		return resolvedId;
 	}
 }
