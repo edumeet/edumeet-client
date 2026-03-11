@@ -11,12 +11,13 @@ import edumeetConfig from '../../utils/edumeetConfig';
 import { startListeners, stopListeners } from '../../store/actions/startActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getData } from '../../store/actions/managementActions';
+import { Room } from '../../utils/types';
 
 const LandingPage = (): React.JSX.Element | null => {
 	const navigate = useNavigate();
 	const randomizeOnBlank = edumeetConfig.randomizeOnBlank;
 	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomString({ length: 8 }).toLowerCase() : '');
-	const [ rooms, setRooms ] = useState<Array<{ id: number; name: string }>>([]);
+	const [ rooms, setRooms ] = useState<Room[]>([]);
 	const [ activeEntryTab, setActiveEntryTab ] = useState(0);
 	
 	const onClicked = () => navigate(`/${roomId}`);
@@ -52,9 +53,9 @@ const LandingPage = (): React.JSX.Element | null => {
 	useEffect(() => {
 		if (!roomDropdownEnabled || !loggedIn) return;
 
-		dispatch(getData('rooms')).then((roomsData) => {
-			if (roomsData && roomsData.data) {
-				setRooms(roomsData.data);
+		dispatch(getData('rooms')).then((roomsData: unknown) => {
+			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
+				setRooms(roomsData.data as Room[]);
 			}
 		});
 	}, [ roomDropdownEnabled, loggedIn ]);
@@ -68,9 +69,9 @@ const LandingPage = (): React.JSX.Element | null => {
 	};
 
 	const handleDropdownOpen = () => {
-		dispatch(getData('rooms')).then((roomsData) => {
-			if (roomsData && roomsData.data) {
-				setRooms(roomsData.data);
+		dispatch(getData('rooms')).then((roomsData: unknown) => {
+			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
+				setRooms(roomsData.data as Room[]);
 			}
 		});
 	};
@@ -80,9 +81,9 @@ const LandingPage = (): React.JSX.Element | null => {
 
 		const handleVisibilityChange = () => {
 			if (!document.hidden) {
-				dispatch(getData('rooms')).then((roomsData) => {
-					if (roomsData && roomsData.data) {
-						setRooms(roomsData.data);
+				dispatch(getData('rooms')).then((roomsData: unknown) => {
+					if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
+						setRooms(roomsData.data as Room[]);
 					}
 				});
 			}
@@ -140,7 +141,7 @@ const LandingPage = (): React.JSX.Element | null => {
 									id="room-select"
 									value={roomId}
 									label={roomNameLabel()}
-									onChange={handleRoomSelect}
+									onChange={(event) => { handleRoomSelect(event as React.ChangeEvent<{ value: unknown }>); }}
 									onOpen={handleDropdownOpen}
 									autoFocus
 									style={{ textAlign: 'left' }}
