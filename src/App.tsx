@@ -42,6 +42,7 @@ const App = (): React.JSX.Element => {
 	const userBackgroundImage = useAppSelector((state) => state.me.selectedDestop?.imageUrl);
 	const dispatch = useAppDispatch();
 	const roomState = useAppSelector((state) => state.room.state);
+	const signalingState = useAppSelector((state) => state.signaling.state);
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
 	const navigate = useNavigate();
@@ -54,6 +55,25 @@ const App = (): React.JSX.Element => {
 			dispatch(roomActions.setState('new'));
 		};
 	}, []);
+
+	useEffect(() => {
+		const active =
+			roomState !== 'left' &&
+			(signalingState === 'connecting' || signalingState === 'connected' || signalingState === 'reconnecting');
+
+		if (!active) return;
+
+		const onBeforeUnload = (event: BeforeUnloadEvent) => {
+			event.preventDefault();
+			event.returnValue = '';
+		};
+
+		window.addEventListener('beforeunload', onBeforeUnload);
+
+		return () => {
+			window.removeEventListener('beforeunload', onBeforeUnload);
+		};
+	}, [ signalingState, roomState ]);
 
 	const handleFileDrop = (event: React.DragEvent<HTMLDivElement>): void => {
 		event.preventDefault();
