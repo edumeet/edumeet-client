@@ -5,7 +5,7 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
-import { startExtraVideo, updateMic, updateWebcam } from '../actions/mediaActions';
+import { pauseMic, startExtraVideo, updateMic, updateWebcam } from '../actions/mediaActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { meActions } from '../slices/meSlice';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
@@ -220,7 +220,11 @@ const createRoomMiddleware = ({
 							if (lostAudio) dispatch(meActions.setLostAudio(false));
 							if (lostVideo) dispatch(meActions.setLostVideo(false));
 
-							if (lostAudio || !getState().me.audioMuted) dispatch(updateMic());
+							const audioMuted = getState().me.audioMuted;
+
+							dispatch(updateMic()).then(() => {
+								if (!lostAudio && audioMuted) dispatch(pauseMic());
+							});
 							if (lostVideo || !getState().me.videoMuted) dispatch(updateWebcam());
 							if (getState().me.extraVideoEnabled) dispatch(startExtraVideo());
 
