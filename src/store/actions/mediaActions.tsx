@@ -405,6 +405,8 @@ export const updatePreviewWebcam = ({
 	} catch (error) {
 		logger.error('updatePreviewWebcam() [error:%o]', error);
 		showMediaErrorToast(dispatch, error, 'camera');
+
+		deviceService.updateMediaDevices();
 	} finally {
 		dispatch(meActions.setVideoInProgress(false));
 	}
