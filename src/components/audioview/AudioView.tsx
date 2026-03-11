@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 import { ServiceContext } from '../../store/store';
 import { HTMLMediaElementWithSink } from '../../utils/types';
+import { isSinkIdSupported } from '../../store/selectors';
 import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('AudioView');
@@ -80,14 +81,8 @@ const AudioView = ({
 					deviceId
 				});
 
-			// runtime feature detection, regardless of TS typings
-			const elementWithSink = currentAudioElement as unknown as {
-				// eslint-disable-next-line no-unused-vars
-				setSinkId?: (deviceId: string) => Promise<void>;
-			};
-
-			if (typeof elementWithSink.setSinkId === 'function') {
-				elementWithSink.setSinkId(deviceId)
+			if (isSinkIdSupported()) {
+				currentAudioElement.setSinkId(deviceId)
 					.then(() => {
 						logger.debug('AudioView: setSinkId succeeded %O',
 							{

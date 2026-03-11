@@ -55,6 +55,21 @@ const App = (): React.JSX.Element => {
 		};
 	}, []);
 
+	useEffect(() => {
+		if (roomState !== 'joined' && roomState !== 'lobby') return;
+
+		const onBeforeUnload = (event: BeforeUnloadEvent) => {
+			event.preventDefault();
+			event.returnValue = '';
+		};
+
+		window.addEventListener('beforeunload', onBeforeUnload);
+
+		return () => {
+			window.removeEventListener('beforeunload', onBeforeUnload);
+		};
+	}, [ roomState ]);
+
 	const handleFileDrop = (event: React.DragEvent<HTMLDivElement>): void => {
 		event.preventDefault();
 

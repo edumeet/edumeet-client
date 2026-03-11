@@ -61,38 +61,31 @@ const VideoInputChooser = ({
 	}, [ videoDevice ]);
 
 	return (
-		<>
-			{ videoDevices.length >= 1 && 
-				<ChooserDiv>
-					<DeviceChooser
-						value={selectedVideoDevice ?? ''}
-						setValue={handleDeviceChange}
-						name={videoDeviceLabel()}
-						devicesLabel={selectVideoDeviceLabel()}
-						noDevicesLabel={noVideoDevicesLabel()}
-						disabled={videoDevices.length < 2 || videoInProgress}
-						devices={videoDevices}
-						extraButtons={<>
-							{ withBlur && <BlurButton /> }
-							{ withVideoBackground && <VideoBackgroundButton /> }
-							{ withConfirm && (selectedVideoDevice !== videoDevice) && (
-								<Button
-									style={{ minWidth: 'fit-content' }}
-									variant='text'
-									onClick={handleConfirm}
-									disabled={videoInProgress}
-								>
-									{applyLabel()}
-								</Button>
-								
-							)}
-						</>}
-					/>
-					
-				</ChooserDiv>
-			}
-			
-		</>
+		<ChooserDiv>
+			<DeviceChooser
+				value={selectedVideoDevice ?? ''}
+				setValue={handleDeviceChange}
+				name={videoDeviceLabel()}
+				devicesLabel={selectVideoDeviceLabel()}
+				noDevicesLabel={noVideoDevicesLabel()}
+				disabled={videoDevices.length < 2 || videoInProgress}
+				devices={videoDevices}
+				extraButtons={<>
+					{ withBlur && <BlurButton disabled={videoDevices.length === 0 || videoInProgress} /> }
+					{ withVideoBackground && <VideoBackgroundButton disabled={videoDevices.length === 0 || videoInProgress} /> }
+					{ withConfirm && (selectedVideoDevice !== videoDevice) && (
+						<Button
+							style={{ minWidth: 'fit-content' }}
+							variant='text'
+							onClick={handleConfirm}
+							disabled={videoInProgress}
+						>
+							{applyLabel()}
+						</Button>
+					)}
+				</>}
+			/>
+		</ChooserDiv>
 	);
 };
 
