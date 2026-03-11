@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Box, Link, Typography, MenuItem, Select, InputLabel, FormControl, Tab, Tabs } from '@mui/material'; import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { enterRoomLabel, selectRoomLabel, joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
+import { enterRoomLabel, selectRoomLabel, copyRoomLabel, joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
@@ -19,6 +19,7 @@ const LandingPage = (): React.JSX.Element | null => {
 	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomString({ length: 8 }).toLowerCase() : '');
 	const [ rooms, setRooms ] = useState<Room[]>([]);
 	const [ activeEntryTab, setActiveEntryTab ] = useState(0);
+	const [ copyFeedback, setCopyFeedback ] = useState(false);
 	
 	const onClicked = () => navigate(`/${roomId}`);
 
@@ -96,6 +97,18 @@ const LandingPage = (): React.JSX.Element | null => {
 		};
 	}, [ roomDropdownEnabled, loggedIn, dispatch ]);
 
+	const handleCopyClick = () => {
+		const protocol = window.location.protocol;
+		const hostname = window.location.hostname;
+		const port = window.location.port ? `:${window.location.port}` : '';
+		const fullUrl = `${protocol}//${hostname}${port}/${roomId}`;
+
+		navigator.clipboard.writeText(fullUrl).then(() => {
+			setCopyFeedback(true);
+			setTimeout(() => setCopyFeedback(false), 2000);
+		});
+	};
+
 	if (localeInProgress) {
 		return null;
 	}
@@ -139,6 +152,14 @@ const LandingPage = (): React.JSX.Element | null => {
 								<Select
 									labelId="room-select-label"
 									id="room-select"
+									endAdornment={roomId.trim() !== '' &&
+										<Button
+											style={{ minWidth: 'fit-content', marginRight: '5px' }}
+											variant='text'
+											onClick={handleCopyClick}
+										>
+											{copyFeedback ? 'Copied!' : copyRoomLabel()}
+										</Button>}
 									value={roomId}
 									label={roomNameLabel()}
 									onChange={(event) => { handleRoomSelect(event as React.ChangeEvent<{ value: unknown }>); }}

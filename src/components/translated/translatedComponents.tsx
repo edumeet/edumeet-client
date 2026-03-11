@@ -249,6 +249,11 @@ export const selectRoomLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Select from my rooms'
 });
 
+export const copyRoomLabel = (): string => intl.formatMessage({
+	id: 'label.copyRoom',
+	defaultMessage: 'Copy'
+});
+
 export const joinLabel = (): string => intl.formatMessage({
 	id: 'label.join',
 	defaultMessage: 'Join'
