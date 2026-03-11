@@ -239,6 +239,16 @@ export const logoutLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Log out'
 });
 
+export const enterRoomLabel = (): string => intl.formatMessage({
+	id: 'label.enterRoom',
+	defaultMessage: 'Enter room name'
+});
+
+export const selectRoomLabel = (): string => intl.formatMessage({
+	id: 'label.selectRoom',
+	defaultMessage: 'Select from my rooms'
+});
+
 export const joinLabel = (): string => intl.formatMessage({
 	id: 'label.join',
 	defaultMessage: 'Join'

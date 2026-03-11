@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Box, Link, Typography, MenuItem, Select, InputLabel, FormControl, Tab, Tabs } from '@mui/material'; import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
+import { enterRoomLabel, selectRoomLabel, joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
@@ -117,8 +117,8 @@ const LandingPage = (): React.JSX.Element | null => {
 								}}
 								centered={false}
 							>
-								<Tab label="Enter room name" aria-label="Enter room name" />
-								<Tab label="Select from my rooms" aria-label="Select from my rooms" />
+								<Tab label={enterRoomLabel()} aria-label={enterRoomLabel()} />
+								<Tab label={selectRoomLabel()} aria-label={selectRoomLabel()} />
 							</Tabs>
 						)}
 						{activeEntryTab === 0 && (
