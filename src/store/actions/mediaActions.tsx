@@ -459,12 +459,16 @@ export const updateAudioSettings = (
 	logger.debug('updateAudioSettings()');
 
 	const micEnabled = getState().me.micEnabled;
+	const audioMuted = getState().me.audioMuted;
 
 	dispatch(settingsActions.updateSettings(settings));
 	dispatch(meActions.setMicEnabled(false));
 	dispatch(stopMic());
 
-	if (micEnabled) await dispatch(updateMic());
+	if (micEnabled) {
+		await dispatch(updateMic());
+		if (audioMuted) dispatch(pauseMic());
+	}
 };
 
 /**
