@@ -50,6 +50,9 @@ const lobbyPeersSlice = createSlice({
 					peer.promotionInProgress = promotionInProgress;
 			}
 		}),
+		removeAllPeers: (() => {
+			return [];
+		}),
 	},
 	extraReducers: (builder) => {
 		builder

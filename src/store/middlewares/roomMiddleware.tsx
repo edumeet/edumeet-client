@@ -5,11 +5,14 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
-import { updateMic, updateWebcam } from '../actions/mediaActions';
+import { pauseMic, startExtraVideo, updateMic, updateWebcam } from '../actions/mediaActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { meActions } from '../slices/meSlice';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { settingsActions } from '../slices/settingsSlice';
+import { peersActions } from '../slices/peersSlice';
+import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
+import { drawingActions } from '../slices/drawingSlice';
 import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('RoomMiddleware');
@@ -49,6 +52,9 @@ const createRoomMiddleware = ({
 							} = notification.data;
 
 							batch(() => {
+								// Clear any stale sessions from a prior long-disconnect reconnect
+								// where the server closed the peer and sends roomReady again.
+								dispatch(roomSessionsActions.removeAllRoomSessions());
 								dispatch(roomSessionsActions.addRoomSession({
 									sessionId,
 									creationTimestamp,
@@ -157,6 +163,70 @@ const createRoomMiddleware = ({
 							const { roomSessionId } = notification.data;
 
 							dispatch(roomSessionsActions.removeRoomSession(roomSessionId));
+
+							break;
+						}
+
+						case 'peerReconnected': {
+							const {
+								sessionId,
+								roomSessionId,
+								creationTimestamp,
+								peers,
+								chatHistory,
+								fileHistory,
+								locked,
+								breakoutRooms,
+								lobbyPeers,
+								drawing,
+								countdownTimer,
+							} = notification.data;
+
+							// roomSessionId is the main room's sessionId;
+							// sessionId is the peer's current session (may differ if in a breakout room).
+							const mainSessionId = roomSessionId ?? sessionId;
+
+							batch(() => {
+								dispatch(roomSessionsActions.removeAllRoomSessions());
+								dispatch(roomSessionsActions.addRoomSession({
+									sessionId: mainSessionId,
+									creationTimestamp,
+									parent: true,
+									...initialRoomSession,
+								}));
+								dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
+								dispatch(meActions.setSessionId(sessionId));
+								dispatch(peersActions.addPeers(peers));
+								dispatch(lobbyPeersActions.addPeers(lobbyPeers));
+								dispatch(roomSessionsActions.addMessages({ sessionId: mainSessionId, messages: chatHistory }));
+								dispatch(roomSessionsActions.addFiles({ sessionId: mainSessionId, files: fileHistory }));
+								dispatch(permissionsActions.setLocked(Boolean(locked)));
+								dispatch(roomActions.joinCountdownTimer(countdownTimer));
+								dispatch(countdownTimer.isStarted ?
+									roomActions.startCountdownTimer() :
+									roomActions.stopCountdownTimer()
+								);
+								dispatch(drawing.isEnabled ?
+									drawingActions.enableDrawing() :
+									drawingActions.disableDrawing()
+								);
+								dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
+								dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
+							});
+
+							const lostAudio = getState().me.lostAudio;
+							const lostVideo = getState().me.lostVideo;
+
+							if (lostAudio) dispatch(meActions.setLostAudio(false));
+							if (lostVideo) dispatch(meActions.setLostVideo(false));
+
+							const audioMuted = getState().me.audioMuted;
+
+							dispatch(updateMic()).then(() => {
+								if (!lostAudio && audioMuted) dispatch(pauseMic());
+							});
+							if (lostVideo || !getState().me.videoMuted) dispatch(updateWebcam());
+							if (getState().me.extraVideoEnabled) dispatch(startExtraVideo());
 
 							break;
 						}

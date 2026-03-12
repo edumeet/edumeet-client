@@ -141,6 +141,9 @@ const peersSlice = createSlice({
 			if (peer)
 				peer.transcripts = [];
 		}),
+		removeAllPeers: (() => {
+			return initialState;
+		}),
 	},
 	extraReducers: (builder) => {
 		builder

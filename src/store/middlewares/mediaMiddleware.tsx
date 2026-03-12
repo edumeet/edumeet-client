@@ -50,6 +50,10 @@ const createMediaMiddleware = ({
 			}
 
 			if (roomActions.setState.match(action) && action.payload === 'joined') {
+				// Clear any stale listeners before re-registering (e.g. after long-disconnect reconnect
+				// where roomReady fires again and setState('joined') is dispatched a second time).
+				mediaService.removeAllListeners();
+
 				// Server has provided us with a new Consumer. The MediaService
 				// has created it for us and we need to add it to the store.
 				// MediaService will notify us of any changes to Consumer.

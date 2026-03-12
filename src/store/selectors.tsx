@@ -31,11 +31,16 @@ const recordingSelector: Selector<boolean | undefined> = (state) => state.room.r
 
 export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
 
-export const canSelectAudioOutput: Selector<boolean> = (state) => {
-	const { name, version } = state.me.browser;
+export const isSinkIdSupported = (): boolean => {
+	if (!('setSinkId' in HTMLAudioElement.prototype)) return false;
 
-	return name === 'chrome' && Number.parseInt(version) >= 110 && 'setSinkId' in HTMLAudioElement.prototype;
+	// Firefox has setSinkId in the prototype but it is broken (bugzilla #1849108).
+	// Only trust it on Chromium-based browsers (Chrome, Edge, Opera, etc.).
+
+	return /Chrome\//.test(navigator.userAgent);
 };
+
+export const canSelectAudioOutput: Selector<boolean> = () => isSinkIdSupported();
 
 /**
  * Returns the peers as an array.
@@ -138,13 +143,13 @@ export const currentRoomSessionSelector = createSelector(
  */
 export const sessionIdSpotlightsSelector = createSelector(
 	currentRoomSessionSelector,
-	(roomSession) => roomSession.spotlights
+	(roomSession) => roomSession?.spotlights ?? []
 );
 
 export const sessionIdSpotlightedConsumerSelector = createSelector(
 	currentRoomSessionSelector,
 	consumersSelect,
-	(roomSession, consumers) => consumers.filter((c) => roomSession.spotlights.includes(c.id))
+	(roomSession, consumers) => consumers.filter((c) => roomSession?.spotlights?.includes(c.id))
 );
 
 const consumerSelectedPeerIdsSelector = createSelector(
@@ -163,6 +168,7 @@ export const spotlightPeersSelector = createSelector(
 	currentRoomSessionSelector,
 	consumerSelectedPeerIdsSelector,
 	(maxActiveVideos, roomSession, consumerSelectedPeerIds) => {
+		if (!roomSession) return [];
 		const { spotlights, selectedPeers } = roomSession;
 		const uniqueSet = Array.from(new Set([ ...consumerSelectedPeerIds, ...selectedPeers, ...spotlights ]));
 
@@ -603,7 +609,7 @@ export const makeIsActiveSpeakerSelector = (id: string): Selector<boolean> => {
 		sessionIdSelector,
 		roomSessionsSelect,
 		(sessionId, roomSessions) => {
-			return roomSessions[sessionId].activeSpeakerId === id;
+			return roomSessions[sessionId]?.activeSpeakerId === id;
 		}
 	);
 };
