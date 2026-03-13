@@ -116,7 +116,7 @@ const LandingPage = (): React.JSX.Element | null => {
 				title={ <PrecallTitle /> }
 				content={
 					<Container style={{ textAlign: 'center' }}>
-						{qrCodeEnabled && <QRCode value={`${window.location.protocol}//${window.location.hostname }/${roomId}`} />}
+						{qrCodeEnabled && <QRCode value={`${window.location.protocol}//${window.location.hostname}/${roomId}`} />}
 						{roomDropdownEnabled && loggedIn && rooms.length > 0 && (
 							<Tabs
 								value={activeEntryTab}
