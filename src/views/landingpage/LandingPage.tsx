@@ -98,12 +98,7 @@ const LandingPage = (): React.JSX.Element | null => {
 	}, [ roomDropdownEnabled, loggedIn, dispatch ]);
 
 	const handleCopyClick = () => {
-		const protocol = window.location.protocol;
-		const hostname = window.location.hostname;
-		const port = window.location.port ? `:${window.location.port}` : '';
-		const fullUrl = `${protocol}//${hostname}${port}/${roomId}`;
-
-		navigator.clipboard.writeText(fullUrl).then(() => {
+		navigator.clipboard.writeText(`${window.location.protocol}//${window.location.hostname}/${roomId}`).then(() => {
 			setCopyFeedback(true);
 			setTimeout(() => setCopyFeedback(false), 2000);
 		});
