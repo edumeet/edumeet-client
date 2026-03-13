@@ -241,12 +241,12 @@ export const logoutLabel = (): string => intl.formatMessage({
 
 export const enterRoomLabel = (): string => intl.formatMessage({
 	id: 'label.enterRoom',
-	defaultMessage: 'Enter room name'
+	defaultMessage: 'Join room'
 });
 
 export const selectRoomLabel = (): string => intl.formatMessage({
 	id: 'label.selectRoom',
-	defaultMessage: 'Select from my rooms'
+	defaultMessage: 'My rooms'
 });
 
 export const copyRoomLabel = (): string => intl.formatMessage({
