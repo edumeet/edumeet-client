@@ -241,17 +241,22 @@ export const logoutLabel = (): string => intl.formatMessage({
 
 export const enterRoomLabel = (): string => intl.formatMessage({
 	id: 'label.enterRoom',
-	defaultMessage: 'Join room'
+	defaultMessage: 'Enter room'
 });
 
-export const selectRoomLabel = (): string => intl.formatMessage({
-	id: 'label.selectRoom',
+export const myRoomsLabel = (): string => intl.formatMessage({
+	id: 'label.myRooms',
 	defaultMessage: 'My rooms'
 });
 
 export const copyRoomLabel = (): string => intl.formatMessage({
 	id: 'label.copyRoom',
 	defaultMessage: 'Copy'
+});
+
+export const copiedRoomLabel = (): string => intl.formatMessage({
+	id: 'label.copiedRoom',
+	defaultMessage: 'Copied!'
 });
 
 export const joinLabel = (): string => intl.formatMessage({

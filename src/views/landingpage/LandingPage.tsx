@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Box, Link, Typography, MenuItem, Select, InputLabel, FormControl, Tab, Tabs } from '@mui/material'; import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { enterRoomLabel, selectRoomLabel, copyRoomLabel, joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
+import { enterRoomLabel, myRoomsLabel, copyRoomLabel, copiedRoomLabel, joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
@@ -126,7 +126,7 @@ const LandingPage = (): React.JSX.Element | null => {
 								centered={false}
 							>
 								<Tab label={enterRoomLabel()} aria-label={enterRoomLabel()} />
-								<Tab label={selectRoomLabel()} aria-label={selectRoomLabel()} />
+								<Tab label={myRoomsLabel()} aria-label={myRoomsLabel()} />
 							</Tabs>
 						)}
 						{activeEntryTab === 0 && (
@@ -153,7 +153,7 @@ const LandingPage = (): React.JSX.Element | null => {
 											variant='text'
 											onClick={handleCopyClick}
 										>
-											{copyFeedback ? 'Copied!' : copyRoomLabel()}
+											{copyFeedback ? copiedRoomLabel() : copyRoomLabel()}
 										</Button>}
 									value={roomId}
 									label={roomNameLabel()}
