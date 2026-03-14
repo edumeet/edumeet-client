@@ -16,7 +16,8 @@ import { Room } from '../../utils/types';
 const LandingPage = (): React.JSX.Element | null => {
 	const navigate = useNavigate();
 	const randomizeOnBlank = edumeetConfig.randomizeOnBlank;
-	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomString({ length: 8 }).toLowerCase() : '');
+	const randomRoomString = randomString({ length: 8 }).toLowerCase();
+	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomRoomString : '');
 	const [ rooms, setRooms ] = useState<Room[]>([]);
 	const [ activeEntryTab, setActiveEntryTab ] = useState(0);
 	const [ copyFeedback, setCopyFeedback ] = useState(false);
@@ -38,6 +39,26 @@ const LandingPage = (): React.JSX.Element | null => {
 		setRoomId(selectedValue);
 	};
 
+	const handleTabChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+		// Reset roomId when switching to My Rooms tab if it's a room name
+		// that doesn't exist in the rooms list
+		if (value === 1 && myRoomsTabEnabled && loggedIn && rooms.length > 0) {
+			const isRoomInList = rooms.some((room) => room.name === roomId);
+
+			if (!isRoomInList && roomId.trim() !== '') {
+				setRoomId('');
+			}
+		}
+
+		// Generate new random room when switching back to Enter Room tab
+		// and randomizeOnBlank is true
+		if (value === 0 && randomizeOnBlank && roomId === '') {
+			setRoomId(randomRoomString);
+		}
+		
+		setActiveEntryTab(value);
+	};
+
 	const handleDropdownOpen = () => {
 		dispatch(getData('rooms')).then((roomsData: unknown) => {
 			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
@@ -54,7 +75,7 @@ const LandingPage = (): React.JSX.Element | null => {
 	};
 
 	useEffect(() => {
-		if (!myRoomsTabEnabled) return;
+		if (!myRoomsTabEnabled || roomId.trim() !== '') return;
 
 		if (loggedIn && rooms.length > 0) {
 			setActiveEntryTab(1);
@@ -119,9 +140,7 @@ const LandingPage = (): React.JSX.Element | null => {
 						{myRoomsTabEnabled && loggedIn && rooms.length > 0 && (
 							<Tabs
 								value={activeEntryTab}
-								onChange={(_event, value) => {
-									setActiveEntryTab(value);
-								}}
+								onChange={handleTabChange}
 								centered={false}
 							>
 								<Tab label={enterRoomLabel()} aria-label={enterRoomLabel()} />
