@@ -1,5 +1,5 @@
 import { permissionsActions } from '../slices/permissionsSlice';
-import { AppThunk, AppDispatch } from '../store';
+import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { getTenantFromFqdn } from './managementActions';
@@ -16,10 +16,9 @@ let tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
 
 const REFRESH_BEFORE_EXPIRY_MS = 5 * 60 * 1000; // refresh 5 min before expiry
 
-const scheduleTokenRefresh = (
-	token: string,
-	dispatch: AppDispatch,
-): void => {
+const scheduleTokenRefresh = (token: string): AppThunk<void> => (
+	dispatch
+) => {
 	if (tokenRefreshTimer !== null) {
 		clearTimeout(tokenRefreshTimer);
 		tokenRefreshTimer = null;
@@ -329,7 +328,7 @@ export const updateLoginState = (inputToken?: string): AppThunk<void> => async (
 		logger.debug('updateLoginState() setting token and loggedIn=true');
 		dispatch(permissionsActions.setToken(token));
 		dispatch(permissionsActions.setLoggedIn(true));
-		scheduleTokenRefresh(token, dispatch);
+		dispatch(scheduleTokenRefresh(token));
 	} else {
 		logger.debug('updateLoginState() removing token and loggedIn=false');
 		dispatch(permissionsActions.setToken());
