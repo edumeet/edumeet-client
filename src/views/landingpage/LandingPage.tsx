@@ -21,8 +21,6 @@ const LandingPage = (): React.JSX.Element | null => {
 	const [ activeEntryTab, setActiveEntryTab ] = useState(0);
 	const [ copyFeedback, setCopyFeedback ] = useState(false);
 	
-	const onClicked = () => navigate(`/${roomId}`);
-
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
 	const qrCodeEnabled = edumeetConfig.qrCodeEnabled;
@@ -30,6 +28,30 @@ const LandingPage = (): React.JSX.Element | null => {
 
 	const dispatch = useAppDispatch();
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);
+
+	const onClicked = () => navigate(`/${roomId}`);
+
+	const handleRoomSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
+		const selectedValue = event.target.value as string;
+
+		setRoomId(selectedValue);
+	};
+
+	const handleDropdownOpen = () => {
+		dispatch(getData('rooms')).then((roomsData: unknown) => {
+			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
+				setRooms(roomsData.data as Room[]);
+			}
+		});
+	};
+
+	const handleCopyClick = () => {
+		navigator.clipboard.writeText(`${window.location.protocol}//${window.location.hostname}/${roomId}`).then(() => {
+			setCopyFeedback(true);
+			setTimeout(() => setCopyFeedback(false), 2000);
+		});
+	};
 
 	useEffect(() => {
 		if (!roomDropdownEnabled) return;
@@ -61,22 +83,6 @@ const LandingPage = (): React.JSX.Element | null => {
 		});
 	}, [ roomDropdownEnabled, loggedIn ]);
 
-	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);
-
-	const handleRoomSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
-		const selectedValue = event.target.value as string;
-
-		setRoomId(selectedValue);
-	};
-
-	const handleDropdownOpen = () => {
-		dispatch(getData('rooms')).then((roomsData: unknown) => {
-			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
-				setRooms(roomsData.data as Room[]);
-			}
-		});
-	};
-
 	useEffect(() => {
 		if (!roomDropdownEnabled || !loggedIn) return;
 
@@ -96,13 +102,6 @@ const LandingPage = (): React.JSX.Element | null => {
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
 	}, [ roomDropdownEnabled, loggedIn, dispatch ]);
-
-	const handleCopyClick = () => {
-		navigator.clipboard.writeText(`${window.location.protocol}//${window.location.hostname}/${roomId}`).then(() => {
-			setCopyFeedback(true);
-			setTimeout(() => setCopyFeedback(false), 2000);
-		});
-	};
 
 	if (localeInProgress) {
 		return null;
