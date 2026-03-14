@@ -94,6 +94,12 @@ var config = {
 	qrCodeEnabled: false,
 
 	/**
+	 * Enable/disable tab 'My rooms' in landing page view
+	 */
+	myRoomsTabEnabled: false,
+
+
+	/**
 	 * Optional: enable countdown timer in UI.
 	 */
 	countdownTimerEnabled: false,

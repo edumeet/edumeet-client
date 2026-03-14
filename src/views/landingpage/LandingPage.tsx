@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Box, Link, Typography } from '@mui/material';
-import randomString from 'random-string';
+import { Button, Container, Box, Link, Typography, MenuItem, Select, InputLabel, FormControl, Tab, Tabs } from '@mui/material'; import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
+import { enterRoomLabel, myRoomsLabel, copyRoomLabel, copiedRoomLabel, joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
@@ -11,18 +10,81 @@ import { QRCode } from 'react-qrcode-logo';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { startListeners, stopListeners } from '../../store/actions/startActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { getData } from '../../store/actions/managementActions';
+import { Room } from '../../utils/types';
 
 const LandingPage = (): React.JSX.Element | null => {
 	const navigate = useNavigate();
 	const randomizeOnBlank = edumeetConfig.randomizeOnBlank;
-	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomString({ length: 8 }).toLowerCase() : '');
-	const onClicked = () => navigate(`/${roomId}`);
-
+	const randomRoomString = randomString({ length: 8 }).toLowerCase();
+	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomRoomString : '');
+	const [ rooms, setRooms ] = useState<Room[]>([]);
+	const [ activeEntryTab, setActiveEntryTab ] = useState(0);
+	const [ copyFeedback, setCopyFeedback ] = useState(false);
+	
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
 	const qrCodeEnabled = edumeetConfig.qrCodeEnabled;
+	const myRoomsTabEnabled = edumeetConfig.myRoomsTabEnabled;
 
 	const dispatch = useAppDispatch();
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);
+
+	const onClicked = () => navigate(`/${roomId}`);
+
+	const handleRoomSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
+		const selectedValue = event.target.value as string;
+
+		setRoomId(selectedValue);
+	};
+
+	const handleTabChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+		// Reset roomId when switching to My Rooms tab if it's a room name
+		// that doesn't exist in the rooms list
+		if (value === 1 && myRoomsTabEnabled && loggedIn && rooms.length > 0) {
+			const isRoomInList = rooms.some((room) => room.name === roomId);
+
+			if (!isRoomInList && roomId.trim() !== '') {
+				setRoomId('');
+			}
+		}
+
+		// Generate new random room when switching back to Enter Room tab
+		// and randomizeOnBlank is true
+		if (value === 0 && randomizeOnBlank && roomId === '') {
+			setRoomId(randomRoomString);
+		}
+		
+		setActiveEntryTab(value);
+	};
+
+	const handleDropdownOpen = () => {
+		dispatch(getData('rooms')).then((roomsData: unknown) => {
+			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
+				setRooms(roomsData.data as Room[]);
+			}
+		});
+	};
+
+	const handleCopyClick = () => {
+		navigator.clipboard.writeText(`${window.location.protocol}//${window.location.hostname}/${roomId}`).then(() => {
+			setCopyFeedback(true);
+			setTimeout(() => setCopyFeedback(false), 2000);
+		});
+	};
+
+	useEffect(() => {
+		if (!myRoomsTabEnabled || roomId.trim() !== '') return;
+
+		if (loggedIn && rooms.length > 0) {
+			setActiveEntryTab(1);
+		}
+
+		if (!loggedIn || rooms.length == 0) {
+			setActiveEntryTab(0);
+		}
+	}, [ myRoomsTabEnabled, loggedIn, rooms ]);
 
 	useEffect(() => {
 		dispatch(startListeners());
@@ -32,7 +94,35 @@ const LandingPage = (): React.JSX.Element | null => {
 		};
 	}, [ dispatch ]);
 
-	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);
+	useEffect(() => {
+		if (!myRoomsTabEnabled || !loggedIn) return;
+
+		dispatch(getData('rooms')).then((roomsData: unknown) => {
+			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
+				setRooms(roomsData.data as Room[]);
+			}
+		});
+	}, [ myRoomsTabEnabled, loggedIn ]);
+
+	useEffect(() => {
+		if (!myRoomsTabEnabled || !loggedIn) return;
+
+		const handleVisibilityChange = () => {
+			if (!document.hidden) {
+				dispatch(getData('rooms')).then((roomsData: unknown) => {
+					if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
+						setRooms(roomsData.data as Room[]);
+					}
+				});
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+		
+		return () => {
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
+	}, [ myRoomsTabEnabled, loggedIn, dispatch ]);
 
 	if (localeInProgress) {
 		return null;
@@ -46,17 +136,57 @@ const LandingPage = (): React.JSX.Element | null => {
 				title={ <PrecallTitle /> }
 				content={
 					<Container style={{ textAlign: 'center' }}>
-						{qrCodeEnabled && <QRCode value={`${window.location.protocol}//${window.location.hostname }/${roomId}`} />}
-						<TextInputField
-							label={roomNameLabel()}
-							value={roomId}
-							setValue={setRoomId}
-							onEnter={onClicked}
-							randomizeOnBlank={randomizeOnBlank}
-							autoFocus
-						/>
+						{qrCodeEnabled && <QRCode value={`${window.location.protocol}//${window.location.hostname}/${roomId}`} />}
+						{myRoomsTabEnabled && loggedIn && rooms.length > 0 && (
+							<Tabs
+								value={activeEntryTab}
+								onChange={handleTabChange}
+								centered={false}
+							>
+								<Tab label={enterRoomLabel()} aria-label={enterRoomLabel()} />
+								<Tab label={myRoomsLabel()} aria-label={myRoomsLabel()} />
+							</Tabs>
+						)}
+						{activeEntryTab === 0 && (
+							<Box sx={{ pt: 2 }}>
+								<TextInputField
+									label={roomNameLabel()}
+									value={roomId}
+									setValue={setRoomId}
+									onEnter={onClicked}
+									randomizeOnBlank={randomizeOnBlank}
+									autoFocus
+								/>
+							</Box>
+						)}
+						{activeEntryTab === 1 && myRoomsTabEnabled && loggedIn && rooms.length > 0 && (
+							<FormControl fullWidth margin="normal">
+								<InputLabel id="room-select-label">{roomNameLabel()}</InputLabel>
+								<Select
+									labelId="room-select-label"
+									id="room-select"
+									endAdornment={roomId.trim() !== '' &&
+										<Button
+											style={{ minWidth: 'fit-content', marginRight: '5px' }}
+											variant='text'
+											onClick={handleCopyClick}
+										>
+											{copyFeedback ? copiedRoomLabel() : copyRoomLabel()}
+										</Button>}
+									value={roomId}
+									label={roomNameLabel()}
+									onChange={(event) => { handleRoomSelect(event as React.ChangeEvent<{ value: unknown }>); }}
+									onOpen={handleDropdownOpen}
+									autoFocus
+									style={{ textAlign: 'left' }}
+								>
+									{rooms.map((room) => (
+										<MenuItem key={room.id} value={room.name}>{room.name}</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						)}
 					</Container>
-
 				}
 				actions={
 					<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
