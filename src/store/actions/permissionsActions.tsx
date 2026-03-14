@@ -1,5 +1,5 @@
 import { permissionsActions } from '../slices/permissionsSlice';
-import { AppThunk } from '../store';
+import { AppThunk, AppDispatch } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { getTenantFromFqdn } from './managementActions';
@@ -10,6 +10,52 @@ import { signalingActions } from '../slices/signalingSlice';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 const logger = new Logger('PermissionsActions');
+
+// Holds the pending token-refresh timer so it can be cancelled on logout.
+let tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+
+const REFRESH_BEFORE_EXPIRY_MS = 5 * 60 * 1000; // refresh 5 min before expiry
+
+const scheduleTokenRefresh = (
+	token: string,
+	dispatch: AppDispatch,
+): void => {
+	if (tokenRefreshTimer !== null) {
+		clearTimeout(tokenRefreshTimer);
+		tokenRefreshTimer = null;
+	}
+
+	try {
+		const { exp } = jwtDecode<JwtPayload>(token);
+
+		if (!exp) return;
+
+		const msUntilExpiry = (exp * 1000) - Date.now();
+
+		if (msUntilExpiry <= 0) return; // already expired, nothing to do
+
+		const msUntilRefresh = msUntilExpiry - REFRESH_BEFORE_EXPIRY_MS;
+
+		if (msUntilRefresh <= 0) {
+			// Token is valid but inside the refresh window — refresh immediately.
+			logger.debug('scheduleTokenRefresh() - inside refresh window, refreshing immediately');
+			dispatch(refreshToken());
+
+			return;
+		}
+
+		logger.debug(
+			'scheduleTokenRefresh() - will refresh in %d min',
+			Math.round(msUntilRefresh / 60000)
+		);
+
+		tokenRefreshTimer = setTimeout(() => {
+			dispatch(refreshToken());
+		}, msUntilRefresh);
+	} catch (error) {
+		logger.warn('scheduleTokenRefresh() - could not decode token [error: %o]', error);
+	}
+};
 
 export const login = (): AppThunk<Promise<void>> => async (
 	dispatch,
@@ -223,6 +269,34 @@ export const promotePeers = (): AppThunk<Promise<void>> => async (
 	}
 };
 
+export const refreshToken = (): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ managementService }
+): Promise<void> => {
+	logger.debug('refreshToken()');
+
+	try {
+		const management = await managementService;
+		const result = await management.service('token-refresh').create({});
+		const newToken: string = result.accessToken;
+
+		await management.authentication.setAccessToken(newToken);
+		dispatch(updateLoginState(newToken));
+
+		const { exp } = jwtDecode<JwtPayload>(newToken);
+
+		logger.debug(
+			'refreshToken() - token refreshed successfully, new expiry: %s',
+			exp ? new Date(exp * 1000).toISOString() : 'unknown'
+		);
+	} catch (error) {
+		logger.error('refreshToken() - failed [error: %o]', error);
+		// Do not force a logout here; let the existing token expire naturally.
+		// If the token is already expired the next API call will trigger handleAuthError.
+	}
+};
+
 export const updateLoginState = (inputToken?: string): AppThunk<void> => async (
 	dispatch,
 	getState,
@@ -255,11 +329,17 @@ export const updateLoginState = (inputToken?: string): AppThunk<void> => async (
 		logger.debug('updateLoginState() setting token and loggedIn=true');
 		dispatch(permissionsActions.setToken(token));
 		dispatch(permissionsActions.setLoggedIn(true));
+		scheduleTokenRefresh(token, dispatch);
 	} else {
 		logger.debug('updateLoginState() removing token and loggedIn=false');
 		dispatch(permissionsActions.setToken());
 		dispatch(permissionsActions.setLoggedIn(false));
 		dispatch(managamentActions.clearUser());
+
+		if (tokenRefreshTimer !== null) {
+			clearTimeout(tokenRefreshTimer);
+			tokenRefreshTimer = null;
+		}
 	}
 
 	if (nextUrl && nextUrl !== currentUrl) {
