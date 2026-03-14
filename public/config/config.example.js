@@ -94,9 +94,9 @@ var config = {
 	qrCodeEnabled: false,
 
 	/**
-	 * Enable/disable personal room dropdown
+	 * Enable/disable tab 'My rooms' in landing page view
 	 */
-	roomDropdownEnabled: false,
+	myRoomsTabEnabled: false,
 
 
 	/**

@@ -24,7 +24,7 @@ const LandingPage = (): React.JSX.Element | null => {
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
 	const qrCodeEnabled = edumeetConfig.qrCodeEnabled;
-	const roomDropdownEnabled = edumeetConfig.roomDropdownEnabled;
+	const myRoomsTabEnabled = edumeetConfig.myRoomsTabEnabled;
 
 	const dispatch = useAppDispatch();
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
@@ -54,7 +54,7 @@ const LandingPage = (): React.JSX.Element | null => {
 	};
 
 	useEffect(() => {
-		if (!roomDropdownEnabled) return;
+		if (!myRoomsTabEnabled) return;
 
 		if (loggedIn && rooms.length > 0) {
 			setActiveEntryTab(1);
@@ -63,7 +63,7 @@ const LandingPage = (): React.JSX.Element | null => {
 		if (!loggedIn || rooms.length == 0) {
 			setActiveEntryTab(0);
 		}
-	}, [ roomDropdownEnabled, loggedIn, rooms ]);
+	}, [ myRoomsTabEnabled, loggedIn, rooms ]);
 
 	useEffect(() => {
 		dispatch(startListeners());
@@ -74,17 +74,17 @@ const LandingPage = (): React.JSX.Element | null => {
 	}, [ dispatch ]);
 
 	useEffect(() => {
-		if (!roomDropdownEnabled || !loggedIn) return;
+		if (!myRoomsTabEnabled || !loggedIn) return;
 
 		dispatch(getData('rooms')).then((roomsData: unknown) => {
 			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
 				setRooms(roomsData.data as Room[]);
 			}
 		});
-	}, [ roomDropdownEnabled, loggedIn ]);
+	}, [ myRoomsTabEnabled, loggedIn ]);
 
 	useEffect(() => {
-		if (!roomDropdownEnabled || !loggedIn) return;
+		if (!myRoomsTabEnabled || !loggedIn) return;
 
 		const handleVisibilityChange = () => {
 			if (!document.hidden) {
@@ -101,7 +101,7 @@ const LandingPage = (): React.JSX.Element | null => {
 		return () => {
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
-	}, [ roomDropdownEnabled, loggedIn, dispatch ]);
+	}, [ myRoomsTabEnabled, loggedIn, dispatch ]);
 
 	if (localeInProgress) {
 		return null;
@@ -116,7 +116,7 @@ const LandingPage = (): React.JSX.Element | null => {
 				content={
 					<Container style={{ textAlign: 'center' }}>
 						{qrCodeEnabled && <QRCode value={`${window.location.protocol}//${window.location.hostname}/${roomId}`} />}
-						{roomDropdownEnabled && loggedIn && rooms.length > 0 && (
+						{myRoomsTabEnabled && loggedIn && rooms.length > 0 && (
 							<Tabs
 								value={activeEntryTab}
 								onChange={(_event, value) => {
@@ -140,7 +140,7 @@ const LandingPage = (): React.JSX.Element | null => {
 								/>
 							</Box>
 						)}
-						{activeEntryTab === 1 && roomDropdownEnabled && loggedIn && rooms.length > 0 && (
+						{activeEntryTab === 1 && myRoomsTabEnabled && loggedIn && rooms.length > 0 && (
 							<FormControl fullWidth margin="normal">
 								<InputLabel id="room-select-label">{roomNameLabel()}</InputLabel>
 								<Select
