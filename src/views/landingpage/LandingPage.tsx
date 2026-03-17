@@ -75,16 +75,16 @@ const LandingPage = (): React.JSX.Element | null => {
 	};
 
 	useEffect(() => {
-		if (!myRoomsTabEnabled || roomId.trim() !== '') return;
+		if (!myRoomsTabEnabled) return;
 
-		if (loggedIn && rooms.length > 0) {
+		if (loggedIn && !randomizeOnBlank && rooms.length > 0) {
 			setActiveEntryTab(1);
 		}
 
 		if (!loggedIn || rooms.length == 0) {
 			setActiveEntryTab(0);
 		}
-	}, [ myRoomsTabEnabled, loggedIn, rooms ]);
+	}, [ loggedIn, rooms ]);
 
 	useEffect(() => {
 		dispatch(startListeners());
@@ -102,7 +102,7 @@ const LandingPage = (): React.JSX.Element | null => {
 				setRooms(roomsData.data as Room[]);
 			}
 		});
-	}, [ myRoomsTabEnabled, loggedIn ]);
+	}, [ loggedIn ]);
 
 	useEffect(() => {
 		if (!myRoomsTabEnabled || !loggedIn) return;
@@ -122,7 +122,7 @@ const LandingPage = (): React.JSX.Element | null => {
 		return () => {
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
-	}, [ myRoomsTabEnabled, loggedIn, dispatch ]);
+	}, [ loggedIn, dispatch ]);
 
 	if (localeInProgress) {
 		return null;
