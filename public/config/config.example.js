@@ -96,7 +96,7 @@ var config = {
 	/**
 	 * Enable/disable tab 'My rooms' in landing page view
 	 */
-	myRoomsTabEnabled: false,
+	myRoomsTabEnabled: true,
 
 
 	/**
