@@ -4,7 +4,7 @@ import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	qrCodeEnabled: false,
-	myRoomsTabEnabled: false,
+	myRoomsTabEnabled: true,
 	countdownTimerEnabled: false,
 	infoTooltipEnabled: false,
 	infoTooltipText: '',
