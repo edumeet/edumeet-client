@@ -86,11 +86,11 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 				</>
 			}
 			actions={
-				<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+				<Box display="flex" alignItems="flex-end" justifyContent="space-between" width="100%">
 					<Box display="flex" alignItems="left">
 						{imprintUrl.trim() !== '' && (
 							<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
-								<Typography variant="body2">{ imprintLabel() }</Typography>
+								<Typography variant="caption" color="text.secondary">{ imprintLabel() }</Typography>
 							</Link>
 						)}
 					</Box>
