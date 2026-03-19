@@ -299,6 +299,8 @@
   "label.managementRuleSettings": "Regelindstillinger",
   "label.imprint": "Om os",
   "label.privacy": "Privatliv",
+  "label.joinConsent": null,
+  "label.privacyPolicy": null,
   "filesharing.upload": "Upload fil",
   "label.default": "Standard",
   "label.removeAllImages": "Fjern alle billeder",

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Button, Box, Link, Typography } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
-import { joinLabel, yourNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
+import { joinLabel, yourNameLabel, imprintLabel, privacyLabel, joinConsentLabel, privacyPolicyLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
@@ -32,7 +32,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 	const videoMuted = useAppSelector((state) => state.me.videoMuted);
 	const showAudioOutputChooser = useAppSelector(canSelectAudioOutput);
-	
+
 	const url = new URL(window.location.href);
 	const headless = Boolean(url.searchParams.get('headless'));
 
@@ -93,20 +93,25 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 								<Typography variant="body2">{ imprintLabel() }</Typography>
 							</Link>
 						)}
-						{privacyUrl.trim() !== '' && (
-							<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
-								<Typography variant="body2">{ privacyLabel() }</Typography>
-							</Link>
-						)}
 					</Box>
-					<Button
-						onClick={handleJoin}
-						variant='contained'
-						disabled={!displayName || joinInProgress || mediaLoading}
-						size='small'
-					>
-						{ joinLabel() }
-					</Button>
+					<Box display="flex" flexDirection="column" alignItems="flex-end">
+						{privacyUrl.trim() !== '' && (
+							<Typography variant="caption" color="text.secondary" sx={{ mb: 0.5 }}>
+								{joinConsentLabel()}{' '}
+								<Link href={privacyUrl} target="_blank" color="inherit">
+									{privacyPolicyLabel()}
+								</Link>
+							</Typography>
+						)}
+						<Button
+							onClick={handleJoin}
+							variant='contained'
+							disabled={!displayName || joinInProgress || mediaLoading}
+							size='small'
+						>
+							{ joinLabel() }
+						</Button>
+					</Box>
 				</Box>
 			}
 		/>

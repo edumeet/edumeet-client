@@ -310,6 +310,8 @@
 	"label.managementRuleSettings": "Rule settings",
 	"label.imprint": "About us",
 	"label.privacy": "Privacy",
+	"label.joinConsent": "By joining, you accept our",
+	"label.privacyPolicy": "Privacy Policy",
 	"label.managementRoomSettingsLabel": "Room settings",
 	"label.managementAdvancedSettingsLabel": "Advanced management settings",
 	"label.managementClaimRoomLabel": "Claim current room",

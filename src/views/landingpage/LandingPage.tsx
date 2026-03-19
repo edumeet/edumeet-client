@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Container, Box, Link, Typography } from '@mui/material';
 import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
+import { joinLabel, roomNameLabel, imprintLabel, privacyLabel, joinConsentLabel, privacyPolicyLabel } from '../../components/translated/translatedComponents';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
@@ -66,24 +66,29 @@ const LandingPage = (): React.JSX.Element | null => {
 									<Typography variant="body2">{ imprintLabel() }</Typography>
 								</Link>
 							)}
-							{privacyUrl.trim() !== '' && (
-								<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
-									<Typography variant="body2">{ privacyLabel() }</Typography>
-								</Link>
-							)}
 						</Box>
-						<Button
-							onClick={onClicked}
-							variant='contained'
-							disabled={!roomId}
-							size='small'
-						>
-							{ joinLabel()}
-						</Button>
+						<Box display="flex" flexDirection="column" alignItems="flex-end">
+							{privacyUrl.trim() !== '' && (
+								<Typography variant="caption" color="text.secondary" sx={{ mb: 0.5 }}>
+									{joinConsentLabel()}{' '}
+									<Link href={privacyUrl} target="_blank" color="inherit">
+										{privacyPolicyLabel()}
+									</Link>
+								</Typography>
+							)}
+							<Button
+								onClick={onClicked}
+								variant='contained'
+								disabled={!roomId}
+								size='small'
+							>
+								{ joinLabel()}
+							</Button>
+						</Box>
 					</Box>
 				}
 			/>
-			
+
 		</StyledBackground>
 	);
 };

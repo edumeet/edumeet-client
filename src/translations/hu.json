@@ -300,6 +300,8 @@
   "label.managementRuleSettings": "Szabályok",
   "label.imprint": "Rólunk",
   "label.privacy": "Adatvédelem",
+  "label.joinConsent": null,
+  "label.privacyPolicy": null,
   "filesharing.upload": "Feltöltés",
   "label.default": "Alapértelmezett",
   "label.removeAllImages": "Képek törlése",
