@@ -185,7 +185,7 @@ const LandingPage = (): React.JSX.Element | null => {
 								size='small'
 								variant='text'
 								onClick={handleCopyClick}
-								disabled={!roomId.trim()}
+								disabled={!roomId.trim() || copyFeedback}
 							>
 								{copyFeedback ? copiedRoomLabel() : copyRoomLabel()}
 							</Button>
