@@ -144,37 +144,39 @@ const LandingPage = (): React.JSX.Element | null => {
 								<Tab label={myRoomsLabel()} aria-label={myRoomsLabel()} />
 							</Tabs>
 						)}
-						{activeEntryTab === 0 && (
-							<Box sx={{ pt: 2 }}>
-								<TextInputField
-									label={roomNameLabel()}
-									value={roomId}
-									setValue={setRoomId}
-									onEnter={onClicked}
-									randomizeOnBlank={randomizeOnBlank}
-									autoFocus
-								/>
-							</Box>
-						)}
-						{activeEntryTab === 1 && myRoomsTabEnabled && loggedIn && rooms.length > 0 && (
-							<FormControl fullWidth margin="normal">
-								<InputLabel id="room-select-label">{roomNameLabel()}</InputLabel>
-								<Select
-									labelId="room-select-label"
-									id="room-select"
-									value={roomId}
-									label={roomNameLabel()}
-									onChange={(event) => { handleRoomSelect(event as React.ChangeEvent<{ value: unknown }>); }}
-									onOpen={handleDropdownOpen}
-									autoFocus
-									style={{ textAlign: 'left' }}
-								>
-									{rooms.map((room) => (
-										<MenuItem key={room.id} value={room.name ?? ''}>{room.name ?? ''}</MenuItem>
-									))}
-								</Select>
-							</FormControl>
-						)}
+						<Box sx={{ minHeight: 80 }}>
+							{activeEntryTab === 0 && (
+								<Box sx={{ pt: 2 }}>
+									<TextInputField
+										label={roomNameLabel()}
+										value={roomId}
+										setValue={setRoomId}
+										onEnter={onClicked}
+										randomizeOnBlank={randomizeOnBlank}
+										autoFocus
+									/>
+								</Box>
+							)}
+							{activeEntryTab === 1 && myRoomsTabEnabled && loggedIn && rooms.length > 0 && (
+								<FormControl fullWidth margin="normal">
+									<InputLabel id="room-select-label">{roomNameLabel()}</InputLabel>
+									<Select
+										labelId="room-select-label"
+										id="room-select"
+										value={roomId}
+										label={roomNameLabel()}
+										onChange={(event) => { handleRoomSelect(event as React.ChangeEvent<{ value: unknown }>); }}
+										onOpen={handleDropdownOpen}
+										autoFocus
+										style={{ textAlign: 'left' }}
+									>
+										{rooms.map((room) => (
+											<MenuItem key={room.id} value={room.name ?? ''}>{room.name ?? ''}</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							)}
+						</Box>
 						<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 1, mb: 1 }}>
 							<Typography variant="caption" color="text.secondary" sx={{ wordBreak: 'break-all', textAlign: 'center' }}>
 								{roomUrl}
