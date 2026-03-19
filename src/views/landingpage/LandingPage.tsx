@@ -144,21 +144,6 @@ const LandingPage = (): React.JSX.Element | null => {
 								<Tab label={myRoomsLabel()} aria-label={myRoomsLabel()} />
 							</Tabs>
 						)}
-						<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1, mb: 1 }}>
-							<Typography variant="caption" color="text.secondary" sx={{ wordBreak: 'break-all', textAlign: 'left' }}>
-								{roomUrl}
-							</Typography>
-							<Button
-								size='small'
-								variant='text'
-								onClick={handleCopyClick}
-								disabled={!roomId.trim()}
-								sx={{ ml: 1, minWidth: 'fit-content', flexShrink: 0 }}
-							>
-								{copyFeedback ? copiedRoomLabel() : copyRoomLabel()}
-							</Button>
-						</Box>
-						{qrCodeEnabled && <QRCode value={roomUrl} />}
 						{activeEntryTab === 0 && (
 							<Box sx={{ pt: 2 }}>
 								<TextInputField
@@ -190,6 +175,20 @@ const LandingPage = (): React.JSX.Element | null => {
 								</Select>
 							</FormControl>
 						)}
+						<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 1, mb: 1 }}>
+							<Typography variant="caption" color="text.secondary" sx={{ wordBreak: 'break-all', textAlign: 'center' }}>
+								{roomUrl}
+							</Typography>
+							<Button
+								size='small'
+								variant='text'
+								onClick={handleCopyClick}
+								disabled={!roomId.trim()}
+							>
+								{copyFeedback ? copiedRoomLabel() : copyRoomLabel()}
+							</Button>
+						</Box>
+						{qrCodeEnabled && <QRCode value={roomUrl} />}
 					</Container>
 				}
 				actions={
