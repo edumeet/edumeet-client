@@ -191,8 +191,8 @@ const LandingPage = (): React.JSX.Element | null => {
 							</Button>
 						</Box>
 						{qrCodeEnabled && (
-							<Box sx={{ height: 150 }}>
-								{roomId.trim() && <QRCode value={roomUrl} size={150} />}
+							<Box sx={{ visibility: roomId.trim() ? 'visible' : 'hidden' }}>
+								<QRCode value={roomUrl} size={150} />
 							</Box>
 						)}
 					</Container>
