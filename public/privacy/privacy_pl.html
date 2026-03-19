@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang='pl'>
+<head>
+	<meta charset='UTF-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<title>Polityka prywatności</title>
+	<style type='text/css'>
+		body { margin: 40px auto; max-width: 800px; line-height: 1.6; font-size: 16px; color: #333; padding: 0 20px; font-family: sans-serif; }
+		h1, h2, h3 { line-height: 1.2; color: #111; }
+		h1 { font-size: 2em; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+		h2 { font-size: 1.4em; margin-top: 2em; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+		h3 { font-size: 1.1em; margin-top: 1.5em; }
+		table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em; }
+		th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; vertical-align: top; }
+		th { background: #f5f5f5; font-weight: bold; }
+		tr:nth-child(even) { background: #fafafa; }
+		.notice { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 16px; margin: 1em 0; font-size: 0.9em; }
+		ul { padding-left: 1.5em; }
+		li { margin-bottom: 4px; }
+		a { color: #1a73e8; }
+	</style>
+</head>
+<body>
+
+<header>
+	<h1>Polityka prywatności</h1>
+	<p><strong>Usługa:</strong> [NAZWA USŁUGI]<br>
+	<strong>Administrator:</strong> [NAZWA ADMINISTRATORA, ADRES]<br>
+	<strong>Kontakt:</strong> <a href='mailto:[PRIVACY@TWOJADOMENA.PL]'>[PRIVACY@TWOJADOMENA.PL]</a><br>
+	<strong>Ostatnia aktualizacja:</strong> [DATA]</p>
+</header>
+
+<div class='notice'>
+	<strong>Uwaga dla operatorów:</strong> Przed opublikowaniem zastąp wszystkie oznaczenia w nawiasach kwadratowych właściwymi danymi Twojej organizacji. Sekcje oznaczone jako opcjonalne można usunąć, jeśli nie mają zastosowania.
+</div>
+
+<h2>1. Wprowadzenie</h2>
+<p>Niniejsza polityka prywatności opisuje, w jaki sposób [NAZWA USŁUGI] („my") przetwarza dane osobowe podczas korzystania z naszej platformy wideokonferencyjnej. Platforma oparta jest na oprogramowaniu edumeet — rozwiązaniu open-source do wideokonferencji WebRTC.</p>
+<p>Zobowiązujemy się do przetwarzania Twoich danych wyłącznie w zakresie niezbędnym do świadczenia usługi, zgodnie z Rozporządzeniem (UE) 2016/679 (RODO).</p>
+
+<h2>2. Brak plików cookie</h2>
+<p>Usługa ta <strong>nie używa plików cookie</strong> żadnego rodzaju — ani niezbędnych, ani analitycznych, ani marketingowych. Twoja przeglądarka nie otrzyma żadnego pliku cookie od tej usługi.</p>
+<p>Preferencje użytkownika (np. wybrane urządzenie audio/wideo, język) są przechowywane wyłącznie w <strong>localStorage</strong> Twojej przeglądarki, który nigdy nie opuszcza Twojego urządzenia i nie jest dla nas dostępny.</p>
+
+<h2>3. Dane przetwarzane podczas sesji</h2>
+<p>Poniższe dane są przetwarzane przez czas trwania sesji konferencyjnej. Przechowywane są wyłącznie w pamięci operacyjnej serwera i nie są zapisywane do trwałego magazynu po zakończeniu sesji.</p>
+
+<table>
+	<thead>
+		<tr><th>Dane</th><th>Cel</th><th>Podstawa prawna (art. 6 RODO)</th><th>Okres przechowywania</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><strong>Nazwa wyświetlana</strong> (podana przez Ciebie)</td>
+			<td>Identyfikacja uczestnika dla innych uczestników sesji</td>
+			<td>Art. 6 ust. 1 lit. b — wykonanie umowy / świadczenie usługi</td>
+			<td>Wyłącznie na czas trwania sesji</td>
+		</tr>
+		<tr>
+			<td><strong>Zdjęcie profilowe</strong> (opcjonalne, przesłane przez Ciebie)</td>
+			<td>Wizualna identyfikacja na liście uczestników</td>
+			<td>Art. 6 ust. 1 lit. b</td>
+			<td>Wyłącznie na czas trwania sesji</td>
+		</tr>
+		<tr>
+			<td><strong>Tymczasowy identyfikator uczestnika</strong> (losowy UUID, generowany per sesja)</td>
+			<td>Techniczne routowanie strumieni audio/wideo w ramach sesji</td>
+			<td>Art. 6 ust. 1 lit. b</td>
+			<td>Wyłącznie na czas trwania sesji; nowy identyfikator jest generowany dla każdej sesji</td>
+		</tr>
+		<tr>
+			<td><strong>Strumień audio</strong> (mikrofon)</td>
+			<td>Komunikacja głosowa w czasie rzeczywistym z innymi uczestnikami</td>
+			<td>Art. 6 ust. 1 lit. b</td>
+			<td>Przesyłany strumieniowo w czasie rzeczywistym; nie jest zapisywany na serwerze</td>
+		</tr>
+		<tr>
+			<td><strong>Strumień wideo</strong> (kamera)</td>
+			<td>Komunikacja wideo w czasie rzeczywistym z innymi uczestnikami</td>
+			<td>Art. 6 ust. 1 lit. b</td>
+			<td>Przesyłany strumieniowo w czasie rzeczywistym; nie jest zapisywany na serwerze</td>
+		</tr>
+		<tr>
+			<td><strong>Strumień udostępniania ekranu</strong> (opcjonalne)</td>
+			<td>Udostępnianie ekranu innym uczestnikom</td>
+			<td>Art. 6 ust. 1 lit. b</td>
+			<td>Przesyłany strumieniowo w czasie rzeczywistym; nie jest zapisywany na serwerze</td>
+		</tr>
+		<tr>
+			<td><strong>Wiadomości czatu</strong></td>
+			<td>Komunikacja tekstowa w ramach sesji</td>
+			<td>Art. 6 ust. 1 lit. b</td>
+			<td>Przechowywane w pamięci operacyjnej serwera przez czas trwania sesji; dostępne dla uczestników dołączających w trakcie; usuwane po zakończeniu sesji</td>
+		</tr>
+		<tr>
+			<td><strong>Metadane udostępnianych plików</strong> (nazwa pliku, magnet URI)</td>
+			<td>Wymiana plików między uczestnikami w trybie peer-to-peer</td>
+			<td>Art. 6 ust. 1 lit. b</td>
+			<td>Na czas trwania sesji; zawartość pliku jest przesyłana bezpośrednio między przeglądarkami uczestników (P2P) i nie przechodzi przez nasz serwer</td>
+		</tr>
+		<tr>
+			<td><strong>Typ przeglądarki i system operacyjny</strong> (pochodne nagłówka User-Agent)</td>
+			<td>Określenie możliwości WebRTC i zgodności kodeków</td>
+			<td>Art. 6 ust. 1 lit. b</td>
+			<td>Wyłącznie na czas trwania sesji</td>
+		</tr>
+		<tr>
+			<td><strong>Adres IP</strong></td>
+			<td>Routing sieciowy; wymagany do połączeń WebSocket i WebRTC; może być widoczny dla serwerów przekaźnikowych TURN</td>
+			<td>Art. 6 ust. 1 lit. b</td>
+			<td>Nie jest trwale rejestrowany; przechowywany wyłącznie przez czas aktywnego połączenia</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>4. Transmisja mediów przez WebRTC</h2>
+<p>Audio i wideo są przesyłane za pomocą technologii <strong>WebRTC</strong> (Web Real-Time Communication) — otwartego standardu wbudowanego w nowoczesne przeglądarki. Media przepływają przez nasz serwer <strong>SFU (Selective Forwarding Unit)</strong>, który przekazuje zaszyfrowane strumienie mediów między uczestnikami bez ich odszyfrowywania lub przechowywania.</p>
+<p>W celu przebicia NAT (łączenia uczestników za zaporami sieciowymi lub routerami) usługa może korzystać z <strong>serwerów przekaźnikowych TURN</strong>. W takim przypadku ruch medialny jest przekazywany przez serwer TURN w postaci zaszyfrowanej. Używane serwery TURN: <strong>[LISTA SERWERÓW TURN LUB „własna infrastruktura"]</strong>.</p>
+<p>Cała sygnalizacja (negocjacja sesji) jest przesyłana przez szyfrowane połączenie <strong>WebSocket (WSS)</strong> z użyciem TLS.</p>
+
+<h2>5. Lokalne przechowywanie danych (wyłącznie na Twoim urządzeniu)</h2>
+<p>Poniższe dane są zapisywane w <strong>localStorage</strong> Twojej przeglądarki pod kluczem <code>edumeetRoot</code>. Dane te nigdy nie opuszczają Twojego urządzenia i nie są dla nas dostępne.</p>
+<ul>
+	<li>Nazwa wyświetlana (aby nie trzeba było jej wpisywać przy każdym wejściu)</li>
+	<li>Wybrane urządzenie wejścia audio</li>
+	<li>Wybrane urządzenie wyjścia audio</li>
+	<li>Wybrane urządzenie wideo</li>
+	<li>Ustawienia jakości audio (redukcja szumów, redukcja echa, preferencje kodeków)</li>
+	<li>Ustawienia jakości wideo (rozdzielczość, liczba klatek na sekundę)</li>
+	<li>Język interfejsu (locale)</li>
+	<li>Preferencje interfejsu (układ, podgląd własny, maks. widoczne wideo)</li>
+</ul>
+<p>Możesz usunąć te dane w dowolnym momencie poprzez ustawienia przeglądarki (<em>Wyczyść dane witryny</em> / <em>Wyczyść localStorage</em>).</p>
+
+<h2>6. Nagrywanie lokalne (funkcja opcjonalna)</h2>
+<p>Platforma udostępnia opcjonalną funkcję <strong>nagrywania lokalnego</strong>. Gdy jest używana:</p>
+<ul>
+	<li>Nagrywanie odbywa się całkowicie w Twojej przeglądarce przy użyciu interfejsu <code>MediaRecorder</code>.</li>
+	<li>Plik nagrania jest zapisywany bezpośrednio w wybranej przez Ciebie lokalizacji na <strong>Twoim urządzeniu</strong> (wybór przez okno dialogowe).</li>
+	<li>Dane nagrania <strong>nie są przesyłane na nasze serwery</strong>.</li>
+	<li>Inni uczestnicy są powiadamiani o trwającym nagrywaniu.</li>
+	<li>Jeśli nagrywasz sesję, stajesz się administratorem danych dla tego nagrania i ponosisz odpowiedzialność za jego zgodne z prawem wykorzystanie.</li>
+</ul>
+
+<h2>7. Efekty tła i przetwarzanie AI</h2>
+<p>Platforma oferuje opcjonalne funkcje rozmycia tła oraz wirtualnego tła. Przetwarzanie to:</p>
+<ul>
+	<li>Odbywa się <strong>całkowicie lokalnie w Twojej przeglądarce</strong> przy użyciu technologii WebGL i TensorFlow Lite.</li>
+	<li>Nie wysyła klatek wideo do żadnego zewnętrznego serwera w celu przetworzenia.</li>
+	<li>Niestandardowe obrazy tła przesłane przez Ciebie są przechowywane wyłącznie w localStorage Twojej przeglądarki.</li>
+</ul>
+
+<h2>8. Funkcje zarządzania / administracji (opcjonalne)</h2>
+<p>Jeśli operator włączył system zarządzania, administratorzy pokoi mogą logować się przy użyciu adresu e-mail i hasła. W takim przypadku:</p>
+<ul>
+	<li>Przetwarzany jest <strong>adres e-mail</strong> oraz <strong>token uwierzytelniający JWT</strong>.</li>
+	<li>Token jest przechowywany w localStorage pod kluczem <code>feathers-jwt</code> i służy do podtrzymania sesji.</li>
+	<li>Dotyczy to wyłącznie kont administratorów, a nie zwykłych uczestników konferencji.</li>
+</ul>
+
+<h2>9. Logowanie przez OAuth 2.0 / OpenID Connect (OIDC) (opcjonalne)</h2>
+<p>Jeśli operator włączył logowanie federacyjne, użytkownicy (zazwyczaj administratorzy lub członkowie instytucji) mogą uwierzytelniać się za pomocą zewnętrznego dostawcy tożsamości (IdP) poprzez protokół <strong>OAuth 2.0 / OpenID Connect</strong>. Dotyczy to wyłącznie sytuacji, gdy w konfiguracji usługi ustawiono <code>loginEnabled</code> — opcja ta nie jest dostępna dla anonimowych uczestników konferencji.</p>
+
+<h3>Jak to działa</h3>
+<p>Po kliknięciu „Zaloguj", Twoja przeglądarka jest przekierowywana do punktu autoryzacji dostawcy tożsamości (<code>authorize_url</code>). Uwierzytelniasz się tam bezpośrednio — Twoje hasło nigdy nie jest przesyłane do tej usługi. Po pomyślnym uwierzytelnieniu dostawca tożsamości zwraca kod autoryzacyjny, który serwer wymienia na token w punkcie <code>access_url</code>. Dane Twojego profilu są następnie pobierane z <code>profile_url</code> dostawcy.</p>
+
+<h3>Dane otrzymywane od dostawcy tożsamości</h3>
+<p>Domyślny zakres OAuth to <code>openid profile email</code>. Następujące dane mogą być otrzymane w zależności od tego, co zwraca dostawca tożsamości:</p>
+<table>
+	<thead>
+		<tr><th>Pole / claim</th><th>Cel</th><th>Gdzie przechowywane</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><strong>sub</strong> / SSO ID</td>
+			<td>Unikalny identyfikator przyznany przez dostawcę tożsamości; służy do powiązania konta między sesjami (pole <code>ssoId</code>)</td>
+			<td>Baza danych systemu zarządzania (po stronie serwera)</td>
+		</tr>
+		<tr>
+			<td><strong>email</strong></td>
+			<td>Używany jako identyfikator konta w systemie zarządzania</td>
+			<td>Baza danych systemu zarządzania (po stronie serwera)</td>
+		</tr>
+		<tr>
+			<td><strong>profile</strong> (imię, nazwa wyświetlana)</td>
+			<td>Może być używany do wstępnego wypełnienia nazwy wyświetlanej</td>
+			<td>Wyłącznie na czas sesji</td>
+		</tr>
+	</tbody>
+</table>
+
+<h3>Przechowywanie tokenu</h3>
+<p>Po zalogowaniu <strong>token JWT</strong> jest przechowywany w localStorage Twojej przeglądarki pod kluczem <code>feathers-jwt</code>. Token ten służy do uwierzytelniania kolejnych żądań do API zarządzania bez konieczności ponownego logowania. Jest automatycznie odświeżany na krótko przed wygaśnięciem. Token jest usuwany z localStorage po wylogowaniu.</p>
+
+<h3>Dostawca tożsamości</h3>
+<p>Dostawca tożsamości używany w tej instalacji to: <strong>[NAZWA IdP, np. „Microsoft Entra ID instytucji / Google Workspace / Keycloak / własny dostawca OIDC"]</strong>.<br>
+Uwierzytelniając się przez dostawcę tożsamości, podlegasz jego własnej polityce prywatności. Zapoznaj się z nią tutaj: <strong>[LINK DO POLITYKI PRYWATNOŚCI IdP]</strong>.</p>
+
+<p>Podstawa prawna: art. 6 ust. 1 lit. b RODO — przetwarzanie jest niezbędne do zapewnienia uwierzytelnionego dostępu do usługi.</p>
+
+<h2>10. Monitorowanie wydajności (opcjonalne)</h2>
+<p>Operator tej instalacji może opcjonalnie włączyć monitorowanie wydajności WebRTC po stronie klienta (przy użyciu biblioteki <code>@observertc/client-monitor-js</code>). Jeśli jest włączone:</p>
+<ul>
+	<li>Zbierane są techniczne metryki, takie jak utrata pakietów, opóźnienie, rozdzielczość i informacje o kodekach.</li>
+	<li>Dane te nie identyfikują Cię bezpośrednio i są wykorzystywane do poprawy jakości usługi.</li>
+	<li>Operator jest odpowiedzialny za ujawnienie miejsca docelowego tych danych.</li>
+</ul>
+<p>W tej instalacji monitorowanie wydajności jest: <strong>[WŁĄCZONE / WYŁĄCZONE]</strong>. [Jeśli włączone: dane są wysyłane do: [ENDPOINT]].</p>
+
+<h2>11. Brak zewnętrznych usług analitycznych i reklamowych</h2>
+<p>Usługa ta nie integruje żadnych zewnętrznych usług analitycznych (np. Google Analytics), sieci reklamowych, pikselów śledzących mediów społecznościowych ani żadnych innych zewnętrznych usług śledzenia.</p>
+<p>Wszystkie używane komponenty oprogramowania są bibliotekami open-source ładowanymi z tego samego źródła co ta usługa — żadne zewnętrzne zasoby CDN nie są ładowane.</p>
+
+<h2>12. Podsumowanie okresów przechowywania danych</h2>
+<table>
+	<thead>
+		<tr><th>Dane</th><th>Miejsce przechowywania</th><th>Okres przechowywania</th></tr>
+	</thead>
+	<tbody>
+		<tr><td>Nazwa wyświetlana, zdjęcie, identyfikator uczestnika, info o przeglądarce</td><td>RAM serwera (tylko sesja)</td><td>Usuwane po zakończeniu sesji</td></tr>
+		<tr><td>Strumienie audio / wideo</td><td>Nie są przechowywane — wyłącznie przekazywanie w czasie rzeczywistym</td><td>Nie dotyczy</td></tr>
+		<tr><td>Wiadomości czatu</td><td>RAM serwera</td><td>Usuwane po zakończeniu sesji</td></tr>
+		<tr><td>Preferencje użytkownika (urządzenie, język, układ)</td><td>localStorage przeglądarki</td><td>Do momentu wyczyszczenia danych przeglądarki</td></tr>
+		<tr><td>Token JWT (tylko admin)</td><td>localStorage przeglądarki</td><td>Do wylogowania lub wygaśnięcia tokenu</td></tr>
+		<tr><td>Nagranie lokalne</td><td>Twoje urządzenie (lokalizacja wybrana przez Ciebie)</td><td>Do momentu usunięcia pliku przez Ciebie</td></tr>
+		<tr><td>Niestandardowe obrazy tła</td><td>localStorage przeglądarki</td><td>Do momentu wyczyszczenia danych przeglądarki</td></tr>
+		<tr><td>Logi dostępu serwera (IP, znaczniki czasu)</td><td>[TWÓJ MAGAZYN LOGÓW]</td><td>[TWÓJ OKRES PRZECHOWYWANIA, np. 30 dni]</td></tr>
+	</tbody>
+</table>
+
+<h2>13. Twoje prawa wynikające z RODO</h2>
+<p>Na podstawie RODO przysługują Ci następujące prawa dotyczące przetwarzanych przez nas danych osobowych:</p>
+<ul>
+	<li><strong>Prawo dostępu</strong> (art. 15) — możesz zażądać informacji o przetwarzanych danych na Twój temat.</li>
+	<li><strong>Prawo do sprostowania</strong> (art. 16) — możesz poprawić niedokładne dane.</li>
+	<li><strong>Prawo do usunięcia</strong> (art. 17) — możesz zażądać usunięcia danych. Uwaga: dane sesyjne są automatycznie usuwane po zakończeniu sesji; dane w localStorage możesz usunąć bezpośrednio w przeglądarce.</li>
+	<li><strong>Prawo do ograniczenia przetwarzania</strong> (art. 18).</li>
+	<li><strong>Prawo do przenoszenia danych</strong> (art. 20).</li>
+	<li><strong>Prawo do sprzeciwu</strong> (art. 21).</li>
+	<li><strong>Prawo do wniesienia skargi</strong> — do krajowego organu nadzorczego ds. ochrony danych osobowych (w Polsce: Prezes Urzędu Ochrony Danych Osobowych, <a href='https://uodo.gov.pl' target='_blank'>uodo.gov.pl</a>).</li>
+</ul>
+<p>Aby skorzystać z powyższych praw, skontaktuj się z nami: <a href='mailto:[PRIVACY@TWOJADOMENA.PL]'>[PRIVACY@TWOJADOMENA.PL]</a></p>
+
+<h2>14. Przekazywanie danych poza EOG</h2>
+<p>Wszystkie serwery używane przez tę usługę znajdują się w: <strong>[LOKALIZACJA SERWERÓW, np. „Unii Europejskiej / Polsce"]</strong>. Dane osobowe nie są przekazywane poza Europejski Obszar Gospodarczy. [Lub opisz mechanizm transferu, jeśli ma zastosowanie.]</p>
+
+<h2>15. Zmiany niniejszej polityki</h2>
+<p>Możemy od czasu do czasu aktualizować niniejszą politykę. Data na górze strony wskazuje, kiedy została ostatnio zmieniona. Dalsze korzystanie z usługi po wprowadzeniu zmian oznacza akceptację zaktualizowanej polityki.</p>
+
+<h2>Polityka dopuszczalnego użytkowania (AUP)</h2>
+<p>Korzystając z tej usługi, zgadzasz się nie:</p>
+<ul>
+	<li>Nagrywać ani rozpowszechniać sesji bez wiedzy i zgody pozostałych uczestników.</li>
+	<li>Udostępniać treści nielegalnych, szkodliwych lub naruszających prawa własności intelektualnej poprzez udostępnianie ekranu, czat lub wymianę plików.</li>
+	<li>Próbować obejść mechanizmów kontroli dostępu ani zakłócać działania usługi.</li>
+	<li>Używać usługi do przetwarzania szczególnych kategorii danych osobowych (art. 9 RODO) bez odpowiednich zabezpieczeń.</li>
+	<li>Używać usługi do niezamówionych komunikatów handlowych.</li>
+</ul>
+<p>Naruszenia mogą skutkować odebraniem dostępu do usługi. W przypadku pytań dotyczących dozwolonego użytkowania skontaktuj się: <a href='mailto:[KONTAKT@TWOJADOMENA.PL]'>[KONTAKT@TWOJADOMENA.PL]</a></p>
+
+</body>
+</html>

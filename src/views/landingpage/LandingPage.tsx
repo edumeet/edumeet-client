@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Container, Box, Link, Typography } from '@mui/material';
 import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
+import { joinLabel, roomNameLabel, imprintLabel, joinConsentLabel, privacyPolicyLabel } from '../../components/translated/translatedComponents';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
@@ -59,31 +59,36 @@ const LandingPage = (): React.JSX.Element | null => {
 
 				}
 				actions={
-					<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+					<Box display="flex" alignItems="flex-end" justifyContent="space-between" width="100%">
 						<Box display="flex" alignItems="left">
 							{imprintUrl.trim() !== '' && (
 								<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
-									<Typography variant="body2">{ imprintLabel() }</Typography>
-								</Link>
-							)}
-							{privacyUrl.trim() !== '' && (
-								<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
-									<Typography variant="body2">{ privacyLabel() }</Typography>
+									<Typography variant="caption" color="text.secondary">{ imprintLabel() }</Typography>
 								</Link>
 							)}
 						</Box>
-						<Button
-							onClick={onClicked}
-							variant='contained'
-							disabled={!roomId}
-							size='small'
-						>
-							{ joinLabel()}
-						</Button>
+						<Box display="flex" flexDirection="column" alignItems="flex-end">
+							{privacyUrl.trim() !== '' && (
+								<Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
+									{joinConsentLabel()}{' '}
+									<Link href={privacyUrl} target="_blank" color="inherit">
+										{privacyPolicyLabel()}
+									</Link>
+								</Typography>
+							)}
+							<Button
+								onClick={onClicked}
+								variant='contained'
+								disabled={!roomId}
+								size='small'
+							>
+								{ joinLabel()}
+							</Button>
+						</Box>
 					</Box>
 				}
 			/>
-			
+
 		</StyledBackground>
 	);
 };

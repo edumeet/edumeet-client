@@ -303,6 +303,8 @@
   "label.managementRuleSettings": "Ustawienia reguł",
   "label.imprint": "O nas",
   "label.privacy": "Prywatność",
+  "label.joinConsent": "Dołączając, akceptujesz naszą",
+  "label.privacyPolicy": "Politykę prywatności",
   "label.default": "Domyślny",
   "label.removeAllImages": "Usuń wszystkie obrazy",
   "label.roomBackground": "Tło pokoju",

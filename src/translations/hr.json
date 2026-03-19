@@ -297,6 +297,8 @@
   "label.managementRuleSettings": null,
   "label.imprint": null,
   "label.privacy": null,
+  "label.joinConsent": null,
+  "label.privacyPolicy": null,
   "filesharing.upload": null,
   "label.default": null,
   "label.removeAllImages": null,

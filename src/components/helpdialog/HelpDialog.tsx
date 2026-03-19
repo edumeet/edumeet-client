@@ -31,12 +31,12 @@ const HelpDialog = (): React.JSX.Element => {
 					<Box display="flex" alignItems="left">
 						{imprintUrl.trim() !== '' && (
 							<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
-								<Typography variant="body2">{ imprintLabel() }</Typography>
+								<Typography variant="caption" color="text.secondary">{ imprintLabel() }</Typography>
 							</Link>
 						)}
 						{privacyUrl.trim() !== '' && (
 							<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
-								<Typography variant="body2">{ privacyLabel() }</Typography>
+								<Typography variant="caption" color="text.secondary">{ privacyLabel() }</Typography>
 							</Link>
 						)}
 					</Box>
