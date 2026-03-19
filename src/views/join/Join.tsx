@@ -96,7 +96,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 					</Box>
 					<Box display="flex" flexDirection="column" alignItems="flex-end">
 						{privacyUrl.trim() !== '' && (
-							<Typography variant="caption" color="text.secondary" sx={{ mb: 0.5 }}>
+							<Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
 								{joinConsentLabel()}{' '}
 								<Link href={privacyUrl} target="_blank" color="inherit">
 									{privacyPolicyLabel()}
