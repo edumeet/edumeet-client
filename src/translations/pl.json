@@ -303,6 +303,8 @@
   "label.managementRuleSettings": "Ustawienia reguł",
   "label.imprint": "O nas",
   "label.privacy": "Prywatność",
+  "label.joinConsent": "Dołączając, akceptujesz naszą",
+  "label.privacyPolicy": "Politykę prywatności",
   "label.default": "Domyślny",
   "label.removeAllImages": "Usuń wszystkie obrazy",
   "label.roomBackground": "Tło pokoju",
@@ -352,5 +354,9 @@
   "label.management.tenantAdmin": "Administrator instytucji",
   "settings.selectVideoBackground": "Wybierz tło wideo",
   "room.reaction": "{displayName} dodał(a) reakcję {reaction}",
-  "label.management.room.reactionsEnabled": "Włącz reakcje"
+  "label.management.room.reactionsEnabled": "Włącz reakcje",
+  "label.enterRoom": "Dołącz do pokoju",
+  "label.myRooms": "Moje pokoje",
+  "label.copyRoom": "Kopiuj",
+  "label.copiedRoom": "Skopiowano!"
 }

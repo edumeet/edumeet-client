@@ -299,6 +299,8 @@
   "label.managementRuleSettings": "Regelindstillinger",
   "label.imprint": "Om os",
   "label.privacy": "Privatliv",
+  "label.joinConsent": null,
+  "label.privacyPolicy": null,
   "filesharing.upload": "Upload fil",
   "label.default": "Standard",
   "label.removeAllImages": "Fjern alle billeder",
@@ -352,5 +354,9 @@
   "label.management.tenantAdmin": null,
   "tooltip.countdowntimer.start": null,
   "tooltip.countdowntimer.stop": null,
-  "tooltip.countdowntimer.pause": null
+  "tooltip.countdowntimer.pause": null,
+  "label.enterRoom": null,
+  "label.myRooms": null,
+  "label.copyRoom": null,
+  "label.copiedRoom": null
 }

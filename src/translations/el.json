@@ -297,6 +297,8 @@
   "label.managementRuleSettings": null,
   "label.imprint": null,
   "label.privacy": null,
+  "label.joinConsent": null,
+  "label.privacyPolicy": null,
   "filesharing.upload": null,
   "label.default": null,
   "label.removeAllImages": null,
@@ -352,5 +354,9 @@
   "label.management.tenantAdmin": null,
   "tooltip.countdowntimer.start": null,
   "tooltip.countdowntimer.stop": null,
-  "tooltip.countdowntimer.pause": null
+  "tooltip.countdowntimer.pause": null,
+  "label.enterRoom": null,
+  "label.myRooms": null,
+  "label.copyRoom": null,
+  "label.copiedRoom": null
 }

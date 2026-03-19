@@ -300,6 +300,8 @@
   "label.managementRuleSettings": "Szabályok",
   "label.imprint": "Rólunk",
   "label.privacy": "Adatvédelem",
+  "label.joinConsent": null,
+  "label.privacyPolicy": null,
   "filesharing.upload": "Feltöltés",
   "label.default": "Alapértelmezett",
   "label.removeAllImages": "Képek törlése",
@@ -352,5 +354,9 @@
   "label.none": "-",
   "room.reaction": "{displayName} reakciója {reaction}",
   "settings.selectVideoBackground": "Válassz videó hátteret",
-  "label.management.room.reactionsEnabled": "Szoba reakciók"
+  "label.management.room.reactionsEnabled": "Szoba reakciók",
+  "label.enterRoom": null,
+  "label.myRooms": null,
+  "label.copyRoom": null,
+  "label.copiedRoom": null
 }

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Box, Link, Typography, MenuItem, Select, InputLabel, FormControl, Tab, Tabs } from '@mui/material'; import randomString from 'random-string';
+import { Button, Container, Box, Link, Typography, MenuItem, Select, InputLabel, FormControl, Tab, Tabs } from '@mui/material';
+import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { enterRoomLabel, myRoomsLabel, copyRoomLabel, copiedRoomLabel, joinLabel, roomNameLabel, imprintLabel, privacyLabel } from '../../components/translated/translatedComponents';
+import { enterRoomLabel, myRoomsLabel, copyRoomLabel, copiedRoomLabel, joinLabel, roomNameLabel, imprintLabel, joinConsentLabel, privacyPolicyLabel } from '../../components/translated/translatedComponents';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
@@ -16,12 +17,11 @@ import { Room } from '../../utils/types';
 const LandingPage = (): React.JSX.Element | null => {
 	const navigate = useNavigate();
 	const randomizeOnBlank = edumeetConfig.randomizeOnBlank;
-	const randomRoomString = randomString({ length: 8 }).toLowerCase();
-	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomRoomString : '');
+	const [ roomId, setRoomId ] = useState(randomizeOnBlank ? randomString({ length: 8 }).toLowerCase() : '');
 	const [ rooms, setRooms ] = useState<Room[]>([]);
 	const [ activeEntryTab, setActiveEntryTab ] = useState(0);
 	const [ copyFeedback, setCopyFeedback ] = useState(false);
-	
+
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
 	const qrCodeEnabled = edumeetConfig.qrCodeEnabled;
@@ -40,22 +40,18 @@ const LandingPage = (): React.JSX.Element | null => {
 	};
 
 	const handleTabChange = (_event: React.ChangeEvent<unknown>, value: number) => {
-		// Reset roomId when switching to My Rooms tab if it's a room name
-		// that doesn't exist in the rooms list
 		if (value === 1 && myRoomsTabEnabled && loggedIn && rooms.length > 0) {
-			const isRoomInList = rooms.some((room) => room.name === roomId);
+			const isRoomInList = rooms.some((room) => (room.name ?? '') === roomId);
 
 			if (!isRoomInList && roomId.trim() !== '') {
 				setRoomId('');
 			}
 		}
 
-		// Generate new random room when switching back to Enter Room tab
-		// and randomizeOnBlank is true
 		if (value === 0 && randomizeOnBlank && roomId === '') {
-			setRoomId(randomRoomString);
+			setRoomId(randomString({ length: 8 }).toLowerCase());
 		}
-		
+
 		setActiveEntryTab(value);
 	};
 
@@ -81,7 +77,7 @@ const LandingPage = (): React.JSX.Element | null => {
 			setActiveEntryTab(1);
 		}
 
-		if (!loggedIn || rooms.length == 0) {
+		if (!loggedIn || rooms.length === 0) {
 			setActiveEntryTab(0);
 		}
 	}, [ loggedIn, rooms ]);
@@ -118,7 +114,7 @@ const LandingPage = (): React.JSX.Element | null => {
 		};
 
 		document.addEventListener('visibilitychange', handleVisibilityChange);
-		
+
 		return () => {
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
@@ -181,7 +177,7 @@ const LandingPage = (): React.JSX.Element | null => {
 									style={{ textAlign: 'left' }}
 								>
 									{rooms.map((room) => (
-										<MenuItem key={room.id} value={room.name}>{room.name}</MenuItem>
+										<MenuItem key={room.id} value={room.name ?? ''}>{room.name ?? ''}</MenuItem>
 									))}
 								</Select>
 							</FormControl>
@@ -189,31 +185,36 @@ const LandingPage = (): React.JSX.Element | null => {
 					</Container>
 				}
 				actions={
-					<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+					<Box display="flex" alignItems="flex-end" justifyContent="space-between" width="100%">
 						<Box display="flex" alignItems="left">
 							{imprintUrl.trim() !== '' && (
 								<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
-									<Typography variant="body2">{ imprintLabel() }</Typography>
-								</Link>
-							)}
-							{privacyUrl.trim() !== '' && (
-								<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
-									<Typography variant="body2">{ privacyLabel() }</Typography>
+									<Typography variant="caption" color="text.secondary">{ imprintLabel() }</Typography>
 								</Link>
 							)}
 						</Box>
-						<Button
-							onClick={onClicked}
-							variant='contained'
-							disabled={!roomId}
-							size='small'
-						>
-							{ joinLabel()}
-						</Button>
+						<Box display="flex" flexDirection="column" alignItems="flex-end">
+							{privacyUrl.trim() !== '' && (
+								<Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
+									{joinConsentLabel()}{' '}
+									<Link href={privacyUrl} target="_blank" color="inherit">
+										{privacyPolicyLabel()}
+									</Link>
+								</Typography>
+							)}
+							<Button
+								onClick={onClicked}
+								variant='contained'
+								disabled={!roomId}
+								size='small'
+							>
+								{ joinLabel()}
+							</Button>
+						</Box>
 					</Box>
 				}
 			/>
-			
+
 		</StyledBackground>
 	);
 };

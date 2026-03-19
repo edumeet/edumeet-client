@@ -16,7 +16,7 @@ $ yarn install
 $ yarn start
 ```
 
-To run the service you need to have Node.js version 18 or higher installed.
+To run the service you need to have Node.js version 24 or higher installed.
 
 ### Running the service in production
 
