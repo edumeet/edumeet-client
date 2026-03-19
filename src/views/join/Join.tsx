@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Button, Box, Link, Typography } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
-import { joinLabel, yourNameLabel, imprintLabel, privacyLabel, joinConsentLabel, privacyPolicyLabel } from '../../components/translated/translatedComponents';
+import { joinLabel, yourNameLabel, imprintLabel, joinConsentLabel, privacyPolicyLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';

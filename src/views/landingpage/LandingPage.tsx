@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Container, Box, Link, Typography } from '@mui/material';
 import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
-import { joinLabel, roomNameLabel, imprintLabel, privacyLabel, joinConsentLabel, privacyPolicyLabel } from '../../components/translated/translatedComponents';
+import { joinLabel, roomNameLabel, imprintLabel, joinConsentLabel, privacyPolicyLabel } from '../../components/translated/translatedComponents';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
