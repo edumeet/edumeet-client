@@ -251,7 +251,7 @@ export const myRoomsLabel = (): string => intl.formatMessage({
 
 export const copyRoomLabel = (): string => intl.formatMessage({
 	id: 'label.copyRoom',
-	defaultMessage: 'Copy'
+	defaultMessage: 'Copy meeting link'
 });
 
 export const copiedRoomLabel = (): string => intl.formatMessage({
