@@ -190,7 +190,11 @@ const LandingPage = (): React.JSX.Element | null => {
 								{copyFeedback ? copiedRoomLabel() : copyRoomLabel()}
 							</Button>
 						</Box>
-						{qrCodeEnabled && <QRCode value={roomUrl} />}
+						{qrCodeEnabled && (
+						roomId.trim()
+							? <QRCode value={roomUrl} />
+							: <Box sx={{ height: 150 }} />
+					)}
 					</Container>
 				}
 				actions={
