@@ -31,6 +31,8 @@ const LandingPage = (): React.JSX.Element | null => {
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);
 
+	const roomUrl = `${window.location.protocol}//${window.location.hostname}/${roomId}`;
+
 	const onClicked = () => navigate(`/${roomId}`);
 
 	const handleRoomSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -64,7 +66,7 @@ const LandingPage = (): React.JSX.Element | null => {
 	};
 
 	const handleCopyClick = () => {
-		navigator.clipboard.writeText(`${window.location.protocol}//${window.location.hostname}/${roomId}`).then(() => {
+		navigator.clipboard.writeText(roomUrl).then(() => {
 			setCopyFeedback(true);
 			setTimeout(() => setCopyFeedback(false), 2000);
 		});
@@ -132,17 +134,31 @@ const LandingPage = (): React.JSX.Element | null => {
 				title={ <PrecallTitle /> }
 				content={
 					<Container style={{ textAlign: 'center' }}>
-						{qrCodeEnabled && <QRCode value={`${window.location.protocol}//${window.location.hostname}/${roomId}`} />}
 						{myRoomsTabEnabled && loggedIn && rooms.length > 0 && (
 							<Tabs
 								value={activeEntryTab}
 								onChange={handleTabChange}
-								centered={false}
+								centered
 							>
 								<Tab label={enterRoomLabel()} aria-label={enterRoomLabel()} />
 								<Tab label={myRoomsLabel()} aria-label={myRoomsLabel()} />
 							</Tabs>
 						)}
+						<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1, mb: 1 }}>
+							<Typography variant="caption" color="text.secondary" sx={{ wordBreak: 'break-all', textAlign: 'left' }}>
+								{roomUrl}
+							</Typography>
+							<Button
+								size='small'
+								variant='text'
+								onClick={handleCopyClick}
+								disabled={!roomId.trim()}
+								sx={{ ml: 1, minWidth: 'fit-content', flexShrink: 0 }}
+							>
+								{copyFeedback ? copiedRoomLabel() : copyRoomLabel()}
+							</Button>
+						</Box>
+						{qrCodeEnabled && <QRCode value={roomUrl} />}
 						{activeEntryTab === 0 && (
 							<Box sx={{ pt: 2 }}>
 								<TextInputField
@@ -161,14 +177,6 @@ const LandingPage = (): React.JSX.Element | null => {
 								<Select
 									labelId="room-select-label"
 									id="room-select"
-									endAdornment={roomId.trim() !== '' &&
-										<Button
-											style={{ minWidth: 'fit-content', marginRight: '5px' }}
-											variant='text'
-											onClick={handleCopyClick}
-										>
-											{copyFeedback ? copiedRoomLabel() : copyRoomLabel()}
-										</Button>}
 									value={roomId}
 									label={roomNameLabel()}
 									onChange={(event) => { handleRoomSelect(event as React.ChangeEvent<{ value: unknown }>); }}
