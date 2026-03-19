@@ -352,5 +352,13 @@
   "label.none": "-",
   "room.reaction": "{displayName} reakciója {reaction}",
   "settings.selectVideoBackground": "Válassz videó hátteret",
-  "label.management.room.reactionsEnabled": "Szoba reakciók"
+  "label.management.room.reactionsEnabled": "Szoba reakciók",
+  "label.defaults": "Alapértelmezések",
+  "label.defaultSettings": "Alapértelmezések",
+  "room.startDrawing": "Rajzolás",
+  "room.stopDrawing": "Rajzolás befejezése",
+  "room.removeDrawings": "Rajz törélse",
+  "room.drawingsRemoved": "Rajzok törölve",
+  "room.startDrawingMode": "Rajz mód engedélyezve",
+  "room.stopDrawingMode": "Rajz mód befejezve"
 }

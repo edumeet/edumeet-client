@@ -352,5 +352,13 @@
 	"label.management.room.localRecordingEnabled": "Enable local recording",
 	"label.management.room.breakoutsEnabled": "Enable breakout rooms",
 	"label.management.room.owners": "Owners",
-	"label.management.tenantAdmin": "Tenant admin"
+	"label.management.tenantAdmin": "Tenant admin",
+	"label.defaults": "Defaults",
+	"label.defaultSettings": "Defaults",
+	"room.startDrawing": "Start drawing",
+	"room.stopDrawing": "Stop drawing",
+	"room.removeDrawings": "Remove drawings for all",
+	"room.drawingsRemoved": "The drawings have been removed",
+	"room.startDrawingMode": "The drawing mode has been started",
+	"room.stopDrawingMode": "The drawing mode has been stopped"
 }

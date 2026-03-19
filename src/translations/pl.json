@@ -352,5 +352,13 @@
   "label.management.tenantAdmin": "Administrator instytucji",
   "settings.selectVideoBackground": "Wybierz tło wideo",
   "room.reaction": "{displayName} dodał(a) reakcję {reaction}",
-  "label.management.room.reactionsEnabled": "Włącz reakcje"
+  "label.management.room.reactionsEnabled": "Włącz reakcje",
+  "label.defaults": null,
+  "label.defaultSettings": null,
+  "room.startDrawing": null,
+  "room.stopDrawing": null,
+  "room.removeDrawings": null,
+  "room.drawingsRemoved": null,
+  "room.startDrawingMode": null,
+  "room.stopDrawingMode": null
 }

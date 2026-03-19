@@ -352,5 +352,13 @@
   "label.management.tenantAdmin": null,
   "tooltip.countdowntimer.start": null,
   "tooltip.countdowntimer.stop": null,
-  "tooltip.countdowntimer.pause": null
+  "tooltip.countdowntimer.pause": null,
+  "label.defaults": null,
+  "label.defaultSettings": null,
+  "room.startDrawing": null,
+  "room.stopDrawing": null,
+  "room.removeDrawings": null,
+  "room.drawingsRemoved": null,
+  "room.startDrawingMode": null,
+  "room.stopDrawingMode": null
 }
