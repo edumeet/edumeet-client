@@ -360,5 +360,20 @@
 	"room.removeDrawings": "Remove drawings for all",
 	"room.drawingsRemoved": "The drawings have been removed",
 	"room.startDrawingMode": "The drawing mode has been started",
-	"room.stopDrawingMode": "The drawing mode has been stopped"
+	"room.stopDrawingMode": "The drawing mode has been stopped",
+	"label.defaults.userManagedRoomNumberLimit": "Number of rooms allowed in the tenant for one user",
+  	"label.defaults.numberLimit": "Number of rooms allowed in the tenant",
+  	"label.defaults.managerManagedRoomNumberLimit": "Number of rooms allowed in the tenant for one manager user",
+  	"label.defaults.roomBackgroundURL": "Background Image URL",
+  	"label.defaults.roomLogoURL": "Logo Image URL",
+  	"label.defaults.roomTracker": "Tracker (wss://FQDN/path)",
+  	"label.defaults.defaultRoleId": "Default role",
+  	"label.defaults.maxFileSize": "Max file size",
+	"label.type": "Type",
+	"label.method": "Method",
+	"label.parameter": "Parameter",
+	"label.negate": "Negate",
+	"label.value": "Value",
+	"label.action": "Action",
+	"label.accessId": "Access Id"
 }

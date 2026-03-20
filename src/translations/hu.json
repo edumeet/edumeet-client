@@ -360,5 +360,20 @@
   "room.removeDrawings": "Rajz törélse",
   "room.drawingsRemoved": "Rajzok törölve",
   "room.startDrawingMode": "Rajz mód engedélyezve",
-  "room.stopDrawingMode": "Rajz mód befejezve"
+  "room.stopDrawingMode": "Rajz mód befejezve",
+  "label.defaults.userManagedRoomNumberLimit": "A szervezeten bellül létrehozható szobák száma felhasználónként",
+  "label.defaults.numberLimit": "A szervezeten bellül létrehozható szobák száma",
+  "label.defaults.managerManagedRoomNumberLimit": "A szervezeten bellül létrehozható szobák száma managerenként",
+  "label.defaults.roomBackgroundURL": "Szoba háttér URL",
+  "label.defaults.roomLogoURL": "Szoba logo URL",
+  "label.defaults.roomTracker": "Tracker (wss://FQDN/path)",
+  "label.defaults.defaultRoleId": "Alapértelezett szerep",
+  "label.defaults.maxFileSize": "Feltölthető file méret",
+  "label.type": "Típus",
+  "label.method": "Metódus",
+	"label.parameter": "Paraméter",
+	"label.negate": "Tagadás",
+	"label.value": "Érték",
+	"label.action": "Művelet",
+	"label.accessId": "Azonosító"
 }
