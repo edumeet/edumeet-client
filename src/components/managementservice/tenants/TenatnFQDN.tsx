@@ -163,7 +163,7 @@ const TenantFQDNTable = (props: TenantProp) => {
 					<TextField
 						margin="dense"
 						id="description"
-						label="description"
+						label={descLabel()}
 						type="text"
 						fullWidth
 						onChange={handleDescriptionChange}
