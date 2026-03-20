@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<meta charset='UTF-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<title>Privacy Policy</title>
+	<style type='text/css'>
+		body { margin: 40px auto; max-width: 800px; line-height: 1.6; font-size: 16px; color: #333; padding: 0 20px; font-family: sans-serif; }
+		h1, h2, h3 { line-height: 1.2; color: #111; }
+		h1 { font-size: 2em; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+		h2 { font-size: 1.4em; margin-top: 2em; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+		h3 { font-size: 1.1em; margin-top: 1.5em; }
+		table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em; }
+		th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; vertical-align: top; }
+		th { background: #f5f5f5; font-weight: bold; }
+		tr:nth-child(even) { background: #fafafa; }
+		.notice { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 16px; margin: 1em 0; font-size: 0.9em; }
+		ul { padding-left: 1.5em; }
+		li { margin-bottom: 4px; }
+		a { color: #1a73e8; }
+	</style>
+</head>
+<body>
+
+<header>
+	<h1>Privacy Policy</h1>
+	<p><strong>Service:</strong> [YOUR SERVICE NAME]<br>
+	<strong>Operator:</strong> [OPERATOR NAME, ADDRESS]<br>
+	<strong>Contact:</strong> <a href='mailto:[PRIVACY@YOURDOMAIN]'>[PRIVACY@YOURDOMAIN]</a><br>
+	<strong>Last updated:</strong> [DATE]</p>
+</header>
+
+<div class='notice'>
+	<strong>Note for operators:</strong> Replace all bracketed placeholders with your organisation's specific information before publishing. Sections marked as optional may be removed if not applicable.
+</div>
+
+<h2>1. Introduction</h2>
+<p>This privacy policy describes how [YOUR SERVICE NAME] ("we", "us") processes personal data when you use our video conferencing platform. The platform is based on edumeet, an open-source WebRTC video conferencing solution.</p>
+<p>We are committed to processing your data only to the extent necessary to provide the service, in accordance with Regulation (EU) 2016/679 (GDPR).</p>
+
+<h2>2. No Cookies</h2>
+<p>This service <strong>does not use cookies</strong> of any kind — neither essential, analytical, nor marketing cookies. Your browser will not receive any cookie from this service.</p>
+<p>User preferences (such as selected audio/video device and language) are stored exclusively in your browser's <strong>localStorage</strong>, which never leaves your device and is not accessible to us or any third party.</p>
+
+<h2>3. Data Processed During a Session</h2>
+<p>The following data is processed for the duration of a conference session. It is held in server memory only while the session is active and is not written to permanent storage after the session ends.</p>
+
+<table>
+	<thead>
+		<tr><th>Data</th><th>Purpose</th><th>Legal basis (GDPR Art. 6)</th><th>Retention</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><strong>Display name</strong> (entered by you)</td>
+			<td>Identifying you to other participants</td>
+			<td>Art. 6(1)(b) — performance of a contract / provision of the service</td>
+			<td>Duration of session only</td>
+		</tr>
+		<tr>
+			<td><strong>Profile picture</strong> (optional, uploaded by you)</td>
+			<td>Visual identification in the participant list</td>
+			<td>Art. 6(1)(b)</td>
+			<td>Duration of session only</td>
+		</tr>
+		<tr>
+			<td><strong>Temporary peer ID</strong> (random UUID, generated per session)</td>
+			<td>Technical routing of audio/video streams within the session</td>
+			<td>Art. 6(1)(b)</td>
+			<td>Duration of session only; a new ID is generated for each session</td>
+		</tr>
+		<tr>
+			<td><strong>Audio stream</strong> (microphone)</td>
+			<td>Real-time voice communication with other participants</td>
+			<td>Art. 6(1)(b)</td>
+			<td>Streamed in real time; not stored on server</td>
+		</tr>
+		<tr>
+			<td><strong>Video stream</strong> (camera)</td>
+			<td>Real-time video communication with other participants</td>
+			<td>Art. 6(1)(b)</td>
+			<td>Streamed in real time; not stored on server</td>
+		</tr>
+		<tr>
+			<td><strong>Screen sharing stream</strong> (optional)</td>
+			<td>Sharing screen content with other participants</td>
+			<td>Art. 6(1)(b)</td>
+			<td>Streamed in real time; not stored on server</td>
+		</tr>
+		<tr>
+			<td><strong>Chat messages</strong></td>
+			<td>Text communication within the session</td>
+			<td>Art. 6(1)(b)</td>
+			<td>Held in server memory for the duration of the session; available to participants who join mid-session; deleted when session ends</td>
+		</tr>
+		<tr>
+			<td><strong>Shared file metadata</strong> (file name, magnet URI)</td>
+			<td>Peer-to-peer file sharing between participants</td>
+			<td>Art. 6(1)(b)</td>
+			<td>Duration of session; file content is transferred directly between participants' browsers (P2P) and does not pass through our server</td>
+		</tr>
+		<tr>
+			<td><strong>Browser type and operating system</strong> (derived from User-Agent)</td>
+			<td>Determining WebRTC capabilities and codec compatibility</td>
+			<td>Art. 6(1)(b)</td>
+			<td>Duration of session only</td>
+		</tr>
+		<tr>
+			<td><strong>IP address</strong></td>
+			<td>Network routing; required for WebSocket and WebRTC connections; may be visible to TURN relay servers</td>
+			<td>Art. 6(1)(b)</td>
+			<td>Not logged persistently; held only for active connection duration</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>4. WebRTC Media Transport</h2>
+<p>Audio and video are transmitted using <strong>WebRTC</strong> (Web Real-Time Communication), an open standard built into modern browsers. Media flows through our <strong>SFU (Selective Forwarding Unit)</strong> server, which forwards encrypted media streams between participants without decrypting or storing them.</p>
+<p>For NAT traversal (connecting participants behind firewalls or routers), the service may use <strong>TURN relay servers</strong>. In that case your media traffic is relayed through the TURN server in encrypted form. The TURN server(s) used are: <strong>[LIST YOUR TURN SERVER(S) OR STATE "our own infrastructure"]</strong>.</p>
+<p>All signaling (session negotiation) is transmitted over an encrypted <strong>WebSocket (WSS)</strong> connection using TLS.</p>
+
+<h2>5. Local Storage (Your Device Only)</h2>
+<p>The following data is saved in your browser's <strong>localStorage</strong> under the key <code>edumeetRoot</code>. This data never leaves your device and is not accessible to us.</p>
+<ul>
+	<li>Display name (so you do not have to re-enter it on each visit)</li>
+	<li>Selected audio input device</li>
+	<li>Selected audio output device</li>
+	<li>Selected video input device</li>
+	<li>Audio quality settings (noise suppression, echo cancellation, codec preferences)</li>
+	<li>Video quality settings (resolution, frame rate)</li>
+	<li>Interface language (locale)</li>
+	<li>UI preferences (layout, mirror view, max visible videos)</li>
+</ul>
+<p>You can clear this data at any time via your browser's settings (<em>Clear site data</em> / <em>Clear localStorage</em>).</p>
+
+<h2>6. Local Recording (Optional Feature)</h2>
+<p>The platform provides an optional <strong>local recording</strong> feature. When used:</p>
+<ul>
+	<li>Recording is performed entirely in your browser using the browser's <code>MediaRecorder</code> API.</li>
+	<li>The recording file is saved directly to a location on <strong>your own device</strong> that you choose via a save dialog.</li>
+	<li>Recording data is <strong>not uploaded to our servers</strong>.</li>
+	<li>Other participants are notified when recording is active.</li>
+	<li>If you record a session, you become the data controller for that recording and are responsible for its lawful use.</li>
+</ul>
+
+<h2>7. Background Effects and AI Processing</h2>
+<p>The platform offers optional background blur and virtual background features. This processing:</p>
+<ul>
+	<li>Is performed <strong>entirely locally in your browser</strong> using WebGL and TensorFlow Lite.</li>
+	<li>Does not send video frames to any external server for processing.</li>
+	<li>Custom background images you upload are stored in your browser's local storage only.</li>
+</ul>
+
+<h2>8. Management / Administration Features (Optional)</h2>
+<p>If your operator has enabled the management system, room administrators may log in with an email address and password. In that case:</p>
+<ul>
+	<li><strong>Email address</strong> and a <strong>JWT authentication token</strong> are processed.</li>
+	<li>The token is stored in localStorage under the key <code>feathers-jwt</code> and is used for session continuity.</li>
+	<li>This applies only to administrator accounts, not to regular conference participants.</li>
+</ul>
+
+<h2>9. Login via OAuth 2.0 / OpenID Connect (OIDC) (Optional)</h2>
+<p>If the operator has enabled federated login, users (typically administrators or members of an institution) can authenticate using an external identity provider (IdP) via the <strong>OAuth 2.0 / OpenID Connect</strong> protocol. This applies only when <code>loginEnabled</code> is set in the service configuration — it is not available to anonymous conference participants.</p>
+
+<h3>How it works</h3>
+<p>When you click "Login", your browser is redirected to the identity provider's authorisation endpoint (<code>authorize_url</code>). You authenticate there directly — your password is never sent to this service. After successful authentication, the identity provider returns an authorisation code, which the server exchanges for a token at the provider's <code>access_url</code>. Your profile data is then retrieved from the provider's <code>profile_url</code>.</p>
+
+<h3>Data received from the identity provider</h3>
+<p>The default requested OAuth scope is <code>openid profile email</code>. The following claims may be received depending on what the identity provider returns:</p>
+<table>
+	<thead>
+		<tr><th>Claim / field</th><th>Purpose</th><th>Stored where</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><strong>sub</strong> / SSO ID</td>
+			<td>Unique identifier assigned by the identity provider; used to link the account across sessions (<code>ssoId</code> field)</td>
+			<td>Management database (server-side)</td>
+		</tr>
+		<tr>
+			<td><strong>email</strong></td>
+			<td>Used as the account identifier in the management system</td>
+			<td>Management database (server-side)</td>
+		</tr>
+		<tr>
+			<td><strong>profile</strong> (name, display name)</td>
+			<td>May be used to pre-fill display name</td>
+			<td>Session only</td>
+		</tr>
+	</tbody>
+</table>
+
+<h3>Token storage</h3>
+<p>After login, a <strong>JWT token</strong> is stored in your browser's localStorage under the key <code>feathers-jwt</code>. This token is used to authenticate subsequent requests to the management API without requiring you to log in again. It is automatically refreshed shortly before expiry. The token is removed from localStorage when you log out.</p>
+
+<h3>Identity provider</h3>
+<p>The identity provider used on this installation is: <strong>[NAME OF IDP, e.g. "your institution's Microsoft Entra ID / Google Workspace / Keycloak / custom OIDC provider"]</strong>.<br>
+When you authenticate via the identity provider, their own privacy policy applies. Please refer to: <strong>[LINK TO IDP PRIVACY POLICY]</strong>.</p>
+
+<p>Legal basis: Art. 6(1)(b) GDPR — processing is necessary to provide authenticated access to the service.</p>
+
+<h2>10. Performance Monitoring (Optional)</h2>
+<p>The operator of this installation may optionally enable client-side WebRTC performance monitoring (using the <code>@observertc/client-monitor-js</code> library). If enabled:</p>
+<ul>
+	<li>Technical metrics such as packet loss, latency, resolution, and codec information are collected.</li>
+	<li>This data does not directly identify you and is used for service quality improvement.</li>
+	<li>The operator is responsible for disclosing the destination of this data.</li>
+</ul>
+<p>On this installation, performance monitoring is: <strong>[ENABLED / DISABLED]</strong>. [If enabled: Data is sent to: [ENDPOINT]].</p>
+
+<h2>11. No Third-Party Analytics or Advertising</h2>
+<p>This service does not integrate any third-party analytics (e.g. Google Analytics), advertising networks, social media tracking pixels, or any other external tracking services.</p>
+<p>All software components used are open-source libraries loaded from the same origin as this service — no external CDN resources are loaded.</p>
+
+<h2>12. Data Retention Summary</h2>
+<table>
+	<thead>
+		<tr><th>Data</th><th>Storage location</th><th>Retention period</th></tr>
+	</thead>
+	<tbody>
+		<tr><td>Display name, picture, peer ID, browser info</td><td>Server RAM (session only)</td><td>Deleted at session end</td></tr>
+		<tr><td>Audio / video streams</td><td>Not stored — real-time forwarding only</td><td>N/A</td></tr>
+		<tr><td>Chat messages</td><td>Server RAM</td><td>Deleted at session end</td></tr>
+		<tr><td>User preferences (device, locale, layout)</td><td>Your browser's localStorage</td><td>Until you clear browser data</td></tr>
+		<tr><td>JWT token (admin only)</td><td>Your browser's localStorage</td><td>Until logout or token expiry</td></tr>
+		<tr><td>Local recording</td><td>Your device (you choose location)</td><td>Until you delete the file</td></tr>
+		<tr><td>Custom background images</td><td>Your browser's localStorage</td><td>Until you clear browser data</td></tr>
+		<tr><td>Server-side access logs (IP, timestamps)</td><td>[YOUR LOG STORAGE]</td><td>[YOUR RETENTION PERIOD, e.g. 30 days]</td></tr>
+	</tbody>
+</table>
+
+<h2>13. Your Rights Under GDPR</h2>
+<p>Under the GDPR you have the following rights regarding personal data we process about you:</p>
+<ul>
+	<li><strong>Right of access</strong> (Art. 15) — you may request information about data processed about you.</li>
+	<li><strong>Right to rectification</strong> (Art. 16) — you may correct inaccurate data.</li>
+	<li><strong>Right to erasure</strong> (Art. 17) — you may request deletion. Note: session data is automatically deleted when the session ends; localStorage data can be deleted directly in your browser.</li>
+	<li><strong>Right to restriction of processing</strong> (Art. 18).</li>
+	<li><strong>Right to data portability</strong> (Art. 20).</li>
+	<li><strong>Right to object</strong> (Art. 21).</li>
+	<li><strong>Right to lodge a complaint</strong> — with your national data protection supervisory authority.</li>
+</ul>
+<p>To exercise any of these rights, contact us at: <a href='mailto:[PRIVACY@YOURDOMAIN]'>[PRIVACY@YOURDOMAIN]</a></p>
+
+<h2>14. International Transfers</h2>
+<p>All servers used for this service are located in: <strong>[YOUR SERVER LOCATION, e.g. "the European Union / Poland"]</strong>. No personal data is transferred outside the EEA. [Or describe your transfer mechanism if applicable.]</p>
+
+<h2>15. Changes to This Policy</h2>
+<p>We may update this policy from time to time. The date at the top of this page indicates when it was last revised. Continued use of the service after changes constitutes acceptance of the updated policy.</p>
+
+<h2>Acceptable Use Policy (AUP)</h2>
+<p>By using this service you agree not to:</p>
+<ul>
+	<li>Record or distribute sessions without the knowledge and consent of other participants.</li>
+	<li>Share illegal, harmful, or infringing content via screen sharing, chat, or file transfer.</li>
+	<li>Attempt to circumvent access controls or disrupt the service.</li>
+	<li>Use the service to process special categories of personal data (Art. 9 GDPR) without appropriate safeguards.</li>
+	<li>Use the service for unsolicited commercial communications.</li>
+</ul>
+<p>Violations may result in termination of access. For questions about permitted use, contact: <a href='mailto:[CONTACT@YOURDOMAIN]'>[CONTACT@YOURDOMAIN]</a></p>
+
+</body>
+</html>

@@ -305,6 +305,26 @@ export const logoutLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Log out'
 });
 
+export const enterRoomLabel = (): string => intl.formatMessage({
+	id: 'label.enterRoom',
+	defaultMessage: 'Enter room'
+});
+
+export const myRoomsLabel = (): string => intl.formatMessage({
+	id: 'label.myRooms',
+	defaultMessage: 'My rooms'
+});
+
+export const copyRoomLabel = (): string => intl.formatMessage({
+	id: 'label.copyRoom',
+	defaultMessage: 'Copy meeting link'
+});
+
+export const copiedRoomLabel = (): string => intl.formatMessage({
+	id: 'label.copiedRoom',
+	defaultMessage: 'Copied!'
+});
+
 export const joinLabel = (): string => intl.formatMessage({
 	id: 'label.join',
 	defaultMessage: 'Join'
@@ -938,6 +958,14 @@ export const imprintLabel = (): string => intl.formatMessage({
 export const privacyLabel = (): string => intl.formatMessage({
 	id: 'label.privacy',
 	defaultMessage: 'Privacy'
+});
+export const joinConsentLabel = (): string => intl.formatMessage({
+	id: 'label.joinConsent',
+	defaultMessage: 'By joining, you accept our'
+});
+export const privacyPolicyLabel = (): string => intl.formatMessage({
+	id: 'label.privacyPolicy',
+	defaultMessage: 'Privacy Policy'
 });
 export const countdownTimerTitleLabel = (): string => intl.formatMessage({
 	id: 'label.countdownTimer.title',

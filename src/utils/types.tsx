@@ -4,6 +4,7 @@ import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
 	qrCodeEnabled: false,
+	myRoomsTabEnabled: true,
 	countdownTimerEnabled: false,
 	infoTooltipEnabled: false,
 	infoTooltipText: '',
@@ -133,6 +134,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 
 export interface EdumeetConfig {
 	qrCodeEnabled: boolean;
+	myRoomsTabEnabled: boolean,
 	countdownTimerEnabled: boolean,
 	infoTooltipEnabled: boolean;
 	infoTooltipText?: string;

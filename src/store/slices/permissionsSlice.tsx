@@ -57,7 +57,6 @@ const permissionsSlice = createSlice({
 			})
 			.addCase(roomActions.setState, (state, action) => {
 				if (action.payload === 'left') {
-					state.loggedIn = false;
 					state.locked = false;
 					state.signInRequired = false;
 					state.permissions = [];
