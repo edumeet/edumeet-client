@@ -150,9 +150,17 @@ export const checkJWT = (): AppThunk<Promise<void>> => async (
 			} catch (error) {
 				logger.error('checkJWT() - authenticate failed [error: %o]', error);
 
-				token = undefined;
+				const is401 = typeof error === 'object' && error !== null &&
+					'code' in error && (error as { code?: number }).code === 401;
 
-				await management.authentication.removeAccessToken();
+				if (is401) {
+					token = undefined;
+					await management.authentication.removeAccessToken();
+				} else {
+					// Transient error (network, 5xx, request abort, etc.) — keep the token.
+					// The user is still authenticated; the next checkJWT() call will retry.
+					token = undefined;
+				}
 			}
 		}
 	} else {
