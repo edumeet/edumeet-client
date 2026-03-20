@@ -1,22 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 import Autocomplete from '@mui/material/Autocomplete';
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Grid, Checkbox, InputAdornment } from '@mui/material';
 import React from 'react';
-import { Groups, Roles, Tenant, TenantOptionTypes, RoleOptionTypes, DefaultOptionTypes, Default } from '../../../utils/types';
+import { Roles, Tenant, TenantOptionTypes, RoleOptionTypes, DefaultOptionTypes, Default } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, reactionsEnabledLabel, tenantLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, defaultRoleIdLabel, deleteLabel, genericItemDescLabel, manageItemLabel, managerManagedRoomNumberLimitLabel, maxFileSizedLabel, numberLimitLabel, reactionsEnabledLabel, roomBackgroundURLLabel, roomLogoURLLabel, roomTrackerLabel, tenantLabel, userManagedRoomNumberLimitLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import { getTenantName } from '../../../utils/management';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
-import BlockIcon from '@mui/icons-material/Block';
-import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
 const DefaultTable = () => {
 	const dispatch = useAppDispatch();
@@ -120,7 +116,7 @@ const DefaultTable = () => {
 	const [ open, setOpen ] = React.useState(false);
 
 	// ADD NEW
-	const handleOpen = () => {
+	/* const handleOpen = () => {
 		setId(0);
 
 		// tenant selectable on add
@@ -165,7 +161,7 @@ const DefaultTable = () => {
 		// setTenantPermissionLimitRoleOption(undefined);
 
 		setOpen(true);
-	};
+	}; */
 	
 	const handleClickOpenNoreset = () => {
 		// get tenantId from clicked element
@@ -338,13 +334,13 @@ const DefaultTable = () => {
 								renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
 							/>
 						</Grid>
-						<Grid size={6}>
+						<Grid size={12}>
 							<TextField
 								required
 								autoFocus
 								margin="dense"
 								id="numberLimit"
-								label={'numberLimit'}
+								label={numberLimitLabel()}
 								type="number"
 								fullWidth
 								disabled={false}
@@ -352,7 +348,7 @@ const DefaultTable = () => {
 								value={numberLimit}
 							/>
 						</Grid>
-						<Grid size={6} visibility={'hidden'}>
+						<Grid size={0} visibility={'hidden'} display={'none'}>
 							<TextField
 								required
 								margin="dense"
@@ -365,12 +361,12 @@ const DefaultTable = () => {
 								value={liveNumberLimit}
 							/>
 						</Grid>
-						<Grid size={6}>
+						<Grid size={12}>
 							<TextField
 								required
 								margin="dense"
 								id="numberLimit"
-								label={'userManagedRoomNumberLimit'}
+								label={userManagedRoomNumberLimitLabel()}
 								type="number"
 								fullWidth
 								disabled={false}
@@ -379,12 +375,12 @@ const DefaultTable = () => {
 							/>
 						</Grid>
 						
-						<Grid size={6}>
+						<Grid size={12}>
 							<TextField
 								required
 								margin="dense"
 								id="managerManagedRoomNumberLimit"
-								label={'managerManagedRoomNumberLimit'}
+								label={managerManagedRoomNumberLimitLabel()}
 								type="number"
 								fullWidth
 								disabled={!superAdmin}
@@ -454,7 +450,7 @@ const DefaultTable = () => {
 								margin="dense"
 								id="tracker"
 								error={(filesharingEnabledUnmanaged && tracker=='')}
-								label={'tracker'}
+								label={roomTrackerLabel()}
 								type="text"
 								fullWidth
 								disabled={false}
@@ -467,7 +463,7 @@ const DefaultTable = () => {
 								required
 								margin="dense"
 								id="maxFileSize"
-								label={'File upload size'}
+								label={maxFileSizedLabel()}
 								type="number"
 								fullWidth
 								disabled={false}
@@ -481,7 +477,7 @@ const DefaultTable = () => {
 						<TextField
 							margin="dense"
 							id="background"
-							label={'Background Image'}
+							label={roomBackgroundURLLabel()}
 							type="text"
 							fullWidth
 							disabled={false}
@@ -491,7 +487,7 @@ const DefaultTable = () => {
 						<TextField
 							margin="dense"
 							id="Logo"
-							label={'Logo URL'}
+							label={roomLogoURLLabel()}
 							type="text"
 							fullWidth
 							disabled={false}
@@ -506,7 +502,7 @@ const DefaultTable = () => {
 							onChange={handleDefaultRoleId}
 							value={defaultRoleIdOption}
 							sx={{ marginTop: '8px' }}
-							renderInput={(params) => <TextField required {...params} label={'defaultRoleId'} />}
+							renderInput={(params) => <TextField required {...params} label={defaultRoleIdLabel()} />}
 							
 						/>
 						{/* 						<Autocomplete

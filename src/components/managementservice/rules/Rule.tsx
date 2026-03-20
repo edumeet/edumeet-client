@@ -6,7 +6,7 @@ import React from 'react';
 import { Groups, Rule, Tenant } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
+import { accessIdLabel, actionLabel, addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, methodLabel, nameLabel, negateLabel, parameterLabel, tenantLabel, typeLablel, valueLabel } from '../../translated/translatedComponents';
 
 const RuleTable = () => {
 	const dispatch = useAppDispatch();
@@ -45,31 +45,31 @@ const RuleTable = () => {
 			},
 			{
 				accessorKey: 'type',
-				header: 'Type'
+				header: typeLablel()
 			},
 			{
 				accessorKey: 'parameter',
-				header: 'Parameter'
+				header: parameterLabel()
 			},
 			{
 				accessorKey: 'method',
-				header: 'Method'
+				header: methodLabel()
 			},
 			{
 				accessorKey: 'negate',
-				header: 'Negate'
+				header: negateLabel()
 			},
 			{
 				accessorKey: 'value',
-				header: 'Value'
+				header: valueLabel()
 			},
 			{
 				accessorKey: 'action',
-				header: 'Action'
+				header: actionLabel()
 			},
 			{
 				accessorKey: 'accessId',
-				header: 'Access Id'
+				header: accessIdLabel()
 			}			
 		],
 		[ tenants ],
@@ -328,13 +328,13 @@ const RuleTable = () => {
 					<FormControl 
 						sx={{ marginTop: '8px' }}
 						fullWidth >
-						<InputLabel id="type-label">Rule type</InputLabel>
+						<InputLabel id="type-label">{typeLablel()}</InputLabel>
 						<Select
 							required
 							labelId="type-label"
 							id="type"
 							value={type}
-							label="rule type"
+							label={typeLablel()}
 							onChange={handleTypeChange}
 						>
 							<MenuItem value={'assert'}>Assert</MenuItem>
@@ -344,7 +344,7 @@ const RuleTable = () => {
 					<TextField
 						margin="dense"
 						id="parameter"
-						label="parameter"
+						label={parameterLabel()}
 						type="text"
 						required
 						fullWidth
@@ -356,12 +356,12 @@ const RuleTable = () => {
 					<FormControl
 						sx={{ marginTop: '8px' }}
 						fullWidth>
-						<InputLabel id="method-label">method</InputLabel>
+						<InputLabel id="method-label">{methodLabel()}</InputLabel>
 						<Select
 							labelId="method-label"
 							id="method"
 							value={method}
-							label="method"
+							label={methodLabel()}
 							required
 							onChange={handleMethodChange}
 						>
@@ -376,13 +376,13 @@ const RuleTable = () => {
 						justifyContent="center"
 						alignItems="center"
 					>
-						<FormControlLabel style={{ textAlign: 'center' }} control={<Checkbox onChange={handleNegateChange} checked={negate} />} label="Negate method" />
+						<FormControlLabel style={{ textAlign: 'center' }} control={<Checkbox onChange={handleNegateChange} checked={negate} />} label={negateLabel()} />
 					</Box>
 
 					<TextField
 						margin="dense"
 						id="value"
-						label="value"
+						label={valueLabel()}
 						type="text"
 						required
 						fullWidth
@@ -421,7 +421,7 @@ const RuleTable = () => {
 								id="accessid"
 								value={accessId}
 								disabled={type !== 'gain'}
-								label="Access Id"
+								label={accessIdLabel()}
 								required
 								onChange={handleAccessIdChange}
 							>

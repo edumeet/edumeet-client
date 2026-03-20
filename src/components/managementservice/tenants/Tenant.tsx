@@ -134,7 +134,7 @@ const TenantTable = () => {
 						autoFocus
 						margin="dense"
 						id="name"
-						label="Name"
+						label={nameLabel()}
 						type="text"
 						required
 						fullWidth
@@ -145,7 +145,7 @@ const TenantTable = () => {
 					<TextField
 						margin="dense"
 						id="description"
-						label="description"
+						label={descLabel()}
 						type="text"
 						fullWidth
 						onChange={handleDescriptionChange}

@@ -29,6 +29,72 @@ export const defaultSettingsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Defaults'
 });
 
+export const userManagedRoomNumberLimitLabel = (): string => intl.formatMessage({
+	id: 'label.defaults.userManagedRoomNumberLimit',
+	defaultMessage: 'Number of rooms allowed in the tenant for one user'
+});
+
+export const numberLimitLabel = (): string => intl.formatMessage({
+	id: 'label.defaults.numberLimit',
+	defaultMessage: 'Number of rooms allowed in the tenant'
+});
+
+export const managerManagedRoomNumberLimitLabel = (): string => intl.formatMessage({
+	id: 'label.defaults.managerManagedRoomNumberLimit',
+	defaultMessage: 'Number of rooms allowed in the tenant for one manager user'
+});
+
+export const roomBackgroundURLLabel = (): string => intl.formatMessage({
+	id: 'label.defaults.roomBackgroundURL',
+	defaultMessage: 'Background Image URL'
+});
+export const roomLogoURLLabel = (): string => intl.formatMessage({
+	id: 'label.defaults.roomLogoURL',
+	defaultMessage: 'Logo Image URL'
+});
+export const roomTrackerLabel = (): string => intl.formatMessage({
+	id: 'label.defaults.roomTracker',
+	defaultMessage: 'Tracker (wss://fqdn/path)'
+});
+export const defaultRoleIdLabel = (): string => intl.formatMessage({
+	id: 'label.defaults.defaultRoleId',
+	defaultMessage: 'Default role'
+});
+
+export const maxFileSizedLabel = (): string => intl.formatMessage({
+	id: 'label.defaults.maxFileSize',
+	defaultMessage: 'Max file size'
+});
+
+export const typeLablel = (): string => intl.formatMessage({
+	id: 'label.type',
+	defaultMessage: 'Type'
+});
+export const parameterLabel = (): string => intl.formatMessage({
+	id: 'label.parameter',
+	defaultMessage: 'Parameter'
+});
+export const methodLabel = (): string => intl.formatMessage({
+	id: 'label.method',
+	defaultMessage: 'Method'
+});
+export const negateLabel = (): string => intl.formatMessage({
+	id: 'label.negate',
+	defaultMessage: 'Negate'
+});
+export const valueLabel = (): string => intl.formatMessage({
+	id: 'label.value',
+	defaultMessage: 'Value'
+});
+export const actionLabel = (): string => intl.formatMessage({
+	id: 'label.action',
+	defaultMessage: 'Action'
+});
+export const accessIdLabel = (): string => intl.formatMessage({
+	id: 'label.accessId',
+	defaultMessage: 'Access Id'
+});
+
 export const joinedRoomLabel = (): string => intl.formatMessage({
 	id: 'room.joined',
 	defaultMessage: 'You have joined the room'
