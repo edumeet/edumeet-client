@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { startListeners, stopListeners } from './store/actions/startActions';
 import { useAppDispatch, useAppSelector, usePermissionSelector } from './store/hooks';
 import StyledBackground from './components/StyledBackground';
@@ -44,8 +44,7 @@ const App = (): React.JSX.Element => {
 	const roomState = useAppSelector((state) => state.room.state);
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
-	const navigate = useNavigate();
-
+	
 	useEffect(() => {
 		dispatch(startListeners());
 
