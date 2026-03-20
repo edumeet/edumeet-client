@@ -1,4 +1,10 @@
 {
+  	"label.copiedRoom": "Copied!",
+  	"label.copyRoom": "Copy meeting link",
+  	"label.enterRoom": "Enter room",
+  	"label.joinConsent": "By joining, you accept our",
+  	"label.myRooms": "My rooms",
+  	"label.privacyPolicy": "Privacy Policy",
 	"device.activateAudio": "Activate audio",
 	"device.audioUnsupported": "Audio unsupported",
 	"device.muteAudio": "Mute audio",
