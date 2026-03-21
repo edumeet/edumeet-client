@@ -45,6 +45,7 @@ const LeaveButton = (): React.JSX.Element => {
 			<GenericDialog
 				open={confirmOpen}
 				onClose={handleCloseConfirm}
+				maxWidth='sm'
 				title={leaveLabel()}
 				content={confirmLeaveLabel()}
 				actions={
