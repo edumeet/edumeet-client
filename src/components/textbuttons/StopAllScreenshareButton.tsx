@@ -1,11 +1,11 @@
-import { Button } from '@mui/material';
+import { Button, ButtonProps } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	stopAllScreensharingLabel,
 } from '../translated/translatedComponents';
 import { stopAllScreenshare } from '../../store/actions/peerActions';
 
-const StopAllScreenshareButton = (): React.JSX.Element => {
+const StopAllScreenshareButton = ({ size }: Pick<ButtonProps, 'size'> = {}): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const muteAllInProgress = useAppSelector((state) => state.room.muteAllInProgress);
 
@@ -20,7 +20,7 @@ const StopAllScreenshareButton = (): React.JSX.Element => {
 			variant='contained'
 			onClick={handleStopAll}
 			disabled={muteAllInProgress}
-			size='small'
+			size={size}
 		>
 			{ stopAllScreensharingLabel() }
 		</Button>

@@ -177,7 +177,14 @@ export class RoomServerConnection extends EventEmitter {
 		this.socket.on('disconnect', (reason: string) => {
 			logger.debug('socket disconnected [reason:%s]', reason);
 
-			this.emit('disconnected', reason);
+			if (reason === 'io server disconnect') {
+				// Server intentionally closed the connection (room closed, kicked, etc.)
+				// Prevent Socket.IO from attempting to reconnect.
+				this.socket.io.reconnection(false);
+				this.emit('close');
+			} else {
+				this.emit('disconnected', reason);
+			}
 		});
 
 		this.socket.io.on('reconnect_attempt', (attempt: number) => {

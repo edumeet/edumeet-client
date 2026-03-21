@@ -40,6 +40,7 @@ const ListHeader = styled(Typography)({
 });
 
 const ParticipantList = (): React.JSX.Element => {
+	useAppSelector((state) => state.settings.locale);
 	const breakoutsEnabled = useAppSelector((state) => state.room.breakoutsEnabled);
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const isMobile = useAppSelector(isMobileSelector);

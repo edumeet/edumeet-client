@@ -1,5 +1,5 @@
 import { styled } from '@mui/material';
-import { usePermissionSelector } from '../../store/hooks';
+import { useAppSelector, usePermissionSelector } from '../../store/hooks';
 import { permissions } from '../../utils/roles';
 import ChatHistory from './ChatHistory';
 import ChatInput from './ChatInput';
@@ -14,6 +14,7 @@ const ChatDiv = styled('div')({
 });
 
 const Chat = (): React.JSX.Element => {
+	useAppSelector((state) => state.settings.locale);
 	const isChatModerator = usePermissionSelector(permissions.MODERATE_CHAT);
 	const canChat = usePermissionSelector(permissions.SEND_CHAT);
 
