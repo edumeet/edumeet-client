@@ -1,5 +1,6 @@
 import { styled } from '@mui/material';
 import { memo } from 'react';
+import { useAppSelector } from '../../store/hooks';
 import CloseMeetingButton from '../textbuttons/CloseMeetingButton';
 import MuteAllButton from '../textbuttons/MuteAllButton';
 import StopAllScreenshareButton from '../textbuttons/StopAllScreenshareButton';
@@ -15,6 +16,8 @@ const ModeratorDiv = styled('div')(({ theme }) => ({
 }));
 
 const ListModerator = (): React.JSX.Element => {
+	useAppSelector((state) => state.settings.locale);
+
 	return (
 		<ModeratorDiv>
 			<CloseMeetingButton size='small' />

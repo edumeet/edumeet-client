@@ -17,6 +17,7 @@ const ModeratorDiv = styled('div')(({ theme }) => ({
 }));
 
 const BreakoutModerator = (): React.JSX.Element => {
+	useAppSelector((state) => state.settings.locale);
 	const dispatch = useAppDispatch();
 	const [ name, setName ] = useState<string>('');
 
