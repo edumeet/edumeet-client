@@ -11,7 +11,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
 import edumeetConfig from './utils/edumeetConfig';
 import { intl } from './utils/intlManager';
-import { useAppDispatch } from './store/hooks';
+import { useAppDispatch, useAppSelector } from './store/hooks';
 import { setLocale } from './store/actions/localeActions';
 import { CssBaseline } from '@mui/material';
 import { Logger } from './utils/Logger';
@@ -64,6 +64,12 @@ const router = createBrowserRouter(
  * 
  * @returns {JSX.Element} Either the app or the unsupported browser page
  */
+const IntlProviderWrapper = ({ children }: { children: React.ReactNode }): React.JSX.Element => {
+	useAppSelector((state) => state.settings.locale);
+
+	return <RawIntlProvider value={intl}>{children}</RawIntlProvider>;
+};
+
 const RootComponent = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
@@ -90,11 +96,11 @@ root.render(
 		<Provider store={store}>
 			<PersistGate persistor={persistor}>
 				<ThemeProvider theme={theme}>
-					<RawIntlProvider value={intl}>
+					<IntlProviderWrapper>
 						<ServiceContext.Provider value={{ mediaService, fileService }}>
 							<RootComponent />
 						</ServiceContext.Provider>
-					</RawIntlProvider>
+					</IntlProviderWrapper>
 				</ThemeProvider>
 			</PersistGate>
 		</Provider>
