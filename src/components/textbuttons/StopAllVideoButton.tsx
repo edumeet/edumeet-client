@@ -1,11 +1,11 @@
-import { Button } from '@mui/material';
+import { Button, ButtonProps } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	stopAllVideoLabel,
 } from '../translated/translatedComponents';
 import { stopAllVideo } from '../../store/actions/peerActions';
 
-const StopAllVideoButton = (): React.JSX.Element => {
+const StopAllVideoButton = ({ size }: Pick<ButtonProps, 'size'> = {}): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const muteAllInProgress = useAppSelector((state) => state.room.muteAllInProgress);
 
@@ -20,7 +20,7 @@ const StopAllVideoButton = (): React.JSX.Element => {
 			variant='contained'
 			onClick={handleStopAll}
 			disabled={muteAllInProgress}
-			size='small'
+			size={size}
 		>
 			{ stopAllVideoLabel() }
 		</Button>

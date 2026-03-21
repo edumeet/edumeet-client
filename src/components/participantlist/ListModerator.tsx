@@ -18,9 +18,9 @@ const ListModerator = (): React.JSX.Element => {
 	return (
 		<ModeratorDiv>
 			<CloseMeetingButton size='small' />
-			<MuteAllButton />
-			<StopAllVideoButton />
-			<StopAllScreenshareButton />
+			<MuteAllButton size='small' />
+			<StopAllVideoButton size='small' />
+			<StopAllScreenshareButton size='small' />
 		</ModeratorDiv>
 	);
 };

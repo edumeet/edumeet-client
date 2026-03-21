@@ -1,11 +1,11 @@
-import { Button } from '@mui/material';
+import { Button, ButtonProps } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	muteAllLabel,
 } from '../translated/translatedComponents';
 import { muteAll } from '../../store/actions/peerActions';
 
-const MuteAllButton = (): React.JSX.Element => {
+const MuteAllButton = ({ size }: Pick<ButtonProps, 'size'> = {}): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const muteAllInProgress = useAppSelector((state) => state.room.muteAllInProgress);
 
@@ -20,7 +20,7 @@ const MuteAllButton = (): React.JSX.Element => {
 			variant='contained'
 			onClick={handleMuteAll}
 			disabled={muteAllInProgress}
-			size='small'
+			size={size}
 		>
 			{ muteAllLabel() }
 		</Button>

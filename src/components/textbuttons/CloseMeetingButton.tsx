@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, ButtonProps } from '@mui/material';
 import { useState } from 'react';
 import GenericDialog from '../genericdialog/GenericDialog';
 import { closeMeeting } from '../../store/actions/roomActions';
@@ -9,11 +9,7 @@ import {
 	yesLabel
 } from '../translated/translatedComponents';
 
-interface CloseMeetingButtonProps {
-	size?: 'small' | 'medium' | 'large';
-}
-
-const CloseMeetingButton = ({ size }: CloseMeetingButtonProps): React.JSX.Element => {
+const CloseMeetingButton = ({ size }: Pick<ButtonProps, 'size'>): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const closeMeetingInProgress =
 		useAppSelector((state) => state.room.closeMeetingInProgress);
