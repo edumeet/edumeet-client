@@ -12,6 +12,7 @@ import { roomActions } from './store/slices/roomSlice';
 import { permissions } from './utils/roles';
 import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import { Close } from '@mui/icons-material';
 import { meActions } from './store/slices/meSlice';
 import edumeetConfig from './utils/edumeetConfig';
@@ -108,6 +109,7 @@ const App = (): React.JSX.Element => {
 
 	return (
 		<>
+			<GlobalStyles styles={{ '.notistack-SnackbarContainer': { bottom: '80px !important' } }} />
 			<SnackbarProvider action={ (snackbarKey: SnackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} /> }>
 				<StyledBackground
 					onDrop={handleFileDrop}
