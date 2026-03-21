@@ -109,7 +109,7 @@ const App = (): React.JSX.Element => {
 
 	return (
 		<>
-			<GlobalStyles styles={{ '.notistack-SnackbarContainer': { bottom: '80px !important' } }} />
+			<GlobalStyles styles={{ '.notistack-SnackbarContainer': { bottom: '60px !important' } }} />
 			<SnackbarProvider action={ (snackbarKey: SnackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} /> }>
 				<StyledBackground
 					onDrop={handleFileDrop}
