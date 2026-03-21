@@ -7,11 +7,14 @@ import {
 	noLabel,
 	yesLabel
 } from '../translated/translatedComponents';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, usePermissionSelector } from '../../store/hooks';
 import { leaveRoom } from '../../store/actions/roomActions';
+import { permissions } from '../../utils/roles';
+import CloseMeetingButton from './CloseMeetingButton';
 
 const LeaveButton = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
+	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const [ confirmOpen, setConfirmOpen ] = useState(false);
 
 	const handleOpenConfirm = (): void => {
@@ -52,6 +55,7 @@ const LeaveButton = (): React.JSX.Element => {
 						<Button color='error' variant='contained' onClick={handleConfirmLeave}>
 							{yesLabel()}
 						</Button>
+						{isModerator && <CloseMeetingButton />}
 					</>
 				}
 			/>
