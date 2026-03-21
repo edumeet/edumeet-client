@@ -17,7 +17,7 @@ const ModeratorDiv = styled('div')(({ theme }) => ({
 const ListModerator = (): React.JSX.Element => {
 	return (
 		<ModeratorDiv>
-			<CloseMeetingButton />
+			<CloseMeetingButton size='small' />
 			<MuteAllButton />
 			<StopAllVideoButton />
 			<StopAllScreenshareButton />

@@ -49,10 +49,10 @@ const LeaveButton = (): React.JSX.Element => {
 				content={confirmLeaveLabel()}
 				actions={
 					<>
-						<Button size='small' onClick={handleCloseConfirm}>
+						<Button onClick={handleCloseConfirm}>
 							{noLabel()}
 						</Button>
-						<Button size='small' color='error' variant='contained' onClick={handleConfirmLeave}>
+						<Button color='error' variant='contained' onClick={handleConfirmLeave}>
 							{yesLabel()}
 						</Button>
 						{isModerator && <CloseMeetingButton />}

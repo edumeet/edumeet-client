@@ -9,7 +9,11 @@ import {
 	yesLabel
 } from '../translated/translatedComponents';
 
-const CloseMeetingButton = (): React.JSX.Element => {
+interface CloseMeetingButtonProps {
+	size?: 'small' | 'medium' | 'large';
+}
+
+const CloseMeetingButton = ({ size }: CloseMeetingButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const closeMeetingInProgress =
 		useAppSelector((state) => state.room.closeMeetingInProgress);
@@ -37,7 +41,7 @@ const CloseMeetingButton = (): React.JSX.Element => {
 				variant='contained'
 				onClick={handleOpenConfirm}
 				disabled={closeMeetingInProgress}
-				size='small'
+				size={size}
 			>
 				{closeMeetingLabel()}
 			</Button>
