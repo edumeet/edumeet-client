@@ -2,7 +2,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Grid, Checkbox, InputAdornment } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Grid, Checkbox, InputAdornment, Tooltip } from '@mui/material';
 import React from 'react';
 import { Roles, Tenant, TenantOptionTypes, RoleOptionTypes, DefaultOptionTypes, Default } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -47,6 +47,8 @@ const DefaultTable = () => {
 	const [ liveNumberLimit, setLiveNumberLimit ] = useState(0);
 	const [ userManagedRoomNumberLimit, setUserManagedRoomNumberLimit ] = useState(0);
 	const [ managerManagedRoomNumberLimit, setManagerManagedRoomNumberLimit ] = useState(0);
+	const [ disableUnmanaged, setDisableUnmanaged ] = useState(false);
+	const [ disableUnmanagedLock, setDisableUnmanagedLock ] = useState(false);
 	const [ lockedUnmanaged, setLockUnmanaged ] = useState(false);
 	const [ raiseHandEnabledUnmanaged, setRaiseHandEnabledUnmanaged ] = useState(false);
 	const [ reactionsEnabledUnmanaged, setReactionsEnabledUnmanaged ] = useState(false);
@@ -267,6 +269,8 @@ const DefaultTable = () => {
 					liveNumberLimit: liveNumberLimit,
 					userManagedRoomNumberLimit: userManagedRoomNumberLimit,
 					managerManagedRoomNumberLimit: managerManagedRoomNumberLimit,
+					disableUnmanaged: disableUnmanaged,
+					disableUnmanagedLock: disableUnmanagedLock,
 					lockedUnmanaged: lockedUnmanaged,
 					raiseHandEnabledUnmanaged: raiseHandEnabledUnmanaged,
 					reactionsEnabledUnmanaged: reactionsEnabledUnmanaged,
@@ -408,7 +412,12 @@ const DefaultTable = () => {
 							</thead>
 							<tbody>
 								<tr>
-									<td>Room locked</td>
+									<td><Tooltip title="When enabled, users cannot create or join unmanaged (ad-hoc) rooms. Only pre-configured managed rooms will be accessible for this tenant." placement="right"><span>Disable unmanaged rooms</span></Tooltip></td>
+									<td><Checkbox disabled={disableUnmanagedLock && !superAdmin} checked={disableUnmanaged} onClick={() => setDisableUnmanaged(Boolean(!disableUnmanaged))} /></td>
+									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={disableUnmanagedLock} onClick={() => setDisableUnmanagedLock(Boolean(!disableUnmanagedLock))} /></td>
+								</tr>
+								<tr>
+									<td><Tooltip title="When enabled, new unmanaged rooms start in a locked state. Only the first user to join who is authenticated (logged in via SSO/management) can bypass the lock and admit others from the lobby. All other users, including subsequent authenticated users, will be placed in the lobby." placement="right"><span>Room locked</span></Tooltip></td>
 									<td><Checkbox disabled={lockedLock && !superAdmin} checked={lockedUnmanaged} onClick={() => setLockUnmanaged(Boolean(!lockedUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={lockedLock} onClick={() => setLockLock(Boolean(!lockedLock))} /></td>
 								</tr>
@@ -566,6 +575,8 @@ const DefaultTable = () => {
 						setLiveNumberLimit(parseInt(d.liveNumberLimit)|1000);
 						setUserManagedRoomNumberLimit(parseInt(d.userManagedRoomNumberLimit));
 						setManagerManagedRoomNumberLimit(parseInt(d.managerManagedRoomNumberLimit));
+						setDisableUnmanaged(Boolean(d.disableUnmanaged));
+						setDisableUnmanagedLock(Boolean(d.disableUnmanagedLock));
 						setLockUnmanaged(Boolean(d.lockedUnmanaged));
 						setRaiseHandEnabledUnmanaged(Boolean(d.raiseHandEnabledUnmanaged));
 						setLocalRecordingEnabledUnmanaged(Boolean(d.localRecordingEnabledUnmanaged));

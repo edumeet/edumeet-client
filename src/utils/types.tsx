@@ -466,6 +466,8 @@ export type Default = {
 	liveNumberLimit: string, // number,
 	userManagedRoomNumberLimit: string, // number,
 	managerManagedRoomNumberLimit: string, // number,
+	disableUnmanaged: boolean | undefined,
+	disableUnmanagedLock: boolean | undefined,
 	lockedUnmanaged: boolean | undefined,
 	raiseHandEnabledUnmanaged: boolean | undefined,
 	localRecordingEnabledUnmanaged: boolean | undefined,
