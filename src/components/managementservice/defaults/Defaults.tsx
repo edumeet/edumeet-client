@@ -465,7 +465,7 @@ const DefaultTable = () => {
 								disabled={false}
 								onChange={handleTracker}
 								value={tracker}
-								helperText={tracker === '' ? 'Optional — if not set, the server configuration will be used' : undefined}
+								helperText={tracker === '' ? 'If not set, the server configuration will be used' : undefined}
 							/>
 						</Grid>
 						<Grid size={4}>
