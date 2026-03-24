@@ -448,7 +448,7 @@ const DefaultTable = () => {
 								</tr>
 								<tr>
 									<td>Filesharing service</td>
-									<td><Checkbox color={(filesharingEnabledUnmanaged && tracker=='') ? 'warning' : undefined} disabled={filesharingEnabledLock && !superAdmin} checked={filesharingEnabledUnmanaged} onClick={() => setFilesharingEnabledUnmanaged(Boolean(!filesharingEnabledUnmanaged))} /></td>
+									<td><Checkbox disabled={filesharingEnabledLock && !superAdmin} checked={filesharingEnabledUnmanaged} onClick={() => setFilesharingEnabledUnmanaged(Boolean(!filesharingEnabledUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={filesharingEnabledLock} onClick={() => setFilesharingEnabledLock(Boolean(!filesharingEnabledLock))} /></td>
 								</tr>
 							</tbody>
@@ -458,13 +458,14 @@ const DefaultTable = () => {
 							<TextField
 								margin="dense"
 								id="tracker"
-								error={(filesharingEnabledUnmanaged && tracker=='')}
+								error={false}
 								label={roomTrackerLabel()}
 								type="text"
 								fullWidth
 								disabled={false}
 								onChange={handleTracker}
 								value={tracker}
+								helperText={tracker === '' ? 'Optional — if not set, the server configuration will be used' : undefined}
 							/>
 						</Grid>
 						<Grid size={4}>
