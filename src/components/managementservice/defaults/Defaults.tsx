@@ -347,7 +347,7 @@ const DefaultTable = () => {
 								label={numberLimitLabel()}
 								type="number"
 								fullWidth
-								disabled={false}
+								disabled={!superAdmin}
 								onChange={handleNumberLimit}
 								value={numberLimit}
 							/>
