@@ -86,23 +86,23 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 				</>
 			}
 			actions={
-				<Box display="flex" alignItems="flex-end" justifyContent="space-between" width="100%">
-					<Box display="flex" alignItems="left">
-						{imprintUrl.trim() !== '' && (
-							<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
-								<Typography variant="caption" color="text.secondary">{ imprintLabel() }</Typography>
+				<Box display="flex" flexDirection="column" width="100%">
+					{privacyUrl.trim() !== '' && (
+						<Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
+							{joinConsentLabel()}{' '}
+							<Link href={privacyUrl} target="_blank" color="inherit">
+								{privacyPolicyLabel()}
 							</Link>
-						)}
-					</Box>
-					<Box display="flex" flexDirection="column" alignItems="flex-end">
-						{privacyUrl.trim() !== '' && (
-							<Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
-								{joinConsentLabel()}{' '}
-								<Link href={privacyUrl} target="_blank" color="inherit">
-									{privacyPolicyLabel()}
+						</Typography>
+					)}
+					<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+						<Box display="flex" alignItems="center">
+							{imprintUrl.trim() !== '' && (
+								<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
+									<Typography variant="caption" color="text.secondary">{ imprintLabel() }</Typography>
 								</Link>
-							</Typography>
-						)}
+							)}
+						</Box>
 						<Button
 							onClick={handleJoin}
 							variant='contained'
