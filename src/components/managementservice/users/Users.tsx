@@ -5,7 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Tenant, User } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, nameLabel, noLabel, rolesLabel, tenantAdminLabel, tenantLabel, tenantOwnerLabel, undefinedLabel, yesLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, avatarLabel, cancelLabel, deleteLabel, emailFieldLabel, emailHeaderLabel, genericItemDescLabel, hiddenEmailLabel, hiddenNameLabel, manageItemLabel, nameFieldLabel, nameLabel, noLabel, rolesLabel, ssoIdLabel, tenantAdminFieldLabel, tenantAdminLabel, tenantLabel, tenantOwnerFieldLabel, tenantOwnerLabel, undefinedLabel, yesLabel } from '../../translated/translatedComponents';
 
 const UserTable = () => {
 	const dispatch = useAppDispatch();
@@ -35,27 +35,27 @@ const UserTable = () => {
 			},
 			{
 				accessorKey: 'ssoId',
-				header: 'ssoId'
+				header: ssoIdLabel()
 			},
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
+				accessorFn: (row) => getTenantName(String(row.tenantId))
 
 			},
 			{
 				accessorKey: 'email',
-				header: 'email',
-				Cell: ({ cell }) => (cell.getValue<string>() ? String(cell.getValue<string>()) : 'Hidden email')
+				header: emailHeaderLabel(),
+				Cell: ({ cell }) => (cell.getValue<string>() ? String(cell.getValue<string>()) : hiddenEmailLabel())
 			},
 			{
 				accessorKey: 'name',
 				header: nameLabel(),
-				Cell: ({ cell }) => (cell.getValue<string>() ? String(cell.getValue<string>()) : 'Hidden name')
+				Cell: ({ cell }) => (cell.getValue<string>() ? String(cell.getValue<string>()) : hiddenNameLabel())
 			},
 			{
 				accessorKey: 'avatar',
-				header: 'avatar'
+				header: avatarLabel()
 			},
 			{
 				accessorKey: 'roles',
@@ -227,7 +227,7 @@ const UserTable = () => {
 					<TextField
 						margin="dense"
 						id="ssoId"
-						label="ssoId"
+						label={ssoIdLabel()}
 						type="text"
 						required
 						fullWidth
@@ -245,12 +245,12 @@ const UserTable = () => {
 						value={tenantIdOption}
 						sx={{ marginTop: '8px' }}
 						disabled
-						renderInput={(params) => <TextField {...params} label="Tenant" />}
+						renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
 					/>
 					<TextField
 						margin="dense"
 						id="email"
-						label="Email"
+						label={emailFieldLabel()}
 						type="email"
 						required
 						fullWidth
@@ -261,7 +261,7 @@ const UserTable = () => {
 					<TextField
 						margin="dense"
 						id="name"
-						label="Name"
+						label={nameFieldLabel()}
 						type="text"
 						required
 						fullWidth
@@ -272,7 +272,7 @@ const UserTable = () => {
 					<TextField
 						margin="dense"
 						id="avatar"
-						label="avatar"
+						label={avatarLabel()}
 						type="text"
 						fullWidth
 						onChange={handleAvatarChange}
@@ -280,8 +280,8 @@ const UserTable = () => {
 						disabled={cannotEdit}
 					/>
 					{/* roles */}
-					<FormControlLabel control={<Checkbox disabled checked={tenantAdminBox} onChange={handleTenantAdminChange} />} label="tenantAdmin" />
-					<FormControlLabel control={<Checkbox disabled checked={tenantOwnerBox} onChange={handleTenantOwnerChange} />} label="tenantOwner" />
+					<FormControlLabel control={<Checkbox disabled checked={tenantAdminBox} onChange={handleTenantAdminChange} />} label={tenantAdminFieldLabel()} />
+					<FormControlLabel control={<Checkbox disabled checked={tenantOwnerBox} onChange={handleTenantOwnerChange} />} label={tenantOwnerFieldLabel()} />
 
 				</DialogContent>
 				<DialogActions>

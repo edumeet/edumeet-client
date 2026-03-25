@@ -110,19 +110,19 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				Cell: ({ cell }) => getUserName(cell.getValue<string>())
+				accessorFn: (row) => getUserName(String(row.userId))
 
 			},
 			{
 				accessorKey: 'roleId',
 				header: 'Role',
-				Cell: ({ cell }) => getRoleName(cell.getValue<string>())
+				accessorFn: (row) => getRoleName(String(row.roleId))
 
 			},
 			{
 				accessorKey: 'roomId',
 				header: 'Room',
-				Cell: ({ cell }) => getRoomName(cell.getValue<string>())
+				accessorFn: (row) => getRoomName(String(row.roomId))
 
 			},
 

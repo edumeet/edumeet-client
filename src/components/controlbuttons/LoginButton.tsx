@@ -1,7 +1,7 @@
 import { useAppDispatch } from '../../store/hooks';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import ControlButton, { ControlButtonProps } from './ControlButton';
-import { loginLabel } from '../translated/translatedComponents';
+import { loginLabel, tenantLoginLabel } from '../translated/translatedComponents';
 import { login } from '../../store/actions/permissionsActions';
 import React from 'react';
 import { Button } from '@mui/material';
@@ -40,7 +40,7 @@ export const CustomLoginButton = (): React.JSX.Element => {
 					{ loginImageURL=='' && <LoginIcon />}
 				</Grid>
 				<Grid size={12}>
-					Tenant {loginLabel()}		
+					{tenantLoginLabel()}
 				</Grid>
 			</Grid>
 		</Button>

@@ -8,7 +8,7 @@ import { Groups, Tenant } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel, undefinedLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameCannotBeEmptyLabel, nameLabel, tenantLabel, undefinedLabel } from '../../translated/translatedComponents';
 
 const GroupTable = () => {
 	const dispatch = useAppDispatch();
@@ -47,7 +47,7 @@ const GroupTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
+				accessorFn: (row) => getTenantName(String(row.tenantId))
 			}
 		],
 		[ tenants ],
@@ -184,7 +184,7 @@ const GroupTable = () => {
 			});
 		} else {
 			dispatch(notificationsActions.enqueueNotification({
-				message: 'Name cannot be empty!',
+				message: nameCannotBeEmptyLabel(),
 				options: { variant: 'warning' }
 			}));
 		}

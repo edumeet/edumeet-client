@@ -6,7 +6,7 @@ import React from 'react';
 import { Groups, Rule, Tenant } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { accessIdLabel, actionLabel, addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, methodLabel, nameLabel, negateLabel, parameterLabel, tenantLabel, typeLablel, valueLabel } from '../../translated/translatedComponents';
+import { accessIdLabel, actionLabel, actionToRunLabel, addNewLabel, applyLabel, assertLabel, cancelLabel, containsLabel, deleteLabel, endswithLabel, equalsLabel, gainLabel, genericItemDescLabel, makeUserGroupMemberLabel, makeUserSuperAdminLabel, makeUserTenantAdminLabel, makeUserTenantOwnerLabel, manageItemLabel, methodLabel, nameLabel, negateLabel, parameterLabel, startswithLabel, tenantLabel, typeLablel, undefinedTenantLabel, valueLabel } from '../../translated/translatedComponents';
 
 const RuleTable = () => {
 	const dispatch = useAppDispatch();
@@ -22,7 +22,7 @@ const RuleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined tenant';
+			return undefinedTenantLabel();
 		}
 	};
 	// should be memoized or stable
@@ -41,7 +41,7 @@ const RuleTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
+				accessorFn: (row) => getTenantName(String(row.tenantId ?? ''))
 			},
 			{
 				accessorKey: 'type',
@@ -337,8 +337,8 @@ const RuleTable = () => {
 							label={typeLablel()}
 							onChange={handleTypeChange}
 						>
-							<MenuItem value={'assert'}>Assert</MenuItem>
-							<MenuItem value={'gain'}>Gain</MenuItem>
+							<MenuItem value={'assert'}>{assertLabel()}</MenuItem>
+							<MenuItem value={'gain'}>{gainLabel()}</MenuItem>
 						</Select>
 					</FormControl>
 					<TextField
@@ -365,10 +365,10 @@ const RuleTable = () => {
 							required
 							onChange={handleMethodChange}
 						>
-							<MenuItem value={'contains'}>contains</MenuItem>
-							<MenuItem value={'equals'}>equals</MenuItem>
-							<MenuItem value={'startswith'}>startswith</MenuItem>
-							<MenuItem value={'endswith'}>endswith</MenuItem>
+							<MenuItem value={'contains'}>{containsLabel()}</MenuItem>
+							<MenuItem value={'equals'}>{equalsLabel()}</MenuItem>
+							<MenuItem value={'startswith'}>{startswithLabel()}</MenuItem>
+							<MenuItem value={'endswith'}>{endswithLabel()}</MenuItem>
 						</Select>
 					</FormControl>
 					<Box
@@ -394,28 +394,28 @@ const RuleTable = () => {
 						<FormControl
 							sx={{ marginTop: '8px' }}
 							fullWidth>
-							<InputLabel id="action-label">Action to run when condition is satisfied</InputLabel>
+							<InputLabel id="action-label">{actionToRunLabel()}</InputLabel>
 							<Select
 								labelId="action-label"
 								id="action"
 								value={action}
 								disabled={type !== 'gain'}
 
-								label="Action to run when condition is satisfied"
+								label={actionToRunLabel()}
 								required
 								onChange={handleActionChange}
 							>
-								<MenuItem value={'groupUsers'}>Make user group member</MenuItem>
-								<MenuItem value={'tenantOwners'}>Make user tenant owner</MenuItem>
-								<MenuItem value={'tenantAdmins'}>Make user tenant admin</MenuItem>
-								<MenuItem value={'superAdmin'} disabled={!superAdmin}>Make user super admin</MenuItem>
+								<MenuItem value={'groupUsers'}>{makeUserGroupMemberLabel()}</MenuItem>
+								<MenuItem value={'tenantOwners'}>{makeUserTenantOwnerLabel()}</MenuItem>
+								<MenuItem value={'tenantAdmins'}>{makeUserTenantAdminLabel()}</MenuItem>
+								<MenuItem value={'superAdmin'} disabled={!superAdmin}>{makeUserSuperAdminLabel()}</MenuItem>
 							</Select>
 						</FormControl>
 						{action=='groupUsers' && 
 						<FormControl
 							sx={{ marginTop: '8px' }}
 							fullWidth>
-							<InputLabel id="accessid-label">Access Id</InputLabel>
+							<InputLabel id="accessid-label">{accessIdLabel()}</InputLabel>
 							<Select
 								labelId="accessid-label"
 								id="accessid"

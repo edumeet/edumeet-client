@@ -5,7 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Tenant, TenantOptionTypes, TenantOwners, User } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { addNewLabel, genericItemDescLabel, manageItemLabel, tenantAdminsLabel, tenantLabel, userLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantAdminsLabel, tenantLabel, userLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import { getTenantName, getUserEmail } from '../../../utils/management';
 
@@ -40,13 +40,13 @@ const TenantAdminTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				Cell: ({ cell }) => getTenantName(tenants, cell.getValue<string>())
+				accessorFn: (row) => getTenantName(tenants, String(row.tenantId))
 
 			},
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				Cell: ({ cell }) => getUserEmail(users, cell.getValue<string>())
+				accessorFn: (row) => getUserEmail(users, String(row.userId))
 
 			},
 		],
@@ -224,9 +224,9 @@ const TenantAdminTable = () => {
 
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>

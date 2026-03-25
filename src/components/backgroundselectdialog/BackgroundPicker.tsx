@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import { ThumbnailItem } from '../../services/clientImageService';
 import { deleteImage, getImage, loadThumbnails } from '../../store/actions/meActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { defaultLabel, noneLabel } from '../translated/translatedComponents';
+import { defaultLabel, deleteImageLabel, noneLabel } from '../translated/translatedComponents';
 import DropZone from './DropZone';
 import { RoomBgTile } from './RoomBackgroundTile';
 
@@ -131,7 +131,7 @@ const BackgroundPicker = ({
 										event.stopPropagation();
 										handleOnDelete(item);
 									}}
-									aria-label={`delete ${item.imageName}`}
+									aria-label={deleteImageLabel(item.imageName)}
 								>
 									<DeleteForever htmlColor='secondary' />
 								</IconButton>

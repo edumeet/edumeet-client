@@ -14,6 +14,7 @@ import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 import ColorsPicker from './ColorsPicker';
 import BgColorsPicker from './BgColorsPicker';
 import { DrawingState } from '../../../store/slices/drawingSlice';
+import { decreaseSizeLabel, increaseSizeLabel, redoLabel, undoLabel, useEraserToolLabel, useMoveToolLabel, usePencilBrushToolLabel, useTextToolLabel } from '../../translated/translatedComponents';
 
 interface drawingMenuProps {
     menuRef: React.RefObject<HTMLDivElement>
@@ -110,9 +111,9 @@ const DrawingMenu = ({
 				>
 					{/* Move */}
 					<IconButton
-						aria-label="Use move Tool"
+						aria-label={useMoveToolLabel()}
 						onClick={handleUseMoveTool}
-						title="Use Move Tool"
+						title={useMoveToolLabel()}
 						style={{ border: tool === 'move' ? '2px solid gray' : '2px solid lightgray' }}
 						size='small'
 					>
@@ -121,9 +122,9 @@ const DrawingMenu = ({
 
 					{/* PencilBrush */}
 					<IconButton
-						aria-label="Use Pencil Brush Tool"
+						aria-label={usePencilBrushToolLabel()}
 						onClick={handleUsePencilBrush}
-						title="Use Pencil Brush Tool"
+						title={usePencilBrushToolLabel()}
 						style={{ border: tool === 'pencilBrush' ? '2px solid gray' : '2px solid lightgray' }}
 						size='small'
 					>
@@ -132,9 +133,9 @@ const DrawingMenu = ({
 
 					{/* Text */}
 					<IconButton
-						aria-label="Use Text Tool"
+						aria-label={useTextToolLabel()}
 						onClick={handleUseTextTool}
-						title="Use Text Tool"
+						title={useTextToolLabel()}
 						style={{ border: tool === 'text' ? '2px solid gray' : '2px solid lightgray' }}
 						size='small'
 					>
@@ -143,9 +144,9 @@ const DrawingMenu = ({
 
 					{/* Eraser */}
 					<IconButton
-						aria-label="Use Eraser Tool"
+						aria-label={useEraserToolLabel()}
 						onClick={handleUseEraserTool}
-						title="Use Eraser Tool"
+						title={useEraserToolLabel()}
 						style={{ border: tool === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
 						size='small'
 					>
@@ -161,13 +162,13 @@ const DrawingMenu = ({
 				>
 					{/* Increase Size */}
 					<IconButton
-						aria-label="Increase Size"
+						aria-label={increaseSizeLabel()}
 						onClick={(e) => handleChangeSize(e, 'inc')}
 						onMouseDown={(e) => handleChangeSize(e, 'inc')}
 						onMouseUp={(e) => handleChangeSize(e, 'inc')}
 						onMouseLeave={(e) => handleChangeSize(e, 'inc')}
 						disabled={sizeRange && size === sizeRange.max}
-						title="Increase Size"
+						title={increaseSizeLabel()}
 						size='small'
 					>
 						<AddCircleOutlineIcon />
@@ -186,13 +187,13 @@ const DrawingMenu = ({
 						
 					{/* Decrease Size */}
 					<IconButton
-						aria-label="Decrease Size"
+						aria-label={decreaseSizeLabel()}
 						onClick={(e) => handleChangeSize(e, 'dec')}
 						onMouseDown={(e) => handleChangeSize(e, 'dec')}
 						onMouseUp={(e) => handleChangeSize(e, 'dec')}
 						onMouseLeave={(e) => handleChangeSize(e, 'dec')}
 						disabled={sizeRange && size === sizeRange.min}
-						title="Decrease Size"
+						title={decreaseSizeLabel()}
 						size='small'
 					>
 						<RemoveCircleOutlineIcon />
@@ -237,9 +238,9 @@ const DrawingMenu = ({
 				>
 					{/* Undo */}
 					<IconButton
-						aria-label="Undo"
+						aria-label={undoLabel()}
 						onClick={handleUndo}
-						title="Undo"
+						title={undoLabel()}
 						size='small'
 						disabled={pastActions.length === 0}
 					>
@@ -249,9 +250,9 @@ const DrawingMenu = ({
 
 					{/* Redo */}
 					<IconButton
-						aria-label="Redo"
+						aria-label={redoLabel()}
 						onClick={handleRedo}
-						title="Redo"
+						title={redoLabel()}
 						size='small'
 						disabled={futureActions.length === 0}
 					>

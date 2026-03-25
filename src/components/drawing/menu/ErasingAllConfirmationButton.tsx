@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { confirmLabel } from '../../translated/translatedComponents';
 import { Button, IconButton, Popover, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -67,7 +68,7 @@ const ErasingAllConfirmationButton: React.FC<ErasingAllConfirmationButtonProps> 
 						color="warning"
 						onClick={handleConfirmed}
 					>
-						Confirm
+						{confirmLabel()}
 					</Button>
 				</Typography>
 			</Popover>

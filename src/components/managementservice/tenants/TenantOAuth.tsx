@@ -7,7 +7,7 @@ import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
 import { TenantProp } from './Tenant';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantLabel } from '../../translated/translatedComponents';
+import { accessUrlFieldLabel, accessUrlLabel, addNewLabel, applyLabel, authorizeUrlFieldLabel, authorizeUrlLabel, cancelLabel, deleteLabel, endSessionEndpointFieldLabel, endSessionEndpointLabel, genericItemDescLabel, manageItemLabel, nameParameterFieldLabel, nameParameterLabel, oauthKeyLabel, oauthSecretLabel, profileUrlFieldLabel, profileUrlLabel, redirectUriLabel, redirectUrlFieldLabel, scopeDelimiterFieldLabel, scopeDelimiterLabel, scopeFieldLabel, scopeLabel, tenantLabel, undefinedTenantLabel, updateParamsFromUrlLabel, wellKnownUrlLabel } from '../../translated/translatedComponents';
 
 const TenantOAuthTable = (props: TenantProp) => {
 	const tenantId = props.tenantId;
@@ -24,7 +24,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined tenant';
+			return undefinedTenantLabel();
 		}
 	};
 
@@ -38,40 +38,40 @@ const TenantOAuthTable = (props: TenantProp) => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
+				accessorFn: (row) => getTenantName(String(row.tenantId))
 
 			},
 			{
 				accessorKey: 'access_url',
-				header: 'Access URL'
+				header: accessUrlLabel()
 			},
 			{
 				accessorKey: 'authorize_url',
-				header: 'Authorize URL'
+				header: authorizeUrlLabel()
 			},
 			{
 				accessorKey: 'profile_url',
-				header: 'Profile URL'
+				header: profileUrlLabel()
 			},
 			{
 				accessorKey: 'redirect_uri',
-				header: 'Redirect URI'
+				header: redirectUriLabel()
 			},
 			{
 				accessorKey: 'scope',
-				header: 'Scope'
+				header: scopeLabel()
 			},
 			{
 				accessorKey: 'scope_delimiter',
-				header: 'Scope delimiter'
+				header: scopeDelimiterLabel()
 			},
 			{
 				accessorKey: 'end_session_endpoint',
-				header: 'end_session_endpoint (full logout)'
+				header: endSessionEndpointLabel()
 			},
 			{
 				accessorKey: 'name_parameter',
-				header: 'Name parameter (name/nickname/...)'
+				header: nameParameterLabel()
 			}
 		],
 		[ tenants ],
@@ -296,18 +296,18 @@ const TenantOAuthTable = (props: TenantProp) => {
 						margin="dense"
 						required
 						id="wellknown"
-						label="Well-known URL"
+						label={wellKnownUrlLabel()}
 						type="text"
 						fullWidth
 						value={wellknown}
 						onChange={handleWellknownChange}
 					/>
-					<Button onClick={handleWellknownUpdate} variant="contained" fullWidth disabled={wellknownEmpty} >Update parameters from URL</Button>
+					<Button onClick={handleWellknownUpdate} variant="contained" fullWidth disabled={wellknownEmpty} >{updateParamsFromUrlLabel()}</Button>
 					<TextField
 						margin="dense"
 						required
 						id="key"
-						label="key"
+						label={oauthKeyLabel()}
 						type="text"
 						fullWidth
 						value={key}
@@ -318,7 +318,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						margin="dense"
 
 						id="secret"
-						label="secret"
+						label={oauthSecretLabel()}
 						type="text"
 						fullWidth
 						value={secret}
@@ -328,7 +328,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						required
 						margin="dense"
 						id="access_url"
-						label="access_url"
+						label={accessUrlFieldLabel()}
 						type="text"
 						fullWidth
 						value={accessUrl}
@@ -339,7 +339,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						margin="dense"
 
 						id="authorize_url"
-						label="authorize_url"
+						label={authorizeUrlFieldLabel()}
 						type="text"
 						fullWidth
 						value={authorizeUrl}
@@ -349,7 +349,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						required
 						margin="dense"
 						id="profile_url"
-						label="profile_url"
+						label={profileUrlFieldLabel()}
 						type="text"
 						fullWidth
 						onChange={handleProfileUrlChange}
@@ -360,7 +360,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						margin="dense"
 
 						id="scope"
-						label="scope"
+						label={scopeFieldLabel()}
 						type="text"
 						fullWidth
 						value={scope}
@@ -371,7 +371,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						required
 
 						id="scope_delimiter"
-						label="scope_delimiter"
+						label={scopeDelimiterFieldLabel()}
 						type="text"
 						fullWidth
 						value={scopeDelimeter}
@@ -381,7 +381,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						required
 						margin="dense"
 						id="redirect_url"
-						label="redirect_url"
+						label={redirectUrlFieldLabel()}
 						type="text"
 						fullWidth
 						value={redirect}
@@ -391,7 +391,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						required
 						margin="dense"
 						id="end_session_endpoint"
-						label="end_session_endpoint"
+						label={endSessionEndpointFieldLabel()}
 						type="text"
 						fullWidth
 						value={end_session_endpoint}
@@ -401,7 +401,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						required
 						margin="dense"
 						id="name_parameter"
-						label="name_parameter"
+						label={nameParameterFieldLabel()}
 						type="text"
 						fullWidth
 						value={name_parameter}
