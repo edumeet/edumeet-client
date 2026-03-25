@@ -37,7 +37,7 @@ const TenantFQDNTable = (props: TenantProp) => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
+				accessorFn: (row) => getTenantName(row.tenantId)
 
 			},
 			{

@@ -63,12 +63,12 @@ const GroupUserTable = () => {
 			{
 				accessorKey: 'groupId',
 				header: groupLabel(),
-				Cell: ({ cell }) => getGroupName(cell.getValue<string>())
+				accessorFn: (row) => getGroupName(row.groupId)
 			},
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				Cell: ({ cell }) => getUserEmail(cell.getValue<string>())
+				accessorFn: (row) => getUserEmail(row.userId)
 
 			}
 		],

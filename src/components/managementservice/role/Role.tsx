@@ -46,17 +46,13 @@ const RoleTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
+				accessorFn: (row) => getTenantName(row.tenantId)
 
 			},
 			{
 				accessorKey: 'permissions',
 				header: 'Permission(s)',
-				Cell: ({ cell }) =>
-					(
-						cell.getValue<Array<Permissions>>().map((single: Permissions) => single.name)
-							.join(', ')
-					),
+				accessorFn: (row) => row.permissions.map((single: Permissions) => single.name).join(', '),
 			},
 
 		],

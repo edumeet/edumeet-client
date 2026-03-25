@@ -103,13 +103,13 @@ const RoomTable = () => {
 			{
 				accessorKey: 'defaultRoleId',
 				header: defaultRoleLabel(),
-				Cell: ({ cell }) => getRoleName(cell.getValue<string>())
+				accessorFn: (row) => getRoleName(row.defaultRoleId)
 
 			},
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				Cell: ({ cell }) => getTenantName(cell.getValue<string>())
+				accessorFn: (row) => getTenantName(row.tenantId)
 			},
 			{
 				accessorKey: 'logo',
@@ -170,20 +170,12 @@ const RoomTable = () => {
 			{
 				accessorKey: 'owners',
 				header: ownersLabel(),
-				Cell: ({ cell }) =>
-					(	
-						cell.getValue<Array<RoomOwners>>().map((single:RoomOwners) => getUserEmail(single.userId))
-							.join(', ')
-					),
+				accessorFn: (row) => row.owners.map((single: RoomOwners) => getUserEmail(single.userId)).join(', '),
 			},
 			{
 				accessorKey: 'groupRoles',
 				header: groupRolesLabel(),
-				Cell: ({ cell }) =>
-					(	
-						cell.getValue<Array<GroupRoles>>().map((single:GroupRoles) => single.role.description)
-							.join(', ')
-					),
+				accessorFn: (row) => row.groupRoles.map((single: GroupRoles) => single.role.description).join(', '),
 			},
 			{
 				accessorKey: 'breakoutsEnabled',
