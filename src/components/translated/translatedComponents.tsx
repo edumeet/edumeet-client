@@ -1513,3 +1513,7 @@ export const signInLabel = (): string => intl.formatMessage({
 	id: 'label.admin.signIn',
 	defaultMessage: 'Sign In'
 });
+export const tenantLoginLabel = (): string => intl.formatMessage({
+	id: 'label.admin.tenantLogin',
+	defaultMessage: 'Tenant Login'
+});

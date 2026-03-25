@@ -457,5 +457,6 @@
 	"label.drawing.increaseSize": "Zwiększ rozmiar",
 	"label.drawing.decreaseSize": "Zmniejsz rozmiar",
 	"label.drawing.undo": "Cofnij",
-	"label.drawing.redo": "Ponów"
+	"label.drawing.redo": "Ponów",
+	"label.admin.tenantLogin": "Zaloguj przez instytucję"
 }

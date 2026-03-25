@@ -457,5 +457,6 @@
 	"label.drawing.increaseSize": "Increase Size",
 	"label.drawing.decreaseSize": "Decrease Size",
 	"label.drawing.undo": "Undo",
-	"label.drawing.redo": "Redo"
+	"label.drawing.redo": "Redo",
+	"label.admin.tenantLogin": "Tenant Login"
 }

@@ -457,5 +457,6 @@
 	"label.drawing.increaseSize": "Größe erhöhen",
 	"label.drawing.decreaseSize": "Größe verringern",
 	"label.drawing.undo": "Rükgängig",
-	"label.drawing.redo": "Wiederholen"
+	"label.drawing.redo": "Wiederholen",
+	"label.admin.tenantLogin": "Über Mandant anmelden"
 }
