@@ -8,7 +8,7 @@ import { Roles, Tenant, TenantOptionTypes, RoleOptionTypes, DefaultOptionTypes, 
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
-import { addNewLabel, applyLabel, breakoutRoomsServiceLabel, cancelLabel, chatServiceLabel, configurationLockLabel, defaultRoleIdLabel, deleteLabel, disableUnmanagedRoomsLabel, filesharingServiceLabel, genericItemDescLabel, localRecordingMgmtLabel, manageItemLabel, managerManagedRoomNumberLimitLabel, maxFileSizedLabel, numberLimitLabel, raiseHandMgmtLabel, reactionsEnabledLabel, roomBackgroundURLLabel, roomLockedMgmtLabel, roomLogoURLLabel, roomOptionStateLabel, roomTrackerLabel, tenantLabel, trackerHelperTextLabel, unmanagedLabel, userManagedRoomNumberLimitLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, breakoutRoomsServiceLabel, cancelLabel, chatServiceLabel, configurationLockLabel, defaultRoleIdLabel, deleteLabel, disableUnmanagedRoomsLabel, filesharingServiceLabel, genericItemDescLabel, liveNumberLimitLabel, localRecordingMgmtLabel, manageItemLabel, managerManagedRoomNumberLimitLabel, maxFileSizedLabel, nameCannotBeEmptyLabel, numberLimitLabel, raiseHandMgmtLabel, reactionsEnabledLabel, roomBackgroundURLLabel, roomLockedMgmtLabel, roomLogoURLLabel, roomOptionStateLabel, roomTrackerLabel, tenantLabel, trackerHelperTextLabel, unmanagedLabel, userManagedRoomNumberLimitLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import { getTenantName } from '../../../utils/management';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -297,7 +297,7 @@ const DefaultTable = () => {
 			});
 		} else {
 			dispatch(notificationsActions.enqueueNotification({
-				message: 'Name cannot be empty!',
+				message: nameCannotBeEmptyLabel(),
 				options: { variant: 'warning' }
 			}));
 		}
@@ -357,7 +357,7 @@ const DefaultTable = () => {
 								required
 								margin="dense"
 								id="liveNumberLimit"
-								label={'liveNumberLimit'}
+								label={liveNumberLimitLabel()}
 								type="number"
 								fullWidth
 								disabled={false}

@@ -1349,3 +1349,103 @@ export const tenantOwnerFieldLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.tenantOwnerField',
 	defaultMessage: 'tenantOwner'
 });
+export const liveNumberLimitLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.liveNumberLimit',
+	defaultMessage: 'liveNumberLimit'
+});
+export const nameCannotBeEmptyLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.nameCannotBeEmpty',
+	defaultMessage: 'Name cannot be empty!'
+});
+export const permissionsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.permissions',
+	defaultMessage: 'Permission(s)'
+});
+export const fqdnFullLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.fqdnFull',
+	defaultMessage: 'Fully Qualified Domain Name (FQDN)'
+});
+export const fqdnFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.fqdn',
+	defaultMessage: 'fqdn'
+});
+export const accessUrlLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.accessUrl',
+	defaultMessage: 'Access URL'
+});
+export const authorizeUrlLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.authorizeUrl',
+	defaultMessage: 'Authorize URL'
+});
+export const profileUrlLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.profileUrl',
+	defaultMessage: 'Profile URL'
+});
+export const redirectUriLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.redirectUri',
+	defaultMessage: 'Redirect URI'
+});
+export const scopeLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.scope',
+	defaultMessage: 'Scope'
+});
+export const scopeDelimiterLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.scopeDelimiter',
+	defaultMessage: 'Scope delimiter'
+});
+export const endSessionEndpointLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.endSessionEndpoint',
+	defaultMessage: 'end_session_endpoint (full logout)'
+});
+export const nameParameterLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.nameParameter',
+	defaultMessage: 'Name parameter (name/nickname/...)'
+});
+export const wellKnownUrlLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.wellKnownUrl',
+	defaultMessage: 'Well-known URL'
+});
+export const updateParamsFromUrlLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.updateParamsFromUrl',
+	defaultMessage: 'Update parameters from URL'
+});
+export const oauthKeyLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.oauthKey',
+	defaultMessage: 'key'
+});
+export const oauthSecretLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.oauthSecret',
+	defaultMessage: 'secret'
+});
+export const accessUrlFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.accessUrlField',
+	defaultMessage: 'access_url'
+});
+export const authorizeUrlFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.authorizeUrlField',
+	defaultMessage: 'authorize_url'
+});
+export const profileUrlFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.profileUrlField',
+	defaultMessage: 'profile_url'
+});
+export const scopeFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.scopeField',
+	defaultMessage: 'scope'
+});
+export const scopeDelimiterFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.scopeDelimiterField',
+	defaultMessage: 'scope_delimiter'
+});
+export const redirectUrlFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.redirectUrlField',
+	defaultMessage: 'redirect_url'
+});
+export const endSessionEndpointFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.endSessionEndpointField',
+	defaultMessage: 'end_session_endpoint'
+});
+export const nameParameterFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.nameParameterField',
+	defaultMessage: 'name_parameter'
+});

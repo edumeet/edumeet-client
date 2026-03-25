@@ -6,7 +6,7 @@ import React from 'react';
 import { Roles, Tenant, Permissions, RolePermissions } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { addNewLabel, allPermissionsLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel, undefinedTenantLabel } from '../../translated/translatedComponents';
+import { addNewLabel, allPermissionsLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameLabel, permissionsLabel, tenantLabel, undefinedTenantLabel } from '../../translated/translatedComponents';
 
 const RoleTable = () => {
 	const dispatch = useAppDispatch();
@@ -51,7 +51,7 @@ const RoleTable = () => {
 			},
 			{
 				accessorKey: 'permissions',
-				header: 'Permission(s)',
+				header: permissionsLabel(),
 				accessorFn: (row) => row.permissions.map((single: Permissions) => single.name).join(', '),
 			},
 

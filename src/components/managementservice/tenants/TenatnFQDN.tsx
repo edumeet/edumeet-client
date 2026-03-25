@@ -6,7 +6,7 @@ import { Tenant, TenantFQDN } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { TenantProp } from './Tenant';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, tenantLabel, undefinedLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, fqdnFieldLabel, fqdnFullLabel, genericItemDescLabel, manageItemLabel, tenantLabel, undefinedLabel } from '../../translated/translatedComponents';
 
 const TenantFQDNTable = (props: TenantProp) => {
 	const tenantId = props.tenantId;
@@ -46,7 +46,7 @@ const TenantFQDNTable = (props: TenantProp) => {
 			},
 			{
 				accessorKey: 'fqdn',
-				header: 'Fully Qualified Domain Name (FQDN)'
+				header: fqdnFullLabel()
 			},
 			
 		],
@@ -154,7 +154,7 @@ const TenantFQDNTable = (props: TenantProp) => {
 					<TextField
 						margin="dense"
 						id="fqdn"
-						label="fqdn"
+						label={fqdnFieldLabel()}
 						type="text"
 						fullWidth
 						onChange={handleFQDNChange}

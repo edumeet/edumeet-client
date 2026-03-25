@@ -5,7 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Tenant, TenantOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, manageItemLabel, tenantLabel, tenantOwnersLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, hiddenEmailLabel, manageItemLabel, tenantLabel, tenantOwnersLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
 
 const TenantOwnerTable = () => {
 	const dispatch = useAppDispatch();
@@ -44,7 +44,7 @@ const TenantOwnerTable = () => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'Hidden email';
+			return hiddenEmailLabel();
 		}
 	};
 	// should be memoized or stable
