@@ -8,7 +8,7 @@ import { Roles, Tenant, TenantOptionTypes, RoleOptionTypes, DefaultOptionTypes, 
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
-import { addNewLabel, applyLabel, breakoutRoomsServiceLabel, cancelLabel, chatServiceLabel, configurationLockLabel, defaultRoleIdLabel, deleteLabel, disableUnmanagedRoomsLabel, filesharingServiceLabel, genericItemDescLabel, liveNumberLimitLabel, localRecordingMgmtLabel, manageItemLabel, managerManagedRoomNumberLimitLabel, maxFileSizedLabel, nameCannotBeEmptyLabel, numberLimitLabel, raiseHandMgmtLabel, reactionsEnabledLabel, roomBackgroundURLLabel, roomLockedMgmtLabel, roomLogoURLLabel, roomOptionStateLabel, roomTrackerLabel, tenantLabel, trackerHelperTextLabel, unmanagedLabel, userManagedRoomNumberLimitLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, breakoutRoomsServiceLabel, cancelLabel, chatServiceLabel, configurationLockLabel, defaultRoleIdLabel, deleteLabel, disableUnmanagedRoomsLabel, disableUnmanagedRoomsTooltipLabel, filesharingServiceLabel, genericItemDescLabel, liveNumberLimitLabel, localRecordingMgmtLabel, manageItemLabel, managerManagedRoomNumberLimitLabel, maxFileSizedLabel, nameCannotBeEmptyLabel, numberLimitLabel, raiseHandMgmtLabel, reactionsEnabledLabel, roomBackgroundURLLabel, roomLockedMgmtLabel, roomLockedTooltipLabel, roomLogoURLLabel, roomOptionStateLabel, roomTrackerLabel, tenantLabel, trackerHelperTextLabel, unmanagedLabel, userManagedRoomNumberLimitLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import { getTenantName } from '../../../utils/management';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -412,12 +412,12 @@ const DefaultTable = () => {
 							</thead>
 							<tbody>
 								<tr>
-									<td><Tooltip title="When enabled, users cannot create or join unmanaged (ad-hoc) rooms. Only pre-configured managed rooms will be accessible for this tenant." placement="right"><span>{disableUnmanagedRoomsLabel()}</span></Tooltip></td>
+									<td><Tooltip title={disableUnmanagedRoomsTooltipLabel()} placement="right"><span>{disableUnmanagedRoomsLabel()}</span></Tooltip></td>
 									<td><Checkbox disabled={disableUnmanagedLock && !superAdmin} checked={disableUnmanaged} onClick={() => setDisableUnmanaged(Boolean(!disableUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={disableUnmanagedLock} onClick={() => setDisableUnmanagedLock(Boolean(!disableUnmanagedLock))} /></td>
 								</tr>
 								<tr>
-									<td><Tooltip title="When enabled, new unmanaged rooms start in a locked state. Only the first user to join who is authenticated (logged in via SSO/management) can bypass the lock and admit others from the lobby. All other users, including subsequent authenticated users, will be placed in the lobby." placement="right"><span>{roomLockedMgmtLabel()}</span></Tooltip></td>
+									<td><Tooltip title={roomLockedTooltipLabel()} placement="right"><span>{roomLockedMgmtLabel()}</span></Tooltip></td>
 									<td><Checkbox disabled={lockedLock && !superAdmin} checked={lockedUnmanaged} onClick={() => setLockUnmanaged(Boolean(!lockedUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={lockedLock} onClick={() => setLockLock(Boolean(!lockedLock))} /></td>
 								</tr>

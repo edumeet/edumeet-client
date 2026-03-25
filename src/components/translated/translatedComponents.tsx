@@ -1541,3 +1541,11 @@ export const useColorLabel = (color: string): string => intl.formatMessage({
 	id: 'label.drawing.useColor',
 	defaultMessage: 'Use {color}'
 }, { color: colorNameLabel(color) });
+export const disableUnmanagedRoomsTooltipLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.disableUnmanagedRoomsTooltip',
+	defaultMessage: 'When enabled, users cannot create or join unmanaged (ad-hoc) rooms. Only pre-configured managed rooms will be accessible for this tenant.'
+});
+export const roomLockedTooltipLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.roomLockedTooltip',
+	defaultMessage: 'When enabled, new unmanaged rooms start in a locked state. Only the first user to join who is authenticated (logged in via SSO/management) can bypass the lock and admit others from the lobby. All other users, including subsequent authenticated users, will be placed in the lobby.'
+});

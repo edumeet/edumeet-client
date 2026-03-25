@@ -372,7 +372,7 @@
 	"label.defaults.managerManagedRoomNumberLimit": "Raumlimit des Managers",
 	"label.defaults.roomBackgroundURL": "Raumhintergrund-URL",
 	"label.defaults.roomLogoURL": "Raumlogo-URL",
-	"label.defaults.roomTracker": "Raum-Tracker",
+	"label.defaults.roomTracker": "Tracker (wss://FQDN/path)",
 	"label.defaults.defaultRoleId": "Standardrolle",
 	"label.defaults.maxFileSize": "Maximale Dateigröße",
 	"label.type": "Typ",
@@ -472,5 +472,7 @@
 	"label.color.orange": "Orange",
 	"label.color.red": "Rot",
 	"label.color.blue": "Blau",
-	"label.color.purple": "Lila"
+	"label.color.purple": "Lila",
+	"label.managementservice.disableUnmanagedRoomsTooltip": "Wenn aktiviert, können Benutzer keine nicht verwalteten (Ad-hoc-)Räume erstellen oder betreten. Für diesen Mandanten sind nur vorkonfigurierte verwaltete Räume zugänglich.",
+	"label.managementservice.roomLockedTooltip": "Wenn aktiviert, starten neue nicht verwaltete Räume in einem gesperrten Zustand. Nur der erste Benutzer, der beitritt und authentifiziert ist (per SSO/Verwaltung angemeldet), kann die Sperre umgehen und andere aus dem Wartebereich einlassen. Alle anderen Benutzer, einschließlich nachfolgend authentifizierter Benutzer, werden in den Wartebereich geleitet."
 }

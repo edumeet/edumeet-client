@@ -372,7 +372,7 @@
 	"label.defaults.managerManagedRoomNumberLimit": "Limit pokojów menedżera",
 	"label.defaults.roomBackgroundURL": "URL tła pokoju",
 	"label.defaults.roomLogoURL": "URL logo pokoju",
-	"label.defaults.roomTracker": "Tracker pokoju",
+	"label.defaults.roomTracker": "Tracker (wss://FQDN/path)",
 	"label.defaults.defaultRoleId": "Domyślna rola",
 	"label.defaults.maxFileSize": "Maksymalny rozmiar pliku",
 	"label.type": "Typ",
@@ -472,5 +472,7 @@
 	"label.color.orange": "pomarańczowy",
 	"label.color.red": "czerwony",
 	"label.color.blue": "niebieski",
-	"label.color.purple": "fioletowy"
+	"label.color.purple": "fioletowy",
+	"label.managementservice.disableUnmanagedRoomsTooltip": "Gdy włączone, użytkownicy nie mogą tworzyć ani dołączać do pokoi niezarządzanych (ad-hoc). Dla tej instytucji dostępne będą wyłącznie wstępnie skonfigurowane pokoje zarządzane.",
+	"label.managementservice.roomLockedTooltip": "Gdy włączone, nowe pokoje niezarządzane startują w stanie zablokowanym. Tylko pierwszy użytkownik, który dołączy i jest uwierzytelniony (zalogowany przez SSO/zarządzanie), może ominąć blokadę i wpuszczać innych z poczekalni. Wszyscy pozostali użytkownicy, w tym kolejni uwierzytelnieni, zostaną umieszczeni w poczekalni."
 }

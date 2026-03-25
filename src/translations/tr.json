@@ -472,5 +472,7 @@
 	"label.color.orange": null,
 	"label.color.red": null,
 	"label.color.blue": null,
-	"label.color.purple": null
+	"label.color.purple": null,
+	"label.managementservice.disableUnmanagedRoomsTooltip": null,
+	"label.managementservice.roomLockedTooltip": null
 }
