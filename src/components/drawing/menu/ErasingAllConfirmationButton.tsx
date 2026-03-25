@@ -68,7 +68,7 @@ const ErasingAllConfirmationButton: React.FC<ErasingAllConfirmationButtonProps> 
 						color="warning"
 						onClick={handleConfirmed}
 					>
-						Confirm
+						{confirmLabel()}
 					</Button>
 				</Typography>
 			</Popover>

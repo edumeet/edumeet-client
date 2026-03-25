@@ -71,19 +71,19 @@ const DownloadCanvasButton: React.FC<DownloadCanvasButtonProps> = (props) => {
 							color="warning"
 							onClick={handleDownloadAs('png')}
 						>
-						{asPngLabel()}
+							{asPngLabel()}
 						</Button>
 						<Button
 							color="warning"
 							onClick={handleDownloadAs('jpeg')}
 						>
-						{asJpegLabel()}
+							{asJpegLabel()}
 						</Button>
 						<Button
 							color="warning"
 							onClick={handleDownloadAs('svg')}
 						>
-						{asSvgLabel()}
+							{asSvgLabel()}
 						</Button>
 					</ButtonGroup>
 				</Typography>
