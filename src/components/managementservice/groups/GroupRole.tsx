@@ -100,19 +100,19 @@ const GroupRoleTable = () => {
 			{
 				accessorKey: 'groupId',
 				header: groupLabel(),
-				accessorFn: (row) => getGroupsName(row.groupId)
+				accessorFn: (row) => getGroupsName(String(row.groupId))
 
 			},
 			{
 				accessorKey: 'roleId',
 				header: roleLabel(),
-				accessorFn: (row) => getRoleName(row.roleId)
+				accessorFn: (row) => getRoleName(String(row.roleId))
 
 			},
 			{
 				accessorKey: 'roomId',
 				header: roomLabel(),
-				accessorFn: (row) => getRoomName(row.roomId)
+				accessorFn: (row) => getRoomName(String(row.roomId))
 
 			},
 

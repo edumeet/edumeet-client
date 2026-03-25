@@ -90,13 +90,13 @@ const RoomOwnerTable = (props: RoomProp) => {
 			{
 				accessorKey: 'roomId',
 				header: 'Room',
-				accessorFn: (row) => getRoomName(row.roomId)
+				accessorFn: (row) => getRoomName(String(row.roomId))
 
 			},
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				accessorFn: (row) => getUserName(row.userId)
+				accessorFn: (row) => getUserName(String(row.userId))
 
 			},
 			

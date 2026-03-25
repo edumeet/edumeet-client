@@ -103,13 +103,13 @@ const RoomTable = () => {
 			{
 				accessorKey: 'defaultRoleId',
 				header: defaultRoleLabel(),
-				accessorFn: (row) => getRoleName(row.defaultRoleId)
+				accessorFn: (row) => getRoleName(String(row.defaultRoleId ?? ''))
 
 			},
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				accessorFn: (row) => getTenantName(row.tenantId)
+				accessorFn: (row) => getTenantName(String(row.tenantId ?? ''))
 			},
 			{
 				accessorKey: 'logo',
@@ -170,12 +170,12 @@ const RoomTable = () => {
 			{
 				accessorKey: 'owners',
 				header: ownersLabel(),
-				accessorFn: (row) => row.owners.map((single: RoomOwners) => getUserEmail(single.userId)).join(', '),
+				accessorFn: (row) => (row.owners ?? []).map((single: RoomOwners) => getUserEmail(single.userId)).join(', '),
 			},
 			{
 				accessorKey: 'groupRoles',
 				header: groupRolesLabel(),
-				accessorFn: (row) => row.groupRoles.map((single: GroupRoles) => single.role.description).join(', '),
+				accessorFn: (row) => (row.groupRoles as unknown as GroupRoles[] ?? []).map((single: GroupRoles) => single.role.description).join(', '),
 			},
 			{
 				accessorKey: 'breakoutsEnabled',

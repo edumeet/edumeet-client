@@ -59,13 +59,13 @@ const TenantOwnerTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				accessorFn: (row) => getTenantName(row.tenantId)
+				accessorFn: (row) => getTenantName(String(row.tenantId))
 
 			},
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				accessorFn: (row) => getUserEmail(row.userId)
+				accessorFn: (row) => getUserEmail(String(row.userId))
 
 			},
 		],
