@@ -1204,3 +1204,148 @@ export const ownersLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Owners'
 
 });
+
+export const createdAtLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.createdAt',
+	defaultMessage: 'Created at'
+});
+export const updatedAtLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.updatedAt',
+	defaultMessage: 'Updated at'
+});
+export const creatorIdLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.creatorId',
+	defaultMessage: 'Creator id'
+});
+export const allPermissionsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.allPermissions',
+	defaultMessage: 'All permissions'
+});
+export const undefinedTenantLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.undefinedTenant',
+	defaultMessage: 'undefined tenant'
+});
+export const assertLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.assert',
+	defaultMessage: 'Assert'
+});
+export const gainLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.gain',
+	defaultMessage: 'Gain'
+});
+export const containsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.contains',
+	defaultMessage: 'contains'
+});
+export const equalsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.equals',
+	defaultMessage: 'equals'
+});
+export const startswithLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.startswith',
+	defaultMessage: 'startswith'
+});
+export const endswithLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.endswith',
+	defaultMessage: 'endswith'
+});
+export const actionToRunLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.actionToRun',
+	defaultMessage: 'Action to run when condition is satisfied'
+});
+export const makeUserGroupMemberLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.makeUserGroupMember',
+	defaultMessage: 'Make user group member'
+});
+export const makeUserTenantOwnerLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.makeUserTenantOwner',
+	defaultMessage: 'Make user tenant owner'
+});
+export const makeUserTenantAdminLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.makeUserTenantAdmin',
+	defaultMessage: 'Make user tenant admin'
+});
+export const makeUserSuperAdminLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.makeUserSuperAdmin',
+	defaultMessage: 'Make user super admin'
+});
+export const roomOptionStateLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.roomOptionState',
+	defaultMessage: 'Room option state'
+});
+export const unmanagedLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.unmanaged',
+	defaultMessage: '(unmanaged)'
+});
+export const configurationLockLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.configurationLock',
+	defaultMessage: 'Configuration Lock'
+});
+export const disableUnmanagedRoomsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.disableUnmanagedRooms',
+	defaultMessage: 'Disable unmanaged rooms'
+});
+export const roomLockedMgmtLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.roomLocked',
+	defaultMessage: 'Room locked'
+});
+export const raiseHandMgmtLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.raiseHand',
+	defaultMessage: 'Raise Hand'
+});
+export const localRecordingMgmtLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.localRecording',
+	defaultMessage: 'Local Recording'
+});
+export const chatServiceLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.chatService',
+	defaultMessage: 'Chat service'
+});
+export const breakoutRoomsServiceLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.breakoutRoomsService',
+	defaultMessage: 'Breakout rooms service'
+});
+export const filesharingServiceLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.filesharingService',
+	defaultMessage: 'Filesharing service'
+});
+export const trackerHelperTextLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.trackerHelperText',
+	defaultMessage: 'If not set, the server configuration will be used'
+});
+export const ssoIdLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.ssoId',
+	defaultMessage: 'ssoId'
+});
+export const emailHeaderLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.emailHeader',
+	defaultMessage: 'email'
+});
+export const hiddenEmailLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.hiddenEmail',
+	defaultMessage: 'Hidden email'
+});
+export const hiddenNameLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.hiddenName',
+	defaultMessage: 'Hidden name'
+});
+export const avatarLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.avatar',
+	defaultMessage: 'avatar'
+});
+export const emailFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.emailField',
+	defaultMessage: 'Email'
+});
+export const nameFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.nameField',
+	defaultMessage: 'Name'
+});
+export const tenantAdminFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.tenantAdminField',
+	defaultMessage: 'tenantAdmin'
+});
+export const tenantOwnerFieldLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.tenantOwnerField',
+	defaultMessage: 'tenantOwner'
+});

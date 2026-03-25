@@ -6,7 +6,7 @@ import React from 'react';
 import { Roles, Tenant, Permissions, RolePermissions } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
+import { addNewLabel, allPermissionsLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel, undefinedTenantLabel } from '../../translated/translatedComponents';
 
 const RoleTable = () => {
 	const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ const RoleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined tenant';
+			return undefinedTenantLabel();
 		}
 	};
 	// should be memoized or stable
@@ -325,7 +325,7 @@ const RoleTable = () => {
 					/>
 					<div>
 						<FormControlLabel
-							label="All permissions"
+							label={allPermissionsLabel()}
 							control={
 								<Checkbox
 									disabled={checkedDisabled || cannotEdit }

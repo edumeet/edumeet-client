@@ -8,7 +8,7 @@ import { useAppDispatch } from '../../../store/hooks';
 import { createRoomWithParams, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import RoomOwnerTable from './RoomOwner';
 import RoomUserRoleTable from './roomUserRole';
-import { addNewLabel, applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, defaultRoleLabel, deleteLabel, descLabel, filesharingEnabledLabel, genericItemDescLabel, groupRolesLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, ownersLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roomBgLabel, roomLockedLabel, tenantLabel, undefinedLabel, yesLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, createdAtLabel, creatorIdLabel, defaultRoleLabel, deleteLabel, descLabel, filesharingEnabledLabel, genericItemDescLabel, groupRolesLabel, hiddenEmailLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, ownersLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roomBgLabel, roomLockedLabel, tenantLabel, undefinedLabel, updatedAtLabel, yesLabel } from '../../translated/translatedComponents';
 
 export interface RoomProp {
 	roomId: number;
@@ -65,7 +65,7 @@ const RoomTable = () => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return `${id} - Hidden email`;
+			return `${id} - ${hiddenEmailLabel()}`;
 		}
 	};
 
@@ -88,17 +88,17 @@ const RoomTable = () => {
 			},
 			{
 				accessorKey: 'createdAt',
-				header: 'Created at',
+				header: createdAtLabel(),
 				Cell: ({ cell }) => new Date(parseInt(cell.getValue<string>())).toLocaleString()
 			},
 			{
 				accessorKey: 'updatedAt',
-				header: 'Updated at',
+				header: updatedAtLabel(),
 				Cell: ({ cell }) => new Date(parseInt(cell.getValue<string>())).toLocaleString()
 			},
 			{
 				accessorKey: 'creatorId',
-				header: 'Creator id'
+				header: creatorIdLabel()
 			},
 			{
 				accessorKey: 'defaultRoleId',

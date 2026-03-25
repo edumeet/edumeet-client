@@ -8,7 +8,7 @@ import { Roles, Tenant, TenantOptionTypes, RoleOptionTypes, DefaultOptionTypes, 
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
-import { addNewLabel, applyLabel, cancelLabel, defaultRoleIdLabel, deleteLabel, genericItemDescLabel, manageItemLabel, managerManagedRoomNumberLimitLabel, maxFileSizedLabel, numberLimitLabel, reactionsEnabledLabel, roomBackgroundURLLabel, roomLogoURLLabel, roomTrackerLabel, tenantLabel, userManagedRoomNumberLimitLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, breakoutRoomsServiceLabel, cancelLabel, chatServiceLabel, configurationLockLabel, defaultRoleIdLabel, deleteLabel, disableUnmanagedRoomsLabel, filesharingServiceLabel, genericItemDescLabel, localRecordingMgmtLabel, manageItemLabel, managerManagedRoomNumberLimitLabel, maxFileSizedLabel, numberLimitLabel, raiseHandMgmtLabel, reactionsEnabledLabel, roomBackgroundURLLabel, roomLockedMgmtLabel, roomLogoURLLabel, roomOptionStateLabel, roomTrackerLabel, tenantLabel, trackerHelperTextLabel, unmanagedLabel, userManagedRoomNumberLimitLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import { getTenantName } from '../../../utils/management';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -405,24 +405,24 @@ const DefaultTable = () => {
 						>
 							<thead>
 								<tr>
-									<th>Room option state </th>
-									<th>(unmanaged)</th>
-									<th>Configuration Lock</th>
+									<th>{roomOptionStateLabel()}</th>
+									<th>{unmanagedLabel()}</th>
+									<th>{configurationLockLabel()}</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
-									<td><Tooltip title="When enabled, users cannot create or join unmanaged (ad-hoc) rooms. Only pre-configured managed rooms will be accessible for this tenant." placement="right"><span>Disable unmanaged rooms</span></Tooltip></td>
+									<td><Tooltip title="When enabled, users cannot create or join unmanaged (ad-hoc) rooms. Only pre-configured managed rooms will be accessible for this tenant." placement="right"><span>{disableUnmanagedRoomsLabel()}</span></Tooltip></td>
 									<td><Checkbox disabled={disableUnmanagedLock && !superAdmin} checked={disableUnmanaged} onClick={() => setDisableUnmanaged(Boolean(!disableUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={disableUnmanagedLock} onClick={() => setDisableUnmanagedLock(Boolean(!disableUnmanagedLock))} /></td>
 								</tr>
 								<tr>
-									<td><Tooltip title="When enabled, new unmanaged rooms start in a locked state. Only the first user to join who is authenticated (logged in via SSO/management) can bypass the lock and admit others from the lobby. All other users, including subsequent authenticated users, will be placed in the lobby." placement="right"><span>Room locked</span></Tooltip></td>
+									<td><Tooltip title="When enabled, new unmanaged rooms start in a locked state. Only the first user to join who is authenticated (logged in via SSO/management) can bypass the lock and admit others from the lobby. All other users, including subsequent authenticated users, will be placed in the lobby." placement="right"><span>{roomLockedMgmtLabel()}</span></Tooltip></td>
 									<td><Checkbox disabled={lockedLock && !superAdmin} checked={lockedUnmanaged} onClick={() => setLockUnmanaged(Boolean(!lockedUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={lockedLock} onClick={() => setLockLock(Boolean(!lockedLock))} /></td>
 								</tr>
 								<tr>
-									<td>Raise Hand</td>
+									<td>{raiseHandMgmtLabel()}</td>
 									<td><Checkbox disabled={raiseHandEnabledLock && !superAdmin} checked={raiseHandEnabledUnmanaged} onClick={() => setRaiseHandEnabledUnmanaged(Boolean(!raiseHandEnabledUnmanaged))}/></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={raiseHandEnabledLock} onClick={() => setRaiseHandEnabledLock(Boolean(!raiseHandEnabledLock))}/></td>
 								</tr>
@@ -432,22 +432,22 @@ const DefaultTable = () => {
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={reactionsEnabledLock} onClick={() => setReactionsEnabledLock(Boolean(!reactionsEnabledLock))}/></td>
 								</tr>
 								<tr>
-									<td>Local Recording</td>
+									<td>{localRecordingMgmtLabel()}</td>
 									<td><Checkbox disabled={localRecordingEnabledLock && !superAdmin} checked={localRecordingEnabledUnmanaged} onClick={() => setLocalRecordingEnabledUnmanaged(Boolean(!localRecordingEnabledUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={localRecordingEnabledLock} onClick={() => setLocalRecordingEnabledLock(Boolean(!localRecordingEnabledLock))} /></td>
 								</tr>
 								<tr>
-									<td>Chat service</td>
+									<td>{chatServiceLabel()}</td>
 									<td><Checkbox disabled={chatEnabledLock && !superAdmin} checked={chatEnabledUnmanaged} onClick={() => setChatEnabledUnmanaged(Boolean(!chatEnabledUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={chatEnabledLock} onClick={() => setChatEnabledLock(Boolean(!chatEnabledLock))} /></td>
 								</tr>
 								<tr>
-									<td>Breakout rooms service</td>
+									<td>{breakoutRoomsServiceLabel()}</td>
 									<td><Checkbox disabled={breakoutsEnabledLock && !superAdmin} checked={breakoutsEnabledUnmanaged} onClick={() => setBreakoutsEnabledUnmanaged(Boolean(!breakoutsEnabledUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={breakoutsEnabledLock} onClick={() => setBreakoutsEnabledLock(Boolean(!breakoutsEnabledLock))} /></td>
 								</tr>
 								<tr>
-									<td>Filesharing service</td>
+									<td>{filesharingServiceLabel()}</td>
 									<td><Checkbox disabled={filesharingEnabledLock && !superAdmin} checked={filesharingEnabledUnmanaged} onClick={() => setFilesharingEnabledUnmanaged(Boolean(!filesharingEnabledUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={filesharingEnabledLock} onClick={() => setFilesharingEnabledLock(Boolean(!filesharingEnabledLock))} /></td>
 								</tr>
@@ -465,7 +465,7 @@ const DefaultTable = () => {
 								disabled={false}
 								onChange={handleTracker}
 								value={tracker}
-								helperText={tracker === '' ? 'If not set, the server configuration will be used' : undefined}
+								helperText={tracker === '' ? trackerHelperTextLabel() : undefined}
 							/>
 						</Grid>
 						<Grid size={4}>

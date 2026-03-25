@@ -5,7 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { Permissions } from '../../../utils/types';
-import { descLabel, nameLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameLabel } from '../../translated/translatedComponents';
 
 const PermissionTable = () => {
 	const dispatch = useAppDispatch();
@@ -122,22 +122,22 @@ const PermissionTable = () => {
 	return <>
 		<div>
 			<Button variant="outlined" disabled onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<TextField
 						autoFocus
 						margin="dense"
 						id="name"
-						label="name"
+						label={nameLabel()}
 						type="text"
 						required
 						fullWidth
@@ -147,19 +147,19 @@ const PermissionTable = () => {
 					<TextField
 						margin="dense"
 						id="description"
-						label="description"
+						label={descLabel()}
 						type="text"
 						required
 						fullWidth
 						onChange={handleDescriptionChange}
 						value={description}
 					/>
-					
+
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} disabled={cantDelete} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} disabled={cantDelete} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
