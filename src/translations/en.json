@@ -442,5 +442,20 @@
 	"label.managementservice.scopeDelimiterField": "scope_delimiter",
 	"label.managementservice.redirectUrlField": "redirect_url",
 	"label.managementservice.endSessionEndpointField": "end_session_endpoint",
-	"label.managementservice.nameParameterField": "name_parameter"
+	"label.managementservice.nameParameterField": "name_parameter",
+	"label.volume": "Volume",
+	"label.background.deleteImage": "delete {name}",
+	"label.admin.loginToUseManagement": "Login to use management functions",
+	"label.admin.localAdminLogin": "Local admin login",
+	"label.admin.emailAddress": "Email Address",
+	"label.admin.signIn": "Sign In",
+	"label.drawing.useEditTool": "Use Edit Tool",
+	"label.drawing.useMoveTool": "Use Move Tool",
+	"label.drawing.usePencilBrushTool": "Use Pencil Brush Tool",
+	"label.drawing.useTextTool": "Use Text Tool",
+	"label.drawing.useEraserTool": "Use Eraser Tool",
+	"label.drawing.increaseSize": "Increase Size",
+	"label.drawing.decreaseSize": "Decrease Size",
+	"label.drawing.undo": "Undo",
+	"label.drawing.redo": "Redo"
 }

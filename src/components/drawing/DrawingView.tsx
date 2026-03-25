@@ -22,6 +22,7 @@ import BgColorsPicker from './menu/BgColorsPicker';
 import { FabricAction } from '../../store/slices/drawingSlice';
 import DownloadCanvasButton from './menu/DownloadCanvasButton';
 import { isMobileSelector } from '../../store/selectors';
+import { decreaseSizeLabel, increaseSizeLabel, redoLabel, undoLabel, useEditToolLabel, useEraserToolLabel, usePencilBrushToolLabel, useTextToolLabel } from '../translated/translatedComponents';
 
 type ErasableObject = FabricObject & {
   erasable?: boolean;
@@ -1008,9 +1009,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 					>
 						{/* Edit */}
 						<IconButton
-							aria-label="Use Edit Tool"
+							aria-label={useEditToolLabel()}
 							onClick={handleUseEditTool}
-							title="Use Edit Tool"
+							title={useEditToolLabel()}
 							style={{ border: tool === 'edit' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
@@ -1019,9 +1020,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 						{/* PencilBrush */}
 						<IconButton
-							aria-label="Use Pencil Brush Tool"
+							aria-label={usePencilBrushToolLabel()}
 							onClick={handleUsePencilBrush}
-							title="Use Pencil Brush Tool"
+							title={usePencilBrushToolLabel()}
 							style={{ border: tool === 'pencilBrush' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
@@ -1030,9 +1031,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 						{/* Text */}
 						<IconButton
-							aria-label="Use Text Tool"
+							aria-label={useTextToolLabel()}
 							onClick={handleUseTextTool}
-							title="Use Text Tool"
+							title={useTextToolLabel()}
 							style={{ border: tool === 'text' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
@@ -1041,9 +1042,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 						{/* Eraser */}
 						<IconButton
-							aria-label="Use Eraser Tool"
+							aria-label={useEraserToolLabel()}
 							onClick={handleUseEraserTool}
-							title="Use Eraser Tool"
+							title={useEraserToolLabel()}
 							style={{ border: tool === 'eraser' ? '2px solid gray' : '2px solid lightgray' }}
 							size='small'
 						>
@@ -1059,13 +1060,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 					>
 						{/* Increase Size */}
 						<IconButton
-							aria-label="Increase Size"
+							aria-label={increaseSizeLabel()}
 							onClick={(e) => handleChangeSize(e, 'inc')}
 							onMouseDown={(e) => handleChangeSize(e, 'inc')}
 							onMouseUp={(e) => handleChangeSize(e, 'inc')}
 							onMouseLeave={(e) => handleChangeSize(e, 'inc')}
 							disabled={sizeRange && size === sizeRange.max}
-							title="Increase Size"
+							title={increaseSizeLabel()}
 							size='small'
 						>
 							<AddCircleOutlineIcon />
@@ -1084,13 +1085,13 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 						
 						{/* Decrease Size */}
 						<IconButton
-							aria-label="Decrease Size"
+							aria-label={decreaseSizeLabel()}
 							onClick={(e) => handleChangeSize(e, 'dec')}
 							onMouseDown={(e) => handleChangeSize(e, 'dec')}
 							onMouseUp={(e) => handleChangeSize(e, 'dec')}
 							onMouseLeave={(e) => handleChangeSize(e, 'dec')}
 							disabled={sizeRange && size === sizeRange.min}
-							title="Decrease Size"
+							title={decreaseSizeLabel()}
 							size='small'
 						>
 							<RemoveCircleOutlineIcon />
@@ -1135,9 +1136,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 					>
 						{/* Undo */}
 						<IconButton
-							aria-label="Undo"
+							aria-label={undoLabel()}
 							onClick={handleUndo}
-							title="Undo"
+							title={undoLabel()}
 							size='small'
 							disabled={pastActions.length === 0}
 						>
@@ -1147,9 +1148,9 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 						{/* Redo */}
 						<IconButton
-							aria-label="Redo"
+							aria-label={redoLabel()}
 							onClick={handleRedo}
-							title="Redo"
+							title={redoLabel()}
 							size='small'
 							disabled={futureActions.length === 0}
 						>

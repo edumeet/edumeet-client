@@ -442,5 +442,20 @@
 	"label.managementservice.scopeDelimiterField": "scope_delimiter",
 	"label.managementservice.redirectUrlField": "redirect_url",
 	"label.managementservice.endSessionEndpointField": "end_session_endpoint",
-	"label.managementservice.nameParameterField": "name_parameter"
+	"label.managementservice.nameParameterField": "name_parameter",
+	"label.volume": "Głośność",
+	"label.background.deleteImage": "usuń {name}",
+	"label.admin.loginToUseManagement": "Zaloguj się, aby korzystać z funkcji zarządzania",
+	"label.admin.localAdminLogin": "Lokalne logowanie administratora",
+	"label.admin.emailAddress": "Adres e-mail",
+	"label.admin.signIn": "Zaloguj się",
+	"label.drawing.useEditTool": "Użyj narzędzia edycji",
+	"label.drawing.useMoveTool": "Użyj narzędzia przesuwania",
+	"label.drawing.usePencilBrushTool": "Użyj narzędzia ołówka",
+	"label.drawing.useTextTool": "Użyj narzędzia tekstu",
+	"label.drawing.useEraserTool": "Użyj narzędzia gumki",
+	"label.drawing.increaseSize": "Zwiększ rozmiar",
+	"label.drawing.decreaseSize": "Zmniejsz rozmiar",
+	"label.drawing.undo": "Cofnij",
+	"label.drawing.redo": "Ponów"
 }

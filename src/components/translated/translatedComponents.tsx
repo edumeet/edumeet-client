@@ -1449,3 +1449,67 @@ export const nameParameterFieldLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.nameParameterField',
 	defaultMessage: 'name_parameter'
 });
+export const useEditToolLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.useEditTool',
+	defaultMessage: 'Use Edit Tool'
+});
+export const useMoveToolLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.useMoveTool',
+	defaultMessage: 'Use Move Tool'
+});
+export const usePencilBrushToolLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.usePencilBrushTool',
+	defaultMessage: 'Use Pencil Brush Tool'
+});
+export const useTextToolLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.useTextTool',
+	defaultMessage: 'Use Text Tool'
+});
+export const useEraserToolLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.useEraserTool',
+	defaultMessage: 'Use Eraser Tool'
+});
+export const increaseSizeLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.increaseSize',
+	defaultMessage: 'Increase Size'
+});
+export const decreaseSizeLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.decreaseSize',
+	defaultMessage: 'Decrease Size'
+});
+export const undoLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.undo',
+	defaultMessage: 'Undo'
+});
+export const redoLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.redo',
+	defaultMessage: 'Redo'
+});
+export const volumeLabel = (): string => intl.formatMessage({
+	id: 'label.volume',
+	defaultMessage: 'Volume'
+});
+export const deleteImageLabel = (name: string): string => intl.formatMessage({
+	id: 'label.background.deleteImage',
+	defaultMessage: 'delete {name}'
+}, { name });
+export const loginToUseManagementLabel = (): string => intl.formatMessage({
+	id: 'label.admin.loginToUseManagement',
+	defaultMessage: 'Login to use management functions'
+});
+export const localAdminLoginLabel = (): string => intl.formatMessage({
+	id: 'label.admin.localAdminLogin',
+	defaultMessage: 'Local admin login'
+});
+export const emailAddressLabel = (): string => intl.formatMessage({
+	id: 'label.admin.emailAddress',
+	defaultMessage: 'Email Address'
+});
+export const passwordLabel = (): string => intl.formatMessage({
+	id: 'label.password',
+	defaultMessage: 'Password'
+});
+export const signInLabel = (): string => intl.formatMessage({
+	id: 'label.admin.signIn',
+	defaultMessage: 'Sign In'
+});

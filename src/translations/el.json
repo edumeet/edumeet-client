@@ -442,5 +442,20 @@
 	"label.managementservice.scopeDelimiterField": null,
 	"label.managementservice.redirectUrlField": null,
 	"label.managementservice.endSessionEndpointField": null,
-	"label.managementservice.nameParameterField": null
+	"label.managementservice.nameParameterField": null,
+	"label.volume": null,
+	"label.background.deleteImage": null,
+	"label.admin.loginToUseManagement": null,
+	"label.admin.localAdminLogin": null,
+	"label.admin.emailAddress": null,
+	"label.admin.signIn": null,
+	"label.drawing.useEditTool": null,
+	"label.drawing.useMoveTool": null,
+	"label.drawing.usePencilBrushTool": null,
+	"label.drawing.useTextTool": null,
+	"label.drawing.useEraserTool": null,
+	"label.drawing.increaseSize": null,
+	"label.drawing.decreaseSize": null,
+	"label.drawing.undo": null,
+	"label.drawing.redo": null
 }

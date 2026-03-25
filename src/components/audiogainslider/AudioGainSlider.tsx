@@ -5,6 +5,7 @@ import VolumeUp from '@mui/icons-material/VolumeUp';
 import { useAppDispatch } from '../../store/hooks';
 import { styled } from '@mui/material/styles';
 import { Box, Slider, Stack } from '@mui/material';
+import { volumeLabel } from '../translated/translatedComponents';
 
 interface AudioGainSliderProps {
 	consumer: StateConsumer;
@@ -43,7 +44,7 @@ const AudioGainSlider = ({
 				<VolumeDown />
 				<Slider
 					onPointerDown={(event) => event.stopPropagation()}
-					aria-label='Volume'
+					aria-label={volumeLabel()}
 					value={audioGain}
 					onChange={onChange}
 					onChangeCommitted={handleChange}

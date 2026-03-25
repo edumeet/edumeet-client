@@ -6,6 +6,7 @@ import { adminLogin } from '../../../store/actions/permissionsActions';
 import { useAppDispatch } from '../../../store/hooks';
 import { CustomLoginButton } from '../../controlbuttons/LoginButton';
 import { useState } from 'react';
+import { emailAddressLabel, localAdminLoginLabel, loginToUseManagementLabel, passwordLabel, signInLabel } from '../../translated/translatedComponents';
 
 export default function SignIn() {
 
@@ -37,18 +38,18 @@ export default function SignIn() {
 					alignItems: 'center',
 				}}
 			>
-				<h2>Login to use management functions</h2>
+				<h2>{loginToUseManagementLabel()}</h2>
 				<Box>
 					<CustomLoginButton />
 				</Box>
-				<Button color='secondary' onClick={() => setShow((prev) => !prev)}>Local admin login</Button>
+				<Button color='secondary' onClick={() => setShow((prev) => !prev)}>{localAdminLoginLabel()}</Button>
 				{show && <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
 					<TextField
 						margin="normal"
 						required
 						fullWidth
 						id="email"
-						label="Email Address"
+						label={emailAddressLabel()}
 						name="email"
 						autoComplete="email"
 						autoFocus
@@ -58,7 +59,7 @@ export default function SignIn() {
 						required
 						fullWidth
 						name="password"
-						label="Password"
+						label={passwordLabel()}
 						type="password"
 						id="password"
 						autoComplete="current-password"
@@ -69,7 +70,7 @@ export default function SignIn() {
 						variant="contained"
 						sx={{ mt: 3, mb: 2 }}
 					>
-						Sign In
+						{signInLabel()}
 					</Button>
 				</Box>
 				}
