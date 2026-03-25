@@ -458,5 +458,19 @@
 	"label.drawing.decreaseSize": "Zmniejsz rozmiar",
 	"label.drawing.undo": "Cofnij",
 	"label.drawing.redo": "Ponów",
-	"label.admin.tenantLogin": "Zaloguj przez instytucję"
+	"label.admin.tenantLogin": "Zaloguj przez instytucję",
+	"label.confirm": "Potwierdź",
+	"label.drawing.asPng": "Jako PNG",
+	"label.drawing.asJpeg": "Jako JPEG",
+	"label.drawing.asSvg": "Jako SVG",
+	"label.drawing.useColor": "Użyj {color}",
+	"label.color.black": "czarny",
+	"label.color.white": "biały",
+	"label.color.gray": "szary",
+	"label.color.green": "zielony",
+	"label.color.yellow": "żółty",
+	"label.color.orange": "pomarańczowy",
+	"label.color.red": "czerwony",
+	"label.color.blue": "niebieski",
+	"label.color.purple": "fioletowy"
 }

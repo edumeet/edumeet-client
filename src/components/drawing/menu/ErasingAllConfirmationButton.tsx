@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { confirmLabel } from '../../translated/translatedComponents';
 import { Button, IconButton, Popover, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 

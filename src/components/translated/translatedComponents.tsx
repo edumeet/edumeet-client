@@ -1517,3 +1517,27 @@ export const tenantLoginLabel = (): string => intl.formatMessage({
 	id: 'label.admin.tenantLogin',
 	defaultMessage: 'Tenant Login'
 });
+export const confirmLabel = (): string => intl.formatMessage({
+	id: 'label.confirm',
+	defaultMessage: 'Confirm'
+});
+export const asPngLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.asPng',
+	defaultMessage: 'As PNG'
+});
+export const asJpegLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.asJpeg',
+	defaultMessage: 'As JPEG'
+});
+export const asSvgLabel = (): string => intl.formatMessage({
+	id: 'label.drawing.asSvg',
+	defaultMessage: 'As SVG'
+});
+export const colorNameLabel = (color: string): string => intl.formatMessage({
+	id: `label.color.${color}`,
+	defaultMessage: color
+});
+export const useColorLabel = (color: string): string => intl.formatMessage({
+	id: 'label.drawing.useColor',
+	defaultMessage: 'Use {color}'
+}, { color: colorNameLabel(color) });

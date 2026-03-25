@@ -458,5 +458,19 @@
 	"label.drawing.decreaseSize": "Decrease Size",
 	"label.drawing.undo": "Undo",
 	"label.drawing.redo": "Redo",
-	"label.admin.tenantLogin": "Tenant Login"
+	"label.admin.tenantLogin": "Tenant Login",
+	"label.confirm": "Confirm",
+	"label.drawing.asPng": "As PNG",
+	"label.drawing.asJpeg": "As JPEG",
+	"label.drawing.asSvg": "As SVG",
+	"label.drawing.useColor": "Use {color}",
+	"label.color.black": "black",
+	"label.color.white": "white",
+	"label.color.gray": "gray",
+	"label.color.green": "green",
+	"label.color.yellow": "yellow",
+	"label.color.orange": "orange",
+	"label.color.red": "red",
+	"label.color.blue": "blue",
+	"label.color.purple": "purple"
 }

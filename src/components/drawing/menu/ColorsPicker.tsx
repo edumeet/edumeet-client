@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 // import Row from './Row';
 // import Menu from './Popover';
 import { DrawingState } from '../../../store/slices/drawingSlice';
+import { colorNameLabel, useColorLabel } from '../../translated/translatedComponents';
 import { Popover } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
@@ -36,8 +37,8 @@ const ColorsPicker: React.FC<Props> = (props) => {
 				{colors.map((value) => (
 					<IconButton
 						key={value}
-						aria-label={`Use ${value} color`}
-						title={value}
+						aria-label={useColorLabel(value)}
+						title={colorNameLabel(value)}
 						onClick={() => handleUseColor(value)}
 						style={{ border: color === value ? '2px solid gray' : '2px solid lightgray' }}
 						size='small'

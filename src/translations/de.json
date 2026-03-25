@@ -458,5 +458,19 @@
 	"label.drawing.decreaseSize": "Größe verringern",
 	"label.drawing.undo": "Rükgängig",
 	"label.drawing.redo": "Wiederholen",
-	"label.admin.tenantLogin": "Über Mandant anmelden"
+	"label.admin.tenantLogin": "Über Mandant anmelden",
+	"label.confirm": "Bestätigen",
+	"label.drawing.asPng": "Als PNG",
+	"label.drawing.asJpeg": "Als JPEG",
+	"label.drawing.asSvg": "Als SVG",
+	"label.drawing.useColor": "{color} verwenden",
+	"label.color.black": "Schwarz",
+	"label.color.white": "Weiß",
+	"label.color.gray": "Grau",
+	"label.color.green": "Grün",
+	"label.color.yellow": "Gelb",
+	"label.color.orange": "Orange",
+	"label.color.red": "Rot",
+	"label.color.blue": "Blau",
+	"label.color.purple": "Lila"
 }

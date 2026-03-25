@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { asPngLabel, asJpegLabel, asSvgLabel } from '../../translated/translatedComponents';
 import { Button, ButtonGroup, IconButton, Popover, Typography } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { ImageFormat } from 'fabric';
@@ -70,19 +71,19 @@ const DownloadCanvasButton: React.FC<DownloadCanvasButtonProps> = (props) => {
 							color="warning"
 							onClick={handleDownloadAs('png')}
 						>
-						As Png
+						{asPngLabel()}
 						</Button>
 						<Button
 							color="warning"
 							onClick={handleDownloadAs('jpeg')}
 						>
-						As Jpeg
+						{asJpegLabel()}
 						</Button>
 						<Button
 							color="warning"
 							onClick={handleDownloadAs('svg')}
 						>
-						As SVG
+						{asSvgLabel()}
 						</Button>
 					</ButtonGroup>
 				</Typography>

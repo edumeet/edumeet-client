@@ -458,5 +458,19 @@
 	"label.drawing.decreaseSize": null,
 	"label.drawing.undo": null,
 	"label.drawing.redo": null,
-	"label.admin.tenantLogin": null
+	"label.admin.tenantLogin": null,
+	"label.confirm": null,
+	"label.drawing.asPng": null,
+	"label.drawing.asJpeg": null,
+	"label.drawing.asSvg": null,
+	"label.drawing.useColor": null,
+	"label.color.black": null,
+	"label.color.white": null,
+	"label.color.gray": null,
+	"label.color.green": null,
+	"label.color.yellow": null,
+	"label.color.orange": null,
+	"label.color.red": null,
+	"label.color.blue": null,
+	"label.color.purple": null
 }
