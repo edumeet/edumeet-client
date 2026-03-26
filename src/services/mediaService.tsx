@@ -658,6 +658,7 @@ export class MediaService extends EventEmitter {
 					}
 
 					case 'lostMediaServer': {
+						this.close();
 						this.reset();
 						this.emit('lostMediaServer');
 
