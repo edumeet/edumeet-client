@@ -57,7 +57,7 @@ function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { produ
 	const maxSpatialLayer = (producer as { maxSpatialLayer?: number }).maxSpatialLayer;
 	const maxSpatialLayerCount = isSimulcast ? encodings.length - 1
 		: isSVC ? spatialLayers - 1
-		: undefined;
+			: undefined;
 
 	return { codec, mode, maxSpatialLayer, maxSpatialLayerCount };
 }
