@@ -202,7 +202,7 @@ const MeStatsView = ({
 					<span>{stats.sendingKbps ?? -1} kbps | RTT: {stats.RTT ?? -1} ms</span><br />
 				</div>
 			))}
-			{ outboundAudioStats && <hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0' }} /> }
+			{ outboundAudioStats && <hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0', width: '100%' }} /> }
 			{ outboundAudioStats && (
 				<div>
 					{ outboundAudioStats.codec && <><span>{outboundAudioStats.codec}</span><br /></> }
