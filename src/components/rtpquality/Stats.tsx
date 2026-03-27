@@ -41,6 +41,7 @@ const StatsDiv = styled('div')<StatsDivProps>(({
 	}),
 	fontSize: '0.8rem',
 	color: 'white',
+	backgroundColor: 'rgba(0, 0, 0, 0.08)',
 	alignItems: alignitems,
 	justifyContent: justifycontent,
 

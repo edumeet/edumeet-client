@@ -134,7 +134,7 @@ const MeStatsView = ({
 				frameHeight: rtp.frameHeight,
 				framesPerSecond: rtp.framesPerSecond,
 				RTT: Math.round(Math.max(0, rtp.getRemoteInboundRtp?.()?.roundTripTime ?? 0) * 1000),
-			})).sort((a, b) => (b.frameWidth ?? 0) * (b.frameHeight ?? 0) - (a.frameWidth ?? 0) * (a.frameHeight ?? 0));
+			})).sort((a, b) => ((b.frameWidth ?? 0) * (b.frameHeight ?? 0)) - ((a.frameWidth ?? 0) * (a.frameHeight ?? 0)));
 
 			logger.debug('Stats newOutboundStats=%o', newOutboundStats);
 			setOutboundStats(newOutboundStats);
