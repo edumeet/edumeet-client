@@ -77,7 +77,7 @@ const MeStatsView = ({
 		setCodecLine(undefined);
 
 		const listener = () => {
-			let producer: { id?: string; track?: MediaStreamTrack; rtpParameters?: { encodings?: Array<{ ssrc?: number }> } } | undefined;
+			let producer: { id?: string; track?: MediaStreamTrack; rtpParameters?: { encodings?: Array<{ ssrc?: number; rid?: string }> } } | undefined;
 
 			if (source) {
 				producer = mediaService.mediaSenders[source].producer as typeof producer;
@@ -94,17 +94,18 @@ const MeStatsView = ({
 
 			if (!producer) return;
 
-			const producerSsrcs = new Set(
-				(producer.rtpParameters?.encodings ?? []).map((e) => e.ssrc).filter((s): s is number => s !== undefined)
-			);
+			const encodings = producer.rtpParameters?.encodings ?? [];
+			const producerSsrcs = new Set(encodings.map((e) => e.ssrc).filter((s): s is number => s !== undefined));
+			const producerRids = new Set(encodings.map((e) => e.rid).filter((r): r is string => r !== undefined));
 
-			logger.debug('Stats producerSsrcs=%s', JSON.stringify(Array.from(producerSsrcs)));
+			logger.debug('Stats producerSsrcs=%s producerRids=%s', JSON.stringify(Array.from(producerSsrcs)), JSON.stringify(Array.from(producerRids)));
 
-			if (producerSsrcs.size === 0) return;
+			if (producerSsrcs.size === 0 && producerRids.size === 0) return;
 
 			const mon = monitor as unknown as {
 				outboundRtps?: Array<{
 					ssrc?: number;
+					rid?: string;
 					bitrate?: number;
 					frameWidth?: number;
 					frameHeight?: number;
@@ -113,7 +114,10 @@ const MeStatsView = ({
 				}>;
 			};
 
-			const matchingRtps = (mon.outboundRtps ?? []).filter((rtp) => rtp.ssrc !== undefined && producerSsrcs.has(rtp.ssrc));
+			const matchingRtps = (mon.outboundRtps ?? []).filter((rtp) =>
+				(producerSsrcs.size > 0 && rtp.ssrc !== undefined && producerSsrcs.has(rtp.ssrc)) ||
+				(producerRids.size > 0 && rtp.rid !== undefined && producerRids.has(rtp.rid))
+			);
 
 			logger.debug('Stats matchingRtps.length=%s', matchingRtps.length);
 
