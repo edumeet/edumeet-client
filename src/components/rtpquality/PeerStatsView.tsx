@@ -2,15 +2,13 @@ import { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { ServiceContext } from '../../store/store';
 import Stats from './Stats';
-import { ProducerSource } from '../../utils/types';
 import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('PeerStatsView');
 
 interface PeerStatsViewProps {
-	producerId?: string;
-	consumerId?: string;
-	source?: ProducerSource;
+	consumerId: string;
+	audioConsumerId?: string;
 }
 
 type InboundStats = {
@@ -18,55 +16,42 @@ type InboundStats = {
 	receivedKbps?: number;
 	fractionLoss?: number;
 	meanOpinionScore?: number;
+	codec?: string;
+	scalabilityMode?: string;
+	preferredSpatialLayer?: number;
+	preferredTemporalLayer?: number;
+	frameWidth?: number;
+	frameHeight?: number;
+	framesPerSecond?: number;
 }
 
-type OutboundStats = {
-	ssrc: number;
-	sendingKbps?: number;
-	RTT?: number;
-	Fps?: number;
-}
-
-function createOutboundStatsFromTrackMonitor(trackMonitor: unknown): OutboundStats[] {
-	const tm = trackMonitor as {
-		mappedOutboundRtps?: Map<number, unknown>;
-	};
-
-	if (!tm.mappedOutboundRtps) return [ ];
-
-	const result: OutboundStats[] = [ ];
-
-	for (const outboundRtp of tm.mappedOutboundRtps.values()) {
-		const rtp = outboundRtp as {
-			ssrc?: number;
-			bitrate?: number;
-			framesPerSecond?: number;
-			roundTripTime?: number;
-			getRemoteInboundRtp?: () => { roundTripTime?: number } | undefined;
-		};
-
-		const item: OutboundStats = {
-			ssrc: rtp.ssrc ?? 0,
-			sendingKbps: Math.floor(((rtp.bitrate ?? 0) / 1000)),
-			Fps: rtp.framesPerSecond,
-			RTT: Math.round(Math.max(0, rtp.getRemoteInboundRtp?.()?.roundTripTime ?? rtp.roundTripTime ?? 0) * 1000),
-		};
-
-		result.push(item);
-	}
-
-	return result;
+type InboundAudioStats = {
+	ssrc?: number;
+	codec?: string;
+	receivedKbps?: number;
+	fractionLoss?: number;
+	meanOpinionScore?: number;
 }
 
 function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats[] {
 	const tm = trackMonitor as {
-		mappedInboundRtps?: Map<number, unknown>;
-		_inboundRtp?: unknown;
+		getInboundRtp?: () => {
+			ssrc?: number;
+			bitrate?: number;
+			fractionLost?: number;
+			frameWidth?: number;
+			frameHeight?: number;
+			framesPerSecond?: number;
+		};
 		score?: number;
 		calculatedScore?: {
 			value?: number;
 		};
 	};
+
+	const rtp = tm.getInboundRtp?.();
+
+	if (!rtp) return [];
 
 	const mos = (typeof tm.calculatedScore?.value === 'number')
 		? tm.calculatedScore.value
@@ -74,49 +59,19 @@ function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats
 			? tm.score
 			: undefined;
 
-	const result: InboundStats[] = [ ];
+	return [ {
+		ssrc: rtp.ssrc ?? 0,
+		receivedKbps: Math.floor(((rtp.bitrate ?? 0) / 1000)),
+		fractionLoss: Math.round((rtp.fractionLost ?? 0) * 100) / 100,
+		meanOpinionScore: mos,
+		frameWidth: rtp.frameWidth,
+		frameHeight: rtp.frameHeight,
+		framesPerSecond: rtp.framesPerSecond,
+	} ];
+}
 
-	if (tm.mappedInboundRtps) {
-		for (const inboundRtp of tm.mappedInboundRtps.values()) {
-			const rtp = inboundRtp as {
-				ssrc?: number;
-				bitrate?: number;
-				fractionLost?: number;
-			};
-
-			const item: InboundStats = {
-				ssrc: rtp.ssrc ?? 0,
-				receivedKbps: Math.floor(((rtp.bitrate ?? 0) / 1000)),
-				fractionLoss: Math.round((rtp.fractionLost ?? 0) * 100) / 100,
-				meanOpinionScore: mos,
-			};
-
-			result.push(item);
-		}
-
-		return result;
-	}
-
-	if (tm._inboundRtp) {
-		const rtp = tm._inboundRtp as {
-			ssrc?: number;
-			bitrate?: number;
-			fractionLost?: number;
-		};
-
-		const item: InboundStats = {
-			ssrc: rtp.ssrc ?? 0,
-			receivedKbps: Math.floor(((rtp.bitrate ?? 0) / 1000)),
-			fractionLoss: Math.round((rtp.fractionLost ?? 0) * 100) / 100,
-			meanOpinionScore: mos,
-		};
-
-		result.push(item);
-
-		return result;
-	}
-
-	return result;
+function isSVCCodec(codec: string): boolean {
+	return codec === 'VP9' || codec === 'AV1';
 }
 
 function getTrackMonitorByIdOrMatch(
@@ -124,8 +79,6 @@ function getTrackMonitorByIdOrMatch(
 	trackId?: string,
 	kind?: 'audio' | 'video',
 	label?: string,
-	direction?: 'inbound' | 'outbound',
-	producerId?: string,
 	consumerId?: string,
 ): unknown | undefined {
 	const m = monitor as {
@@ -133,13 +86,12 @@ function getTrackMonitorByIdOrMatch(
 			track?: MediaStreamTrack;
 			direction?: 'inbound' | 'outbound';
 			attachments?: {
-				producerId?: string;
 				consumerId?: string;
 			};
 		} & Record<string, unknown>>;
 	};
 
-	const tracks = m.tracks ?? [ ];
+	const tracks = m.tracks ?? [];
 
 	if (consumerId) {
 		for (const t of tracks) {
@@ -149,26 +101,16 @@ function getTrackMonitorByIdOrMatch(
 		}
 	}
 
-	if (producerId) {
-		for (const t of tracks) {
-			if (t.attachments?.producerId === producerId) {
-				return t;
-			}
-		}
-	}
-
 	if (trackId) {
 		for (const t of tracks) {
-			const tTrackId = t.track?.id;
-
-			if (tTrackId && tTrackId === trackId) {
+			if (t.track?.id === trackId) {
 				return t;
 			}
 		}
 	}
 
 	for (const t of tracks) {
-		if (direction && t.direction !== direction) continue;
+		if (t.direction !== 'inbound') continue;
 		if (kind && t.track?.kind !== kind) continue;
 		if (label && t.track?.label !== label) continue;
 
@@ -178,122 +120,104 @@ function getTrackMonitorByIdOrMatch(
 	return undefined;
 }
 
-const PeerStatsView = ({
-	producerId,
-	consumerId,
-	source,
-}: PeerStatsViewProps): React.JSX.Element => {
+const PeerStatsView = ({ consumerId, audioConsumerId }: PeerStatsViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
-	const [ inboundStats, setInboundStats ] = useState<InboundStats [ ] >([ ]);
-	const [ outboundStats, setOutboundStats ] = useState<OutboundStats [ ] >([ ]);
-	const [ loading, setLoading ] = useState<boolean>(true);
+	const [ inboundStats, setInboundStats ] = useState<InboundStats[]>([]);
+	const [ inboundAudioStats, setInboundAudioStats ] = useState<InboundAudioStats | null>(null);
 
 	useEffect(() => {
-		// this runs on mount
 		const monitor = mediaService.monitor;
 
-		logger.debug('Stats init() producerId=%s, consumerId=%s, source=%s',
-			producerId, consumerId, source);
+		logger.debug('Stats init() consumerId=%s audioConsumerId=%s', consumerId, audioConsumerId);
 
-		if (!monitor) {
-			return;
-		}
+		if (!monitor) return;
 
-		if ((producerId && consumerId) || (source && consumerId) || (producerId && source)) {
-			return;
-		}
-
-		setLoading(true);
+		setInboundStats([]);
+		setInboundAudioStats(null);
 
 		const listener = () => {
-			let trackId: string | undefined;
-			let trackKind: 'audio' | 'video' | undefined;
-			let trackLabel: string | undefined;
-			let direction: 'inbound' | 'outbound' | undefined;
-
-			if (consumerId) {
-				const consumer = mediaService.getConsumer(consumerId);
-				const track = consumer?.track;
-
-				trackId = track?.id;
-				trackKind = (track?.kind as 'audio' | 'video' | undefined);
-				trackLabel = track?.label;
-				direction = 'inbound';
-			} else if (source) {
-				const track = mediaService.mediaSenders[source].track;
-
-				trackId = track?.id;
-				trackKind = (track?.kind as 'audio' | 'video' | undefined);
-				trackLabel = track?.label;
-				direction = 'outbound';
-			} else if (producerId) {
-				for (const sender of Object.values(mediaService.mediaSenders)) {
-					const producer = sender.producer;
-
-					if (!producer || producer.id !== producerId) {
-						continue;
-					}
-					const track = producer.track;
-
-					trackId = track?.id;
-					trackKind = (track?.kind as 'audio' | 'video' | undefined);
-					trackLabel = track?.label;
-					direction = 'outbound';
-
-					break;
-				}
-			}
+			// Video stats
+			const consumer = mediaService.getConsumer(consumerId);
+			const track = consumer?.track;
+			const trackId = track?.id;
+			const trackKind = (track?.kind as 'audio' | 'video' | undefined);
+			const trackLabel = track?.label;
 
 			logger.debug('Stats trackId=%s', trackId);
-
-			if (!trackId && !producerId) {
-				return;
-			}
 
 			const tracksCount = (monitor as unknown as { tracks?: unknown[] }).tracks?.length ?? 0;
 
 			logger.debug('Stats monitor.tracks.length=%s', tracksCount);
 
-			const trackMonitor = getTrackMonitorByIdOrMatch(monitor, trackId, trackKind, trackLabel,
-				direction, producerId, consumerId);
+			const trackMonitor = getTrackMonitorByIdOrMatch(
+				monitor, trackId, trackKind, trackLabel, consumerId
+			);
 
 			logger.debug('Stats trackMonitor=%o', trackMonitor);
 
-			if (!trackMonitor) {
-				return;
-			}
+			if (trackMonitor) {
+				const rtpParams = (consumer as unknown as {
+					rtpParameters?: {
+						codecs?: Array<{ mimeType?: string }>;
+						encodings?: Array<{ scalabilityMode?: string }>;
+					};
+				})?.rtpParameters;
 
-			setLoading(false);
+				const codec = rtpParams?.codecs?.[0]?.mimeType?.split('/')?.[1]?.toUpperCase();
+				const scalabilityMode = rtpParams?.encodings?.[0]?.scalabilityMode;
+				const preferred = mediaService.consumerPreferredLayers.get(consumerId);
 
-			if (consumerId) {
-				const newInboundStats = createInboundStatsFromTrackMonitor(trackMonitor);
+				const newInboundStats = createInboundStatsFromTrackMonitor(trackMonitor).map((s) => ({
+					...s,
+					codec,
+					scalabilityMode,
+					preferredSpatialLayer: preferred?.spatialLayer,
+					preferredTemporalLayer: preferred?.temporalLayer,
+				}));
 
 				logger.debug('Stats newInboundStats=%o', newInboundStats);
-
 				setInboundStats(newInboundStats);
-				setOutboundStats([ ]);
-
-				return;
 			}
 
-			const newOutboundStats = createOutboundStatsFromTrackMonitor(trackMonitor);
+			// Audio stats
+			if (audioConsumerId) {
+				const audioConsumer = mediaService.getConsumer(audioConsumerId);
+				const audioTrack = audioConsumer?.track;
+				const audioTrackMonitor = getTrackMonitorByIdOrMatch(
+					monitor,
+					audioTrack?.id,
+					audioTrack?.kind as 'audio' | 'video' | undefined,
+					audioTrack?.label,
+					audioConsumerId
+				);
 
-			logger.debug('Stats newOutboundStats=%o', newOutboundStats);
+				if (audioTrackMonitor) {
+					const audioRtpParams = (audioConsumer as unknown as {
+						rtpParameters?: { codecs?: Array<{ mimeType?: string }> };
+					})?.rtpParameters;
+					const audioCodec = audioRtpParams?.codecs?.[0]?.mimeType?.split('/')?.[1]?.toUpperCase();
+					const audioBase = createInboundStatsFromTrackMonitor(audioTrackMonitor)[0];
 
-			setOutboundStats(newOutboundStats);
-			setInboundStats([ ]);
+					if (audioBase) {
+						setInboundAudioStats({
+							ssrc: audioBase.ssrc,
+							codec: audioCodec,
+							receivedKbps: audioBase.receivedKbps,
+							fractionLoss: audioBase.fractionLoss,
+							meanOpinionScore: audioBase.meanOpinionScore,
+						});
+					}
+				}
+			}
 		};
 
 		monitor.on('stats-collected', listener);
+		listener();
 
 		return () => {
-			if (!monitor) {
-				return;
-			}
-
 			monitor.off('stats-collected', listener);
 		};
-	}, [ mediaService, producerId, consumerId, source, mediaService.monitor ]);
+	}, [ mediaService, consumerId, audioConsumerId, mediaService.monitor ]);
 
 	return (
 		<Stats
@@ -301,30 +225,28 @@ const PeerStatsView = ({
 			horizontalPlacement='left'
 			verticalPlacement='bottom'
 		>
-			{ loading && <div>...</div> }
-			{inboundStats.map((stats, index) => {
-				return (
-					<div key={index + 10}>
-						<b key={index + 1}>SSRC: {stats.ssrc}</b><br />
-						<span key={index + 2}>receiving: {stats.receivedKbps ?? -1} kbps</span><br />
-						<span key={index + 3}>FractionLoss: {stats.fractionLoss ?? -1}</span><br />
-						<span key={index + 4}>MOS: {stats.meanOpinionScore}</span><br />
-					</div>
-				);
-			})}
-			{outboundStats.map((stats, index) => {
-				return (
-					<div key={index + 100010}>
-						<b key={index + 1}>SSRC: {stats.ssrc}</b><br />
-						<span key={index + 2}>sending: {stats.sendingKbps ?? -1} kbps</span><br />
-						<span key={index + 3}>RTT: {stats.RTT ?? -1} ms</span><br />
-						<span key={index + 4}>Fps: {stats.Fps ?? -1}</span><br />
-						<br />
-						
-					</div>
-				);
-			})}
-		</Stats>);
+			{ inboundStats.length === 0 && <div>...</div> }
+			{inboundStats.map((stats, index) => (
+				<div key={index + 10}>
+					<b key={index + 1}>SSRC: {stats.ssrc}</b><br />
+					{ stats.codec && <><span>{stats.codec}{ isSVCCodec(stats.codec) && stats.scalabilityMode && parseInt(stats.scalabilityMode.match(/^L(\d+)/)?.[1] ?? '1') > 1 ? ` SVC ${stats.scalabilityMode}` : '' }</span><br /></> }
+					{ stats.frameWidth && stats.frameHeight && <><span>{stats.frameWidth}x{stats.frameHeight}@{stats.framesPerSecond ?? '?'}</span><br /></> }
+					{ (stats.preferredSpatialLayer !== undefined || stats.preferredTemporalLayer !== undefined) &&
+						<><span>Requested SL: {stats.preferredSpatialLayer ?? '?'} | TL: {stats.preferredTemporalLayer ?? '?'}</span><br /></>
+					}
+					<span key={index + 2}>{stats.receivedKbps ?? -1} kbps | FractionLoss: {stats.fractionLoss ?? -1} | MOS: {stats.meanOpinionScore}</span><br />
+				</div>
+			))}
+			{ inboundAudioStats && <hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0', width: '100%' }} /> }
+			{ inboundAudioStats && (
+				<div>
+					<b>SSRC: {inboundAudioStats.ssrc}</b><br />
+					{ inboundAudioStats.codec && <><span>{inboundAudioStats.codec}</span><br /></> }
+					<span>{inboundAudioStats.receivedKbps ?? -1} kbps | FractionLoss: {inboundAudioStats.fractionLoss ?? -1} | MOS: {inboundAudioStats.meanOpinionScore}</span><br />
+				</div>
+			)}
+		</Stats>
+	);
 };
 
 export default PeerStatsView;

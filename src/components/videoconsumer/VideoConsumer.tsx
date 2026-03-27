@@ -86,7 +86,7 @@ const VideoConsumer = ({ consumer, style }: VideoConsumerProps): React.JSX.Eleme
 						<FullscreenVideoButton consumerId={consumer.id} toolTipLocation='bottom' />
 						{ !isMobile && <WindowedVideoButton consumerId={consumer.id} toolTipLocation='bottom' /> }
 					</MediaControls>
-					{ !isMobile && showStats && <PeerStatsView consumerId={consumer.id} /> }
+					{ !isMobile && showStats && <PeerStatsView consumerId={consumer.id} audioConsumerId={micConsumer?.id} /> }
 					<QualityIndicator />
 				</>
 			}

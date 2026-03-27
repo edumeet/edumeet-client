@@ -22,7 +22,7 @@ const StatsDiv = styled('div')<StatsDivProps>(({
 	autohide: autoHide
 }) => ({
 	position,
-	width: '30%',
+	width: '50%',
 	height: '100%',
 	display: 'flex',
 	...(withGap && {
@@ -41,6 +41,7 @@ const StatsDiv = styled('div')<StatsDivProps>(({
 	}),
 	fontSize: '0.8rem',
 	color: 'white',
+	backgroundColor: 'rgba(0, 0, 0, 0.9)',
 	alignItems: alignitems,
 	justifyContent: justifycontent,
 

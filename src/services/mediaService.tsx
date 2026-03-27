@@ -110,6 +110,8 @@ export class MediaService extends EventEmitter {
 	public recvTransport: Transport | undefined;
 	private consumers: Map<string, Consumer | PeerConsumer> = new Map();
 	private consumerCreationState: Map<string, { paused: boolean; closed: boolean; }> = new Map();
+	public consumerCurrentLayers = new Map<string, { spatialLayer?: number; temporalLayer?: number }>();
+	public consumerPreferredLayers = new Map<string, { spatialLayer: number; temporalLayer: number }>();
 	private dataConsumers: Map<string, DataConsumer> = new Map();
 	private dataProducers: Map<string, DataProducer> = new Map();
 
@@ -360,7 +362,13 @@ export class MediaService extends EventEmitter {
 						}
 
 						this.consumers.set(peerConsumer.id, peerConsumer);
-						peerConsumer.observer.once('close', () => this.consumers.delete(peerConsumer.id));
+
+						peerConsumer.observer.once('close', () => {
+							this.consumers.delete(peerConsumer.id);
+							this.consumerCurrentLayers.delete(peerConsumer.id);
+							this.consumerPreferredLayers.delete(peerConsumer.id);
+						});
+
 						peerConsumer.once('transportclose', () => this.changeConsumer(peerConsumer.id, 'close', false));
 
 						this.emit('consumerCreated', peerConsumer, false, false, true);
@@ -495,6 +503,7 @@ export class MediaService extends EventEmitter {
 
 								lastSpatialLayer = spatialLayer;
 
+								this.consumerPreferredLayers.set(consumer.id, { spatialLayer, temporalLayer });
 								this.signalingService.notify('setConsumerPreferredLayers', { consumerId: consumer.id, spatialLayer, temporalLayer });
 							});
 
@@ -502,7 +511,13 @@ export class MediaService extends EventEmitter {
 						}
 
 						this.consumers.set(consumer.id, consumer);
-						consumer.observer.once('close', () => this.consumers.delete(consumer.id));
+
+						consumer.observer.once('close', () => {
+							this.consumers.delete(consumer.id);
+							this.consumerCurrentLayers.delete(consumer.id);
+							this.consumerPreferredLayers.delete(consumer.id);
+						});
+
 						consumer.once('transportclose', () => this.changeConsumer(consumer.id, 'close', false));
 
 						logger.debug({
@@ -639,6 +654,15 @@ export class MediaService extends EventEmitter {
 						const { consumerId, score: { score } } = notification.data;
 
 						this.emit('consumerScore', consumerId, score);
+
+						break;
+					}
+
+					case 'consumerLayersChanged': {
+						const { consumerId, spatialLayer, temporalLayer } = notification.data;
+
+						logger.debug('consumerLayersChanged consumerId=%s spatialLayer=%s temporalLayer=%s', consumerId, spatialLayer, temporalLayer);
+						this.consumerCurrentLayers.set(consumerId, { spatialLayer, temporalLayer });
 
 						break;
 					}
