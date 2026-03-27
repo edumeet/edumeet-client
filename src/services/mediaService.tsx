@@ -661,6 +661,7 @@ export class MediaService extends EventEmitter {
 					case 'consumerLayersChanged': {
 						const { consumerId, spatialLayer, temporalLayer } = notification.data;
 
+						logger.debug('consumerLayersChanged consumerId=%s spatialLayer=%s temporalLayer=%s', consumerId, spatialLayer, temporalLayer);
 						this.consumerCurrentLayers.set(consumerId, { spatialLayer, temporalLayer });
 
 						break;
