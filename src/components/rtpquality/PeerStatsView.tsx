@@ -235,7 +235,7 @@ const PeerStatsView = ({ consumerId, audioConsumerId }: PeerStatsViewProps): Rea
 					<span key={index + 2}>{stats.receivedKbps ?? -1} kbps | FractionLoss: {stats.fractionLoss ?? -1} | MOS: {stats.meanOpinionScore}</span><br />
 				</div>
 			))}
-			{ inboundAudioStats && <div style={{ width: '100%' }}><hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0' }} /></div> }
+			{ inboundAudioStats && <hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0' }} /> }
 			{ inboundAudioStats && (
 				<div>
 					{ inboundAudioStats.codec && <><span>{inboundAudioStats.codec}</span><br /></> }
