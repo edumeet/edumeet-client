@@ -101,7 +101,7 @@ function getTrackMonitorByIdOrMatch(
 	return undefined;
 }
 
-function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { producer?: unknown }> }, source?: ProducerSource, producerId?: string): { codec?: string; mode?: string } {
+function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { producer?: unknown }> }, source?: ProducerSource, producerId?: string): { codec?: string; mode?: string; maxSpatialLayer?: number; encodingCount?: number } {
 	let producer: unknown;
 
 	if (source) {
@@ -134,7 +134,9 @@ function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { produ
 	const isSVC = (codec === 'VP9' || codec === 'AV1') && spatialLayers > 1;
 	const mode = isSVC ? `SVC ${scalabilityMode}` : isSimulcast ? 'simulcast' : undefined;
 
-	return { codec, mode };
+	const maxSpatialLayer = (producer as { maxSpatialLayer?: number }).maxSpatialLayer;
+
+	return { codec, mode, maxSpatialLayer, encodingCount: encodings.length };
 }
 
 const MeStatsView = ({
@@ -199,9 +201,13 @@ const MeStatsView = ({
 
 			if (!trackMonitor) return;
 
-			const { codec, mode } = getProducerRtpInfo(mediaService, source, producerId);
+			const { codec, mode, maxSpatialLayer, encodingCount } = getProducerRtpInfo(mediaService, source, producerId);
 
-			setCodecLine([ codec, mode ].filter(Boolean).join(' ') || undefined);
+			const layerInfo = (encodingCount !== undefined && encodingCount > 1 && maxSpatialLayer !== undefined)
+				? ` (max layer ${maxSpatialLayer}/${encodingCount - 1})`
+				: '';
+
+			setCodecLine([ codec, mode ].filter(Boolean).join(' ') + layerInfo || undefined);
 
 			const newOutboundStats = createOutboundStatsFromTrackMonitor(trackMonitor);
 
