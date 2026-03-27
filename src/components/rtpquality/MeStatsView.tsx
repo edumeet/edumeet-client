@@ -85,13 +85,15 @@ const MeStatsView = ({
 			let trackId: string | undefined;
 
 			if (source) {
-				trackId = mediaService.mediaSenders[source].track?.id;
+				const producer = mediaService.mediaSenders[source].producer as { track?: MediaStreamTrack } | undefined;
+
+				trackId = producer?.track?.id;
 			} else if (producerId) {
 				for (const sender of Object.values(mediaService.mediaSenders)) {
 					const p = sender.producer as { id?: string; track?: MediaStreamTrack } | undefined;
 
 					if (p?.id === producerId) {
-						trackId = (p as unknown as { track?: MediaStreamTrack }).track?.id;
+						trackId = p.track?.id;
 						break;
 					}
 				}
@@ -124,7 +126,6 @@ const MeStatsView = ({
 
 			if (trackId) {
 				for (const pc of mon.mappedPeerConnections.values()) {
-					logger.debug('Stats pc mediaSources=%s', JSON.stringify(Array.from(pc.mappedMediaSourceMonitors.entries()).map(([ id, s ]) => ({ id, trackIdentifier: s.trackIdentifier }))));
 					for (const [ id, src ] of pc.mappedMediaSourceMonitors) {
 						if (src.trackIdentifier === trackId) {
 							matchingSourceIds.add(id);
