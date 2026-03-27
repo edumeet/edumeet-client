@@ -102,24 +102,42 @@ const MeStatsView = ({
 			if (!trackId && !producerId) return;
 
 			const mon = monitor as unknown as {
+				mappedPeerConnections: Map<string, {
+					mappedMediaSourceMonitors: Map<string, { trackIdentifier?: string }>;
+				}>;
 				outboundRtps?: Array<{
 					ssrc?: number;
 					bitrate?: number;
 					frameWidth?: number;
 					frameHeight?: number;
 					framesPerSecond?: number;
-					trackIdentifier?: string;
+					mediaSourceId?: string;
 					getRemoteInboundRtp?: () => { roundTripTime?: number } | undefined;
 				}>;
 			};
 
+			// Find mediaSourceIds whose trackIdentifier matches our track.
+			// We do this lookup ourselves because OutboundRtpMonitor.trackIdentifier
+			// goes through getMediaSource() which can be undefined if stats are
+			// processed in media-source-after-outbound-rtp order.
+			const matchingSourceIds = new Set<string>();
+
+			if (trackId) {
+				for (const pc of mon.mappedPeerConnections.values()) {
+					for (const [ id, src ] of pc.mappedMediaSourceMonitors) {
+						if (src.trackIdentifier === trackId) {
+							matchingSourceIds.add(id);
+						}
+					}
+				}
+			}
+
+			logger.debug('Stats matchingSourceIds=%s', matchingSourceIds.size);
+
+			if (matchingSourceIds.size === 0) return;
+
 			const allOutboundRtps = mon.outboundRtps ?? [];
-
-			logger.debug('Stats allOutboundRtps.length=%s', allOutboundRtps.length);
-
-			const matchingRtps = trackId
-				? allOutboundRtps.filter((rtp) => rtp.trackIdentifier === trackId)
-				: allOutboundRtps;
+			const matchingRtps = allOutboundRtps.filter((rtp) => rtp.mediaSourceId && matchingSourceIds.has(rtp.mediaSourceId));
 
 			logger.debug('Stats matchingRtps.length=%s', matchingRtps.length);
 
