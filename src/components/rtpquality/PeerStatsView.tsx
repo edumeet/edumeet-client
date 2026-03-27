@@ -17,8 +17,6 @@ type InboundStats = {
 	meanOpinionScore?: number;
 	codec?: string;
 	scalabilityMode?: string;
-	spatialLayer?: number;
-	temporalLayer?: number;
 	preferredSpatialLayer?: number;
 	preferredTemporalLayer?: number;
 	frameWidth?: number;
@@ -156,15 +154,12 @@ const PeerStatsView = ({ consumerId }: PeerStatsViewProps): React.JSX.Element =>
 
 			const codec = rtpParams?.codecs?.[0]?.mimeType?.split('/')?.[1]?.toUpperCase();
 			const scalabilityMode = rtpParams?.encodings?.[0]?.scalabilityMode;
-			const layers = mediaService.consumerCurrentLayers.get(consumerId);
 			const preferred = mediaService.consumerPreferredLayers.get(consumerId);
 
 			const newInboundStats = createInboundStatsFromTrackMonitor(trackMonitor).map((s) => ({
 				...s,
 				codec,
 				scalabilityMode,
-				spatialLayer: layers?.spatialLayer,
-				temporalLayer: layers?.temporalLayer,
 				preferredSpatialLayer: preferred?.spatialLayer,
 				preferredTemporalLayer: preferred?.temporalLayer,
 			}));
@@ -191,9 +186,9 @@ const PeerStatsView = ({ consumerId }: PeerStatsViewProps): React.JSX.Element =>
 			{inboundStats.map((stats, index) => (
 				<div key={index + 10}>
 					<b key={index + 1}>SSRC: {stats.ssrc}</b><br />
-					{ stats.codec && <><span>{stats.codec}{ isSVCCodec(stats.codec) && stats.scalabilityMode && parseInt(stats.scalabilityMode.match(/^L(\d+)/)?.[1] ?? '1') > 1 ? ` SVC ${stats.scalabilityMode}` : stats.spatialLayer !== undefined ? ' simulcast' : '' }</span><br /></> }
-					{ (stats.spatialLayer !== undefined || stats.temporalLayer !== undefined) &&
-						<><span>SL {stats.spatialLayer ?? '?'}/{stats.preferredSpatialLayer ?? '?'} | TL {stats.temporalLayer ?? '?'}/{stats.preferredTemporalLayer ?? '?'}</span><br /></>
+					{ stats.codec && <><span>{stats.codec}{ isSVCCodec(stats.codec) && stats.scalabilityMode && parseInt(stats.scalabilityMode.match(/^L(\d+)/)?.[1] ?? '1') > 1 ? ` SVC ${stats.scalabilityMode}` : '' }</span><br /></> }
+					{ (stats.preferredSpatialLayer !== undefined || stats.preferredTemporalLayer !== undefined) &&
+						<><span>preferred SL: {stats.preferredSpatialLayer ?? '?'} | TL: {stats.preferredTemporalLayer ?? '?'}</span><br /></>
 					}
 					{ stats.frameWidth && stats.frameHeight && <><span>resolution: {stats.frameWidth}x{stats.frameHeight}@{stats.framesPerSecond ?? '?'}</span><br /></> }
 					<span key={index + 2}>receiving: {stats.receivedKbps ?? -1} kbps</span><br />
