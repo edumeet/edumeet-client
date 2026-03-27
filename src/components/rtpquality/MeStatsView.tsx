@@ -21,6 +21,12 @@ type OutboundStats = {
 	framesPerSecond?: number;
 }
 
+type OutboundAudioStats = {
+	codec?: string;
+	sendingKbps?: number;
+	RTT?: number;
+}
+
 function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { producer?: unknown }> }, source?: ProducerSource, producerId?: string): { codec?: string; mode?: string } {
 	let producer: unknown;
 
@@ -64,6 +70,7 @@ const MeStatsView = ({
 	const { mediaService } = useContext(ServiceContext);
 	const [ outboundStats, setOutboundStats ] = useState<OutboundStats[]>([]);
 	const [ codecLine, setCodecLine ] = useState<string | undefined>();
+	const [ outboundAudioStats, setOutboundAudioStats ] = useState<OutboundAudioStats | null>(null);
 
 	useEffect(() => {
 		const monitor = mediaService.monitor;
@@ -75,8 +82,22 @@ const MeStatsView = ({
 
 		setOutboundStats([]);
 		setCodecLine(undefined);
+		setOutboundAudioStats(null);
 
 		const listener = () => {
+			const mon = monitor as unknown as {
+				outboundRtps?: Array<{
+					ssrc?: number;
+					rid?: string;
+					bitrate?: number;
+					frameWidth?: number;
+					frameHeight?: number;
+					framesPerSecond?: number;
+					getRemoteInboundRtp?: () => { roundTripTime?: number } | undefined;
+				}>;
+			};
+
+			// Video stats
 			let producer: { id?: string; track?: MediaStreamTrack; rtpParameters?: { encodings?: Array<{ ssrc?: number; rid?: string }> } } | undefined;
 
 			if (source) {
@@ -92,52 +113,70 @@ const MeStatsView = ({
 				}
 			}
 
-			if (!producer) return;
+			if (producer) {
+				const encodings = producer.rtpParameters?.encodings ?? [];
+				const producerSsrcs = new Set(encodings.map((e) => e.ssrc).filter((s): s is number => s !== undefined));
+				const producerRids = new Set(encodings.map((e) => e.rid).filter((r): r is string => r !== undefined));
 
-			const encodings = producer.rtpParameters?.encodings ?? [];
-			const producerSsrcs = new Set(encodings.map((e) => e.ssrc).filter((s): s is number => s !== undefined));
-			const producerRids = new Set(encodings.map((e) => e.rid).filter((r): r is string => r !== undefined));
+				logger.debug('Stats producerSsrcs=%s producerRids=%s', JSON.stringify(Array.from(producerSsrcs)), JSON.stringify(Array.from(producerRids)));
 
-			logger.debug('Stats producerSsrcs=%s producerRids=%s', JSON.stringify(Array.from(producerSsrcs)), JSON.stringify(Array.from(producerRids)));
+				if (producerSsrcs.size > 0 || producerRids.size > 0) {
+					const matchingRtps = (mon.outboundRtps ?? []).filter((rtp) =>
+						(producerSsrcs.size > 0 && rtp.ssrc !== undefined && producerSsrcs.has(rtp.ssrc)) ||
+						(producerRids.size > 0 && rtp.rid !== undefined && producerRids.has(rtp.rid))
+					);
 
-			if (producerSsrcs.size === 0 && producerRids.size === 0) return;
+					logger.debug('Stats matchingRtps.length=%s', matchingRtps.length);
 
-			const mon = monitor as unknown as {
-				outboundRtps?: Array<{
-					ssrc?: number;
-					rid?: string;
-					bitrate?: number;
-					frameWidth?: number;
-					frameHeight?: number;
-					framesPerSecond?: number;
-					getRemoteInboundRtp?: () => { roundTripTime?: number } | undefined;
-				}>;
-			};
+					if (matchingRtps.length > 0) {
+						const { codec, mode } = getProducerRtpInfo(mediaService, source, producerId);
 
-			const matchingRtps = (mon.outboundRtps ?? []).filter((rtp) =>
-				(producerSsrcs.size > 0 && rtp.ssrc !== undefined && producerSsrcs.has(rtp.ssrc)) ||
-				(producerRids.size > 0 && rtp.rid !== undefined && producerRids.has(rtp.rid))
-			);
+						setCodecLine([ codec, mode ].filter(Boolean).join(' ') || undefined);
 
-			logger.debug('Stats matchingRtps.length=%s', matchingRtps.length);
+						const newOutboundStats = matchingRtps.map((rtp) => ({
+							ssrc: rtp.ssrc ?? 0,
+							sendingKbps: Math.floor((rtp.bitrate ?? 0) / 1000),
+							frameWidth: rtp.frameWidth,
+							frameHeight: rtp.frameHeight,
+							framesPerSecond: rtp.framesPerSecond,
+							RTT: Math.round(Math.max(0, rtp.getRemoteInboundRtp?.()?.roundTripTime ?? 0) * 1000),
+						})).sort((a, b) => ((b.frameWidth ?? 0) * (b.frameHeight ?? 0)) - ((a.frameWidth ?? 0) * (a.frameHeight ?? 0)));
 
-			if (matchingRtps.length === 0) return;
+						logger.debug('Stats newOutboundStats=%o', newOutboundStats);
+						setOutboundStats(newOutboundStats);
+					}
+				}
+			}
 
-			const { codec, mode } = getProducerRtpInfo(mediaService, source, producerId);
+			// Audio stats
+			const micProducer = mediaService.mediaSenders['mic']?.producer as {
+				rtpParameters?: {
+					codecs?: Array<{ mimeType?: string }>;
+					encodings?: Array<{ ssrc?: number; rid?: string }>;
+				};
+			} | undefined;
 
-			setCodecLine([ codec, mode ].filter(Boolean).join(' ') || undefined);
+			if (micProducer) {
+				const micEncodings = micProducer.rtpParameters?.encodings ?? [];
+				const micSsrcs = new Set(micEncodings.map((e) => e.ssrc).filter((s): s is number => s !== undefined));
+				const micRids = new Set(micEncodings.map((e) => e.rid).filter((r): r is string => r !== undefined));
 
-			const newOutboundStats = matchingRtps.map((rtp) => ({
-				ssrc: rtp.ssrc ?? 0,
-				sendingKbps: Math.floor((rtp.bitrate ?? 0) / 1000),
-				frameWidth: rtp.frameWidth,
-				frameHeight: rtp.frameHeight,
-				framesPerSecond: rtp.framesPerSecond,
-				RTT: Math.round(Math.max(0, rtp.getRemoteInboundRtp?.()?.roundTripTime ?? 0) * 1000),
-			})).sort((a, b) => ((b.frameWidth ?? 0) * (b.frameHeight ?? 0)) - ((a.frameWidth ?? 0) * (a.frameHeight ?? 0)));
+				const micRtps = (mon.outboundRtps ?? []).filter((rtp) =>
+					(micSsrcs.size > 0 && rtp.ssrc !== undefined && micSsrcs.has(rtp.ssrc)) ||
+					(micRids.size > 0 && rtp.rid !== undefined && micRids.has(rtp.rid))
+				);
 
-			logger.debug('Stats newOutboundStats=%o', newOutboundStats);
-			setOutboundStats(newOutboundStats);
+				if (micRtps.length > 0) {
+					const micRtp = micRtps[0];
+					const micCodec = micProducer.rtpParameters?.codecs?.[0]?.mimeType?.split('/')?.[1]?.toUpperCase();
+
+					setOutboundAudioStats({
+						codec: micCodec,
+						sendingKbps: Math.floor((micRtp.bitrate ?? 0) / 1000),
+						RTT: Math.round(Math.max(0, micRtp.getRemoteInboundRtp?.()?.roundTripTime ?? 0) * 1000),
+					});
+				}
+			}
 		};
 
 		monitor.on('stats-collected', listener);
@@ -163,6 +202,13 @@ const MeStatsView = ({
 					<span>{stats.sendingKbps ?? -1} kbps | RTT: {stats.RTT ?? -1} ms</span><br />
 				</div>
 			))}
+			{ outboundAudioStats && (
+				<div>
+					<hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0' }} />
+					{ outboundAudioStats.codec && <><span>{outboundAudioStats.codec}</span><br /></> }
+					<span>{outboundAudioStats.sendingKbps ?? -1} kbps | RTT: {outboundAudioStats.RTT ?? -1} ms</span><br />
+				</div>
+			)}
 		</Stats>
 	);
 };

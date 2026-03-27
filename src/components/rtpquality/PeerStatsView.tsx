@@ -8,6 +8,7 @@ const logger = new Logger('PeerStatsView');
 
 interface PeerStatsViewProps {
 	consumerId: string;
+	audioConsumerId?: string;
 }
 
 type InboundStats = {
@@ -22,6 +23,13 @@ type InboundStats = {
 	frameWidth?: number;
 	frameHeight?: number;
 	framesPerSecond?: number;
+}
+
+type InboundAudioStats = {
+	codec?: string;
+	receivedKbps?: number;
+	fractionLoss?: number;
+	meanOpinionScore?: number;
 }
 
 function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats[] {
@@ -111,20 +119,23 @@ function getTrackMonitorByIdOrMatch(
 	return undefined;
 }
 
-const PeerStatsView = ({ consumerId }: PeerStatsViewProps): React.JSX.Element => {
+const PeerStatsView = ({ consumerId, audioConsumerId }: PeerStatsViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ inboundStats, setInboundStats ] = useState<InboundStats[]>([]);
+	const [ inboundAudioStats, setInboundAudioStats ] = useState<InboundAudioStats | null>(null);
 
 	useEffect(() => {
 		const monitor = mediaService.monitor;
 
-		logger.debug('Stats init() consumerId=%s', consumerId);
+		logger.debug('Stats init() consumerId=%s audioConsumerId=%s', consumerId, audioConsumerId);
 
 		if (!monitor) return;
 
 		setInboundStats([]);
+		setInboundAudioStats(null);
 
 		const listener = () => {
+			// Video stats
 			const consumer = mediaService.getConsumer(consumerId);
 			const track = consumer?.track;
 			const trackId = track?.id;
@@ -143,29 +154,59 @@ const PeerStatsView = ({ consumerId }: PeerStatsViewProps): React.JSX.Element =>
 
 			logger.debug('Stats trackMonitor=%o', trackMonitor);
 
-			if (!trackMonitor) return;
+			if (trackMonitor) {
+				const rtpParams = (consumer as unknown as {
+					rtpParameters?: {
+						codecs?: Array<{ mimeType?: string }>;
+						encodings?: Array<{ scalabilityMode?: string }>;
+					};
+				})?.rtpParameters;
 
-			const rtpParams = (consumer as unknown as {
-				rtpParameters?: {
-					codecs?: Array<{ mimeType?: string }>;
-					encodings?: Array<{ scalabilityMode?: string }>;
-				};
-			})?.rtpParameters;
+				const codec = rtpParams?.codecs?.[0]?.mimeType?.split('/')?.[1]?.toUpperCase();
+				const scalabilityMode = rtpParams?.encodings?.[0]?.scalabilityMode;
+				const preferred = mediaService.consumerPreferredLayers.get(consumerId);
 
-			const codec = rtpParams?.codecs?.[0]?.mimeType?.split('/')?.[1]?.toUpperCase();
-			const scalabilityMode = rtpParams?.encodings?.[0]?.scalabilityMode;
-			const preferred = mediaService.consumerPreferredLayers.get(consumerId);
+				const newInboundStats = createInboundStatsFromTrackMonitor(trackMonitor).map((s) => ({
+					...s,
+					codec,
+					scalabilityMode,
+					preferredSpatialLayer: preferred?.spatialLayer,
+					preferredTemporalLayer: preferred?.temporalLayer,
+				}));
 
-			const newInboundStats = createInboundStatsFromTrackMonitor(trackMonitor).map((s) => ({
-				...s,
-				codec,
-				scalabilityMode,
-				preferredSpatialLayer: preferred?.spatialLayer,
-				preferredTemporalLayer: preferred?.temporalLayer,
-			}));
+				logger.debug('Stats newInboundStats=%o', newInboundStats);
+				setInboundStats(newInboundStats);
+			}
 
-			logger.debug('Stats newInboundStats=%o', newInboundStats);
-			setInboundStats(newInboundStats);
+			// Audio stats
+			if (audioConsumerId) {
+				const audioConsumer = mediaService.getConsumer(audioConsumerId);
+				const audioTrack = audioConsumer?.track;
+				const audioTrackMonitor = getTrackMonitorByIdOrMatch(
+					monitor,
+					audioTrack?.id,
+					audioTrack?.kind as 'audio' | 'video' | undefined,
+					audioTrack?.label,
+					audioConsumerId
+				);
+
+				if (audioTrackMonitor) {
+					const audioRtpParams = (audioConsumer as unknown as {
+						rtpParameters?: { codecs?: Array<{ mimeType?: string }> };
+					})?.rtpParameters;
+					const audioCodec = audioRtpParams?.codecs?.[0]?.mimeType?.split('/')?.[1]?.toUpperCase();
+					const audioBase = createInboundStatsFromTrackMonitor(audioTrackMonitor)[0];
+
+					if (audioBase) {
+						setInboundAudioStats({
+							codec: audioCodec,
+							receivedKbps: audioBase.receivedKbps,
+							fractionLoss: audioBase.fractionLoss,
+							meanOpinionScore: audioBase.meanOpinionScore,
+						});
+					}
+				}
+			}
 		};
 
 		monitor.on('stats-collected', listener);
@@ -174,7 +215,7 @@ const PeerStatsView = ({ consumerId }: PeerStatsViewProps): React.JSX.Element =>
 		return () => {
 			monitor.off('stats-collected', listener);
 		};
-	}, [ mediaService, consumerId, mediaService.monitor ]);
+	}, [ mediaService, consumerId, audioConsumerId, mediaService.monitor ]);
 
 	return (
 		<Stats
@@ -194,6 +235,13 @@ const PeerStatsView = ({ consumerId }: PeerStatsViewProps): React.JSX.Element =>
 					<span key={index + 2}>{stats.receivedKbps ?? -1} kbps | FractionLoss: {stats.fractionLoss ?? -1} | MOS: {stats.meanOpinionScore}</span><br />
 				</div>
 			))}
+			{ inboundAudioStats && (
+				<div>
+					<hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0' }} />
+					{ inboundAudioStats.codec && <><span>{inboundAudioStats.codec}</span><br /></> }
+					<span>{inboundAudioStats.receivedKbps ?? -1} kbps | FractionLoss: {inboundAudioStats.fractionLoss ?? -1} | MOS: {inboundAudioStats.meanOpinionScore}</span><br />
+				</div>
+			)}
 		</Stats>
 	);
 };
