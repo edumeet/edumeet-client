@@ -124,7 +124,7 @@ const MeStatsView = ({
 
 			if (trackId) {
 				for (const pc of mon.mappedPeerConnections.values()) {
-					logger.debug('Stats pc mediaSources=%o', Array.from(pc.mappedMediaSourceMonitors.entries()).map(([ id, s ]) => ({ id, trackIdentifier: s.trackIdentifier })));
+					logger.debug('Stats pc mediaSources=%s', JSON.stringify(Array.from(pc.mappedMediaSourceMonitors.entries()).map(([ id, s ]) => ({ id, trackIdentifier: s.trackIdentifier }))));
 					for (const [ id, src ] of pc.mappedMediaSourceMonitors) {
 						if (src.trackIdentifier === trackId) {
 							matchingSourceIds.add(id);
