@@ -22,7 +22,7 @@ const StatsDiv = styled('div')<StatsDivProps>(({
 	autohide: autoHide
 }) => ({
 	position,
-	width: '30%',
+	width: '50%',
 	height: '100%',
 	display: 'flex',
 	...(withGap && {

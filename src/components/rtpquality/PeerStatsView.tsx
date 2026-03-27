@@ -187,13 +187,11 @@ const PeerStatsView = ({ consumerId }: PeerStatsViewProps): React.JSX.Element =>
 				<div key={index + 10}>
 					<b key={index + 1}>SSRC: {stats.ssrc}</b><br />
 					{ stats.codec && <><span>{stats.codec}{ isSVCCodec(stats.codec) && stats.scalabilityMode && parseInt(stats.scalabilityMode.match(/^L(\d+)/)?.[1] ?? '1') > 1 ? ` SVC ${stats.scalabilityMode}` : '' }</span><br /></> }
+					{ stats.frameWidth && stats.frameHeight && <><span>{stats.frameWidth}x{stats.frameHeight}@{stats.framesPerSecond ?? '?'}</span><br /></> }
 					{ (stats.preferredSpatialLayer !== undefined || stats.preferredTemporalLayer !== undefined) &&
-						<><span>preferred SL: {stats.preferredSpatialLayer ?? '?'} | TL: {stats.preferredTemporalLayer ?? '?'}</span><br /></>
+						<><span>Requested SL: {stats.preferredSpatialLayer ?? '?'} | TL: {stats.preferredTemporalLayer ?? '?'}</span><br /></>
 					}
-					{ stats.frameWidth && stats.frameHeight && <><span>resolution: {stats.frameWidth}x{stats.frameHeight}@{stats.framesPerSecond ?? '?'}</span><br /></> }
-					<span key={index + 2}>receiving: {stats.receivedKbps ?? -1} kbps</span><br />
-					<span key={index + 3}>FractionLoss: {stats.fractionLoss ?? -1}</span><br />
-					<span key={index + 4}>MOS: {stats.meanOpinionScore}</span><br />
+					<span key={index + 2}>{stats.receivedKbps ?? -1} kbps | FractionLoss: {stats.fractionLoss ?? -1} | MOS: {stats.meanOpinionScore}</span><br />
 				</div>
 			))}
 		</Stats>
