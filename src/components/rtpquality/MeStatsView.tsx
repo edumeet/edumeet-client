@@ -21,7 +21,7 @@ type OutboundStats = {
 	framesPerSecond?: number;
 }
 
-function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { producer?: unknown }> }, source?: ProducerSource, producerId?: string): { codec?: string; mode?: string; maxSpatialLayer?: number; maxSpatialLayerCount?: number } {
+function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { producer?: unknown }> }, source?: ProducerSource, producerId?: string): { codec?: string; mode?: string; sendingLayers?: number; totalLayers?: number } {
 	let producer: unknown;
 
 	if (source) {
@@ -59,7 +59,11 @@ function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { produ
 		: isSVC ? spatialLayers - 1
 			: undefined;
 
-	return { codec, mode, maxSpatialLayer, maxSpatialLayerCount };
+	// maxSpatialLayer is 0-based index; convert to 1-based count for display
+	const sendingLayers = maxSpatialLayer !== undefined ? maxSpatialLayer + 1 : undefined;
+	const totalLayers = maxSpatialLayerCount !== undefined ? maxSpatialLayerCount + 1 : undefined;
+
+	return { codec, mode, sendingLayers, totalLayers };
 }
 
 const MeStatsView = ({
@@ -82,73 +86,52 @@ const MeStatsView = ({
 		setCodecLine(undefined);
 
 		const listener = () => {
-			let trackId: string | undefined;
+			let producer: { id?: string; track?: MediaStreamTrack; rtpParameters?: { encodings?: Array<{ ssrc?: number }> } } | undefined;
 
 			if (source) {
-				const producer = mediaService.mediaSenders[source].producer as { track?: MediaStreamTrack } | undefined;
-
-				trackId = producer?.track?.id;
+				producer = mediaService.mediaSenders[source].producer as typeof producer;
 			} else if (producerId) {
 				for (const sender of Object.values(mediaService.mediaSenders)) {
-					const p = sender.producer as { id?: string; track?: MediaStreamTrack } | undefined;
+					const p = sender.producer as typeof producer;
 
 					if (p?.id === producerId) {
-						trackId = p.track?.id;
+						producer = p;
 						break;
 					}
 				}
 			}
 
-			logger.debug('Stats trackId=%s', trackId);
+			if (!producer) return;
 
-			if (!trackId && !producerId) return;
+			const producerSsrcs = new Set(
+				(producer.rtpParameters?.encodings ?? []).map((e) => e.ssrc).filter((s): s is number => s !== undefined)
+			);
+
+			logger.debug('Stats producerSsrcs=%s', JSON.stringify(Array.from(producerSsrcs)));
+
+			if (producerSsrcs.size === 0) return;
 
 			const mon = monitor as unknown as {
-				mappedPeerConnections: Map<string, {
-					mappedMediaSourceMonitors: Map<string, { trackIdentifier?: string }>;
-				}>;
 				outboundRtps?: Array<{
 					ssrc?: number;
 					bitrate?: number;
 					frameWidth?: number;
 					frameHeight?: number;
 					framesPerSecond?: number;
-					mediaSourceId?: string;
 					getRemoteInboundRtp?: () => { roundTripTime?: number } | undefined;
 				}>;
 			};
 
-			// Find mediaSourceIds whose trackIdentifier matches our track.
-			// We do this lookup ourselves because OutboundRtpMonitor.trackIdentifier
-			// goes through getMediaSource() which can be undefined if stats are
-			// processed in media-source-after-outbound-rtp order.
-			const matchingSourceIds = new Set<string>();
-
-			if (trackId) {
-				for (const pc of mon.mappedPeerConnections.values()) {
-					for (const [ id, src ] of pc.mappedMediaSourceMonitors) {
-						if (src.trackIdentifier === trackId) {
-							matchingSourceIds.add(id);
-						}
-					}
-				}
-			}
-
-			logger.debug('Stats matchingSourceIds=%s', matchingSourceIds.size);
-
-			if (matchingSourceIds.size === 0) return;
-
-			const allOutboundRtps = mon.outboundRtps ?? [];
-			const matchingRtps = allOutboundRtps.filter((rtp) => rtp.mediaSourceId && matchingSourceIds.has(rtp.mediaSourceId));
+			const matchingRtps = (mon.outboundRtps ?? []).filter((rtp) => rtp.ssrc !== undefined && producerSsrcs.has(rtp.ssrc));
 
 			logger.debug('Stats matchingRtps.length=%s', matchingRtps.length);
 
 			if (matchingRtps.length === 0) return;
 
-			const { codec, mode, maxSpatialLayer, maxSpatialLayerCount } = getProducerRtpInfo(mediaService, source, producerId);
+			const { codec, mode, sendingLayers, totalLayers } = getProducerRtpInfo(mediaService, source, producerId);
 
-			const layerInfo = (maxSpatialLayerCount !== undefined && maxSpatialLayer !== undefined)
-				? ` (max layer ${maxSpatialLayer}/${maxSpatialLayerCount})`
+			const layerInfo = (sendingLayers !== undefined && totalLayers !== undefined)
+				? ` (${sendingLayers}/${totalLayers} layers)`
 				: '';
 
 			setCodecLine([ codec, mode ].filter(Boolean).join(' ') + layerInfo || undefined);
