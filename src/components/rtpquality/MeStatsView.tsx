@@ -204,7 +204,7 @@ const MeStatsView = ({
 			))}
 			{ outboundAudioStats && (
 				<div>
-					<hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0' }} />
+					<hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0', width: '100%' }} />
 					{ outboundAudioStats.codec && <><span>{outboundAudioStats.codec}</span><br /></> }
 					<span>{outboundAudioStats.sendingKbps ?? -1} kbps | RTT: {outboundAudioStats.RTT ?? -1} ms</span><br />
 				</div>
