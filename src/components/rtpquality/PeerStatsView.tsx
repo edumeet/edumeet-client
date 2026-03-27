@@ -63,6 +63,10 @@ function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats
 	} ];
 }
 
+function isSVCCodec(codec: string): boolean {
+	return codec === 'VP9' || codec === 'AV1';
+}
+
 function getTrackMonitorByIdOrMatch(
 	monitor: unknown,
 	trackId?: string,
@@ -187,7 +191,7 @@ const PeerStatsView = ({ consumerId }: PeerStatsViewProps): React.JSX.Element =>
 			{inboundStats.map((stats, index) => (
 				<div key={index + 10}>
 					<b key={index + 1}>SSRC: {stats.ssrc}</b><br />
-					{ stats.codec && <><span>{stats.codec}{ stats.scalabilityMode ? ` SVC ${stats.scalabilityMode}` : stats.spatialLayer !== undefined ? ' simulcast' : '' }</span><br /></> }
+					{ stats.codec && <><span>{stats.codec}{ isSVCCodec(stats.codec) && stats.scalabilityMode && parseInt(stats.scalabilityMode.match(/^L(\d+)/)?.[1] ?? '1') > 1 ? ` SVC ${stats.scalabilityMode}` : stats.spatialLayer !== undefined ? ' simulcast' : '' }</span><br /></> }
 					{ (stats.spatialLayer !== undefined || stats.temporalLayer !== undefined) &&
 						<><span>SL {stats.spatialLayer ?? '?'}/{stats.preferredSpatialLayer ?? '?'} | TL {stats.temporalLayer ?? '?'}/{stats.preferredTemporalLayer ?? '?'}</span><br /></>
 					}

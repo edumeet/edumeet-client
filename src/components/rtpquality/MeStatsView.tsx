@@ -130,7 +130,9 @@ function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { produ
 	const encodings = rtpParams?.encodings ?? [];
 	const scalabilityMode = encodings[0]?.scalabilityMode;
 	const isSimulcast = encodings.length > 1;
-	const mode = scalabilityMode ? `SVC ${scalabilityMode}` : isSimulcast ? 'simulcast' : undefined;
+	const spatialLayers = parseInt(scalabilityMode?.match(/^L(\d+)/)?.[1] ?? '1');
+	const isSVC = (codec === 'VP9' || codec === 'AV1') && spatialLayers > 1;
+	const mode = isSVC ? `SVC ${scalabilityMode}` : isSimulcast ? 'simulcast' : undefined;
 
 	return { codec, mode };
 }
@@ -222,7 +224,7 @@ const MeStatsView = ({
 			verticalPlacement='bottom'
 		>
 			{ outboundStats.length === 0 && <div>...</div> }
-			{ codecLine && <><span>{codecLine}</span><br /></> }
+			{ codecLine && <><span>{codecLine}</span></> }
 			{outboundStats.map((stats, index) => (
 				<div key={index + 100010}>
 					<b>SSRC: {stats.ssrc}</b><br />
