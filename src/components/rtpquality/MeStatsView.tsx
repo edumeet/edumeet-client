@@ -21,86 +21,6 @@ type OutboundStats = {
 	framesPerSecond?: number;
 }
 
-function createOutboundStatsFromTrackMonitor(trackMonitor: unknown): OutboundStats[] {
-	const tm = trackMonitor as {
-		mappedOutboundRtps?: Map<number, unknown>;
-	};
-
-	if (!tm.mappedOutboundRtps) return [];
-
-	const result: OutboundStats[] = [];
-
-	for (const outboundRtp of tm.mappedOutboundRtps.values()) {
-		const rtp = outboundRtp as {
-			ssrc?: number;
-			bitrate?: number;
-			framesPerSecond?: number;
-			frameWidth?: number;
-			frameHeight?: number;
-			roundTripTime?: number;
-			getRemoteInboundRtp?: () => { roundTripTime?: number } | undefined;
-		};
-
-		result.push({
-			ssrc: rtp.ssrc ?? 0,
-			sendingKbps: Math.floor(((rtp.bitrate ?? 0) / 1000)),
-			frameWidth: rtp.frameWidth,
-			frameHeight: rtp.frameHeight,
-			framesPerSecond: rtp.framesPerSecond,
-			RTT: Math.round(Math.max(0, rtp.getRemoteInboundRtp?.()?.roundTripTime ?? rtp.roundTripTime ?? 0) * 1000),
-		});
-	}
-
-	return result;
-}
-
-function getTrackMonitorByIdOrMatch(
-	monitor: unknown,
-	trackId?: string,
-	kind?: 'audio' | 'video',
-	label?: string,
-	direction?: 'inbound' | 'outbound',
-	producerId?: string,
-): unknown | undefined {
-	const m = monitor as {
-		tracks?: Array<{
-			track?: MediaStreamTrack;
-			direction?: 'inbound' | 'outbound';
-			attachments?: {
-				producerId?: string;
-			};
-		} & Record<string, unknown>>;
-	};
-
-	const tracks = m.tracks ?? [];
-
-	if (producerId) {
-		for (const t of tracks) {
-			if (t.attachments?.producerId === producerId) {
-				return t;
-			}
-		}
-	}
-
-	if (trackId) {
-		for (const t of tracks) {
-			if (t.track?.id === trackId) {
-				return t;
-			}
-		}
-	}
-
-	for (const t of tracks) {
-		if (direction && t.direction !== direction) continue;
-		if (kind && t.track?.kind !== kind) continue;
-		if (label && t.track?.label !== label) continue;
-
-		return t;
-	}
-
-	return undefined;
-}
-
 function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { producer?: unknown }> }, source?: ProducerSource, producerId?: string): { codec?: string; mode?: string; maxSpatialLayer?: number; encodingCount?: number } {
 	let producer: unknown;
 
@@ -160,28 +80,17 @@ const MeStatsView = ({
 
 		const listener = () => {
 			let trackId: string | undefined;
-			let trackKind: 'audio' | 'video' | undefined;
-			let trackLabel: string | undefined;
 
 			if (source) {
-				const track = mediaService.mediaSenders[source].track;
-
-				trackId = track?.id;
-				trackKind = (track?.kind as 'audio' | 'video' | undefined);
-				trackLabel = track?.label;
+				trackId = mediaService.mediaSenders[source].track?.id;
 			} else if (producerId) {
 				for (const sender of Object.values(mediaService.mediaSenders)) {
-					const producer = sender.producer;
+					const p = sender.producer as { id?: string; track?: MediaStreamTrack } | undefined;
 
-					if (!producer || (producer as { id?: string }).id !== producerId) continue;
-
-					const track = (producer as { track?: MediaStreamTrack }).track;
-
-					trackId = track?.id;
-					trackKind = (track?.kind as 'audio' | 'video' | undefined);
-					trackLabel = track?.label;
-
-					break;
+					if (p?.id === producerId) {
+						trackId = (p as unknown as { track?: MediaStreamTrack }).track?.id;
+						break;
+					}
 				}
 			}
 
@@ -189,17 +98,29 @@ const MeStatsView = ({
 
 			if (!trackId && !producerId) return;
 
-			const tracksCount = (monitor as unknown as { tracks?: unknown[] }).tracks?.length ?? 0;
+			const mon = monitor as unknown as {
+				outboundRtps?: Array<{
+					ssrc?: number;
+					bitrate?: number;
+					frameWidth?: number;
+					frameHeight?: number;
+					framesPerSecond?: number;
+					trackIdentifier?: string;
+					getRemoteInboundRtp?: () => { roundTripTime?: number } | undefined;
+				}>;
+			};
 
-			logger.debug('Stats monitor.tracks.length=%s', tracksCount);
+			const allOutboundRtps = mon.outboundRtps ?? [];
 
-			const trackMonitor = getTrackMonitorByIdOrMatch(
-				monitor, trackId, trackKind, trackLabel, 'outbound', producerId
-			);
+			logger.debug('Stats allOutboundRtps.length=%s', allOutboundRtps.length);
 
-			logger.debug('Stats trackMonitor=%o', trackMonitor);
+			const matchingRtps = trackId
+				? allOutboundRtps.filter((rtp) => rtp.trackIdentifier === trackId)
+				: allOutboundRtps;
 
-			if (!trackMonitor) return;
+			logger.debug('Stats matchingRtps.length=%s', matchingRtps.length);
+
+			if (matchingRtps.length === 0) return;
 
 			const { codec, mode, maxSpatialLayer, encodingCount } = getProducerRtpInfo(mediaService, source, producerId);
 
@@ -209,7 +130,14 @@ const MeStatsView = ({
 
 			setCodecLine([ codec, mode ].filter(Boolean).join(' ') + layerInfo || undefined);
 
-			const newOutboundStats = createOutboundStatsFromTrackMonitor(trackMonitor);
+			const newOutboundStats = matchingRtps.map((rtp) => ({
+				ssrc: rtp.ssrc ?? 0,
+				sendingKbps: Math.floor((rtp.bitrate ?? 0) / 1000),
+				frameWidth: rtp.frameWidth,
+				frameHeight: rtp.frameHeight,
+				framesPerSecond: rtp.framesPerSecond,
+				RTT: Math.round(Math.max(0, rtp.getRemoteInboundRtp?.()?.roundTripTime ?? 0) * 1000),
+			}));
 
 			logger.debug('Stats newOutboundStats=%o', newOutboundStats);
 			setOutboundStats(newOutboundStats);
