@@ -26,6 +26,7 @@ type InboundStats = {
 }
 
 type InboundAudioStats = {
+	ssrc?: number;
 	codec?: string;
 	receivedKbps?: number;
 	fractionLoss?: number;
@@ -199,6 +200,7 @@ const PeerStatsView = ({ consumerId, audioConsumerId }: PeerStatsViewProps): Rea
 
 					if (audioBase) {
 						setInboundAudioStats({
+							ssrc: audioBase.ssrc,
 							codec: audioCodec,
 							receivedKbps: audioBase.receivedKbps,
 							fractionLoss: audioBase.fractionLoss,
@@ -238,6 +240,7 @@ const PeerStatsView = ({ consumerId, audioConsumerId }: PeerStatsViewProps): Rea
 			{ inboundAudioStats && <hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0', width: '100%' }} /> }
 			{ inboundAudioStats && (
 				<div>
+					<b>SSRC: {inboundAudioStats.ssrc}</b><br />
 					{ inboundAudioStats.codec && <><span>{inboundAudioStats.codec}</span><br /></> }
 					<span>{inboundAudioStats.receivedKbps ?? -1} kbps | FractionLoss: {inboundAudioStats.fractionLoss ?? -1} | MOS: {inboundAudioStats.meanOpinionScore}</span><br />
 				</div>

@@ -22,6 +22,7 @@ type OutboundStats = {
 }
 
 type OutboundAudioStats = {
+	ssrc?: number;
 	codec?: string;
 	sendingKbps?: number;
 	RTT?: number;
@@ -171,6 +172,7 @@ const MeStatsView = ({
 					const micCodec = micProducer.rtpParameters?.codecs?.[0]?.mimeType?.split('/')?.[1]?.toUpperCase();
 
 					setOutboundAudioStats({
+						ssrc: micRtp.ssrc,
 						codec: micCodec,
 						sendingKbps: Math.floor((micRtp.bitrate ?? 0) / 1000),
 						RTT: Math.round(Math.max(0, micRtp.getRemoteInboundRtp?.()?.roundTripTime ?? 0) * 1000),
@@ -205,6 +207,7 @@ const MeStatsView = ({
 			{ outboundAudioStats && <hr style={{ borderColor: 'rgba(255,255,255,0.3)', margin: '4px 0', width: '100%' }} /> }
 			{ outboundAudioStats && (
 				<div>
+					<b>SSRC: {outboundAudioStats.ssrc}</b><br />
 					{ outboundAudioStats.codec && <><span>{outboundAudioStats.codec}</span><br /></> }
 					<span>{outboundAudioStats.sendingKbps ?? -1} kbps | RTT: {outboundAudioStats.RTT ?? -1} ms</span><br />
 				</div>
