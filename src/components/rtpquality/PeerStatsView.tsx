@@ -232,7 +232,7 @@ const PeerStatsView = ({ consumerId, audioConsumerId }: PeerStatsViewProps): Rea
 			{inboundStats.map((stats, index) => (
 				<div key={index + 10}>
 					<b key={index + 1}>SSRC: {stats.ssrc}</b><br />
-					{ stats.codec && <><span>{stats.codec}{ isSVCCodec(stats.codec) && stats.scalabilityMode && parseInt(stats.scalabilityMode.match(/^L(\d+)/)?.[1] ?? '1') > 1 ? ` SVC ${stats.scalabilityMode}` : '' }</span><br /></> }
+					{ stats.codec && <><span>{stats.codec}{ isSVCCodec(stats.codec) && stats.scalabilityMode && parseInt(stats.scalabilityMode.match(/^[LS](\d+)/)?.[1] ?? '1') > 1 ? ` SVC ${stats.scalabilityMode}` : '' }</span><br /></> }
 					{ stats.frameWidth && stats.frameHeight && <><span>{stats.frameWidth}x{stats.frameHeight}@{stats.framesPerSecond ?? '?'}</span><br /></> }
 					{ (stats.spatialLayer !== undefined || stats.preferredSpatialLayer !== undefined) &&
 						<><span>SL: {stats.spatialLayer ?? '?'}/{stats.preferredSpatialLayer ?? '?'} | TL: {stats.temporalLayer ?? '?'}/{stats.preferredTemporalLayer ?? '?'}</span><br /></>

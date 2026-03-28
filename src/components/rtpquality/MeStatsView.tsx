@@ -57,7 +57,7 @@ function getProducerRtpInfo(mediaService: { mediaSenders: Record<string, { produ
 	const encodings = rtpParams?.encodings ?? [];
 	const scalabilityMode = encodings[0]?.scalabilityMode;
 	const isSimulcast = encodings.length > 1;
-	const spatialLayers = parseInt(scalabilityMode?.match(/^L(\d+)/)?.[1] ?? '1');
+	const spatialLayers = parseInt(scalabilityMode?.match(/^[LS](\d+)/)?.[1] ?? '1');
 	const isSVC = (codec === 'VP9' || codec === 'AV1') && spatialLayers > 1;
 	const mode = isSVC ? `SVC ${scalabilityMode}` : isSimulcast ? 'simulcast' : undefined;
 

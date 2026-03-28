@@ -512,6 +512,7 @@ export class MediaService extends EventEmitter {
 
 						this.consumers.set(consumer.id, consumer);
 
+
 						consumer.observer.once('close', () => {
 							this.consumers.delete(consumer.id);
 							this.consumerCurrentLayers.delete(consumer.id);
