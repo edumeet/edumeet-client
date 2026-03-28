@@ -495,6 +495,13 @@ export class MediaService extends EventEmitter {
 
 							resolutionWatcher.on('newResolution', (resolution) => {
 								const { width } = resolution;
+
+								// Spatial layer is chosen by rendered width using fixed thresholds; temporal layer is
+								// always set to the highest index (2). Both values may exceed the actual max layers
+								// for this consumer (e.g. SVC L2T2 has max SL=1, TL=1). mediasoup silently clamps
+								// out-of-range requests to the available maximum, so the effective result is always
+								// the highest layer that matches the rendered size — correct quality without needing
+								// to know the exact layer counts per consumer.
 								const spatialLayer = width >= 480 ? width >= 960 ? 2 : 1 : 0;
 								const temporalLayer = 2;
 
