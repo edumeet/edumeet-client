@@ -18,6 +18,8 @@ type InboundStats = {
 	meanOpinionScore?: number;
 	codec?: string;
 	scalabilityMode?: string;
+	spatialLayer?: number;
+	temporalLayer?: number;
 	preferredSpatialLayer?: number;
 	preferredTemporalLayer?: number;
 	frameWidth?: number;
@@ -165,12 +167,15 @@ const PeerStatsView = ({ consumerId, audioConsumerId }: PeerStatsViewProps): Rea
 
 				const codec = rtpParams?.codecs?.[0]?.mimeType?.split('/')?.[1]?.toUpperCase();
 				const scalabilityMode = rtpParams?.encodings?.[0]?.scalabilityMode;
+				const layers = mediaService.consumerCurrentLayers.get(consumerId);
 				const preferred = mediaService.consumerPreferredLayers.get(consumerId);
 
 				const newInboundStats = createInboundStatsFromTrackMonitor(trackMonitor).map((s) => ({
 					...s,
 					codec,
 					scalabilityMode,
+					spatialLayer: layers?.spatialLayer,
+					temporalLayer: layers?.temporalLayer,
 					preferredSpatialLayer: preferred?.spatialLayer,
 					preferredTemporalLayer: preferred?.temporalLayer,
 				}));
@@ -231,8 +236,8 @@ const PeerStatsView = ({ consumerId, audioConsumerId }: PeerStatsViewProps): Rea
 					<b key={index + 1}>SSRC: {stats.ssrc}</b><br />
 					{ stats.codec && <><span>{stats.codec}{ isSVCCodec(stats.codec) && stats.scalabilityMode && parseInt(stats.scalabilityMode.match(/^L(\d+)/)?.[1] ?? '1') > 1 ? ` SVC ${stats.scalabilityMode}` : '' }</span><br /></> }
 					{ stats.frameWidth && stats.frameHeight && <><span>{stats.frameWidth}x{stats.frameHeight}@{stats.framesPerSecond ?? '?'}</span><br /></> }
-					{ (stats.preferredSpatialLayer !== undefined || stats.preferredTemporalLayer !== undefined) &&
-						<><span>Requested SL: {stats.preferredSpatialLayer ?? '?'} | TL: {stats.preferredTemporalLayer ?? '?'}</span><br /></>
+					{ (stats.spatialLayer !== undefined || stats.preferredSpatialLayer !== undefined) &&
+						<><span>SL: {stats.spatialLayer ?? '?'}/{stats.preferredSpatialLayer ?? '?'} | TL: {stats.temporalLayer ?? '?'}/{stats.preferredTemporalLayer ?? '?'}</span><br /></>
 					}
 					<span key={index + 2}>{stats.receivedKbps ?? -1} kbps | FractionLoss: {stats.fractionLoss ?? -1} | MOS: {stats.meanOpinionScore}</span><br />
 				</div>
