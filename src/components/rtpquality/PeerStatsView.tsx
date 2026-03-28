@@ -208,7 +208,6 @@ const PeerStatsView = ({ consumerId, audioConsumerId }: PeerStatsViewProps): Rea
 							codec: audioCodec,
 							receivedKbps: audioBase.receivedKbps,
 							fractionLoss: audioBase.fractionLoss,
-							meanOpinionScore: audioBase.meanOpinionScore,
 						});
 					}
 				}
