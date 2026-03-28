@@ -32,7 +32,6 @@ type InboundAudioStats = {
 	codec?: string;
 	receivedKbps?: number;
 	fractionLoss?: number;
-	meanOpinionScore?: number;
 }
 
 function createInboundStatsFromTrackMonitor(trackMonitor: unknown): InboundStats[] {
@@ -247,7 +246,7 @@ const PeerStatsView = ({ consumerId, audioConsumerId }: PeerStatsViewProps): Rea
 				<div>
 					<b>SSRC: {inboundAudioStats.ssrc}</b><br />
 					{ inboundAudioStats.codec && <><span>{inboundAudioStats.codec}</span><br /></> }
-					<span>{inboundAudioStats.receivedKbps ?? -1} kbps | FractionLoss: {inboundAudioStats.fractionLoss ?? -1} | MOS: {inboundAudioStats.meanOpinionScore}</span><br />
+					<span>{inboundAudioStats.receivedKbps ?? -1} kbps | FractionLoss: {inboundAudioStats.fractionLoss ?? -1}</span><br />
 				</div>
 			)}
 		</Stats>
