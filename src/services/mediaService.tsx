@@ -314,18 +314,48 @@ export class MediaService extends EventEmitter {
 
 						this.consumerCreationState.set(id, { paused: false, closed: false });
 
-						const peerTransport = await this.getPeerTransport(peerId, 'recv');
+						let peerConsumer: PeerConsumer | undefined;
 
-						const peerConsumer = await peerTransport.consume({
-							id,
-							kind,
-							rtpParameters,
-							appData: {
-								...appData,
-								peerId,
-								peerConsumer: true,
-							},
-						});
+						try {
+							const peerTransport = await this.getPeerTransport(peerId, 'recv');
+
+							peerConsumer = await peerTransport.consume({
+								id,
+								kind,
+								rtpParameters,
+								appData: {
+									...appData,
+									peerId,
+									peerConsumer: true,
+								},
+							});
+						} catch (consumeError) {
+							logger.warn('peerProduce: consume() failed, retrying [peerId: %s, id: %s, error: %o]', peerId, id, consumeError);
+
+							try {
+								await new Promise<void>((resolve) => setTimeout(resolve, 500));
+								const peerTransport = await this.getPeerTransport(peerId, 'recv');
+
+								peerConsumer = await peerTransport.consume({
+									id,
+									kind,
+									rtpParameters,
+									appData: {
+										...appData,
+										peerId,
+										peerConsumer: true,
+									},
+								});
+							} catch (retryError) {
+								logger.error('peerProduce: consume() failed after retry [peerId: %s, id: %s, error: %o]', peerId, id, retryError);
+							}
+						}
+
+						if (!peerConsumer) {
+							this.consumerCreationState.delete(id);
+
+							break;
+						}
 
 						const {
 							paused: consumerPaused,
@@ -345,20 +375,24 @@ export class MediaService extends EventEmitter {
 						}
 
 						if (kind === 'audio') {
-							const { track } = peerConsumer;
-							const harkStream = new MediaStream();
+							try {
+								const { track } = peerConsumer;
+								const harkStream = new MediaStream();
 
-							harkStream.addTrack(track);
+								harkStream.addTrack(track);
 
-							const consumerHark = hark(harkStream, {
-								play: false,
-								interval: 50,
-								threshold: -60,
-								history: 100
-							});
+								const consumerHark = hark(harkStream, {
+									play: false,
+									interval: 50,
+									threshold: -60,
+									history: 100
+								});
 
-							peerConsumer.appData.hark = consumerHark;
-							peerConsumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
+								peerConsumer.appData.hark = consumerHark;
+								peerConsumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
+							} catch (harkError) {
+								logger.warn('peerProduce: hark init failed [peerId: %s, error: %o]', peerId, harkError);
+							}
 						}
 
 						this.consumers.set(peerConsumer.id, peerConsumer);
@@ -442,19 +476,51 @@ export class MediaService extends EventEmitter {
 
 						this.consumerCreationState.set(id, { paused: producerPaused, closed: false });
 
-						const consumer = await this.recvTransport.consume({
-							id,
-							producerId,
-							streamId,
-							kind,
-							rtpParameters,
-							appData: {
-								...appData,
-								peerId,
-								producerPaused,
+						let consumer: Consumer | undefined;
+
+						try {
+							consumer = await this.recvTransport.consume({
+								id,
 								producerId,
-							},
-						});
+								streamId,
+								kind,
+								rtpParameters,
+								appData: {
+									...appData,
+									peerId,
+									producerPaused,
+									producerId,
+								},
+							});
+						} catch (consumeError) {
+							logger.warn('newConsumer: consume() failed, retrying [peerId: %s, producerId: %s, kind: %s, error: %o]', peerId, producerId, kind, consumeError);
+
+							try {
+								await new Promise<void>((resolve) => setTimeout(resolve, 500));
+
+								consumer = await this.recvTransport.consume({
+									id,
+									producerId,
+									streamId,
+									kind,
+									rtpParameters,
+									appData: {
+										...appData,
+										peerId,
+										producerPaused,
+										producerId,
+									},
+								});
+							} catch (retryError) {
+								logger.error('newConsumer: consume() failed after retry [peerId: %s, producerId: %s, kind: %s, error: %o]', peerId, producerId, kind, retryError);
+							}
+						}
+
+						if (!consumer) {
+							this.consumerCreationState.delete(id);
+
+							break;
+						}
 
 						const {
 							paused: consumerPaused,
@@ -474,20 +540,24 @@ export class MediaService extends EventEmitter {
 						}
 
 						if (kind === 'audio') {
-							const { track } = consumer;
-							const harkStream = new MediaStream();
+							try {
+								const { track } = consumer;
+								const harkStream = new MediaStream();
 
-							harkStream.addTrack(track);
+								harkStream.addTrack(track);
 
-							const consumerHark = hark(harkStream, {
-								play: false,
-								interval: 50,
-								threshold: -60,
-								history: 100
-							});
+								const consumerHark = hark(harkStream, {
+									play: false,
+									interval: 50,
+									threshold: -60,
+									history: 100
+								});
 
-							consumer.appData.hark = consumerHark;
-							consumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
+								consumer.appData.hark = consumerHark;
+								consumer.appData.volumeWatcher = new VolumeWatcher({ hark: consumerHark });
+							} catch (harkError) {
+								logger.warn('newConsumer: hark init failed [peerId: %s, error: %o]', peerId, harkError);
+							}
 						} else {
 							const resolutionWatcher = new ResolutionWatcher();
 
