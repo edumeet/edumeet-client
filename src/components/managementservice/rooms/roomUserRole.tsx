@@ -110,19 +110,19 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				accessorFn: (row) => getUserName(String(row.userId))
+				Cell: ({ row }) => getUserName(String(row.original.userId))
 
 			},
 			{
 				accessorKey: 'roleId',
 				header: 'Role',
-				accessorFn: (row) => getRoleName(String(row.roleId))
+				Cell: ({ row }) => getRoleName(String(row.original.roleId))
 
 			},
 			{
 				accessorKey: 'roomId',
 				header: 'Room',
-				accessorFn: (row) => getRoomName(String(row.roomId))
+				Cell: ({ row }) => getRoomName(String(row.original.roomId))
 
 			},
 
@@ -544,6 +544,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			data={data} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
+					id: false
 				}
 			}}
 			state={{ isLoading }}

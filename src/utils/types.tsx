@@ -322,7 +322,8 @@ export interface BackgroundPipelineOptions {
 export type Tenant = {
 	id: number,
 	name: string,
-	description: string
+	description: string,
+	hideUserDetails?: boolean
 };
 export type TenantOptionTypes = Array<Tenant>
 

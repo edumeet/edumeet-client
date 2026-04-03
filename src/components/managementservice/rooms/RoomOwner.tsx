@@ -90,13 +90,13 @@ const RoomOwnerTable = (props: RoomProp) => {
 			{
 				accessorKey: 'roomId',
 				header: 'Room',
-				accessorFn: (row) => getRoomName(String(row.roomId))
+				Cell: ({ row }) => getRoomName(String(row.original.roomId))
 
 			},
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				accessorFn: (row) => getUserName(String(row.userId))
+				Cell: ({ row }) => getUserName(String(row.original.userId))
 
 			},
 			
@@ -469,6 +469,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 			data={data} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
+					id: false
 				}
 			}}
 			state={{ isLoading }}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox } from '@mui/material';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Tenant, TenantOptionTypes } from '../../../utils/types';
@@ -44,6 +44,7 @@ const TenantTable = () => {
 	const [ id, setId ] = useState(0);
 	const [ name, setName ] = useState('');
 	const [ description, setDescription ] = useState('');
+	const [ hideUserDetails, setHideUserDetails ] = useState(true);
 
 	async function fetchProduct() {
 		setIsLoading(true);
@@ -68,6 +69,7 @@ const TenantTable = () => {
 		setId(0);
 		setName('');
 		setDescription('');
+		setHideUserDetails(true);
 		setOpen(true);
 	};
 
@@ -103,13 +105,13 @@ const TenantTable = () => {
 
 		// add new data / mod data / error
 		if (name != '' && id === 0) {
-			dispatch(createData({ name, description }, 'tenants')).then(() => {
+			dispatch(createData({ name, description, hideUserDetails }, 'tenants')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
 
 		} else if (name != '' && id != 0) {
-			dispatch(patchData(id, { name: name, description: description }, 'tenants')).then(() => {
+			dispatch(patchData(id, { name: name, description: description, hideUserDetails: hideUserDetails }, 'tenants')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
@@ -152,6 +154,10 @@ const TenantTable = () => {
 
 						value={description}
 					/>
+					<FormControlLabel
+						control={<Checkbox checked={hideUserDetails} onChange={() => setHideUserDetails(!hideUserDetails)} />}
+						label="Hide user details (email, name) from non-admin users"
+					/>
 					{ id !=0 && <>
 						{`${tenantLabel()} ${fqdnLabel()}`}
 						<TenantFQDNTable tenantId={id} />
@@ -192,6 +198,10 @@ const TenantTable = () => {
 					} else {
 						setDescription('');
 					}
+
+					const tenantData = tenants.find((t) => t.id == tid);
+
+					setHideUserDetails(tenantData?.hideUserDetails !== false);
 
 					handleClickOpenNoreset();
 
