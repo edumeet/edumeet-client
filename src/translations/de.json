@@ -474,5 +474,10 @@
 	"label.color.blue": "Blau",
 	"label.color.purple": "Lila",
 	"label.managementservice.disableUnmanagedRoomsTooltip": "Wenn aktiviert, können Benutzer keine nicht verwalteten (Ad-hoc-)Räume erstellen oder betreten. Für diesen Mandanten sind nur vorkonfigurierte verwaltete Räume zugänglich.",
-	"label.managementservice.roomLockedTooltip": "Wenn aktiviert, starten neue nicht verwaltete Räume in einem gesperrten Zustand. Nur der erste Benutzer, der beitritt und authentifiziert ist (per SSO/Verwaltung angemeldet), kann die Sperre umgehen und andere aus dem Wartebereich einlassen. Alle anderen Benutzer, einschließlich nachfolgend authentifizierter Benutzer, werden in den Wartebereich geleitet."
+	"label.managementservice.roomLockedTooltip": "Wenn aktiviert, starten neue nicht verwaltete Räume in einem gesperrten Zustand. Nur der erste Benutzer, der beitritt und authentifiziert ist (per SSO/Verwaltung angemeldet), kann die Sperre umgehen und andere aus dem Wartebereich einlassen. Alle anderen Benutzer, einschließlich nachfolgend authentifizierter Benutzer, werden in den Wartebereich geleitet.",
+	"label.managementservice.selectButton": "Auswählen",
+	"label.managementservice.userEmail": "Benutzer-E-Mail",
+	"label.management.roomOwners": "Raumbesitzer",
+	"label.management.roomUserRoles": "Raum-Benutzerrollen",
+	"label.managementservice.hideUserDetails": "Benutzerdetails (E-Mail, Name) vor Nicht-Administratoren verbergen"
 }

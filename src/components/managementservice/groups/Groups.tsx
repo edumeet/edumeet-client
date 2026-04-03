@@ -23,7 +23,7 @@ const GroupTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return `${undefinedLabel()} ${tenantLabel()}`;
+			return `${tenantLabel()} - ${undefinedLabel()}`;
 		}
 	};
 
@@ -47,7 +47,7 @@ const GroupTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				accessorFn: (row) => getTenantName(String(row.tenantId))
+				Cell: ({ row }) => getTenantName(String(row.original.tenantId))
 			}
 		],
 		[ tenants ],

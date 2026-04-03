@@ -41,7 +41,7 @@ const RuleTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				accessorFn: (row) => getTenantName(String(row.tenantId ?? ''))
+				Cell: ({ row }) => getTenantName(String(row.original.tenantId ?? ''))
 			},
 			{
 				accessorKey: 'type',

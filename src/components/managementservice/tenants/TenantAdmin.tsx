@@ -40,13 +40,13 @@ const TenantAdminTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				accessorFn: (row) => getTenantName(tenants, String(row.tenantId))
+				Cell: ({ row }) => getTenantName(tenants, String(row.original.tenantId))
 
 			},
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				accessorFn: (row) => getUserEmail(users, String(row.userId))
+				Cell: ({ row }) => getUserEmail(users, String(row.original.userId))
 
 			},
 		],

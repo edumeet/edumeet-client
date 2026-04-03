@@ -4,9 +4,9 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, Box } from '@mui/material';
 import { Roles, Room, User, UsersRoles } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, getDataByRoomId, patchData, getUserByEmail } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByRoomId, patchData, getUserByEmail, persistResolvedUser } from '../../../store/actions/managementActions';
 import { RoomProp } from './Room';
-import { userLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, hiddenEmailLabel, manageItemLabel, roleLabel, roomLabel, roomUserRolesLabel, selectButtonLabel, undefinedLabel, userEmailLabel, userLabel } from '../../translated/translatedComponents';
 
 const RoomUserRoleTable = (props: RoomProp) => {
 	const roomId = props.roomId;
@@ -57,7 +57,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined role';
+			return `${roleLabel()} - ${undefinedLabel()}`;
 		}
 	};
 
@@ -83,7 +83,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return `${id} - Hidden email`;
+			return `${id} - ${hiddenEmailLabel()}`;
 		}
 	};
 
@@ -95,7 +95,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'Undefined room';
+			return `${roomLabel()} - ${undefinedLabel()}`;
 		}
 	};
 
@@ -110,19 +110,19 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				accessorFn: (row) => getUserName(String(row.userId))
+				Cell: ({ row }) => getUserName(String(row.original.userId))
 
 			},
 			{
 				accessorKey: 'roleId',
-				header: 'Role',
-				accessorFn: (row) => getRoleName(String(row.roleId))
+				header: roleLabel(),
+				Cell: ({ row }) => getRoleName(String(row.original.roleId))
 
 			},
 			{
 				accessorKey: 'roomId',
-				header: 'Room',
-				accessorFn: (row) => getRoomName(String(row.roomId))
+				header: roomLabel(),
+				Cell: ({ row }) => getRoomName(String(row.original.roomId))
 
 			},
 
@@ -343,6 +343,9 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				setUserId(idNumber);
 				setSelectedUser(updatedUser);
 				setCantPatch(false);
+
+				// Persist the resolution so the server unsanitizes this user's details
+				dispatch(persistResolvedUser(idNumber));
 			})
 			.catch(() => {
 				setIsResolvingUser(false);
@@ -401,21 +404,21 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	const getUserLabel = (u: User): string => {
 		if (u?.email) return `${u.id} - ${u.email}`;
 
-		return `${u.id} - Hidden email`;
+		return `${u.id} - ${hiddenEmailLabel()}`;
 	};
 
 	return <>
 		<div>
-			<h4>Room-User roles</h4>
+			<h4>{roomUserRolesLabel()}</h4>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					<Box
@@ -426,7 +429,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						}}
 					>
 						<TextField
-							label="User email"
+							label={userEmailLabel()}
 							fullWidth
 							sx={{ marginRight: '8px' }}
 							value={userEmailInput}
@@ -441,7 +444,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 							onClick={handleResolveUserByEmail}
 							disabled={cantPatch || isResolvingUser || userEmailInput.trim() === ''}
 						>
-							{'SELECT'}
+							{selectButtonLabel()}
 						</Button>
 					</Box>
 					<Autocomplete
@@ -464,7 +467,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						onChange={handleUserIdChange}
 						value={selectedUser as User}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="User" />}
+						renderInput={(params) => <TextField {...params} label={userLabel()} />}
 					/>
 					<Autocomplete
 						options={roles}
@@ -476,13 +479,13 @@ const RoomUserRoleTable = (props: RoomProp) => {
 						onChange={handleRoleIdChange}
 						value={roleIdOption}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="Role" />}
+						renderInput={(params) => <TextField {...params} label={roleLabel()} />}
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} disabled={cantDelete} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} disabled={cantDelete} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -544,6 +547,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			data={data} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
+					id: false
 				}
 			}}
 			state={{ isLoading }}

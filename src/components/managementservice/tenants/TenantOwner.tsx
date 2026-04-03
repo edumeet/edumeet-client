@@ -20,7 +20,7 @@ const TenantOwnerTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return `${undefinedLabel()} ${tenantLabel()}`;
+			return `${tenantLabel()} - ${undefinedLabel()}`;
 		}
 	};
 
@@ -59,13 +59,13 @@ const TenantOwnerTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				accessorFn: (row) => getTenantName(String(row.tenantId))
+				Cell: ({ row }) => getTenantName(String(row.original.tenantId))
 
 			},
 			{
 				accessorKey: 'userId',
 				header: userLabel(),
-				accessorFn: (row) => getUserEmail(String(row.userId))
+				Cell: ({ row }) => getUserEmail(String(row.original.userId))
 
 			},
 		],

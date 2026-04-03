@@ -55,7 +55,7 @@ const GroupRoleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return `${undefinedLabel()} ${roleLabel()}`;
+			return `${roleLabel()} - ${undefinedLabel()}`;
 		}
 	};
 
@@ -76,7 +76,7 @@ const GroupRoleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return `${undefinedLabel()} ${groupLabel()}`;
+			return `${groupLabel()} - ${undefinedLabel()}`;
 		}
 	};
 
@@ -86,7 +86,7 @@ const GroupRoleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return `${undefinedLabel()} ${roomLabel()}`;
+			return `${roomLabel()} - ${undefinedLabel()}`;
 		}
 	};
 	
@@ -100,19 +100,19 @@ const GroupRoleTable = () => {
 			{
 				accessorKey: 'groupId',
 				header: groupLabel(),
-				accessorFn: (row) => getGroupsName(String(row.groupId))
+				Cell: ({ row }) => getGroupsName(String(row.original.groupId))
 
 			},
 			{
 				accessorKey: 'roleId',
 				header: roleLabel(),
-				accessorFn: (row) => getRoleName(String(row.roleId))
+				Cell: ({ row }) => getRoleName(String(row.original.roleId))
 
 			},
 			{
 				accessorKey: 'roomId',
 				header: roomLabel(),
-				accessorFn: (row) => getRoomName(String(row.roomId))
+				Cell: ({ row }) => getRoomName(String(row.original.roomId))
 
 			},
 
