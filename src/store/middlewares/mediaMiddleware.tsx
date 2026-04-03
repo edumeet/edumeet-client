@@ -12,6 +12,8 @@ import { batch } from 'react-redux';
 import { updateMic, updateWebcam } from '../actions/mediaActions';
 import { ProducerSource } from '../../utils/types';
 import { Logger } from '../../utils/Logger';
+import edumeetConfig from '../../utils/edumeetConfig';
+import { browserInfo } from '../../utils/deviceInfo';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -53,6 +55,16 @@ const createMediaMiddleware = ({
 				// Clear any stale listeners before re-registering (e.g. after long-disconnect reconnect
 				// where roomReady fires again and setState('joined') is dispatched a second time).
 				mediaService.removeAllListeners();
+
+				// Show browser-specific warnings if configured
+				for (const warning of edumeetConfig.browserWarnings) {
+					if (browserInfo.satisfies({ [warning.browser]: '>=0' })) {
+						dispatch(notificationsActions.enqueueNotification({
+							message: warning.message,
+							options: { variant: warning.variant ?? 'warning', persist: true },
+						}));
+					}
+				}
 
 				// Server has provided us with a new Consumer. The MediaService
 				// has created it for us and we need to add it to the store.

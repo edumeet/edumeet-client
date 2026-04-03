@@ -129,7 +129,14 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	},
 	imprintUrl: '',
 	privacyUrl: '',
-	reactionsTimeout: 10000
+	reactionsTimeout: 10000,
+	browserWarnings: [
+		{
+			browser: 'firefox',
+			message: 'Firefox may experience audio/video issues in larger meetings. For best experience, use a Chromium-based browser (Chrome, Edge, Opera, Brave).',
+			variant: 'warning',
+		},
+	],
 };
 
 export interface EdumeetConfig {
@@ -184,6 +191,13 @@ export interface EdumeetConfig {
 	imprintUrl: string;
 	privacyUrl: string;
 	reactionsTimeout: number;
+	browserWarnings: BrowserWarning[];
+}
+
+export interface BrowserWarning {
+	browser: string;
+	message: string;
+	variant?: 'default' | 'error' | 'success' | 'warning' | 'info';
 }
 
 export interface HTMLMediaElementWithSink extends HTMLMediaElement {

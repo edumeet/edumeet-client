@@ -11,13 +11,16 @@ export interface DeviceInfo {
 }
 
 export const supportedBrowsers = {
-	'safari': '>12',
-	'firefox': '>=60',
-	'chrome': '>=74',
-	'chromium': '>=74',
-	'opera': '>=62',
-	'edge': '>=79',
-	'samsung internet for android': '>=11.1.1.52',
+	'safari': '>=16.4',
+	'firefox': '>=110',
+	'chrome': '>=110',
+	'chromium': '>=110',
+	'opera': '>=96',
+	'edge': '>=110',
+	'samsung internet for android': '>=20',
+	'vivaldi': '>=6.0',
+	'uc browser': '>=13',
+	'naver whale browser': '>=3',
 };
 
 export const deviceInfo = (): DeviceInfo => {

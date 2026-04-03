@@ -10,6 +10,7 @@ export interface Notification {
 	message: string;
 	options?: {
 		variant?: 'default' | 'error' | 'success' | 'warning' | 'info';
+		persist?: boolean;
 	};
 }
 

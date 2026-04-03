@@ -26,12 +26,15 @@ interface UnsupportedBrowserProps {
 }
 
 const supportedBrowsers = [
-	{ name: 'Chrome/Chromium', version: '74', vendor: 'Google' },
-	{ name: 'Edge', version: '18', vendor: 'Microsoft' },
-	{ name: 'Firefox', version: '60', vendor: 'Mozilla' },
-	{ name: 'Safari', version: '12', vendor: 'Apple' },
-	{ name: 'Opera', version: '62', vendor: '' },
-	{ name: 'Samsung Internet', version: '11.1.1.52', vendor: '' },
+	{ name: 'Chrome/Chromium', version: '110', vendor: 'Google' },
+	{ name: 'Edge', version: '110', vendor: 'Microsoft' },
+	{ name: 'Firefox', version: '110', vendor: 'Mozilla' },
+	{ name: 'Safari', version: '16.4', vendor: 'Apple' },
+	{ name: 'Opera', version: '96', vendor: '' },
+	{ name: 'Samsung Internet', version: '20', vendor: '' },
+	{ name: 'Vivaldi', version: '6.0', vendor: '' },
+	{ name: 'UC Browser', version: '13', vendor: '' },
+	{ name: 'NAVER Whale', version: '3', vendor: '' },
 ];
 
 let dense = false;
