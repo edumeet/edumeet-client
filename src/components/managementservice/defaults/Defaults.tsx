@@ -33,7 +33,7 @@ const DefaultTable = () => {
 			{
 				accessorKey: 'tenantId',
 				header: tenantLabel(),
-				accessorFn: (row) => getTenantName(tenants, row.tenantId),
+				Cell: ({ row }) => getTenantName(tenants, row.original.tenantId),
 			}
 		],
 		[ tenants ],
