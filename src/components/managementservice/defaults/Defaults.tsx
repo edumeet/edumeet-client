@@ -2,6 +2,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
+import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Grid, Checkbox, InputAdornment, Tooltip } from '@mui/material';
 import React from 'react';
 import { Roles, Tenant, TenantOptionTypes, RoleOptionTypes, DefaultOptionTypes, Default } from '../../../utils/types';
@@ -16,6 +17,7 @@ import LockIcon from '@mui/icons-material/Lock';
 
 const DefaultTable = () => {
 	const dispatch = useAppDispatch();
+	const localization = useMRTLocalization();
 	const tenants: TenantOptionTypes = useAppSelector((state) => state.management.tenants);
 	const roles: RoleOptionTypes = useAppSelector((state) => state.management.roles);
 
@@ -535,7 +537,7 @@ const DefaultTable = () => {
 				</DialogActions>
 			</Dialog>
 		</div>
-		<MaterialReactTable
+		<MaterialReactTable localization={localization}
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
 

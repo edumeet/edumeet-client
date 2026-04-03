@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
+import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { Tenant, TenantFQDN } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
@@ -11,6 +12,7 @@ import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, fqdnField
 const TenantFQDNTable = (props: TenantProp) => {
 	const tenantId = props.tenantId;
 	const dispatch = useAppDispatch();
+	const localization = useMRTLocalization();
 
 	type TenantOptionTypes = Array<Tenant>
 
@@ -177,7 +179,7 @@ const TenantFQDNTable = (props: TenantProp) => {
 				</DialogActions>
 			</Dialog>
 		</div>
-		<MaterialReactTable
+		<MaterialReactTable localization={localization}
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
 

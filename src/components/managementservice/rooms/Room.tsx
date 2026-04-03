@@ -1,6 +1,7 @@
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
+import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete } from '@mui/material';
 import React from 'react';
 import { GroupRoles, Roles, Room, RoomOwners, Tenant, User } from '../../../utils/types';
@@ -16,6 +17,7 @@ export interface RoomProp {
 
 const RoomTable = () => {
 	const dispatch = useAppDispatch();
+	const localization = useMRTLocalization();
 
 	type TenantOptionTypes = Array<Tenant>
 
@@ -540,7 +542,7 @@ const RoomTable = () => {
 				</DialogActions>
 			</Dialog>
 		</div>
-		<MaterialReactTable
+		<MaterialReactTable localization={localization}
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
 

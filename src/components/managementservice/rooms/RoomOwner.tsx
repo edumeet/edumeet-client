@@ -1,6 +1,7 @@
 import { SyntheticEvent, useEffect, useMemo, useState, ChangeEvent } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
+import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, Box } from '@mui/material';
 import { Room, RoomOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
@@ -12,6 +13,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 	const roomId = props.roomId;
 
 	const dispatch = useAppDispatch();
+	const localization = useMRTLocalization();
 
 	type RoomOptionTypes = Array<Room>
 
@@ -421,7 +423,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 				</DialogActions>
 			</Dialog>
 		</div>
-		<MaterialReactTable
+		<MaterialReactTable localization={localization}
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
 

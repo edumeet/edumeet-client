@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
+import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete } from '@mui/material';
 import { GroupRoles, Groups, Roles, Room } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
@@ -9,6 +10,7 @@ import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel
 
 const GroupRoleTable = () => {
 	const dispatch = useAppDispatch();
+	const localization = useMRTLocalization();
 	
 	type RoomOptionTypes = Array<Room>
 
@@ -339,7 +341,7 @@ const GroupRoleTable = () => {
 				</DialogActions>
 			</Dialog>
 		</div>
-		<MaterialReactTable
+		<MaterialReactTable localization={localization}
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
 

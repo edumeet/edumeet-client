@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox } from '@mui/material';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
+import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { Tenant, TenantOptionTypes } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
@@ -16,6 +17,7 @@ export interface TenantProp {
 const TenantTable = () => {
 
 	const dispatch = useAppDispatch();
+	const localization = useMRTLocalization();
 	const { superAdmin } = useAppSelector((state) => state.management);
 
 	// eslint-disable-next-line camelcase
@@ -175,7 +177,7 @@ const TenantTable = () => {
 				</DialogActions>
 			</Dialog>
 		</div>
-		<MaterialReactTable
+		<MaterialReactTable localization={localization}
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
 

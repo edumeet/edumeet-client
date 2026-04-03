@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import { useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
+import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { Tenant, TenantOAuth } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
@@ -13,6 +14,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 	const tenantId = props.tenantId;
 
 	const dispatch = useAppDispatch();
+	const localization = useMRTLocalization();
 
 	type TenantOptionTypes = Array<Tenant>
 
@@ -415,7 +417,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 				</DialogActions>
 			</Dialog>
 		</div>
-		<MaterialReactTable
+		<MaterialReactTable localization={localization}
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
 

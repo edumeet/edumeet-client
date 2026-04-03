@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
+import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
@@ -9,6 +10,7 @@ import { addNewLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericIt
 
 const PermissionTable = () => {
 	const dispatch = useAppDispatch();
+	const localization = useMRTLocalization();
 
 	// should be memoized or stable
 	// eslint-disable-next-line camelcase
@@ -163,7 +165,7 @@ const PermissionTable = () => {
 				</DialogActions>
 			</Dialog>
 		</div>
-		<MaterialReactTable
+		<MaterialReactTable localization={localization}
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: () => {
 
