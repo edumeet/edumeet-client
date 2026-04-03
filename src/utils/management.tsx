@@ -9,7 +9,7 @@ export function getTenantName(tenants: TenantOptionTypes, id: string): string {
 		return tenant.name;
 	}
 
-	return `${undefinedLabel()} ${tenantLabel()}`;
+	return `${tenantLabel()} - ${undefinedLabel()}`;
 }
 
 export function getUserEmail(users: UserTypes, id: string): string {

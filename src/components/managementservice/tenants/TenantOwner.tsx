@@ -20,7 +20,7 @@ const TenantOwnerTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return `${undefinedLabel()} ${tenantLabel()}`;
+			return `${tenantLabel()} - ${undefinedLabel()}`;
 		}
 	};
 

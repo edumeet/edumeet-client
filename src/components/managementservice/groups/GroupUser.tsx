@@ -5,7 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Groups, GroupUsers, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, groupLabel, manageItemLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, groupLabel, hiddenEmailLabel, manageItemLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
 
 const GroupUserTable = () => {
 	const dispatch = useAppDispatch();
@@ -38,7 +38,7 @@ const GroupUserTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return `${undefinedLabel()} ${groupLabel()}`;
+			return `${groupLabel()} - ${undefinedLabel()}`;
 		}
 	};
 	const getUserEmail = (id: string): string => {
@@ -47,7 +47,7 @@ const GroupUserTable = () => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return 'Hidden email';
+			return hiddenEmailLabel();
 		}
 	};
 

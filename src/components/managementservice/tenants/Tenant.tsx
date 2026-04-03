@@ -154,10 +154,12 @@ const TenantTable = () => {
 
 						value={description}
 					/>
-					<FormControlLabel
-						control={<Checkbox checked={hideUserDetails} onChange={() => setHideUserDetails(!hideUserDetails)} />}
-						label="Hide user details (email, name) from non-admin users"
-					/>
+					<div>
+						<FormControlLabel
+							control={<Checkbox checked={hideUserDetails} onChange={() => setHideUserDetails(!hideUserDetails)} />}
+							label="Hide user details (email, name) from non-admin users"
+						/>
+					</div>
 					{ id !=0 && <>
 						{`${tenantLabel()} ${fqdnLabel()}`}
 						<TenantFQDNTable tenantId={id} />

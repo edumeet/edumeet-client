@@ -4,9 +4,9 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, Box } from '@mui/material';
 import { Roles, Room, User, UsersRoles } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, deleteData, getData, getDataByRoomId, patchData, getUserByEmail } from '../../../store/actions/managementActions';
+import { createData, deleteData, getData, getDataByRoomId, patchData, getUserByEmail, persistResolvedUser } from '../../../store/actions/managementActions';
 import { RoomProp } from './Room';
-import { userLabel } from '../../translated/translatedComponents';
+import { hiddenEmailLabel, roleLabel, roomLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
 
 const RoomUserRoleTable = (props: RoomProp) => {
 	const roomId = props.roomId;
@@ -57,7 +57,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'undefined role';
+			return `${roleLabel()} - ${undefinedLabel()}`;
 		}
 	};
 
@@ -83,7 +83,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.email) {
 			return t.email;
 		} else {
-			return `${id} - Hidden email`;
+			return `${id} - ${hiddenEmailLabel()}`;
 		}
 	};
 
@@ -95,7 +95,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return 'Undefined room';
+			return `${roomLabel()} - ${undefinedLabel()}`;
 		}
 	};
 
@@ -115,13 +115,13 @@ const RoomUserRoleTable = (props: RoomProp) => {
 			},
 			{
 				accessorKey: 'roleId',
-				header: 'Role',
+				header: roleLabel(),
 				Cell: ({ row }) => getRoleName(String(row.original.roleId))
 
 			},
 			{
 				accessorKey: 'roomId',
-				header: 'Room',
+				header: roomLabel(),
 				Cell: ({ row }) => getRoomName(String(row.original.roomId))
 
 			},
@@ -343,6 +343,9 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				setUserId(idNumber);
 				setSelectedUser(updatedUser);
 				setCantPatch(false);
+
+				// Persist the resolution so the server unsanitizes this user's details
+				dispatch(persistResolvedUser(idNumber));
 			})
 			.catch(() => {
 				setIsResolvingUser(false);
@@ -401,7 +404,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	const getUserLabel = (u: User): string => {
 		if (u?.email) return `${u.id} - ${u.email}`;
 
-		return `${u.id} - Hidden email`;
+		return `${u.id} - ${hiddenEmailLabel()}`;
 	};
 
 	return <>

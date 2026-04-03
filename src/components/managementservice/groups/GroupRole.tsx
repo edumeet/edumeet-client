@@ -55,7 +55,7 @@ const GroupRoleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return `${undefinedLabel()} ${roleLabel()}`;
+			return `${roleLabel()} - ${undefinedLabel()}`;
 		}
 	};
 
@@ -76,7 +76,7 @@ const GroupRoleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return `${undefinedLabel()} ${groupLabel()}`;
+			return `${groupLabel()} - ${undefinedLabel()}`;
 		}
 	};
 
@@ -86,7 +86,7 @@ const GroupRoleTable = () => {
 		if (t && t.name) {
 			return t.name;
 		} else {
-			return `${undefinedLabel()} ${roomLabel()}`;
+			return `${roomLabel()} - ${undefinedLabel()}`;
 		}
 	};
 	

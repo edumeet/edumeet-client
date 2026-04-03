@@ -464,6 +464,20 @@ export const getUserByEmail = (email: string): AppThunk<Promise<object | undefin
 	return data;
 };
 
+export const persistResolvedUser = (resolvedUserId: number): AppThunk<Promise<void>> => async (
+	_dispatch,
+	_getState,
+	{ managementService }
+): Promise<void> => {
+	try {
+		await (await managementService).service('resolvedUsers').create(
+			{ resolvedUserId }
+		);
+	} catch {
+		// Silently ignore — duplicate or failure is not critical
+	}
+};
+
 // eslint-disable-next-line no-unused-vars
 let messageListener: (event: MessageEvent) => void;
 
