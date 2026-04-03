@@ -161,9 +161,9 @@ const TenantTable = () => {
 						/>
 					</div>
 					{ id !=0 && <>
-						{`${tenantLabel()} ${fqdnLabel()}`}
+						<h4>{`${tenantLabel()} ${fqdnLabel()}`}</h4>
 						<TenantFQDNTable tenantId={id} />
-						{`${tenantLabel()} ${authenticationLabel()}`}
+						<h4>{`${tenantLabel()} ${authenticationLabel()}`}</h4>
 						<TenantOAuthTable tenantId={id} />
 					</>}
 
