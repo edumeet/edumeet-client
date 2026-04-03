@@ -13,6 +13,7 @@ import { consumersActions } from '../slices/consumersSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { Logger } from '../../utils/Logger';
 import { stopListeners } from './startActions';
+import { stopRecording } from './recordingActions';
 
 const logger = new Logger('RoomActions');
 
@@ -122,9 +123,14 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (
-	dispatch
+	dispatch,
+	getState
 ): Promise<void> => {
 	logger.debug('leaveRoom()');
+
+	if (getState().room.recording)
+		dispatch(stopRecording());
+
 	dispatch(stopListeners());
 	dispatch(signalingActions.disconnect());
 };

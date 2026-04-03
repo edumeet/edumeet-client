@@ -42,12 +42,21 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 
 	const roomName = new URL(getState().signaling.url).searchParams.get('roomId');
 
-	const saveFileHandle = await showSaveFilePicker({
-		suggestedName: `${roomName}.mp4`,
-		types: [ { description: 'LocalRecording', accept: { 'video/mp4': [ '.mp4' ] } } ],
-	});
+	try {
+		const saveFileHandle = await showSaveFilePicker({
+			suggestedName: `${roomName}.mp4`,
+			types: [ { description: 'LocalRecording', accept: { 'video/mp4': [ '.mp4' ] } } ],
+		});
 
-	writableStream = await saveFileHandle.createWritable();
+		writableStream = await saveFileHandle.createWritable();
+	} catch (error) {
+		if (error instanceof DOMException && error.name === 'AbortError')
+			return;
+
+		logger.error('recordingActions.start [error:%o]', error);
+
+		return;
+	}
 
 	try {
 		audioContext = new AudioContext();

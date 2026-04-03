@@ -9,6 +9,7 @@ import Room from './views/room/Room';
 import { sendFiles } from './store/actions/filesharingActions';
 import { uiActions } from './store/slices/uiSlice';
 import { roomActions } from './store/slices/roomSlice';
+import { stopRecording } from './store/actions/recordingActions';
 import { permissions } from './utils/roles';
 import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
@@ -59,6 +60,7 @@ const App = (): React.JSX.Element => {
 		if (roomState !== 'joined' && roomState !== 'lobby') return;
 
 		const onBeforeUnload = (event: BeforeUnloadEvent) => {
+			dispatch(stopRecording());
 			event.preventDefault();
 			event.returnValue = '';
 		};
