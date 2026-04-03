@@ -6,7 +6,7 @@ import { Room, RoomOwners, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, getDataByRoomId, patchData, getUserByEmail, persistResolvedUser } from '../../../store/actions/managementActions';
 import { RoomProp } from './Room';
-import { hiddenEmailLabel, roomLabel, undefinedLabel, userLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, cancelLabel, deleteLabel, genericItemDescLabel, hiddenEmailLabel, manageItemLabel, roomLabel, roomOwnersLabel, selectButtonLabel, undefinedLabel, userEmailLabel, userLabel } from '../../translated/translatedComponents';
 
 const RoomOwnerTable = (props: RoomProp) => {
 	const roomId = props.roomId;
@@ -342,16 +342,16 @@ const RoomOwnerTable = (props: RoomProp) => {
 
 	return <>
 		<div>
-			<h4>Room owners</h4>
+			<h4>{roomOwnersLabel()}</h4>
 			<Button variant="outlined" onClick={() => handleClickOpen()}>
-				Add new
+				{addNewLabel()}
 			</Button>
 			<hr/>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Add/Edit</DialogTitle>
+				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						These are the parameters that you can change.
+						{genericItemDescLabel()}
 					</DialogContentText>
 					<input type="hidden" name="id" value={id} />
 					{/* <Autocomplete
@@ -373,7 +373,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 						}}
 					>
 						<TextField
-							label="User email"
+							label={userEmailLabel()}
 							fullWidth
 							sx={{ marginRight: '8px' }}
 							value={userEmailInput}
@@ -388,7 +388,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 							onClick={handleResolveUserByEmail}
 							disabled={cantPatch || isResolvingUser || userEmailInput.trim() === ''}
 						>
-							{'SELECT'}
+							{selectButtonLabel()}
 						</Button>
 					</Box>
 					<Autocomplete
@@ -411,13 +411,13 @@ const RoomOwnerTable = (props: RoomProp) => {
 						onChange={handleUserIdChange}
 						value={selectedUser as User}
 						sx={{ marginTop: '8px' }}
-						renderInput={(params) => <TextField {...params} label="User" />}
+						renderInput={(params) => <TextField {...params} label={userLabel()} />}
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} color='warning'>Delete</Button>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>OK</Button>
+					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>

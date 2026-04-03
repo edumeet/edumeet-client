@@ -1549,3 +1549,23 @@ export const roomLockedTooltipLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.roomLockedTooltip',
 	defaultMessage: 'When enabled, new unmanaged rooms start in a locked state. Only the first user to join who is authenticated (logged in via SSO/management) can bypass the lock and admit others from the lobby. All other users, including subsequent authenticated users, will be placed in the lobby.'
 });
+export const selectButtonLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.selectButton',
+	defaultMessage: 'Select'
+});
+export const userEmailLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.userEmail',
+	defaultMessage: 'User email'
+});
+export const roomOwnersLabel = (): string => intl.formatMessage({
+	id: 'label.management.roomOwners',
+	defaultMessage: 'Room owners'
+});
+export const roomUserRolesLabel = (): string => intl.formatMessage({
+	id: 'label.management.roomUserRoles',
+	defaultMessage: 'Room-User roles'
+});
+export const hideUserDetailsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.hideUserDetails',
+	defaultMessage: 'Hide user details (email, name) from non-admin users'
+});

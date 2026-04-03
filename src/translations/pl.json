@@ -474,5 +474,10 @@
 	"label.color.blue": "niebieski",
 	"label.color.purple": "fioletowy",
 	"label.managementservice.disableUnmanagedRoomsTooltip": "Gdy włączone, użytkownicy nie mogą tworzyć ani dołączać do pokoi niezarządzanych (ad-hoc). Dla tej instytucji dostępne będą wyłącznie wstępnie skonfigurowane pokoje zarządzane.",
-	"label.managementservice.roomLockedTooltip": "Gdy włączone, nowe pokoje niezarządzane startują w stanie zablokowanym. Tylko pierwszy użytkownik, który dołączy i jest uwierzytelniony (zalogowany przez SSO/zarządzanie), może ominąć blokadę i wpuszczać innych z poczekalni. Wszyscy pozostali użytkownicy, w tym kolejni uwierzytelnieni, zostaną umieszczeni w poczekalni."
+	"label.managementservice.roomLockedTooltip": "Gdy włączone, nowe pokoje niezarządzane startują w stanie zablokowanym. Tylko pierwszy użytkownik, który dołączy i jest uwierzytelniony (zalogowany przez SSO/zarządzanie), może ominąć blokadę i wpuszczać innych z poczekalni. Wszyscy pozostali użytkownicy, w tym kolejni uwierzytelnieni, zostaną umieszczeni w poczekalni.",
+	"label.managementservice.selectButton": "Wybierz",
+	"label.managementservice.userEmail": "E-mail użytkownika",
+	"label.management.roomOwners": "Właściciele pokoju",
+	"label.management.roomUserRoles": "Role użytkowników pokoju",
+	"label.managementservice.hideUserDetails": "Ukryj dane użytkowników (e-mail, nazwa użytkownika) przed użytkownikami bez uprawnień administratora"
 }

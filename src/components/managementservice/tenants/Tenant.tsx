@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import TenantFQDNTable from './TenatnFQDN';
 import TenantOAuthTable from './TenantOAuth';
-import { addNewLabel, applyLabel, authenticationLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, authenticationLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 export interface TenantProp {
 	tenantId: number;
@@ -157,7 +157,7 @@ const TenantTable = () => {
 					<div>
 						<FormControlLabel
 							control={<Checkbox checked={hideUserDetails} onChange={() => setHideUserDetails(!hideUserDetails)} />}
-							label="Hide user details (email, name) from non-admin users"
+							label={hideUserDetailsLabel()}
 						/>
 					</div>
 					{ id !=0 && <>
