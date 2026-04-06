@@ -8,7 +8,6 @@ import { signalingActions } from '../slices/signalingSlice';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { meActions } from '../slices/meSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
-import { batch } from 'react-redux';
 import { updateMic, updateWebcam } from '../actions/mediaActions';
 import { ProducerSource } from '../../utils/types';
 import { Logger } from '../../utils/Logger';
@@ -254,22 +253,20 @@ const createMediaMiddleware = ({
 				});
 			
 				mediaService.on('lostMediaServer', () => {
-					batch(() => {
-						dispatch(notificationsActions.enqueueNotification({
-							message: 'Lost connection to media server, reconnecting...',
-							options: { variant: 'error' }
-						}));
+					dispatch(notificationsActions.enqueueNotification({
+						message: 'Lost connection to media server, reconnecting...',
+						options: { variant: 'error' }
+					}));
 
-						if (getState().me.lostAudio) {
-							dispatch(meActions.setLostAudio(false));
-							dispatch(updateMic());
-						}
+					if (getState().me.lostAudio) {
+						dispatch(meActions.setLostAudio(false));
+						dispatch(updateMic());
+					}
 
-						if (getState().me.lostVideo) {
-							dispatch(meActions.setLostVideo(false));
-							dispatch(updateWebcam());
-						}
-					});
+					if (getState().me.lostVideo) {
+						dispatch(meActions.setLostVideo(false));
+						dispatch(updateWebcam());
+					}
 				});
 			}
 

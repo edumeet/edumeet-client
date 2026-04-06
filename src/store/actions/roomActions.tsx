@@ -1,4 +1,3 @@
-import { batch } from 'react-redux';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { meActions } from '../slices/meSlice';
 import { peersActions } from '../slices/peersSlice';
@@ -84,29 +83,26 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	// this does nothing 
 	// fileService.iceServers = mediaService.iceServers; 
 
-	batch(() => {
-		
-		dispatch(permissionsActions.setLocked(Boolean(locked)));
-		dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
-		dispatch(peersActions.addPeers(peers));
-		dispatch(lobbyPeersActions.addPeers(lobbyPeers));
-		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
-		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-		dispatch(roomActions.joinCountdownTimer(countdownTimer));
+	dispatch(permissionsActions.setLocked(Boolean(locked)));
+	dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
+	dispatch(peersActions.addPeers(peers));
+	dispatch(lobbyPeersActions.addPeers(lobbyPeers));
+	dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+	dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
+	dispatch(roomActions.joinCountdownTimer(countdownTimer));
 
-		dispatch(countdownTimer.isStarted ? 
-			roomActions.startCountdownTimer() : 
-			roomActions.stopCountdownTimer()
-		);
+	dispatch(countdownTimer.isStarted ?
+		roomActions.startCountdownTimer() :
+		roomActions.stopCountdownTimer()
+	);
 
-		dispatch(drawing.isEnabled ? 
-			drawingActions.enableDrawing() : 
-			drawingActions.disableDrawing()
-		);
+	dispatch(drawing.isEnabled ?
+		drawingActions.enableDrawing() :
+		drawingActions.disableDrawing()
+	);
 
-		dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
-		dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
-	});
+	dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
+	dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
 	
 	// On long-disconnect reconnect, producerClosed may have fired before joinRoom runs,
 	// setting audioMuted/videoMuted=true and lostAudio/lostVideo=true. Clear the lost
@@ -144,11 +140,9 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 
 	// 1. Clear stale peer/media state — room sessions are cleared atomically in peerReconnected
 	//    (short disconnect) or in roomReady (long disconnect, see roomMiddleware).
-	batch(() => {
-		dispatch(peersActions.removeAllPeers());
-		dispatch(consumersActions.removeAllConsumers());
-		dispatch(lobbyPeersActions.removeAllPeers());
-	});
+	dispatch(peersActions.removeAllPeers());
+	dispatch(consumersActions.removeAllConsumers());
+	dispatch(lobbyPeersActions.removeAllPeers());
 
 	// 2. Stop all active senders so they restart cleanly after rejoin.
 	//    local=true (default) suppresses mediaClosed — avoids setting audioMuted/videoMuted here.
@@ -246,11 +240,9 @@ export const joinBreakoutRoom = (sessionId: string): AppThunk<Promise<void>> => 
 			fileHistory,
 		} = await signalingService.sendRequest('joinBreakoutRoom', { roomSessionId: sessionId });
 
-		batch(() => {
-			dispatch(meActions.setSessionId(sessionId));
-			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
-			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-		});
+		dispatch(meActions.setSessionId(sessionId));
+		dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+		dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 
 		if (!audioMuted) dispatch(updateMic());
 		if (!videoMuted) dispatch(updateWebcam());
@@ -280,15 +272,13 @@ export const leaveBreakoutRoom = (): AppThunk<Promise<void>> => async (
 			fileHistory
 		} = await signalingService.sendRequest('leaveBreakoutRoom');
 
-		batch(() => {
-			dispatch(meActions.setSessionId(sessionId));
+		dispatch(meActions.setSessionId(sessionId));
 
-			if (chatHistory)
-				dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+		if (chatHistory)
+			dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 
-			if (fileHistory)
-				dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-		});
+		if (fileHistory)
+			dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 
 		if (!audioMuted) dispatch(updateMic());
 		if (!videoMuted) dispatch(updateWebcam());

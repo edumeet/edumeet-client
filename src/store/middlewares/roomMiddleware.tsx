@@ -3,7 +3,6 @@ import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
-import { batch } from 'react-redux';
 import { setDisplayName, setPicture } from '../actions/meActions';
 import { pauseMic, startExtraVideo, updateMic, updateWebcam } from '../actions/mediaActions';
 import { permissionsActions } from '../slices/permissionsSlice';
@@ -51,37 +50,35 @@ const createRoomMiddleware = ({
 								// TODO: get the rest of the data from the server
 							} = notification.data;
 
-							batch(() => {
-								// Clear any stale sessions from a prior long-disconnect reconnect
-								// where the server closed the peer and sends roomReady again.
-								dispatch(roomSessionsActions.removeAllRoomSessions());
-								dispatch(roomSessionsActions.addRoomSession({
-									sessionId,
-									creationTimestamp,
-									parent: true,
-									...initialRoomSession,
-								}));
-								dispatch(meActions.setSessionId(sessionId));
-								dispatch(settingsActions.setMaxActiveVideos(maxActiveVideos));
-								dispatch(roomActions.updateRoom({
-									breakoutsEnabled,
-									chatEnabled,
-									filesharingEnabled,
-									raiseHandEnabled,
-									reactionsEnabled,
-									localRecordingEnabled,
-									logo: settings.logo,
-									backgroundImage: settings.background,
-									videoCodec: settings.videoCodec ?? 'vp8',
-									simulcast: settings.simulcast ?? true,
-									audioCodec: settings.audioCodec ?? 'opus',
-									screenSharingCodec: settings.screenSharingCodec ?? 'vp8',
-									screenSharingSimulcast: settings.screenSharingSimulcast ?? true,
-								}));
+							// Clear any stale sessions from a prior long-disconnect reconnect
+							// where the server closed the peer and sends roomReady again.
+							dispatch(roomSessionsActions.removeAllRoomSessions());
+							dispatch(roomSessionsActions.addRoomSession({
+								sessionId,
+								creationTimestamp,
+								parent: true,
+								...initialRoomSession,
+							}));
+							dispatch(meActions.setSessionId(sessionId));
+							dispatch(settingsActions.setMaxActiveVideos(maxActiveVideos));
+							dispatch(roomActions.updateRoom({
+								breakoutsEnabled,
+								chatEnabled,
+								filesharingEnabled,
+								raiseHandEnabled,
+								reactionsEnabled,
+								localRecordingEnabled,
+								logo: settings.logo,
+								backgroundImage: settings.background,
+								videoCodec: settings.videoCodec ?? 'vp8',
+								simulcast: settings.simulcast ?? true,
+								audioCodec: settings.audioCodec ?? 'opus',
+								screenSharingCodec: settings.screenSharingCodec ?? 'vp8',
+								screenSharingSimulcast: settings.screenSharingSimulcast ?? true,
+							}));
 
-								dispatch(roomActions.setState('joined'));
-								dispatch(joinRoom());
-							});
+							dispatch(roomActions.setState('joined'));
+							dispatch(joinRoom());
 
 							break;
 						}
@@ -99,35 +96,31 @@ const createRoomMiddleware = ({
 								settings,
 							} = notification.data;
 
-							batch(() => {
-								dispatch(roomActions.updateRoom({
-									chatEnabled,
-									filesharingEnabled,
-									raiseHandEnabled,
-									reactionsEnabled,
-									localRecordingEnabled,
-									breakoutsEnabled,
-									logo: settings.logo,
-									backgroundImage: settings.background,
-									videoCodec: settings.videoCodec ?? 'vp8',
-									simulcast: settings.simulcast ?? true,
-									audioCodec: settings.audioCodec ?? 'opus',
-									screenSharingCodec: settings.screenSharingCodec ?? 'vp8',
-									screenSharingSimulcast: settings.screenSharingSimulcast ?? true,
-								}));
-								dispatch(permissionsActions.setLocked(locked));
-								dispatch(settingsActions.setMaxActiveVideos(maxActiveVideos));
-							});
+							dispatch(roomActions.updateRoom({
+								chatEnabled,
+								filesharingEnabled,
+								raiseHandEnabled,
+								reactionsEnabled,
+								localRecordingEnabled,
+								breakoutsEnabled,
+								logo: settings.logo,
+								backgroundImage: settings.background,
+								videoCodec: settings.videoCodec ?? 'vp8',
+								simulcast: settings.simulcast ?? true,
+								audioCodec: settings.audioCodec ?? 'opus',
+								screenSharingCodec: settings.screenSharingCodec ?? 'vp8',
+								screenSharingSimulcast: settings.screenSharingSimulcast ?? true,
+							}));
+							dispatch(permissionsActions.setLocked(locked));
+							dispatch(settingsActions.setMaxActiveVideos(maxActiveVideos));
 
 							break;
 						}
 
 						case 'enteredLobby': {
-							batch(() => {
-								dispatch(roomActions.setState('lobby'));
-								dispatch(setDisplayName(getState().settings.displayName));
-								dispatch(setPicture(getState().me.picture || ''));
-							});
+							dispatch(roomActions.setState('lobby'));
+							dispatch(setDisplayName(getState().settings.displayName));
+							dispatch(setPicture(getState().me.picture || ''));
 							break;
 						}
 
@@ -184,33 +177,31 @@ const createRoomMiddleware = ({
 							// sessionId is the peer's current session (may differ if in a breakout room).
 							const mainSessionId = roomSessionId ?? sessionId;
 
-							batch(() => {
-								dispatch(roomSessionsActions.removeAllRoomSessions());
-								dispatch(roomSessionsActions.addRoomSession({
-									sessionId: mainSessionId,
-									creationTimestamp,
-									parent: true,
-									...initialRoomSession,
-								}));
-								dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
-								dispatch(meActions.setSessionId(sessionId));
-								dispatch(peersActions.addPeers(peers));
-								dispatch(lobbyPeersActions.addPeers(lobbyPeers));
-								dispatch(roomSessionsActions.addMessages({ sessionId: mainSessionId, messages: chatHistory }));
-								dispatch(roomSessionsActions.addFiles({ sessionId: mainSessionId, files: fileHistory }));
-								dispatch(permissionsActions.setLocked(Boolean(locked)));
-								dispatch(roomActions.joinCountdownTimer(countdownTimer));
-								dispatch(countdownTimer.isStarted ?
-									roomActions.startCountdownTimer() :
-									roomActions.stopCountdownTimer()
-								);
-								dispatch(drawing.isEnabled ?
-									drawingActions.enableDrawing() :
-									drawingActions.disableDrawing()
-								);
-								dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
-								dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
-							});
+							dispatch(roomSessionsActions.removeAllRoomSessions());
+							dispatch(roomSessionsActions.addRoomSession({
+								sessionId: mainSessionId,
+								creationTimestamp,
+								parent: true,
+								...initialRoomSession,
+							}));
+							dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
+							dispatch(meActions.setSessionId(sessionId));
+							dispatch(peersActions.addPeers(peers));
+							dispatch(lobbyPeersActions.addPeers(lobbyPeers));
+							dispatch(roomSessionsActions.addMessages({ sessionId: mainSessionId, messages: chatHistory }));
+							dispatch(roomSessionsActions.addFiles({ sessionId: mainSessionId, files: fileHistory }));
+							dispatch(permissionsActions.setLocked(Boolean(locked)));
+							dispatch(roomActions.joinCountdownTimer(countdownTimer));
+							dispatch(countdownTimer.isStarted ?
+								roomActions.startCountdownTimer() :
+								roomActions.stopCountdownTimer()
+							);
+							dispatch(drawing.isEnabled ?
+								drawingActions.enableDrawing() :
+								drawingActions.disableDrawing()
+							);
+							dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
+							dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
 
 							const lostAudio = getState().me.lostAudio;
 							const lostVideo = getState().me.lostVideo;
@@ -236,15 +227,13 @@ const createRoomMiddleware = ({
 								fileHistory
 							} = notification.data;
 
-							batch(() => {
-								dispatch(meActions.setSessionId(sessionId));
+							dispatch(meActions.setSessionId(sessionId));
 
-								if (chatHistory)
-									dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
+							if (chatHistory)
+								dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 
-								if (fileHistory)
-									dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
-							});
+							if (fileHistory)
+								dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 
 							const lostAudio = getState().me.lostAudio;
 							const lostVideo = getState().me.lostVideo;
