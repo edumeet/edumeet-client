@@ -249,6 +249,21 @@ var config = {
 	title: 'edumeet',
 
 	/**
+	 * Browser-specific warning banners shown on join.
+	 * Each entry matches a browser name (bowser format) and displays
+	 * a persistent notification. Set to [] to disable all warnings.
+	 *
+	 * variant: 'warning' (yellow), 'info' (blue), 'error' (red), 'success' (green)
+	 */
+	browserWarnings: [
+		{
+			browser: 'firefox',
+			message: 'Firefox may experience audio/video issues in larger meetings. For best experience, use a Chromium-based browser (Chrome, Edge, Opera, Brave).',
+			variant: 'warning'
+		}
+	],
+
+	/**
 	 * Theme/UI configuration (4.2+).
 	 *
 	 * This object is merged into the app's Material UI theme (ThemeOptions).
