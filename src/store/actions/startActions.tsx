@@ -11,6 +11,10 @@ import { VolumeWatcher } from '../../utils/volumeWatcher';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { Logger } from '../../utils/Logger';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { getUserData } from './managementActions';
+import { managamentActions } from '../slices/managementSlice';
+import { settingsActions } from '../slices/settingsSlice';
+import { setDisplayName } from './meActions';
 
 const logger = new Logger('listenerActions');
 
@@ -295,6 +299,30 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 					await (await managementService).reAuthenticate();
 
 					dispatch(updateLoginState(token));
+
+					// Populate management.username from OIDC user data
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const userData: any = await dispatch(getUserData());
+
+					const mgmtName = userData?.user?.name || userData?.user?.email || '';
+
+					if (mgmtName) {
+						dispatch(managamentActions.setUsername(mgmtName));
+
+						const currentName = getState().settings.displayName;
+
+						if (!currentName || currentName === 'Guest') {
+							const roomState = getState().room.state;
+
+							if (roomState === 'lobby' || roomState === 'joined') {
+								// Already connected — notify the server
+								dispatch(setDisplayName(mgmtName));
+							} else {
+								// Not connected yet (join screen) — just update the store
+								dispatch(settingsActions.setDisplayName(mgmtName));
+							}
+						}
+					}
 				}
 			}
 		}

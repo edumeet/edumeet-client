@@ -125,9 +125,7 @@ const createRoomMiddleware = ({
 						case 'enteredLobby': {
 							batch(() => {
 								dispatch(roomActions.setState('lobby'));
-								dispatch(
-									setDisplayName(getState().management.username || getState().settings.displayName || 'Guest')
-								);
+								dispatch(setDisplayName(getState().settings.displayName));
 								dispatch(setPicture(getState().me.picture || ''));
 							});
 							break;

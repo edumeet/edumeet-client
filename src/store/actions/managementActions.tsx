@@ -3,6 +3,8 @@ import { Logger } from '../../utils/Logger';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { updateLoginState } from './permissionsActions';
 import { AppThunk } from '../store';
+import { managamentActions } from '../slices/managementSlice';
+import { settingsActions } from '../slices/settingsSlice';
 
 const logger = new Logger('ManagementActions');
 
@@ -503,6 +505,23 @@ export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
 					await (await managementService).reAuthenticate();
 
 					dispatch(updateLoginState(token));
+
+					// Populate management.username from OIDC user data
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const userData: any = await dispatch(getUserData());
+
+					const mgmtName = userData?.user?.name || userData?.user?.email || '';
+
+					if (mgmtName) {
+						dispatch(managamentActions.setUsername(mgmtName));
+
+						// Update the display name if user hasn't set one
+						const currentName = getState().settings.displayName;
+
+						if (!currentName || currentName === 'Guest') {
+							dispatch(settingsActions.setDisplayName(mgmtName));
+						}
+					}
 				}
 			}
 
