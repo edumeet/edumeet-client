@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN yarn install --frozen-lockfile
+RUN corepack enable && yarn install --immutable
 RUN yarn build
 
 FROM steebchen/nginx-spa:stable

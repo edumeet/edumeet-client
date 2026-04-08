@@ -4,7 +4,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 import { ServiceContext } from '../../store/store';
 import { ResolutionWatcher } from '../../utils/resolutionWatcher';
-import type { Consumer as PeerConsumer } from 'ortc-p2p/src/types';
+import type { Consumer as PeerConsumer } from 'ortc-p2p/lib/types';
 import { ProducerSource } from '../../utils/types';
 import { useAppSelector } from '../../store/hooks';
 

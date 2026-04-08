@@ -29,3 +29,8 @@ yarn-error.log*
 !types.d.ts
 .vscode
 stats.html
+
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+.pnp.*

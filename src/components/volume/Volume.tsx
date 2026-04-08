@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { StateConsumer } from '../../store/slices/consumersSlice';
 import { ServiceContext } from '../../store/store';
 import { VolumeWatcher } from '../../utils/volumeWatcher';
-import type { Consumer as PeerConsumer } from 'ortc-p2p/src/types';
+import type { Consumer as PeerConsumer } from 'ortc-p2p/lib/types';
 import hark from 'hark';
 import { useAppSelector } from '../../store/hooks';
 
