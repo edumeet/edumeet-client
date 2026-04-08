@@ -12,11 +12,12 @@ This will start the service using https with a self-signed certificate. It's exp
 Https is needed for things such as `navigator.mediaService.getUserMedia()`. 
 
 ```bash
-$ yarn install
+$ corepack enable
+$ yarn install --immutable
 $ yarn start
 ```
 
-To run the service you need to have Node.js version 24 or higher installed.
+To run the service you need to have Node.js version 24 or higher installed. This project uses Yarn 4 via Corepack.
 
 ### Running the service in production
 
