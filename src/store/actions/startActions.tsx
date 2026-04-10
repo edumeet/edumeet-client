@@ -93,7 +93,9 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 	const videoPermissionSelector = makePermissionSelector(permissions.SHARE_VIDEO);
 	const lockPermissionSelector = makePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 
-	keydownListener = ({ repeat, target, key, ctrlKey, altKey, shiftKey, metaKey }): void => {
+	keydownListener = (event: KeyboardEvent): void => {
+		const { repeat, target, key, ctrlKey, altKey, shiftKey, metaKey } = event;
+
 		if (repeat) return;
 
 		const source = target as HTMLElement;
@@ -101,6 +103,11 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 		if ([ 'input', 'textarea', 'div' ].includes(source?.tagName?.toLowerCase())) return;
 
 		if (ctrlKey || altKey || shiftKey || metaKey) return;
+
+		// Prevent Space and Enter from triggering click on focused buttons
+		if ((key === ' ' || key === 'Enter') && source?.closest('button, [role="button"]')) {
+			event.preventDefault();
+		}
 
 		logger.debug('[keydown:%s]', key);
 
@@ -246,7 +253,8 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 
 	document.addEventListener('keydown', keydownListener);
 
-	keyupListener = ({ target, key, ctrlKey, altKey, shiftKey, metaKey }): void => {
+	keyupListener = (event: KeyboardEvent): void => {
+		const { target, key, ctrlKey, altKey, shiftKey, metaKey } = event;
 		const source = target as HTMLElement;
 
 		if (
@@ -254,6 +262,11 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 				.includes(source?.tagName?.toLowerCase())
 		)
 			return;
+
+		// Prevent Space from triggering click on focused buttons
+		if (key === ' ' && source?.closest('button, [role="button"]')) {
+			event.preventDefault();
+		}
 
 		if (ctrlKey || altKey || shiftKey || metaKey) return;
 

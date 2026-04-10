@@ -48,6 +48,7 @@ const ControlButton = ({
 					onClick={onClick}
 					children={children}
 					variant={variant}
+					tabIndex={-1}
 				/>
 			</div>
 		</Tooltip>
