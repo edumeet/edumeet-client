@@ -44,6 +44,7 @@ const CountdownTimerChip = (): React.JSX.Element => {
 					size="small"
 					icon={<AvTimerIcon style={{ color: 'white' }} />}
 					onClick={() => openUsersTab()}
+					tabIndex={-1}
 				/>
 			)}
 		</>

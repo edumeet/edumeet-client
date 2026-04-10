@@ -38,6 +38,7 @@ const LeaveButton = (): React.JSX.Element => {
 				variant='contained'
 				onClick={handleOpenConfirm}
 				size='small'
+				tabIndex={-1}
 			>
 				{leaveLabel()}
 			</Button>
