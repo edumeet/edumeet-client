@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RoleOptionTypes, TenantOptionTypes } from '../../utils/types';
 export interface ManagementState {
 	//  name: string;
+	userId: number | null;
 	username: string;
 	email: string;
 	avatar: string;
@@ -23,6 +24,7 @@ export interface ManagementState {
 
 const initialState: ManagementState = {
 	// name: '',
+	userId: null,
 	username: '',
 	email: '',
 	avatar: '',
@@ -45,6 +47,7 @@ const managementSlice = createSlice({
 	initialState,
 	reducers: {
 		clearUser: ((state) => {
+			state.userId = null;
 			state.username = '';
 			state.username = '';
 			state.email = '';
@@ -52,6 +55,9 @@ const managementSlice = createSlice({
 			state.tenantAdmin = false;
 			state.tenantOwner = false;
 			state.superAdmin = false;
+		}),
+		setUserId: ((state, action: PayloadAction<number | null>) => {
+			state.userId = action.payload;
 		}),
 		setUsername: ((state, action: PayloadAction<string>) => {
 			state.username = action.payload ?? '';

@@ -29,6 +29,7 @@ const LandingPage = (): React.JSX.Element | null => {
 
 	const dispatch = useAppDispatch();
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	const userId = useAppSelector((state) => state.management.userId);
 	const localeInProgress = useAppSelector((state) => state.room.localeInProgress);
 
 	const roomUrl = `${window.location.protocol}//${window.location.hostname}/${roomId}`;
@@ -57,10 +58,18 @@ const LandingPage = (): React.JSX.Element | null => {
 		setActiveEntryTab(value);
 	};
 
+	const filterOwnedRooms = (allRooms: Room[]) => {
+		if (!userId) return allRooms;
+
+		return allRooms.filter((room) =>
+			room.owners?.some((owner) => owner.userId === userId)
+		);
+	};
+
 	const handleDropdownOpen = () => {
 		dispatch(getData('rooms')).then((roomsData: unknown) => {
 			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
-				setRooms(roomsData.data as Room[]);
+				setRooms(filterOwnedRooms(roomsData.data as Room[]));
 			}
 		});
 	};
@@ -97,7 +106,7 @@ const LandingPage = (): React.JSX.Element | null => {
 
 		dispatch(getData('rooms')).then((roomsData: unknown) => {
 			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
-				setRooms(roomsData.data as Room[]);
+				setRooms(filterOwnedRooms(roomsData.data as Room[]));
 			}
 		});
 	}, [ loggedIn ]);
@@ -109,7 +118,7 @@ const LandingPage = (): React.JSX.Element | null => {
 			if (!document.hidden) {
 				dispatch(getData('rooms')).then((roomsData: unknown) => {
 					if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
-						setRooms(roomsData.data as Room[]);
+						setRooms(filterOwnedRooms(roomsData.data as Room[]));
 					}
 				});
 			}
