@@ -72,8 +72,6 @@ export default function ManagementUI(/* props: Props */) {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getUserData()).then((tdata: any) => {
 			if (tdata) {
-				if (tdata.user.id)
-					dispatch(managamentActions.setUserId(typeof tdata.user.id === 'number' ? tdata.user.id : parseInt(String(tdata.user.id), 10)));
 				if (tdata.user.name!=null && tdata.user.name !='') {
 					dispatch(managamentActions.setUsername(tdata.user.name));
 				} else {

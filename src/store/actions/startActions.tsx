@@ -317,9 +317,6 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					const userData: any = await dispatch(getUserData());
 
-					if (userData?.user?.id)
-						dispatch(managamentActions.setUserId(typeof userData.user.id === 'number' ? userData.user.id : parseInt(String(userData.user.id), 10)));
-
 					const mgmtName = userData?.user?.name || userData?.user?.email || '';
 
 					if (mgmtName) {
