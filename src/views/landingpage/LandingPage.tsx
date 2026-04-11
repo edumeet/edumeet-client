@@ -102,14 +102,14 @@ const LandingPage = (): React.JSX.Element | null => {
 	}, [ dispatch ]);
 
 	useEffect(() => {
-		if (!myRoomsTabEnabled || !loggedIn) return;
+		if (!myRoomsTabEnabled || !loggedIn || !userId) return;
 
 		dispatch(getData('rooms')).then((roomsData: unknown) => {
 			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
 				setRooms(filterOwnedRooms(roomsData.data as Room[]));
 			}
 		});
-	}, [ loggedIn ]);
+	}, [ loggedIn, userId ]);
 
 	useEffect(() => {
 		if (!myRoomsTabEnabled || !loggedIn) return;
