@@ -73,7 +73,7 @@ interface PaginatedResult {
 	data: unknown[];
 }
 
-export const getData = (serviceName: string): AppThunk<Promise<object | undefined>> => async (
+export const getData = (serviceName: string, extraQuery?: Record<string, unknown>): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,
 	{ managementService }
@@ -97,7 +97,8 @@ export const getData = (serviceName: string): AppThunk<Promise<object | undefine
 					$sort: {
 						id: 1,
 
-					}
+					},
+					...extraQuery
 				}
 			}
 		) as PaginatedResult;
@@ -113,7 +114,8 @@ export const getData = (serviceName: string): AppThunk<Promise<object | undefine
 						$sort: {
 							id: 1,
 
-						}
+						},
+						...extraQuery
 					}
 				}
 			) as PaginatedResult;

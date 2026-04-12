@@ -58,7 +58,7 @@ const LandingPage = (): React.JSX.Element | null => {
 	};
 
 	const handleDropdownOpen = () => {
-		dispatch(getData('rooms')).then((roomsData: unknown) => {
+		dispatch(getData('rooms', { ownedOnly: true })).then((roomsData: unknown) => {
 			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
 				setRooms(roomsData.data as Room[]);
 			}
@@ -95,7 +95,7 @@ const LandingPage = (): React.JSX.Element | null => {
 	useEffect(() => {
 		if (!myRoomsTabEnabled || !loggedIn) return;
 
-		dispatch(getData('rooms')).then((roomsData: unknown) => {
+		dispatch(getData('rooms', { ownedOnly: true })).then((roomsData: unknown) => {
 			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
 				setRooms(roomsData.data as Room[]);
 			}
@@ -107,7 +107,7 @@ const LandingPage = (): React.JSX.Element | null => {
 
 		const handleVisibilityChange = () => {
 			if (!document.hidden) {
-				dispatch(getData('rooms')).then((roomsData: unknown) => {
+				dispatch(getData('rooms', { ownedOnly: true })).then((roomsData: unknown) => {
 					if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
 						setRooms(roomsData.data as Room[]);
 					}
