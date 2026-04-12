@@ -57,14 +57,6 @@ const LandingPage = (): React.JSX.Element | null => {
 		setActiveEntryTab(value);
 	};
 
-	const handleDropdownOpen = () => {
-		dispatch(getData('rooms', { ownedOnly: true })).then((roomsData: unknown) => {
-			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
-				setRooms(roomsData.data as Room[]);
-			}
-		});
-	};
-
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText(roomUrl).then(() => {
 			setCopyFeedback(true);
@@ -93,25 +85,25 @@ const LandingPage = (): React.JSX.Element | null => {
 	}, [ dispatch ]);
 
 	useEffect(() => {
-		if (!myRoomsTabEnabled || !loggedIn) return;
+		if (!myRoomsTabEnabled || !loggedIn) {
+			setRooms([]);
 
-		dispatch(getData('rooms', { ownedOnly: true })).then((roomsData: unknown) => {
-			if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
-				setRooms(roomsData.data as Room[]);
-			}
-		});
-	}, [ loggedIn ]);
+			return;
+		}
 
-	useEffect(() => {
-		if (!myRoomsTabEnabled || !loggedIn) return;
+		const fetchRooms = () => {
+			dispatch(getData('rooms', { ownedOnly: true })).then((roomsData: unknown) => {
+				if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
+					setRooms(roomsData.data as Room[]);
+				}
+			});
+		};
+
+		fetchRooms();
 
 		const handleVisibilityChange = () => {
 			if (!document.hidden) {
-				dispatch(getData('rooms', { ownedOnly: true })).then((roomsData: unknown) => {
-					if (roomsData && typeof roomsData === 'object' && 'data' in roomsData) {
-						setRooms(roomsData.data as Room[]);
-					}
-				});
+				fetchRooms();
 			}
 		};
 
@@ -120,7 +112,7 @@ const LandingPage = (): React.JSX.Element | null => {
 		return () => {
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
-	}, [ loggedIn, dispatch ]);
+	}, [ loggedIn ]);
 
 	if (localeInProgress) {
 		return null;
@@ -166,7 +158,6 @@ const LandingPage = (): React.JSX.Element | null => {
 										value={roomId}
 										label={roomNameLabel()}
 										onChange={(event) => { handleRoomSelect(event as React.ChangeEvent<{ value: unknown }>); }}
-										onOpen={handleDropdownOpen}
 										autoFocus
 										style={{ textAlign: 'left' }}
 									>
