@@ -130,13 +130,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	imprintUrl: '',
 	privacyUrl: '',
 	reactionsTimeout: 10000,
-	browserWarnings: [
-		{
-			browser: 'firefox',
-			message: 'Firefox may experience audio/video issues in larger meetings. For best experience, use a Chromium-based browser (Chrome, Edge, Opera, Brave).',
-			variant: 'warning',
-		},
-	],
+	browserWarnings: [],
 };
 
 export interface EdumeetConfig {
