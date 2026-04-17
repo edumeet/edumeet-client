@@ -422,7 +422,7 @@
 	"label.managementservice.nameCannotBeEmpty": "Name cannot be empty!",
 	"label.managementservice.permissions": "Permission(s)",
 	"label.managementservice.fqdnFull": "Fully Qualified Domain Name (FQDN)",
-	"label.managementservice.fqdn": "fqdn",
+	"label.managementservice.fqdn": "FQDN",
 	"label.managementservice.accessUrl": "Access URL",
 	"label.managementservice.authorizeUrl": "Authorize URL",
 	"label.managementservice.profileUrl": "Profile URL",
