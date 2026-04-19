@@ -34,13 +34,6 @@ const createPermissionsMiddleware = ({
 				const flush = (): void => {
 					flushTimeout = null;
 
-					if (getState().room.state !== 'joined') {
-						pendingAdded.clear();
-						pendingRemoved.clear();
-
-						return;
-					}
-
 					if (pendingAdded.size > 0) {
 						dispatch(notificationsActions.enqueueNotification({
 							message: permissionGrantedLabel([ ...pendingAdded ].join(', ')),
@@ -59,6 +52,11 @@ const createPermissionsMiddleware = ({
 				};
 
 				const schedule = (perm: string, kind: 'added' | 'removed'): void => {
+					// Gate at schedule time — events that arrive before we're fully
+					// in the room (initial join, slow reconnect) are silently dropped
+					// so they can't leak into a flush that runs after the state flips.
+					if (getState().room.state !== 'joined') return;
+
 					if (kind === 'added') {
 						pendingAdded.add(perm);
 						pendingRemoved.delete(perm);
