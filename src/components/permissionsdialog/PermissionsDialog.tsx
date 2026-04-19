@@ -164,12 +164,22 @@ const PermissionsDialog = (): React.JSX.Element => {
 		setBulkDraft(null);
 	};
 
+	const resetDraftFor = (peerId: string): void => {
+		const original = peers?.find((p) => p.id === peerId)?.permissions ?? [];
+
+		setDraft((prev) => ({ ...prev, [peerId]: new Set(original) }));
+	};
+
 	const togglePeer = (peerId: string): void => {
 		setSelectedPeerIds((prev) => {
 			const next = new Set(prev);
 
-			if (next.has(peerId)) next.delete(peerId);
-			else next.add(peerId);
+			if (next.has(peerId)) {
+				next.delete(peerId);
+				resetDraftFor(peerId);
+			} else {
+				next.add(peerId);
+			}
 
 			return next;
 		});
@@ -179,7 +189,11 @@ const PermissionsDialog = (): React.JSX.Element => {
 		if (!peers) return;
 
 		setSelectedPeerIds((prev) => {
-			if (prev.size === peers.length) return new Set();
+			if (prev.size === peers.length) {
+				setDraft(Object.fromEntries(peers.map((p) => [ p.id, new Set(p.permissions) ])));
+
+				return new Set();
+			}
 
 			return new Set(peers.map((p) => p.id));
 		});
