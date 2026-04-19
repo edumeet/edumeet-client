@@ -127,6 +127,10 @@ const PermissionsDialog = (): React.JSX.Element => {
 		try {
 			const result = await dispatch(fetchRoomPermissions());
 
+			result.sort((a, b) =>
+				(a.displayName || a.id).localeCompare(b.displayName || b.id)
+			);
+
 			setPeers(result);
 			setDraft(new Set());
 			setDraftDirty(false);
