@@ -2,12 +2,12 @@ import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { useMRTLocalization } from '../../../utils/mrtLocalization';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, FormControlLabel, Checkbox, Box } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, FormControlLabel, Checkbox, Box, Typography } from '@mui/material';
 import React from 'react';
 import { Roles, Tenant, Permissions, RolePermissions } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { addNewLabel, allPermissionsLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameLabel, permissionsLabel, tenantLabel, undefinedTenantLabel } from '../../translated/translatedComponents';
+import { addNewLabel, allPermissionsLabel, applyLabel, cancelLabel, deleteLabel, descLabel, genericItemDescLabel, manageItemLabel, nameLabel, permissionDescriptions, permissionsLabel, tenantLabel, undefinedTenantLabel } from '../../translated/translatedComponents';
 
 const RoleTable = () => {
 	const dispatch = useAppDispatch();
@@ -263,18 +263,28 @@ const RoleTable = () => {
 
 	const children = (
 		<Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-			{Object.entries(permissions).map(([ key, value ]) =>
-				<FormControlLabel
-					disabled={checkedDisabled || cannotEdit }
-					key={`${key}uniqe`}
-					control={<Checkbox checked={checked[parseInt(key)]}
-						onChange={(event) => handleChangeMod(event, parseInt(key))
-						}
-						name={`${key}uniq`} />}
+			{Object.entries(permissions).map(([ key, value ]) => {
+				const permDescription = permissionDescriptions[value.name]?.();
 
-					label={value.name}
-				/>
-			)}
+				return (
+					<Box key={`${key}uniqe`} sx={{ mb: 1 }}>
+						<FormControlLabel
+							disabled={checkedDisabled || cannotEdit }
+							control={<Checkbox checked={checked[parseInt(key)]}
+								onChange={(event) => handleChangeMod(event, parseInt(key))
+								}
+								name={`${key}uniq`} />}
+
+							label={value.name}
+						/>
+						{permDescription && (
+							<Typography variant='caption' color='text.secondary' sx={{ display: 'block', ml: 4 }}>
+								{permDescription}
+							</Typography>
+						)}
+					</Box>
+				);
+			})}
 		</Box>
 	);
 

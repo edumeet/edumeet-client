@@ -9,6 +9,7 @@ import BackgroundSelectDialog from '../../components/backgroundselectdialog/Back
 import LobbyDialog from '../../components/lobbydialog/LobbyDialog';
 import FilesharingDialog from '../../components/filesharingdialog/FilesharingDialog';
 import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog';
+import PermissionsDialog from '../../components/permissionsdialog/PermissionsDialog';
 import Help from '../../components/helpdialog/HelpDialog';
 import MainContent from '../../components/maincontent/MainContent';
 import HelpButton from '../../components/controlbuttons/HelpButton';
@@ -82,6 +83,7 @@ const Room = (): React.JSX.Element => {
 			<Help />
 			<FilesharingDialog />
 			<ExtraVideoDialog />
+			<PermissionsDialog />
 			<HelpButton type='iconbutton' />
 		</>
 	);

@@ -1,8 +1,10 @@
 import { styled } from '@mui/material';
 import { memo } from 'react';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, usePermissionSelector } from '../../store/hooks';
+import { permissions } from '../../utils/roles';
 import CloseMeetingButton from '../textbuttons/CloseMeetingButton';
 import MuteAllButton from '../textbuttons/MuteAllButton';
+import PermissionsButton from '../textbuttons/PermissionsButton';
 import StopAllScreenshareButton from '../textbuttons/StopAllScreenshareButton';
 import StopAllVideoButton from '../textbuttons/StopAllVideoButton';
 
@@ -17,6 +19,7 @@ const ModeratorDiv = styled('div')(({ theme }) => ({
 
 const ListModerator = (): React.JSX.Element => {
 	useAppSelector((state) => state.settings.locale);
+	const canModerateRoom = usePermissionSelector(permissions.MODERATE_ROOM);
 
 	return (
 		<ModeratorDiv>
@@ -24,6 +27,7 @@ const ListModerator = (): React.JSX.Element => {
 			<MuteAllButton size='small' />
 			<StopAllVideoButton size='small' />
 			<StopAllScreenshareButton size='small' />
+			{canModerateRoom && <PermissionsButton size='small' />}
 		</ModeratorDiv>
 	);
 };

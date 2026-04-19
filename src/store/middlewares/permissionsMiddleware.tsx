@@ -1,10 +1,17 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
-import { AppDispatch, MiddlewareOptions } from '../store';
+import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { permissionsActions } from '../slices/permissionsSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { permissionGrantedLabel, permissionRevokedLabel } from '../../components/translated/translatedComponents';
 import { Logger } from '../../utils/Logger';
 
 const logger = new Logger('PermissionsMiddleware');
+
+// Batch window: multiple permissionAdded/Removed notifications from a single
+// server-side `Peer.permissions = [...]` setter call arrive back-to-back;
+// we group them into one snackbar per direction.
+const BATCH_MS = 150;
 
 const createPermissionsMiddleware = ({
 	signalingService
@@ -12,12 +19,57 @@ const createPermissionsMiddleware = ({
 	logger.debug('createPermissionsMiddleware()');
 
 	const middleware: Middleware = ({
-		dispatch
+		dispatch,
+		getState,
 	}: {
 		dispatch: AppDispatch,
+		getState: () => RootState,
 	}) =>
 		(next) => (action) => {
 			if (signalingActions.connect.match(action)) {
+				const pendingAdded = new Set<string>();
+				const pendingRemoved = new Set<string>();
+				let flushTimeout: ReturnType<typeof setTimeout> | null = null;
+
+				const flush = (): void => {
+					flushTimeout = null;
+
+					if (pendingAdded.size > 0) {
+						dispatch(notificationsActions.enqueueNotification({
+							message: permissionGrantedLabel([ ...pendingAdded ].join(', ')),
+							options: { variant: 'success' },
+						}));
+						pendingAdded.clear();
+					}
+
+					if (pendingRemoved.size > 0) {
+						dispatch(notificationsActions.enqueueNotification({
+							message: permissionRevokedLabel([ ...pendingRemoved ].join(', ')),
+							options: { variant: 'warning' },
+						}));
+						pendingRemoved.clear();
+					}
+				};
+
+				const schedule = (perm: string, kind: 'added' | 'removed'): void => {
+					// Gate at schedule time — events that arrive before we're fully
+					// in the room (initial join, slow reconnect) are silently dropped
+					// so they can't leak into a flush that runs after the state flips.
+					if (getState().room.state !== 'joined') return;
+
+					if (kind === 'added') {
+						pendingAdded.add(perm);
+						pendingRemoved.delete(perm);
+					} else {
+						pendingRemoved.add(perm);
+						pendingAdded.delete(perm);
+					}
+
+					if (flushTimeout === null) {
+						flushTimeout = setTimeout(flush, BATCH_MS);
+					}
+				};
+
 				signalingService.on('notification', (notification) => {
 					try {
 						switch (notification.method) {
@@ -39,11 +91,13 @@ const createPermissionsMiddleware = ({
 
 							case 'permissionAdded': {
 								dispatch(permissionsActions.addPermission(notification.data.permission));
+								schedule(notification.data.permission, 'added');
 								break;
 							}
 
 							case 'permissionRemoved': {
 								dispatch(permissionsActions.removePermission(notification.data.permission));
+								schedule(notification.data.permission, 'removed');
 								break;
 							}
 						}

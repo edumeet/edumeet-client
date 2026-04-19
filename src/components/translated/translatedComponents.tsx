@@ -1569,3 +1569,120 @@ export const hideUserDetailsLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.hideUserDetails',
 	defaultMessage: 'Hide user details (email, name) from non-admin users'
 });
+
+export const managePermissionsLabel = (): string => intl.formatMessage({
+	id: 'label.managePermissions',
+	defaultMessage: 'Manage permissions'
+});
+
+export const selectAllLabel = (): string => intl.formatMessage({
+	id: 'label.selectAll',
+	defaultMessage: 'Select all'
+});
+
+export const selectPeersFirstLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.selectPeersFirst',
+	defaultMessage: 'Select one or more peers to edit their permissions.'
+});
+
+export const noOtherPeersLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.noOtherPeers',
+	defaultMessage: 'No other peers are in the room.'
+});
+
+export const applyPermissionsLabel = (count: number): string => intl.formatMessage({
+	id: 'label.permissions.apply',
+	defaultMessage: 'Apply changes ({count})'
+}, { count });
+
+export const pendingChangesLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.pendingChanges',
+	defaultMessage: 'Pending changes'
+});
+
+export const resetDraftLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.resetDraft',
+	defaultMessage: 'Reset'
+});
+
+export const discardChangesLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.discardChanges',
+	defaultMessage: 'Discard unsaved changes?'
+});
+
+export const permissionGrantedLabel = (list: string): string => intl.formatMessage({
+	id: 'label.permissions.granted',
+	defaultMessage: 'Permission granted: {list}'
+}, { list });
+
+export const permissionRevokedLabel = (list: string): string => intl.formatMessage({
+	id: 'label.permissions.revoked',
+	defaultMessage: 'Permission revoked: {list}'
+}, { list });
+
+export const permissionDescriptions: Record<string, () => string> = {
+	BYPASS_ROOM_LOCK: () => intl.formatMessage({
+		id: 'label.permission.description.BYPASS_ROOM_LOCK',
+		defaultMessage: 'Allows the user to enter the room even when the room is locked.'
+	}),
+	CHANGE_ROOM_LOCK: () => intl.formatMessage({
+		id: 'label.permission.description.CHANGE_ROOM_LOCK',
+		defaultMessage: 'Allows the user to lock or unlock the room.'
+	}),
+	PROMOTE_PEER: () => intl.formatMessage({
+		id: 'label.permission.description.PROMOTE_PEER',
+		defaultMessage: 'Allows the user to admit peers from the lobby into the room.'
+	}),
+	MODIFY_ROLE: () => intl.formatMessage({
+		id: 'label.permission.description.MODIFY_ROLE',
+		defaultMessage: 'Allows the user to grant or revoke roles of other peers. (currently not used)'
+	}),
+	SEND_CHAT: () => intl.formatMessage({
+		id: 'label.permission.description.SEND_CHAT',
+		defaultMessage: 'Allows the user to send chat messages.'
+	}),
+	MODERATE_CHAT: () => intl.formatMessage({
+		id: 'label.permission.description.MODERATE_CHAT',
+		defaultMessage: 'Allows the user to moderate chat and clear chat history.'
+	}),
+	SHARE_AUDIO: () => intl.formatMessage({
+		id: 'label.permission.description.SHARE_AUDIO',
+		defaultMessage: 'Allows the user to share their microphone.'
+	}),
+	SHARE_VIDEO: () => intl.formatMessage({
+		id: 'label.permission.description.SHARE_VIDEO',
+		defaultMessage: 'Allows the user to share their webcam.'
+	}),
+	SHARE_SCREEN: () => intl.formatMessage({
+		id: 'label.permission.description.SHARE_SCREEN',
+		defaultMessage: 'Allows the user to share their screen.'
+	}),
+	SHARE_EXTRA_VIDEO: () => intl.formatMessage({
+		id: 'label.permission.description.SHARE_EXTRA_VIDEO',
+		defaultMessage: 'Allows the user to share additional video sources beyond their webcam.'
+	}),
+	SHARE_FILE: () => intl.formatMessage({
+		id: 'label.permission.description.SHARE_FILE',
+		defaultMessage: 'Allows the user to share files with other peers in the room.'
+	}),
+	MODERATE_FILES: () => intl.formatMessage({
+		id: 'label.permission.description.MODERATE_FILES',
+		defaultMessage: 'Allows the user to moderate shared files and clear file history.'
+	}),
+	MODERATE_ROOM: () => intl.formatMessage({
+		id: 'label.permission.description.MODERATE_ROOM',
+		defaultMessage: 'Allows the user to moderate the room: kick peers, mute all, stop video, manage permissions.'
+	}),
+	LOCAL_RECORD_ROOM: () => intl.formatMessage({
+		id: 'label.permission.description.LOCAL_RECORD_ROOM',
+		defaultMessage: 'Allows the user to record the meeting locally on their own device.'
+	}),
+	CREATE_ROOM: () => intl.formatMessage({
+		id: 'label.permission.description.CREATE_ROOM',
+		defaultMessage: 'Allows the user to create breakout rooms.'
+	}),
+	CHANGE_ROOM: () => intl.formatMessage({
+		id: 'label.permission.description.CHANGE_ROOM',
+		defaultMessage: 'Allows the user to join or leave breakout rooms.'
+	}),
+};
