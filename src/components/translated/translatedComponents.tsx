@@ -1600,6 +1600,11 @@ export const pendingChangesLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Pending changes'
 });
 
+export const resetDraftLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.resetDraft',
+	defaultMessage: 'Reset'
+});
+
 export const permissionDescriptions: Record<string, () => string> = {
 	BYPASS_ROOM_LOCK: () => intl.formatMessage({
 		id: 'label.permission.description.BYPASS_ROOM_LOCK',
