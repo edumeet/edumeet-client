@@ -487,6 +487,7 @@
 	"label.permissions.apply": "Änderungen übernehmen ({count})",
 	"label.permissions.pendingChanges": "Ausstehende Änderungen",
 	"label.permissions.resetDraft": "Zurücksetzen",
+	"label.permissions.discardChanges": "Nicht gespeicherte Änderungen verwerfen?",
 	"label.permission.description.BYPASS_ROOM_LOCK": "Erlaubt dem Benutzer, den Raum zu betreten, selbst wenn der Raum gesperrt ist.",
 	"label.permission.description.CHANGE_ROOM_LOCK": "Erlaubt dem Benutzer, den Raum zu sperren und zu entsperren.",
 	"label.permission.description.PROMOTE_PEER": "Erlaubt dem Benutzer, Teilnehmer aus dem Warteraum in den Raum zu lassen.",

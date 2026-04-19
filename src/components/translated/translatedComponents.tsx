@@ -1605,6 +1605,11 @@ export const resetDraftLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Reset'
 });
 
+export const discardChangesLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.discardChanges',
+	defaultMessage: 'Discard unsaved changes?'
+});
+
 export const permissionDescriptions: Record<string, () => string> = {
 	BYPASS_ROOM_LOCK: () => intl.formatMessage({
 		id: 'label.permission.description.BYPASS_ROOM_LOCK',

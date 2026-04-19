@@ -23,7 +23,9 @@ import { permissions as allClientPermissions } from '../../utils/roles';
 import {
 	applyPermissionsLabel,
 	closeLabel,
+	discardChangesLabel,
 	managePermissionsLabel,
+	noLabel,
 	noOtherPeersLabel,
 	pendingChangesLabel,
 	permissionDescriptions,
@@ -31,6 +33,7 @@ import {
 	resetDraftLabel,
 	selectAllLabel,
 	selectPeersFirstLabel,
+	yesLabel,
 } from '../translated/translatedComponents';
 import GenericDialog from '../genericdialog/GenericDialog';
 import {
@@ -109,6 +112,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 	const [ draftDirty, setDraftDirty ] = useState(false);
 	const [ loading, setLoading ] = useState(false);
 	const [ submitting, setSubmitting ] = useState(false);
+	const [ confirmCloseOpen, setConfirmCloseOpen ] = useState(false);
 
 	const permissionKeys = useMemo(() => Object.values(allClientPermissions), []);
 	const callerPermissionSet = useMemo(() => new Set(callerPermissions), [ callerPermissions ]);
@@ -162,12 +166,23 @@ const PermissionsDialog = (): React.JSX.Element => {
 		setDraft(union);
 	}, [ selectedPeerIds, peers, draftDirty ]);
 
-	const handleClose = (): void => {
+	const doClose = (): void => {
+		setConfirmCloseOpen(false);
 		dispatch(uiActions.setUi({ permissionsDialogOpen: false }));
 		setPeers(null);
 		setDraft(new Set());
 		setDraftDirty(false);
 		setSelectedPeerIds(new Set());
+	};
+
+	const handleClose = (): void => {
+		if (draftDirty && !submitting) {
+			setConfirmCloseOpen(true);
+
+			return;
+		}
+
+		doClose();
 	};
 
 	const togglePeer = (peerId: string): void => {
@@ -259,176 +274,198 @@ const PermissionsDialog = (): React.JSX.Element => {
 	const allSelected = peers !== null && peers.length > 0 && selectedPeerIds.size === peers.length;
 
 	return (
-		<GenericDialog
-			open={open}
-			onClose={handleClose}
-			maxWidth='lg'
-			title={managePermissionsLabel()}
-			content={
-				<>
-					<SplitContent>
-						<PeerColumn>
-							<Typography variant='subtitle2' sx={{ mb: 1 }}>
-								{permissionsLabel()}
-							</Typography>
-							{loading && !peers ? (
-								<Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-									<CircularProgress size={24} />
-								</Box>
-							) : peers && peers.length > 0 ? (
-								<>
-									<FormControlLabel
-										control={
-											<Checkbox
-												checked={allSelected}
-												indeterminate={!allSelected && selectedPeerIds.size > 0}
-												onChange={toggleSelectAll}
-											/>
-										}
-										label={selectAllLabel()}
-									/>
-									<Divider />
-									<List dense disablePadding>
-										{peers.map((peer) => (
-											<ListItemButton
-												key={peer.id}
-												onClick={() => togglePeer(peer.id)}
-												dense
-											>
-												<ListItemIcon sx={{ minWidth: 36 }}>
+		<>
+			<GenericDialog
+				open={open}
+				onClose={handleClose}
+				maxWidth='lg'
+				title={managePermissionsLabel()}
+				content={
+					<>
+						<SplitContent>
+							<PeerColumn>
+								<Typography variant='subtitle2' sx={{ mb: 1 }}>
+									{permissionsLabel()}
+								</Typography>
+								{loading && !peers ? (
+									<Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+										<CircularProgress size={24} />
+									</Box>
+								) : peers && peers.length > 0 ? (
+									<>
+										<FormControlLabel
+											control={
+												<Checkbox
+													checked={allSelected}
+													indeterminate={!allSelected && selectedPeerIds.size > 0}
+													onChange={toggleSelectAll}
+												/>
+											}
+											label={selectAllLabel()}
+										/>
+										<Divider />
+										<List dense disablePadding>
+											{peers.map((peer) => (
+												<ListItemButton
+													key={peer.id}
+													onClick={() => togglePeer(peer.id)}
+													dense
+												>
+													<ListItemIcon sx={{ minWidth: 36 }}>
+														<Checkbox
+															edge='start'
+															checked={selectedPeerIds.has(peer.id)}
+															tabIndex={-1}
+															disableRipple
+														/>
+													</ListItemIcon>
+													<ListItemText primary={peer.displayName || peer.id} />
+												</ListItemButton>
+											))}
+										</List>
+									</>
+								) : (
+									<Typography variant='body2' color='text.secondary'>
+										{noOtherPeersLabel()}
+									</Typography>
+								)}
+							</PeerColumn>
+							<PermissionColumn>
+								{selectedPeerIds.size === 0 && (
+									<Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
+										{selectPeersFirstLabel()}
+									</Typography>
+								)}
+								<List dense disablePadding>
+									{permissionKeys.map((perm) => {
+										const callerLacks = !callerPermissionSet.has(perm);
+										const disabled = callerLacks || selectedPeerIds.size === 0 || submitting;
+										const description = permissionDescriptions[perm]?.();
+										const checked = isPermissionChecked(perm);
+
+										return (
+											<PermissionRow key={perm} disablePadding>
+												<ListItemIcon sx={{ minWidth: 36, mt: 1 }}>
 													<Checkbox
 														edge='start'
-														checked={selectedPeerIds.has(peer.id)}
-														tabIndex={-1}
-														disableRipple
+														checked={checked}
+														disabled={disabled}
+														onChange={() => togglePermission(perm)}
 													/>
 												</ListItemIcon>
-												<ListItemText primary={peer.displayName || peer.id} />
-											</ListItemButton>
-										))}
-									</List>
-								</>
-							) : (
-								<Typography variant='body2' color='text.secondary'>
-									{noOtherPeersLabel()}
+												<Stack sx={{ py: 1, pr: 1, flex: 1 }}>
+													<PermissionKey variant='body2'>{perm}</PermissionKey>
+													{description && (
+														<Typography variant='caption' color='text.secondary'>
+															{description}
+														</Typography>
+													)}
+												</Stack>
+											</PermissionRow>
+										);
+									})}
+								</List>
+							</PermissionColumn>
+						</SplitContent>
+						{peerDiffs.length > 0 && (
+							<PendingStrip>
+								<Typography variant='subtitle2' sx={{ mb: 1 }}>
+									{pendingChangesLabel()} ({peerDiffs.length})
 								</Typography>
-							)}
-						</PeerColumn>
-						<PermissionColumn>
-							{selectedPeerIds.size === 0 && (
-								<Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
-									{selectPeersFirstLabel()}
-								</Typography>
-							)}
-							<List dense disablePadding>
-								{permissionKeys.map((perm) => {
-									const callerLacks = !callerPermissionSet.has(perm);
-									const disabled = callerLacks || selectedPeerIds.size === 0 || submitting;
-									const description = permissionDescriptions[perm]?.();
-									const checked = isPermissionChecked(perm);
+								<Stack spacing={0.5}>
+									{peerDiffs.map((diff) => {
+										const peer = peers?.find((p) => p.id === diff.peerId);
 
-									return (
-										<PermissionRow key={perm} disablePadding>
-											<ListItemIcon sx={{ minWidth: 36, mt: 1 }}>
-												<Checkbox
-													edge='start'
-													checked={checked}
-													disabled={disabled}
-													onChange={() => togglePermission(perm)}
-												/>
-											</ListItemIcon>
-											<Stack sx={{ py: 1, pr: 1, flex: 1 }}>
-												<PermissionKey variant='body2'>{perm}</PermissionKey>
-												{description && (
-													<Typography variant='caption' color='text.secondary'>
-														{description}
-													</Typography>
-												)}
+										return (
+											<Stack
+												key={diff.peerId}
+												direction='row'
+												spacing={0.5}
+												flexWrap='wrap'
+												alignItems='center'
+											>
+												<Typography variant='body2' sx={{ fontWeight: 600, minWidth: 120 }}>
+													{peer?.displayName || diff.peerId}:
+												</Typography>
+												{diff.added.map((p) => (
+													<Chip
+														key={`+${p}`}
+														label={`+ ${p}`}
+														size='small'
+														color='success'
+														variant='outlined'
+													/>
+												))}
+												{diff.removed.map((p) => (
+													<Chip
+														key={`-${p}`}
+														label={`− ${p}`}
+														size='small'
+														color='error'
+														variant='outlined'
+													/>
+												))}
 											</Stack>
-										</PermissionRow>
-									);
-								})}
-							</List>
-						</PermissionColumn>
-					</SplitContent>
-					{peerDiffs.length > 0 && (
-						<PendingStrip>
-							<Typography variant='subtitle2' sx={{ mb: 1 }}>
-								{pendingChangesLabel()} ({peerDiffs.length})
-							</Typography>
-							<Stack spacing={0.5}>
-								{peerDiffs.map((diff) => {
-									const peer = peers?.find((p) => p.id === diff.peerId);
-
-									return (
-										<Stack
-											key={diff.peerId}
-											direction='row'
-											spacing={0.5}
-											flexWrap='wrap'
-											alignItems='center'
-										>
-											<Typography variant='body2' sx={{ fontWeight: 600, minWidth: 120 }}>
-												{peer?.displayName || diff.peerId}:
-											</Typography>
-											{diff.added.map((p) => (
-												<Chip
-													key={`+${p}`}
-													label={`+ ${p}`}
-													size='small'
-													color='success'
-													variant='outlined'
-												/>
-											))}
-											{diff.removed.map((p) => (
-												<Chip
-													key={`-${p}`}
-													label={`− ${p}`}
-													size='small'
-													color='error'
-													variant='outlined'
-												/>
-											))}
-										</Stack>
-									);
-								})}
-							</Stack>
-						</PendingStrip>
-					)}
-				</>
-			}
-			actions={
-				<>
-					<Button
-						onClick={handleClose}
-						startIcon={<CloseIcon />}
-						variant='outlined'
-						size='small'
-						disabled={submitting}
-						sx={{ marginRight: 'auto' }}
-					>
-						{closeLabel()}
-					</Button>
-					<Button
-						onClick={handleReset}
-						variant='contained'
-						size='small'
-						disabled={!draftDirty || submitting}
-					>
-						{resetDraftLabel()}
-					</Button>
-					<Button
-						onClick={handleSubmit}
-						variant='contained'
-						color='error'
-						size='small'
-						disabled={changedUpdates.length === 0 || submitting || loading}
-					>
-						{submitting ? <CircularProgress size={18} /> : applyPermissionsLabel(changedUpdates.length)}
-					</Button>
-				</>
-			}
-		/>
+										);
+									})}
+								</Stack>
+							</PendingStrip>
+						)}
+					</>
+				}
+				actions={
+					<>
+						<Button
+							onClick={handleClose}
+							startIcon={<CloseIcon />}
+							variant='outlined'
+							size='small'
+							disabled={submitting}
+							sx={{ marginRight: 'auto' }}
+						>
+							{closeLabel()}
+						</Button>
+						<Button
+							onClick={handleReset}
+							variant='contained'
+							size='small'
+							disabled={!draftDirty || submitting}
+						>
+							{resetDraftLabel()}
+						</Button>
+						<Button
+							onClick={handleSubmit}
+							variant='contained'
+							color='error'
+							size='small'
+							disabled={changedUpdates.length === 0 || submitting || loading}
+						>
+							{submitting ? <CircularProgress size={18} /> : applyPermissionsLabel(changedUpdates.length)}
+						</Button>
+					</>
+				}
+			/>
+			<GenericDialog
+				open={confirmCloseOpen}
+				onClose={() => setConfirmCloseOpen(false)}
+				maxWidth='xs'
+				title={discardChangesLabel()}
+				actions={
+					<>
+						<Button onClick={() => setConfirmCloseOpen(false)}>
+							{noLabel()}
+						</Button>
+						<Button
+							onClick={doClose}
+							color='error'
+							variant='contained'
+						>
+							{yesLabel()}
+						</Button>
+					</>
+				}
+			/>
+		</>
 	);
 };
 
