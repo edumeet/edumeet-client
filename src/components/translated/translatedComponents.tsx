@@ -1620,6 +1620,11 @@ export const permissionRevokedLabel = (list: string): string => intl.formatMessa
 	defaultMessage: 'Permission revoked: {list}'
 }, { list });
 
+export const claimRoomNoticeLabel = (): string => intl.formatMessage({
+	id: 'label.room.claimNotice',
+	defaultMessage: 'Settings will take effect on the next meeting after everyone has left.'
+});
+
 export const permissionDescriptions: Record<string, () => string> = {
 	BYPASS_ROOM_LOCK: () => intl.formatMessage({
 		id: 'label.permission.description.BYPASS_ROOM_LOCK',

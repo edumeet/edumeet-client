@@ -490,6 +490,7 @@
 	"label.permissions.discardChanges": null,
 	"label.permissions.granted": null,
 	"label.permissions.revoked": null,
+	"label.room.claimNotice": null,
 	"label.permission.description.BYPASS_ROOM_LOCK": null,
 	"label.permission.description.CHANGE_ROOM_LOCK": null,
 	"label.permission.description.PROMOTE_PEER": null,

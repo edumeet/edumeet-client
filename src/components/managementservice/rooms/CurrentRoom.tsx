@@ -3,7 +3,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextFiel
 import { Roles, Room } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
-import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roleLabel, roomBgLabel } from '../../translated/translatedComponents';
+import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, claimRoomNoticeLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roleLabel, roomBgLabel, yesLabel } from '../../translated/translatedComponents';
 import { Logger } from '../../../utils/Logger';
 
 const logger = new Logger('CurrentRoom');
@@ -222,6 +222,7 @@ const CurrentRoomModal = () => {
 	}, [ loggedIn ]);
 
 	const [ open, setOpen ] = useState(false);
+	const [ claimConfirmOpen, setClaimConfirmOpen ] = useState(false);
 
 	const handleNameChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
 		setName(event.target.value);
@@ -278,6 +279,7 @@ const CurrentRoomModal = () => {
 		fetchProduct();
 	};
 	const handleCreateRoom = () => {
+		setClaimConfirmOpen(false);
 		dispatch(createRoom(window.location.pathname.substring(1).toLowerCase())).then(() => {
 			checkRoomExists();
 		});
@@ -399,11 +401,25 @@ const CurrentRoomModal = () => {
 		<div style={{ margin: 'auto', textAlign: 'center' }}>
 			<Button
 				disabled={isLoadingRoomExists || managementConnectionError }
-				onClick={roomExists ? handleOpen : handleCreateRoom}
+				onClick={roomExists ? handleOpen : () => setClaimConfirmOpen(true)}
 			>
 				{isLoadingRoomExists ? '...' : (roomExists ? editRoomLabel() : claimRoomLabel())}
 			</Button>
 		</div>
+		<Dialog open={claimConfirmOpen} onClose={() => setClaimConfirmOpen(false)}>
+			<DialogTitle>{claimRoomLabel()}</DialogTitle>
+			<DialogContent>
+				<DialogContentText>{claimRoomNoticeLabel()}</DialogContentText>
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={() => setClaimConfirmOpen(false)} variant='outlined'>
+					{noLabel()}
+				</Button>
+				<Button onClick={handleCreateRoom} variant='contained'>
+					{yesLabel()}
+				</Button>
+			</DialogActions>
+		</Dialog>
 	</>;
 };
 
