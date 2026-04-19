@@ -2,7 +2,7 @@ import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { useMRTLocalization } from '../../../utils/mrtLocalization';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, FormControlLabel, Checkbox, Box, Tooltip } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, FormControlLabel, Checkbox, Box, Typography } from '@mui/material';
 import React from 'react';
 import { Roles, Tenant, Permissions, RolePermissions } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -267,7 +267,7 @@ const RoleTable = () => {
 				const permDescription = permissionDescriptions[value.name]?.();
 
 				return (
-					<Tooltip key={`${key}uniqe`} title={permDescription ?? ''} placement='right' arrow>
+					<Box key={`${key}uniqe`} sx={{ mb: 1 }}>
 						<FormControlLabel
 							disabled={checkedDisabled || cannotEdit }
 							control={<Checkbox checked={checked[parseInt(key)]}
@@ -277,7 +277,12 @@ const RoleTable = () => {
 
 							label={value.name}
 						/>
-					</Tooltip>
+						{permDescription && (
+							<Typography variant='caption' color='text.secondary' sx={{ display: 'block', ml: 4 }}>
+								{permDescription}
+							</Typography>
+						)}
+					</Box>
 				);
 			})}
 		</Box>
