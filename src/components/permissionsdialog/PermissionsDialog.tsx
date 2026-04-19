@@ -405,12 +405,13 @@ const PermissionsDialog = (): React.JSX.Element => {
 						variant='outlined'
 						size='small'
 						disabled={submitting}
+						sx={{ marginRight: 'auto' }}
 					>
 						{closeLabel()}
 					</Button>
 					<Button
 						onClick={handleReset}
-						variant='text'
+						variant='contained'
 						size='small'
 						disabled={!draftDirty || submitting}
 					>
@@ -419,6 +420,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 					<Button
 						onClick={handleSubmit}
 						variant='contained'
+						color='error'
 						size='small'
 						disabled={changedUpdates.length === 0 || submitting || loading}
 					>
