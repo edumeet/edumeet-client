@@ -321,11 +321,13 @@ const PermissionsDialog = (): React.JSX.Element => {
 								)}
 							</PeerColumn>
 							<PermissionColumn>
-								{selectedPeerIds.size === 0 && (
-									<Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
-										{selectPeersFirstLabel()}
-									</Typography>
-								)}
+								<Typography
+									variant='body2'
+									color='text.secondary'
+									sx={{ mb: 1, visibility: selectedPeerIds.size === 0 ? 'visible' : 'hidden' }}
+								>
+									{selectPeersFirstLabel()}
+								</Typography>
 								<List dense disablePadding>
 									{permissionKeys.map((perm) => {
 										const callerLacks = !callerPermissionSet.has(perm);
