@@ -114,7 +114,12 @@ const PermissionsDialog = (): React.JSX.Element => {
 	const [ submitting, setSubmitting ] = useState(false);
 	const [ confirmCloseOpen, setConfirmCloseOpen ] = useState(false);
 
-	const permissionKeys = useMemo(() => Object.values(allClientPermissions), []);
+	// MODIFY_ROLE is declared and distributed but not yet enforced anywhere; hide it
+	// from the modal so it doesn't surface as a ghost toggle.
+	const permissionKeys = useMemo(
+		() => Object.values(allClientPermissions).filter((p) => p !== allClientPermissions.MODIFY_ROLE),
+		[],
+	);
 	const callerPermissionSet = useMemo(() => new Set(callerPermissions), [ callerPermissions ]);
 
 	const reload = useCallback(async () => {

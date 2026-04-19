@@ -1610,6 +1610,16 @@ export const discardChangesLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Discard unsaved changes?'
 });
 
+export const permissionGrantedLabel = (list: string): string => intl.formatMessage({
+	id: 'label.permissions.granted',
+	defaultMessage: 'Permission granted: {list}'
+}, { list });
+
+export const permissionRevokedLabel = (list: string): string => intl.formatMessage({
+	id: 'label.permissions.revoked',
+	defaultMessage: 'Permission revoked: {list}'
+}, { list });
+
 export const permissionDescriptions: Record<string, () => string> = {
 	BYPASS_ROOM_LOCK: () => intl.formatMessage({
 		id: 'label.permission.description.BYPASS_ROOM_LOCK',
@@ -1625,7 +1635,7 @@ export const permissionDescriptions: Record<string, () => string> = {
 	}),
 	MODIFY_ROLE: () => intl.formatMessage({
 		id: 'label.permission.description.MODIFY_ROLE',
-		defaultMessage: 'Allows the user to grant or revoke roles of other peers.'
+		defaultMessage: 'Allows the user to grant or revoke roles of other peers. (currently not used)'
 	}),
 	SEND_CHAT: () => intl.formatMessage({
 		id: 'label.permission.description.SEND_CHAT',
