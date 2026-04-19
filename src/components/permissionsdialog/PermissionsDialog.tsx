@@ -144,27 +144,18 @@ const PermissionsDialog = (): React.JSX.Element => {
 		reload();
 	}, [ open, reload ]);
 
-	// Auto-seed draft from the union of currently-selected peers' server permissions,
-	// but ONLY while the draft is still clean. Once the user edits anything, selection
-	// changes leave the draft untouched.
-	useEffect(() => {
-		if (draftDirty) return;
-		if (!peers) return;
-
-		if (selectedPeerIds.size === 0) {
-			setDraft(new Set());
-
-			return;
-		}
-
+	// Compute the union of permissions for a given set of peer ids. Used to seed
+	// the draft when it is still clean.
+	const computeUnion = useCallback((ids: Set<string>): Set<string> => {
 		const union = new Set<string>();
 
-		selectedPeerIds.forEach((id) => {
+		if (!peers) return union;
+		ids.forEach((id) => {
 			peers.find((p) => p.id === id)?.permissions.forEach((p) => union.add(p));
 		});
 
-		setDraft(union);
-	}, [ selectedPeerIds, peers, draftDirty ]);
+		return union;
+	}, [ peers ]);
 
 	const doClose = (): void => {
 		setConfirmCloseOpen(false);
@@ -186,24 +177,24 @@ const PermissionsDialog = (): React.JSX.Element => {
 	};
 
 	const togglePeer = (peerId: string): void => {
-		setSelectedPeerIds((prev) => {
-			const next = new Set(prev);
+		const next = new Set(selectedPeerIds);
 
-			if (next.has(peerId)) next.delete(peerId);
-			else next.add(peerId);
+		if (next.has(peerId)) next.delete(peerId);
+		else next.add(peerId);
 
-			return next;
-		});
+		setSelectedPeerIds(next);
+		if (!draftDirty) setDraft(computeUnion(next));
 	};
 
 	const toggleSelectAll = (): void => {
 		if (!peers) return;
 
-		setSelectedPeerIds((prev) => {
-			if (prev.size === peers.length) return new Set();
+		const next = selectedPeerIds.size === peers.length
+			? new Set<string>()
+			: new Set(peers.map((p) => p.id));
 
-			return new Set(peers.map((p) => p.id));
-		});
+		setSelectedPeerIds(next);
+		if (!draftDirty) setDraft(computeUnion(next));
 	};
 
 	const isPermissionChecked = (perm: string): boolean => draft.has(perm);
@@ -253,6 +244,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 
 	const handleReset = (): void => {
 		setDraftDirty(false);
+		setDraft(computeUnion(selectedPeerIds));
 	};
 
 	const handleSubmit = async (): Promise<void> => {
