@@ -1,6 +1,8 @@
 export type Permission = string;
 
 export const permissions: Record<string, Permission> = {
+	// The role(s) will gain access to the room even if it is locked
+	BYPASS_ROOM_LOCK: 'BYPASS_ROOM_LOCK',
 	// The role(s) have permission to lock/unlock a room
 	CHANGE_ROOM_LOCK: 'CHANGE_ROOM_LOCK',
 	// The role(s) have permission to promote a peer from the lobby
