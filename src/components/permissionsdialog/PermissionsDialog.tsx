@@ -125,14 +125,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 			setPeers(result);
 			setDraft(new Set());
 			setDraftDirty(false);
-			setSelectedPeerIds((prev) => {
-				const valid = new Set<string>();
-				const ids = new Set(result.map((p) => p.id));
-
-				prev.forEach((id) => ids.has(id) && valid.add(id));
-
-				return valid;
-			});
+			setSelectedPeerIds(new Set());
 		} finally {
 			setLoading(false);
 		}
