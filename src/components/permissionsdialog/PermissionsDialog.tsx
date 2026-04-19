@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	Box,
 	Button,
+	ButtonGroup,
 	Checkbox,
+	Chip,
 	CircularProgress,
 	Divider,
 	FormControlLabel,
@@ -22,10 +24,13 @@ import { permissions as allClientPermissions } from '../../utils/roles';
 import {
 	applyPermissionsLabel,
 	closeLabel,
+	grantToAllLabel,
 	managePermissionsLabel,
 	noOtherPeersLabel,
+	pendingChangesLabel,
 	permissionDescriptions,
 	permissionsLabel,
+	revokeFromAllLabel,
 	selectAllLabel,
 	selectPeersFirstLabel,
 } from '../translated/translatedComponents';
@@ -68,6 +73,21 @@ const PermissionKey = styled(Typography)({
 	fontFamily: 'monospace',
 	fontWeight: 600,
 });
+
+const PendingStrip = styled(Box)(({ theme }) => ({
+	marginTop: theme.spacing(2),
+	paddingTop: theme.spacing(1),
+	borderTop: `1px solid ${theme.palette.divider}`,
+	maxHeight: 160,
+	overflowY: 'auto',
+}));
+
+interface PeerDiff {
+	peerId: string;
+	displayName?: string;
+	added: string[];
+	removed: string[];
+}
 
 const PermissionsDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -153,11 +173,8 @@ const PermissionsDialog = (): React.JSX.Element => {
 		return 'mixed';
 	};
 
-	const togglePermissionForSelected = (perm: string): void => {
+	const applyPermissionChange = (perm: string, grant: boolean): void => {
 		if (selectedPeerIds.size === 0) return;
-
-		const state = permissionStateForSelected(perm);
-		const shouldGrant = state !== 'all';
 
 		setDraft((prev) => {
 			const next: Record<string, Set<string>> = { ...prev };
@@ -165,7 +182,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 			selectedPeerIds.forEach((id) => {
 				const current = next[id] ? new Set(next[id]) : new Set<string>();
 
-				if (shouldGrant) current.add(perm);
+				if (grant) current.add(perm);
 				else current.delete(perm);
 
 				next[id] = current;
@@ -175,25 +192,33 @@ const PermissionsDialog = (): React.JSX.Element => {
 		});
 	};
 
-	const changedUpdates = useMemo<PermissionUpdate[]>(() => {
+	const peerDiffs = useMemo<PeerDiff[]>(() => {
 		if (!peers) return [];
 
-		const updates: PermissionUpdate[] = [];
+		const diffs: PeerDiff[] = [];
 
 		for (const peer of peers) {
 			const original = new Set(peer.permissions);
 			const draftSet = draft[peer.id] ?? new Set<string>();
 
-			if (
-				original.size !== draftSet.size ||
-				[ ...original ].some((p) => !draftSet.has(p))
-			) {
-				updates.push({ peerId: peer.id, permissions: [ ...draftSet ] });
+			const added: string[] = [];
+			const removed: string[] = [];
+
+			draftSet.forEach((p) => { if (!original.has(p)) added.push(p); });
+			original.forEach((p) => { if (!draftSet.has(p)) removed.push(p); });
+
+			if (added.length > 0 || removed.length > 0) {
+				diffs.push({ peerId: peer.id, displayName: peer.displayName, added, removed });
 			}
 		}
 
-		return updates;
+		return diffs;
 	}, [ peers, draft ]);
+
+	const changedUpdates = useMemo<PermissionUpdate[]>(
+		() => peerDiffs.map((d) => ({ peerId: d.peerId, permissions: [ ...(draft[d.peerId] ?? new Set()) ] })),
+		[ peerDiffs, draft ],
+	);
 
 	const handleSubmit = async (): Promise<void> => {
 		if (changedUpdates.length === 0) return;
@@ -220,92 +245,148 @@ const PermissionsDialog = (): React.JSX.Element => {
 			maxWidth='lg'
 			title={managePermissionsLabel()}
 			content={
-				<SplitContent>
-					<PeerColumn>
-						<Typography variant='subtitle2' sx={{ mb: 1 }}>
-							{permissionsLabel()}
-						</Typography>
-						{loading && !peers ? (
-							<Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-								<CircularProgress size={24} />
-							</Box>
-						) : peers && peers.length > 0 ? (
-							<>
-								<FormControlLabel
-									control={
-										<Checkbox
-											checked={allSelected}
-											indeterminate={!allSelected && selectedPeerIds.size > 0}
-											onChange={toggleSelectAll}
-										/>
-									}
-									label={selectAllLabel()}
-								/>
-								<Divider />
-								<List dense disablePadding>
-									{peers.map((peer) => (
-										<ListItemButton
-											key={peer.id}
-											onClick={() => togglePeer(peer.id)}
-											dense
-										>
-											<ListItemIcon sx={{ minWidth: 36 }}>
-												<Checkbox
-													edge='start'
-													checked={selectedPeerIds.has(peer.id)}
-													tabIndex={-1}
-													disableRipple
-												/>
-											</ListItemIcon>
-											<ListItemText primary={peer.displayName || peer.id} />
-										</ListItemButton>
-									))}
-								</List>
-							</>
-						) : (
-							<Typography variant='body2' color='text.secondary'>
-								{noOtherPeersLabel()}
+				<>
+					<SplitContent>
+						<PeerColumn>
+							<Typography variant='subtitle2' sx={{ mb: 1 }}>
+								{permissionsLabel()}
 							</Typography>
-						)}
-					</PeerColumn>
-					<PermissionColumn>
-						{selectedPeerIds.size === 0 && (
-							<Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
-								{selectPeersFirstLabel()}
-							</Typography>
-						)}
-						<List dense disablePadding>
-							{permissionKeys.map((perm) => {
-								const state = permissionStateForSelected(perm);
-								const callerLacks = !callerPermissionSet.has(perm);
-								const disabled = callerLacks || selectedPeerIds.size === 0 || submitting;
-								const description = permissionDescriptions[perm]?.();
-
-								return (
-									<PermissionRow key={perm} disablePadding>
-										<ListItemIcon sx={{ minWidth: 36, mt: 1 }}>
+							{loading && !peers ? (
+								<Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+									<CircularProgress size={24} />
+								</Box>
+							) : peers && peers.length > 0 ? (
+								<>
+									<FormControlLabel
+										control={
 											<Checkbox
-												edge='start'
-												checked={state === 'all'}
-												indeterminate={state === 'mixed'}
-												disabled={disabled}
-												onChange={() => togglePermissionForSelected(perm)}
+												checked={allSelected}
+												indeterminate={!allSelected && selectedPeerIds.size > 0}
+												onChange={toggleSelectAll}
 											/>
-										</ListItemIcon>
-										<Stack sx={{ py: 1, pr: 1, flex: 1 }}>
-											<PermissionKey variant='body2'>{perm}</PermissionKey>
-											{description && (
-												<Typography variant='caption' color='text.secondary'>
-													{description}
-												</Typography>
-											)}
+										}
+										label={selectAllLabel()}
+									/>
+									<Divider />
+									<List dense disablePadding>
+										{peers.map((peer) => (
+											<ListItemButton
+												key={peer.id}
+												onClick={() => togglePeer(peer.id)}
+												dense
+											>
+												<ListItemIcon sx={{ minWidth: 36 }}>
+													<Checkbox
+														edge='start'
+														checked={selectedPeerIds.has(peer.id)}
+														tabIndex={-1}
+														disableRipple
+													/>
+												</ListItemIcon>
+												<ListItemText primary={peer.displayName || peer.id} />
+											</ListItemButton>
+										))}
+									</List>
+								</>
+							) : (
+								<Typography variant='body2' color='text.secondary'>
+									{noOtherPeersLabel()}
+								</Typography>
+							)}
+						</PeerColumn>
+						<PermissionColumn>
+							{selectedPeerIds.size === 0 && (
+								<Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
+									{selectPeersFirstLabel()}
+								</Typography>
+							)}
+							<List dense disablePadding>
+								{permissionKeys.map((perm) => {
+									const state = permissionStateForSelected(perm);
+									const callerLacks = !callerPermissionSet.has(perm);
+									const baseDisabled = callerLacks || selectedPeerIds.size === 0 || submitting;
+									const description = permissionDescriptions[perm]?.();
+
+									return (
+										<PermissionRow key={perm} disablePadding>
+											<Box sx={{ minWidth: 160, pt: 1, display: 'flex', alignItems: 'center' }}>
+												{state === 'mixed' ? (
+													<ButtonGroup size='small' variant='outlined' disabled={baseDisabled}>
+														<Button onClick={() => applyPermissionChange(perm, true)}>
+															{grantToAllLabel(selectedPeerIds.size)}
+														</Button>
+														<Button onClick={() => applyPermissionChange(perm, false)}>
+															{revokeFromAllLabel(selectedPeerIds.size)}
+														</Button>
+													</ButtonGroup>
+												) : (
+													<Checkbox
+														edge='start'
+														checked={state === 'all'}
+														disabled={baseDisabled}
+														onChange={() => applyPermissionChange(perm, state !== 'all')}
+													/>
+												)}
+											</Box>
+											<Stack sx={{ py: 1, pr: 1, flex: 1 }}>
+												<PermissionKey variant='body2'>{perm}</PermissionKey>
+												{description && (
+													<Typography variant='caption' color='text.secondary'>
+														{description}
+													</Typography>
+												)}
+											</Stack>
+										</PermissionRow>
+									);
+								})}
+							</List>
+						</PermissionColumn>
+					</SplitContent>
+					{peerDiffs.length > 0 && (
+						<PendingStrip>
+							<Typography variant='subtitle2' sx={{ mb: 1 }}>
+								{pendingChangesLabel()} ({peerDiffs.length})
+							</Typography>
+							<Stack spacing={0.5}>
+								{peerDiffs.map((diff) => {
+									const peer = peers?.find((p) => p.id === diff.peerId);
+
+									return (
+										<Stack
+											key={diff.peerId}
+											direction='row'
+											spacing={0.5}
+											flexWrap='wrap'
+											alignItems='center'
+										>
+											<Typography variant='body2' sx={{ fontWeight: 600, minWidth: 120 }}>
+												{peer?.displayName || diff.peerId}:
+											</Typography>
+											{diff.added.map((p) => (
+												<Chip
+													key={`+${p}`}
+													label={`+ ${p}`}
+													size='small'
+													color='success'
+													variant='outlined'
+												/>
+											))}
+											{diff.removed.map((p) => (
+												<Chip
+													key={`-${p}`}
+													label={`− ${p}`}
+													size='small'
+													color='error'
+													variant='outlined'
+												/>
+											))}
 										</Stack>
-									</PermissionRow>
-								);
-							})}
-						</List>
-					</PermissionColumn>
-				</SplitContent>
+									);
+								})}
+							</Stack>
+						</PendingStrip>
+					)}
+				</>
 			}
 			actions={
 				<>
