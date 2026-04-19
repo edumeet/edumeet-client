@@ -50,7 +50,7 @@ const CloseMeetingButton = ({ size }: Pick<ButtonProps, 'size'>): React.JSX.Elem
 				content={`${closeMeetingLabel()}?`}
 				actions={
 					<>
-						<Button onClick={handleCloseConfirm} disabled={closeMeetingInProgress}>
+						<Button onClick={handleCloseConfirm} disabled={closeMeetingInProgress} variant='outlined'>
 							{noLabel()}
 						</Button>
 						<Button

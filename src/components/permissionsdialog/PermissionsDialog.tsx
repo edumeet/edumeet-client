@@ -444,7 +444,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 				title={discardChangesLabel()}
 				actions={
 					<>
-						<Button onClick={() => setConfirmCloseOpen(false)}>
+						<Button onClick={() => setConfirmCloseOpen(false)} variant='outlined'>
 							{noLabel()}
 						</Button>
 						<Button

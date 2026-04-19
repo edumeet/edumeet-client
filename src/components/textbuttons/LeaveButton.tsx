@@ -51,7 +51,7 @@ const LeaveButton = (): React.JSX.Element => {
 				content={confirmLeaveLabel()}
 				actions={
 					<>
-						<Button onClick={handleCloseConfirm}>
+						<Button onClick={handleCloseConfirm} variant='outlined'>
 							{noLabel()}
 						</Button>
 						<Button color='error' variant='contained' onClick={handleConfirmLeave}>
