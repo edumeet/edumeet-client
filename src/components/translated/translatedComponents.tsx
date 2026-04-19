@@ -1622,7 +1622,7 @@ export const permissionRevokedLabel = (list: string): string => intl.formatMessa
 
 export const claimRoomNoticeLabel = (): string => intl.formatMessage({
 	id: 'label.room.claimNotice',
-	defaultMessage: 'Settings will take effect on the next meeting after everyone has left.'
+	defaultMessage: 'Settings will take effect on the next meeting after everyone has left. Continue?'
 });
 
 export const permissionDescriptions: Record<string, () => string> = {

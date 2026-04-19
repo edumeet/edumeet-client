@@ -490,7 +490,7 @@
 	"label.permissions.discardChanges": "Odrzucić niezapisane zmiany?",
 	"label.permissions.granted": "Nadano uprawnienia: {list}",
 	"label.permissions.revoked": "Odebrano uprawnienia: {list}",
-	"label.room.claimNotice": "Ustawienia zaczną obowiązywać na kolejnym spotkaniu, gdy wszyscy opuszczą obecne.",
+	"label.room.claimNotice": "Ustawienia zaczną obowiązywać na kolejnym spotkaniu, gdy wszyscy opuszczą obecne. Kontynuować?",
 	"label.permission.description.BYPASS_ROOM_LOCK": "Pozwala użytkownikowi wejść do pokoju, nawet gdy pokój jest zablokowany.",
 	"label.permission.description.CHANGE_ROOM_LOCK": "Pozwala użytkownikowi blokować i odblokowywać pokój.",
 	"label.permission.description.PROMOTE_PEER": "Pozwala użytkownikowi wpuszczać uczestników z poczekalni do pokoju.",

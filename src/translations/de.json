@@ -490,7 +490,7 @@
 	"label.permissions.discardChanges": "Nicht gespeicherte Änderungen verwerfen?",
 	"label.permissions.granted": "Berechtigung gewährt: {list}",
 	"label.permissions.revoked": "Berechtigung entzogen: {list}",
-	"label.room.claimNotice": "Die Einstellungen werden beim nächsten Meeting wirksam, nachdem alle den Raum verlassen haben.",
+	"label.room.claimNotice": "Die Einstellungen werden beim nächsten Meeting wirksam, nachdem alle den Raum verlassen haben. Fortfahren?",
 	"label.permission.description.BYPASS_ROOM_LOCK": "Erlaubt dem Benutzer, den Raum zu betreten, selbst wenn der Raum gesperrt ist.",
 	"label.permission.description.CHANGE_ROOM_LOCK": "Erlaubt dem Benutzer, den Raum zu sperren und zu entsperren.",
 	"label.permission.description.PROMOTE_PEER": "Erlaubt dem Benutzer, Teilnehmer aus dem Warteraum in den Raum zu lassen.",

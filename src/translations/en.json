@@ -490,7 +490,7 @@
 	"label.permissions.discardChanges": "Discard unsaved changes?",
 	"label.permissions.granted": "Permission granted: {list}",
 	"label.permissions.revoked": "Permission revoked: {list}",
-	"label.room.claimNotice": "Settings will take effect on the next meeting after everyone has left.",
+	"label.room.claimNotice": "Settings will take effect on the next meeting after everyone has left. Continue?",
 	"label.permission.description.BYPASS_ROOM_LOCK": "Allows the user to enter the room even when the room is locked.",
 	"label.permission.description.CHANGE_ROOM_LOCK": "Allows the user to lock or unlock the room.",
 	"label.permission.description.PROMOTE_PEER": "Allows the user to admit peers from the lobby into the room.",
