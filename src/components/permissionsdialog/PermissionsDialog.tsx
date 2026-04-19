@@ -47,6 +47,10 @@ const SplitContent = styled(Box)(({ theme }) => ({
 	display: 'flex',
 	gap: theme.spacing(2),
 	minHeight: 400,
+	[theme.breakpoints.down('sm')]: {
+		flexDirection: 'column',
+		minHeight: 0,
+	},
 }));
 
 const PeerColumn = styled(Box)(({ theme }) => ({
@@ -55,13 +59,24 @@ const PeerColumn = styled(Box)(({ theme }) => ({
 	paddingRight: theme.spacing(1),
 	overflowY: 'auto',
 	maxHeight: 480,
+	[theme.breakpoints.down('sm')]: {
+		flex: '0 0 auto',
+		maxHeight: 200,
+		borderRight: 'none',
+		borderBottom: `1px solid ${theme.palette.divider}`,
+		paddingRight: 0,
+		paddingBottom: theme.spacing(1),
+	},
 }));
 
-const PermissionColumn = styled(Box)({
+const PermissionColumn = styled(Box)(({ theme }) => ({
 	flex: 1,
 	overflowY: 'auto',
 	maxHeight: 480,
-});
+	[theme.breakpoints.down('sm')]: {
+		maxHeight: 'none',
+	},
+}));
 
 const PermissionRow = styled(ListItem)(({ theme }) => ({
 	alignItems: 'flex-start',
