@@ -485,8 +485,6 @@
 	"label.permissions.selectPeersFirst": "Wählen Sie einen oder mehrere Teilnehmer aus, um deren Berechtigungen zu bearbeiten.",
 	"label.permissions.noOtherPeers": "Es sind keine anderen Teilnehmer im Raum.",
 	"label.permissions.apply": "Änderungen übernehmen ({count})",
-	"label.permissions.grantToAll": "Gewähren ({count})",
-	"label.permissions.revokeFromAll": "Entziehen ({count})",
 	"label.permissions.pendingChanges": "Ausstehende Änderungen",
 	"label.permission.description.BYPASS_ROOM_LOCK": "Erlaubt dem Benutzer, den Raum zu betreten, selbst wenn der Raum gesperrt ist.",
 	"label.permission.description.CHANGE_ROOM_LOCK": "Erlaubt dem Benutzer, den Raum zu sperren und zu entsperren.",

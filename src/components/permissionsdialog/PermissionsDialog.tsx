@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	Box,
 	Button,
-	ButtonGroup,
 	Checkbox,
 	Chip,
 	CircularProgress,
@@ -24,13 +23,11 @@ import { permissions as allClientPermissions } from '../../utils/roles';
 import {
 	applyPermissionsLabel,
 	closeLabel,
-	grantToAllLabel,
 	managePermissionsLabel,
 	noOtherPeersLabel,
 	pendingChangesLabel,
 	permissionDescriptions,
 	permissionsLabel,
-	revokeFromAllLabel,
 	selectAllLabel,
 	selectPeersFirstLabel,
 } from '../translated/translatedComponents';
@@ -89,6 +86,13 @@ interface PeerDiff {
 	removed: string[];
 }
 
+const setsEqual = (a: Set<string>, b: Set<string>): boolean => {
+	if (a.size !== b.size) return false;
+	for (const v of a) if (!b.has(v)) return false;
+
+	return true;
+};
+
 const PermissionsDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const open = useAppSelector((state) => state.ui.permissionsDialogOpen);
@@ -97,7 +101,10 @@ const PermissionsDialog = (): React.JSX.Element => {
 
 	const [ peers, setPeers ] = useState<PermissionsPeer[] | null>(null);
 	const [ selectedPeerIds, setSelectedPeerIds ] = useState<Set<string>>(new Set());
+	// Per-peer edits, used in single-peer mode and as the persisted edits carried across selections.
 	const [ draft, setDraft ] = useState<Record<string, Set<string>>>({});
+	// Uniform target set in multi-peer (bulk) mode. Null when fewer than 2 peers are selected.
+	const [ bulkDraft, setBulkDraft ] = useState<Set<string> | null>(null);
 	const [ loading, setLoading ] = useState(false);
 	const [ submitting, setSubmitting ] = useState(false);
 
@@ -119,6 +126,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 
 				return valid;
 			});
+			setBulkDraft(null);
 		} finally {
 			setLoading(false);
 		}
@@ -130,11 +138,30 @@ const PermissionsDialog = (): React.JSX.Element => {
 		reload();
 	}, [ open, reload ]);
 
+	// Maintain bulkDraft: reset to union of selected peers' drafts whenever the selection changes.
+	// In single-peer mode (size < 2), clear it.
+	useEffect(() => {
+		if (selectedPeerIds.size < 2) {
+			setBulkDraft(null);
+
+			return;
+		}
+
+		const union = new Set<string>();
+
+		selectedPeerIds.forEach((id) => {
+			draft[id]?.forEach((p) => union.add(p));
+		});
+
+		setBulkDraft(union);
+	}, [ selectedPeerIds ]);
+
 	const handleClose = (): void => {
 		dispatch(uiActions.setUi({ permissionsDialogOpen: false }));
 		setPeers(null);
 		setDraft({});
 		setSelectedPeerIds(new Set());
+		setBulkDraft(null);
 	};
 
 	const togglePeer = (peerId: string): void => {
@@ -158,39 +185,48 @@ const PermissionsDialog = (): React.JSX.Element => {
 		});
 	};
 
-	const permissionStateForSelected = (perm: string): 'all' | 'none' | 'mixed' => {
-		if (selectedPeerIds.size === 0) return 'none';
+	const isBulkMode = selectedPeerIds.size >= 2 && bulkDraft !== null;
+	const singlePeerId = selectedPeerIds.size === 1 ? [ ...selectedPeerIds ][0] : null;
 
-		let has = 0;
+	const isPermissionChecked = (perm: string): boolean => {
+		if (isBulkMode) return bulkDraft!.has(perm);
+		if (singlePeerId) return draft[singlePeerId]?.has(perm) ?? false;
 
-		selectedPeerIds.forEach((id) => {
-			if (draft[id]?.has(perm)) has++;
-		});
-
-		if (has === 0) return 'none';
-		if (has === selectedPeerIds.size) return 'all';
-
-		return 'mixed';
+		return false;
 	};
 
-	const applyPermissionChange = (perm: string, grant: boolean): void => {
-		if (selectedPeerIds.size === 0) return;
+	const togglePermission = (perm: string): void => {
+		if (isBulkMode) {
+			setBulkDraft((prev) => {
+				const next = new Set(prev);
 
-		setDraft((prev) => {
-			const next: Record<string, Set<string>> = { ...prev };
+				if (next.has(perm)) next.delete(perm);
+				else next.add(perm);
 
-			selectedPeerIds.forEach((id) => {
-				const current = next[id] ? new Set(next[id]) : new Set<string>();
-
-				if (grant) current.add(perm);
-				else current.delete(perm);
-
-				next[id] = current;
+				return next;
 			});
 
-			return next;
+			return;
+		}
+
+		if (!singlePeerId) return;
+
+		setDraft((prev) => {
+			const current = prev[singlePeerId] ? new Set(prev[singlePeerId]) : new Set<string>();
+
+			if (current.has(perm)) current.delete(perm);
+			else current.add(perm);
+
+			return { ...prev, [singlePeerId]: current };
 		});
 	};
+
+	// Effective target set for each peer, used for diff computation and submit payload.
+	const effectiveTarget = useCallback((peerId: string): Set<string> => {
+		if (isBulkMode && selectedPeerIds.has(peerId)) return bulkDraft!;
+
+		return draft[peerId] ?? new Set();
+	}, [ isBulkMode, bulkDraft, draft, selectedPeerIds ]);
 
 	const peerDiffs = useMemo<PeerDiff[]>(() => {
 		if (!peers) return [];
@@ -199,25 +235,25 @@ const PermissionsDialog = (): React.JSX.Element => {
 
 		for (const peer of peers) {
 			const original = new Set(peer.permissions);
-			const draftSet = draft[peer.id] ?? new Set<string>();
+			const target = effectiveTarget(peer.id);
+
+			if (setsEqual(original, target)) continue;
 
 			const added: string[] = [];
 			const removed: string[] = [];
 
-			draftSet.forEach((p) => { if (!original.has(p)) added.push(p); });
-			original.forEach((p) => { if (!draftSet.has(p)) removed.push(p); });
+			target.forEach((p) => { if (!original.has(p)) added.push(p); });
+			original.forEach((p) => { if (!target.has(p)) removed.push(p); });
 
-			if (added.length > 0 || removed.length > 0) {
-				diffs.push({ peerId: peer.id, displayName: peer.displayName, added, removed });
-			}
+			diffs.push({ peerId: peer.id, displayName: peer.displayName, added, removed });
 		}
 
 		return diffs;
-	}, [ peers, draft ]);
+	}, [ peers, effectiveTarget ]);
 
 	const changedUpdates = useMemo<PermissionUpdate[]>(
-		() => peerDiffs.map((d) => ({ peerId: d.peerId, permissions: [ ...(draft[d.peerId] ?? new Set()) ] })),
-		[ peerDiffs, draft ],
+		() => peerDiffs.map((d) => ({ peerId: d.peerId, permissions: [ ...effectiveTarget(d.peerId) ] })),
+		[ peerDiffs, effectiveTarget ],
 	);
 
 	const handleSubmit = async (): Promise<void> => {
@@ -302,32 +338,21 @@ const PermissionsDialog = (): React.JSX.Element => {
 							)}
 							<List dense disablePadding>
 								{permissionKeys.map((perm) => {
-									const state = permissionStateForSelected(perm);
 									const callerLacks = !callerPermissionSet.has(perm);
-									const baseDisabled = callerLacks || selectedPeerIds.size === 0 || submitting;
+									const disabled = callerLacks || selectedPeerIds.size === 0 || submitting;
 									const description = permissionDescriptions[perm]?.();
+									const checked = isPermissionChecked(perm);
 
 									return (
 										<PermissionRow key={perm} disablePadding>
-											<Box sx={{ minWidth: 160, pt: 1, display: 'flex', alignItems: 'center' }}>
-												{state === 'mixed' ? (
-													<ButtonGroup size='small' variant='outlined' disabled={baseDisabled}>
-														<Button onClick={() => applyPermissionChange(perm, true)}>
-															{grantToAllLabel(selectedPeerIds.size)}
-														</Button>
-														<Button onClick={() => applyPermissionChange(perm, false)}>
-															{revokeFromAllLabel(selectedPeerIds.size)}
-														</Button>
-													</ButtonGroup>
-												) : (
-													<Checkbox
-														edge='start'
-														checked={state === 'all'}
-														disabled={baseDisabled}
-														onChange={() => applyPermissionChange(perm, state !== 'all')}
-													/>
-												)}
-											</Box>
+											<ListItemIcon sx={{ minWidth: 36, mt: 1 }}>
+												<Checkbox
+													edge='start'
+													checked={checked}
+													disabled={disabled}
+													onChange={() => togglePermission(perm)}
+												/>
+											</ListItemIcon>
 											<Stack sx={{ py: 1, pr: 1, flex: 1 }}>
 												<PermissionKey variant='body2'>{perm}</PermissionKey>
 												{description && (

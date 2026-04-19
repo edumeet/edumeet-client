@@ -485,8 +485,6 @@
 	"label.permissions.selectPeersFirst": "Wybierz jednego lub więcej uczestników, aby edytować ich uprawnienia.",
 	"label.permissions.noOtherPeers": "W pokoju nie ma innych uczestników.",
 	"label.permissions.apply": "Zastosuj zmiany ({count})",
-	"label.permissions.grantToAll": "Nadaj ({count})",
-	"label.permissions.revokeFromAll": "Odbierz ({count})",
 	"label.permissions.pendingChanges": "Oczekujące zmiany",
 	"label.permission.description.BYPASS_ROOM_LOCK": "Pozwala użytkownikowi wejść do pokoju, nawet gdy pokój jest zablokowany.",
 	"label.permission.description.CHANGE_ROOM_LOCK": "Pozwala użytkownikowi blokować i odblokowywać pokój.",

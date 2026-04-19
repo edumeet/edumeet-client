@@ -485,8 +485,6 @@
 	"label.permissions.selectPeersFirst": "Select one or more peers to edit their permissions.",
 	"label.permissions.noOtherPeers": "No other peers are in the room.",
 	"label.permissions.apply": "Apply changes ({count})",
-	"label.permissions.grantToAll": "Grant ({count})",
-	"label.permissions.revokeFromAll": "Revoke ({count})",
 	"label.permissions.pendingChanges": "Pending changes",
 	"label.permission.description.BYPASS_ROOM_LOCK": "Allows the user to enter the room even when the room is locked.",
 	"label.permission.description.CHANGE_ROOM_LOCK": "Allows the user to lock or unlock the room.",

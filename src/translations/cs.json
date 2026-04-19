@@ -485,8 +485,6 @@
 	"label.permissions.selectPeersFirst": null,
 	"label.permissions.noOtherPeers": null,
 	"label.permissions.apply": null,
-	"label.permissions.grantToAll": null,
-	"label.permissions.revokeFromAll": null,
 	"label.permissions.pendingChanges": null,
 	"label.permission.description.BYPASS_ROOM_LOCK": null,
 	"label.permission.description.CHANGE_ROOM_LOCK": null,

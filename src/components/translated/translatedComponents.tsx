@@ -1595,16 +1595,6 @@ export const applyPermissionsLabel = (count: number): string => intl.formatMessa
 	defaultMessage: 'Apply changes ({count})'
 }, { count });
 
-export const grantToAllLabel = (count: number): string => intl.formatMessage({
-	id: 'label.permissions.grantToAll',
-	defaultMessage: 'Grant ({count})'
-}, { count });
-
-export const revokeFromAllLabel = (count: number): string => intl.formatMessage({
-	id: 'label.permissions.revokeFromAll',
-	defaultMessage: 'Revoke ({count})'
-}, { count });
-
 export const pendingChangesLabel = (): string => intl.formatMessage({
 	id: 'label.permissions.pendingChanges',
 	defaultMessage: 'Pending changes'
