@@ -234,6 +234,8 @@ const PermissionsDialog = (): React.JSX.Element => {
 		const diffs: PeerDiff[] = [];
 
 		for (const peer of peers) {
+			if (!selectedPeerIds.has(peer.id)) continue;
+
 			const original = new Set(peer.permissions);
 			const target = effectiveTarget(peer.id);
 
@@ -249,7 +251,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 		}
 
 		return diffs;
-	}, [ peers, effectiveTarget ]);
+	}, [ peers, selectedPeerIds, effectiveTarget ]);
 
 	const changedUpdates = useMemo<PermissionUpdate[]>(
 		() => peerDiffs.map((d) => ({ peerId: d.peerId, permissions: [ ...effectiveTarget(d.peerId) ] })),
