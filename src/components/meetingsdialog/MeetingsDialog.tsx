@@ -82,15 +82,10 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 	};
 
 	const handleOpenManagement = () => {
-		// Use edumeetConfig.managementUrl verbatim. The operator is expected to configure
-		// the correct full URL (absolute or relative) in public/config/config.js. No
-		// guessing, no port stripping — whatever's in the config is what opens.
-		const base = edumeetConfig.managementUrl;
-
-		if (!base) return;
-		const sep = base.includes('?') ? '&' : '?';
-
-		window.open(`${base}${sep}section=meetings`, '_blank', 'noopener,noreferrer');
+		// The management UI is a hardcoded React route in the same client bundle,
+		// mounted at '/mgmt-admin'. Same pattern ManagementSettings.tsx uses.
+		// Relative URL → resolves against the current origin.
+		window.open('/mgmt-admin?section=meetings', '_blank', 'noopener,noreferrer');
 	};
 
 	return (
@@ -170,7 +165,6 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 						startIcon={<OpenInNewIcon />}
 						onClick={handleOpenManagement}
 						size='small'
-						disabled={!edumeetConfig.managementUrl}
 					>
 						{manageMeetingsLabel()}
 					</Button>
