@@ -79,7 +79,15 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 	};
 
 	const handleOpenManagement = () => {
-		const base = edumeetConfig.managementUrl || '/mgmt';
+		// Resolve the management UI URL.
+		//   - If `edumeetConfig.managementUrl` is an absolute URL (http/https), use it verbatim.
+		//   - Otherwise, build one from the current hostname on the default HTTPS port (443),
+		//     NOT window.location.origin — which would carry over a dev port like :4443.
+		const cfg = edumeetConfig.managementUrl;
+		const pathPart = cfg && !/^https?:\/\//i.test(cfg) ? cfg : '/mgmt';
+		const base = cfg && /^https?:\/\//i.test(cfg)
+			? cfg
+			: `${window.location.protocol}//${window.location.hostname}${pathPart}`;
 		const sep = base.includes('?') ? '&' : '?';
 
 		window.open(`${base}${sep}section=meetings`, '_blank', 'noopener,noreferrer');
