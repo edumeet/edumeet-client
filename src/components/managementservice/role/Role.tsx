@@ -213,11 +213,18 @@ const RoleTable = () => {
 					const c = rp.data.filter((x: RolePermissions) => x.permissionId == permissions[index].id && x.roleId==id);
 
 					if ((c.length === 0) === element) {
-	
+						let permId: number;
+
+						if (typeof (permissions[index].id) !== 'number') {
+							permId = parseInt(permissions[index].id);
+						} else {
+							permId = permissions[index].id;
+						}
+
 						if (element) {
 							dispatch(createData({ 
 								roleId: id,
-								permissionId: permissions[index].id
+								permissionId: permId
 							}, 'rolePermissions')).then(() => {
 								fetchProduct();
 								setOpen(false);
@@ -364,6 +371,9 @@ const RoleTable = () => {
 					const r = row.getAllCells();
 
 					const tid = r[0].getValue();
+
+					// TODO get data from API
+
 					const tname = r[1].getValue();
 					const tdescription = r[2].getValue();
 					const ttenantId = r[3].getValue();
