@@ -208,9 +208,10 @@ const RoomMeetingsTable = (props: RoomProp) => {
 					const parsed = parseRrule(v);
 
 					if (parsed.mode === 'NEVER') return '—';
-					const modeLabel = parsed.mode === 'DAILY' ? repeatDailyLabel()
-						: parsed.mode === 'WEEKLY' ? repeatWeeklyLabel()
-						: repeatMonthlyLabel();
+					let modeLabel = repeatMonthlyLabel();
+
+					if (parsed.mode === 'DAILY') modeLabel = repeatDailyLabel();
+					else if (parsed.mode === 'WEEKLY') modeLabel = repeatWeeklyLabel();
 
 					return `${modeLabel} × ${parsed.count}`;
 				}
