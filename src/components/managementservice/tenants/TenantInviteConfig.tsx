@@ -27,7 +27,6 @@ import {
 	organizerAddressLabel,
 	organizerNameLabel,
 	passwordUnchangedLabel,
-	sendTestInviteLabel,
 	smtpHostLabel,
 	smtpPasswordLabel,
 	smtpPortLabel,
@@ -132,11 +131,6 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 			await dispatch(patchData(existingId, payload, 'tenantInviteConfigs'));
 		}
 		await fetchConfig();
-	};
-
-	const handleSendTest = async () => {
-		// eslint-disable-next-line no-alert
-		alert('Test invite endpoint not yet implemented. Save config and schedule a meeting to yourself to verify.');
 	};
 
 	return (
@@ -268,9 +262,6 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 				<Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
 					<Button variant="contained" onClick={handleSave} disabled={!organizerAddress || !smtpHost || !smtpUser}>
 						{applyLabel()}
-					</Button>
-					<Button variant="outlined" onClick={handleSendTest} disabled={existingId === null}>
-						{sendTestInviteLabel()}
 					</Button>
 				</Box>
 			</AccordionDetails>
