@@ -280,6 +280,16 @@ export const deleteData = (id: number, serviceName: string): AppThunk<Promise<ob
 	return data;
 };
 
+// Like createData but silent — no success/failure toast. For internal RPC-style calls
+// (e.g. test-connection) where the caller handles result display itself.
+export const createDataSilent = (params: object, serviceName: string): AppThunk<Promise<object | undefined>> => async (
+	_dispatch,
+	_getState,
+	{ managementService }
+): Promise<object | undefined> => {
+	return (await managementService).service(serviceName).create(params);
+};
+
 export const createData = (params: object, serviceName: string): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,

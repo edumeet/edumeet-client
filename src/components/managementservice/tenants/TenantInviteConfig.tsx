@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { TenantInviteConfig } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, getData, patchData } from '../../../store/actions/managementActions';
+import { createData, createDataSilent, getData, patchData } from '../../../store/actions/managementActions';
 
 interface TestResultSide { ok: boolean; error?: string }
 interface TestResult { smtp: TestResultSide; imap?: TestResultSide }
@@ -123,7 +123,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 		setTestResult(null);
 		try {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const res: any = await dispatch(createData({ tenantId }, 'invite-tests'));
+			const res: any = await dispatch(createDataSilent({ tenantId }, 'invite-tests'));
 
 			setTestResult(res as TestResult);
 		} catch (err) {
