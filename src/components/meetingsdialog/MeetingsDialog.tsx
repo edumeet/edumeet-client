@@ -28,15 +28,17 @@ import {
 
 const nextOccurrence = (m: Meeting): number => {
 	const now = Date.now();
+	// Coerce — Postgres bigint comes back as string; Date/rrule would misparse.
+	const startsAt = Number(m.startsAt);
 
-	if (!m.rrule) return m.startsAt >= now ? m.startsAt : 0;
+	if (!m.rrule) return startsAt >= now ? startsAt : 0;
 	try {
-		const rule = rrulestr(m.rrule, { dtstart: new Date(m.startsAt) });
+		const rule = rrulestr(m.rrule, { dtstart: new Date(startsAt) });
 		const next = rule.after(new Date(now), true);
 
 		return next ? next.getTime() : 0;
 	} catch {
-		return m.startsAt >= now ? m.startsAt : 0;
+		return startsAt >= now ? startsAt : 0;
 	}
 };
 

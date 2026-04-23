@@ -202,10 +202,12 @@ const MeetingsTable = () => {
 			{
 				accessorKey: 'startsAt',
 				header: startsAtLabel(),
+				// Coerce to Number — Postgres bigint columns come back as strings;
+				// moment() would parse a numeric string as ISO and yield Invalid Date.
 				Cell: ({ cell }) => {
-					const v = cell.getValue<number>();
+					const v = cell.getValue<number | string>();
 
-					return v ? moment(v).format('YYYY-MM-DD HH:mm') : '';
+					return v ? moment(Number(v)).format('YYYY-MM-DD HH:mm') : '';
 				}
 			},
 			{
@@ -268,8 +270,8 @@ const MeetingsTable = () => {
 		setRoomId(m.roomId);
 		setTitle(m.title ?? '');
 		setDescription(m.description ?? '');
-		setStartsAt(m.startsAt ? moment(m.startsAt) : null);
-		setEndsAt(m.endsAt ? moment(m.endsAt) : null);
+		setStartsAt(m.startsAt ? moment(Number(m.startsAt)) : null);
+		setEndsAt(m.endsAt ? moment(Number(m.endsAt)) : null);
 		setTimezone(m.timezone ?? browserTimezone());
 		setLocale(m.locale ?? defaultLocale);
 		const p = parseRrule(m.rrule);

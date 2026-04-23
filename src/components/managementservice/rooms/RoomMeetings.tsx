@@ -179,10 +179,11 @@ const RoomMeetingsTable = (props: RoomProp) => {
 			{
 				accessorKey: 'startsAt',
 				header: startsAtLabel(),
+				// Postgres bigint serializes as string — coerce before moment() to avoid Invalid Date.
 				Cell: ({ cell }) => {
-					const v = cell.getValue<number>();
+					const v = cell.getValue<number | string>();
 
-					return v ? moment(v).format('YYYY-MM-DD HH:mm') : '';
+					return v ? moment(Number(v)).format('YYYY-MM-DD HH:mm') : '';
 				}
 			},
 			{
@@ -243,8 +244,8 @@ const RoomMeetingsTable = (props: RoomProp) => {
 		setId(m.id ?? 0);
 		setTitle(m.title ?? '');
 		setDescription(m.description ?? '');
-		setStartsAt(m.startsAt ? moment(m.startsAt) : null);
-		setEndsAt(m.endsAt ? moment(m.endsAt) : null);
+		setStartsAt(m.startsAt ? moment(Number(m.startsAt)) : null);
+		setEndsAt(m.endsAt ? moment(Number(m.endsAt)) : null);
 		setTimezone(m.timezone ?? browserTimezone());
 		setLocale(m.locale ?? defaultLocale);
 		const p = parseRrule(m.rrule);
