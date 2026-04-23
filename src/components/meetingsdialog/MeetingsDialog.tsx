@@ -23,6 +23,7 @@ import {
 	manageMeetingsLabel,
 	noUpcomingMeetingsLabel,
 	refreshLabel,
+	roomLabel,
 	upcomingMeetingsLabel
 } from '../translated/translatedComponents';
 
@@ -146,7 +147,16 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 								>
 									<ListItemText
 										primary={meeting.title}
-										secondary={`${startStr} – ${endStr} — ${rName}`}
+										secondary={
+											<>
+												<Box component='span' sx={{ display: 'block' }}>
+													{`${startStr} – ${endStr}`}
+												</Box>
+												<Box component='span' sx={{ display: 'block' }}>
+													{`${roomLabel()}: ${rName}`}
+												</Box>
+											</>
+										}
 									/>
 								</ListItem>
 							);
