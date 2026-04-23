@@ -25,6 +25,7 @@ import {
 	imapUserLabel,
 	inviteEmailConfigLabel,
 	inviteEnabledLabel,
+	manageItemLabel,
 	organizerAddressLabel,
 	organizerNameLabel,
 	passwordUnchangedLabel,
@@ -149,9 +150,9 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 		: '—';
 
 	return (
-		<Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+		<Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 2 }}>
 			<Button variant="outlined" onClick={handleOpen}>
-				{inviteEmailConfigLabel()}
+				{manageItemLabel()}
 			</Button>
 			<Typography variant="body2" color="text.secondary">
 				{statusText}

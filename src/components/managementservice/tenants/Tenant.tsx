@@ -9,7 +9,7 @@ import { createData, deleteData, getData, patchData } from '../../../store/actio
 import TenantFQDNTable from './TenatnFQDN';
 import TenantOAuthTable from './TenantOAuth';
 import TenantInviteConfigPanel from './TenantInviteConfig';
-import { addNewLabel, applyLabel, authenticationLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, authenticationLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 export interface TenantProp {
 	tenantId: number;
@@ -168,6 +168,7 @@ const TenantTable = () => {
 						<TenantFQDNTable tenantId={id} />
 						<h4>{`${tenantLabel()} ${authenticationLabel()}`}</h4>
 						<TenantOAuthTable tenantId={id} />
+						<h4>{`${tenantLabel()} ${inviteEmailConfigLabel()}`}</h4>
 						<TenantInviteConfigPanel tenantId={id} />
 					</>}
 

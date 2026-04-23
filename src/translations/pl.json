@@ -528,7 +528,7 @@
 	"label.management.meetings.partstat.declined": "Odrzucono",
 	"label.management.meetings.partstat.tentative": "Wstępnie",
 	"label.management.meetings.partstat.needsAction": "Oczekuje",
-	"label.management.tenants.inviteEmailConfig": "E-mail zaproszeń (SMTP/IMAP)",
+	"label.management.tenants.inviteEmailConfig": "Zaproszenia e-mail (SMTP/IMAP)",
 	"label.management.tenants.sendTestInvite": "Wyślij zaproszenie testowe",
 	"label.management.tenants.inviteEnabled": "Zaproszenia włączone",
 	"label.management.tenants.organizerAddress": "Adres e-mail nadawcy",
