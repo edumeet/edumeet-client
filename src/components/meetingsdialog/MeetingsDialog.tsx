@@ -16,7 +16,6 @@ import GenericDialog from '../genericdialog/GenericDialog';
 import { useAppDispatch } from '../../store/hooks';
 import { getData } from '../../store/actions/managementActions';
 import { Meeting } from '../../utils/types';
-import edumeetConfig from '../../utils/edumeetConfig';
 import {
 	closeLabel,
 	joinLabel,
