@@ -588,7 +588,9 @@ const MeetingsTable = () => {
 				</DialogContent>
 				<DialogActions>
 					{(() => {
-						const canEdit = roomId !== '' && rooms.some((r) => r.id === roomId);
+						// Coerce both sides to Number — the API may serialize bigint ids as strings,
+						// which would break strict equality against the numeric roomId we hold in state.
+						const canEdit = roomId !== '' && rooms.some((r) => Number(r.id) === Number(roomId));
 
 						return <>
 							{id !== 0 && (
