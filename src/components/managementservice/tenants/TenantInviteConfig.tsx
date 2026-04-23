@@ -64,8 +64,9 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 	const [ organizerAddress, setOrganizerAddress ] = useState('');
 	const [ organizerName, setOrganizerName ] = useState('');
 	const [ smtpHost, setSmtpHost ] = useState('');
-	const [ smtpPort, setSmtpPort ] = useState(587);
-	const [ smtpSecure, setSmtpSecure ] = useState(false);
+	// Default to implicit TLS (port 465, secure=true) — most modern/recommended setup.
+	const [ smtpPort, setSmtpPort ] = useState(465);
+	const [ smtpSecure, setSmtpSecure ] = useState(true);
 	const [ smtpUser, setSmtpUser ] = useState('');
 	const [ smtpPass, setSmtpPass ] = useState('');
 	const [ imapHost, setImapHost ] = useState('');
@@ -88,8 +89,8 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 			setOrganizerAddress(cfg.organizerAddress ?? '');
 			setOrganizerName(cfg.organizerName ?? '');
 			setSmtpHost(cfg.smtpHost ?? '');
-			setSmtpPort(cfg.smtpPort ?? 587);
-			setSmtpSecure(cfg.smtpSecure ?? false);
+			setSmtpPort(cfg.smtpPort ?? 465);
+			setSmtpSecure(cfg.smtpSecure ?? true);
 			setSmtpUser(cfg.smtpUser ?? '');
 			setSmtpPass(''); // never pre-fill password
 			setImapHost(cfg.imapHost ?? '');
@@ -224,7 +225,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 							type="number"
 							sx={{ flex: 1, minWidth: 120 }}
 							value={smtpPort}
-							onChange={(e) => setSmtpPort(parseInt(e.target.value, 10) || 587)}
+							onChange={(e) => setSmtpPort(parseInt(e.target.value, 10) || 465)}
 						/>
 						<FormControlLabel
 							control={<Checkbox checked={smtpSecure} onChange={(e) => {
