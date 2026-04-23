@@ -162,8 +162,13 @@ const MeetingsTable = () => {
 		const meetings: any = await dispatch(getData('meetings'));
 
 		setData((meetings?.data ?? []) as Meeting[]);
+		// No ownedOnly: the rooms service's filterByRoomOwnership hook already filters
+		// correctly per role (regular users → their owned rooms; tenant admins/owners →
+		// all tenant rooms; super-admins → all rooms), matching meeting-create auth.
+		// Passing ownedOnly=true would also crash on super-admin since their bypass skips
+		// the hook that translates the flag into a proper id filter.
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const r: any = await dispatch(getData('rooms', { ownedOnly: true }));
+		const r: any = await dispatch(getData('rooms'));
 
 		setRooms((r?.data ?? []) as Room[]);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
