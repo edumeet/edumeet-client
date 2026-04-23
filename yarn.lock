@@ -3325,15 +3325,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "dompurify@npm:3.4.0"
+"dompurify@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "dompurify@npm:3.4.1"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10c0/5593ac44ee20b9aa521c2120884effc98927fb9128c548183c75e79e0a04357c62ee913a049a267c8f396cb8c9d520ecf72562826c5524c46d4fe03c12063638
+  checksum: 10c0/440a4246020cb54b82ef2cb66381e4d310a0c470f9994655e61b6122811f0eaa00a2f9665d2bed30ca3f58932ba7bb0d5e26fdfce61c8daf35d21a3f5a799e48
   languageName: node
   linkType: hard
 
@@ -3402,7 +3402,7 @@ __metadata:
     bowser: "npm:^2.11.0"
     dayjs: "npm:^1.11.20"
     debug: "npm:^4.3.7"
-    dompurify: "npm:^3.4.0"
+    dompurify: "npm:^3.4.1"
     eslint: "npm:^10.0.3"
     eslint-plugin-import: "npm:^2.32.0"
     eslint-plugin-react: "npm:^7.36.1"
@@ -3414,14 +3414,14 @@ __metadata:
     jwt-decode: "npm:^4.0.0"
     marked: "npm:^10.0.0"
     material-react-table: "npm:^3.0.1"
-    mediasoup-client: "npm:^3.18.8"
+    mediasoup-client: "npm:^3.19.0"
     moment: "npm:^2.29.4"
     native-file-system-adapter: "npm:^3.0.1"
-    notistack: "npm:^3.0.1"
+    notistack: "npm:^3.0.2"
     ortc-p2p: "github:edumeet/edumeet-ortc-p2p#0.1.3"
     random-string: "npm:^0.2.0"
-    react: "npm:^19.2.4"
-    react-dom: "npm:^19.2.4"
+    react: "npm:^19.2.5"
+    react-dom: "npm:^19.2.5"
     react-flip-toolkit: "npm:^7.2.4"
     react-intl: "npm:^7.1.14"
     react-qrcode-logo: "npm:^4.0.0"
@@ -3430,10 +3430,10 @@ __metadata:
     redux-logger: "npm:^3.0.6"
     redux-persist: "npm:^6.0.0"
     reselect: "npm:^5.1.1"
-    rollup-plugin-visualizer: "npm:^6.0.5"
-    socket.io-client: "npm:^4.8.0"
+    rollup-plugin-visualizer: "npm:^6.0.11"
+    socket.io-client: "npm:^4.8.3"
     typescript: "npm:^5.9.3"
-    uuid: "npm:^9.0.1"
+    uuid: "npm:^14.0.0"
     vite: "npm:^7.3.2"
     vite-plugin-eslint: "npm:^1.8.1"
     vite-tsconfig-paths: "npm:^5.1.4"
@@ -5568,9 +5568,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mediasoup-client@npm:^3.18.8":
-  version: 3.18.8
-  resolution: "mediasoup-client@npm:3.18.8"
+"mediasoup-client@npm:^3.19.0":
+  version: 3.19.0
+  resolution: "mediasoup-client@npm:3.19.0"
   dependencies:
     "@types/debug": "npm:^4.1.13"
     "@types/events-alias": "npm:@types/events@^3.0.3"
@@ -5581,7 +5581,7 @@ __metadata:
     h264-profile-level-id: "npm:^2.3.2"
     sdp-transform: "npm:^3.0.0"
     supports-color: "npm:^10.2.2"
-  checksum: 10c0/97d8bc01067b3fb919c6c69c1dddd37a8b4c3a5b8d00219e4600117f4d34036a13b463e2830c553d3dbfa9cdfec4ee211feadc42770bd79ec980b073b5974d97
+  checksum: 10c0/9fde5ec5daec91d43a88796f49e2b1b7a018c8100a3f99786966678a0e0b5328e88f6e6af36d50f9eed93889b84f23a164865c7177c0767ee805c7a8c7a51eb2
   languageName: node
   linkType: hard
 
@@ -5925,7 +5925,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"notistack@npm:^3.0.1":
+"notistack@npm:^3.0.2":
   version: 3.0.2
   resolution: "notistack@npm:3.0.2"
   dependencies:
@@ -6438,14 +6438,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^19.2.4":
-  version: 19.2.4
-  resolution: "react-dom@npm:19.2.4"
+"react-dom@npm:^19.2.5":
+  version: 19.2.5
+  resolution: "react-dom@npm:19.2.5"
   dependencies:
     scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.2.4
-  checksum: 10c0/f0c63f1794dedb154136d4d0f59af00b41907f4859571c155940296808f4b94bf9c0c20633db75b5b2112ec13d8d7dd4f9bf57362ed48782f317b11d05a44f35
+    react: ^19.2.5
+  checksum: 10c0/8067606e9f58e4c2e8cb5f09570217dbc71c4843ebcaa20ae2085912d3e3a351f17d8f7c1713313cdda7f272840c8c34ff6c860fcb840862071bceea218e0c63
   languageName: node
   linkType: hard
 
@@ -6579,10 +6579,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^19.2.4":
-  version: 19.2.4
-  resolution: "react@npm:19.2.4"
-  checksum: 10c0/cd2c9ff67a720799cc3b38a516009986f7fc4cb8d3e15716c6211cf098d1357ee3e348ab05ad0600042bbb0fd888530ba92e329198c92eafa0994f5213396596
+"react@npm:^19.2.5":
+  version: 19.2.5
+  resolution: "react@npm:19.2.5"
+  checksum: 10c0/4b5f231dbef92886f602533c9ce3bde04d99f0e71dfb5d794c43e02726efaad0421c08688f75fc98a6d6e1dc017372e1af7abbfecdc86a79968f461675931a7a
   languageName: node
   linkType: hard
 
@@ -6788,7 +6788,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-visualizer@npm:^6.0.5":
+"rollup-plugin-visualizer@npm:^6.0.11":
   version: 6.0.11
   resolution: "rollup-plugin-visualizer@npm:6.0.11"
   dependencies:
@@ -7193,7 +7193,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket.io-client@npm:^4.8.0":
+"socket.io-client@npm:^4.8.3":
   version: 4.8.3
   resolution: "socket.io-client@npm:4.8.3"
   dependencies:
@@ -7928,6 +7928,15 @@ __metadata:
   bin:
     uuid: dist/esm/bin/uuid
   checksum: 10c0/34aa51b9874ae398c2b799c88a127701408cd581ee89ec3baa53509dd8728cbb25826f2a038f9465f8b7be446f0fbf11558862965b18d21c993684297628d4d3
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "uuid@npm:14.0.0"
+  bin:
+    uuid: dist-node/bin/uuid
+  checksum: 10c0/a57ae7794c45005c1a9208989196c5baf79a7679c30f43c1bee9033a2c4d113a2cea216fa6fcc9663b08b0d55635df1a7c6eb7e7f3d21c3e50688c698fa39a50
   languageName: node
   linkType: hard
 
