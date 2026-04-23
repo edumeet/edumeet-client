@@ -548,5 +548,6 @@
 	"label.generic.refresh": "Refresh",
 	"label.meetings.manage": "Manage meetings",
 	"label.meetings.noUpcoming": "No upcoming meetings",
-	"label.meetings.upcoming": "Upcoming meetings"
+	"label.meetings.upcoming": "Upcoming meetings",
+	"label.management.tenants.testConnection": "Test connection"
 }

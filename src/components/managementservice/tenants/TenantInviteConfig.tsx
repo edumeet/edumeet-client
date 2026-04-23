@@ -14,6 +14,9 @@ import {
 import { TenantInviteConfig } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, getData, patchData } from '../../../store/actions/managementActions';
+
+interface TestResultSide { ok: boolean; error?: string }
+interface TestResult { smtp: TestResultSide; imap?: TestResultSide }
 import {
 	applyLabel,
 	cancelLabel,
@@ -33,7 +36,8 @@ import {
 	smtpPasswordLabel,
 	smtpPortLabel,
 	smtpSecureLabel,
-	smtpUserLabel
+	smtpUserLabel,
+	testConnectionLabel
 } from '../../translated/translatedComponents';
 
 export interface TenantInviteConfigProps {
@@ -69,6 +73,8 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 	const [ imapSecure, setImapSecure ] = useState(true);
 	const [ imapUser, setImapUser ] = useState('');
 	const [ imapPass, setImapPass ] = useState('');
+	const [ testing, setTesting ] = useState(false);
+	const [ testResult, setTestResult ] = useState<TestResult | null>(null);
 
 	const fetchConfig = async () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,7 +112,25 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 		setOpen(true);
 	};
 
-	const handleClose = () => setOpen(false);
+	const handleClose = () => {
+		setTestResult(null);
+		setOpen(false);
+	};
+
+	const handleTestConnection = async () => {
+		setTesting(true);
+		setTestResult(null);
+		try {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const res: any = await dispatch(createData({ tenantId }, 'invite-tests'));
+
+			setTestResult(res as TestResult);
+		} catch (err) {
+			setTestResult({ smtp: { ok: false, error: (err as Error)?.message ?? String(err) } });
+		} finally {
+			setTesting(false);
+		}
+	};
 
 	const handleSave = async () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -287,7 +311,26 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 						/>
 					</Box>
 				</DialogContent>
+				{testResult && (
+					<Box sx={{ mx: 3, mb: 1 }}>
+						<Typography variant="body2" color={testResult.smtp.ok ? 'success.main' : 'error'}>
+							SMTP: {testResult.smtp.ok ? '✓ OK' : `✗ ${testResult.smtp.error ?? 'failed'}`}
+						</Typography>
+						{testResult.imap && (
+							<Typography variant="body2" color={testResult.imap.ok ? 'success.main' : 'error'}>
+								IMAP: {testResult.imap.ok ? '✓ OK' : `✗ ${testResult.imap.error ?? 'failed'}`}
+							</Typography>
+						)}
+					</Box>
+				)}
 				<DialogActions>
+					<Button
+						onClick={handleTestConnection}
+						disabled={testing || existingId === null}
+					>
+						{testConnectionLabel()}
+					</Button>
+					<Box sx={{ flex: 1 }} />
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
 					<Button
 						variant="contained"

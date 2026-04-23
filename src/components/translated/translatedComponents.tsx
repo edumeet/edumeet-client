@@ -1785,6 +1785,10 @@ export const sendTestInviteLabel = (): string => intl.formatMessage({
 	id: 'label.management.tenants.sendTestInvite',
 	defaultMessage: 'Send test invite'
 });
+export const testConnectionLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.testConnection',
+	defaultMessage: 'Test connection'
+});
 export const inviteEnabledLabel = (): string => intl.formatMessage({
 	id: 'label.management.tenants.inviteEnabled',
 	defaultMessage: 'Invites enabled'

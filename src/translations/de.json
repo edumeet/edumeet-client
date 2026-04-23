@@ -548,5 +548,6 @@
 	"label.generic.refresh": "Aktualisieren",
 	"label.meetings.manage": "Besprechungen verwalten",
 	"label.meetings.noUpcoming": "Keine bevorstehenden Besprechungen",
-	"label.meetings.upcoming": "Bevorstehende Besprechungen"
+	"label.meetings.upcoming": "Bevorstehende Besprechungen",
+	"label.management.tenants.testConnection": "Verbindung testen"
 }

@@ -548,5 +548,6 @@
 	"label.generic.refresh": null,
 	"label.meetings.manage": null,
 	"label.meetings.noUpcoming": null,
-	"label.meetings.upcoming": null
+	"label.meetings.upcoming": null,
+	"label.management.tenants.testConnection": null
 }
