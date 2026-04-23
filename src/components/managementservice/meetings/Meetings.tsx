@@ -376,11 +376,14 @@ const MeetingsTable = () => {
 			const created: any = await dispatch(createData({ ...payload, roomId }, 'meetings'));
 
 			if (created?.id) {
+				// Coerce — server returns bigint PKs as strings; attendees service validates meetingId as number.
+				const createdMeetingId = Number(created.id);
+
 				await Promise.all(attendees.map((a) => dispatch(createData({
-					meetingId: created.id,
+					meetingId: createdMeetingId,
 					email: a.email,
 					name: a.name,
-					userId: a.userId
+					userId: a.userId !== undefined ? Number(a.userId) : undefined
 				}, 'meetingAttendees'))));
 			}
 		} else {
@@ -393,10 +396,10 @@ const MeetingsTable = () => {
 			for (const a of attendees) {
 				if (!byEmail.has(a.email.toLowerCase())) {
 					await dispatch(createData({
-						meetingId: id,
+						meetingId: Number(id),
 						email: a.email,
 						name: a.name,
-						userId: a.userId
+						userId: a.userId !== undefined ? Number(a.userId) : undefined
 					}, 'meetingAttendees'));
 				}
 			}
