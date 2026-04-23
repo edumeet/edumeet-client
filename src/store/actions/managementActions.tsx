@@ -280,14 +280,20 @@ export const deleteData = (id: number, serviceName: string): AppThunk<Promise<ob
 	return data;
 };
 
-// Like createData but silent — no success/failure toast. For internal RPC-style calls
-// (e.g. test-connection) where the caller handles result display itself.
-export const createDataSilent = (params: object, serviceName: string): AppThunk<Promise<object | undefined>> => async (
+// Dispatches the invite-config SMTP/IMAP test for a tenant.
+// Returns { smtp: { ok, error? }, imap?: { ok, error? } } — the component renders
+// the result inline, so no success/failure toast is fired.
+export interface InviteTestResult {
+	smtp: { ok: boolean; error?: string };
+	imap?: { ok: boolean; error?: string };
+}
+
+export const testInviteConfig = (tenantId: number): AppThunk<Promise<InviteTestResult>> => async (
 	_dispatch,
 	_getState,
 	{ managementService }
-): Promise<object | undefined> => {
-	return (await managementService).service(serviceName).create(params);
+): Promise<InviteTestResult> => {
+	return (await managementService).service('invite-tests').create({ tenantId }) as Promise<InviteTestResult>;
 };
 
 export const createData = (params: object, serviceName: string): AppThunk<Promise<object | undefined>> => async (
