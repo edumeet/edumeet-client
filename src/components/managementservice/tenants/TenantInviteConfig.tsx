@@ -39,6 +39,16 @@ export interface TenantInviteConfigProps {
 	tenantId: number;
 }
 
+// When the secure toggle flips, auto-switch the port if it's still at one of
+// the standard defaults (so admins don't have to remember 465 vs 587, 993 vs 143).
+// Custom port values are preserved.
+const swapPortIfDefault = (currentPort: number, nowSecure: boolean, implicitPort: number, startTlsPort: number): number => {
+	if (nowSecure && currentPort === startTlsPort) return implicitPort;
+	if (!nowSecure && currentPort === implicitPort) return startTlsPort;
+
+	return currentPort;
+};
+
 const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 	const { tenantId } = props;
 	const dispatch = useAppDispatch();
@@ -174,7 +184,12 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 						onChange={(e) => setSmtpPort(parseInt(e.target.value, 10) || 587)}
 					/>
 					<FormControlLabel
-						control={<Checkbox checked={smtpSecure} onChange={(e) => setSmtpSecure(e.target.checked)} />}
+						control={<Checkbox checked={smtpSecure} onChange={(e) => {
+							const next = e.target.checked;
+
+							setSmtpSecure(next);
+							setSmtpPort(swapPortIfDefault(smtpPort, next, 465, 587));
+						}} />}
 						label={smtpSecureLabel()}
 					/>
 				</Box>
@@ -217,7 +232,12 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 						disabled={!imapHost}
 					/>
 					<FormControlLabel
-						control={<Checkbox checked={imapSecure} onChange={(e) => setImapSecure(e.target.checked)} disabled={!imapHost} />}
+						control={<Checkbox checked={imapSecure} onChange={(e) => {
+							const next = e.target.checked;
+
+							setImapSecure(next);
+							setImapPort(swapPortIfDefault(imapPort, next, 993, 143));
+						}} disabled={!imapHost} />}
 						label={imapSecureLabel()}
 					/>
 				</Box>
