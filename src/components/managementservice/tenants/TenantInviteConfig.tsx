@@ -204,6 +204,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 					<TextField
 						label={smtpPasswordLabel()}
 						type="password"
+						required={!existingId}
 						fullWidth
 						value={smtpPass}
 						onChange={(e) => setSmtpPass(e.target.value)}
@@ -226,6 +227,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 					<TextField
 						label={imapPortLabel()}
 						type="number"
+						required={Boolean(imapHost)}
 						sx={{ flex: 1, minWidth: 120 }}
 						value={imapPort}
 						onChange={(e) => setImapPort(parseInt(e.target.value, 10) || 993)}
@@ -244,6 +246,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 				<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
 					<TextField
 						label={imapUserLabel()}
+						required={Boolean(imapHost)}
 						fullWidth
 						value={imapUser}
 						onChange={(e) => setImapUser(e.target.value)}
@@ -252,6 +255,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 					<TextField
 						label={imapPasswordLabel()}
 						type="password"
+						required={Boolean(imapHost) && !existingId}
 						fullWidth
 						value={imapPass}
 						onChange={(e) => setImapPass(e.target.value)}
