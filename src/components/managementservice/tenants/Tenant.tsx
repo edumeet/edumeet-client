@@ -128,7 +128,7 @@ const TenantTable = () => {
 				{addNewLabel()}
 			</Button>
 			<hr/>
-			<Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+			<Dialog open={open} onClose={handleClose}>
 				<DialogTitle>{manageItemLabel()}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
