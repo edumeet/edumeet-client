@@ -626,7 +626,7 @@ const RoomMeetingsTable = (props: RoomProp) => {
 								return (
 									<Box key={a.email} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.5 }}>
 										<Chip
-											label={`${a.name ?? a.email} — ${partstatLabel(effectivePartstat)}`}
+											label={`${a.name ?? a.email} - ${partstatLabel(effectivePartstat)}`}
 											color={partstatColor(effectivePartstat)}
 											onDelete={() => handleRemoveAttendee(a.email)}
 										/>
