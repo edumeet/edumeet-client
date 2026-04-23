@@ -5,6 +5,7 @@ import edumeetConfig from '../../utils/edumeetConfig';
 import LoginButton from '../controlbuttons/LoginButton';
 import { loginLabel, logoutLabel } from '../translated/translatedComponents';
 import LogoutButton from '../controlbuttons/LogoutButton';
+import MeetingsButton from '../controlbuttons/MeetingsButton';
 import React, { useEffect } from 'react';
 import { checkJWT, login, logout } from '../../store/actions/permissionsActions';
 import { styled } from '@mui/material/styles';
@@ -50,7 +51,8 @@ const PrecallTitle = (): React.JSX.Element => {
 				)}
 			</Grid>
 
-			<Grid size={4} style={{ display: 'flex', justifyContent: 'end' }} >
+			<Grid size={4} style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }} >
+				<MeetingsButton type='iconbutton' toolTipLocation='left' />
 				{loginEnabled &&
 					<>
 						{loggedIn ? <LogoutButton

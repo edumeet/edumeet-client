@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import TenantFQDNTable from './TenatnFQDN';
 import TenantOAuthTable from './TenantOAuth';
+import TenantInviteConfigPanel from './TenantInviteConfig';
 import { addNewLabel, applyLabel, authenticationLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 export interface TenantProp {
@@ -167,6 +168,7 @@ const TenantTable = () => {
 						<TenantFQDNTable tenantId={id} />
 						<h4>{`${tenantLabel()} ${authenticationLabel()}`}</h4>
 						<TenantOAuthTable tenantId={id} />
+						<TenantInviteConfigPanel tenantId={id} />
 					</>}
 
 				</DialogContent>

@@ -3431,6 +3431,7 @@ __metadata:
     redux-persist: "npm:^6.0.0"
     reselect: "npm:^5.1.1"
     rollup-plugin-visualizer: "npm:^6.0.5"
+    rrule: "npm:^2.8.1"
     socket.io-client: "npm:^4.8.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^9.0.1"
@@ -6914,6 +6915,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rrule@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "rrule@npm:2.8.1"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 10c0/c9350620bbd57d0cdf99320b576121a2d7ed579fda4ae50891e2779c7dfd6dc7b174b558b6598adefb1f0e053549dc977740e1a265f77dcf0827aaeea60b45e7
+  languageName: node
+  linkType: hard
+
 "rrweb-cssom@npm:^0.8.0":
   version: 0.8.0
   resolution: "rrweb-cssom@npm:0.8.0"
@@ -7678,7 +7688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.8.0":
+"tslib@npm:^2.0.0, tslib@npm:^2.4.0, tslib@npm:^2.8.0":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
