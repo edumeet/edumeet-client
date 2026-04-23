@@ -468,7 +468,10 @@ const RoomMeetingsTable = (props: RoomProp) => {
 					columns={columns}
 					data={data}
 					state={{ isLoading }}
-					initialState={{ columnVisibility: { id: false } }}
+					initialState={{
+						columnVisibility: { id: false },
+						sorting: [ { id: 'startsAt', desc: true } ]
+					}}
 					muiTableBodyRowProps={({ row }) => ({
 						onClick: () => handleOpenEdit(row.original)
 					})}
@@ -605,12 +608,26 @@ const RoomMeetingsTable = (props: RoomProp) => {
 										.filter((r) => Number(r.meetingAttendeeId) === Number(a.id))
 										.sort((r1, r2) => Number(r1.recurrenceId) - Number(r2.recurrenceId))
 									: [];
+								const expectedOccurrences = repeatMode === 'NEVER' ? 0 : repeatCount;
+								let effectivePartstat = a.partstat;
+
+								if ((a.partstat == null || a.partstat === 'NEEDS-ACTION')
+									&& expectedOccurrences > 0
+									&& exceptions.length >= expectedOccurrences) {
+									const set = new Set(exceptions.map((e) => e.partstat ?? 'NEEDS-ACTION'));
+
+									if (set.size === 1) {
+										const [ only ] = Array.from(set);
+
+										if (only !== 'NEEDS-ACTION') effectivePartstat = only as MeetingPartstat;
+									}
+								}
 
 								return (
 									<Box key={a.email} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.5 }}>
 										<Chip
-											label={`${a.name ?? a.email} — ${partstatLabel(a.partstat)}`}
-											color={partstatColor(a.partstat)}
+											label={`${a.name ?? a.email} — ${partstatLabel(effectivePartstat)}`}
+											color={partstatColor(effectivePartstat)}
 											onDelete={() => handleRemoveAttendee(a.email)}
 										/>
 										{exceptions.map((ex) => (
