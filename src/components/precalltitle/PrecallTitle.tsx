@@ -52,12 +52,12 @@ const PrecallTitle = (): React.JSX.Element => {
 			</Grid>
 
 			<Grid size={4} style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }} >
-				<MeetingsButton type='iconbutton' toolTipLocation='left' />
+				<MeetingsButton type='iconbutton' toolTipLocation='bottom' />
 				{loginEnabled &&
 					<>
 						{loggedIn ? <LogoutButton
 							type='iconbutton'
-							toolTipLocation='left' /> : <LoginButton type='iconbutton' toolTipLocation='left' />}
+							toolTipLocation='bottom' /> : <LoginButton type='iconbutton' toolTipLocation='bottom' />}
 						{loggedIn ? <ClickableLabel onClick={() => dispatch(logout())}>{logoutLabel()}</ClickableLabel>
 							: <ClickableLabel onClick={() => dispatch(login())}>{loginLabel()}</ClickableLabel>}
 					</>
