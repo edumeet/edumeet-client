@@ -215,6 +215,15 @@ const MeetingsTable = () => {
 				}
 			},
 			{
+				accessorKey: 'endsAt',
+				header: endsAtLabel(),
+				Cell: ({ cell }) => {
+					const v = cell.getValue<number | string>();
+
+					return v ? moment(Number(v)).format('YYYY-MM-DD HH:mm') : '';
+				}
+			},
+			{
 				accessorKey: 'rrule',
 				header: repeatsLabel(),
 				Cell: ({ cell }) => {
@@ -440,6 +449,7 @@ const MeetingsTable = () => {
 					columns={columns}
 					data={data}
 					state={{ isLoading }}
+					initialState={{ columnVisibility: { id: false } }}
 					muiTableBodyRowProps={({ row }) => ({
 						onClick: () => handleOpenEdit(row.original)
 					})}

@@ -81,15 +81,12 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 	};
 
 	const handleOpenManagement = () => {
-		// Resolve the management UI URL.
-		//   - If `edumeetConfig.managementUrl` is an absolute URL (http/https), use it verbatim.
-		//   - Otherwise, build one from the current hostname on the default HTTPS port (443),
-		//     NOT window.location.origin — which would carry over a dev port like :4443.
-		const cfg = edumeetConfig.managementUrl;
-		const pathPart = cfg && !/^https?:\/\//i.test(cfg) ? cfg : '/mgmt';
-		const base = cfg && /^https?:\/\//i.test(cfg)
-			? cfg
-			: `${window.location.protocol}//${window.location.hostname}${pathPart}`;
+		// Use edumeetConfig.managementUrl verbatim. The operator is expected to configure
+		// the correct full URL (absolute or relative) in public/config/config.js. No
+		// guessing, no port stripping — whatever's in the config is what opens.
+		const base = edumeetConfig.managementUrl;
+
+		if (!base) return;
 		const sep = base.includes('?') ? '&' : '?';
 
 		window.open(`${base}${sep}section=meetings`, '_blank', 'noopener,noreferrer');
@@ -119,6 +116,19 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 					<List sx={{ maxHeight: 360, overflow: 'auto' }}>
 						{upcoming.map(({ meeting, next }) => {
 							const rName = meeting.room?.name ?? '';
+							// End = next occurrence's start + duration (endsAt - startsAt).
+							// Postgres bigint serialized as string, so coerce.
+							const duration = Number(meeting.endsAt) - Number(meeting.startsAt);
+							const nextEnd = next + (Number.isFinite(duration) && duration > 0 ? duration : 0);
+							const startDate = new Date(next);
+							const endDate = new Date(nextEnd);
+							// Same calendar day → show just the end time, not the full date again.
+							const sameDay = startDate.toDateString() === endDate.toDateString();
+							const timeOpts: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
+							const startStr = startDate.toLocaleString();
+							const endStr = sameDay
+								? endDate.toLocaleTimeString(undefined, timeOpts)
+								: endDate.toLocaleString();
 
 							return (
 								<ListItem
@@ -136,7 +146,7 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 								>
 									<ListItemText
 										primary={meeting.title}
-										secondary={`${new Date(next).toLocaleString()} — ${rName}`}
+										secondary={`${startStr} – ${endStr} — ${rName}`}
 									/>
 								</ListItem>
 							);
@@ -150,6 +160,7 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 						startIcon={<OpenInNewIcon />}
 						onClick={handleOpenManagement}
 						size='small'
+						disabled={!edumeetConfig.managementUrl}
 					>
 						{manageMeetingsLabel()}
 					</Button>
