@@ -23,7 +23,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment, { Moment } from 'moment';
 import { Meeting, MeetingAttendee, MeetingPartstat, Room, User } from '../../../utils/types';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { localeList } from '../../../utils/intlManager';
+import { browserTimezone, timezoneOptions } from '../../../utils/timezones';
 import {
 	createData,
 	deleteData,
@@ -65,7 +67,18 @@ import {
 
 type RepeatMode = 'NEVER' | 'DAILY' | 'WEEKLY' | 'MONTHLY';
 
-const SUPPORTED_LOCALES = [ 'en', 'de', 'pl' ] as const;
+// Maps a UI locale code ("pl", "pl-pl", "en-us", etc.) to a translation file code
+// matching localeList entries; falls back to "en" if nothing matches.
+// The server-side email template lookup (getTemplate in invites/templates/index.ts)
+// falls back to English too when a template isn't present, so any selection is safe.
+const mapUiLocaleToFile = (uiLocale: string | undefined): string => {
+	if (!uiLocale) return 'en';
+	const normalized = uiLocale.toLowerCase();
+	const lang = normalized.split('-')[0];
+	const entry = localeList.find((l) => l.locale.some((loc) => loc === normalized || loc === lang));
+
+	return entry?.file ?? 'en';
+};
 
 const partstatLabel = (p?: MeetingPartstat): string => {
 	switch (p) {
@@ -110,17 +123,11 @@ const parseRrule = (rrule?: string): { mode: RepeatMode, interval: number, count
 	};
 };
 
-const browserTimezone = (): string => {
-	try {
-		return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-	} catch {
-		return 'UTC';
-	}
-};
-
 const MeetingsTable = () => {
 	const dispatch = useAppDispatch();
 	const localization = useMRTLocalization();
+	const uiLocale = useAppSelector((state) => state.settings.locale);
+	const defaultLocale = mapUiLocaleToFile(uiLocale);
 
 	const [ data, setData ] = useState<Meeting[]>([]);
 	const [ rooms, setRooms ] = useState<Room[]>([]);
@@ -139,7 +146,7 @@ const MeetingsTable = () => {
 		.add(2, 'hour')
 		.startOf('hour'));
 	const [ timezone, setTimezone ] = useState(browserTimezone());
-	const [ locale, setLocale ] = useState('en');
+	const [ locale, setLocale ] = useState(defaultLocale);
 	const [ repeatMode, setRepeatMode ] = useState<RepeatMode>('NEVER');
 	const [ repeatInterval, setRepeatInterval ] = useState(1);
 	const [ repeatCount, setRepeatCount ] = useState(10);
@@ -241,7 +248,7 @@ const MeetingsTable = () => {
 			.add(2, 'hour')
 			.startOf('hour'));
 		setTimezone(browserTimezone());
-		setLocale('en');
+		setLocale(defaultLocale);
 		setRepeatMode('NEVER');
 		setRepeatInterval(1);
 		setRepeatCount(10);
@@ -264,7 +271,7 @@ const MeetingsTable = () => {
 		setStartsAt(m.startsAt ? moment(m.startsAt) : null);
 		setEndsAt(m.endsAt ? moment(m.endsAt) : null);
 		setTimezone(m.timezone ?? browserTimezone());
-		setLocale(m.locale ?? 'en');
+		setLocale(m.locale ?? defaultLocale);
 		const p = parseRrule(m.rrule);
 
 		setRepeatMode(p.mode);
@@ -481,11 +488,15 @@ const MeetingsTable = () => {
 						/>
 					</Box>
 					<Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-						<TextField
-							label={timezoneLabel()}
-							value={timezone}
-							onChange={(e) => setTimezone(e.target.value)}
+						<Autocomplete
 							sx={{ flex: 1 }}
+							options={timezoneOptions}
+							value={timezoneOptions.find((o) => o.value === timezone) ?? undefined}
+							onChange={(_e, v) => { if (v) setTimezone(v.value); }}
+							getOptionLabel={(o) => o.label}
+							isOptionEqualToValue={(a, b) => a.value === b.value}
+							disableClearable
+							renderInput={(params) => <TextField {...params} label={timezoneLabel()} />}
 						/>
 						<FormControl sx={{ flex: 1 }}>
 							<InputLabel id="meeting-locale-label">{inviteLanguageLabel()}</InputLabel>
@@ -495,8 +506,8 @@ const MeetingsTable = () => {
 								value={locale}
 								onChange={(e) => setLocale(e.target.value)}
 							>
-								{SUPPORTED_LOCALES.map((l) => (
-									<MenuItem key={l} value={l}>{l.toUpperCase()}</MenuItem>
+								{localeList.map(({ file, name }) => (
+									<MenuItem key={file} value={file}>{name}</MenuItem>
 								))}
 							</Select>
 						</FormControl>
@@ -554,22 +565,14 @@ const MeetingsTable = () => {
 						</Box>
 						<Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: 1 }}>
 							<Autocomplete
-								freeSolo
 								sx={{ flex: 1 }}
 								options={users}
-								getOptionLabel={(o) => {
-									if (typeof o === 'string') return o;
-
-									return `${o.name || o.email} <${o.email}>`;
-								}}
-								value={attendeeInput}
+								getOptionLabel={(o) => `${o.name || o.email} <${o.email}>`}
+								value={typeof attendeeInput === 'object' ? attendeeInput : null}
 								onChange={(_e, v) => setAttendeeInput(v)}
-								onInputChange={(_e, v) => {
-									if (v && !users.some((u) => u.email === v)) setAttendeeInput(v);
-								}}
 								renderInput={(params) => <TextField {...params} label={addAttendeeLabel()} />}
 							/>
-							<Button variant="contained" onClick={handleAddAttendee}>+</Button>
+							<Button variant="contained" onClick={handleAddAttendee} disabled={!attendeeInput || typeof attendeeInput === 'string'}>+</Button>
 						</Box>
 						<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
 							{attendees.map((a) => (
