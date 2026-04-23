@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react';
 import {
-	Accordion,
-	AccordionDetails,
-	AccordionSummary,
 	Box,
 	Button,
 	Checkbox,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
 	FormControlLabel,
 	TextField,
 	Typography
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TenantInviteConfig } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, getData, patchData } from '../../../store/actions/managementActions';
 import {
 	applyLabel,
+	cancelLabel,
 	imapHostLabel,
 	imapOptionalNoteLabel,
 	imapPasswordLabel,
@@ -52,6 +53,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 	const { tenantId } = props;
 	const dispatch = useAppDispatch();
 
+	const [ open, setOpen ] = useState(false);
 	const [ existingId, setExistingId ] = useState<number | null>(null);
 	const [ enabled, setEnabled ] = useState(true);
 	const [ organizerAddress, setOrganizerAddress ] = useState('');
@@ -97,6 +99,14 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 		fetchConfig();
 	}, [ tenantId ]);
 
+	const handleOpen = () => {
+		// refresh values when opening the sub-dialog in case the config changed elsewhere
+		fetchConfig();
+		setOpen(true);
+	};
+
+	const handleClose = () => setOpen(false);
+
 	const handleSave = async () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const payload: any = {
@@ -131,141 +141,157 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 			await dispatch(patchData(existingId, payload, 'tenantInviteConfigs'));
 		}
 		await fetchConfig();
+		setOpen(false);
 	};
 
+	const statusText = existingId
+		? `${organizerAddress || ''}${enabled ? '' : ' (disabled)'}`
+		: '—';
+
 	return (
-		<Accordion sx={{ mt: 2 }}>
-			<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-				<Typography>{inviteEmailConfigLabel()}</Typography>
-			</AccordionSummary>
-			<AccordionDetails>
-				<FormControlLabel
-					control={<Checkbox checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />}
-					label={inviteEnabledLabel()}
-				/>
-				<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-					<TextField
-						label={organizerAddressLabel()}
-						required
-						fullWidth
-						type="email"
-						value={organizerAddress}
-						onChange={(e) => setOrganizerAddress(e.target.value)}
-					/>
-					<TextField
-						label={organizerNameLabel()}
-						fullWidth
-						value={organizerName}
-						onChange={(e) => setOrganizerName(e.target.value)}
-					/>
-				</Box>
+		<Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+			<Button variant="outlined" onClick={handleOpen}>
+				{inviteEmailConfigLabel()}
+			</Button>
+			<Typography variant="body2" color="text.secondary">
+				{statusText}
+			</Typography>
 
-				<Typography variant="subtitle2" sx={{ mt: 3, mb: 1 }}>SMTP</Typography>
-				<Box sx={{ display: 'flex', gap: 2 }}>
-					<TextField
-						label={smtpHostLabel()}
-						required
-						sx={{ flex: 3 }}
-						value={smtpHost}
-						onChange={(e) => setSmtpHost(e.target.value)}
-					/>
-					<TextField
-						label={smtpPortLabel()}
-						required
-						type="number"
-						sx={{ flex: 1, minWidth: 120 }}
-						value={smtpPort}
-						onChange={(e) => setSmtpPort(parseInt(e.target.value, 10) || 587)}
-					/>
+			<Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+				<DialogTitle>{inviteEmailConfigLabel()}</DialogTitle>
+				<DialogContent>
 					<FormControlLabel
-						control={<Checkbox checked={smtpSecure} onChange={(e) => {
-							const next = e.target.checked;
+						control={<Checkbox checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />}
+						label={inviteEnabledLabel()}
+					/>
+					<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+						<TextField
+							label={organizerAddressLabel()}
+							required
+							fullWidth
+							type="email"
+							value={organizerAddress}
+							onChange={(e) => setOrganizerAddress(e.target.value)}
+						/>
+						<TextField
+							label={organizerNameLabel()}
+							fullWidth
+							value={organizerName}
+							onChange={(e) => setOrganizerName(e.target.value)}
+						/>
+					</Box>
 
-							setSmtpSecure(next);
-							setSmtpPort(swapPortIfDefault(smtpPort, next, 465, 587));
-						}} />}
-						label={smtpSecureLabel()}
-					/>
-				</Box>
-				<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-					<TextField
-						label={smtpUserLabel()}
-						required
-						fullWidth
-						value={smtpUser}
-						onChange={(e) => setSmtpUser(e.target.value)}
-					/>
-					<TextField
-						label={smtpPasswordLabel()}
-						type="password"
-						required={!existingId}
-						fullWidth
-						value={smtpPass}
-						onChange={(e) => setSmtpPass(e.target.value)}
-						placeholder={existingId ? passwordUnchangedLabel() : ''}
-						InputLabelProps={existingId ? { shrink: true } : undefined}
-					/>
-				</Box>
+					<Typography variant="subtitle2" sx={{ mt: 3, mb: 1 }}>SMTP</Typography>
+					<Box sx={{ display: 'flex', gap: 2 }}>
+						<TextField
+							label={smtpHostLabel()}
+							required
+							sx={{ flex: 3 }}
+							value={smtpHost}
+							onChange={(e) => setSmtpHost(e.target.value)}
+						/>
+						<TextField
+							label={smtpPortLabel()}
+							required
+							type="number"
+							sx={{ flex: 1, minWidth: 120 }}
+							value={smtpPort}
+							onChange={(e) => setSmtpPort(parseInt(e.target.value, 10) || 587)}
+						/>
+						<FormControlLabel
+							control={<Checkbox checked={smtpSecure} onChange={(e) => {
+								const next = e.target.checked;
 
-				<Typography variant="subtitle2" sx={{ mt: 3, mb: 1 }}>IMAP</Typography>
-				<Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-					{imapOptionalNoteLabel()}
-				</Typography>
-				<Box sx={{ display: 'flex', gap: 2 }}>
-					<TextField
-						label={imapHostLabel()}
-						sx={{ flex: 3 }}
-						value={imapHost}
-						onChange={(e) => setImapHost(e.target.value)}
-					/>
-					<TextField
-						label={imapPortLabel()}
-						type="number"
-						required={Boolean(imapHost)}
-						sx={{ flex: 1, minWidth: 120 }}
-						value={imapPort}
-						onChange={(e) => setImapPort(parseInt(e.target.value, 10) || 993)}
-						disabled={!imapHost}
-					/>
-					<FormControlLabel
-						control={<Checkbox checked={imapSecure} onChange={(e) => {
-							const next = e.target.checked;
+								setSmtpSecure(next);
+								setSmtpPort(swapPortIfDefault(smtpPort, next, 465, 587));
+							}} />}
+							label={smtpSecureLabel()}
+						/>
+					</Box>
+					<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+						<TextField
+							label={smtpUserLabel()}
+							required
+							fullWidth
+							value={smtpUser}
+							onChange={(e) => setSmtpUser(e.target.value)}
+						/>
+						<TextField
+							label={smtpPasswordLabel()}
+							type="password"
+							required={!existingId}
+							fullWidth
+							value={smtpPass}
+							onChange={(e) => setSmtpPass(e.target.value)}
+							placeholder={existingId ? passwordUnchangedLabel() : ''}
+							InputLabelProps={existingId ? { shrink: true } : undefined}
+						/>
+					</Box>
 
-							setImapSecure(next);
-							setImapPort(swapPortIfDefault(imapPort, next, 993, 143));
-						}} disabled={!imapHost} />}
-						label={imapSecureLabel()}
-					/>
-				</Box>
-				<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-					<TextField
-						label={imapUserLabel()}
-						required={Boolean(imapHost)}
-						fullWidth
-						value={imapUser}
-						onChange={(e) => setImapUser(e.target.value)}
-						disabled={!imapHost}
-					/>
-					<TextField
-						label={imapPasswordLabel()}
-						type="password"
-						required={Boolean(imapHost) && !existingId}
-						fullWidth
-						value={imapPass}
-						onChange={(e) => setImapPass(e.target.value)}
-						placeholder={existingId ? passwordUnchangedLabel() : ''}
-						InputLabelProps={existingId ? { shrink: true } : undefined}
-						disabled={!imapHost}
-					/>
-				</Box>
+					<Typography variant="subtitle2" sx={{ mt: 3, mb: 1 }}>IMAP</Typography>
+					<Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+						{imapOptionalNoteLabel()}
+					</Typography>
+					<Box sx={{ display: 'flex', gap: 2 }}>
+						<TextField
+							label={imapHostLabel()}
+							sx={{ flex: 3 }}
+							value={imapHost}
+							onChange={(e) => setImapHost(e.target.value)}
+						/>
+						<TextField
+							label={imapPortLabel()}
+							type="number"
+							required={Boolean(imapHost)}
+							sx={{ flex: 1, minWidth: 120 }}
+							value={imapPort}
+							onChange={(e) => setImapPort(parseInt(e.target.value, 10) || 993)}
+							disabled={!imapHost}
+						/>
+						<FormControlLabel
+							control={<Checkbox checked={imapSecure} onChange={(e) => {
+								const next = e.target.checked;
 
-				<Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-					<Button variant="contained" onClick={handleSave} disabled={!organizerAddress || !smtpHost || !smtpUser}>
+								setImapSecure(next);
+								setImapPort(swapPortIfDefault(imapPort, next, 993, 143));
+							}} disabled={!imapHost} />}
+							label={imapSecureLabel()}
+						/>
+					</Box>
+					<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+						<TextField
+							label={imapUserLabel()}
+							required={Boolean(imapHost)}
+							fullWidth
+							value={imapUser}
+							onChange={(e) => setImapUser(e.target.value)}
+							disabled={!imapHost}
+						/>
+						<TextField
+							label={imapPasswordLabel()}
+							type="password"
+							required={Boolean(imapHost) && !existingId}
+							fullWidth
+							value={imapPass}
+							onChange={(e) => setImapPass(e.target.value)}
+							placeholder={existingId ? passwordUnchangedLabel() : ''}
+							InputLabelProps={existingId ? { shrink: true } : undefined}
+							disabled={!imapHost}
+						/>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose}>{cancelLabel()}</Button>
+					<Button
+						variant="contained"
+						onClick={handleSave}
+						disabled={!organizerAddress || !smtpHost || !smtpUser}
+					>
 						{applyLabel()}
 					</Button>
-				</Box>
-			</AccordionDetails>
-		</Accordion>
+				</DialogActions>
+			</Dialog>
+		</Box>
 	);
 };
 
