@@ -503,6 +503,19 @@ export type MeetingAttendee = {
 	name?: string,
 	partstat?: MeetingPartstat,
 	lastNotifiedSequence?: number,
+	replyDtstamp?: number | null,
+	replySequence?: number | null,
+	createdAt?: number,
+	updatedAt?: number,
+};
+
+export type MeetingOccurrenceRsvp = {
+	id?: number,
+	meetingAttendeeId: number,
+	recurrenceId: number,
+	partstat?: MeetingPartstat,
+	replyDtstamp?: number | null,
+	replySequence?: number | null,
 	createdAt?: number,
 	updatedAt?: number,
 };

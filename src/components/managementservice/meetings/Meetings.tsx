@@ -22,7 +22,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment, { Moment } from 'moment';
-import { Meeting, MeetingAttendee, MeetingPartstat, Room, User } from '../../../utils/types';
+import { Meeting, MeetingAttendee, MeetingOccurrenceRsvp, MeetingPartstat, Room, User } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { localeList } from '../../../utils/intlManager';
 import { browserTimezone, timezoneOptions } from '../../../utils/timezones';
@@ -155,6 +155,7 @@ const MeetingsTable = () => {
 	const [ repeatInterval, setRepeatInterval ] = useState(1);
 	const [ repeatCount, setRepeatCount ] = useState(10);
 	const [ attendees, setAttendees ] = useState<MeetingAttendee[]>([]);
+	const [ occurrenceRsvps, setOccurrenceRsvps ] = useState<MeetingOccurrenceRsvp[]>([]);
 	const [ attendeeInput, setAttendeeInput ] = useState<User | string | null>(null);
 	const [ resolveEmail, setResolveEmail ] = useState('');
 	const [ isResolving, setIsResolving ] = useState(false);
@@ -278,7 +279,7 @@ const MeetingsTable = () => {
 		setOpen(true);
 	};
 
-	const handleOpenEdit = (m: Meeting) => {
+	const handleOpenEdit = async (m: Meeting) => {
 		setId(m.id ?? 0);
 		setRoomId(m.roomId);
 		setTitle(m.title ?? '');
@@ -292,11 +293,26 @@ const MeetingsTable = () => {
 		setRepeatMode(p.mode);
 		setRepeatInterval(p.interval);
 		setRepeatCount(p.count);
-		setAttendees((m.attendees ?? []) as MeetingAttendee[]);
+		const list = (m.attendees ?? []) as MeetingAttendee[];
+
+		setAttendees(list);
 		setAttendeeInput(null);
 		setResolveEmail('');
 		setResolveError(null);
 		setOpen(true);
+
+		// Fetch per-occurrence exceptions only for recurring meetings that actually have attendees.
+		const attendeeIds = list.map((a) => Number(a.id)).filter((n) => !Number.isNaN(n) && n > 0);
+
+		if (m.rrule && attendeeIds.length > 0) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const res: any = await dispatch(getData('meetingOccurrenceRsvps', { meetingAttendeeId: { $in: attendeeIds } }));
+			const rows = (res?.data ?? []) as MeetingOccurrenceRsvp[];
+
+			setOccurrenceRsvps(rows);
+		} else {
+			setOccurrenceRsvps([]);
+		}
 	};
 
 	const handleClose = () => setOpen(false);
@@ -593,15 +609,33 @@ const MeetingsTable = () => {
 							/>
 							<Button variant="contained" onClick={handleAddAttendee} disabled={!attendeeInput || typeof attendeeInput === 'string'}>+</Button>
 						</Box>
-						<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
-							{attendees.map((a) => (
-								<Chip
-									key={a.email}
-									label={`${a.name ?? a.email} — ${partstatLabel(a.partstat)}`}
-									color={partstatColor(a.partstat)}
-									onDelete={() => handleRemoveAttendee(a.email)}
-								/>
-							))}
+						<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, mt: 1 }}>
+							{attendees.map((a) => {
+								const exceptions = a.id
+									? occurrenceRsvps
+										.filter((r) => Number(r.meetingAttendeeId) === Number(a.id))
+										.sort((r1, r2) => Number(r1.recurrenceId) - Number(r2.recurrenceId))
+									: [];
+
+								return (
+									<Box key={a.email} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.5 }}>
+										<Chip
+											label={`${a.name ?? a.email} — ${partstatLabel(a.partstat)}`}
+											color={partstatColor(a.partstat)}
+											onDelete={() => handleRemoveAttendee(a.email)}
+										/>
+										{exceptions.map((ex) => (
+											<Chip
+												key={ex.id}
+												size="small"
+												variant="outlined"
+												label={`${moment(Number(ex.recurrenceId)).format('YYYY-MM-DD')}: ${partstatLabel(ex.partstat)}`}
+												color={partstatColor(ex.partstat)}
+											/>
+										))}
+									</Box>
+								);
+							})}
 						</Box>
 					</Box>
 				</DialogContent>
