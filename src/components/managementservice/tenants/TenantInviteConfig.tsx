@@ -109,6 +109,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 	const handleOpen = () => {
 		// refresh values when opening the sub-dialog in case the config changed elsewhere
 		fetchConfig();
+		setTestResult(null);
 		setOpen(true);
 	};
 
