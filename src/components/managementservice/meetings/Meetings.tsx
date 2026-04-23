@@ -26,6 +26,7 @@ import { Meeting, MeetingAttendee, MeetingPartstat, Room, User } from '../../../
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { localeList } from '../../../utils/intlManager';
 import { browserTimezone, timezoneOptions } from '../../../utils/timezones';
+import { ensureMomentLocale, toMomentLocale } from '../../../utils/momentLocale';
 import {
 	createData,
 	deleteData,
@@ -128,6 +129,9 @@ const MeetingsTable = () => {
 	const localization = useMRTLocalization();
 	const uiLocale = useAppSelector((state) => state.settings.locale);
 	const defaultLocale = mapUiLocaleToFile(uiLocale);
+	const momentLocale = toMomentLocale(defaultLocale);
+
+	useEffect(() => { ensureMomentLocale(defaultLocale); }, [ defaultLocale ]);
 
 	const [ data, setData ] = useState<Meeting[]>([]);
 	const [ rooms, setRooms ] = useState<Room[]>([]);
@@ -425,7 +429,7 @@ const MeetingsTable = () => {
 	};
 
 	return (
-		<LocalizationProvider dateAdapter={AdapterMoment}>
+		<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={momentLocale}>
 			<Box>
 				<Typography variant="h6">{meetingsLabel()}</Typography>
 				<Button variant="outlined" onClick={handleOpenAdd} sx={{ mt: 1, mb: 1 }} disabled={rooms.length === 0}>

@@ -190,6 +190,9 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 							sx={{ flex: 3 }}
 							value={smtpHost}
 							onChange={(e) => setSmtpHost(e.target.value)}
+							placeholder="smtp.example.com"
+							error={smtpHost.includes('@')}
+							helperText={smtpHost.includes('@') ? 'Server hostname only (no @)' : ''}
 						/>
 						<TextField
 							label={smtpPortLabel()}
@@ -239,6 +242,9 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 							sx={{ flex: 3 }}
 							value={imapHost}
 							onChange={(e) => setImapHost(e.target.value)}
+							placeholder="imap.example.com"
+							error={imapHost.includes('@')}
+							helperText={imapHost.includes('@') ? 'Server hostname only (no @)' : ''}
 						/>
 						<TextField
 							label={imapPortLabel()}
