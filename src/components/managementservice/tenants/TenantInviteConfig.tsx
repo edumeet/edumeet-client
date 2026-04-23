@@ -169,7 +169,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 						label={smtpPortLabel()}
 						required
 						type="number"
-						sx={{ flex: 1 }}
+						sx={{ flex: 1, minWidth: 120 }}
 						value={smtpPort}
 						onChange={(e) => setSmtpPort(parseInt(e.target.value, 10) || 587)}
 					/>
@@ -211,7 +211,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 					<TextField
 						label={imapPortLabel()}
 						type="number"
-						sx={{ flex: 1 }}
+						sx={{ flex: 1, minWidth: 120 }}
 						value={imapPort}
 						onChange={(e) => setImapPort(parseInt(e.target.value, 10) || 993)}
 						disabled={!imapHost}
