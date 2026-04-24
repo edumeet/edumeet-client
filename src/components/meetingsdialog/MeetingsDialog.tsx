@@ -148,6 +148,7 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 								<ListItem
 									key={meeting.id}
 									alignItems='flex-start'
+									divider
 									sx={{ flexWrap: 'wrap', gap: 1 }}
 								>
 									<ListItemText
