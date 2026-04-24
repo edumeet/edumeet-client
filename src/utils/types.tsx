@@ -5,6 +5,7 @@ import { TFLite } from '../services/effectsService';
 export const defaultEdumeetConfig: EdumeetConfig = {
 	qrCodeEnabled: false,
 	myRoomsTabEnabled: true,
+	myMeetingsTabEnabled: true,
 	countdownTimerEnabled: false,
 	infoTooltipEnabled: false,
 	infoTooltipText: '',
@@ -136,6 +137,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 export interface EdumeetConfig {
 	qrCodeEnabled: boolean;
 	myRoomsTabEnabled: boolean,
+	myMeetingsTabEnabled: boolean,
 	countdownTimerEnabled: boolean,
 	infoTooltipEnabled: boolean;
 	infoTooltipText?: string;
@@ -468,6 +470,76 @@ export type Rule = {
 	action: string,
 	type: string,
 }
+export type Meeting = {
+	id?: number,
+	roomId: number,
+	tenantId?: number,
+	organizerId?: number,
+	title: string,
+	description?: string,
+	startsAt: number,
+	endsAt: number,
+	timezone: string,
+	locale: string,
+	uid?: string,
+	sequence?: number,
+	status?: 'CONFIRMED' | 'CANCELLED',
+	rrule?: string,
+	recurrenceEnd?: number,
+	recurrenceCount?: number,
+	createdAt?: number,
+	updatedAt?: number,
+	room?: Room,
+	attendees?: Array<MeetingAttendee>,
+};
+
+export type MeetingPartstat = 'NEEDS-ACTION' | 'ACCEPTED' | 'DECLINED' | 'TENTATIVE';
+
+export type MeetingAttendee = {
+	id?: number,
+	meetingId: number,
+	userId?: number,
+	email: string,
+	name?: string,
+	partstat?: MeetingPartstat,
+	lastNotifiedSequence?: number,
+	replyDtstamp?: number | null,
+	replySequence?: number | null,
+	createdAt?: number,
+	updatedAt?: number,
+};
+
+export type MeetingOccurrenceRsvp = {
+	id?: number,
+	meetingAttendeeId: number,
+	recurrenceId: number,
+	partstat?: MeetingPartstat,
+	replyDtstamp?: number | null,
+	replySequence?: number | null,
+	createdAt?: number,
+	updatedAt?: number,
+};
+
+export type TenantInviteConfig = {
+	id?: number,
+	tenantId?: number,
+	enabled: boolean,
+	organizerAddress: string,
+	organizerName?: string,
+	smtpHost: string,
+	smtpPort: number,
+	smtpSecure: boolean,
+	smtpUser: string,
+	smtpPass?: string,
+	imapHost?: string,
+	imapPort?: number,
+	imapSecure?: boolean,
+	imapUser?: string,
+	imapPass?: string,
+	createdAt?: number,
+	updatedAt?: number,
+};
+
 export type Default = {
 	id: number,
 	tenantId: string, // number,

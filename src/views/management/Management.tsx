@@ -25,7 +25,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import { getUserData, startMGMTListeners, stopMGMTListeners } from '../../store/actions/managementActions';
+import { getData, getUserData, startMGMTListeners, stopMGMTListeners } from '../../store/actions/managementActions';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
 import TenantAdminTable from '../../components/managementservice/tenants/TenantAdmin';
 import TenantOwnerTable from '../../components/managementservice/tenants/TenantOwner';
@@ -37,8 +37,10 @@ import GroupUserTable from '../../components/managementservice/groups/GroupUser'
 import RuleTable from '../../components/managementservice/rules/Rule';
 import RuleIcon from '@mui/icons-material/Rule';
 import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
-import { chooseComponentLabel, defaultSettingsLabel, defaultsLabel, edumeetManagementClientLabel, groupRolesLabel, groupsLabel, groupUsersLabel, logoutLabel, rolesLabel, roomSettingsLabel, roomsLabel, rulesLabel, tenantSettingsLabel, tenantsLabel, usersLabel } from '../../components/translated/translatedComponents';
+import EventIcon from '@mui/icons-material/Event';
+import { chooseComponentLabel, defaultSettingsLabel, defaultsLabel, edumeetManagementClientLabel, groupRolesLabel, groupsLabel, groupUsersLabel, logoutLabel, meetingsLabel, rolesLabel, roomSettingsLabel, roomsLabel, rulesLabel, tenantSettingsLabel, tenantsLabel, usersLabel } from '../../components/translated/translatedComponents';
 import DefaultTable from '../../components/managementservice/defaults/Defaults';
+import MeetingsTable from '../../components/managementservice/meetings/Meetings';
 
 const drawerWidth = 300;
 
@@ -50,13 +52,20 @@ export default function ManagementUI(/* props: Props */) {
 	const { username, tenantAdmin, tenantOwner, superAdmin } = useAppSelector((state) => state.management);
 	const canManageTenant = tenantOwner || tenantAdmin || superAdmin;
 
+	const [ invitesEnabled, setInvitesEnabled ] = useState(false);
 	const [ mobileOpen, setMobileOpen ] = useState(false);
 
 	const handleDrawerToggle = () => {
 		setMobileOpen((prev) => !prev);
 	};
 
-	const [ selectedComponent, setSelectedComponent ] = useState('');
+	const [ selectedComponent, setSelectedComponent ] = useState(() => {
+		try {
+			return new URLSearchParams(window.location.search).get('section') ?? '';
+		} catch {
+			return '';
+		}
+	});
 
 	useEffect(() => {
 		dispatch(startMGMTListeners());
@@ -67,6 +76,24 @@ export default function ManagementUI(/* props: Props */) {
 			dispatch(stopMGMTListeners());
 		};
 	}, []);
+
+	useEffect(() => {
+		if (!loggedIn) {
+			setInvitesEnabled(false);
+
+			return;
+		}
+		dispatch(getData('tenantInviteConfigs'))
+			.then((res: unknown) => {
+				const list = (res && typeof res === 'object' && 'data' in res)
+					? (res as { data: Array<{ enabled?: boolean }> }).data
+					: [];
+				const hasEnabled = Array.isArray(list) && list.some((c) => c.enabled);
+
+				setInvitesEnabled(Boolean(hasEnabled));
+			})
+			.catch(() => setInvitesEnabled(false));
+	}, [ loggedIn, selectedComponent ]);
 
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -137,6 +164,10 @@ export default function ManagementUI(/* props: Props */) {
 					return <>
 						{rolesLabel()}
 						<RoleTable />
+					</>;
+				case 'meetings':
+					return <>
+						<MeetingsTable />
 					</>;
 				case 'rule':
 					return <>
@@ -232,6 +263,16 @@ export default function ManagementUI(/* props: Props */) {
 							<ListItemText primary={roomsLabel()} />
 						</ListItemButton>
 					</ListItem>
+					{invitesEnabled && (
+						<ListItem key={'Meetings'} disablePadding onClick={() => setSelectedComponent('meetings')}>
+							<ListItemButton>
+								<ListItemIcon>
+									<EventIcon />
+								</ListItemIcon>
+								<ListItemText primary={meetingsLabel()} />
+							</ListItemButton>
+						</ListItem>
+					)}
 					<ListItem key={'User(s)'} disablePadding onClick={
 						() => setSelectedComponent('user')
 					}>

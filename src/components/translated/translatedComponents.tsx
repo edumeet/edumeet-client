@@ -1691,3 +1691,189 @@ export const permissionDescriptions: Record<string, () => string> = {
 		defaultMessage: 'Allows the user to join or leave breakout rooms.'
 	}),
 };
+
+// Meeting / calendar invite labels
+export const meetingsLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings',
+	defaultMessage: 'Meetings'
+});
+export const scheduleMeetingLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.schedule',
+	defaultMessage: 'Schedule meeting'
+});
+export const myMeetingsLabel = (): string => intl.formatMessage({
+	id: 'label.landing.myMeetings',
+	defaultMessage: 'My meetings'
+});
+export const titleLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.title',
+	defaultMessage: 'Title'
+});
+export const startsAtLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.startsAt',
+	defaultMessage: 'Starts at'
+});
+export const endsAtLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.endsAt',
+	defaultMessage: 'Ends at'
+});
+export const timezoneLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.timezone',
+	defaultMessage: 'Timezone'
+});
+export const inviteLanguageLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.inviteLanguage',
+	defaultMessage: 'Invite language'
+});
+export const repeatsLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.repeats',
+	defaultMessage: 'Repeats'
+});
+export const showPastMeetingsLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.showPast',
+	defaultMessage: 'Show past meetings'
+});
+export const organizerRoleLabel = (): string => intl.formatMessage({
+	id: 'label.meetings.role.organizer',
+	defaultMessage: 'Organizer'
+});
+export const attendeeRoleLabel = (): string => intl.formatMessage({
+	id: 'label.meetings.role.attendee',
+	defaultMessage: 'Attendee'
+});
+export const repeatNeverLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.repeat.never',
+	defaultMessage: 'Never'
+});
+export const repeatDailyLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.repeat.daily',
+	defaultMessage: 'Daily'
+});
+export const repeatWeeklyLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.repeat.weekly',
+	defaultMessage: 'Weekly'
+});
+export const repeatMonthlyLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.repeat.monthly',
+	defaultMessage: 'Monthly'
+});
+export const repeatIntervalLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.repeat.interval',
+	defaultMessage: 'Every'
+});
+export const repeatCountLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.repeat.count',
+	defaultMessage: 'Number of occurrences'
+});
+export const attendeesLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.attendees',
+	defaultMessage: 'Attendees'
+});
+export const addAttendeeLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.addAttendee',
+	defaultMessage: 'Add attendee'
+});
+export const partstatAcceptedLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.partstat.accepted',
+	defaultMessage: 'Accepted'
+});
+export const partstatDeclinedLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.partstat.declined',
+	defaultMessage: 'Declined'
+});
+export const partstatTentativeLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.partstat.tentative',
+	defaultMessage: 'Tentative'
+});
+export const partstatNeedsActionLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.partstat.needsAction',
+	defaultMessage: 'Pending'
+});
+export const inviteEmailConfigLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.inviteEmailConfig',
+	defaultMessage: 'Invite email (SMTP/IMAP)'
+});
+export const sendTestInviteLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.sendTestInvite',
+	defaultMessage: 'Send test invite'
+});
+export const testConnectionLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.testConnection',
+	defaultMessage: 'Test connection'
+});
+export const inviteEnabledLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.inviteEnabled',
+	defaultMessage: 'Invites enabled'
+});
+export const organizerAddressLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.organizerAddress',
+	defaultMessage: 'Organizer email address'
+});
+export const organizerNameLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.organizerName',
+	defaultMessage: 'Organizer display name'
+});
+export const smtpHostLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.smtpHost',
+	defaultMessage: 'SMTP host'
+});
+export const smtpPortLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.smtpPort',
+	defaultMessage: 'SMTP port'
+});
+export const smtpSecureLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.smtpSecure',
+	defaultMessage: 'SMTP TLS'
+});
+export const smtpUserLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.smtpUser',
+	defaultMessage: 'SMTP user'
+});
+export const smtpPasswordLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.smtpPassword',
+	defaultMessage: 'SMTP password'
+});
+export const imapHostLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.imapHost',
+	defaultMessage: 'IMAP host'
+});
+export const imapPortLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.imapPort',
+	defaultMessage: 'IMAP port'
+});
+export const imapSecureLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.imapSecure',
+	defaultMessage: 'IMAP TLS'
+});
+export const imapUserLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.imapUser',
+	defaultMessage: 'IMAP user'
+});
+export const imapPasswordLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.imapPassword',
+	defaultMessage: 'IMAP password'
+});
+export const imapOptionalNoteLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.imapOptionalNote',
+	defaultMessage: 'IMAP is optional. Provide to track RSVP status.'
+});
+export const passwordUnchangedLabel = (): string => intl.formatMessage({
+	id: 'label.management.tenants.passwordUnchanged',
+	defaultMessage: 'Leave blank to keep existing password'
+});
+export const refreshLabel = (): string => intl.formatMessage({
+	id: 'label.generic.refresh',
+	defaultMessage: 'Refresh'
+});
+export const manageMeetingsLabel = (): string => intl.formatMessage({
+	id: 'label.meetings.manage',
+	defaultMessage: 'Manage meetings'
+});
+export const noUpcomingMeetingsLabel = (): string => intl.formatMessage({
+	id: 'label.meetings.noUpcoming',
+	defaultMessage: 'No upcoming meetings'
+});
+export const upcomingMeetingsLabel = (): string => intl.formatMessage({
+	id: 'label.meetings.upcoming',
+	defaultMessage: 'Upcoming meetings'
+});

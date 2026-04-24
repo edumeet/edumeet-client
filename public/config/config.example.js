@@ -98,6 +98,10 @@ var config = {
 	 */
 	myRoomsTabEnabled: true,
 
+	/**
+	 * Enable/disable tab 'My meetings' (upcoming calendar invites) on landing page
+	 */
+	myMeetingsTabEnabled: true,
 
 	/**
 	 * Optional: enable countdown timer in UI.

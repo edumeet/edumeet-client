@@ -9,6 +9,7 @@ import { useAppDispatch } from '../../../store/hooks';
 import { createRoomWithParams, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import RoomOwnerTable from './RoomOwner';
 import RoomUserRoleTable from './roomUserRole';
+import RoomMeetingsTable from './RoomMeetings';
 import { addNewLabel, applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, createdAtLabel, creatorIdLabel, defaultRoleLabel, deleteLabel, descLabel, filesharingEnabledLabel, genericItemDescLabel, groupRolesLabel, hiddenEmailLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, ownersLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roomBgLabel, roomLockedLabel, tenantLabel, undefinedLabel, updatedAtLabel, yesLabel } from '../../translated/translatedComponents';
 
 export interface RoomProp {
@@ -532,6 +533,7 @@ const RoomTable = () => {
 					{ id !=0 && <>
 						<RoomOwnerTable roomId={id} />
 						<RoomUserRoleTable roomId={id} />
+						<RoomMeetingsTable roomId={id} />
 					</>}
 					
 				</DialogContent>

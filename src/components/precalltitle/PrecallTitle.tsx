@@ -5,6 +5,7 @@ import edumeetConfig from '../../utils/edumeetConfig';
 import LoginButton from '../controlbuttons/LoginButton';
 import { loginLabel, logoutLabel } from '../translated/translatedComponents';
 import LogoutButton from '../controlbuttons/LogoutButton';
+import MeetingsButton from '../controlbuttons/MeetingsButton';
 import React, { useEffect } from 'react';
 import { checkJWT, login, logout } from '../../store/actions/permissionsActions';
 import { styled } from '@mui/material/styles';
@@ -20,9 +21,15 @@ const PrecallTitleRoot = styled(Grid)(({ theme }) => ({
 	},
 }));
 
-const ClickableLabel = styled('span')(() => ({
+const ClickableLabel = styled('span')(({ theme }) => ({
 	cursor: 'pointer',
 	color: 'inherit',
+	marginLeft: theme.spacing(0.5),
+	whiteSpace: 'nowrap',
+	// Hide the text label on narrow screens; icon button alone remains visible.
+	[theme.breakpoints.down('sm')]: {
+		display: 'none'
+	}
 }));
 
 const PrecallTitle = (): React.JSX.Element => {
@@ -38,7 +45,7 @@ const PrecallTitle = (): React.JSX.Element => {
 
 	return (
 		<PrecallTitleRoot container spacing={2}>
-			<Grid size={8} style={{ display: 'flex', alignItems: 'center' }}>
+			<Grid size={7} style={{ display: 'flex', alignItems: 'center' }}>
 				{logo ? (
 					<img
 						style={{ height: '32px', maxHeight: '32px', maxWidth: '200px' }}
@@ -50,12 +57,13 @@ const PrecallTitle = (): React.JSX.Element => {
 				)}
 			</Grid>
 
-			<Grid size={4} style={{ display: 'flex', justifyContent: 'end' }} >
+			<Grid size={5} style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }} >
+				<MeetingsButton type='iconbutton' toolTipLocation='bottom' />
 				{loginEnabled &&
 					<>
 						{loggedIn ? <LogoutButton
 							type='iconbutton'
-							toolTipLocation='left' /> : <LoginButton type='iconbutton' toolTipLocation='left' />}
+							toolTipLocation='bottom' /> : <LoginButton type='iconbutton' toolTipLocation='bottom' />}
 						{loggedIn ? <ClickableLabel onClick={() => dispatch(logout())}>{logoutLabel()}</ClickableLabel>
 							: <ClickableLabel onClick={() => dispatch(login())}>{loginLabel()}</ClickableLabel>}
 					</>
