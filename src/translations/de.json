@@ -517,6 +517,8 @@
 	"label.management.meetings.inviteLanguage": "Einladungssprache",
 	"label.management.meetings.repeats": "Wiederholt",
 	"label.management.meetings.showPast": "Vergangene Meetings anzeigen",
+	"label.meetings.role.organizer": "Organisator",
+	"label.meetings.role.attendee": "Teilnehmer",
 	"label.management.meetings.repeat.never": "Nie",
 	"label.management.meetings.repeat.daily": "Täglich",
 	"label.management.meetings.repeat.weekly": "Wöchentlich",

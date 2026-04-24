@@ -517,6 +517,8 @@
 	"label.management.meetings.inviteLanguage": "Invite language",
 	"label.management.meetings.repeats": "Repeats",
 	"label.management.meetings.showPast": "Show past meetings",
+	"label.meetings.role.organizer": "Organizer",
+	"label.meetings.role.attendee": "Attendee",
 	"label.management.meetings.repeat.never": "Never",
 	"label.management.meetings.repeat.daily": "Daily",
 	"label.management.meetings.repeat.weekly": "Weekly",

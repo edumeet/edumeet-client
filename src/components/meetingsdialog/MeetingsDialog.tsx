@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	Box,
 	Button,
+	Chip,
 	IconButton,
 	List,
 	ListItem,
@@ -12,15 +13,18 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Close } from '@mui/icons-material';
 import { rrulestr } from 'rrule';
+import { jwtDecode } from 'jwt-decode';
 import GenericDialog from '../genericdialog/GenericDialog';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getData } from '../../store/actions/managementActions';
 import { Meeting } from '../../utils/types';
 import {
+	attendeeRoleLabel,
 	closeLabel,
 	joinLabel,
 	manageMeetingsLabel,
 	noUpcomingMeetingsLabel,
+	organizerRoleLabel,
 	refreshLabel,
 	roomLabel,
 	upcomingMeetingsLabel
@@ -51,6 +55,19 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 	const dispatch = useAppDispatch();
 	const [ meetings, setMeetings ] = useState<Meeting[]>([]);
 	const [ loading, setLoading ] = useState(false);
+	// Resolve current user id from the JWT `sub` claim so we can distinguish meetings
+	// the user organizes vs. meetings they were invited to.
+	const token = useAppSelector((state) => state.permissions.token);
+	const myUserId = useMemo<number | null>(() => {
+		if (!token) return null;
+		try {
+			const payload = jwtDecode<{ sub?: string }>(token);
+
+			return payload.sub ? Number(payload.sub) : null;
+		} catch {
+			return null;
+		}
+	}, [ token ]);
 
 	const fetchMeetings = async () => {
 		setLoading(true);
@@ -125,6 +142,8 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 								? endDate.toLocaleTimeString(undefined, timeOpts)
 								: endDate.toLocaleString();
 
+							const isOrganizer = myUserId != null && Number(meeting.organizerId) === myUserId;
+
 							return (
 								<ListItem
 									key={meeting.id}
@@ -133,7 +152,17 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 								>
 									<ListItemText
 										sx={{ flex: '1 1 200px', my: 0 }}
-										primary={meeting.title}
+										primary={
+											<Box component='span' sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+												<Box component='span'>{meeting.title}</Box>
+												<Chip
+													size='small'
+													label={isOrganizer ? organizerRoleLabel() : attendeeRoleLabel()}
+													color={isOrganizer ? 'primary' : 'default'}
+													variant={isOrganizer ? 'filled' : 'outlined'}
+												/>
+											</Box>
+										}
 										secondary={
 											<>
 												<Box component='span' sx={{ display: 'block' }}>
