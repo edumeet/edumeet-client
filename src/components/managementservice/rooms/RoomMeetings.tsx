@@ -179,7 +179,6 @@ const RoomMeetingsTable = (props: RoomProp) => {
 	const [ repeatCount, setRepeatCount ] = useState(10);
 	const [ attendees, setAttendees ] = useState<MeetingAttendee[]>([]);
 	const [ occurrenceRsvps, setOccurrenceRsvps ] = useState<MeetingOccurrenceRsvp[]>([]);
-	const [ attendeesWithExceptions, setAttendeesWithExceptions ] = useState<Set<number>>(new Set());
 	const [ showPastMeetings, setShowPastMeetings ] = useState(false);
 	const [ attendeeInput, setAttendeeInput ] = useState<User | string | null>(null);
 	const [ resolveEmail, setResolveEmail ] = useState('');
@@ -191,25 +190,7 @@ const RoomMeetingsTable = (props: RoomProp) => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const meetings: any = await dispatch(getDataByRoomId(roomId, 'meetings'));
 
-		const meetingList = (meetings?.data ?? []) as Meeting[];
-
-		setData(meetingList);
-
-		const recurAttendeeIds = meetingList
-			.filter((m) => Boolean(m.rrule))
-			.flatMap((m) => (m.attendees ?? []))
-			.map((a) => Number(a.id))
-			.filter((n) => !Number.isNaN(n) && n > 0);
-
-		if (recurAttendeeIds.length > 0) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const rsvpsRes: any = await dispatch(getData('meetingOccurrenceRsvps', { meetingAttendeeId: { $in: recurAttendeeIds } }));
-			const rsvps = (rsvpsRes?.data ?? []) as MeetingOccurrenceRsvp[];
-
-			setAttendeesWithExceptions(new Set(rsvps.map((r) => Number(r.meetingAttendeeId))));
-		} else {
-			setAttendeesWithExceptions(new Set());
-		}
+		setData((meetings?.data ?? []) as Meeting[]);
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const usersData: any = await dispatch(getData('users'));
@@ -267,16 +248,12 @@ const RoomMeetingsTable = (props: RoomProp) => {
 				header: attendeesLabel(),
 				Cell: ({ row }) => {
 					const list = (row.original.attendees ?? []) as MeetingAttendee[];
-					const accepted = list.filter((a) => a.partstat === 'ACCEPTED').length;
-					const declined = list.filter((a) => a.partstat === 'DECLINED').length;
-					const pending = list.filter((a) => !a.partstat || a.partstat === 'NEEDS-ACTION').length;
-					const hasExceptions = list.some((a) => a.id != null && attendeesWithExceptions.has(Number(a.id)));
 
-					return `${accepted} ✓ / ${declined} ✗ / ${pending} ?${hasExceptions ? ' *' : ''}`;
+					return list.length;
 				}
 			}
 		],
-		[ attendeesWithExceptions ]
+		[]
 	);
 
 	const resetForm = () => {
