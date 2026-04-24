@@ -21,9 +21,14 @@ const PrecallTitleRoot = styled(Grid)(({ theme }) => ({
 	},
 }));
 
-const ClickableLabel = styled('span')(() => ({
+const ClickableLabel = styled('span')(({ theme }) => ({
 	cursor: 'pointer',
 	color: 'inherit',
+	marginLeft: theme.spacing(0.5),
+	// Hide the text label on narrow screens; icon button alone remains visible.
+	[theme.breakpoints.down('sm')]: {
+		display: 'none'
+	}
 }));
 
 const PrecallTitle = (): React.JSX.Element => {
