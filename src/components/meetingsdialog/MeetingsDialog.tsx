@@ -128,18 +128,11 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 							return (
 								<ListItem
 									key={meeting.id}
-									secondaryAction={
-										<Button
-											variant='contained'
-											size='small'
-											onClick={() => handleJoin(rName)}
-											disabled={!rName}
-										>
-											{joinLabel()}
-										</Button>
-									}
+									alignItems='flex-start'
+									sx={{ flexWrap: 'wrap', gap: 1 }}
 								>
 									<ListItemText
+										sx={{ flex: '1 1 200px', my: 0 }}
 										primary={meeting.title}
 										secondary={
 											<>
@@ -152,6 +145,15 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 											</>
 										}
 									/>
+									<Button
+										variant='contained'
+										size='small'
+										onClick={() => handleJoin(rName)}
+										disabled={!rName}
+										sx={{ alignSelf: 'center' }}
+									>
+										{joinLabel()}
+									</Button>
 								</ListItem>
 							);
 						})}
@@ -159,7 +161,7 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 				)
 			}
 			actions={
-				<Box display='flex' alignItems='center' justifyContent='space-between' width='100%'>
+				<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: 1 }}>
 					<Button
 						startIcon={<OpenInNewIcon />}
 						onClick={handleOpenManagement}

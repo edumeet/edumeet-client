@@ -1729,6 +1729,10 @@ export const repeatsLabel = (): string => intl.formatMessage({
 	id: 'label.management.meetings.repeats',
 	defaultMessage: 'Repeats'
 });
+export const showPastMeetingsLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.showPast',
+	defaultMessage: 'Show past meetings'
+});
 export const repeatNeverLabel = (): string => intl.formatMessage({
 	id: 'label.management.meetings.repeat.never',
 	defaultMessage: 'Never'

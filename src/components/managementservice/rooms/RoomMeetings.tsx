@@ -12,12 +12,15 @@ import {
 	DialogContent,
 	DialogTitle,
 	FormControl,
+	FormControlLabel,
 	InputLabel,
 	MenuItem,
 	Select,
+	Switch,
 	TextField,
 	Typography
 } from '@mui/material';
+import { rrulestr } from 'rrule';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -59,6 +62,7 @@ import {
 	repeatWeeklyLabel,
 	repeatCountLabel,
 	repeatsLabel,
+	showPastMeetingsLabel,
 	scheduleMeetingLabel,
 	selectButtonLabel,
 	startsAtLabel,
@@ -102,6 +106,27 @@ const buildRrule = (mode: RepeatMode, interval: number, count: number): string |
 	if (mode === 'NEVER') return undefined;
 
 	return `FREQ=${mode};INTERVAL=${Math.max(1, interval)};COUNT=${Math.max(1, count)}`;
+};
+
+const isMeetingPast = (m: Meeting, now: number): boolean => {
+	const startsAt = Number(m.startsAt);
+	const endsAt = Number(m.endsAt);
+	const duration = endsAt - startsAt;
+
+	if (!m.rrule) return endsAt < now;
+	try {
+		const rule = rrulestr(m.rrule, { dtstart: new Date(startsAt) });
+		const nextStart = rule.after(new Date(now), true);
+
+		if (nextStart) return false;
+		const lastStart = rule.before(new Date(now), true);
+
+		if (!lastStart) return true;
+
+		return lastStart.getTime() + duration < now;
+	} catch {
+		return endsAt < now;
+	}
 };
 
 const parseRrule = (rrule?: string): { mode: RepeatMode, interval: number, count: number } => {
@@ -155,6 +180,7 @@ const RoomMeetingsTable = (props: RoomProp) => {
 	const [ attendees, setAttendees ] = useState<MeetingAttendee[]>([]);
 	const [ occurrenceRsvps, setOccurrenceRsvps ] = useState<MeetingOccurrenceRsvp[]>([]);
 	const [ attendeesWithExceptions, setAttendeesWithExceptions ] = useState<Set<number>>(new Set());
+	const [ showPastMeetings, setShowPastMeetings ] = useState(false);
 	const [ attendeeInput, setAttendeeInput ] = useState<User | string | null>(null);
 	const [ resolveEmail, setResolveEmail ] = useState('');
 	const [ isResolving, setIsResolving ] = useState(false);
@@ -456,17 +482,30 @@ const RoomMeetingsTable = (props: RoomProp) => {
 		}
 	};
 
+	const visibleData = useMemo(() => {
+		if (showPastMeetings) return data;
+		const now = Date.now();
+
+		return data.filter((m) => !isMeetingPast(m, now));
+	}, [ data, showPastMeetings ]);
+
 	return (
 		<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={momentLocale}>
 			<Box sx={{ mt: 2 }}>
 				<Typography variant="h6">{meetingsLabel()}</Typography>
-				<Button variant="outlined" onClick={handleOpenAdd} sx={{ mt: 1, mb: 1 }}>
-					{addNewLabel()}
-				</Button>
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 1, mb: 1 }}>
+					<Button variant="outlined" onClick={handleOpenAdd}>
+						{addNewLabel()}
+					</Button>
+					<FormControlLabel
+						control={<Switch checked={showPastMeetings} onChange={(e) => setShowPastMeetings(e.target.checked)} />}
+						label={showPastMeetingsLabel()}
+					/>
+				</Box>
 				<MaterialReactTable
 					localization={localization}
 					columns={columns}
-					data={data}
+					data={visibleData}
 					state={{ isLoading }}
 					initialState={{
 						columnVisibility: { id: false },
@@ -498,25 +537,25 @@ const RoomMeetingsTable = (props: RoomProp) => {
 						value={description}
 						onChange={(e) => setDescription(e.target.value)}
 					/>
-					<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+					<Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
 						<DateTimePicker
 							label={startsAtLabel()}
 							value={startsAt}
 							onChange={(v) => setStartsAt(v)}
 							ampm={false}
-							sx={{ flex: 1 }}
+							sx={{ flex: '1 1 240px' }}
 						/>
 						<DateTimePicker
 							label={endsAtLabel()}
 							value={endsAt}
 							onChange={(v) => setEndsAt(v)}
 							ampm={false}
-							sx={{ flex: 1 }}
+							sx={{ flex: '1 1 240px' }}
 						/>
 					</Box>
-					<Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+					<Box sx={{ display: 'flex', gap: 2, mt: 2, flexWrap: 'wrap' }}>
 						<Autocomplete
-							sx={{ flex: 1 }}
+							sx={{ flex: '1 1 240px' }}
 							options={timezoneOptions}
 							value={timezoneOptions.find((o) => o.value === timezone) ?? undefined}
 							onChange={(_e, v) => { if (v) setTimezone(v.value); }}
@@ -525,7 +564,7 @@ const RoomMeetingsTable = (props: RoomProp) => {
 							disableClearable
 							renderInput={(params) => <TextField {...params} label={timezoneLabel()} />}
 						/>
-						<FormControl sx={{ flex: 1 }}>
+						<FormControl sx={{ flex: '1 1 240px' }}>
 							<InputLabel id="meeting-locale-label">{inviteLanguageLabel()}</InputLabel>
 							<Select
 								labelId="meeting-locale-label"
@@ -539,8 +578,8 @@ const RoomMeetingsTable = (props: RoomProp) => {
 							</Select>
 						</FormControl>
 					</Box>
-					<Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-						<FormControl sx={{ flex: 1 }}>
+					<Box sx={{ display: 'flex', gap: 2, mt: 2, flexWrap: 'wrap' }}>
+						<FormControl sx={{ flex: '2 1 200px' }}>
 							<InputLabel id="meeting-repeat-label">{repeatsLabel()}</InputLabel>
 							<Select
 								labelId="meeting-repeat-label"
@@ -560,7 +599,7 @@ const RoomMeetingsTable = (props: RoomProp) => {
 							value={repeatInterval}
 							onChange={(e) => setRepeatInterval(parseInt(e.target.value, 10) || 1)}
 							disabled={repeatMode === 'NEVER'}
-							sx={{ width: 120 }}
+							sx={{ flex: '1 1 120px', minWidth: 120 }}
 						/>
 						<TextField
 							label={repeatCountLabel()}
@@ -568,7 +607,7 @@ const RoomMeetingsTable = (props: RoomProp) => {
 							value={repeatCount}
 							onChange={(e) => setRepeatCount(parseInt(e.target.value, 10) || 1)}
 							disabled={repeatMode === 'NEVER'}
-							sx={{ width: 180 }}
+							sx={{ flex: '1 1 160px', minWidth: 140 }}
 						/>
 					</Box>
 					<Box sx={{ mt: 3 }}>

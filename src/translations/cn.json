@@ -516,6 +516,7 @@
 	"label.management.meetings.timezone": null,
 	"label.management.meetings.inviteLanguage": null,
 	"label.management.meetings.repeats": null,
+	"label.management.meetings.showPast": null,
 	"label.management.meetings.repeat.never": null,
 	"label.management.meetings.repeat.daily": null,
 	"label.management.meetings.repeat.weekly": null,

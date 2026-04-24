@@ -190,29 +190,29 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 						control={<Checkbox checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />}
 						label={inviteEnabledLabel()}
 					/>
-					<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+					<Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
 						<TextField
 							label={organizerAddressLabel()}
 							required
-							fullWidth
+							sx={{ flex: '1 1 240px' }}
 							type="email"
 							value={organizerAddress}
 							onChange={(e) => setOrganizerAddress(e.target.value)}
 						/>
 						<TextField
 							label={organizerNameLabel()}
-							fullWidth
+							sx={{ flex: '1 1 240px' }}
 							value={organizerName}
 							onChange={(e) => setOrganizerName(e.target.value)}
 						/>
 					</Box>
 
 					<Typography variant="subtitle2" sx={{ mt: 3, mb: 1 }}>SMTP</Typography>
-					<Box sx={{ display: 'flex', gap: 2 }}>
+					<Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
 						<TextField
 							label={smtpHostLabel()}
 							required
-							sx={{ flex: 3 }}
+							sx={{ flex: '3 1 240px' }}
 							value={smtpHost}
 							onChange={(e) => setSmtpHost(e.target.value)}
 							placeholder="smtp.example.com"
@@ -223,25 +223,31 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 							label={smtpPortLabel()}
 							required
 							type="number"
-							sx={{ flex: 1, minWidth: 120 }}
+							sx={{ flex: '1 1 120px', minWidth: 120 }}
 							value={smtpPort}
 							onChange={(e) => setSmtpPort(parseInt(e.target.value, 10) || 465)}
 						/>
-						<FormControlLabel
-							control={<Checkbox checked={smtpSecure} onChange={(e) => {
-								const next = e.target.checked;
+						<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+							<FormControlLabel
+								control={<Checkbox checked={smtpSecure} onChange={(e) => {
+									const next = e.target.checked;
 
-								setSmtpSecure(next);
-								setSmtpPort(swapPortIfDefault(smtpPort, next, 465, 587));
-							}} />}
-							label={smtpSecureLabel()}
-						/>
+									setSmtpSecure(next);
+									setSmtpPort(swapPortIfDefault(smtpPort, next, 465, 587));
+								}} />}
+								label={smtpSecureLabel()}
+								sx={{ mr: 0 }}
+							/>
+							<Typography variant="caption" color="text.secondary" sx={{ ml: 4, mt: -0.5 }}>
+								{smtpSecure ? 'SSL (implicit TLS)' : 'STARTTLS'}
+							</Typography>
+						</Box>
 					</Box>
-					<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+					<Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
 						<TextField
 							label={smtpUserLabel()}
 							required
-							fullWidth
+							sx={{ flex: '1 1 240px' }}
 							value={smtpUser}
 							onChange={(e) => setSmtpUser(e.target.value)}
 						/>
@@ -249,7 +255,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 							label={smtpPasswordLabel()}
 							type="password"
 							required={!existingId}
-							fullWidth
+							sx={{ flex: '1 1 240px' }}
 							value={smtpPass}
 							onChange={(e) => setSmtpPass(e.target.value)}
 							placeholder={existingId ? passwordUnchangedLabel() : ''}
@@ -261,10 +267,10 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 					<Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
 						{imapOptionalNoteLabel()}
 					</Typography>
-					<Box sx={{ display: 'flex', gap: 2 }}>
+					<Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
 						<TextField
 							label={imapHostLabel()}
-							sx={{ flex: 3 }}
+							sx={{ flex: '3 1 240px' }}
 							value={imapHost}
 							onChange={(e) => setImapHost(e.target.value)}
 							placeholder="imap.example.com"
@@ -275,26 +281,32 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 							label={imapPortLabel()}
 							type="number"
 							required={Boolean(imapHost)}
-							sx={{ flex: 1, minWidth: 120 }}
+							sx={{ flex: '1 1 120px', minWidth: 120 }}
 							value={imapPort}
 							onChange={(e) => setImapPort(parseInt(e.target.value, 10) || 993)}
 							disabled={!imapHost}
 						/>
-						<FormControlLabel
-							control={<Checkbox checked={imapSecure} onChange={(e) => {
-								const next = e.target.checked;
+						<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+							<FormControlLabel
+								control={<Checkbox checked={imapSecure} onChange={(e) => {
+									const next = e.target.checked;
 
-								setImapSecure(next);
-								setImapPort(swapPortIfDefault(imapPort, next, 993, 143));
-							}} disabled={!imapHost} />}
-							label={imapSecureLabel()}
-						/>
+									setImapSecure(next);
+									setImapPort(swapPortIfDefault(imapPort, next, 993, 143));
+								}} disabled={!imapHost} />}
+								label={imapSecureLabel()}
+								sx={{ mr: 0 }}
+							/>
+							<Typography variant="caption" color="text.secondary" sx={{ ml: 4, mt: -0.5 }}>
+								{imapSecure ? 'SSL (implicit TLS)' : 'STARTTLS'}
+							</Typography>
+						</Box>
 					</Box>
-					<Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+					<Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
 						<TextField
 							label={imapUserLabel()}
 							required={Boolean(imapHost)}
-							fullWidth
+							sx={{ flex: '1 1 240px' }}
 							value={imapUser}
 							onChange={(e) => setImapUser(e.target.value)}
 							disabled={!imapHost}
@@ -303,7 +315,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 							label={imapPasswordLabel()}
 							type="password"
 							required={Boolean(imapHost) && !existingId}
-							fullWidth
+							sx={{ flex: '1 1 240px' }}
 							value={imapPass}
 							onChange={(e) => setImapPass(e.target.value)}
 							placeholder={existingId ? passwordUnchangedLabel() : ''}
