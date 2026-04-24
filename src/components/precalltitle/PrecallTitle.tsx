@@ -25,6 +25,7 @@ const ClickableLabel = styled('span')(({ theme }) => ({
 	cursor: 'pointer',
 	color: 'inherit',
 	marginLeft: theme.spacing(0.5),
+	whiteSpace: 'nowrap',
 	// Hide the text label on narrow screens; icon button alone remains visible.
 	[theme.breakpoints.down('sm')]: {
 		display: 'none'
@@ -44,7 +45,7 @@ const PrecallTitle = (): React.JSX.Element => {
 
 	return (
 		<PrecallTitleRoot container spacing={2}>
-			<Grid size={8} style={{ display: 'flex', alignItems: 'center' }}>
+			<Grid size={7} style={{ display: 'flex', alignItems: 'center' }}>
 				{logo ? (
 					<img
 						style={{ height: '32px', maxHeight: '32px', maxWidth: '200px' }}
@@ -56,7 +57,7 @@ const PrecallTitle = (): React.JSX.Element => {
 				)}
 			</Grid>
 
-			<Grid size={4} style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }} >
+			<Grid size={5} style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }} >
 				<MeetingsButton type='iconbutton' toolTipLocation='bottom' />
 				{loginEnabled &&
 					<>
