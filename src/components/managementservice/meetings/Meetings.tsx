@@ -170,10 +170,12 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 	const uiLocale = useAppSelector((state) => state.settings.locale);
 	const defaultLocale = mapUiLocaleToFile(uiLocale);
 	// `ensureMomentLocale` dynamically imports the moment bundle. Until that resolves,
-	// the DateTimePicker would fall back to English (MM/DD/YYYY). Track the loaded
-	// locale in state and key the LocalizationProvider on it so it remounts once
-	// the bundle is ready and the adapter picks up the localized format.
-	const [ momentLocale, setMomentLocale ] = useState<string>(toMomentLocale(defaultLocale));
+	// the DateTimePicker falls back to English (MM/DD/YYYY). We render with 'en' first
+	// (always preloaded by moment) and remount LocalizationProvider via `key` once the
+	// real locale bundle is loaded. We can't initialize state with the target locale
+	// directly — setting state to the same value as the initial value would not
+	// trigger a re-render and the adapter would never pick up the just-loaded bundle.
+	const [ momentLocale, setMomentLocale ] = useState<string>('en');
 
 	useEffect(() => {
 		ensureMomentLocale(defaultLocale).then(setMomentLocale);
