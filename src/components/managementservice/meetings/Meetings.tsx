@@ -29,7 +29,7 @@ import { Meeting, MeetingAttendee, MeetingOccurrenceRsvp, MeetingPartstat, Room,
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { localeList } from '../../../utils/intlManager';
 import { browserTimezone, timezoneOptions } from '../../../utils/timezones';
-import { ensureMomentLocale, toMomentLocale } from '../../../utils/momentLocale';
+import { ensureMomentLocale } from '../../../utils/momentLocale';
 import {
 	createData,
 	deleteData,
