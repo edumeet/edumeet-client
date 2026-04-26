@@ -59,6 +59,11 @@
 		"uuid": "^14.0.0",
 		"webtorrent": "^2.8.5"
 	},
+	"dependenciesMeta": {
+		"node-datachannel@0.32.2": {
+			"built": false
+		}
+	},
 	"scripts": {
 		"start": "vite",
 		"build": "tsc && vite build",

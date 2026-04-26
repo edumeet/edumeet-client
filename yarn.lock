@@ -3441,6 +3441,9 @@ __metadata:
     vite-plugin-eslint: "npm:^1.8.1"
     vite-tsconfig-paths: "npm:^5.1.4"
     webtorrent: "npm:^2.8.5"
+  dependenciesMeta:
+    node-datachannel@0.32.2:
+      built: false
   languageName: unknown
   linkType: soft
 
