@@ -34,6 +34,7 @@ import {
 	createData,
 	deleteData,
 	getData,
+	getDataByRoomId,
 	getUserByEmail,
 	patchData,
 	persistResolvedUser
@@ -152,14 +153,31 @@ const parseRrule = (rrule?: string): { mode: RepeatMode, interval: number, count
 	};
 };
 
-const MeetingsTable = () => {
+export interface MeetingsTableProps {
+	// When provided, the table renders in "room-scoped" mode:
+	// - meetings are fetched via getDataByRoomId(roomId, 'meetings')
+	// - the Room column is hidden in the table
+	// - the Room dropdown is hidden in the dialog (the room is fixed)
+	// When omitted, renders the global "all visible meetings" view with a Room column
+	// and dropdown.
+	roomId?: number;
+}
+
+const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
+	const isRoomScoped = roomIdProp !== undefined;
 	const dispatch = useAppDispatch();
 	const localization = useMRTLocalization();
 	const uiLocale = useAppSelector((state) => state.settings.locale);
 	const defaultLocale = mapUiLocaleToFile(uiLocale);
-	const momentLocale = toMomentLocale(defaultLocale);
+	// `ensureMomentLocale` dynamically imports the moment bundle. Until that resolves,
+	// the DateTimePicker would fall back to English (MM/DD/YYYY). Track the loaded
+	// locale in state and key the LocalizationProvider on it so it remounts once
+	// the bundle is ready and the adapter picks up the localized format.
+	const [ momentLocale, setMomentLocale ] = useState<string>(toMomentLocale(defaultLocale));
 
-	useEffect(() => { ensureMomentLocale(defaultLocale); }, [ defaultLocale ]);
+	useEffect(() => {
+		ensureMomentLocale(defaultLocale).then(setMomentLocale);
+	}, [ defaultLocale ]);
 
 	const [ data, setData ] = useState<Meeting[]>([]);
 	const [ rooms, setRooms ] = useState<Room[]>([]);
@@ -168,7 +186,9 @@ const MeetingsTable = () => {
 
 	const [ open, setOpen ] = useState(false);
 	const [ id, setId ] = useState(0);
-	const [ roomId, setRoomId ] = useState<number | ''>('');
+	// Internal state used only in "all-meetings" mode; in room-scoped mode the prop wins.
+	const [ roomIdState, setRoomIdState ] = useState<number | ''>('');
+	const roomId: number | '' = isRoomScoped ? (roomIdProp as number) : roomIdState;
 	const [ title, setTitle ] = useState('');
 	const [ description, setDescription ] = useState('');
 	const [ startsAt, setStartsAt ] = useState<Moment | null>(moment()
@@ -200,19 +220,24 @@ const MeetingsTable = () => {
 	const fetchAll = async () => {
 		setIsLoading(true);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const meetings: any = await dispatch(getData('meetings'));
+		const meetings: any = isRoomScoped
+			? await dispatch(getDataByRoomId(roomIdProp as number, 'meetings'))
+			: await dispatch(getData('meetings'));
 
 		setData((meetings?.data ?? []) as Meeting[]);
 
-		// No ownedOnly: the rooms service's filterByRoomOwnership hook already filters
-		// correctly per role (regular users → their owned rooms; tenant admins/owners →
-		// all tenant rooms; super-admins → all rooms), matching meeting-create auth.
-		// Passing ownedOnly=true would also crash on super-admin since their bypass skips
-		// the hook that translates the flag into a proper id filter.
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const r: any = await dispatch(getData('rooms'));
+		if (!isRoomScoped) {
+			// No ownedOnly: the rooms service's filterByRoomOwnership hook already filters
+			// correctly per role (regular users → their owned rooms; tenant admins/owners →
+			// all tenant rooms; super-admins → all rooms), matching meeting-create auth.
+			// Passing ownedOnly=true would also crash on super-admin since their bypass skips
+			// the hook that translates the flag into a proper id filter.
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const r: any = await dispatch(getData('rooms'));
 
-		setRooms((r?.data ?? []) as Room[]);
+			setRooms((r?.data ?? []) as Room[]);
+		}
+
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const u: any = await dispatch(getData('users'));
 
@@ -222,70 +247,83 @@ const MeetingsTable = () => {
 
 	useEffect(() => {
 		fetchAll();
-	}, []);
+	}, [ roomIdProp ]);
 
 	// eslint-disable-next-line camelcase
 	const columns = useMemo<MRT_ColumnDef<Meeting>[]>(
-		() => [
-			{ accessorKey: 'id', header: '#' },
-			{ accessorKey: 'title', header: titleLabel() },
-			{
-				accessorKey: 'roomId',
-				header: roomLabel(),
-				Cell: ({ cell }) => roomName(cell.getValue<number>())
-			},
-			{
-				accessorKey: 'startsAt',
-				header: startsAtLabel(),
-				// Coerce to Number — Postgres bigint columns come back as strings;
-				// moment() would parse a numeric string as ISO and yield Invalid Date.
-				Cell: ({ cell }) => {
-					const v = cell.getValue<number | string>();
+		() => {
+			// eslint-disable-next-line camelcase
+			const cols: MRT_ColumnDef<Meeting>[] = [
+				{ accessorKey: 'id', header: '#' },
+				{ accessorKey: 'title', header: titleLabel() }
+			];
 
-					return v ? moment(Number(v)).format('YYYY-MM-DD HH:mm') : '';
-				}
-			},
-			{
-				accessorKey: 'endsAt',
-				header: endsAtLabel(),
-				Cell: ({ cell }) => {
-					const v = cell.getValue<number | string>();
-
-					return v ? moment(Number(v)).format('YYYY-MM-DD HH:mm') : '';
-				}
-			},
-			{
-				accessorKey: 'rrule',
-				header: repeatsLabel(),
-				Cell: ({ cell }) => {
-					const v = cell.getValue<string | undefined>();
-					const parsed = parseRrule(v);
-
-					if (parsed.mode === 'NEVER') return '—';
-					let modeLabel = repeatMonthlyLabel();
-
-					if (parsed.mode === 'DAILY') modeLabel = repeatDailyLabel();
-					else if (parsed.mode === 'WEEKLY') modeLabel = repeatWeeklyLabel();
-
-					return `${modeLabel} × ${parsed.count}`;
-				}
-			},
-			{
-				accessorKey: 'attendees',
-				header: attendeesLabel(),
-				Cell: ({ row }) => {
-					const list = (row.original.attendees ?? []) as MeetingAttendee[];
-
-					return list.length;
-				}
+			if (!isRoomScoped) {
+				cols.push({
+					accessorKey: 'roomId',
+					header: roomLabel(),
+					Cell: ({ cell }) => roomName(cell.getValue<number>())
+				});
 			}
-		],
-		[ rooms ]
+
+			cols.push(
+				{
+					accessorKey: 'startsAt',
+					header: startsAtLabel(),
+					// Coerce to Number — Postgres bigint columns come back as strings;
+					// moment() would parse a numeric string as ISO and yield Invalid Date.
+					Cell: ({ cell }) => {
+						const v = cell.getValue<number | string>();
+
+						return v ? moment(Number(v)).format('YYYY-MM-DD HH:mm') : '';
+					}
+				},
+				{
+					accessorKey: 'endsAt',
+					header: endsAtLabel(),
+					Cell: ({ cell }) => {
+						const v = cell.getValue<number | string>();
+
+						return v ? moment(Number(v)).format('YYYY-MM-DD HH:mm') : '';
+					}
+				},
+				{
+					accessorKey: 'rrule',
+					header: repeatsLabel(),
+					Cell: ({ cell }) => {
+						const v = cell.getValue<string | undefined>();
+						const parsed = parseRrule(v);
+
+						if (parsed.mode === 'NEVER') return '—';
+						let modeLabel = repeatMonthlyLabel();
+
+						if (parsed.mode === 'DAILY') modeLabel = repeatDailyLabel();
+						else if (parsed.mode === 'WEEKLY') modeLabel = repeatWeeklyLabel();
+
+						return `${modeLabel} × ${parsed.count}`;
+					}
+				},
+				{
+					accessorKey: 'attendees',
+					header: attendeesLabel(),
+					Cell: ({ row }) => {
+						const list = (row.original.attendees ?? []) as MeetingAttendee[];
+
+						return list.length;
+					}
+				}
+			);
+
+			return cols;
+		},
+		[ rooms, isRoomScoped ]
 	);
 
 	const resetForm = () => {
 		setId(0);
-		setRoomId(rooms.length > 0 && rooms[0].id ? Number(rooms[0].id) : '');
+		if (!isRoomScoped) {
+			setRoomIdState(rooms.length > 0 && rooms[0].id ? Number(rooms[0].id) : '');
+		}
 		setTitle('');
 		setDescription('');
 		setStartsAt(moment()
@@ -312,7 +350,7 @@ const MeetingsTable = () => {
 
 	const handleOpenEdit = async (m: Meeting) => {
 		setId(m.id ?? 0);
-		setRoomId(m.roomId);
+		if (!isRoomScoped) setRoomIdState(m.roomId);
 		setTitle(m.title ?? '');
 		setDescription(m.description ?? '');
 		setStartsAt(m.startsAt ? moment(Number(m.startsAt)) : null);
@@ -491,12 +529,16 @@ const MeetingsTable = () => {
 		return data.filter((m) => !isMeetingPast(m, now));
 	}, [ data, showPastMeetings ]);
 
+	// Add button: in all-meetings mode require at least one room (else dropdown is empty).
+	// In room-scoped mode the room is fixed via prop, so always enabled.
+	const addDisabled = !isRoomScoped && rooms.length === 0;
+
 	return (
-		<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={momentLocale}>
-			<Box>
+		<LocalizationProvider key={momentLocale} dateAdapter={AdapterMoment} adapterLocale={momentLocale}>
+			<Box sx={isRoomScoped ? { mt: 2 } : undefined}>
 				<Typography variant="h6">{meetingsLabel()}</Typography>
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 1, mb: 1 }}>
-					<Button variant="outlined" onClick={handleOpenAdd} disabled={rooms.length === 0}>
+					<Button variant="outlined" onClick={handleOpenAdd} disabled={addDisabled}>
 						{addNewLabel()}
 					</Button>
 					<FormControlLabel
@@ -521,20 +563,22 @@ const MeetingsTable = () => {
 			<Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
 				<DialogTitle>{scheduleMeetingLabel()}</DialogTitle>
 				<DialogContent>
-					<FormControl fullWidth margin="dense" required>
-						<InputLabel id="meeting-room-label">{roomLabel()}</InputLabel>
-						<Select
-							labelId="meeting-room-label"
-							label={roomLabel()}
-							value={roomId === '' ? '' : String(roomId)}
-							onChange={(e) => setRoomId(e.target.value === '' ? '' : Number(e.target.value))}
-							disabled={id !== 0}
-						>
-							{rooms.map((r) => (
-								<MenuItem key={r.id} value={String(r.id)}>{r.name}</MenuItem>
-							))}
-						</Select>
-					</FormControl>
+					{!isRoomScoped && (
+						<FormControl fullWidth margin="dense" required>
+							<InputLabel id="meeting-room-label">{roomLabel()}</InputLabel>
+							<Select
+								labelId="meeting-room-label"
+								label={roomLabel()}
+								value={roomId === '' ? '' : String(roomId)}
+								onChange={(e) => setRoomIdState(e.target.value === '' ? '' : Number(e.target.value))}
+								disabled={id !== 0}
+							>
+								{rooms.map((r) => (
+									<MenuItem key={r.id} value={String(r.id)}>{r.name}</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					)}
 					<TextField
 						autoFocus
 						margin="dense"
@@ -557,7 +601,16 @@ const MeetingsTable = () => {
 						<DateTimePicker
 							label={startsAtLabel()}
 							value={startsAt}
-							onChange={(v) => setStartsAt(v)}
+							onChange={(v) => {
+								setStartsAt(v);
+								// Preserve the previous duration: shift endsAt forward when start jumps past it.
+								if (v && endsAt && endsAt.isSameOrBefore(v)) {
+									const prevDuration = startsAt && endsAt.isAfter(startsAt)
+										? endsAt.diff(startsAt) : 60 * 60 * 1000;
+
+									setEndsAt(v.clone().add(prevDuration, 'ms'));
+								}
+							}}
 							ampm={false}
 							sx={{ flex: '1 1 240px' }}
 						/>
@@ -565,6 +618,7 @@ const MeetingsTable = () => {
 							label={endsAtLabel()}
 							value={endsAt}
 							onChange={(v) => setEndsAt(v)}
+							minDateTime={startsAt ?? undefined}
 							ampm={false}
 							sx={{ flex: '1 1 240px' }}
 						/>
@@ -706,9 +760,11 @@ const MeetingsTable = () => {
 				</DialogContent>
 				<DialogActions>
 					{(() => {
-						// Coerce both sides to Number — the API may serialize bigint ids as strings,
-						// which would break strict equality against the numeric roomId we hold in state.
-						const canEdit = roomId !== '' && rooms.some((r) => Number(r.id) === Number(roomId));
+						// In room-scoped mode the room is fixed by the parent — always editable.
+						// In all-meetings mode, require the chosen roomId to be in the loaded rooms list
+						// (the API may serialize bigint ids as strings, which would break strict equality
+						// against the numeric roomId we hold in state — coerce both sides with Number).
+						const canEdit = isRoomScoped || (roomId !== '' && rooms.some((r) => Number(r.id) === Number(roomId)));
 
 						return <>
 							{id !== 0 && (
@@ -719,7 +775,7 @@ const MeetingsTable = () => {
 							<Button onClick={handleClose}>{cancelLabel()}</Button>
 							<Button
 								onClick={handleSave}
-								disabled={!canEdit || !title || !startsAt || !endsAt || !roomId}
+								disabled={!canEdit || !title || !startsAt || !endsAt || !roomId || !endsAt.isAfter(startsAt)}
 							>
 								{applyLabel()}
 							</Button>
