@@ -519,6 +519,8 @@
 	"label.management.meetings.showPast": "Εμφάνιση παλαιότερων συναντήσεων",
 	"label.meetings.role.organizer": "Διοργανωτής",
 	"label.meetings.role.attendee": "Συμμετέχων",
+	"label.management.meetings.attendeeAlreadyAdded": "Έχει ήδη προστεθεί",
+	"label.management.meetings.attendeeResolveError": "Σφάλμα κατά την ανάλυση χρήστη",
 	"label.management.meetings.repeat.never": "Ποτέ",
 	"label.management.meetings.repeat.daily": "Καθημερινά",
 	"label.management.meetings.repeat.weekly": "Εβδομαδιαία",

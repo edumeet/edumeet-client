@@ -1741,6 +1741,14 @@ export const attendeeRoleLabel = (): string => intl.formatMessage({
 	id: 'label.meetings.role.attendee',
 	defaultMessage: 'Attendee'
 });
+export const attendeeAlreadyAddedLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.attendeeAlreadyAdded',
+	defaultMessage: 'Already added'
+});
+export const attendeeResolveErrorLabel = (): string => intl.formatMessage({
+	id: 'label.management.meetings.attendeeResolveError',
+	defaultMessage: 'Error resolving user'
+});
 export const repeatNeverLabel = (): string => intl.formatMessage({
 	id: 'label.management.meetings.repeat.never',
 	defaultMessage: 'Never'

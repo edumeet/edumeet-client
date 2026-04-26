@@ -519,6 +519,8 @@
 	"label.management.meetings.showPast": "Vis tidligere møder",
 	"label.meetings.role.organizer": "Arrangør",
 	"label.meetings.role.attendee": "Deltager",
+	"label.management.meetings.attendeeAlreadyAdded": "Allerede tilføjet",
+	"label.management.meetings.attendeeResolveError": "Fejl ved opslag af bruger",
 	"label.management.meetings.repeat.never": "Aldrig",
 	"label.management.meetings.repeat.daily": "Dagligt",
 	"label.management.meetings.repeat.weekly": "Ugentligt",

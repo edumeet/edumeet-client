@@ -519,6 +519,8 @@
 	"label.management.meetings.showPast": "Geçmiş toplantıları göster",
 	"label.meetings.role.organizer": "Düzenleyen",
 	"label.meetings.role.attendee": "Katılımcı",
+	"label.management.meetings.attendeeAlreadyAdded": "Zaten eklenmiş",
+	"label.management.meetings.attendeeResolveError": "Kullanıcı çözümlenirken hata",
 	"label.management.meetings.repeat.never": "Asla",
 	"label.management.meetings.repeat.daily": "Günlük",
 	"label.management.meetings.repeat.weekly": "Haftalık",

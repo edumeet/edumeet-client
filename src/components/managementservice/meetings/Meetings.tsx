@@ -43,6 +43,8 @@ import {
 	addAttendeeLabel,
 	addNewLabel,
 	applyLabel,
+	attendeeAlreadyAddedLabel,
+	attendeeResolveErrorLabel,
 	attendeesLabel,
 	cancelLabel,
 	deleteLabel,
@@ -386,7 +388,7 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 
 		if (!email) return;
 		if (attendees.some((a) => a.email.toLowerCase() === email.toLowerCase())) {
-			setResolveError('Already added');
+			setResolveError(attendeeAlreadyAddedLabel());
 
 			return;
 		}
@@ -424,7 +426,7 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 			})
 			.catch(() => {
 				setIsResolving(false);
-				setResolveError('Error resolving user');
+				setResolveError(attendeeResolveErrorLabel());
 			});
 	};
 
