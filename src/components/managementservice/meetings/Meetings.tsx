@@ -169,24 +169,10 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 	const localization = useMRTLocalization();
 	const uiLocale = useAppSelector((state) => state.settings.locale);
 	const defaultLocale = mapUiLocaleToFile(uiLocale);
-	// All moment locale bundles are statically imported in utils/momentLocale.tsx, so
-	// passing the locale code as `adapterLocale` is enough — AdapterMoment uses it
-	// directly. The UI locale only changes on full page reload, so this resolves once.
+	// `moment` is aliased in vite.config.ts to `moment/min/moment-with-locales`, so all
+	// moment locales are pre-registered on the single shared instance. We just compute
+	// the moment locale code from the UI locale and pass it as `adapterLocale`.
 	const momentLocale = toMomentLocale(defaultLocale);
-
-	// TEMP DEBUG — paste console output back
-	useEffect(() => {
-		// eslint-disable-next-line no-console
-		console.log('[Meetings] uiLocale=', uiLocale, 'defaultLocale=', defaultLocale, 'momentLocale=', momentLocale);
-		// eslint-disable-next-line no-console
-		console.log('[Meetings] moment.locales() includes pl?', moment.locales().includes('pl'), 'all:', moment.locales());
-		// eslint-disable-next-line no-console
-		console.log('[Meetings] moment.locale() global =', moment.locale());
-		const sample = moment(0).locale('pl');
-
-		// eslint-disable-next-line no-console
-		console.log('[Meetings] moment(0).locale("pl").format("L") =', sample.format('L'));
-	}, [ uiLocale, defaultLocale, momentLocale ]);
 
 	const [ data, setData ] = useState<Meeting[]>([]);
 	const [ rooms, setRooms ] = useState<Room[]>([]);
