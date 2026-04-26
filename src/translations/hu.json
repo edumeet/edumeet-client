@@ -519,6 +519,8 @@
 	"label.management.meetings.showPast": "Korábbi konferenciák megjelenítése",
 	"label.meetings.role.organizer": "Szervező",
 	"label.meetings.role.attendee": "Résztvevő",
+	"label.management.meetings.attendeeAlreadyAdded": "Már hozzáadva",
+	"label.management.meetings.attendeeResolveError": "Hiba a felhasználó feloldásánál",
 	"label.management.meetings.repeat.never": "Soha",
 	"label.management.meetings.repeat.daily": "Naponta",
 	"label.management.meetings.repeat.weekly": "Hetente",

@@ -519,6 +519,8 @@
 	"label.management.meetings.showPast": "Показати минулі зустрічі",
 	"label.meetings.role.organizer": "Організатор",
 	"label.meetings.role.attendee": "Учасник",
+	"label.management.meetings.attendeeAlreadyAdded": "Вже додано",
+	"label.management.meetings.attendeeResolveError": "Помилка пошуку користувача",
 	"label.management.meetings.repeat.never": "Ніколи",
 	"label.management.meetings.repeat.daily": "Щодня",
 	"label.management.meetings.repeat.weekly": "Щотижня",

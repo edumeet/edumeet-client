@@ -519,6 +519,8 @@
 	"label.management.meetings.showPast": "Afficher les réunions passées",
 	"label.meetings.role.organizer": "Organisateur",
 	"label.meetings.role.attendee": "Participant",
+	"label.management.meetings.attendeeAlreadyAdded": "Déjà ajouté",
+	"label.management.meetings.attendeeResolveError": "Erreur lors de la résolution de l’utilisateur",
 	"label.management.meetings.repeat.never": "Jamais",
 	"label.management.meetings.repeat.daily": "Quotidien",
 	"label.management.meetings.repeat.weekly": "Hebdomadaire",

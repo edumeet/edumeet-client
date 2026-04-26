@@ -30,6 +30,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'webtorrent': 'webtorrent/dist/webtorrent.min.js',
+			'moment': 'moment/min/moment-with-locales',
 		},
 	},
 	build: {

@@ -519,6 +519,8 @@
 	"label.management.meetings.showPast": "Zobrazit proběhlé schůzky",
 	"label.meetings.role.organizer": "Organizátor",
 	"label.meetings.role.attendee": "Účastník",
+	"label.management.meetings.attendeeAlreadyAdded": "Již přidáno",
+	"label.management.meetings.attendeeResolveError": "Chyba při vyhledávání uživatele",
 	"label.management.meetings.repeat.never": "Nikdy",
 	"label.management.meetings.repeat.daily": "Denně",
 	"label.management.meetings.repeat.weekly": "Týdně",

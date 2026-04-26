@@ -43,6 +43,8 @@ import {
 	addAttendeeLabel,
 	addNewLabel,
 	applyLabel,
+	attendeeAlreadyAddedLabel,
+	attendeeResolveErrorLabel,
 	attendeesLabel,
 	cancelLabel,
 	deleteLabel,
@@ -169,9 +171,9 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 	const localization = useMRTLocalization();
 	const uiLocale = useAppSelector((state) => state.settings.locale);
 	const defaultLocale = mapUiLocaleToFile(uiLocale);
-	// All moment locale bundles are statically imported in utils/momentLocale.tsx, so
-	// passing the locale code as `adapterLocale` is enough — AdapterMoment uses it
-	// directly. The UI locale only changes on full page reload, so this resolves once.
+	// `moment` is aliased in vite.config.ts to `moment/min/moment-with-locales`, so all
+	// moment locales are pre-registered on the single shared instance. We just compute
+	// the moment locale code from the UI locale and pass it as `adapterLocale`.
 	const momentLocale = toMomentLocale(defaultLocale);
 
 	const [ data, setData ] = useState<Meeting[]>([]);
@@ -386,7 +388,7 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 
 		if (!email) return;
 		if (attendees.some((a) => a.email.toLowerCase() === email.toLowerCase())) {
-			setResolveError('Already added');
+			setResolveError(attendeeAlreadyAddedLabel());
 
 			return;
 		}
@@ -424,7 +426,7 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 			})
 			.catch(() => {
 				setIsResolving(false);
-				setResolveError('Error resolving user');
+				setResolveError(attendeeResolveErrorLabel());
 			});
 	};
 

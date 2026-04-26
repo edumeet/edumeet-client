@@ -519,6 +519,8 @@
 	"label.management.meetings.showPast": "Показать прошедшие встречи",
 	"label.meetings.role.organizer": "Организатор",
 	"label.meetings.role.attendee": "Участник",
+	"label.management.meetings.attendeeAlreadyAdded": "Уже добавлен",
+	"label.management.meetings.attendeeResolveError": "Ошибка поиска пользователя",
 	"label.management.meetings.repeat.never": "Никогда",
 	"label.management.meetings.repeat.daily": "Ежедневно",
 	"label.management.meetings.repeat.weekly": "Еженедельно",

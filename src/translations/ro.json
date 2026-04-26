@@ -519,6 +519,8 @@
 	"label.management.meetings.showPast": "Afișează reuniunile trecute",
 	"label.meetings.role.organizer": "Organizator",
 	"label.meetings.role.attendee": "Participant",
+	"label.management.meetings.attendeeAlreadyAdded": "Deja adăugat",
+	"label.management.meetings.attendeeResolveError": "Eroare la rezolvarea utilizatorului",
 	"label.management.meetings.repeat.never": "Niciodată",
 	"label.management.meetings.repeat.daily": "Zilnic",
 	"label.management.meetings.repeat.weekly": "Săptămânal",

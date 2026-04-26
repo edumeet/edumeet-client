@@ -519,6 +519,8 @@
 	"label.management.meetings.showPast": "Prikaži prošle sastanke",
 	"label.meetings.role.organizer": "Organizator",
 	"label.meetings.role.attendee": "Sudionik",
+	"label.management.meetings.attendeeAlreadyAdded": "Već dodano",
+	"label.management.meetings.attendeeResolveError": "Greška pri pronalasku korisnika",
 	"label.management.meetings.repeat.never": "Nikad",
 	"label.management.meetings.repeat.daily": "Dnevno",
 	"label.management.meetings.repeat.weekly": "Tjedno",
