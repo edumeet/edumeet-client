@@ -29,7 +29,7 @@ import { Meeting, MeetingAttendee, MeetingOccurrenceRsvp, MeetingPartstat, Room,
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { localeList } from '../../../utils/intlManager';
 import { browserTimezone, timezoneOptions } from '../../../utils/timezones';
-import { ensureMomentLocale } from '../../../utils/momentLocale';
+import { toMomentLocale } from '../../../utils/momentLocale';
 import {
 	createData,
 	deleteData,
@@ -169,17 +169,10 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 	const localization = useMRTLocalization();
 	const uiLocale = useAppSelector((state) => state.settings.locale);
 	const defaultLocale = mapUiLocaleToFile(uiLocale);
-	// `ensureMomentLocale` dynamically imports the moment bundle. Until that resolves,
-	// the DateTimePicker falls back to English (MM/DD/YYYY). We render with 'en' first
-	// (always preloaded by moment) and remount LocalizationProvider via `key` once the
-	// real locale bundle is loaded. We can't initialize state with the target locale
-	// directly — setting state to the same value as the initial value would not
-	// trigger a re-render and the adapter would never pick up the just-loaded bundle.
-	const [ momentLocale, setMomentLocale ] = useState<string>('en');
-
-	useEffect(() => {
-		ensureMomentLocale(defaultLocale).then(setMomentLocale);
-	}, [ defaultLocale ]);
+	// All moment locale bundles are statically imported in utils/momentLocale.tsx, so
+	// passing the locale code as `adapterLocale` is enough — AdapterMoment uses it
+	// directly. The UI locale only changes on full page reload, so this resolves once.
+	const momentLocale = toMomentLocale(defaultLocale);
 
 	const [ data, setData ] = useState<Meeting[]>([]);
 	const [ rooms, setRooms ] = useState<Room[]>([]);
@@ -536,7 +529,7 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 	const addDisabled = !isRoomScoped && rooms.length === 0;
 
 	return (
-		<LocalizationProvider key={momentLocale} dateAdapter={AdapterMoment} adapterLocale={momentLocale}>
+		<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={momentLocale}>
 			<Box sx={isRoomScoped ? { mt: 2 } : undefined}>
 				<Typography variant="h6">{meetingsLabel()}</Typography>
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 1, mb: 1 }}>
