@@ -182,8 +182,10 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 		console.log('[Meetings] moment.locales() includes pl?', moment.locales().includes('pl'), 'all:', moment.locales());
 		// eslint-disable-next-line no-console
 		console.log('[Meetings] moment.locale() global =', moment.locale());
+		const sample = moment(0).locale('pl');
+
 		// eslint-disable-next-line no-console
-		console.log('[Meetings] moment(0).locale("pl").format("L") =', moment(0).locale('pl').format('L'));
+		console.log('[Meetings] moment(0).locale("pl").format("L") =', sample.format('L'));
 	}, [ uiLocale, defaultLocale, momentLocale ]);
 
 	const [ data, setData ] = useState<Meeting[]>([]);
