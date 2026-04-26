@@ -174,6 +174,18 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 	// directly. The UI locale only changes on full page reload, so this resolves once.
 	const momentLocale = toMomentLocale(defaultLocale);
 
+	// TEMP DEBUG — paste console output back
+	useEffect(() => {
+		// eslint-disable-next-line no-console
+		console.log('[Meetings] uiLocale=', uiLocale, 'defaultLocale=', defaultLocale, 'momentLocale=', momentLocale);
+		// eslint-disable-next-line no-console
+		console.log('[Meetings] moment.locales() includes pl?', moment.locales().includes('pl'), 'all:', moment.locales());
+		// eslint-disable-next-line no-console
+		console.log('[Meetings] moment.locale() global =', moment.locale());
+		// eslint-disable-next-line no-console
+		console.log('[Meetings] moment(0).locale("pl").format("L") =', moment(0).locale('pl').format('L'));
+	}, [ uiLocale, defaultLocale, momentLocale ]);
+
 	const [ data, setData ] = useState<Meeting[]>([]);
 	const [ rooms, setRooms ] = useState<Room[]>([]);
 	const [ users, setUsers ] = useState<User[]>([]);
