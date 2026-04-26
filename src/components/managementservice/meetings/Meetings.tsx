@@ -529,7 +529,7 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 	const addDisabled = !isRoomScoped && rooms.length === 0;
 
 	return (
-		<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={momentLocale}>
+		<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={momentLocale} dateLibInstance={moment}>
 			<Box sx={isRoomScoped ? { mt: 2 } : undefined}>
 				<Typography variant="h6">{meetingsLabel()}</Typography>
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 1, mb: 1 }}>
