@@ -584,7 +584,7 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 		}
 
 		dispatch(meActions.setMicTrackId(mediaService.mediaSenders['mic'].track?.id));
-		dispatch(meActions.setAudioMuted(false));
+		if (start) dispatch(meActions.setAudioMuted(false));
 		dispatch(meActions.setMicEnabled(true));
 	} catch (error) {
 		logger.error('updateMic() [error:%o]', error);
