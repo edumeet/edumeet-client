@@ -147,3 +147,16 @@ export const getVideoConstrains = (
 		height: { ideal: VIDEO_CONSTRAINS[resolution].width / aspectRatio }
 	};
 };
+
+/**
+ * Returns the screen-share video constraints for the given resolution.
+ * Unlike webcam capture, screen sharing should not impose an aspect ratio —
+ * the captured surface dictates its own dimensions.
+ */
+export const getScreenshareVideoConstrains = (
+	resolution: Resolution
+): Record<'width', Record<'ideal', number>> => {
+	return {
+		width: { ideal: VIDEO_CONSTRAINS[resolution].width }
+	};
+};
