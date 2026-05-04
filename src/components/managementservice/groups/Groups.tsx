@@ -168,8 +168,9 @@ const GroupTable = () => {
 
 		// add new data / mod data / error
 		if (name != '' && id === 0) {
-			dispatch(createData({ 
+			dispatch(createData({
 				name: name,
+				tenantId: tenantId
 			}, 'groups')).then(() => {
 				fetchProduct();
 				setOpen(false);
