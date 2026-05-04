@@ -21,6 +21,8 @@ import Volume from '../volume/Volume';
 interface VideoConsumerProps {
 	consumer: StateConsumer;
 	style: Record<'width' | 'height', number>
+	// eslint-disable-next-line no-unused-vars
+	onAspectChange?: (aspect: number) => void;
 }
 
 const ReactionIconContainer = styled(Box)(({ theme }) => ({
@@ -45,7 +47,7 @@ const reactionIcons: { [key: string]: React.JSX.Element } = {
 	laugh: <LaughIcon fontSize="inherit" style={{ color: 'white' }} />,
 };
 
-const VideoConsumer = ({ consumer, style }: VideoConsumerProps): React.JSX.Element => {
+const VideoConsumer = ({ consumer, style, onAspectChange }: VideoConsumerProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const { peerId, source } = consumer;
 	const { micConsumer } = usePeerConsumers(peerId);
@@ -73,7 +75,7 @@ const VideoConsumer = ({ consumer, style }: VideoConsumerProps): React.JSX.Eleme
 					{currentReactionIcon}
 				</ReactionIconContainer>
 			)}
-			<VideoView consumer={consumer} contain={contain} />
+			<VideoView consumer={consumer} contain={contain} onAspectChange={onAspectChange} />
 			{ micConsumer && <Volume consumer={micConsumer} /> }
 			{ !headless &&
 				<>

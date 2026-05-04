@@ -1,4 +1,4 @@
-import { getEncodings, getVideoConstrains } from '../../utils/encodingsHandler';
+import { getEncodings, getScreenshareVideoConstrains, getVideoConstrains } from '../../utils/encodingsHandler';
 import { BackgroundConfig, BackgroundType, Resolution } from '../../utils/types';
 import { meActions } from '../slices/meSlice';
 import { settingsActions } from '../slices/settingsSlice';
@@ -888,7 +888,6 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 			autoGainControl,
 			echoCancellation,
 			noiseSuppression,
-			aspectRatio,
 			sampleRate,
 			channelCount,
 			sampleSize,
@@ -902,10 +901,7 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 		if (start) {
 			const SCREENSHARE_CONSTRAINTS = {
 				video: {
-					...getVideoConstrains(
-						screenSharingResolution,
-						aspectRatio
-					),
+					...getScreenshareVideoConstrains(screenSharingResolution),
 					frameRate: screenSharingFrameRate,
 				},
 				audio: {
@@ -972,7 +968,7 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 			}
 		} else {
 			await mediaService.mediaSenders['screen'].track?.applyConstraints({
-				...getVideoConstrains(screenSharingResolution, aspectRatio),
+				...getScreenshareVideoConstrains(screenSharingResolution),
 				frameRate: screenSharingFrameRate
 			});
 

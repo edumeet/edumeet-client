@@ -15,6 +15,8 @@ interface VideoViewProps {
 	source?: ProducerSource;
 	previewTrack?: boolean;
 	roundedCorners?: boolean;
+	// eslint-disable-next-line no-unused-vars
+	onAspectChange?: (aspect: number) => void;
 }
 
 interface VideoProps {
@@ -54,7 +56,8 @@ const VideoView = ({
 	consumer,
 	source,
 	previewTrack,
-	roundedCorners = true
+	roundedCorners = true,
+	onAspectChange,
 }: VideoViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const videoElement = useRef<HTMLVideoElement>(null);
@@ -140,6 +143,43 @@ const VideoView = ({
 			resolutionReporter.close();
 		};
 	}, [ consumer?.id ]);
+
+	const onAspectChangeRef = useRef(onAspectChange);
+
+	useEffect(() => {
+		onAspectChangeRef.current = onAspectChange;
+	}, [ onAspectChange ]);
+
+	useEffect(() => {
+		const currentVideoElement = videoElement.current;
+
+		if (!currentVideoElement) return;
+
+		const report = (): void => {
+			const cb = onAspectChangeRef.current;
+
+			if (!cb) return;
+			const { videoWidth, videoHeight } = currentVideoElement;
+
+			if (videoWidth > 0 && videoHeight > 0)
+				cb(videoWidth / videoHeight);
+		};
+
+		report();
+		currentVideoElement.addEventListener('loadedmetadata', report);
+		currentVideoElement.addEventListener('resize', report);
+
+		return () => {
+			currentVideoElement.removeEventListener('loadedmetadata', report);
+			currentVideoElement.removeEventListener('resize', report);
+		};
+	}, [
+		previewTrack,
+		source,
+		consumer?.id,
+		previewTrackId,
+		senderTrackId,
+	]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (
