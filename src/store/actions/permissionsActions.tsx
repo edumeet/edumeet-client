@@ -177,8 +177,6 @@ export const logout = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('logout()');
 
-	const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
-
 	const idToken = localStorage.getItem('oidcIdToken');
 
 	localStorage.removeItem('oidcIdToken');
@@ -187,6 +185,14 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	dispatch(updateLoginState());
 
+	// Local-only logins (super-admin, tenant users with local creds) have no
+	// OIDC session to terminate — removeAccessToken above is sufficient.
+	if (!idToken) {
+		return;
+	}
+
+	const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
+
 	if (!tenantId) {
 		dispatch(notificationsActions.enqueueNotification({
 			message: 'no tenant found',
@@ -194,16 +200,14 @@ export const logout = (): AppThunk<Promise<void>> => async (
 		}));
 
 		return logger.error('logout() | no tenant found');
-
-	} else {
-		const params = new URLSearchParams({ tenantId: String(tenantId) });
-
-		if (idToken) {
-			params.set('id_token_hint', idToken);
-		}
-
-		window.open(`${config.managementUrl}/auth/logout?${params.toString()}`, 'logoutWindow');
 	}
+
+	const params = new URLSearchParams({
+		tenantId: String(tenantId),
+		id_token_hint: idToken,
+	});
+
+	window.open(`${config.managementUrl}/auth/logout?${params.toString()}`, 'logoutWindow');
 };
 
 export const lock = (): AppThunk<Promise<void>> => async (
