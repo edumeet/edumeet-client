@@ -517,10 +517,14 @@ export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
 				const { host, protocol } = new URL(url);
 
 				if (origin && origin === `${protocol}//${host}`) {
-					const { data: token } = data;
+					const { data: token, idToken } = data;
 
 					await (await managementService).authentication.setAccessToken(token);
 					await (await managementService).reAuthenticate();
+
+					if (idToken) {
+						localStorage.setItem('oidcIdToken', idToken);
+					}
 
 					dispatch(updateLoginState(token));
 

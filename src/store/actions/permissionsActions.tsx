@@ -179,6 +179,10 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
 
+	const idToken = localStorage.getItem('oidcIdToken');
+
+	localStorage.removeItem('oidcIdToken');
+
 	await (await managementService).authentication.removeAccessToken();
 
 	dispatch(updateLoginState());
@@ -192,7 +196,13 @@ export const logout = (): AppThunk<Promise<void>> => async (
 		return logger.error('logout() | no tenant found');
 
 	} else {
-		window.open(`${config.managementUrl}/auth/logout?tenantId=${tenantId}`, 'logoutWindow');
+		const params = new URLSearchParams({ tenantId: String(tenantId) });
+
+		if (idToken) {
+			params.set('id_token_hint', idToken);
+		}
+
+		window.open(`${config.managementUrl}/auth/logout?${params.toString()}`, 'logoutWindow');
 	}
 };
 
