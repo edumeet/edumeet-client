@@ -204,6 +204,7 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	const params = new URLSearchParams({
 		tenantId: String(tenantId),
+		// eslint-disable-next-line camelcase
 		id_token_hint: idToken,
 	});
 
