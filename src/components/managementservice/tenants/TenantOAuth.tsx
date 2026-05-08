@@ -4,6 +4,7 @@ import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { Tenant, TenantOAuth } from '../../../utils/types';
+import edumeetConfig from '../../../utils/edumeetConfig';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
@@ -124,16 +125,19 @@ const TenantOAuthTable = (props: TenantProp) => {
 	const [ open, setOpen ] = useState(false);
 
 	const handleClickOpen = () => {
+		const mgmtBase = (edumeetConfig.managementUrl ?? 'https://edumeet.example.com/mgmt').replace(/\/$/, '');
+		const originBase = new URL(mgmtBase).origin;
+
 		setId(0);
-		setProfileUrl('https://edumeet.example.com/kc/realms/<realm>/protocol/openid-connect/userinfo');
+		setProfileUrl(`${originBase}/kc/realms/<realm>/protocol/openid-connect/userinfo`);
 		setKey('edumeet-dev-client');
 		setSecret('');
-		setAuthorizeUrl('https://edumeet.example.com/kc/realms/<realm>/protocol/openid-connect/auth');
-		setAccessUrl('https://edumeet.example.com/kc/realms/<realm>/protocol/openid-connect/token');
+		setAuthorizeUrl(`${originBase}/kc/realms/<realm>/protocol/openid-connect/auth`);
+		setAccessUrl(`${originBase}/kc/realms/<realm>/protocol/openid-connect/token`);
 		setScope('openid profile email');
 		setScopeDelimeter(' ');
-		setRedirect('https://edumeet.example.com/mgmt/oauth/tenant/callback');
-		setEndSession('https://edumeet.example.org/kc/realms/<realm>/protocol/openid-connect/logout');
+		setRedirect(`${mgmtBase}/oauth/tenant/callback`);
+		setEndSession(`${originBase}/kc/realms/<realm>/protocol/openid-connect/logout`);
 		setNameParameter('name');
 		setOpen(true);
 	};
