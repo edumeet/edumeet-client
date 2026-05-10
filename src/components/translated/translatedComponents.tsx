@@ -1411,11 +1411,11 @@ export const updateParamsFromUrlLabel = (): string => intl.formatMessage({
 });
 export const oauthKeyLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.oauthKey',
-	defaultMessage: 'key'
+	defaultMessage: 'Client ID'
 });
 export const oauthSecretLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.oauthSecret',
-	defaultMessage: 'secret'
+	defaultMessage: 'Client Secret'
 });
 export const accessUrlFieldLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.accessUrlField',
