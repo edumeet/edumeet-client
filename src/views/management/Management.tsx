@@ -41,6 +41,7 @@ import EventIcon from '@mui/icons-material/Event';
 import { chooseComponentLabel, defaultSettingsLabel, defaultsLabel, edumeetManagementClientLabel, groupRolesLabel, groupsLabel, groupUsersLabel, logoutLabel, meetingsLabel, rolesLabel, roomSettingsLabel, roomsLabel, rulesLabel, tenantSettingsLabel, tenantsLabel, usersLabel } from '../../components/translated/translatedComponents';
 import DefaultTable from '../../components/managementservice/defaults/Defaults';
 import MeetingsTable from '../../components/managementservice/meetings/Meetings';
+import LanguageSelector from '../../components/languageselector/LanguageSelector';
 
 const drawerWidth = 300;
 
@@ -305,12 +306,16 @@ export default function ManagementUI(/* props: Props */) {
 							<ListItemText primary={rolesLabel()} />
 						</ListItemButton>
 					</ListItem>
-					
+
 				</List>
 
 				<Divider />
 			</>
 			}
+
+			<Box sx={{ p: 2 }}>
+				<LanguageSelector />
+			</Box>
 		</div >
 	);
 
