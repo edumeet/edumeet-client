@@ -36,7 +36,7 @@
 		"jwt-decode": "^4.0.0",
 		"marked": "^10.0.0",
 		"material-react-table": "^3.0.1",
-		"mediasoup-client": "^3.19.0",
+		"mediasoup-client": "^3.20.0",
 		"moment": "^2.29.4",
 		"native-file-system-adapter": "^3.0.1",
 		"notistack": "^3.0.2",
