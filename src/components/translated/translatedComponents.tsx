@@ -1570,6 +1570,26 @@ export const hideUserDetailsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Hide user details (email, name) from non-admin users'
 });
 
+export const mediaNodeRegionsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.mediaNodeRegions',
+	defaultMessage: 'Regions'
+});
+
+export const limitMediaNodeRegionsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.limitMediaNodeRegions',
+	defaultMessage: 'Limit media nodes to specific regions'
+});
+
+export const allowedMediaNodeRegionsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.allowedMediaNodeRegions',
+	defaultMessage: 'Allowed regions'
+});
+
+export const selectAtLeastOneRegionLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.selectAtLeastOneRegion',
+	defaultMessage: 'Select at least one region'
+});
+
 export const managePermissionsLabel = (): string => intl.formatMessage({
 	id: 'label.managePermissions',
 	defaultMessage: 'Manage permissions'

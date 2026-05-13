@@ -127,6 +127,22 @@ var config = {
 	privacyUrl: '',
 
 	/**
+	 * Optional: region codes shown in the management UI's tenant editor for
+	 * the per-tenant "limit media nodes to specific regions" picker. Leave
+	 * empty (or omit) to hide the limit toggle in deployments that do not
+	 * use region-based media-node binding.
+	 *
+	 * Values must match region labels used in the room-server's
+	 * `countryToRegion` config; see room-server README for details.
+	 *
+	 * Examples:
+	 *   knownRegions: []                  // disables the UI feature
+	 *   knownRegions: ['EEA']             // single-region deployment
+	 *   knownRegions: ['EEA', 'UA']       // mixed EEA + UA fleet
+	 */
+	knownRegions: [],
+
+	/**
 	 * Optional: login page image URL (blank disables).
 	 */
 	loginImageURL: '',

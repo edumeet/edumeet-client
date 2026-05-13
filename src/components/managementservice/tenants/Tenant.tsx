@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox } from '@mui/material';
+import { Autocomplete, Box, Button, Chip, Collapse, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox } from '@mui/material';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { useMRTLocalization } from '../../../utils/mrtLocalization';
@@ -9,8 +9,9 @@ import { createData, deleteData, getData, patchData } from '../../../store/actio
 import TenantFQDNTable from './TenatnFQDN';
 import TenantOAuthTable from './TenantOAuth';
 import TenantInviteConfigPanel from './TenantInviteConfig';
-import { addNewLabel, applyLabel, authenticationLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, manageItemLabel, nameLabel, tenantLabel } from '../../translated/translatedComponents';
+import { addNewLabel, allowedMediaNodeRegionsLabel, applyLabel, authenticationLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, limitMediaNodeRegionsLabel, manageItemLabel, mediaNodeRegionsLabel, nameLabel, selectAtLeastOneRegionLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
+import edumeetConfig from '../../../utils/edumeetConfig';
 export interface TenantProp {
 	tenantId: number;
 }
@@ -36,10 +37,21 @@ const TenantTable = () => {
 			{
 				accessorKey: 'description',
 				header: descLabel()
+			},
+			{
+				accessorKey: 'allowedMediaNodeRegions',
+				header: mediaNodeRegionsLabel(),
+				Cell: ({ cell }) => {
+					const v = cell.getValue() as string[] | null | undefined;
+
+					return v && v.length > 0 ? v.join(', ') : '—';
+				},
 			}
 		],
 		[],
 	);
+
+	const knownRegions = edumeetConfig.knownRegions ?? [];
 
 	const tenants: TenantOptionTypes = useAppSelector((state) => state.management.tenants);
 	
@@ -48,6 +60,8 @@ const TenantTable = () => {
 	const [ name, setName ] = useState('');
 	const [ description, setDescription ] = useState('');
 	const [ hideUserDetails, setHideUserDetails ] = useState(true);
+	const [ limitRegions, setLimitRegions ] = useState(false);
+	const [ allowedMediaNodeRegions, setAllowedMediaNodeRegions ] = useState<string[]>([]);
 
 	async function fetchProduct() {
 		setIsLoading(true);
@@ -73,6 +87,8 @@ const TenantTable = () => {
 		setName('');
 		setDescription('');
 		setHideUserDetails(true);
+		setLimitRegions(false);
+		setAllowedMediaNodeRegions([]);
 		setOpen(true);
 	};
 
@@ -104,17 +120,24 @@ const TenantTable = () => {
 		}
 	};
 
+	const canApply = name.trim() !== '' && (!limitRegions || allowedMediaNodeRegions.length > 0);
+
 	const addTenant = async () => {
+		if (!canApply) return;
+
+		// Persist as null when the user has the limit checkbox off, so the
+		// server-side "no policy" path is hit instead of an empty array.
+		const regionsPayload = limitRegions ? allowedMediaNodeRegions : null;
 
 		// add new data / mod data / error
-		if (name != '' && id === 0) {
-			dispatch(createData({ name, description, hideUserDetails }, 'tenants')).then(() => {
+		if (id === 0) {
+			dispatch(createData({ name, description, hideUserDetails, allowedMediaNodeRegions: regionsPayload }, 'tenants')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
 
-		} else if (name != '' && id != 0) {
-			dispatch(patchData(id, { name: name, description: description, hideUserDetails: hideUserDetails }, 'tenants')).then(() => {
+		} else {
+			dispatch(patchData(id, { name: name, description: description, hideUserDetails: hideUserDetails, allowedMediaNodeRegions: regionsPayload }, 'tenants')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
@@ -163,6 +186,49 @@ const TenantTable = () => {
 							label={hideUserDetailsLabel()}
 						/>
 					</div>
+					{knownRegions.length > 0 && <div>
+						<FormControlLabel
+							control={
+								<Checkbox
+									checked={limitRegions}
+									onChange={(_, checked) => {
+										setLimitRegions(checked);
+										if (!checked) setAllowedMediaNodeRegions([]);
+									}}
+								/>
+							}
+							label={limitMediaNodeRegionsLabel()}
+						/>
+						<Collapse in={limitRegions}>
+							<Box sx={{ ml: 4, mt: 1 }}>
+								<Autocomplete
+									multiple
+									options={knownRegions}
+									value={allowedMediaNodeRegions}
+									onChange={(_, value) => setAllowedMediaNodeRegions(value)}
+									renderTags={(values, getTagProps) =>
+										values.map((opt, i) => {
+											const { key, ...rest } = getTagProps({ index: i });
+
+											return <Chip key={key} label={opt} {...rest} />;
+										})}
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											margin="dense"
+											label={allowedMediaNodeRegionsLabel()}
+											error={limitRegions && allowedMediaNodeRegions.length === 0}
+											helperText={
+												limitRegions && allowedMediaNodeRegions.length === 0
+													? selectAtLeastOneRegionLabel()
+													: ' '
+											}
+										/>
+									)}
+								/>
+							</Box>
+						</Collapse>
+					</div>}
 					{ id !=0 && <>
 						<h4>{`${tenantLabel()} ${fqdnLabel()}`}</h4>
 						<TenantFQDNTable tenantId={id} />
@@ -176,7 +242,7 @@ const TenantTable = () => {
 				<DialogActions>
 					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
-					<Button onClick={addTenant}>{applyLabel()}</Button>
+					<Button onClick={addTenant} disabled={!canApply}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -209,6 +275,12 @@ const TenantTable = () => {
 					const tenantData = tenants.find((t) => t.id == tid);
 
 					setHideUserDetails(tenantData?.hideUserDetails !== false);
+
+					const regions = tenantData?.allowedMediaNodeRegions;
+					const hasRegions = Array.isArray(regions) && regions.length > 0;
+
+					setLimitRegions(hasRegions);
+					setAllowedMediaNodeRegions(hasRegions ? regions : []);
 
 					handleClickOpenNoreset();
 
