@@ -125,9 +125,7 @@ const TenantTable = () => {
 	const addTenant = async () => {
 		if (!canApply) return;
 
-		// Persist as null when the user has the limit checkbox off, so the
-		// server-side "no policy" path is hit instead of an empty array.
-		const regionsPayload = limitRegions ? allowedMediaNodeRegions : null;
+		const regionsPayload = limitRegions ? allowedMediaNodeRegions : [];
 
 		// add new data / mod data / error
 		if (id === 0) {
