@@ -285,7 +285,7 @@ const createMediaMiddleware = ({
 
 					dispatch(notificationsActions.enqueueNotification({
 						message,
-						options: { variant: 'warning', persist: true }
+						options: { variant: 'error', persist: true }
 					}));
 				});
 			}
