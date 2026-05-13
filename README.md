@@ -118,6 +118,7 @@ The client merges your `window.config` with built-in defaults (see `src/utils/ty
 | transcriptionEnabled | Enable transcription. | `boolean` | `true` |
 | imprintUrl | Show an imprint link (blank to hide). | `string` | `''` |
 | privacyUrl | Show a privacy notice link (blank to hide). | `string` | `''` |
+| knownRegions | Region codes offered in the management UI's tenant editor for the per-tenant "limit media nodes to specific regions" picker. Values must match region labels in the room-server's `countryToRegion` config. Leave empty to hide the limit toggle. | `string[]` | `[]` |
 
 #### Theme settings (`config.theme`) (4.2+)
 

@@ -1,7 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
-import { roomServerConnectionError } from '../../components/translated/translatedComponents';
+import { roomServerConnectionError, signalingReconnectingLabel } from '../../components/translated/translatedComponents';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { RoomServerConnection } from '../../utils/RoomServerConnection';
 import { leaveRoom, reconnectRoom } from '../actions/roomActions';
@@ -46,7 +46,7 @@ const createSignalingMiddleware = ({
 
 				dispatch(signalingActions.reconnecting());
 				dispatch(notificationsActions.enqueueNotification({
-					message: `Connection lost. Reconnecting (attempt ${attempt})...`,
+					message: signalingReconnectingLabel(attempt),
 					options: { variant: 'warning' }
 				}));
 			});

@@ -132,6 +132,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	privacyUrl: '',
 	reactionsTimeout: 10000,
 	browserWarnings: [],
+	knownRegions: [],
 };
 
 export interface EdumeetConfig {
@@ -188,6 +189,7 @@ export interface EdumeetConfig {
 	privacyUrl: string;
 	reactionsTimeout: number;
 	browserWarnings: BrowserWarning[];
+	knownRegions: string[];
 }
 
 export interface BrowserWarning {
@@ -333,7 +335,8 @@ export type Tenant = {
 	id: number,
 	name: string,
 	description: string,
-	hideUserDetails?: boolean
+	hideUserDetails?: boolean,
+	allowedMediaNodeRegions?: string[] | null,
 };
 export type TenantOptionTypes = Array<Tenant>
 

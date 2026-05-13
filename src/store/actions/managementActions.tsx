@@ -5,6 +5,16 @@ import { updateLoginState } from './permissionsActions';
 import { AppThunk } from '../store';
 import { managamentActions } from '../slices/managementSlice';
 import { settingsActions } from '../slices/settingsSlice';
+import {
+	creationSuccessfulLabel,
+	creationUnsuccessfulLabel,
+	deleteSuccessfulLabel,
+	deleteUnsuccessfulLabel,
+	failedToGetDataLabel,
+	failedToGetUserByEmailLabel,
+	modificationSuccessfulLabel,
+	modificationUnsuccessfulLabel,
+} from '../../components/translated/translatedComponents';
 
 const logger = new Logger('ManagementActions');
 
@@ -58,7 +68,7 @@ export const createRoom = (roomName: string): AppThunk<Promise<void>> => async (
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
-				message: `Failed to get data: ${error.toString()}`,
+				message: failedToGetDataLabel(error.toString()),
 				options: { variant: 'error' }
 			}));
 		}
@@ -127,7 +137,7 @@ export const getData = (serviceName: string, extraQuery?: Record<string, unknown
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
-				message: `Failed to get data: ${error.toString()}`,
+				message: failedToGetDataLabel(error.toString()),
 				options: { variant: 'error' }
 			}));
 		}
@@ -164,7 +174,7 @@ export const getDataByID = (id: string | number, serviceName: string): AppThunk<
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
-				message: `Failed to get data: ${error.toString()}`,
+				message: failedToGetDataLabel(error.toString()),
 				options: { variant: 'error' }
 			}));
 		}
@@ -200,7 +210,7 @@ export const getDataByTenantID = (id: string | number, serviceName: string): App
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
-				message: `Failed to get data: ${error.toString()}`,
+				message: failedToGetDataLabel(error.toString()),
 				options: { variant: 'error' }
 			}));
 		}
@@ -237,7 +247,7 @@ export const getDataByRoomId = (roomId: string | number, serviceName: string): A
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
-				message: `Failed to get data: ${error.toString()}`,
+				message: failedToGetDataLabel(error.toString()),
 				options: { variant: 'error' }
 			}));
 		}
@@ -262,14 +272,14 @@ export const deleteData = (id: number, serviceName: string): AppThunk<Promise<ob
 			id
 		);
 		dispatch(notificationsActions.enqueueNotification({
-			message: 'Delete successfull',
+			message: deleteSuccessfulLabel(),
 			options: { variant: 'success' }
 		}));
 
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
-				message: `Delete unsuccessful: ${error.toString()}`,
+				message: deleteUnsuccessfulLabel(error.toString()),
 				options: { variant: 'error' }
 			}));
 		}
@@ -312,13 +322,13 @@ export const createData = (params: object, serviceName: string): AppThunk<Promis
 		);
 
 		dispatch(notificationsActions.enqueueNotification({
-			message: 'Creation successfull',
+			message: creationSuccessfulLabel(),
 			options: { variant: 'success' }
 		}));
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
-				message: `Creation unsuccessful: ${error.toString()}`,
+				message: creationUnsuccessfulLabel(error.toString()),
 				options: { variant: 'error' }
 			}));
 		}
@@ -345,13 +355,13 @@ export const patchData = (id: number, params: object, serviceName: string): AppT
 		);
 
 		dispatch(notificationsActions.enqueueNotification({
-			message: 'Modification successfull',
+			message: modificationSuccessfulLabel(),
 			options: { variant: 'success' }
 		}));
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
-				message: `Modification unsuccessful: ${error.toString()}`,
+				message: modificationUnsuccessfulLabel(error.toString()),
 				options: { variant: 'error' }
 			}));
 		}
@@ -430,14 +440,14 @@ export const createRoomWithParams = (params: object): AppThunk<Promise<object | 
 		);
 
 		dispatch(notificationsActions.enqueueNotification({
-			message: 'Creation successfull',
+			message: creationSuccessfulLabel(),
 			options: { variant: 'success' }
 		}));
 
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
-				message: `Creation unsuccessful: ${error.toString()}`,
+				message: creationUnsuccessfulLabel(error.toString()),
 				options: { variant: 'error' }
 			}));
 		}
@@ -474,7 +484,7 @@ export const getUserByEmail = (email: string): AppThunk<Promise<object | undefin
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
-				message: `Failed to get user by email: ${error.toString()}`,
+				message: failedToGetUserByEmailLabel(error.toString()),
 				options: { variant: 'error' }
 			}));
 		}
