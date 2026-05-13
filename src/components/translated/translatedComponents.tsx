@@ -1905,3 +1905,69 @@ export const upcomingMeetingsLabel = (): string => intl.formatMessage({
 	id: 'label.meetings.upcoming',
 	defaultMessage: 'Upcoming meetings'
 });
+
+// Notification messages used by middlewares / actions when displaying snackbars.
+export const lostMediaServerLabel = (): string => intl.formatMessage({
+	id: 'label.notification.lostMediaServer',
+	defaultMessage: 'Lost connection to media server, reconnecting...'
+});
+
+export const noMediaServerLabel = (): string => intl.formatMessage({
+	id: 'label.notification.noMediaServer',
+	defaultMessage: 'No media server is available for this session. Please leave the room and try again, or contact your administrator.'
+});
+
+export const failedToGetDataLabel = (error: string): string => intl.formatMessage({
+	id: 'label.notification.failedToGetData',
+	defaultMessage: 'Failed to get data: {error}'
+}, { error });
+
+export const deleteSuccessfulLabel = (): string => intl.formatMessage({
+	id: 'label.notification.deleteSuccessful',
+	defaultMessage: 'Delete successful'
+});
+
+export const deleteUnsuccessfulLabel = (error: string): string => intl.formatMessage({
+	id: 'label.notification.deleteUnsuccessful',
+	defaultMessage: 'Delete unsuccessful: {error}'
+}, { error });
+
+export const creationSuccessfulLabel = (): string => intl.formatMessage({
+	id: 'label.notification.creationSuccessful',
+	defaultMessage: 'Creation successful'
+});
+
+export const creationUnsuccessfulLabel = (error: string): string => intl.formatMessage({
+	id: 'label.notification.creationUnsuccessful',
+	defaultMessage: 'Creation unsuccessful: {error}'
+}, { error });
+
+export const modificationSuccessfulLabel = (): string => intl.formatMessage({
+	id: 'label.notification.modificationSuccessful',
+	defaultMessage: 'Modification successful'
+});
+
+export const modificationUnsuccessfulLabel = (error: string): string => intl.formatMessage({
+	id: 'label.notification.modificationUnsuccessful',
+	defaultMessage: 'Modification unsuccessful: {error}'
+}, { error });
+
+export const failedToGetUserByEmailLabel = (error: string): string => intl.formatMessage({
+	id: 'label.notification.failedToGetUserByEmail',
+	defaultMessage: 'Failed to get user by email: {error}'
+}, { error });
+
+export const signalingReconnectingLabel = (attempt: number): string => intl.formatMessage({
+	id: 'label.notification.signalingReconnecting',
+	defaultMessage: 'Connection lost. Reconnecting (attempt {attempt})...'
+}, { attempt });
+
+export const noTenantFoundLabel = (): string => intl.formatMessage({
+	id: 'label.notification.noTenantFound',
+	defaultMessage: 'No tenant found'
+});
+
+export const invalidLoginLabel = (): string => intl.formatMessage({
+	id: 'label.notification.invalidLogin',
+	defaultMessage: 'Invalid login'
+});

@@ -13,6 +13,7 @@ import { ProducerSource } from '../../utils/types';
 import { Logger } from '../../utils/Logger';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { browserInfo } from '../../utils/deviceInfo';
+import { lostMediaServerLabel, noMediaServerLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('MediaMiddleware');
 
@@ -254,7 +255,7 @@ const createMediaMiddleware = ({
 			
 				mediaService.on('lostMediaServer', () => {
 					dispatch(notificationsActions.enqueueNotification({
-						message: 'Lost connection to media server, reconnecting...',
+						message: lostMediaServerLabel(),
 						options: { variant: 'error' }
 					}));
 
@@ -267,6 +268,25 @@ const createMediaMiddleware = ({
 						dispatch(meActions.setLostVideo(false));
 						dispatch(updateWebcam());
 					}
+				});
+
+				// Room-server retries every 10s but its tenant region policy is
+				// pinned at room creation, so a configuration-caused failure
+				// will not self-heal within this room. Phrase the message as
+				// a state (not a promise) and steer the user toward leaving
+				// and rejoining as the recovery path. Dedup against the queue
+				// because the retry resends `noMediaServer` each cycle.
+				mediaService.on('noMediaServer', () => {
+					const message = noMediaServerLabel();
+					const alreadyShown = getState().notifications
+						.some((n) => n.message === message);
+
+					if (alreadyShown) return;
+
+					dispatch(notificationsActions.enqueueNotification({
+						message,
+						options: { variant: 'warning', persist: true }
+					}));
 				});
 			}
 

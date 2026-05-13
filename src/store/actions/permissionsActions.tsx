@@ -8,6 +8,7 @@ import { notificationsActions } from '../slices/notificationsSlice';
 import { managamentActions } from '../slices/managementSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { invalidLoginLabel, noTenantFoundLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('PermissionsActions');
 
@@ -67,7 +68,7 @@ export const login = (): AppThunk<Promise<void>> => async (
 
 	if (!tenantId) {
 		dispatch(notificationsActions.enqueueNotification({
-			message: 'no tenant found',
+			message: noTenantFoundLabel(),
 			options: { variant: 'error' }
 		}));
 
@@ -102,7 +103,7 @@ export const adminLogin = (email: string, password: string): AppThunk<Promise<vo
 		dispatch(updateLoginState());
 
 		dispatch(notificationsActions.enqueueNotification({
-			message: 'Invalid login',
+			message: invalidLoginLabel(),
 			options: { variant: 'error' }
 		}));
 	}
@@ -195,7 +196,7 @@ export const logout = (): AppThunk<Promise<void>> => async (
 
 	if (!tenantId) {
 		dispatch(notificationsActions.enqueueNotification({
-			message: 'no tenant found',
+			message: noTenantFoundLabel(),
 			options: { variant: 'error' }
 		}));
 
