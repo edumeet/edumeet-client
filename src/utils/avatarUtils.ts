@@ -91,6 +91,7 @@ export const getBreezeshotUserProfilePicture = (user: unknown): string => {
 
 /**
  * Extract the best available display name from BreezeShot user payloads.
+ * BreezeShot uses `username` as the public handle ("nickname"); prefer it over firstName/lastName.
  */
 export const getBreezeshotUserDisplayName = (user: unknown): string => {
 	if (!user || typeof user !== 'object') return '';
@@ -107,6 +108,37 @@ export const getBreezeshotUserDisplayName = (user: unknown): string => {
 	};
 	const firstString = (...values: unknown[]): string =>
 		values.find((value) => typeof value === 'string' && value.trim()) as string || '';
+	const pickMeaningful = (value: string): string | undefined => {
+		const trimmed = value.trim();
+
+		if (!trimmed || isPlaceholder(trimmed)) return undefined;
+
+		return trimmed;
+	};
+	const pickFromRecord = (record: Record<string, unknown>): string => {
+		const handle = pickMeaningful(firstString(
+			record.nickname,
+			record.nick_name,
+			record.username,
+			record.userName
+		));
+
+		if (handle) return handle;
+
+		const display = pickMeaningful(firstString(record.displayName, record.display_name));
+
+		if (display) return display;
+
+		const full = pickMeaningful(firstString(record.fullName, record.full_name, record.name));
+
+		if (full) return full;
+
+		const first = firstString(record.firstName, record.first_name);
+		const last = firstString(record.lastName, record.last_name);
+		const combined = `${first.trim()} ${last.trim()}`.trim();
+
+		return combined;
+	};
 	const nested = [
 		u.user,
 		u.profile,
@@ -115,54 +147,14 @@ export const getBreezeshotUserDisplayName = (user: unknown): string => {
 		typeof u.userData === 'object' ? u.userData : undefined
 	].filter((value): value is Record<string, unknown> => Boolean(value && typeof value === 'object'));
 
-	const directPreferred = firstString(
-		u.displayName,
-		u.display_name,
-		u.name,
-		u.fullName,
-		u.full_name,
-		u.firstName,
-		u.first_name
-	);
+	const direct = pickFromRecord(u);
 
-	if (directPreferred && !isPlaceholder(directPreferred)) return directPreferred.trim();
+	if (direct) return direct;
 
 	for (const n of nested) {
-		const nestedPreferred = firstString(
-			n.displayName,
-			n.display_name,
-			n.name,
-			n.fullName,
-			n.full_name,
-			n.firstName,
-			n.first_name
-		);
+		const nestedName = pickFromRecord(n);
 
-		if (nestedPreferred && !isPlaceholder(nestedPreferred)) return nestedPreferred.trim();
-	}
-
-	const first = firstString(u.firstName, u.first_name);
-	const last = firstString(u.lastName, u.last_name);
-	const combined = `${first.trim()} ${last.trim()}`.trim();
-
-	if (combined) return combined;
-
-	for (const n of nested) {
-		const nestedFirst = firstString(n.firstName, n.first_name);
-		const nestedLast = firstString(n.lastName, n.last_name);
-		const nestedCombined = `${nestedFirst.trim()} ${nestedLast.trim()}`.trim();
-
-		if (nestedCombined) return nestedCombined;
-	}
-
-	const directUsername = firstString(u.username, u.userName);
-
-	if (directUsername && !isPlaceholder(directUsername)) return directUsername.trim();
-
-	for (const n of nested) {
-		const nestedUsername = firstString(n.username, n.userName);
-
-		if (nestedUsername && !isPlaceholder(nestedUsername)) return nestedUsername.trim();
+		if (nestedName) return nestedName;
 	}
 
 	return '';
