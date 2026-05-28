@@ -120,7 +120,7 @@ const DefaultTable = () => {
 	const [ open, setOpen ] = React.useState(false);
 
 	// ADD NEW
-	/* const handleOpen = () => {
+	const handleOpen = () => {
 		setId(0);
 
 		// tenant selectable on add
@@ -165,7 +165,7 @@ const DefaultTable = () => {
 		// setTenantPermissionLimitRoleOption(undefined);
 
 		setOpen(true);
-	}; */
+	};
 	
 	const handleClickOpenNoreset = () => {
 		// get tenantId from clicked element
@@ -309,12 +309,7 @@ const DefaultTable = () => {
 	return <>
 		<div>
 			
-			<Button variant="outlined" onClick={() => dispatch(createData({ 
-				tenantId: tenantId
-			}, 'defaults')).then(() => {
-				fetchProduct();
-				setOpen(false);
-			})}>
+			<Button variant="outlined" onClick={() => handleOpen()}>
 				{addNewLabel()}
 			</Button>
 			<hr />
