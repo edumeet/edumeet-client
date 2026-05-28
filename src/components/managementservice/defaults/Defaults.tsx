@@ -77,11 +77,15 @@ const DefaultTable = () => {
 	// const [ tenantPermissionLimitRoleOption, setTenantPermissionLimitRoleOption ] = useState<Roles | undefined>();
 
 	const [ cantPatch ] = useState(false);
-	const [ cantDelete ] = useState(false);
+	const [ cantDelete, setCantDelete ] = useState(false);
 	const [ tenantId, setTenantId ] = useState(0);
 
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
 	const [ tenantIdDisabled, setTenantIdDisabled ] = useState(false);
+	// On add, create only persists tenantId, so every other field is disabled to
+	// avoid tempting the user to fill values that won't be saved (mirrors the
+	// roles dialog, which disables permissions on add for the same reason).
+	const [ fieldsDisabled, setFieldsDisabled ] = useState(false);
 
 	async function fetchProduct() {
 		
@@ -137,6 +141,8 @@ const DefaultTable = () => {
 		}
 
 		setTenantIdDisabled(false);
+		setFieldsDisabled(true);
+		setCantDelete(true);
 
 		setNumberLimit(100);
 		setLiveNumberLimit(1000);
@@ -170,6 +176,8 @@ const DefaultTable = () => {
 	const handleClickOpenNoreset = () => {
 		// get tenantId from clicked element
 		setTenantIdDisabled(false);
+		setFieldsDisabled(false);
+		setCantDelete(false);
 		setOpen(true);
 	};
 
@@ -344,7 +352,7 @@ const DefaultTable = () => {
 								label={numberLimitLabel()}
 								type="number"
 								fullWidth
-								disabled={!superAdmin}
+								disabled={!superAdmin || fieldsDisabled}
 								onChange={handleNumberLimit}
 								value={numberLimit}
 							/>
@@ -357,7 +365,7 @@ const DefaultTable = () => {
 								label={liveNumberLimitLabel()}
 								type="number"
 								fullWidth
-								disabled={false}
+								disabled={fieldsDisabled}
 								onChange={handleLiveNumberLimit}
 								value={liveNumberLimit}
 							/>
@@ -370,7 +378,7 @@ const DefaultTable = () => {
 								label={userManagedRoomNumberLimitLabel()}
 								type="number"
 								fullWidth
-								disabled={false}
+								disabled={fieldsDisabled}
 								onChange={handleUserManagedRoomNumberLimit}
 								value={userManagedRoomNumberLimit}
 							/>
@@ -384,7 +392,7 @@ const DefaultTable = () => {
 								label={managerManagedRoomNumberLimitLabel()}
 								type="number"
 								fullWidth
-								disabled={!superAdmin}
+								disabled={!superAdmin || fieldsDisabled}
 								onChange={handleManagerManagedRoomNumberLimit}
 								value={managerManagedRoomNumberLimit}
 							/>
@@ -410,43 +418,43 @@ const DefaultTable = () => {
 							<tbody>
 								<tr>
 									<td><Tooltip title={disableUnmanagedRoomsTooltipLabel()} placement="right"><span>{disableUnmanagedRoomsLabel()}</span></Tooltip></td>
-									<td><Checkbox disabled={disableUnmanagedLock && !superAdmin} checked={disableUnmanaged} onClick={() => setDisableUnmanaged(Boolean(!disableUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={disableUnmanagedLock} onClick={() => setDisableUnmanagedLock(Boolean(!disableUnmanagedLock))} /></td>
+									<td><Checkbox disabled={(disableUnmanagedLock && !superAdmin) || fieldsDisabled} checked={disableUnmanaged} onClick={() => setDisableUnmanaged(Boolean(!disableUnmanaged))} /></td>
+									<td><Checkbox disabled={!superAdmin || fieldsDisabled} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={disableUnmanagedLock} onClick={() => setDisableUnmanagedLock(Boolean(!disableUnmanagedLock))} /></td>
 								</tr>
 								<tr>
 									<td><Tooltip title={roomLockedTooltipLabel()} placement="right"><span>{roomLockedMgmtLabel()}</span></Tooltip></td>
-									<td><Checkbox disabled={lockedLock && !superAdmin} checked={lockedUnmanaged} onClick={() => setLockUnmanaged(Boolean(!lockedUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={lockedLock} onClick={() => setLockLock(Boolean(!lockedLock))} /></td>
+									<td><Checkbox disabled={(lockedLock && !superAdmin) || fieldsDisabled} checked={lockedUnmanaged} onClick={() => setLockUnmanaged(Boolean(!lockedUnmanaged))} /></td>
+									<td><Checkbox disabled={!superAdmin || fieldsDisabled} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={lockedLock} onClick={() => setLockLock(Boolean(!lockedLock))} /></td>
 								</tr>
 								<tr>
 									<td>{raiseHandMgmtLabel()}</td>
-									<td><Checkbox disabled={raiseHandEnabledLock && !superAdmin} checked={raiseHandEnabledUnmanaged} onClick={() => setRaiseHandEnabledUnmanaged(Boolean(!raiseHandEnabledUnmanaged))}/></td>
-									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={raiseHandEnabledLock} onClick={() => setRaiseHandEnabledLock(Boolean(!raiseHandEnabledLock))}/></td>
+									<td><Checkbox disabled={(raiseHandEnabledLock && !superAdmin) || fieldsDisabled} checked={raiseHandEnabledUnmanaged} onClick={() => setRaiseHandEnabledUnmanaged(Boolean(!raiseHandEnabledUnmanaged))}/></td>
+									<td><Checkbox disabled={!superAdmin || fieldsDisabled} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={raiseHandEnabledLock} onClick={() => setRaiseHandEnabledLock(Boolean(!raiseHandEnabledLock))}/></td>
 								</tr>
 								<tr>
 									<td>{reactionsEnabledLabel()}</td>
-									<td><Checkbox disabled={reactionsEnabledLock && !superAdmin} checked={reactionsEnabledUnmanaged} onClick={() => setReactionsEnabledUnmanaged(Boolean(!reactionsEnabledUnmanaged))}/></td>
-									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={reactionsEnabledLock} onClick={() => setReactionsEnabledLock(Boolean(!reactionsEnabledLock))}/></td>
+									<td><Checkbox disabled={(reactionsEnabledLock && !superAdmin) || fieldsDisabled} checked={reactionsEnabledUnmanaged} onClick={() => setReactionsEnabledUnmanaged(Boolean(!reactionsEnabledUnmanaged))}/></td>
+									<td><Checkbox disabled={!superAdmin || fieldsDisabled} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={reactionsEnabledLock} onClick={() => setReactionsEnabledLock(Boolean(!reactionsEnabledLock))}/></td>
 								</tr>
 								<tr>
 									<td>{localRecordingMgmtLabel()}</td>
-									<td><Checkbox disabled={localRecordingEnabledLock && !superAdmin} checked={localRecordingEnabledUnmanaged} onClick={() => setLocalRecordingEnabledUnmanaged(Boolean(!localRecordingEnabledUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={localRecordingEnabledLock} onClick={() => setLocalRecordingEnabledLock(Boolean(!localRecordingEnabledLock))} /></td>
+									<td><Checkbox disabled={(localRecordingEnabledLock && !superAdmin) || fieldsDisabled} checked={localRecordingEnabledUnmanaged} onClick={() => setLocalRecordingEnabledUnmanaged(Boolean(!localRecordingEnabledUnmanaged))} /></td>
+									<td><Checkbox disabled={!superAdmin || fieldsDisabled} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={localRecordingEnabledLock} onClick={() => setLocalRecordingEnabledLock(Boolean(!localRecordingEnabledLock))} /></td>
 								</tr>
 								<tr>
 									<td>{chatServiceLabel()}</td>
-									<td><Checkbox disabled={chatEnabledLock && !superAdmin} checked={chatEnabledUnmanaged} onClick={() => setChatEnabledUnmanaged(Boolean(!chatEnabledUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={chatEnabledLock} onClick={() => setChatEnabledLock(Boolean(!chatEnabledLock))} /></td>
+									<td><Checkbox disabled={(chatEnabledLock && !superAdmin) || fieldsDisabled} checked={chatEnabledUnmanaged} onClick={() => setChatEnabledUnmanaged(Boolean(!chatEnabledUnmanaged))} /></td>
+									<td><Checkbox disabled={!superAdmin || fieldsDisabled} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={chatEnabledLock} onClick={() => setChatEnabledLock(Boolean(!chatEnabledLock))} /></td>
 								</tr>
 								<tr>
 									<td>{breakoutRoomsServiceLabel()}</td>
-									<td><Checkbox disabled={breakoutsEnabledLock && !superAdmin} checked={breakoutsEnabledUnmanaged} onClick={() => setBreakoutsEnabledUnmanaged(Boolean(!breakoutsEnabledUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={breakoutsEnabledLock} onClick={() => setBreakoutsEnabledLock(Boolean(!breakoutsEnabledLock))} /></td>
+									<td><Checkbox disabled={(breakoutsEnabledLock && !superAdmin) || fieldsDisabled} checked={breakoutsEnabledUnmanaged} onClick={() => setBreakoutsEnabledUnmanaged(Boolean(!breakoutsEnabledUnmanaged))} /></td>
+									<td><Checkbox disabled={!superAdmin || fieldsDisabled} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={breakoutsEnabledLock} onClick={() => setBreakoutsEnabledLock(Boolean(!breakoutsEnabledLock))} /></td>
 								</tr>
 								<tr>
 									<td>{filesharingServiceLabel()}</td>
-									<td><Checkbox disabled={filesharingEnabledLock && !superAdmin} checked={filesharingEnabledUnmanaged} onClick={() => setFilesharingEnabledUnmanaged(Boolean(!filesharingEnabledUnmanaged))} /></td>
-									<td><Checkbox disabled={!superAdmin} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={filesharingEnabledLock} onClick={() => setFilesharingEnabledLock(Boolean(!filesharingEnabledLock))} /></td>
+									<td><Checkbox disabled={(filesharingEnabledLock && !superAdmin) || fieldsDisabled} checked={filesharingEnabledUnmanaged} onClick={() => setFilesharingEnabledUnmanaged(Boolean(!filesharingEnabledUnmanaged))} /></td>
+									<td><Checkbox disabled={!superAdmin || fieldsDisabled} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={filesharingEnabledLock} onClick={() => setFilesharingEnabledLock(Boolean(!filesharingEnabledLock))} /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -459,7 +467,7 @@ const DefaultTable = () => {
 								label={roomTrackerLabel()}
 								type="text"
 								fullWidth
-								disabled={false}
+								disabled={fieldsDisabled}
 								onChange={handleTracker}
 								value={tracker}
 								helperText={tracker === '' ? trackerHelperTextLabel() : undefined}
@@ -473,7 +481,7 @@ const DefaultTable = () => {
 								label={maxFileSizedLabel()}
 								type="number"
 								fullWidth
-								disabled={false}
+								disabled={fieldsDisabled}
 								onChange={handlemaxFileSize}
 								value={maxFileSize}
 								InputProps={{
@@ -487,7 +495,7 @@ const DefaultTable = () => {
 							label={roomBackgroundURLLabel()}
 							type="text"
 							fullWidth
-							disabled={false}
+							disabled={fieldsDisabled}
 							onChange={handleBackgroundChange}
 							value={background}
 						/>
@@ -497,7 +505,7 @@ const DefaultTable = () => {
 							label={roomLogoURLLabel()}
 							type="text"
 							fullWidth
-							disabled={false}
+							disabled={fieldsDisabled}
 							onChange={handleLogoChange}
 							value={logo}
 						/>
@@ -506,11 +514,12 @@ const DefaultTable = () => {
 							getOptionLabel={(option) => option.name}
 							fullWidth
 							disableClearable
+							disabled={fieldsDisabled}
 							onChange={handleDefaultRoleId}
 							value={defaultRoleIdOption}
 							sx={{ marginTop: '8px' }}
 							renderInput={(params) => <TextField required {...params} label={defaultRoleIdLabel()} />}
-							
+
 						/>
 						{/* 						<Autocomplete
 							options={roles}
