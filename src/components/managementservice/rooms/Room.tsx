@@ -220,6 +220,14 @@ const RoomTable = () => {
 	const [ cantPatch ] = useState(false);
 	const [ cantDelete ] = useState(false);
 
+	// Gates the room-bound Meetings table the same way the left-menu Meetings entry is
+	// gated (Management.tsx): a meeting only exists to drive an email invite, so it's
+	// pointless when the tenant has no enabled invite config. Any authenticated user can
+	// READ tenantInviteConfigs (find/get are open, scoped to the user's own tenant by the
+	// query resolver; only writes are admin-gated), so this resolves correctly for room
+	// owners too. Default hidden so a disabled tenant never flashes the table.
+	const [ invitesEnabled, setInvitesEnabled ] = useState(false);
+
 	async function fetchProduct() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('users')).then((tdata: any) => {
@@ -254,8 +262,16 @@ const RoomTable = () => {
 				setData(tdata.data);
 			}
 			setIsLoading(false);
-    
+
 		});
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch(getData('tenantInviteConfigs')).then((tdata: any) => {
+			const list = tdata?.data;
+
+			setInvitesEnabled(Array.isArray(list) && list.some((c: { enabled?: boolean }) => c.enabled));
+		})
+			.catch(() => setInvitesEnabled(false));
 
 		setIsLoading(false);
 
@@ -533,7 +549,7 @@ const RoomTable = () => {
 					{ id !=0 && <>
 						<RoomOwnerTable roomId={id} />
 						<RoomUserRoleTable roomId={id} />
-						<MeetingsTable roomId={id} />
+						{invitesEnabled && <MeetingsTable roomId={id} />}
 					</>}
 					
 				</DialogContent>

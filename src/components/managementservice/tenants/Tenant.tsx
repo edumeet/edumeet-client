@@ -238,7 +238,7 @@ const TenantTable = () => {
 
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={delTenant} color='warning'>{deleteLabel()}</Button>
+					<Button onClick={delTenant} color='warning' disabled={!superAdmin}>{deleteLabel()}</Button>
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
 					<Button onClick={addTenant} disabled={!canApply}>{applyLabel()}</Button>
 				</DialogActions>
