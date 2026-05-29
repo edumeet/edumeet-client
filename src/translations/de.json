@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Organisator",
 	"label.meetings.role.attendee": "Teilnehmer",
 	"label.management.meetings.attendeeAlreadyAdded": "Bereits hinzugefügt",
+	"label.management.invites.serverNotConfigured": "Einladungen sind auf diesem Server nicht konfiguriert (fehlender Verschlüsselungsschlüssel / RSVP-Geheimnis). Einladungen werden erst gesendet, wenn ein Administrator sie konfiguriert.",
 	"label.management.meetings.attendeeResolveError": "Fehler beim Auflösen des Benutzers",
 	"label.management.meetings.repeat.never": "Nie",
 	"label.management.meetings.repeat.daily": "Täglich",

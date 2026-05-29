@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Організатор",
 	"label.meetings.role.attendee": "Учасник",
 	"label.management.meetings.attendeeAlreadyAdded": "Вже додано",
+	"label.management.invites.serverNotConfigured": "Запрошення не налаштовані на цьому сервері (відсутній ключ шифрування / секрет RSVP). Запрошення не надсилатимуться, доки адміністратор їх не налаштує.",
 	"label.management.meetings.attendeeResolveError": "Помилка пошуку користувача",
 	"label.management.meetings.repeat.never": "Ніколи",
 	"label.management.meetings.repeat.daily": "Щодня",

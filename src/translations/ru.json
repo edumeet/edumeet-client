@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Организатор",
 	"label.meetings.role.attendee": "Участник",
 	"label.management.meetings.attendeeAlreadyAdded": "Уже добавлен",
+	"label.management.invites.serverNotConfigured": "Приглашения не настроены на этом сервере (отсутствует ключ шифрования / секрет RSVP). Приглашения не будут отправляться, пока администратор их не настроит.",
 	"label.management.meetings.attendeeResolveError": "Ошибка поиска пользователя",
 	"label.management.meetings.repeat.never": "Никогда",
 	"label.management.meetings.repeat.daily": "Ежедневно",

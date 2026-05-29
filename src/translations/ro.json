@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Organizator",
 	"label.meetings.role.attendee": "Participant",
 	"label.management.meetings.attendeeAlreadyAdded": "Deja adăugat",
+	"label.management.invites.serverNotConfigured": "Invitațiile nu sunt configurate pe acest server (lipsește cheia de criptare / secretul RSVP). Nu se vor trimite invitații până când un administrator nu le configurează.",
 	"label.management.meetings.attendeeResolveError": "Eroare la rezolvarea utilizatorului",
 	"label.management.meetings.repeat.never": "Niciodată",
 	"label.management.meetings.repeat.daily": "Zilnic",

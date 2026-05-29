@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Szervező",
 	"label.meetings.role.attendee": "Résztvevő",
 	"label.management.meetings.attendeeAlreadyAdded": "Már hozzáadva",
+	"label.management.invites.serverNotConfigured": "A meghívók nincsenek konfigurálva ezen a kiszolgálón (hiányzik a titkosítási kulcs / RSVP titok). Nem küldünk meghívókat, amíg egy rendszergazda be nem állítja őket.",
 	"label.management.meetings.attendeeResolveError": "Hiba a felhasználó feloldásánál",
 	"label.management.meetings.repeat.never": "Soha",
 	"label.management.meetings.repeat.daily": "Naponta",

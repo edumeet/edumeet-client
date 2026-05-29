@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Arrangør",
 	"label.meetings.role.attendee": "Deltager",
 	"label.management.meetings.attendeeAlreadyAdded": "Allerede tilføjet",
+	"label.management.invites.serverNotConfigured": "Invitationer er ikke konfigureret på denne server (manglende krypteringsnøgle / RSVP-hemmelighed). Der sendes ingen invitationer, før en administrator konfigurerer dem.",
 	"label.management.meetings.attendeeResolveError": "Fejl ved opslag af bruger",
 	"label.management.meetings.repeat.never": "Aldrig",
 	"label.management.meetings.repeat.daily": "Dagligt",

@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Organizer",
 	"label.meetings.role.attendee": "Attendee",
 	"label.management.meetings.attendeeAlreadyAdded": "Already added",
+	"label.management.invites.serverNotConfigured": "Invites are not configured on this server (missing encryption key / RSVP secret). Invitations will not be sent until an administrator configures them.",
 	"label.management.meetings.attendeeResolveError": "Error resolving user",
 	"label.management.meetings.repeat.never": "Never",
 	"label.management.meetings.repeat.daily": "Daily",

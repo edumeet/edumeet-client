@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+	Alert,
 	Box,
 	Button,
 	Checkbox,
@@ -13,7 +14,7 @@ import {
 } from '@mui/material';
 import { TenantInviteConfig } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { createData, getData, patchData, testInviteConfig } from '../../../store/actions/managementActions';
+import { createData, getData, getInviteServerStatus, patchData, testInviteConfig } from '../../../store/actions/managementActions';
 
 interface TestResultSide { ok: boolean; error?: string }
 interface TestResult { smtp: TestResultSide; imap?: TestResultSide }
@@ -28,6 +29,7 @@ import {
 	imapUserLabel,
 	inviteEmailConfigLabel,
 	inviteEnabledLabel,
+	inviteServerNotConfiguredLabel,
 	manageItemLabel,
 	organizerAddressLabel,
 	organizerNameLabel,
@@ -76,6 +78,8 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 	const [ imapPass, setImapPass ] = useState('');
 	const [ testing, setTesting ] = useState(false);
 	const [ testResult, setTestResult ] = useState<TestResult | null>(null);
+	// Default true to avoid flashing a false warning before the status loads.
+	const [ serverConfigured, setServerConfigured ] = useState(true);
 
 	const fetchConfig = async () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -105,6 +109,7 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 
 	useEffect(() => {
 		fetchConfig();
+		dispatch(getInviteServerStatus()).then((s) => setServerConfigured(s.configured));
 	}, [ tenantId ]);
 
 	const handleOpen = () => {
@@ -186,6 +191,11 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 			<Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
 				<DialogTitle>{inviteEmailConfigLabel()}</DialogTitle>
 				<DialogContent>
+					{!serverConfigured && (
+						<Alert severity="warning" sx={{ mb: 2 }}>
+							{inviteServerNotConfiguredLabel()}
+						</Alert>
+					)}
 					<FormControlLabel
 						control={<Checkbox checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />}
 						label={inviteEnabledLabel()}

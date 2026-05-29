@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Organizátor",
 	"label.meetings.role.attendee": "Účastník",
 	"label.management.meetings.attendeeAlreadyAdded": "Již přidáno",
+	"label.management.invites.serverNotConfigured": "Pozvánky nejsou na tomto serveru nakonfigurovány (chybí šifrovací klíč / tajný klíč RSVP). Pozvánky se nebudou odesílat, dokud je administrátor nenakonfiguruje.",
 	"label.management.meetings.attendeeResolveError": "Chyba při vyhledávání uživatele",
 	"label.management.meetings.repeat.never": "Nikdy",
 	"label.management.meetings.repeat.daily": "Denně",

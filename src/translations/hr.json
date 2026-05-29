@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Organizator",
 	"label.meetings.role.attendee": "Sudionik",
 	"label.management.meetings.attendeeAlreadyAdded": "Već dodano",
+	"label.management.invites.serverNotConfigured": "Pozivnice nisu konfigurirane na ovom poslužitelju (nedostaje ključ za šifriranje / RSVP tajna). Pozivnice se neće slati dok ih administrator ne konfigurira.",
 	"label.management.meetings.attendeeResolveError": "Greška pri pronalasku korisnika",
 	"label.management.meetings.repeat.never": "Nikad",
 	"label.management.meetings.repeat.daily": "Dnevno",

@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": null,
 	"label.meetings.role.attendee": null,
 	"label.management.meetings.attendeeAlreadyAdded": null,
+	"label.management.invites.serverNotConfigured": null,
 	"label.management.meetings.attendeeResolveError": null,
 	"label.management.meetings.repeat.never": null,
 	"label.management.meetings.repeat.daily": null,

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import {
+	Alert,
 	Autocomplete,
 	Box,
 	Button,
@@ -35,6 +36,7 @@ import {
 	deleteData,
 	getData,
 	getDataByRoomId,
+	getInviteServerStatus,
 	getUserByEmail,
 	patchData,
 	persistResolvedUser
@@ -51,6 +53,7 @@ import {
 	descLabel,
 	endsAtLabel,
 	inviteLanguageLabel,
+	inviteServerNotConfiguredLabel,
 	meetingsLabel,
 	partstatAcceptedLabel,
 	partstatDeclinedLabel,
@@ -202,6 +205,12 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 	const [ attendees, setAttendees ] = useState<MeetingAttendee[]>([]);
 	const [ occurrenceRsvps, setOccurrenceRsvps ] = useState<MeetingOccurrenceRsvp[]>([]);
 	const [ showPastMeetings, setShowPastMeetings ] = useState(false);
+	// Default true to avoid flashing a false warning before the status loads.
+	const [ serverConfigured, setServerConfigured ] = useState(true);
+
+	useEffect(() => {
+		dispatch(getInviteServerStatus()).then((s) => setServerConfigured(s.configured));
+	}, []);
 	const [ attendeeInput, setAttendeeInput ] = useState<User | string | null>(null);
 	const [ resolveEmail, setResolveEmail ] = useState('');
 	const [ isResolving, setIsResolving ] = useState(false);
@@ -534,6 +543,11 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 		<LocalizationProvider dateAdapter={AdapterMoment} adapterLocale={momentLocale}>
 			<Box sx={isRoomScoped ? { mt: 2 } : undefined}>
 				<Typography variant="h6">{meetingsLabel()}</Typography>
+				{!serverConfigured && (
+					<Alert severity="warning" sx={{ mt: 1 }}>
+						{inviteServerNotConfiguredLabel()}
+					</Alert>
+				)}
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 1, mb: 1 }}>
 					<Button variant="outlined" onClick={handleOpenAdd} disabled={addDisabled}>
 						{addNewLabel()}

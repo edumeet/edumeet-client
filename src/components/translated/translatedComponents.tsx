@@ -1765,6 +1765,10 @@ export const attendeeAlreadyAddedLabel = (): string => intl.formatMessage({
 	id: 'label.management.meetings.attendeeAlreadyAdded',
 	defaultMessage: 'Already added'
 });
+export const inviteServerNotConfiguredLabel = (): string => intl.formatMessage({
+	id: 'label.management.invites.serverNotConfigured',
+	defaultMessage: 'Invites are not configured on this server (missing encryption key / RSVP secret). Invitations will not be sent until an administrator configures them.'
+});
 export const attendeeResolveErrorLabel = (): string => intl.formatMessage({
 	id: 'label.management.meetings.attendeeResolveError',
 	defaultMessage: 'Error resolving user'

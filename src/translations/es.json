@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Organizador",
 	"label.meetings.role.attendee": "Participante",
 	"label.management.meetings.attendeeAlreadyAdded": "Ya añadido",
+	"label.management.invites.serverNotConfigured": "Las invitaciones no están configuradas en este servidor (falta la clave de cifrado / el secreto RSVP). No se enviarán invitaciones hasta que un administrador las configure.",
 	"label.management.meetings.attendeeResolveError": "Error al resolver el usuario",
 	"label.management.meetings.repeat.never": "Nunca",
 	"label.management.meetings.repeat.daily": "Diario",

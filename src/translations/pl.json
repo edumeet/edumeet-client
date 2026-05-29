@@ -537,6 +537,7 @@
 	"label.meetings.role.organizer": "Organizator",
 	"label.meetings.role.attendee": "Uczestnik",
 	"label.management.meetings.attendeeAlreadyAdded": "Już dodano",
+	"label.management.invites.serverNotConfigured": "Zaproszenia nie są skonfigurowane na tym serwerze (brak klucza szyfrowania / sekretu RSVP). Zaproszenia nie będą wysyłane, dopóki administrator ich nie skonfiguruje.",
 	"label.management.meetings.attendeeResolveError": "Błąd przy odnajdywaniu użytkownika",
 	"label.management.meetings.repeat.never": "Nigdy",
 	"label.management.meetings.repeat.daily": "Codziennie",

@@ -306,6 +306,28 @@ export const testInviteConfig = (tenantId: number): AppThunk<Promise<InviteTestR
 	return (await managementService).service('invite-tests').create({ tenantId }) as Promise<InviteTestResult>;
 };
 
+// Whether the SERVER has the invite secrets (encryptionKey + rsvpTokenSecret) configured.
+// Booleans only — used to warn admins that invites won't work regardless of per-tenant setup.
+export interface InviteServerStatus {
+	encryptionKey: boolean;
+	rsvpTokenSecret: boolean;
+	configured: boolean;
+}
+
+export const getInviteServerStatus = (): AppThunk<Promise<InviteServerStatus>> => async (
+	_dispatch,
+	_getState,
+	{ managementService }
+): Promise<InviteServerStatus> => {
+	try {
+		return (await managementService).service('invite-server-status').find() as Promise<InviteServerStatus>;
+	} catch {
+		// On any failure (older server without the endpoint, auth, etc.) assume configured
+		// so we don't show a false alarm. The dispatch path still logs the real reason.
+		return { encryptionKey: true, rsvpTokenSecret: true, configured: true };
+	}
+};
+
 export const createData = (params: object, serviceName: string): AppThunk<Promise<object | undefined>> => async (
 	dispatch,
 	_getState,
