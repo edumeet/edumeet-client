@@ -137,10 +137,13 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 							// Same calendar day → show just the end time, not the full date again.
 							const sameDay = startDate.toDateString() === endDate.toDateString();
 							const timeOpts: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
-							const startStr = startDate.toLocaleString();
+							const dateTimeOpts: Intl.DateTimeFormatOptions = {
+								year: 'numeric', month: '2-digit', day: '2-digit', ...timeOpts,
+							};
+							const startStr = startDate.toLocaleString(undefined, dateTimeOpts);
 							const endStr = sameDay
 								? endDate.toLocaleTimeString(undefined, timeOpts)
-								: endDate.toLocaleString();
+								: endDate.toLocaleString(undefined, dateTimeOpts);
 
 							const isOrganizer = myUserId != null && Number(meeting.organizerId) === myUserId;
 
