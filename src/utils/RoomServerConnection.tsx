@@ -117,7 +117,12 @@ export class RoomServerConnection extends EventEmitter {
 			if (!this.socket) {
 				reject('No socket connection');
 			} else {
-				this.socket.timeout(1500).emit('request', socketMessage, (timeout, serverError, response) => {
+				// 3s (matches the server's reciprocal request timeout). 1.5s was too
+				// aggressive under join-surge latency: a slow-but-successful ack would be
+				// retried, re-sending stateful requests (produce/connect) and tripping
+				// "already exists" errors on the media node. Idempotency on the server
+				// makes such retries safe; this reduces how often they happen at all.
+				this.socket.timeout(3000).emit('request', socketMessage, (timeout, serverError, response) => {
 					if (timeout) reject(new SocketTimeoutError('Request timed out'));
 					else if (serverError) reject(serverError);
 					else resolve(response);
