@@ -1,7 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppDispatch, mediaService, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { setDisplayName, setPicture } from '../actions/meActions';
 import { pauseMic, startExtraVideo, updateMic, updateWebcam } from '../actions/mediaActions';
@@ -80,6 +80,17 @@ const createRoomMiddleware = ({
 							dispatch(roomActions.setState('joined'));
 							dispatch(joinRoom());
 
+							if (mediaService.monitor) {
+								mediaService.monitor.callId = sessionId;
+								mediaService.monitor.clientId = getState().me.id;
+								mediaService.monitor.attachments = {
+									...mediaService.monitor.attachments,
+									roomId: getState().room.roomId,
+									actualSessionId: sessionId,
+									displayName: getState().settings.displayName,
+								};
+							}
+
 							break;
 						}
 
@@ -133,7 +144,7 @@ const createRoomMiddleware = ({
 
 							dispatch(roomSessionsActions.setActiveSpeakerId({ sessionId, peerId, isMe }));
 							break;
-						} 
+						}
 
 						case 'moderator:kick':
 						case 'escapeMeeting': {
@@ -186,6 +197,15 @@ const createRoomMiddleware = ({
 							}));
 							dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
 							dispatch(meActions.setSessionId(sessionId));
+
+							if (mediaService.monitor) {
+								mediaService.monitor.addClientJoinEvent({
+									payload: {
+										comment: 'Peer reconnected',
+									}
+								});
+							}
+
 							dispatch(peersActions.addPeers(peers));
 							dispatch(lobbyPeersActions.addPeers(lobbyPeers));
 							dispatch(roomSessionsActions.addMessages({ sessionId: mainSessionId, messages: chatHistory }));
@@ -228,6 +248,13 @@ const createRoomMiddleware = ({
 							} = notification.data;
 
 							dispatch(meActions.setSessionId(sessionId));
+
+							if (mediaService.monitor) {
+								mediaService.monitor.attachments = {
+									...mediaService.monitor.attachments,
+									actualSessionId: sessionId,
+								};
+							}
 
 							if (chatHistory)
 								dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));

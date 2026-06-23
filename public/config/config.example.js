@@ -256,11 +256,54 @@ var config = {
 	},
 
 	/**
-	 * ObserverRTC client-monitor configuration (if you use it).
+	 * ObserverRTC client-monitor configuration.
+	 *
+	 * When set, the client collects WebRTC stats, detects congestion and sends
+	 * samples to the media node over a dedicated SCTP data channel
+	 * (label: 'observertc-samples').  The media node writes them to disk or
+	 * S3 depending on its --clientSamplesOutputDirectory / --s3Bucket flags.
+	 *
+	 * Set to `undefined` (or remove the key) to disable monitoring entirely.
+	 *
+	 * @see https://github.com/ObserveRTC/client-monitor-js
 	 */
 	clientMontitor: {
-		// enabled: false,
-		// configUrl: ''
+		/**
+		 * How often (ms) the monitor polls WebRTC getStats().
+		 * Lower values give finer resolution but increase CPU cost.
+		 * Default: 2000
+		 */
+		collectingPeriodInMs: 2000,
+
+		/**
+		 * How often (ms) a ClientSample is assembled and sent over the
+		 * 'observertc-samples' data channel to the media node.
+		 *
+		 * 0 (or omit) — samples are NEVER created or sent. Stats are still
+		 *               collected locally (collectingPeriodInMs still runs)
+		 *               so the congestion detector and QualityIndicator work,
+		 *               but nothing is transmitted to the media node.
+		 *
+		 * > 0          — a sample is created and sent every N ms. Must be a
+		 *               positive multiple of collectingPeriodInMs.
+		 *               Only set this when the media node is configured with
+		 *               --s3 or --clientSamplesOutputDirectory.
+		 *
+		 * Default: 0 (disabled)
+		 */
+		samplingPeriodInMs: 0,
+
+		/**
+		 * Congestion detector — always on by default (sensitivity: 'medium').
+		 * When congestion is detected the monitor calls raiseIssue('congestion')
+		 * which emits 'issue' / 'issue-resolved' events. These are what drive
+		 * the QualityIndicator badge in the UI.
+		 *
+		 * Set to null to disable the detector entirely.
+		 */
+		congestionDetector: {
+			sensitivity: 'medium',
+		},
 	},
 
 	/**

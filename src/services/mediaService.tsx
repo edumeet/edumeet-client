@@ -12,7 +12,7 @@ import { VolumeWatcher } from '../utils/volumeWatcher';
 import type { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
 import type { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProducer';
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
-import { ClientMonitor } from '@observertc/client-monitor-js';
+import { ClientMonitor, ClientMonitorEvents } from '@observertc/client-monitor-js';
 import { safePromise } from '../utils/safePromise';
 import { ProducerSource } from '../utils/types';
 import { MediaSender } from '../utils/mediaSender';
@@ -129,7 +129,7 @@ export class MediaService extends EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
-	
+
 	// eslint-disable-next-line no-unused-vars
 	public rejectMediaReady!: (error: Error) => void;
 	public resolveMediaReady!: () => void;
@@ -287,7 +287,7 @@ export class MediaService extends EventEmitter {
 						const { peerId, rtpCapabilities } = notification.data;
 
 						const peerDevice = this.getPeerDevice(peerId);
-						
+
 						await peerDevice.load({ remoteRtpCapabilities: rtpCapabilities });
 
 						break;
@@ -307,7 +307,7 @@ export class MediaService extends EventEmitter {
 						const transport = await this.getPeerTransport(peerId, direction === 'send' ? 'recv' : 'send');
 
 						await transport.addIceCandidate({ candidate });
-						
+
 						break;
 					}
 
@@ -898,6 +898,39 @@ export class MediaService extends EventEmitter {
 		this.sendTransport = await this.createTransport('createSendTransport');
 		this.recvTransport = await this.createTransport('createRecvTransport');
 		this.resolveTransportsReady();
+
+		this.startObserverSampling().catch((error) =>
+			logger.error('error starting observer sampling [error:%o]', error)
+		);
+	}
+
+	private async startObserverSampling(): Promise<void> {
+		if (!this.monitor) return;
+		if (!this.monitor.config.samplingPeriodInMs) return;
+
+		logger.debug('startObserverSampling()');
+
+		const dataProducer = await this.produceData({
+			label: 'observertc-samples',
+			ordered: false,
+			maxRetransmits: 0,
+		});
+
+		const onSample = ({ sample }: ClientMonitorEvents['sample-created'][0]) => {
+			if (dataProducer.closed) return;
+
+			try {
+				dataProducer.send(JSON.stringify(sample));
+			} catch (error) {
+				logger.error('startObserverSampling() | error sending sample [error:%o]', error);
+			}
+		};
+
+		this.monitor.on('sample-created', onSample);
+
+		dataProducer.observer.once('close', () => {
+			this.monitor?.off('sample-created', onSample);
+		});
 	}
 
 	private async createTransport(creator: 'createSendTransport' | 'createRecvTransport'): Promise<Transport> {

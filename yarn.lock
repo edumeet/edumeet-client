@@ -1341,13 +1341,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@observertc/client-monitor-js@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@observertc/client-monitor-js@npm:4.1.0"
+"@observertc/client-monitor-js@npm:^4.3.1":
+  version: 4.3.1
+  resolution: "@observertc/client-monitor-js@npm:4.3.1"
   dependencies:
     eventemitter3: "npm:^5.0.1"
     ua-parser-js: "npm:^1.0.37"
-  checksum: 10c0/0c5c8c3f2949a4d866d43e326f13e42c443b768e8a4f8c375acd6d272610c1a6966c2afd93e0b02226f8aa7329258fcc5ceb9c4f59b5e27fbbe3304c76fa1133
+  checksum: 10c0/624a5c9c3de35b5a1432d7e47ac334e31393a0259bef8499e209fb8ec5e7e0ac171602b738f96a555297d30c3b4e7624efbfc64ab8a456006b12eca1cc9d774b
   languageName: node
   linkType: hard
 
@@ -3407,7 +3407,7 @@ __metadata:
     "@mui/material": "npm:^7.3.11"
     "@mui/system": "npm:^7.3.11"
     "@mui/x-date-pickers": "npm:^8.27.2"
-    "@observertc/client-monitor-js": "npm:^4.1.0"
+    "@observertc/client-monitor-js": "npm:^4.3.1"
     "@observertc/samples-encoder": "npm:^3.0.0"
     "@reduxjs/toolkit": "npm:^2.9.1"
     "@types/debug": "npm:^4.1.13"

@@ -21,7 +21,7 @@
 		"@mui/material": "^7.3.11",
 		"@mui/system": "^7.3.11",
 		"@mui/x-date-pickers": "^8.27.2",
-		"@observertc/client-monitor-js": "^4.1.0",
+		"@observertc/client-monitor-js": "^4.3.1",
 		"@observertc/samples-encoder": "^3.0.0",
 		"@reduxjs/toolkit": "^2.9.1",
 		"awaitqueue": "^3.0.2",
