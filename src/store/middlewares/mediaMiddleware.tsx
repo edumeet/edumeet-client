@@ -6,6 +6,7 @@ import { resumedVideoConsumersSelector } from '../selectors';
 import { peersActions } from '../slices/peersSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { settingsActions } from '../slices/settingsSlice';
 import { meActions } from '../slices/meSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { updateMic, updateWebcam } from '../actions/mediaActions';
@@ -316,7 +317,8 @@ const createMediaMiddleware = ({
 				roomSessionsActions.deselectPeer.match(action) ||
 				roomSessionsActions.setFullscreenConsumer.match(action) ||
 				roomSessionsActions.addWindowedConsumer.match(action) ||
-				roomSessionsActions.removeWindowedConsumer.match(action)
+				roomSessionsActions.removeWindowedConsumer.match(action) ||
+				settingsActions.setMaxActiveVideos.match(action)
 			) {
 				// Make a diff of the current state and the new state to find out
 				// which Consumers need to be paused/resumed.
