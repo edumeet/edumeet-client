@@ -1,5 +1,5 @@
 export const formatDuration = (duration: number): string => {
-	const durationInSeconds = Math.round(duration / 1000);
+	const durationInSeconds = Math.round(Math.max(0, duration) / 1000);
 
 	const hours = Math.floor(durationInSeconds / 3600);
 	const minutes = Math.floor((durationInSeconds - (hours * 3600)) / 60);
