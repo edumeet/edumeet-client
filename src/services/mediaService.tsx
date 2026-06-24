@@ -609,7 +609,13 @@ export class MediaService extends EventEmitter {
 							paused,
 						}, 'MediaService: newConsumer created');
 
-						if (paused) this.changeConsumer(consumer.id, 'resume', true);
+						// The media node creates video consumers paused (see consumerMiddleware
+						// `paused: producer.kind === 'video'`) so that off-screen videos cost no
+						// bandwidth until the client explicitly resumes them. Do NOT resume here:
+						// that would start RTP for every video regardless of visibility and defeat
+						// the lastN / spotlight optimization. The mediaMiddleware spotlight diff is
+						// the single owner of resume/pause and will resume this consumer if (and
+						// only if) its peer is within the visible spotlight window.
 
 						this.emit('consumerCreated', consumer, paused, consumerPaused, false);
 
