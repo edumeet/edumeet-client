@@ -230,6 +230,7 @@
 	"room.newFile": "Neue Datei verfügbar",
 	"room.newLobbyPeer": "Neuer Teilnehmer im Warteraum",
 	"room.newPeer": "{displayName} hat den Raum betreten",
+	"room.newPeers": "{count} Personen haben den Raum betreten",
 	"room.overRoomLimit": "Der Raum ist voll, probieren Sie es später nochmal.",
 	"room.peerChangedDisplayName": "{oldDisplayName} heißt jetzt {displayName}",
 	"room.peersInLobby": "Teilnehmer im Warteraum",

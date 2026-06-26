@@ -230,6 +230,7 @@
 	"room.newFile": "有新檔案",
 	"room.newLobbyPeer": "新參與者進入大廳",
 	"room.newPeer": "{displayName} 加入了會議室",
+	"room.newPeers": null,
 	"room.overRoomLimit": "會議室已滿，請稍後重試",
 	"room.peerChangedDisplayName": "{oldDisplayName} 已更名為 {displayName}",
 	"room.peersInLobby": "大廳的參與者",

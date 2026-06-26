@@ -230,6 +230,7 @@
 	"room.newFile": "Nouveau fichier disponible",
 	"room.newLobbyPeer": "Un nouveau participant est dans la salle d’attente",
 	"room.newPeer": "{displayName} a rejoint la salle",
+	"room.newPeers": "{count} personnes ont rejoint la salle",
 	"room.overRoomLimit": "La salle est pleine, réessayez plus tard.",
 	"room.peerChangedDisplayName": "{oldDisplayName} est maintenant {displayName}",
 	"room.peersInLobby": "Participants dans la salle d’attente",

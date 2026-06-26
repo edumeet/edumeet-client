@@ -3,7 +3,7 @@ import { SnackbarKey } from 'notistack';
 import { roomActions } from './roomSlice';
 import { v4 as uuid } from 'uuid';
 import { peersActions } from './peersSlice';
-import { peerJoinedRoomLabel, peerSentReactionLabel } from '../../components/translated/translatedComponents';
+import { peerSentReactionLabel } from '../../components/translated/translatedComponents';
 
 export interface Notification {
 	key: SnackbarKey;
@@ -37,21 +37,6 @@ const notificationsSlice = createSlice({
 			.addCase(roomActions.setState, (_state, action) => {
 				if (action.payload === 'left')
 					return [];
-			})
-			.addCase(peersActions.addPeer, (state, action) => {
-				const { displayName } = action.payload;
-
-				if (displayName) {
-					state.push({
-						key: uuid(),
-						message: peerJoinedRoomLabel(displayName),
-					});
-				} else {
-					state.push({
-						key: uuid(),
-						message: peerJoinedRoomLabel('Someone'), // TODO: translate
-					});
-				}
 			})
 			.addCase(peersActions.updatePeer, (state, action) => {
 				const { displayName, reaction } = action.payload;

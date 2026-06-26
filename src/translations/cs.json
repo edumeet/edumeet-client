@@ -230,6 +230,7 @@
 	"room.newFile": "Je dostupný nový soubor",
 	"room.newLobbyPeer": "Nový účastník vstoupil do přijímací místnosti",
 	"room.newPeer": "{displayName} se připojil do místnosti",
+	"room.newPeers": "{count} lidí se připojilo do místnosti",
 	"room.overRoomLimit": "Místnost je plná, zkuste znovu za okamžik.",
 	"room.peerChangedDisplayName": "{oldDisplayName} je nyní {displayName}",
 	"room.peersInLobby": "Účastníci v Přijímací místnosti",

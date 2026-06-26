@@ -230,6 +230,7 @@
 	"room.newFile": "Yeni dosya mevcut",
 	"room.newLobbyPeer": "Lobiye yeni katılımcı girdi",
 	"room.newPeer": "{displayName} odaya katıldı",
+	"room.newPeers": "{count} kişi odaya katıldı",
 	"room.overRoomLimit": "Oda dolu, bir süre sonra tekrar deneyin",
 	"room.peerChangedDisplayName": "{oldDisplayName}, {displayName} olarak değiştirildi",
 	"room.peersInLobby": "Lobideki katılımcılar",

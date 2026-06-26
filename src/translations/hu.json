@@ -163,6 +163,7 @@
 	"room.newFile": "Új fájl érhető el",
 	"room.newLobbyPeer": "Új részvevő lépett be a konferencia előszobájába",
 	"room.newPeer": "{displayName} kapcsolódott a konferenciához",
+	"room.newPeers": "{count} ember kapcsolódott a konferenciához",
 	"room.overRoomLimit": "A konferenciaszoba betelt..",
 	"room.peerChangedDisplayName": "{oldDisplayName} megváltozott erre {displayName}",
 	"room.peersInLobby": "Résztvevők az előszobában",

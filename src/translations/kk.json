@@ -230,6 +230,7 @@
 	"room.newFile": "Жаңа файл қол жетімді",
 	"room.newLobbyPeer": "Жаңа қатысушы кірді",
 	"room.newPeer": "{displayName} бейнеконференцияға қосылды",
+	"room.newPeers": null,
 	"room.overRoomLimit": "Бейнеконференция толды, біраз уақыттан кейін қайталап көріңіз.",
 	"room.peerChangedDisplayName": "{oldDisplayName} енді {displayName}",
 	"room.peersInLobby": "Қатысушылар",

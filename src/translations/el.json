@@ -230,6 +230,7 @@
 	"room.newFile": "Νέο διαθέσιμο αρχείο",
 	"room.newLobbyPeer": "Ένας νέος συμμετέχων μπήκε στο λόμπι",
 	"room.newPeer": "{displayName} μπήκε στο δωμάτιο",
+	"room.newPeers": "{count} άτομα μπήκαν στο δωμάτιο",
 	"room.overRoomLimit": "Το δωμάτιο είναι γεμάτο, δοκιμάστε αργότερα.",
 	"room.peerChangedDisplayName": "{oldDisplayName} είναι τώρα {displayName}",
 	"room.peersInLobby": "Συμμετέχοντες στο δωμάτιο",

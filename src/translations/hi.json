@@ -230,6 +230,7 @@
 	"room.newFile": "नई फ़ाइल उपलब्ध",
 	"room.newLobbyPeer": "नए प्रतिभागी ने प्रवेश किया",
 	"room.newPeer": "{DisplayName} प्रवेश हुआ है",
+	"room.newPeers": null,
 	"room.overRoomLimit": "कमरा रिक्त नहीं है, कुछ देर बाद कोशिश करें",
 	"room.peerChangedDisplayName": "प्रतिभागी का पूर्व नाम {oldDisplayName} से बदलकर {DisplayName} है",
 	"room.peersInLobby": "कमरे के बाहर प्रतिभागी हैं",

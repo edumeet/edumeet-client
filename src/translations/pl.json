@@ -230,6 +230,7 @@
 	"room.newFile": "Dostępny jest nowy plik",
 	"room.newLobbyPeer": "Nowy uczestnik w poczekalni",
 	"room.newPeer": "Nowy uczestnik {displayName} dołączył do konferencji",
+	"room.newPeers": "{count} uczestników dołączyło do konferencji",
 	"room.overRoomLimit": "Pokój jest pełny. Spróbuj ponownie po jakimś czasie.",
 	"room.peerChangedDisplayName": "Zmieniono nazwę użytkownika {oldDisplayName} na {displayName}",
 	"room.peersInLobby": "Uczestnicy w poczekalni",

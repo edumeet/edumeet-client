@@ -230,6 +230,7 @@
 	"room.newFile": "Доступен новый файл",
 	"room.newLobbyPeer": "Зашел новый участник",
 	"room.newPeer": "{displayName} присоединился к видеоконференции",
+	"room.newPeers": "{count} человек присоединились к видеоконференции",
 	"room.overRoomLimit": "Видеоконференция заполнена, повторите попытку через некоторое время.",
 	"room.peerChangedDisplayName": "{oldDisplayName} теперь {displayName}",
 	"room.peersInLobby": "Участники",

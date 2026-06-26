@@ -230,6 +230,7 @@
 	"room.newFile": "Ny fil tilgængelig",
 	"room.newLobbyPeer": "Ny deltager kom ind i lobbyen",
 	"room.newPeer": "{displayName} kom med i mødet",
+	"room.newPeers": "{count} personer kom med i mødet",
 	"room.overRoomLimit": "Rummet er fuldt - prøv igen senere",
 	"room.peerChangedDisplayName": "{oldDisplayName} er nu {displayName}",
 	"room.peersInLobby": "Deltagere i lobbyen",

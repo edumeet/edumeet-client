@@ -230,6 +230,7 @@
 	"room.newFile": "Pieejams jauns fails",
 	"room.newLobbyPeer": "Jauns dalībnieks ienācis uzgaidāmajā telpā",
 	"room.newPeer": "{displayName} pievienojās sapulces telpai",
+	"room.newPeers": null,
 	"room.overRoomLimit": null,
 	"room.peerChangedDisplayName": "{oldDisplayName} pārsaucās par {displayName}",
 	"room.peersInLobby": "Dalībnieki uzgaidāmajā telpā",

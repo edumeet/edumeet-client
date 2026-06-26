@@ -230,6 +230,7 @@
 	"room.newFile": "Dostupna nova datoteka",
 	"room.newLobbyPeer": "Novi sudionik čeka u predvorju",
 	"room.newPeer": "{displayName} je ušao u sobu",
+	"room.newPeers": "{count} osoba je ušlo u sobu",
 	"room.overRoomLimit": "Soba je popunjena, pokušajte ponovno kasnije.",
 	"room.peerChangedDisplayName": "{oldDisplayName} je sada {displayName}",
 	"room.peersInLobby": "Sudionici u predvorju",

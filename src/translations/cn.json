@@ -230,6 +230,7 @@
 	"room.newFile": "新文件可用",
 	"room.newLobbyPeer": "新参与者进入大厅",
 	"room.newPeer": "{displayName}加入了会议室",
+	"room.newPeers": null,
 	"room.overRoomLimit": null,
 	"room.peerChangedDisplayName": "{oldDisplayName}现在为{displayName}",
 	"room.peersInLobby": "大厅的参与者",

@@ -230,6 +230,7 @@
 	"room.newFile": "Un fișier nou e disponibil",
 	"room.newLobbyPeer": "Un nou participant a intrat în hol",
 	"room.newPeer": "{displayName} s-a alăturat camerei",
+	"room.newPeers": "{count} persoane s-au alăturat camerei",
 	"room.overRoomLimit": "Sala este plină, încearcă mai târziu.",
 	"room.peerChangedDisplayName": "{oldDisplayName} e acum {displayName}",
 	"room.peersInLobby": "Participanți în hol",

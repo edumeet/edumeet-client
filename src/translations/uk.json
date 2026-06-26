@@ -230,6 +230,7 @@
 	"room.newFile": "Новий файл є у доступі",
 	"room.newLobbyPeer": "Новий учасник увійшов у зал очікування",
 	"room.newPeer": "{displayName} приєднався до кімнати",
+	"room.newPeers": "{count} осіб приєдналися до кімнати",
 	"room.overRoomLimit": "Кімната переповнена, спробуйте знову через деякий час",
 	"room.peerChangedDisplayName": "{oldDisplayName} змінив ім'я на {displayName}",
 	"room.peersInLobby": "Учасники залу очікувань",

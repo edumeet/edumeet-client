@@ -110,6 +110,11 @@ export const peerJoinedRoomLabel = (displayName: string): string => intl.formatM
 	defaultMessage: '{displayName} joined the room'
 }, { displayName });
 
+export const peersJoinedRoomLabel = (count: number): string => intl.formatMessage({
+	id: 'room.newPeers',
+	defaultMessage: '{count} people joined the room'
+}, { count });
+
 export const peerSentReactionLabel = (displayName: string, reaction: string): string => intl.formatMessage({
 	id: 'room.reaction',
 	defaultMessage: '{displayName} reacted with {reaction}'

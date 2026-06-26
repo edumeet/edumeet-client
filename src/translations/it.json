@@ -230,6 +230,7 @@
 	"room.newFile": "Nuovo file disponibile",
 	"room.newLobbyPeer": "Un nuovo utente è entrato nella lobby",
 	"room.newPeer": "{displayName} è entrato nella stanza",
+	"room.newPeers": "{count} persone sono entrate nella stanza",
 	"room.overRoomLimit": "La stanza è piena, riprova più tardi.",
 	"room.peerChangedDisplayName": "{oldDisplayName} ora si chiama {displayName}",
 	"room.peersInLobby": "Participanti della lobby",

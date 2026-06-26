@@ -168,6 +168,7 @@
 	"room.newFile": "New file available",
 	"room.newLobbyPeer": "New participant entered the lobby",
 	"room.newPeer": "{displayName} joined the room",
+	"room.newPeers": "{count} people joined the room",
 	"room.overRoomLimit": "The room is full, retry after some time.",
 	"room.peerChangedDisplayName": "{oldDisplayName} is now {displayName}",
 	"room.peersInLobby": "Participants in Lobby",
