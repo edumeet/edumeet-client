@@ -318,7 +318,9 @@ const createMediaMiddleware = ({
 				roomSessionsActions.setFullscreenConsumer.match(action) ||
 				roomSessionsActions.addWindowedConsumer.match(action) ||
 				roomSessionsActions.removeWindowedConsumer.match(action) ||
-				settingsActions.setMaxActiveVideos.match(action)
+				settingsActions.setMaxActiveVideos.match(action) ||
+				settingsActions.setHideNonVideo.match(action) ||
+				settingsActions.setHideSelfView.match(action)
 			) {
 				// Make a diff of the current state and the new state to find out
 				// which Consumers need to be paused/resumed.
