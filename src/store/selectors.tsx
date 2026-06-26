@@ -158,21 +158,90 @@ const consumerSelectedPeerIdsSelector = createSelector(
 );
 
 /**
- * Returns the list of peerIds that are currently selected or
- * spotlighted. Cropped to maxActiveVideos.
- * 
+ * Returns the set of peerIds that currently have at least one live video
+ * consumer (webcam, screen or extra video that is not remotely paused).
+ * A peer that has turned off its webcam but is still sharing a screen or an
+ * extra video is therefore "video capable" and keeps its tile.
+ *
+ * @returns {Set<string>} the set of peerIds with live video.
+ */
+const videoCapablePeerIdsSelector = createSelector(
+	consumersSelect,
+	(consumers) => new Set(
+		consumers
+			.filter((c) =>
+				(c.source === 'webcam' || c.source === 'screen' || c.source === 'extravideo') &&
+				!c.remotePaused
+			)
+			.map((c) => c.peerId)
+	)
+);
+
+/**
+ * Returns the list of peerIds that are currently selected or spotlighted,
+ * cropped to the video-box budget.
+ *
+ * The budget is derived from maxActiveVideos (the slider, which already
+ * reserves a box for the local user). Within it:
+ *  - Peers with live video are prioritized over audio-only peers, so a real
+ *    camera is never crowded out by an audio-only peer that merely spoke
+ *    recently.
+ *  - One box is reserved for the collapsed audio-only group when it will be
+ *    shown (there is at least one peer without video, or cameras get cropped),
+ *    unless "hide participants without video" or headless is on.
+ *  - The local user's reserved box is handed back to a camera when self-view
+ *    is hidden.
+ *
  * @returns {string[]} the list of peerIds.
-*/ 
+*/
 export const spotlightPeersSelector = createSelector(
 	maxActiveVideosSelector,
 	currentRoomSessionSelector,
 	consumerSelectedPeerIdsSelector,
-	(maxActiveVideos, roomSession, consumerSelectedPeerIds) => {
+	videoCapablePeerIdsSelector,
+	sessionIdPeersSelector,
+	hideNonVideoSelector,
+	hideSelfViewSelector,
+	headlessSelector,
+	(
+		maxActiveVideos,
+		roomSession,
+		consumerSelectedPeerIds,
+		videoCapablePeerIds,
+		sessionPeers,
+		hideNonVideo,
+		hideSelfView,
+		headless,
+	) => {
 		if (!roomSession) return [];
 		const { spotlights, selectedPeers } = roomSession;
 		const uniqueSet = Array.from(new Set([ ...consumerSelectedPeerIds, ...selectedPeers, ...spotlights ]));
 
-		return uniqueSet.slice(0, maxActiveVideos).sort((a, b) => String(a).localeCompare(String(b)));
+		// Split candidates into those with live video and those without,
+		// preserving the original priority order in each group.
+		const videoPeers = uniqueSet.filter((id) => videoCapablePeerIds.has(id));
+		const audioPeers = uniqueSet.filter((id) => !videoCapablePeerIds.has(id));
+
+		// Self-view occupies one of the slider's boxes; reclaim it when hidden.
+		const budget = maxActiveVideos + (hideSelfView ? 1 : 0);
+
+		// The collapsed audio-only box appears when non-video peers are not
+		// hidden and at least one peer will end up in it: either a peer with no
+		// live video at all, or a camera that gets cropped because there are
+		// more cameras than the budget allows.
+		const audioBoxShown =
+			!hideNonVideo &&
+			!headless &&
+			(
+				sessionPeers.some((p) => !videoCapablePeerIds.has(p.id)) ||
+				videoPeers.length > budget
+			);
+
+		const videoSlots = Math.max(0, budget - (audioBoxShown ? 1 : 0));
+
+		return [ ...videoPeers, ...audioPeers ]
+			.slice(0, videoSlots)
+			.sort((a, b) => String(a).localeCompare(String(b)));
 	}
 );
 
