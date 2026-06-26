@@ -65,7 +65,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 				control={
 					<Switch
 						checked={hideSelfView}
-						onChange={(event) => handleChange(event, 'hideSelfView')}
+						onChange={(event) => dispatch(settingsActions.setHideSelfView(event.target.checked))}
 						inputProps={{ 'aria-label': 'controlled' }}
 					/>
 				}
@@ -75,7 +75,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 				control={
 					<Switch
 						checked={hideNonVideo}
-						onChange={(event) => handleChange(event, 'hideNonVideo')}
+						onChange={(event) => dispatch(settingsActions.setHideNonVideo(event.target.checked))}
 						inputProps={{ 'aria-label': 'controlled' }}
 					/>
 				}
