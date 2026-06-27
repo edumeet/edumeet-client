@@ -6,6 +6,7 @@ import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { setRaisedHand } from '../actions/meActions';
 import { stopMic, stopScreenSharing, stopWebcam } from '../actions/mediaActions';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { settingsActions } from '../slices/settingsSlice';
 import { p2pModeSelector } from '../selectors';
 import { Logger } from '../../utils/Logger';
 import edumeetConfig from '../../utils/edumeetConfig';
@@ -74,7 +75,7 @@ const createPeerMiddleware = ({
 							case 'changeDisplayName':
 							case 'changePicture':
 							case 'recording':
-							case 'raisedHand': 
+							case 'raisedHand':
 							case 'reaction': {
 								const {
 									peerId,
@@ -111,6 +112,13 @@ const createPeerMiddleware = ({
 											})
 										);
 									}, edumeetConfig.reactionsTimeout || 10000);
+								}
+
+								if (mediaService.monitor) {
+									mediaService.monitor.attachments = {
+										...mediaService.monitor.attachments,
+										displayName,
+									};
 								}
 
 								break;
@@ -160,7 +168,7 @@ const createPeerMiddleware = ({
 										displayName,
 										picture,
 									}));
-								
+
 								break;
 							}
 
@@ -172,19 +180,19 @@ const createPeerMiddleware = ({
 
 							case 'moderator:mute': {
 								dispatch(stopMic());
-								
+
 								break;
 							}
 
 							case 'moderator:stopVideo': {
 								dispatch(stopWebcam());
-								
+
 								break;
 							}
 
 							case 'moderator:stopScreenSharing': {
 								dispatch(stopScreenSharing());
-								
+
 								break;
 							}
 						}
@@ -192,6 +200,13 @@ const createPeerMiddleware = ({
 						logger.error('error on signalService "notification" event [error:%o]', error);
 					}
 				});
+			}
+
+			if (settingsActions.setDisplayName.match(action) && mediaService.monitor) {
+				mediaService.monitor.attachments = {
+					...mediaService.monitor.attachments,
+					displayName: action.payload,
+				};
 			}
 
 			if (peersActions.addPeer.match(action)) {
@@ -207,7 +222,7 @@ const createPeerMiddleware = ({
 			if (peersActions.removePeer.match(action)) {
 				mediaService.removePeerId(action.payload.id);
 			}
-			
+
 			if (
 				peersActions.addPeer.match(action) ||
 				peersActions.addPeers.match(action) ||
