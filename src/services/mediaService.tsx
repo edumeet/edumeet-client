@@ -234,9 +234,9 @@ export class MediaService extends EventEmitter {
 
 						fileService.reinitWithIceServers(iceServers);
 
-						const { recvRtpCapabilities: rtpCapabilities, sctpCapabilities } = await this.receiveRouterRtpCapabilities(routerRtpCapabilities);
+						const { recvRtpCapabilities: rtpCapabilities } = await this.receiveRouterRtpCapabilities(routerRtpCapabilities);
 
-						respond({ rtpCapabilities, sctpCapabilities });
+						respond({ rtpCapabilities });
 
 						this.resolveMediaReady();
 
@@ -919,7 +919,7 @@ export class MediaService extends EventEmitter {
 			forceTcp: false,
 			producing: creator === 'createSendTransport',
 			consuming: creator === 'createRecvTransport',
-			sctpCapabilities: this.mediasoup.sctpCapabilities,
+			enableSctp: true,
 		});
 
 		const transport = this.mediasoup[creator]({

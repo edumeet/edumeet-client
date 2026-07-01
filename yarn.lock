@@ -2481,12 +2481,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"awaitqueue@npm:^3.0.2, awaitqueue@npm:^3.3.0":
+"awaitqueue@npm:^3.0.2":
   version: 3.3.0
   resolution: "awaitqueue@npm:3.3.0"
   dependencies:
     debug: "npm:^4.4.3"
   checksum: 10c0/dd52f4c148d2a7255d03fe4f39a4d8f7f0d6f30afa243899226be28741b400bb2832a74bdebbf517c637b591549f331635373d33597c52d8bb5ea362d8c49f2d
+  languageName: node
+  linkType: hard
+
+"awaitqueue@npm:^3.3.1":
+  version: 3.3.1
+  resolution: "awaitqueue@npm:3.3.1"
+  dependencies:
+    debug: "npm:^4.4.3"
+  checksum: 10c0/2a7121520f7769ec0b6eadd795c7190a47a550d1e841962061c609fbae4aad697908e9d3a7ce0f4d4b1b5478e43fb8ec71e2a40700cdc1e4d4449ca3b7cb14c9
   languageName: node
   linkType: hard
 
@@ -3444,7 +3453,7 @@ __metadata:
     jwt-decode: "npm:^4.0.0"
     marked: "npm:^10.0.0"
     material-react-table: "npm:^3.0.1"
-    mediasoup-client: "npm:^3.20.0"
+    mediasoup-client: "npm:^3.21.0"
     moment: "npm:^2.29.4"
     native-file-system-adapter: "npm:^3.0.1"
     notistack: "npm:^3.0.2"
@@ -4541,12 +4550,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h264-profile-level-id@npm:^2.0.0, h264-profile-level-id@npm:^2.3.2":
+"h264-profile-level-id@npm:^2.0.0":
   version: 2.3.2
   resolution: "h264-profile-level-id@npm:2.3.2"
   dependencies:
     debug: "npm:^4.4.3"
   checksum: 10c0/75bd12ff36707ffacf379c31c403d4508f3116ef2065e375deadcfafd4f7d163521cf0c70ae5385ebac970fa0acc07f9dd497c4248cfc1ee5623b4533707731d
+  languageName: node
+  linkType: hard
+
+"h264-profile-level-id@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "h264-profile-level-id@npm:2.3.3"
+  dependencies:
+    debug: "npm:^4.4.3"
+  checksum: 10c0/cc1ffaed628ca3eecc7cd1e0fc7f4b275cc9189516b2a362dde6b089d5f4a9cf5c5c69b6947e1eb203886a3444022f8c84300ae585e74a70fe46cf411eb8b43f
   languageName: node
   linkType: hard
 
@@ -5603,20 +5621,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mediasoup-client@npm:^3.20.0":
-  version: 3.20.0
-  resolution: "mediasoup-client@npm:3.20.0"
+"mediasoup-client@npm:^3.21.0":
+  version: 3.21.0
+  resolution: "mediasoup-client@npm:3.21.0"
   dependencies:
     "@types/debug": "npm:^4.1.13"
     "@types/events-alias": "npm:@types/events@^3.0.3"
-    awaitqueue: "npm:^3.3.0"
+    awaitqueue: "npm:^3.3.1"
     debug: "npm:^4.4.3"
     events-alias: "npm:events@^3.3.0"
     fake-mediastreamtrack: "npm:^2.2.1"
-    h264-profile-level-id: "npm:^2.3.2"
+    h264-profile-level-id: "npm:^2.3.3"
     sdp-transform: "npm:^3.0.0"
     supports-color: "npm:^10.2.2"
-  checksum: 10c0/c8f1660dce78f5649ed1bfd2cc32c720630d70a420850f92b8d637c3f436b86f1ec76307fab28c64dd00717f5eecf56c57192146ad22e41e5cde27dd7703a925
+  checksum: 10c0/2d5767ed7a7033d455c8285d51a411089552770b0cc703c8643b23c094fa3fd868a904a3c9191ca857cfbff95a9d5765711302ebc803878172fe6d9b9a3d7265
   languageName: node
   linkType: hard
 
