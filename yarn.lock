@@ -764,70 +764,70 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@feathersjs/adapter-commons@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@feathersjs/adapter-commons@npm:5.0.45"
+"@feathersjs/adapter-commons@npm:^5.0.46":
+  version: 5.0.46
+  resolution: "@feathersjs/adapter-commons@npm:5.0.46"
   dependencies:
-    "@feathersjs/commons": "npm:^5.0.45"
-    "@feathersjs/errors": "npm:^5.0.45"
-    "@feathersjs/feathers": "npm:^5.0.45"
-  checksum: 10c0/a0662745d5d44c3486dd1b9dc38c119c6daa437aa97147fb97806e21498d763fd1e873e80682d3586a263d0f15c4c40f0f1b86794fb4919b23e3364216f46fb4
+    "@feathersjs/commons": "npm:^5.0.46"
+    "@feathersjs/errors": "npm:^5.0.46"
+    "@feathersjs/feathers": "npm:^5.0.46"
+  checksum: 10c0/323efc29c51f941eeff1c49dea2c73f52ae3f7d8ffbaf7baefaba208e7162a7cb762a772d0373dab0befac013704a60454963622ba3174eac71f8d8515d589f1
   languageName: node
   linkType: hard
 
-"@feathersjs/authentication-client@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@feathersjs/authentication-client@npm:5.0.45"
+"@feathersjs/authentication-client@npm:^5.0.46":
+  version: 5.0.46
+  resolution: "@feathersjs/authentication-client@npm:5.0.46"
   dependencies:
-    "@feathersjs/authentication": "npm:^5.0.45"
-    "@feathersjs/commons": "npm:^5.0.45"
-    "@feathersjs/errors": "npm:^5.0.45"
-    "@feathersjs/feathers": "npm:^5.0.45"
-  checksum: 10c0/6e9ccb6fa9f5d4898b81b1399cb0a964ee25e395d1e07de237dc48667f04aa205d845716c02d1125153dc0bf694af418e62e3e2cb4d7da90497a6f1192292ade
+    "@feathersjs/authentication": "npm:^5.0.46"
+    "@feathersjs/commons": "npm:^5.0.46"
+    "@feathersjs/errors": "npm:^5.0.46"
+    "@feathersjs/feathers": "npm:^5.0.46"
+  checksum: 10c0/6859467d088955db4c97466c9a29e6ce42c1bf2084d000bc098f25f43da9acf2d5f4fa45eb1b273e9baf864e6858cffeb047ac1a88eac3838c5de9624e0d5d9d
   languageName: node
   linkType: hard
 
-"@feathersjs/authentication@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@feathersjs/authentication@npm:5.0.45"
+"@feathersjs/authentication@npm:^5.0.46":
+  version: 5.0.46
+  resolution: "@feathersjs/authentication@npm:5.0.46"
   dependencies:
-    "@feathersjs/commons": "npm:^5.0.45"
-    "@feathersjs/errors": "npm:^5.0.45"
-    "@feathersjs/feathers": "npm:^5.0.45"
+    "@feathersjs/commons": "npm:^5.0.46"
+    "@feathersjs/errors": "npm:^5.0.46"
+    "@feathersjs/feathers": "npm:^5.0.46"
     "@feathersjs/hooks": "npm:^0.9.0"
-    "@feathersjs/schema": "npm:^5.0.45"
-    "@feathersjs/transport-commons": "npm:^5.0.45"
+    "@feathersjs/schema": "npm:^5.0.46"
+    "@feathersjs/transport-commons": "npm:^5.0.46"
     "@types/jsonwebtoken": "npm:^9.0.10"
     jsonwebtoken: "npm:^9.0.3"
-    lodash: "npm:^4.17.23"
+    lodash: "npm:^4.18.1"
     long-timeout: "npm:^0.1.1"
     uuid: "npm:^11.1.0"
-  checksum: 10c0/b74fb47e3af29939f7c77490a7f8419eca2a51b36075b4c714d4ef67371d60a642e85273bf27f6f1469c6da4a5fa84d64a2754f7ff53e732ddfe558e2c2dbe7b
+  checksum: 10c0/f2deb877aace97f5018e3a33930e1bfed7a489de935f0ea777f41d95fadda46a089b71953d83525937360383ef46bc89693508eb6f666db99fbf8d0773fddb36
   languageName: node
   linkType: hard
 
-"@feathersjs/commons@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@feathersjs/commons@npm:5.0.45"
-  checksum: 10c0/d52597070e897119074c828b5e04399b33934c02613f33a22ac3c011831ce70f07db895c78ce5ae5d1f2c4651f51dce0ce708944a71fe99fdd05471928cca16b
+"@feathersjs/commons@npm:^5.0.46":
+  version: 5.0.46
+  resolution: "@feathersjs/commons@npm:5.0.46"
+  checksum: 10c0/0d3f404efee25b92cf5a2eb48daf933794c738bc01e5c9588ca2fa6564041190b7979d7531d8db053266d4e43cabc15aef34418a8e9ab27050c3fc71cac19865
   languageName: node
   linkType: hard
 
-"@feathersjs/errors@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@feathersjs/errors@npm:5.0.45"
-  checksum: 10c0/9fcfed7875b50e9f8b307ddd000abb36c13ffa7efdf5f9a946962f4391ce7fa549d635cce3bcdddda2a3eb650d122d3cae2fb321e776dbac29d523d3fc7af545
+"@feathersjs/errors@npm:^5.0.46":
+  version: 5.0.46
+  resolution: "@feathersjs/errors@npm:5.0.46"
+  checksum: 10c0/89ca94d877fd06fdd7a74ff04ac182cc1f3021ab8e03604cc94566c38ae8e82bc9ee64b536c56e902a20b54c3ef208e1f3d9c41358c7b1417ec632582ea69374
   languageName: node
   linkType: hard
 
-"@feathersjs/feathers@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@feathersjs/feathers@npm:5.0.45"
+"@feathersjs/feathers@npm:^5.0.46":
+  version: 5.0.46
+  resolution: "@feathersjs/feathers@npm:5.0.46"
   dependencies:
-    "@feathersjs/commons": "npm:^5.0.45"
+    "@feathersjs/commons": "npm:^5.0.46"
     "@feathersjs/hooks": "npm:^0.9.0"
     events: "npm:^3.3.0"
-  checksum: 10c0/8511c1c2658e36b18662733e8547fec561e41928532f17aa762e62277f6c5c246831e6fba450c4ebbc18af3efd1632291415117c3538bb4ef2ea45a4b1544551
+  checksum: 10c0/ce3a482514d43e53ab6fae9c6d6b62d8c15dd8b9e130e43bf6b0086cafa1bf1978e3206cab7a278c6d35a12a62d443a374b9a445f2c2e152ce11cf3849f7967a
   languageName: node
   linkType: hard
 
@@ -838,58 +838,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@feathersjs/rest-client@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@feathersjs/rest-client@npm:5.0.45"
+"@feathersjs/rest-client@npm:^5.0.46":
+  version: 5.0.46
+  resolution: "@feathersjs/rest-client@npm:5.0.46"
   dependencies:
-    "@feathersjs/commons": "npm:^5.0.45"
-    "@feathersjs/errors": "npm:^5.0.45"
-    "@feathersjs/feathers": "npm:^5.0.45"
-    "@types/superagent": "npm:^8.1.9"
-    qs: "npm:^6.15.0"
-  checksum: 10c0/d8db8d9c9995d7cc5ca079075b5634f402f24e44d39af40b6af2d77a3beecb69a9e414498c006b9c8f32e5282ab821b08c09d7e5dcc270f0257307cf5ff3b1e5
+    "@feathersjs/commons": "npm:^5.0.46"
+    "@feathersjs/errors": "npm:^5.0.46"
+    "@feathersjs/feathers": "npm:^5.0.46"
+    "@types/superagent": "npm:^8.1.10"
+    qs: "npm:^6.15.2"
+  checksum: 10c0/2b7606d358e114b764db9f49ce37a0668a6fe110320c99e4e9ada354468e3f982a668d5a3bc61ae49cba025079c758fbfd2a769cb2b58452a349f6ee2fc21d30
   languageName: node
   linkType: hard
 
-"@feathersjs/schema@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@feathersjs/schema@npm:5.0.45"
+"@feathersjs/schema@npm:^5.0.46":
+  version: 5.0.46
+  resolution: "@feathersjs/schema@npm:5.0.46"
   dependencies:
-    "@feathersjs/adapter-commons": "npm:^5.0.45"
-    "@feathersjs/commons": "npm:^5.0.45"
-    "@feathersjs/errors": "npm:^5.0.45"
-    "@feathersjs/feathers": "npm:^5.0.45"
+    "@feathersjs/adapter-commons": "npm:^5.0.46"
+    "@feathersjs/commons": "npm:^5.0.46"
+    "@feathersjs/errors": "npm:^5.0.46"
+    "@feathersjs/feathers": "npm:^5.0.46"
     "@feathersjs/hooks": "npm:^0.9.0"
     "@types/json-schema": "npm:^7.0.15"
-    ajv: "npm:^8.18.0"
+    ajv: "npm:^8.20.0"
     ajv-formats: "npm:^3.0.1"
     json-schema-to-ts: "npm:^3.1.1"
   peerDependencies:
     typescript: ">=5.0"
-  checksum: 10c0/8d234b6ad88e0124e295bedff46ace3895565bf6edc1c90333eabf2298ad85cf0e7eabf47efeada2c9ece48aea536bef94c1e1addd3a06718bcdd96c76648554
+  checksum: 10c0/b876cfdfa0572423d53094a5aad2f3ace8a5a1c0d043a413abac508b6210b3aa5a4f3c48cb0db45270a93ddc08097013fb6a99b265725b305cb155030629c22a
   languageName: node
   linkType: hard
 
-"@feathersjs/socketio-client@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@feathersjs/socketio-client@npm:5.0.45"
+"@feathersjs/socketio-client@npm:^5.0.46":
+  version: 5.0.46
+  resolution: "@feathersjs/socketio-client@npm:5.0.46"
   dependencies:
-    "@feathersjs/feathers": "npm:^5.0.45"
-    "@feathersjs/transport-commons": "npm:^5.0.45"
-  checksum: 10c0/a1c77bb06aea916f255d821ba587e06766d2589622e7fea7bb6912e2048cb3cb2b24edadde7d642fb0981f4fd55c8511dfd0b0ceb4b36f81551f11837234f461
+    "@feathersjs/feathers": "npm:^5.0.46"
+    "@feathersjs/transport-commons": "npm:^5.0.46"
+  checksum: 10c0/350e1b6dd8fa6efb1618bf064dc824687414980823b1810e6df6a028308d42ff1e198c9d3cfdcd210c8fcc6df0df3d0898141b887f291791ffc319a6c3565c19
   languageName: node
   linkType: hard
 
-"@feathersjs/transport-commons@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@feathersjs/transport-commons@npm:5.0.45"
+"@feathersjs/transport-commons@npm:^5.0.46":
+  version: 5.0.46
+  resolution: "@feathersjs/transport-commons@npm:5.0.46"
   dependencies:
-    "@feathersjs/commons": "npm:^5.0.45"
-    "@feathersjs/errors": "npm:^5.0.45"
-    "@feathersjs/feathers": "npm:^5.0.45"
+    "@feathersjs/commons": "npm:^5.0.46"
+    "@feathersjs/errors": "npm:^5.0.46"
+    "@feathersjs/feathers": "npm:^5.0.46"
     encodeurl: "npm:^2.0.0"
-    lodash: "npm:^4.17.23"
-  checksum: 10c0/6c030d2ef16ef980464f443ccdee11bdc1778f5dbf11e37d32e04a0f34682bf829a710b15db705807a753edc44e73be851296c632cfa40ed5c6295f54e768d72
+    lodash: "npm:^4.18.1"
+  checksum: 10c0/8746be78aa443ba4459351a02daca2d1cb5b41ca07c9cb2f825d9ec546dfd91ff696cc8c613ea164551ac48227e45dbbca1c17063ad2404e1d6a3dbfefda1f78
   languageName: node
   linkType: hard
 
@@ -1979,12 +1979,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.2.16":
-  version: 19.2.16
-  resolution: "@types/react@npm:19.2.16"
+"@types/react@npm:^19.2.17":
+  version: 19.2.17
+  resolution: "@types/react@npm:19.2.17"
   dependencies:
     csstype: "npm:^3.2.2"
-  checksum: 10c0/96f2850b67c5aa4a695bc32eb06c7609acdda1c0c597ace21ad24a5b9e2ccbccd97c0643253579fd629789a422a3694b4bbcb26e5fc6aec5f0357820bf0ee81c
+  checksum: 10c0/bc2c4af96b3e480604424de70d5ebda90c5f4b485df471858c0bc2d7d70364b606ec3c4d8579f94f01aa0c6c0591f56bcf14cba5689f5eea4b74250ccdc3a232
   languageName: node
   linkType: hard
 
@@ -2013,15 +2013,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/superagent@npm:^8.1.9":
-  version: 8.1.9
-  resolution: "@types/superagent@npm:8.1.9"
+"@types/superagent@npm:^8.1.10":
+  version: 8.1.10
+  resolution: "@types/superagent@npm:8.1.10"
   dependencies:
     "@types/cookiejar": "npm:^2.1.5"
     "@types/methods": "npm:^1.1.4"
     "@types/node": "npm:*"
     form-data: "npm:^4.0.0"
-  checksum: 10c0/12631f1d8b3a62e1f435bc885f6d64d1a2d1ae82b80f0c6d63d4d6372c40b6f1fee6b3da59ac18bb86250b1eb73583bf2d4b1f7882048c32468791c560c69b7c
+  checksum: 10c0/cd911f7e926aae3f23caeebac055c46c5a63576561548356e0ca809147b372a27359112e02a569d527fd677cd90ee6d018b5cdf509a0a5ac70f74289bd29c9bc
   languageName: node
   linkType: hard
 
@@ -2309,7 +2309,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.0, ajv@npm:^8.18.0":
+"ajv@npm:^8.0.0":
   version: 8.18.0
   resolution: "ajv@npm:8.18.0"
   dependencies:
@@ -2318,6 +2318,18 @@ __metadata:
     json-schema-traverse: "npm:^1.0.0"
     require-from-string: "npm:^2.0.2"
   checksum: 10c0/e7517c426173513a07391be951879932bdf3348feaebd2199f5b901c20f99d60db8cd1591502d4d551dc82f594e82a05c4fe1c70139b15b8937f7afeaed9532f
+  languageName: node
+  linkType: hard
+
+"ajv@npm:^8.20.0":
+  version: 8.20.0
+  resolution: "ajv@npm:8.20.0"
+  dependencies:
+    fast-deep-equal: "npm:^3.1.3"
+    fast-uri: "npm:^3.0.1"
+    json-schema-traverse: "npm:^1.0.0"
+    require-from-string: "npm:^2.0.2"
+  checksum: 10c0/5df9a1c8f83863cde1bd3a9ddb426f599718f88e3dc9153616c79fb28e0be455335830d7f21d745576519f057b371352daa31047b6a33d7036fe08777d60cf2a
   languageName: node
   linkType: hard
 
@@ -3363,15 +3375,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.4.8":
-  version: 3.4.8
-  resolution: "dompurify@npm:3.4.8"
+"dompurify@npm:^3.4.11":
+  version: 3.4.11
+  resolution: "dompurify@npm:3.4.11"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10c0/8f56a53d0ac80c76068772c9b72721f31fad68cac64a528e2420699ce2bd26b3516e29a5a7bd2205c2732d7114b9859998bf922d20cdb9361c4a05dab8352570
+  checksum: 10c0/31439481c7e8fc3805d40c376936fd66936620fb1b1a31a2ec097f6165412c37f2d868e082c9ceba62bb37661c1ea132a5db4d5213434317e30df68d4aca9cc9
   languageName: node
   linkType: hard
 
@@ -3408,10 +3420,10 @@ __metadata:
     "@erase2d/fabric": "npm:^1.2.1"
     "@eslint/eslintrc": "npm:^3.3.5"
     "@eslint/js": "npm:^10.0.1"
-    "@feathersjs/authentication-client": "npm:^5.0.45"
-    "@feathersjs/feathers": "npm:^5.0.45"
-    "@feathersjs/rest-client": "npm:^5.0.45"
-    "@feathersjs/socketio-client": "npm:^5.0.45"
+    "@feathersjs/authentication-client": "npm:^5.0.46"
+    "@feathersjs/feathers": "npm:^5.0.46"
+    "@feathersjs/rest-client": "npm:^5.0.46"
+    "@feathersjs/socketio-client": "npm:^5.0.46"
     "@mui/icons-material": "npm:^7.3.11"
     "@mui/material": "npm:^7.3.11"
     "@mui/system": "npm:^7.3.11"
@@ -3425,7 +3437,7 @@ __metadata:
     "@types/hark": "npm:^1.2.5"
     "@types/node": "npm:^24.10.1"
     "@types/random-string": "npm:^0.2.0"
-    "@types/react": "npm:^19.2.16"
+    "@types/react": "npm:^19.2.17"
     "@types/react-dom": "npm:^19.2.3"
     "@types/react-redux": "npm:^7.1.34"
     "@types/redux-logger": "npm:^3.0.13"
@@ -3441,11 +3453,11 @@ __metadata:
     bowser: "npm:^2.11.0"
     dayjs: "npm:^1.11.21"
     debug: "npm:^4.3.7"
-    dompurify: "npm:^3.4.8"
+    dompurify: "npm:^3.4.11"
     eslint: "npm:^10.0.3"
     eslint-plugin-import: "npm:^2.32.0"
     eslint-plugin-react: "npm:^7.36.1"
-    fabric: "npm:^7.1.0"
+    fabric: "npm:^7.4.0"
     file-saver: "npm:^2.0.5"
     fscreen: "npm:^1.2.0"
     globals: "npm:^17.4.0"
@@ -4097,9 +4109,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fabric@npm:^7.1.0":
-  version: 7.2.0
-  resolution: "fabric@npm:7.2.0"
+"fabric@npm:^7.4.0":
+  version: 7.4.0
+  resolution: "fabric@npm:7.4.0"
   dependencies:
     canvas: "npm:^3.2.0"
     jsdom: "npm:^26.1.0"
@@ -4108,7 +4120,7 @@ __metadata:
       optional: true
     jsdom:
       optional: true
-  checksum: 10c0/59cc2fe8bb93e3d6f258a03baf95b2f282577cd90ebadb186a2bf4df172d072d002e308131686b37933f19c8a7714d1969ec0c72554dc0c35bf21f96f1fc444b
+  checksum: 10c0/4c5b97bc61e0bbab4c744500dc451eb72eaf895357c928633ab6b3e171e9a13609cf9f2316b2b80f59ee7d9b97c1076d9e96031a5f4c6746e0f4a1b936ae5d33
   languageName: node
   linkType: hard
 
@@ -5487,7 +5499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.23":
+"lodash@npm:^4.18.1":
   version: 4.18.1
   resolution: "lodash@npm:4.18.1"
   checksum: 10c0/757228fc68805c59789e82185135cf85f05d0b2d3d54631d680ca79ec21944ec8314d4533639a14b8bcfbd97a517e78960933041a5af17ecb693ec6eecb99a27
@@ -6392,12 +6404,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.15.0":
-  version: 6.15.0
-  resolution: "qs@npm:6.15.0"
+"qs@npm:^6.15.2":
+  version: 6.15.3
+  resolution: "qs@npm:6.15.3"
   dependencies:
-    side-channel: "npm:^1.1.0"
-  checksum: 10c0/ff341078a78a991d8a48b4524d52949211447b4b1ad907f489cac0770cbc346a28e47304455c0320e5fb000f8762d64b03331e3b71865f663bf351bcba8cdb4b
+    es-define-property: "npm:^1.0.1"
+    side-channel: "npm:^1.1.1"
+  checksum: 10c0/8f3f6e45ece255347d57696628401cde29e9ec649fff698b53bd3150dea7cefdf33036e1bc1826b9f110bfa7cb0ec4ab9f5297eca628ce216c55af82c304e08e
   languageName: node
   linkType: hard
 
@@ -7185,6 +7198,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"side-channel-list@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "side-channel-list@npm:1.0.1"
+  dependencies:
+    es-errors: "npm:^1.3.0"
+    object-inspect: "npm:^1.13.4"
+  checksum: 10c0/d346c787fd2f9f1c2fdea14f00e8250118db0e7596d85a6cb9faa75f105d31a73a8f7a341c93d7df2a2429098c3d37a77bd3be9e88c37094b8c01807bc77c7a2
+  languageName: node
+  linkType: hard
+
 "side-channel-map@npm:^1.0.1":
   version: 1.0.1
   resolution: "side-channel-map@npm:1.0.1"
@@ -7220,6 +7243,19 @@ __metadata:
     side-channel-map: "npm:^1.0.1"
     side-channel-weakmap: "npm:^1.0.2"
   checksum: 10c0/cb20dad41eb032e6c24c0982e1e5a24963a28aa6122b4f05b3f3d6bf8ae7fd5474ef382c8f54a6a3ab86e0cac4d41a23bd64ede3970e5bfb50326ba02a7996e6
+  languageName: node
+  linkType: hard
+
+"side-channel@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "side-channel@npm:1.1.1"
+  dependencies:
+    es-errors: "npm:^1.3.0"
+    object-inspect: "npm:^1.13.4"
+    side-channel-list: "npm:^1.0.1"
+    side-channel-map: "npm:^1.0.1"
+    side-channel-weakmap: "npm:^1.0.2"
+  checksum: 10c0/dc0ab81d67f61bda9247d053ce93f41c3fd8ad2bdcb9cf9d8d2f8540d488f26d87a5e99ebfc07eea49ec025867b2452b705442d974b1478f0395e69f6bfb3270
   languageName: node
   linkType: hard
 
