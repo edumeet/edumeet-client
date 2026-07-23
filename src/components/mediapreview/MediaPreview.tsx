@@ -36,6 +36,10 @@ const MediaPreview = ({
 	// We do not send it so the state is different on join dialog.
 	const micEnabled = useAppSelector((state) => state.me.previewMicTrackId);
 
+	const {
+		mirroredSelfView
+	} = useAppSelector((state) => state.settings);
+
 	useEffect(() => {
 		if (startAudio) dispatch(updatePreviewMic({ newDeviceId: audioDevice, updateSelection }));
 		if (startVideo) dispatch(updatePreviewWebcam({ newDeviceId: videoDevice, updateSelection }));
@@ -73,7 +77,7 @@ const MediaPreview = ({
 
 					</MediaControls>
 				)}
-				{ previewWebcamTrackId && <VideoView contain={contain} mirrored previewTrack /> }
+				{ previewWebcamTrackId && <VideoView contain={contain} mirrored={mirroredSelfView} previewTrack /> }
 				{ micEnabled && <Volume /> }
 
 			</VideoBox>
