@@ -23,6 +23,7 @@ const peersSelector: Selector<Record<string, Peer>> = (state) => state.peers;
 const sessionIdSelector: Selector<string> = (state) => state.me.sessionId;
 const lobbyPeersSelector: Selector<LobbyPeer[]> = (state) => state.lobbyPeers;
 const maxActiveVideosSelector: Selector<number> = (state) => state.settings.maxActiveVideos;
+const showAudioOnlySelector: Selector<boolean> = (state) => state.settings.showAudioOnly;
 const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNonVideo;
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
@@ -554,12 +555,14 @@ export const videoBoxesSelector = createSelector(
 	hideSelfViewSelector,
 	spotlightWebcamConsumerSelector,
 	audioOnlySessionPeersSelector,
+	showAudioOnlySelector,
 	hideNonVideoSelector,
 	headlessSelector,
 	(
 		hideSelfView,
 		webcamConsumers,
 		audioOnlyPeers,
+		showAudioOnly,
 		hideNonVideo,
 		headless,
 	) => {
@@ -568,7 +571,11 @@ export const videoBoxesSelector = createSelector(
 		// Add everyone else's video
 		videoBoxes += webcamConsumers.length;
 
-		if (audioOnlyPeers.length > 0 && !hideNonVideo && !headless) videoBoxes++; // Add the audio only box
+		if (audioOnlyPeers.length > 0 && !hideNonVideo && !headless && !showAudioOnly) {
+			videoBoxes++; // Add the audio only box
+		} else if (audioOnlyPeers.length > 0 && !hideNonVideo && !headless && showAudioOnly) {
+			videoBoxes+=audioOnlyPeers.length;
+		}
 
 		return videoBoxes;
 	});

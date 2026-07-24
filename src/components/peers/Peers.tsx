@@ -3,10 +3,37 @@ import { styled } from '@mui/material/styles';
 import {
 	useAppDispatch,
 	useAppSelector,
+	usePeerConsumers,
 } from '../../store/hooks';
-import { activeSpeakerIsAudioOnlySelector, audioOnlySessionPeersSelector } from '../../store/selectors';
+import { activeSpeakerIdSelector, activeSpeakerIsAudioOnlySelector, audioOnlySessionPeersSelector } from '../../store/selectors';
 import VideoBox from '../videobox/VideoBox';
 import { uiActions } from '../../store/slices/uiSlice';
+import DisplayName from '../displayname/DisplayName';
+import Volume from '../volume/Volume';
+
+interface AudioPeerBoxProps {
+  peer: { id: string; displayName?: string };
+  activeSpeakerId: string|undefined;
+  style: { width?: string | number; height?: string | number };
+}
+
+const AudioPeerBox = ({ peer, activeSpeakerId, style }: AudioPeerBoxProps): React.JSX.Element => {
+	// Correct hook usage: top-level of a component
+	const consumers = usePeerConsumers(peer.id);
+	const micConsumer = consumers?.micConsumer;
+
+	return (
+		<VideoBox
+			activeSpeaker={peer.id === activeSpeakerId}
+			order={10}
+			width={style.width}
+			height={style.height}
+		>
+			{micConsumer && <Volume consumer={micConsumer} />}
+			<DisplayName displayName={peer?.displayName} peerId={peer.id} />
+		</VideoBox>
+	);
+};
 
 const StyledPeers = styled(Chip)(() => ({
 	position: 'relative',
@@ -31,6 +58,7 @@ const Peers = ({ style }: PeersProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 	const openUsersTab = () => dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
+	const showAudioOnly = useAppSelector((state) => state.settings.showAudioOnly);
 	const hideNonVideo = useAppSelector((state) => state.settings.hideNonVideo);
 	const activeSpeaker = useAppSelector(activeSpeakerIsAudioOnlySelector);
 	const headless = useAppSelector((state) => state.room.headless);
@@ -47,9 +75,11 @@ const Peers = ({ style }: PeersProps): React.JSX.Element => {
 		return displayName;
 	}).join(', ');
 
+	const audioactivespeaker = useAppSelector(activeSpeakerIdSelector);
+
 	return (
 		<>
-			{ !hideNonVideo && !headless && audioOnlyPeers.length > 0 &&
+			{ !hideNonVideo && !headless && audioOnlyPeers.length > 0 && !showAudioOnly && 
 				<VideoBox
 					activeSpeaker={activeSpeaker}
 					order={10}
@@ -67,6 +97,18 @@ const Peers = ({ style }: PeersProps): React.JSX.Element => {
 						</>
 					} variant='filled' onClick={ () => openUsersTab() } />
 				</VideoBox>
+			}
+			{ !hideNonVideo && !headless && audioOnlyPeers.length > 0 && showAudioOnly && 
+				audioOnlyPeers.map((peer) => (
+					
+					<AudioPeerBox
+						key={peer.id} // Don't forget a unique key!
+						peer={peer}
+						activeSpeakerId={audioactivespeaker}
+						style={style}
+					/>
+				
+				))
 			}
 		</>
 	);

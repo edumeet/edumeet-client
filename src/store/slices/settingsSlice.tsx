@@ -7,6 +7,7 @@ export interface SettingsState {
 	displayName: string;
 	maxActiveVideos: number;
 	mirroredSelfView: boolean;
+	showAudioOnly: boolean;
 	hideNonVideo: boolean;
 	hideSelfView: boolean;
 	verticalDivide: boolean;
@@ -50,6 +51,7 @@ const initialState: SettingsState = {
 	screenSharingFrameRate: edumeetConfig.screenSharingFrameRate,
 	preferredRecorderMimeType: 'video/webm',
 	maxActiveVideos: 12,
+	showAudioOnly: edumeetConfig.showAudioOnly,
 	hideNonVideo: edumeetConfig.hideNonVideo,
 	hideSelfView: edumeetConfig.hideSelfView,
 	verticalDivide: true,
@@ -91,6 +93,9 @@ const settingsSlice = createSlice({
 		}),
 		setHideNonVideo: ((state, action: PayloadAction<boolean>) => {
 			state.hideNonVideo = action.payload;
+		}),
+		setShowAudioOnly: ((state, action: PayloadAction<boolean>) => {
+			state.showAudioOnly = action.payload;
 		}),
 		setHideSelfView: ((state, action: PayloadAction<boolean>) => {
 			state.hideSelfView = action.payload;

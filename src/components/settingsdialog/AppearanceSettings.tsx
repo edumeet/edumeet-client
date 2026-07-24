@@ -16,6 +16,7 @@ import {
 	enableVerticallyStackedSidePanels,
 	selectBackgroundLabel,
 	videoContainLabel,
+	showAllAudioOnlyParticipantsLabel,
 } from '../translated/translatedComponents';
 import LastNSlider from '../lastnslider/LastNSlider';
 import { ExtraVideoEffectsSwitch } from './SettingsSwitches';
@@ -25,6 +26,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 	const {
 		mirroredSelfView,
 		hideNonVideo,
+		showAudioOnly,
 		hideSelfView,
 		notificationSounds,
 		verticalDivide,
@@ -70,6 +72,16 @@ const AppearanceSettings = (): React.JSX.Element => {
 					/>
 				}
 				label={hideSelfViewLabel()}
+			/>
+			<FormControlLabel
+				control={
+					<Switch
+						checked={showAudioOnly}
+						onChange={(event) => dispatch(settingsActions.setShowAudioOnly(event.target.checked))}
+						inputProps={{ 'aria-label': 'controlled' }}
+					/>
+				}
+				label={showAllAudioOnlyParticipantsLabel()}
 			/>
 			<FormControlLabel
 				control={

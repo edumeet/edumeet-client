@@ -148,6 +148,11 @@ var config = {
 	loginImageURL: '',
 
 	/**
+	 * Optional: show audio only participants without mergeing them into one box.
+	 */
+	showAudioOnly: false,
+
+	/**
 	 * Optional: hide participants without video.
 	 */
 	hideNonVideo: false,
