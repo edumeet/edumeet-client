@@ -50,6 +50,12 @@ const App = (): React.JSX.Element => {
 	useEffect(() => {
 		dispatch(startListeners());
 
+		if (edumeetConfig.showRoomNameInTitle) {
+			const title = edumeetConfig.title || 'edumeet';
+
+			document.title = `${title} (${id})`;
+		}
+		
 		return () => {
 			dispatch(stopListeners());
 			dispatch(roomActions.setState('new'));

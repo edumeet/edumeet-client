@@ -3,6 +3,7 @@ import { ClientMonitorConfig } from '@observertc/client-monitor-js';
 import { TFLite } from '../services/effectsService';
 
 export const defaultEdumeetConfig: EdumeetConfig = {
+	showRoomNameInTitle: true,
 	qrCodeEnabled: false,
 	myRoomsTabEnabled: true,
 	myMeetingsTabEnabled: true,
@@ -138,6 +139,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 
 export interface EdumeetConfig {
 	qrCodeEnabled: boolean;
+	showRoomNameInTitle: boolean;
 	myRoomsTabEnabled: boolean,
 	myMeetingsTabEnabled: boolean,
 	countdownTimerEnabled: boolean,

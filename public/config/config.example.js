@@ -89,6 +89,11 @@ var config = {
 	randomizeOnBlank: true,
 
 	/**
+	 * Optional: add the room name to the window title
+	 */
+	showRoomNameInTitle: true,
+
+	/**
 	 * Optional: enable QR code display in UI.
 	 */
 	qrCodeEnabled: false,
