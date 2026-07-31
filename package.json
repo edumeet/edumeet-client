@@ -20,7 +20,7 @@
 		"@mui/icons-material": "^9.2.0",
 		"@mui/material": "^9.2.0",
 		"@mui/system": "^9.2.0",
-		"@mui/x-date-pickers": "^8.29.2",
+		"@mui/x-date-pickers": "^9.10.1",
 		"@observertc/client-monitor-js": "^4.1.0",
 		"@observertc/samples-encoder": "^3.0.0",
 		"@reduxjs/toolkit": "^2.12.0",
