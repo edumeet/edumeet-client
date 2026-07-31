@@ -15,7 +15,7 @@ export interface SelectedBackground {
 }
 
 const NoneTile = (): React.JSX.Element => {
-	return (<Box height={164} width={150} />);
+	return (<Box sx={{ height: 164, width: 150 }} />);
 };
 
 type BackgroundPickerProps = {

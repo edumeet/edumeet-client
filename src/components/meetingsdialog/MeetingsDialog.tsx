@@ -110,7 +110,7 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 			onClose={onClose}
 			maxWidth='sm'
 			title={
-				<Box display='flex' alignItems='center' justifyContent='space-between'>
+				<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
 					<Typography variant='h6'>{upcomingMeetingsLabel()}</Typography>
 					<IconButton onClick={fetchMeetings} aria-label={refreshLabel()} disabled={loading}>
 						<RefreshIcon />

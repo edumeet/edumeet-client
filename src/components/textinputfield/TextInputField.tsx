@@ -32,13 +32,15 @@ const TextInputField = ({
 			value={value}
 			variant='outlined'
 			onFocus={(event: FocusEvent<HTMLInputElement>) => event.target.select()}
-			InputProps={{
-				startAdornment: (
-					<InputAdornment position='start' children={startAdornment} />
-				),
-				endAdornment: (
-					<InputAdornment position='end' children={endAdornment} />
-				),
+			slotProps= {{
+				input: {
+					startAdornment: (
+						<InputAdornment position='start' children={startAdornment} />
+					),
+					endAdornment: (
+						<InputAdornment position='end' children={endAdornment} />
+					),
+				}
 			}}
 			onChange={(event: ChangeEvent<HTMLInputElement>) => {
 				setValue(event.target.value);

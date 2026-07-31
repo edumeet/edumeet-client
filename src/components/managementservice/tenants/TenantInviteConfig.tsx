@@ -269,7 +269,9 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 							value={smtpPass}
 							onChange={(e) => setSmtpPass(e.target.value)}
 							placeholder={existingId ? passwordUnchangedLabel() : ''}
-							InputLabelProps={existingId ? { shrink: true } : undefined}
+							slotProps={{ 
+								inputLabel: existingId ? { shrink: true } : undefined
+							}}
 						/>
 					</Box>
 
@@ -329,7 +331,9 @@ const TenantInviteConfigPanel = (props: TenantInviteConfigProps) => {
 							value={imapPass}
 							onChange={(e) => setImapPass(e.target.value)}
 							placeholder={existingId ? passwordUnchangedLabel() : ''}
-							InputLabelProps={existingId ? { shrink: true } : undefined}
+							slotProps={{ 
+								inputLabel: existingId ? { shrink: true } : undefined
+							}}
 							disabled={!imapHost}
 						/>
 					</Box>

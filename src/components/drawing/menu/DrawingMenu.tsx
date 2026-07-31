@@ -7,8 +7,8 @@ import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlined';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutlined';
 
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 import ColorsPicker from './ColorsPicker';
@@ -83,8 +83,9 @@ const DrawingMenu = ({
 			sx={{
 				borderTop: '1px solid gray',
 				backgroundColor: 'lightgray',
+				justifyContent: 'center'
 			}}
-			justifyContent='center'
+			
 			ref={menuRef}
 			direction='row'
 			wrap='nowrap'
@@ -93,13 +94,15 @@ const DrawingMenu = ({
 			{/* Toolbar */}
 			<Grid
 				container	
-				margin={1}
-				border={1}
-				borderColor={'gray'}
-				borderRadius={6}
-				padding={0.6}
 				wrap='nowrap'
-				gap={0.5}
+				sx={{
+					margin: 1,
+					border: 1,
+					borderColor: 'gray',
+					borderRadius: 6,
+					padding: 0.6,
+					gap: 0.5,
+				}}
 			>
 					
 				{/* Draw */} <Divider orientation="vertical" sx={{ display: 'none' }} />
@@ -176,11 +179,14 @@ const DrawingMenu = ({
 
 					{/* Size Label */}
 					<Typography 
+						sx={{
+							width: 20,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+						}}
 						variant="caption" 
-						width={20}
-						display="flex" 
-						alignItems="center" 
-						justifyContent="center"
+						
 					>
 						{size}
 					</Typography>

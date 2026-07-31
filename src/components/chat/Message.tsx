@@ -132,7 +132,7 @@ const Message = ({
 			>
 				{(format === 'single' || format ==='combinedBegin') &&
 					<>
-						<Typography variant='body2' display='flex'>
+						<Typography sx={{ variant: 'body2', display: 'flex' }}>
 							<b>{ isMe ? meLabel() : name }</b><StyledMessageTime>
 								&nbsp;- { <FormattedTime value={new Date(time || Date.now())} hour12={false}/> }
 							</StyledMessageTime>

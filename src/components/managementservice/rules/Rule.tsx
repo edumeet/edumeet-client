@@ -374,9 +374,11 @@ const RuleTable = () => {
 						</Select>
 					</FormControl>
 					<Box
-						display="flex"
-						justifyContent="center"
-						alignItems="center"
+						sx= {{
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center'
+						}}
 					>
 						<FormControlLabel style={{ textAlign: 'center' }} control={<Checkbox onChange={handleNegateChange} checked={negate} />} label={negateLabel()} />
 					</Box>

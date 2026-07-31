@@ -90,7 +90,7 @@ const ListBreakoutRoom = ({
 
 	return (
 		<StyledAccordion
-			TransitionProps={{ unmountOnExit: true }}
+			slotProps = {{ transition: { unmountOnExit: true } }}
 			expanded={inSession || expanded || dragExpand }
 			onChange={(_, exp) => setExpanded(exp)}
 			insession={inSession ? 1 : 0}

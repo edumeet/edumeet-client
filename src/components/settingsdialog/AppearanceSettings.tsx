@@ -58,7 +58,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 					<Switch
 						checked={mirroredSelfView}
 						onChange={(event) => handleChange(event, 'mirroredSelfView')}
-						inputProps={{ 'aria-label': 'controlled' }}
+						slotProps={{ input: { 'aria-label': 'controlled' } }}
 					/>
 				}
 				label={mirroredSelfViewLabel()}
@@ -68,7 +68,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 					<Switch
 						checked={hideSelfView}
 						onChange={(event) => dispatch(settingsActions.setHideSelfView(event.target.checked))}
-						inputProps={{ 'aria-label': 'controlled' }}
+						slotProps={{ input: { 'aria-label': 'controlled' } }}
 					/>
 				}
 				label={hideSelfViewLabel()}
@@ -78,7 +78,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 					<Switch
 						checked={showAudioOnly}
 						onChange={(event) => dispatch(settingsActions.setShowAudioOnly(event.target.checked))}
-						inputProps={{ 'aria-label': 'controlled' }}
+						slotProps={{ input: { 'aria-label': 'controlled' } }}
 					/>
 				}
 				label={showAllAudioOnlyParticipantsLabel()}
@@ -88,7 +88,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 					<Switch
 						checked={hideNonVideo}
 						onChange={(event) => dispatch(settingsActions.setHideNonVideo(event.target.checked))}
-						inputProps={{ 'aria-label': 'controlled' }}
+						slotProps={{ input: { 'aria-label': 'controlled' } }}
 					/>
 				}
 				label={hideNoVideoParticipantsLabel()}
@@ -98,7 +98,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 					<Switch
 						checked={ notificationSounds }
 						onChange={ (event) => handleChange(event, 'notificationSounds') }
-						inputProps={ { 'aria-label': 'controlled' } }
+						slotProps={{ input: { 'aria-label': 'controlled' } }}
 					/>
 				}
 				label={ enableNotificationSoundsLabel() }
@@ -108,7 +108,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 					<Switch
 						checked={ verticalDivide }
 						onChange={ (event) => handleChange(event, 'verticalDivide') }
-						inputProps={ { 'aria-label': 'controlled' } }
+						slotProps={{ input: { 'aria-label': 'controlled' } }}
 					/>
 				}
 				label={ enableVerticallyStackedSidePanels() }
@@ -118,7 +118,7 @@ const AppearanceSettings = (): React.JSX.Element => {
 					<Switch
 						checked={ videoContainEnabled }
 						onChange={ (event) => handleChange(event, 'videoContainEnabled') }
-						inputProps={ { 'aria-label': 'controlled' } }
+						slotProps={{ input: { 'aria-label': 'controlled' } }}
 					/>
 				}
 				label={ videoContainLabel() }
