@@ -17,7 +17,7 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
-    globalIgnores(["**/config.js", "**/vite.config.ts", "src/vite-env.d.ts"]),
+    globalIgnores(["**/config.js", "**/vite.config.mts", "src/vite-env.d.ts"]),
     {
         extends: compat.extends("plugin:@typescript-eslint/recommended"),
         ignores: ["dist/**", "build/**"],
