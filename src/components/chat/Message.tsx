@@ -108,7 +108,7 @@ const Message = ({
 }: MessageProps): React.JSX.Element => {
 	const linkRenderer = new marked.Renderer();
 
-	linkRenderer.link = (href, title, linkText) => {
+	linkRenderer.link = ({ href, title, text: linkText }) => {
 		title = title ? title : href;
 		linkText = linkText ?? href;
 
@@ -143,7 +143,7 @@ const Message = ({
 					<Typography
 						variant='body2'
 						dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
-							marked.parse(text, { renderer: linkRenderer }),
+							marked.parse(text, { renderer: linkRenderer, async: false }) as string,
 							allowedHTMLNodes
 						) }}
 					/>
