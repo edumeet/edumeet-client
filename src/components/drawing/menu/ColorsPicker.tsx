@@ -80,9 +80,13 @@ const ColorsPicker: React.FC<Props> = (props) => {
 	
 					<Grid
 						container
-						spacing={0}
-						direction={'column'}
-						border={0}
+
+						sx={{
+							spacing: 0,
+							direction: 'column',
+							border: 0
+						}}
+						
 					>
 			
 						{colors.map((value) => (

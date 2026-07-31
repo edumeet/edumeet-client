@@ -357,7 +357,11 @@ const DefaultTable = () => {
 								value={numberLimit}
 							/>
 						</Grid>
-						<Grid size={0} visibility={'hidden'} display={'none'}>
+						<Grid size={0} 
+							sx={{ 
+								visibility: 'hidden', 
+								display: 'none' 
+							}}>
 							<TextField
 								required
 								margin="dense"
@@ -484,9 +488,9 @@ const DefaultTable = () => {
 								disabled={fieldsDisabled}
 								onChange={handlemaxFileSize}
 								value={maxFileSize}
-								InputProps={{
+								slotProps = {{ input: {
 									endAdornment: <InputAdornment position="end">MB</InputAdornment>,
-								}}
+								} }}
 							/>
 						</Grid>
 						<TextField

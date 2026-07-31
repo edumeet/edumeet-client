@@ -38,8 +38,10 @@ const AudioGainSlider = ({
 		<StyledSliderBox>
 			<Stack
 				spacing={2}
-				direction='row'
-				alignItems='center'
+				sx={{
+					direction: 'row',
+					alignItems: 'center'
+				}}
 			>
 				<VolumeDown />
 				<Slider

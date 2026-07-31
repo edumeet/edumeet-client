@@ -1,7 +1,6 @@
 import { defineConfig, /* splitVendorChunkPlugin */ } from 'vite';
 import react from '@vitejs/plugin-react';
 import eslint from 'vite-plugin-eslint';
-import viteTsconfigPaths from 'vite-tsconfig-paths';
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import { visualizer } from "rollup-plugin-visualizer";
 
@@ -10,7 +9,6 @@ export default defineConfig({
 	plugins: [
 		react({ babel: { parserOpts: {} } }),
 		eslint(),
-		viteTsconfigPaths(),
 		basicSsl(),
 /* 		splitVendorChunkPlugin(),
  */		visualizer({
@@ -28,6 +26,7 @@ export default defineConfig({
 		}
 	},
 	resolve: {
+		tsconfigPaths: true,
 		alias: {
 			'webtorrent': 'webtorrent/dist/webtorrent.min.js',
 			'moment': 'moment/min/moment-with-locales',

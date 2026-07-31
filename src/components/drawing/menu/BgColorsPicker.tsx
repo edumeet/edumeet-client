@@ -60,9 +60,11 @@ const BgColorsPicker: React.FC<Props> = (props) => {
 	
 			<Grid
 				container
-				spacing={0}
-				direction={'column'}
-				border={0}
+				sx={{
+					spacing: 0,
+					direction: 'column',
+					border: 0
+				}}
 			>
 			
 				{bgColors.map((value) => (

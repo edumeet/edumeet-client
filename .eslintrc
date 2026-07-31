@@ -18,7 +18,7 @@
 		"sourceType": "module",
 		"project": "./tsconfig.json"
 	},
-	"ignorePatterns": ["**/config.js", "vite.config.ts", "src/vite-env.d.ts"],
+	"ignorePatterns": ["**/config.js", "vite.config.mts", "src/vite-env.d.ts"],
 	"rules": {
 		"array-bracket-spacing": [ 2, "always", {
 			"objectsInArrays": true,

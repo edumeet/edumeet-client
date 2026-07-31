@@ -58,9 +58,9 @@ const Lobby = (): React.JSX.Element => {
 				</>
 			}
 			actions={
-				<Box display="flex" flexDirection="column" alignItems="center" justifyContent="space-between" width="100%">
+				<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
 					{roomLockedLabel()}
-					<Box display="flex" alignItems="left">
+					<Box sx={{ display: 'flex', alignItems: 'left' }}>
 						{imprintUrl.trim() !== '' && (
 							<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
 								<Typography variant="body2">{ imprintLabel() }</Typography>

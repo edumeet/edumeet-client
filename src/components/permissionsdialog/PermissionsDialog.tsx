@@ -390,10 +390,12 @@ const PermissionsDialog = (): React.JSX.Element => {
 										return (
 											<Stack
 												key={diff.peerId}
-												direction='row'
-												spacing={0.5}
-												flexWrap='wrap'
-												alignItems='center'
+												sx= {{
+													direction: 'row',
+													spacing: 0.5,
+													flexWrap: 'wrap',
+													alignItems: 'center',
+												}}
 											>
 												<Typography variant='body2' sx={{ fontWeight: 600, minWidth: 120 }}>
 													{peer?.displayName || diff.peerId}:

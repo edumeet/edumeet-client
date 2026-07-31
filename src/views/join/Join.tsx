@@ -86,7 +86,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 				</>
 			}
 			actions={
-				<Box display="flex" flexDirection="column" width="100%">
+				<Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
 					{privacyUrl.trim() !== '' && (
 						<Typography variant="caption" color="text.secondary" sx={{ mb: 1, textAlign: 'right' }}>
 							{joinConsentLabel()}{' '}
@@ -95,8 +95,8 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 							</Link>
 						</Typography>
 					)}
-					<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
-						<Box display="flex" alignItems="center">
+					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }} >
+						<Box sx={{ display: 'flex', alignItems: 'center' }} >
 							{imprintUrl.trim() !== '' && (
 								<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
 									<Typography variant="caption" color="text.secondary">{ imprintLabel() }</Typography>

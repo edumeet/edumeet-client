@@ -204,7 +204,7 @@ const TenantTable = () => {
 									options={knownRegions}
 									value={allowedMediaNodeRegions}
 									onChange={(_, value) => setAllowedMediaNodeRegions(value)}
-									renderTags={(values, getTagProps) =>
+									renderValue={(values, getTagProps) =>
 										values.map((opt, i) => {
 											const { key, ...rest } = getTagProps({ index: i });
 

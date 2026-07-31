@@ -76,7 +76,7 @@ const CountdownTimer = () : React.JSX.Element => {
 				</Grid>
 
 				{/* reset */}
-				<Grid size={2} margin={'auto'} textAlign={'center'}>
+				<Grid size={2} sx={{ margin: 'auto', textAlign: 'center' }}>
 					<IconButton
 						aria-label={countdownTimerStartLabel()}
 						sx={{ flexGrow: '1' }}
@@ -92,7 +92,7 @@ const CountdownTimer = () : React.JSX.Element => {
 				</Grid>
 
 				{/* start/stop */}
-				<Grid size={2} margin={'auto'} textAlign={'center'}>
+				<Grid size={2} sx={{ margin: 'auto', textAlign: 'center' }}>
 					<IconButton
 						aria-label={ !isStarted ? 
 							countdownTimerStartLabel() : 

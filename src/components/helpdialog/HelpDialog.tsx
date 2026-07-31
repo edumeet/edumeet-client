@@ -27,8 +27,12 @@ const HelpDialog = (): React.JSX.Element => {
 			maxWidth='xs'
 			content={ <ShortcutKeys /> }
 			actions={
-				<Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
-					<Box display="flex" alignItems="left">
+				<Box sx={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					width: '100%' }} >
+					<Box sx={{ display: 'flex', alignItems: 'left' }}>
 						{imprintUrl.trim() !== '' && (
 							<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
 								<Typography variant="caption" color="text.secondary">{ imprintLabel() }</Typography>
