@@ -574,5 +574,5 @@
   "label.meetings.noUpcoming": "Δεν υπάρχουν επερχόμενες συναντήσεις",
   "label.meetings.upcoming": "Επερχόμενες συναντήσεις",
   "label.management.tenants.testConnection": "Δοκιμή σύνδεσης",
-  "settings.showAllAudioOnlyParticipantsLabel": null
+  "settings.showAllAudioOnlyParticipantsLabel": "Εμφάνιση κάθε συμμετέχοντα χωρίς βίντεο ξεχωριστά"
 }

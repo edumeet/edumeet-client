@@ -202,6 +202,7 @@ export const spotlightPeersSelector = createSelector(
 	videoCapablePeerIdsSelector,
 	sessionIdPeersSelector,
 	hideNonVideoSelector,
+	showAudioOnlySelector,
 	hideSelfViewSelector,
 	headlessSelector,
 	(
@@ -211,6 +212,7 @@ export const spotlightPeersSelector = createSelector(
 		videoCapablePeerIds,
 		sessionPeers,
 		hideNonVideo,
+		showAudioOnly,
 		hideSelfView,
 		headless,
 	) => {
@@ -229,9 +231,12 @@ export const spotlightPeersSelector = createSelector(
 		// The collapsed audio-only box appears when non-video peers are not
 		// hidden and at least one peer will end up in it: either a peer with no
 		// live video at all, or a camera that gets cropped because there are
-		// more cameras than the budget allows.
+		// more cameras than the budget allows. With showAudioOnly the peers get
+		// a tile each instead of the collapsed box, and those tiles are rendered
+		// outside this budget, so nothing is reserved for them.
 		const audioBoxShown =
 			!hideNonVideo &&
+			!showAudioOnly &&
 			!headless &&
 			(
 				sessionPeers.some((p) => !videoCapablePeerIds.has(p.id)) ||

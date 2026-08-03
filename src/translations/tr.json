@@ -574,5 +574,5 @@
   "label.meetings.noUpcoming": "Yaklaşan toplantı yok",
   "label.meetings.upcoming": "Yaklaşan toplantılar",
   "label.management.tenants.testConnection": "Bağlantıyı test et",
-  "settings.showAllAudioOnlyParticipantsLabel": null
+  "settings.showAllAudioOnlyParticipantsLabel": "Videosu olmayan her katılımcıyı ayrı ayrı göster"
 }

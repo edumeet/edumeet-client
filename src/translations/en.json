@@ -574,6 +574,6 @@
 	"label.meetings.noUpcoming": "No upcoming meetings",
 	"label.meetings.upcoming": "Upcoming meetings",
 	"label.management.tenants.testConnection": "Test connection",
-	"settings.showAllAudioOnlyParticipantsLabel": "Show all audio participants (without merging)"
+	"settings.showAllAudioOnlyParticipantsLabel": "Show each participant with no video separately"
 
 }

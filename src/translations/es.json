@@ -574,5 +574,5 @@
   "label.meetings.noUpcoming": "No hay reuniones próximas",
   "label.meetings.upcoming": "Próximas reuniones",
   "label.management.tenants.testConnection": "Probar conexión",
-  "settings.showAllAudioOnlyParticipantsLabel": null
+  "settings.showAllAudioOnlyParticipantsLabel": "Mostrar cada participante sin vídeo por separado"
 }

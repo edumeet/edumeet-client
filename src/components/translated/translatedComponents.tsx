@@ -262,7 +262,7 @@ export const currentlySelectedLabel = (): string => intl.formatMessage({
 
 export const showAllAudioOnlyParticipantsLabel = (): string => intl.formatMessage({
 	id: 'settings.showAllAudioOnlyParticipantsLabel',
-	defaultMessage: 'Show all audio participants (without merging)'
+	defaultMessage: 'Show each participant with no video separately'
 });
 
 export const hideNoVideoParticipantsLabel = (): string => intl.formatMessage({

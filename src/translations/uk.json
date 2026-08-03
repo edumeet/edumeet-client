@@ -574,5 +574,5 @@
   "label.meetings.noUpcoming": "Немає майбутніх зустрічей",
   "label.meetings.upcoming": "Майбутні зустрічі",
   "label.management.tenants.testConnection": "Перевірити з'єднання",
-  "settings.showAllAudioOnlyParticipantsLabel": null
+  "settings.showAllAudioOnlyParticipantsLabel": "Показувати кожного учасника без відео окремо"
 }

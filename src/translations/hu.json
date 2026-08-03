@@ -574,5 +574,5 @@
   "label.meetings.noUpcoming": "Nincsenek közelgő konferenciák",
   "label.meetings.upcoming": "Közelgő konferenciák",
   "label.management.tenants.testConnection": "Kapcsolat tesztelése",
-  "settings.showAllAudioOnlyParticipantsLabel": "Az videó nélküli résztvevők megjelenítése (összevonás nélkül)"
+  "settings.showAllAudioOnlyParticipantsLabel": "Minden videó nélküli résztvevő külön megjelenítése"
 }

@@ -574,5 +574,5 @@
   "label.meetings.noUpcoming": "Ingen kommende møder",
   "label.meetings.upcoming": "Kommende møder",
   "label.management.tenants.testConnection": "Test forbindelse",
-  "settings.showAllAudioOnlyParticipantsLabel": null
+  "settings.showAllAudioOnlyParticipantsLabel": "Vis hver deltager uden video for sig"
 }
