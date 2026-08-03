@@ -108,11 +108,13 @@ const Message = ({
 }: MessageProps): React.JSX.Element => {
 	const linkRenderer = new marked.Renderer();
 
-	linkRenderer.link = ({ href, title, text: linkText }) => {
-		title = title ? title : href;
-		linkText = linkText ?? href;
+	linkRenderer.link = ({ href, title, tokens }) => {
+		const linkTitle = title ? title : href;
+		// marked >= 16 passes the raw token; the label must be parsed so that
+		// inline markdown inside the link text still renders.
+		const linkText = linkRenderer.parser.parseInline(tokens) || href;
 
-		return `<a target='_blank' href='${href}' title='${title}'>${linkText}</a>`;
+		return `<a target='_blank' href='${href}' title='${linkTitle}'>${linkText}</a>`;
 	};
 
 	return (
@@ -132,7 +134,7 @@ const Message = ({
 			>
 				{(format === 'single' || format ==='combinedBegin') &&
 					<>
-						<Typography sx={{ variant: 'body2', display: 'flex' }}>
+						<Typography variant='body2' sx={{ display: 'flex' }}>
 							<b>{ isMe ? meLabel() : name }</b><StyledMessageTime>
 								&nbsp;- { <FormattedTime value={new Date(time || Date.now())} hour12={false}/> }
 							</StyledMessageTime>

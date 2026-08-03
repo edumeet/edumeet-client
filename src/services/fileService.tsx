@@ -116,7 +116,9 @@ export class FileService {
 
 	public async getTorrent(magnetURI: string) {
 		for (const client of this.getAllClients()) {
-			const torrent = client.get(magnetURI) as unknown as WebTorrent.Torrent | undefined;
+			// get() resolves a Promise; without the await the lookup sees an
+			// always-truthy Promise and stops at the first client.
+			const torrent = await client.get(magnetURI);
 
 			if (torrent) return torrent as LocalWebTorrent;
 		}
@@ -169,12 +171,15 @@ export class FileService {
 		const removals: Promise<void>[] = [];
 
 		for (const client of this.getAllClients()) {
-			const torrent = client.get(magnetURI) as unknown as WebTorrent.Torrent | undefined;
+			const torrent = await client.get(magnetURI);
 
 			if (!torrent) continue;
 
 			removals.push(new Promise((resolve) => {
-				client.remove(magnetURI, { destroyStore: true }, () => resolve());
+				// remove() rejects if the torrent went away between the lookup and here;
+				// without the catch this promise would stay pending forever.
+				client.remove(magnetURI, { destroyStore: true }, () => resolve())
+					.catch(() => resolve());
 			}));
 		}
 

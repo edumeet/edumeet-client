@@ -7,8 +7,8 @@ import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlined';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutlined';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 
 import ErasingAllConfirmationButton from './ErasingAllConfirmationButton';
 import ColorsPicker from './ColorsPicker';

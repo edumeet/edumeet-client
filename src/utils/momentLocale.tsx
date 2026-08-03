@@ -1,4 +1,4 @@
-// Note: moment is aliased in vite.config.ts to `moment/min/moment-with-locales`,
+// Note: moment is aliased in vite.config.mts to `moment/min/moment-with-locales`,
 // which ships every locale pre-registered. We don't need any side-effect imports here.
 // The alias also redirects @mui/x-date-pickers/AdapterMoment's internal `require('moment')`,
 // so it sees the same instance with the same locales registered.

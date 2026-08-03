@@ -117,7 +117,7 @@ const UnsupportedBrowser = ({
 						</Box>
 					</Grid>
 				</Grid>
-				<Box sx={{ display: 'flex', alignItems: 'left' }} >
+				<Box sx={{ display: 'flex' }} >
 					{imprintUrl.trim() !== '' && (
 						<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
 							<Typography variant="body2">{ imprintLabel() }</Typography>
