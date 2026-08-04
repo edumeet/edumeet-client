@@ -26,7 +26,8 @@ const logger = new Logger('SignalingMiddleware');
  * @returns {Middleware} Redux middleware.
  */
 const createSignalingMiddleware = ({
-	signalingService 
+	signalingService,
+	mediaService
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createSignalingMiddleware()');
 
@@ -49,6 +50,15 @@ const createSignalingMiddleware = ({
 					message: signalingReconnectingLabel(attempt),
 					options: { variant: 'warning' }
 				}));
+			});
+
+			signalingService.on('disconnected', (reason) => {
+				logger.debug('disconnected [reason:%s]', reason);
+
+				mediaService.monitor?.addIssue({
+					type: 'websocket-disconnected',
+					payload: { reason },
+				});
 			});
 
 			signalingService.on('reconnected', () => {

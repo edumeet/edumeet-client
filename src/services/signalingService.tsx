@@ -10,7 +10,7 @@ export declare interface SignalingService {
 	on(event: 'connected', listener: () => void): this;
 	on(event: 'reconnected', listener: () => void): this;
 	on(event: 'reconnecting', listener: (attempt: number) => void): this;
-	on(event: 'disconnected', listener: () => void): this;
+	on(event: 'disconnected', listener: (reason: string) => void): this;
 	on(event: 'error', listener: (error: Error) => void): this;
 	on(event: 'close', listener: () => void): this;
 	on(event: 'notification', listener: InboundNotification): this;
@@ -97,11 +97,11 @@ export class SignalingService extends EventEmitter {
 			this.emit('reconnecting', attempt);
 		});
 
-		connection.on('disconnected', () => {
-			logger.debug('socket disconnected event');
+		connection.on('disconnected', (reason: string) => {
+			logger.debug('socket disconnected event [reason:%s]', reason);
 
 			this.connected = false;
-			this.emit('disconnected');
+			this.emit('disconnected', reason);
 		});
 
 		connection.once('close', () => {

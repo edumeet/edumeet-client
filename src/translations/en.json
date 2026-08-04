@@ -285,6 +285,7 @@
 	"tooltip.unLockRoom": "Unlock room",
 	"tooltip.unMuteParticipant": "Unmute audio",
 	"tooltip.unMuteParticipantVideo": "Unmute video",
+	"tooltip.networkCongestion": "Network congestion detected",
 	"tooltip.unMuteScreenSharing": "Unmute screen share",
 	"unsupportedBrowser.bodyText": "This meeting service requires a functionality that is not supported by your browser. Please upgrade, or switch to a different browser or check your settings. Supported browsers:",
 	"unsupportedBrowser.titleUnsupportedBrowser": "Detected unsupported browser!",
