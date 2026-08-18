@@ -41,9 +41,11 @@ const RuleTable = () => {
 				header: nameLabel()
 			},
 			{
-				accessorKey: 'tenantId',
-				header: tenantLabel(),
-				Cell: ({ row }) => getTenantName(String(row.original.tenantId ?? ''))
+				// the row shows the tenant name, so filtering/sorting/search must
+				// use the name too, not the raw tenantId
+				id: 'tenantId',
+				accessorFn: (row) => getTenantName(String(row.tenantId ?? '')),
+				header: tenantLabel()
 			},
 			{
 				accessorKey: 'type',
@@ -78,6 +80,12 @@ const RuleTable = () => {
 	);
 
 	const [ data, setData ] = useState([]);
+
+	// MRT caches accessorFn results per row and only rebuilds its rows when the
+	// data array identity changes. The rows and the lookups above are fetched
+	// concurrently, so hand it a fresh array when a lookup resolves after the
+	// rows, otherwise the resolved names stay stuck on their placeholder.
+	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, tenants ]);
 
 	type GroupsOptionTypes = Array<Groups>
 	const [ groups, setGroups ] = useState<GroupsOptionTypes>([ {
@@ -452,7 +460,7 @@ const RuleTable = () => {
 					const r = row.getAllCells();
 					const tid = r[0].getValue();
 					const tname = r[1].getValue();
-					const ttenantId = r[2].getValue();
+					const ttenantId: unknown = row.original.tenantId;
 
 					const ttype = r[3].getValue(); 
 					const tparameter = r[4].getValue();
@@ -530,7 +538,7 @@ const RuleTable = () => {
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={tableData} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
 				}

@@ -99,22 +99,24 @@ const GroupRoleTable = () => {
 				accessorKey: 'id',
 				header: '#'
 			},
+			// these columns show a resolved name, so the accessor must return that
+			// name too, otherwise filtering/sorting/search runs on the raw id
 			{
-				accessorKey: 'groupId',
-				header: groupLabel(),
-				Cell: ({ row }) => getGroupsName(String(row.original.groupId))
+				id: 'groupId',
+				accessorFn: (row) => getGroupsName(String(row.groupId)),
+				header: groupLabel()
 
 			},
 			{
-				accessorKey: 'roleId',
-				header: roleLabel(),
-				Cell: ({ row }) => getRoleName(String(row.original.roleId))
+				id: 'roleId',
+				accessorFn: (row) => getRoleName(String(row.roleId)),
+				header: roleLabel()
 
 			},
 			{
-				accessorKey: 'roomId',
-				header: roomLabel(),
-				Cell: ({ row }) => getRoomName(String(row.original.roomId))
+				id: 'roomId',
+				accessorFn: (row) => getRoomName(String(row.roomId)),
+				header: roomLabel()
 
 			},
 
@@ -131,6 +133,12 @@ const GroupRoleTable = () => {
 	);
 
 	const [ data, setData ] = useState([]);
+
+	// MRT caches accessorFn results per row and only rebuilds its rows when the
+	// data array identity changes. The rows and the lookups above are fetched
+	// concurrently, so hand it a fresh array when a lookup resolves after the
+	// rows, otherwise the resolved names stay stuck on their placeholder.
+	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, rooms, roles, groups ]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ groupId, setGroupId ] = useState(0);
@@ -348,9 +356,9 @@ const GroupRoleTable = () => {
 					const r = row.getAllCells();
 
 					const tid = r[0].getValue();
-					const tgroupId=r[1].getValue();
-					const troleId=r[2].getValue();
-					const troomId=r[3].getValue();
+					const tgroupId: unknown = row.original.groupId;
+					const troleId: unknown = row.original.roleId;
+					const troomId: unknown = row.original.roomId;
 
 					if (typeof tid === 'number') {
 						setId(tid);
@@ -419,7 +427,7 @@ const GroupRoleTable = () => {
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={tableData} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
 				}

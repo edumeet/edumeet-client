@@ -104,15 +104,19 @@ const RoomTable = () => {
 				header: creatorIdLabel()
 			},
 			{
-				accessorKey: 'defaultRoleId',
-				header: defaultRoleLabel(),
-				Cell: ({ row }) => getRoleName(String(row.original.defaultRoleId ?? ''))
+				// the row shows the role name, so filtering/sorting/search must
+				// use the name too, not the raw defaultRoleId
+				id: 'defaultRoleId',
+				accessorFn: (row) => getRoleName(String(row.defaultRoleId ?? '')),
+				header: defaultRoleLabel()
 
 			},
 			{
-				accessorKey: 'tenantId',
-				header: tenantLabel(),
-				Cell: ({ row }) => getTenantName(String(row.original.tenantId ?? ''))
+				// the row shows the tenant name, so filtering/sorting/search must
+				// use the name too, not the raw tenantId
+				id: 'tenantId',
+				accessorFn: (row) => getTenantName(String(row.tenantId ?? '')),
+				header: tenantLabel()
 			},
 			{
 				accessorKey: 'logo',
@@ -171,14 +175,15 @@ const RoomTable = () => {
 			},
 
 			{
-				accessorKey: 'owners',
+				// filtering/search must see the rendered list, not the raw objects
+				id: 'owners',
+				accessorFn: (row) => (row.owners ?? []).map((single: RoomOwners) => getUserEmail(single.userId)).join(', '),
 				header: ownersLabel(),
-				Cell: ({ row }) => (row.original.owners ?? []).map((single: RoomOwners) => getUserEmail(single.userId)).join(', '),
 			},
 			{
-				accessorKey: 'groupRoles',
+				id: 'groupRoles',
+				accessorFn: (row) => (row.groupRoles as unknown as GroupRoles[] ?? []).map((single: GroupRoles) => single.role.description).join(', '),
 				header: groupRolesLabel(),
-				Cell: ({ row }) => (row.original.groupRoles as unknown as GroupRoles[] ?? []).map((single: GroupRoles) => single.role.description).join(', '),
 			},
 			{
 				accessorKey: 'breakoutsEnabled',
@@ -193,6 +198,12 @@ const RoomTable = () => {
 	);
 
 	const [ data, setData ] = useState([]);
+
+	// MRT caches accessorFn results per row and only rebuilds its rows when the
+	// data array identity changes. The rows and the lookups above are fetched
+	// concurrently, so hand it a fresh array when a lookup resolves after the
+	// rows, otherwise the resolved names stay stuck on their placeholder.
+	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, tenants, roles, users ]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ name, setName ] = useState('');
@@ -568,8 +579,8 @@ const RoomTable = () => {
 					const tid = r[0].getValue();
 					const tname=r[1].getValue();
 					const tdescription=r[2].getValue();
-					const tdefaultroleId=r[6].getValue();
-					const ttenantId=r[7].getValue();
+					const tdefaultroleId: unknown = row.original.defaultRoleId;
+					const ttenantId: unknown = row.original.tenantId;
 					const tlogo=r[8].getValue();
 					const tbackground=r[9].getValue();
 					const tmaxActiveVideos=r[10].getValue();
@@ -699,7 +710,7 @@ const RoomTable = () => {
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={tableData} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
 					updatedAt: false,

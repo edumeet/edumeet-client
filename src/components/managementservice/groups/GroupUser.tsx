@@ -63,14 +63,16 @@ const GroupUserTable = () => {
 				header: '#'
 			},
 			{
-				accessorKey: 'groupId',
-				header: groupLabel(),
-				Cell: ({ row }) => getGroupName(String(row.original.groupId))
+				// these columns show a resolved name/email, so the accessor must return
+				// it too, otherwise filtering/sorting/search runs on the raw id
+				id: 'groupId',
+				accessorFn: (row) => getGroupName(String(row.groupId)),
+				header: groupLabel()
 			},
 			{
-				accessorKey: 'userId',
-				header: userLabel(),
-				Cell: ({ row }) => getUserEmail(String(row.original.userId))
+				id: 'userId',
+				accessorFn: (row) => getUserEmail(String(row.userId)),
+				header: userLabel()
 
 			}
 		],
@@ -78,6 +80,12 @@ const GroupUserTable = () => {
 	);
 
 	const [ data, setData ] = useState([]);
+
+	// MRT caches accessorFn results per row and only rebuilds its rows when the
+	// data array identity changes. The rows and the lookups above are fetched
+	// concurrently, so hand it a fresh array when a lookup resolves after the
+	// rows, otherwise the resolved names stay stuck on their placeholder.
+	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, groups, users ]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ groupId, setGroupId ] = useState(0);
@@ -262,8 +270,8 @@ const GroupUserTable = () => {
 					const r = row.getAllCells();
 
 					const tid = r[0].getValue();
-					const tgroupId=r[1].getValue();
-					const tuserId=r[2].getValue();
+					const tgroupId: unknown = row.original.groupId;
+					const tuserId: unknown = row.original.userId;
 
 					if (typeof tid === 'number') {
 						setId(tid);
@@ -312,7 +320,7 @@ const GroupUserTable = () => {
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={tableData} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
 				}

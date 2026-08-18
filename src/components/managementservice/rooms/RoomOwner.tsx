@@ -90,15 +90,17 @@ const RoomOwnerTable = (props: RoomProp) => {
 				header: '#'
 			},
 			{
-				accessorKey: 'roomId',
-				header: roomLabel(),
-				Cell: ({ row }) => getRoomName(String(row.original.roomId))
+				// these columns show a resolved name, so the accessor must return that
+				// name too, otherwise filtering/sorting/search runs on the raw id
+				id: 'roomId',
+				accessorFn: (row) => getRoomName(String(row.roomId)),
+				header: roomLabel()
 
 			},
 			{
-				accessorKey: 'userId',
-				header: userLabel(),
-				Cell: ({ row }) => getUserName(String(row.original.userId))
+				id: 'userId',
+				accessorFn: (row) => getUserName(String(row.userId)),
+				header: userLabel()
 
 			},
 			
@@ -107,6 +109,12 @@ const RoomOwnerTable = (props: RoomProp) => {
 	);
 
 	const [ data, setData ] = useState([]);
+
+	// MRT caches accessorFn results per row and only rebuilds its rows when the
+	// data array identity changes. The rows and the lookups above are fetched
+	// concurrently, so hand it a fresh array when a lookup resolves after the
+	// rows, otherwise the resolved names stay stuck on their placeholder.
+	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, rooms, users ]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ cantPatch, setCantPatch ] = useState(true);
@@ -432,7 +440,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 					const tid = r[0].getValue();
 
 					/* const troomId=r[1].getValue(); */
-					const tuserId=r[2].getValue();
+					const tuserId: unknown = row.original.userId;
 
 					if (typeof tid === 'number') {
 						setId(tid);
@@ -471,7 +479,7 @@ const RoomOwnerTable = (props: RoomProp) => {
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={tableData} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
 					id: false

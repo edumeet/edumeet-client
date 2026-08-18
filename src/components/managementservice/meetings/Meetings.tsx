@@ -266,39 +266,35 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 
 			if (!isRoomScoped) {
 				cols.push({
-					accessorKey: 'roomId',
-					header: roomLabel(),
-					Cell: ({ cell }) => roomName(cell.getValue<number>())
+					// the row shows the room name, so filtering/sorting/search must
+					// use the name too, not the raw roomId
+					id: 'roomId',
+					accessorFn: (row) => roomName(Number(row.roomId)),
+					header: roomLabel()
 				});
 			}
 
 			cols.push(
+				// the accessors below return the same text the row displays, so the
+				// column filters and the search box work on what the user can see
 				{
-					accessorKey: 'startsAt',
+					id: 'startsAt',
 					header: startsAtLabel(),
 					// Coerce to Number — Postgres bigint columns come back as strings;
 					// moment() would parse a numeric string as ISO and yield Invalid Date.
-					Cell: ({ cell }) => {
-						const v = cell.getValue<number | string>();
-
-						return v ? moment(Number(v)).format('YYYY-MM-DD HH:mm') : '';
-					}
+					// The YYYY-MM-DD format keeps lexicographic sorting chronological.
+					accessorFn: (row) => (row.startsAt ? moment(Number(row.startsAt)).format('YYYY-MM-DD HH:mm') : '')
 				},
 				{
-					accessorKey: 'endsAt',
+					id: 'endsAt',
 					header: endsAtLabel(),
-					Cell: ({ cell }) => {
-						const v = cell.getValue<number | string>();
-
-						return v ? moment(Number(v)).format('YYYY-MM-DD HH:mm') : '';
-					}
+					accessorFn: (row) => (row.endsAt ? moment(Number(row.endsAt)).format('YYYY-MM-DD HH:mm') : '')
 				},
 				{
-					accessorKey: 'rrule',
+					id: 'rrule',
 					header: repeatsLabel(),
-					Cell: ({ cell }) => {
-						const v = cell.getValue<string | undefined>();
-						const parsed = parseRrule(v);
+					accessorFn: (row) => {
+						const parsed = parseRrule(row.rrule);
 
 						if (parsed.mode === 'NEVER') return '—';
 						let modeLabel = repeatMonthlyLabel();
@@ -310,13 +306,9 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 					}
 				},
 				{
-					accessorKey: 'attendees',
+					id: 'attendees',
 					header: attendeesLabel(),
-					Cell: ({ row }) => {
-						const list = (row.original.attendees ?? []) as MeetingAttendee[];
-
-						return list.length;
-					}
+					accessorFn: (row) => ((row.attendees ?? []) as MeetingAttendee[]).length
 				}
 			);
 
@@ -528,12 +520,16 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 		}
 	};
 
+	// `rooms` is a dependency even though it is not read here: MRT caches accessorFn
+	// results per row and only rebuilds its rows when this array's identity changes,
+	// so the room-name column would stay stuck on its placeholder when the rooms
+	// fetch resolves after the meetings fetch. Always return a fresh array.
 	const visibleData = useMemo(() => {
-		if (showPastMeetings) return data;
+		if (showPastMeetings) return [ ...data ];
 		const now = Date.now();
 
 		return data.filter((m) => !isMeetingPast(m, now));
-	}, [ data, showPastMeetings ]);
+	}, [ data, showPastMeetings, rooms ]);
 
 	// Add button: in all-meetings mode require at least one room (else dropdown is empty).
 	// In room-scoped mode the room is fixed via prop, so always enabled.
