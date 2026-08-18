@@ -1,8 +1,12 @@
 import { AppThunk } from '../store';
 import { meActions } from '../slices/meSlice';
 import { DevicesUpdated } from '../../services/deviceService';
-import { activeSpeakerIdSelector, makePermissionSelector } from '../selectors';
-import { permissions } from '../../utils/roles';
+import {
+	activeSpeakerIdSelector,
+	audioPermissionSelector,
+	lockPermissionSelector,
+	videoPermissionSelector,
+} from '../selectors';
 import { pauseMic, resumeMic, stopWebcam, updateMic, updateWebcam } from './mediaActions';
 import { uiActions } from '../slices/uiSlice';
 import { lock, unlock, updateLoginState } from './permissionsActions';
@@ -88,10 +92,6 @@ export const startListeners = (): AppThunk<Promise<void>> => async (
 			dispatch(roomSessionsActions.setActiveSpeakerId({ sessionId: mySessionId, isMe: false }));
 		}
 	}, 500);
-
-	const audioPermissionSelector = makePermissionSelector(permissions.SHARE_AUDIO);
-	const videoPermissionSelector = makePermissionSelector(permissions.SHARE_VIDEO);
-	const lockPermissionSelector = makePermissionSelector(permissions.CHANGE_ROOM_LOCK);
 
 	keydownListener = (event: KeyboardEvent): void => {
 		const { repeat, target, key, ctrlKey, altKey, shiftKey, metaKey } = event;

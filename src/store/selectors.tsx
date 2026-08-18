@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { MediaDevice } from '../services/deviceService';
 import { Transcript } from '../services/mediaService';
-import { Permission } from '../utils/roles';
+import { Permission, permissions } from '../utils/roles';
 import { StateConsumer } from './slices/consumersSlice';
 import { LobbyPeer } from './slices/lobbyPeersSlice';
 import { Peer } from './slices/peersSlice';
@@ -696,3 +696,12 @@ export const makeIsActiveSpeakerSelector = (id: string): Selector<boolean> => {
 };
 
 export const makePermissionSelector = (permission: Permission): Selector<boolean> => createSelector(mePermissionsSelect, (p) => p.includes(permission));
+
+// Permissions that are checked outside React, where the usePermissionSelector
+// hook is not available (thunks, event listeners). Built once at module level so
+// the memoization is shared rather than rebuilt on every call.
+export const audioPermissionSelector = makePermissionSelector(permissions.SHARE_AUDIO);
+export const videoPermissionSelector = makePermissionSelector(permissions.SHARE_VIDEO);
+export const screenPermissionSelector = makePermissionSelector(permissions.SHARE_SCREEN);
+export const extraVideoPermissionSelector = makePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
+export const lockPermissionSelector = makePermissionSelector(permissions.CHANGE_ROOM_LOCK);

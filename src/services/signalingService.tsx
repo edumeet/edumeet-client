@@ -133,14 +133,27 @@ export class SignalingService extends EventEmitter {
 	public async sendRequest(method: string, data: unknown = {}): Promise<any> {
 		logger.debug('request() [method: %s]', method);
 
+		let lastError: unknown;
+		let attempted = false;
+
 		for (const connection of this.connections.items) {
 			try {
 				return await connection.request({ method, data });
 			} catch (error) {
-				logger.error('request() [error: %o]', error);
+				attempted = true;
+				lastError = error;
+
+				logger.error('request() [method: %s, error: %o]', method, error);
 			}
 		}
 
-		logger.warn('request() no connection available');
+		// Every connection failed (or there was none). Rejecting is what callers
+		// expect: resolving with undefined made the failure surface far away as a
+		// TypeError on the missing response, hiding the error the server sent.
+		if (!attempted) logger.warn('request() no connection available [method: %s]', method);
+
+		throw lastError instanceof Error ?
+			lastError :
+			new Error(`request "${method}" failed: ${attempted ? String(lastError) : 'no connection available'}`);
 	}
 }
