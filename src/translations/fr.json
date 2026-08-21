@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "commence par",
   "label.managementservice.endswith": "termine par",
   "label.managementservice.actionToRun": "Action à exécuter lorsque la condition est satisfaite",
+  "label.managementservice.parameterHelp": "Attribut de l’utilisateur qui se connecte à tester. Les autres valeurs ne correspondent jamais.",
   "label.managementservice.makeUserGroupMember": "Rendre l'utilisateur membre du groupe",
   "label.managementservice.makeUserTenantOwner": "Rendre l'utilisateur propriétaire du locataire",
   "label.managementservice.makeUserTenantAdmin": "Rendre l'utilisateur administrateur du locataire",

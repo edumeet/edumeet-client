@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "beginnt mit",
   "label.managementservice.endswith": "endet mit",
   "label.managementservice.actionToRun": "Aktion bei erfüllter Bedingung",
+  "label.managementservice.parameterHelp": "Attribut des sich anmeldenden Benutzers, das geprüft wird. Andere Werte treffen nie zu.",
   "label.managementservice.makeUserGroupMember": "Benutzer zur Gruppe hinzufügen",
   "label.managementservice.makeUserTenantOwner": "Benutzer als Mandanteninhaber festlegen",
   "label.managementservice.makeUserTenantAdmin": "Benutzer als Mandantenadmin festlegen",

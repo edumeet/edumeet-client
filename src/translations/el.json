@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "αρχίζει με",
   "label.managementservice.endswith": "τελειώνει με",
   "label.managementservice.actionToRun": "Ενέργεια που εκτελείται όταν η συνθήκη πληρείται",
+  "label.managementservice.parameterHelp": "Χαρακτηριστικό του χρήστη που συνδέεται προς έλεγχο. Άλλες τιμές δεν ταιριάζουν ποτέ.",
   "label.managementservice.makeUserGroupMember": "Κάνε τον χρήστη μέλος ομάδας",
   "label.managementservice.makeUserTenantOwner": "Κάνε τον χρήστη ιδιοκτήτη ενοικιαστή",
   "label.managementservice.makeUserTenantAdmin": "Κάνε τον χρήστη διαχειριστή ενοικιαστή",

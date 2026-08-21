@@ -1263,6 +1263,10 @@ export const actionToRunLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.actionToRun',
 	defaultMessage: 'Action to run when condition is satisfied'
 });
+export const parameterHelpLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.parameterHelp',
+	defaultMessage: 'Attribute of the signing in user to test. Other values never match.'
+});
 export const makeUserGroupMemberLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.makeUserGroupMember',
 	defaultMessage: 'Make user group member'

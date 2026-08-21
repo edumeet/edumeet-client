@@ -395,6 +395,7 @@
 	"label.managementservice.startswith": "startswith",
 	"label.managementservice.endswith": "endswith",
 	"label.managementservice.actionToRun": "Action to run when condition is satisfied",
+	"label.managementservice.parameterHelp": "Attribute of the signing in user to test. Other values never match.",
 	"label.managementservice.makeUserGroupMember": "Make user group member",
 	"label.managementservice.makeUserTenantOwner": "Make user tenant owner",
 	"label.managementservice.makeUserTenantAdmin": "Make user tenant admin",

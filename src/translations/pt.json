@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "começa com",
   "label.managementservice.endswith": "termina com",
   "label.managementservice.actionToRun": "Ação a executar quando a condição for satisfeita",
+  "label.managementservice.parameterHelp": "Atributo do utilizador que inicia sessão a verificar. Outros valores nunca correspondem.",
   "label.managementservice.makeUserGroupMember": "Tornar o utilizador membro do grupo",
   "label.managementservice.makeUserTenantOwner": "Tornar o utilizador proprietário do inquilino",
   "label.managementservice.makeUserTenantAdmin": "Tornar o utilizador administrador do inquilino",

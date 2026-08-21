@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "начинается с",
   "label.managementservice.endswith": "заканчивается на",
   "label.managementservice.actionToRun": "Действие при выполнении условия",
+  "label.managementservice.parameterHelp": "Атрибут входящего пользователя для проверки. Другие значения никогда не совпадают.",
   "label.managementservice.makeUserGroupMember": "Сделать пользователя членом группы",
   "label.managementservice.makeUserTenantOwner": "Сделать пользователя владельцем арендатора",
   "label.managementservice.makeUserTenantAdmin": "Сделать пользователя администратором арендатора",

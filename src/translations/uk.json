@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "починається з",
   "label.managementservice.endswith": "закінчується на",
   "label.managementservice.actionToRun": "Дія, що виконується при виконанні умови",
+  "label.managementservice.parameterHelp": "Атрибут користувача, який входить, що перевіряється. Інші значення ніколи не збігаються.",
   "label.managementservice.makeUserGroupMember": "Зробити користувача членом групи",
   "label.managementservice.makeUserTenantOwner": "Зробити користувача власником орендаря",
   "label.managementservice.makeUserTenantAdmin": "Зробити користувача адміністратором орендаря",

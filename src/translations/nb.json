@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "starter med",
   "label.managementservice.endswith": "slutter med",
   "label.managementservice.actionToRun": "Handling som kjøres når betingelsen er oppfylt",
+  "label.managementservice.parameterHelp": "Attributt for brukeren som logger inn, som skal testes. Andre verdier treffer aldri.",
   "label.managementservice.makeUserGroupMember": "Gjør bruker til gruppemedlem",
   "label.managementservice.makeUserTenantOwner": "Gjør bruker til tenant-eier",
   "label.managementservice.makeUserTenantAdmin": "Gjør bruker til tenant-admin",

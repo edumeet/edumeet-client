@@ -7,7 +7,13 @@ import React from 'react';
 import { Groups, Rule, Tenant } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { accessIdLabel, actionLabel, actionToRunLabel, addNewLabel, applyLabel, assertLabel, cancelLabel, containsLabel, deleteLabel, endswithLabel, equalsLabel, gainLabel, genericItemDescLabel, makeUserGroupMemberLabel, makeUserSuperAdminLabel, makeUserTenantAdminLabel, makeUserTenantOwnerLabel, manageItemLabel, methodLabel, nameLabel, negateLabel, parameterLabel, startswithLabel, tenantLabel, typeLablel, undefinedTenantLabel, valueLabel } from '../../translated/translatedComponents';
+import { accessIdLabel, actionLabel, actionToRunLabel, addNewLabel, applyLabel, assertLabel, cancelLabel, containsLabel, deleteLabel, endswithLabel, equalsLabel, gainLabel, genericItemDescLabel, makeUserGroupMemberLabel, makeUserSuperAdminLabel, makeUserTenantAdminLabel, makeUserTenantOwnerLabel, manageItemLabel, methodLabel, nameLabel, negateLabel, noLabel, parameterHelpLabel, parameterLabel, startswithLabel, tenantLabel, typeLablel, undefinedTenantLabel, valueLabel, yesLabel } from '../../translated/translatedComponents';
+
+// The only attributes an SSO login carries into the rule hooks (see
+// OAuthTenantStrategy.getEntityData on the management server). The field stays
+// free text so rules predating this list keep their value, but anything outside
+// it can never match.
+const RULE_PARAMETERS = [ 'email', 'name', 'ssoId', 'tenantId' ];
 
 const RuleTable = () => {
 	const dispatch = useAppDispatch();
@@ -15,7 +21,9 @@ const RuleTable = () => {
 
 	type TenantOptionTypes = Array<Tenant>
 
-	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
+	// empty until the fetch resolves; a placeholder row would be preselected as the
+	// rule's tenant by handleClickOpen and shown as a nameless option
+	const [ tenants, setTenants ] = useState<TenantOptionTypes>([]);
 	const { superAdmin } = useAppSelector((state) => state.management);
 
 	const getTenantName = (id: string): string => {
@@ -60,7 +68,11 @@ const RuleTable = () => {
 				header: methodLabel()
 			},
 			{
-				accessorKey: 'negate',
+				// a raw boolean renders as an empty cell, and negate inverts the whole
+				// meaning of a rule, so it has to be readable. accessorFn (not Cell) so
+				// search and column filters work on what is displayed.
+				id: 'negate',
+				accessorFn: (row) => (row.negate ? yesLabel() : noLabel()),
 				header: negateLabel()
 			},
 			{
@@ -88,13 +100,7 @@ const RuleTable = () => {
 	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, tenants ]);
 
 	type GroupsOptionTypes = Array<Groups>
-	const [ groups, setGroups ] = useState<GroupsOptionTypes>([ {
-		'id': 0,
-		'name': '',   
-		'description': '',
-		'tenantId': 0
-	}
-	]);
+	const [ groups, setGroups ] = useState<GroupsOptionTypes>([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ name, setName ] = useState('');
@@ -109,6 +115,18 @@ const RuleTable = () => {
 	const [ cantPatch ] = useState(false);
 	const [ cantDelete, setCantDelete ] = useState(false);
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
+
+	// Postgres returns the bigint id columns as strings, so ids coming from the API
+	// and ids held in local state are not always the same type. Compare on the
+	// string form, the way the rest of this file's lookups do.
+	const sameId = (a: unknown, b: unknown): boolean => String(a) === String(b);
+
+	// A rule can only grant a group that belongs to the rule's own tenant, so the
+	// picker must not offer groups from anywhere else.
+	const tenantGroups = useMemo(
+		() => groups.filter((g) => sameId(g.tenantId, tenantId)),
+		[ groups, tenantId ]
+	);
 
 	async function fetchProduct() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -148,10 +166,20 @@ const RuleTable = () => {
 	const handleClickOpen = () => {
 		setId(0);
 		setName('');
-		setTenantId(0);
 		setCantDelete(true);
 		setOpen(true);
-		setTenantIdOption(undefined);
+
+		// Preselect a tenant, the same way Groups does. A tenant admin only ever sees
+		// their own, and a super admin is no longer pinned to theirs server side, so
+		// leaving this blank would mean the rule has no tenant to belong to.
+		if (tenants.length > 0) {
+			setTenantId(Number(tenants[0].id));
+			setTenantIdOption(tenants[0]);
+		} else {
+			setTenantId(0);
+			setTenantIdOption(undefined);
+		}
+
 		setType('');
 		setParameter('');
 		setMethod('');
@@ -174,8 +202,8 @@ const RuleTable = () => {
 		setType(event.target.value);
 	};
 	
-	const handleParameterChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-		setParameter(event.target.value);
+	const handleParameterChange = (event: SyntheticEvent<Element, Event>, newValue: string) => {
+		setParameter(newValue);
 	};
 	
 	const handleMethodChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -199,12 +227,15 @@ const RuleTable = () => {
 
 	const handleTenantIdChange = (event: SyntheticEvent<Element, Event>, newValue: Tenant) => {
 		if (newValue) {
-			if (typeof newValue.id != 'number') {
-				setTenantId(parseInt(newValue.id));
-			} else {
-				setTenantId(newValue.id);
-			}
+			const newTenantId = typeof newValue.id != 'number' ? parseInt(newValue.id) : newValue.id;
+
+			setTenantId(newTenantId);
 			setTenantIdOption(newValue);
+
+			// The selected group belongs to the tenant we just moved away from
+			if (accessId && !groups.some((g) => sameId(g.id, accessId) && sameId(g.tenantId, newTenantId))) {
+				setAccessId('');
+			}
 		}
 	};
 
@@ -225,6 +256,14 @@ const RuleTable = () => {
 	};
 
 	const addTenant = async () => {
+
+		// A rule is always scoped to a tenant, and a super admin is no longer pinned
+		// to their own, so submitting without one would fail the foreign key.
+		if (tenantId === 0) {
+			setIsLoading(false);
+
+			return;
+		}
 
 		// add new data / mod data / error
 		if (name != '' && id === 0) {
@@ -351,16 +390,21 @@ const RuleTable = () => {
 							<MenuItem value={'gain'}>{gainLabel()}</MenuItem>
 						</Select>
 					</FormControl>
-					<TextField
-						margin="dense"
-						id="parameter"
-						label={parameterLabel()}
-						type="text"
-						required
+					<Autocomplete
+						freeSolo
+						options={RULE_PARAMETERS}
+						inputValue={parameter}
+						onInputChange={handleParameterChange}
 						fullWidth
 						sx={{ marginTop: '8px' }}
-						onChange={handleParameterChange}
-						value={parameter}
+						renderInput={(params) => <TextField
+							{...params}
+							margin="dense"
+							id="parameter"
+							label={parameterLabel()}
+							required
+							helperText={parameterHelpLabel()}
+						/>}
 					/>
 
 					<FormControl
@@ -431,14 +475,16 @@ const RuleTable = () => {
 							<Select
 								labelId="accessid-label"
 								id="accessid"
-								value={accessId}
+								// groups load asynchronously; show nothing rather than an
+								// out-of-range value until the matching option exists
+								value={tenantGroups.some((g) => sameId(g.id, accessId)) ? accessId : ''}
 								disabled={type !== 'gain'}
 								label={accessIdLabel()}
 								required
 								onChange={handleAccessIdChange}
 							>
-								{Object.entries(groups).map(([ , v ]) =>
-									<MenuItem value={v.id}>{v.name}</MenuItem>
+								{tenantGroups.map((g) =>
+									<MenuItem key={g.id} value={String(g.id)}>{g.name}</MenuItem>
 								)}
 							</Select>
 						</FormControl>
@@ -450,7 +496,7 @@ const RuleTable = () => {
 				<DialogActions>
 					<Button onClick={delTenant} disabled={cantDelete} color='warning'>{deleteLabel()}</Button>
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch || tenantId === 0}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -465,7 +511,9 @@ const RuleTable = () => {
 					const ttype = r[3].getValue(); 
 					const tparameter = r[4].getValue();
 					const tmethod = r[5].getValue();
-					const tnegate = r[6].getValue();
+					// read through row.original: the negate cell renders a yes/no label,
+					// and MySQL hands the column back as 0/1 rather than a boolean
+					const tnegate = Boolean(row.original.negate);
 					const tvalue = r[7].getValue();
 					const taction = r[8].getValue();
 					const taccessid = r[9].getValue();
@@ -515,9 +563,7 @@ const RuleTable = () => {
 					} else {
 						setMethod('');
 					}
-					if (typeof tnegate === 'boolean') {
-						setNegate(tnegate);
-					}
+					setNegate(tnegate);
 					if (typeof tvalue === 'string') {
 						setValue(tvalue);
 					} else {
@@ -528,11 +574,9 @@ const RuleTable = () => {
 					} else {
 						setAction('');
 					}
-					if (typeof taccessid === 'string') {
-						setAccessId(taccessid);
-					} else {
-						setAccessId('');
-					}
+					// stored as a string, but normalise so the group Select can match
+					// its (stringified) option values and preselect the group
+					setAccessId(taccessid == null ? '' : String(taccessid));
 
 					handleClickOpenNoreset();
 				}

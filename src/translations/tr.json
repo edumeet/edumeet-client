@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "ile başlar",
   "label.managementservice.endswith": "ile biter",
   "label.managementservice.actionToRun": "Koşul sağlandığında çalışacak eylem",
+  "label.managementservice.parameterHelp": "Oturum açan kullanıcının denetlenecek özniteliği. Diğer değerler asla eşleşmez.",
   "label.managementservice.makeUserGroupMember": "Kullanıcıyı grup üyesi yap",
   "label.managementservice.makeUserTenantOwner": "Kullanıcıyı kiracı sahibi yap",
   "label.managementservice.makeUserTenantAdmin": "Kullanıcıyı kiracı yöneticisi yap",

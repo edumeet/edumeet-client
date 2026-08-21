@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "zaczyna się od",
   "label.managementservice.endswith": "kończy się na",
   "label.managementservice.actionToRun": "Akcja do wykonania gdy warunek jest spełniony",
+  "label.managementservice.parameterHelp": "Atrybut logującego się użytkownika, który ma być sprawdzony. Inne wartości nigdy nie pasują.",
   "label.managementservice.makeUserGroupMember": "Dodaj użytkownika do grupy",
   "label.managementservice.makeUserTenantOwner": "Ustaw użytkownika jako właściciela instytucji",
   "label.managementservice.makeUserTenantAdmin": "Ustaw użytkownika jako administratora instytucji",

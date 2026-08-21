@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "Ezzel kezdődik",
   "label.managementservice.endswith": "Ezzel Végződik",
   "label.managementservice.actionToRun": "Művelet futtatása",
+  "label.managementservice.parameterHelp": "A bejelentkező felhasználó ellenőrizendő attribútuma. Más értékek soha nem egyeznek.",
   "label.managementservice.makeUserGroupMember": "Csoporttagság",
   "label.managementservice.makeUserTenantOwner": "Szervezet tulajdonos",
   "label.managementservice.makeUserTenantAdmin": "Szervezet adminisztrátor",

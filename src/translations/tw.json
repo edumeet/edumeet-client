@@ -395,6 +395,7 @@
   "label.managementservice.startswith": null,
   "label.managementservice.endswith": null,
   "label.managementservice.actionToRun": null,
+  "label.managementservice.parameterHelp": null,
   "label.managementservice.makeUserGroupMember": null,
   "label.managementservice.makeUserTenantOwner": null,
   "label.managementservice.makeUserTenantAdmin": null,

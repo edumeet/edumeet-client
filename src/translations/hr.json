@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "počinje s",
   "label.managementservice.endswith": "završava s",
   "label.managementservice.actionToRun": "Akcija koja se izvršava kada je uvjet ispunjen",
+  "label.managementservice.parameterHelp": "Atribut korisnika koji se prijavljuje koji se provjerava. Druge vrijednosti nikada se ne podudaraju.",
   "label.managementservice.makeUserGroupMember": "Dodaj korisnika u grupu",
   "label.managementservice.makeUserTenantOwner": "Postavi korisnika vlasnikom najmoprimca",
   "label.managementservice.makeUserTenantAdmin": "Postavi korisnika administratorom najmoprimca",

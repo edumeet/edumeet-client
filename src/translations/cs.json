@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "začíná na",
   "label.managementservice.endswith": "končí na",
   "label.managementservice.actionToRun": "Akce spuštěná při splnění podmínky",
+  "label.managementservice.parameterHelp": "Atribut přihlašujícího se uživatele, který se testuje. Jiné hodnoty nikdy neodpovídají.",
   "label.managementservice.makeUserGroupMember": "Udělat uživatele členem skupiny",
   "label.managementservice.makeUserTenantOwner": "Udělat uživatele vlastníkem tenantu",
   "label.managementservice.makeUserTenantAdmin": "Udělat uživatele správcem tenantu",

@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "inizia con",
   "label.managementservice.endswith": "finisce con",
   "label.managementservice.actionToRun": "Azione da eseguire quando la condizione è soddisfatta",
+  "label.managementservice.parameterHelp": "Attributo dell’utente che accede da verificare. Altri valori non corrispondono mai.",
   "label.managementservice.makeUserGroupMember": "Rendi l'utente membro del gruppo",
   "label.managementservice.makeUserTenantOwner": "Rendi l'utente proprietario del tenant",
   "label.managementservice.makeUserTenantAdmin": "Rendi l'utente admin del tenant",

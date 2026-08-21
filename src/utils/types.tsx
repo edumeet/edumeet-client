@@ -476,6 +476,8 @@ export type Rule = {
 	value: string,
 	action: string,
 	type: string,
+	// only meaningful when action is 'groupUsers', where it holds the group id
+	accessId?: string,
 }
 export type Meeting = {
 	id?: number,

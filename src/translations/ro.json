@@ -395,6 +395,7 @@
   "label.managementservice.startswith": "începe cu",
   "label.managementservice.endswith": "se termină cu",
   "label.managementservice.actionToRun": "Acțiune de executat când condiția este îndeplinită",
+  "label.managementservice.parameterHelp": "Atributul utilizatorului care se autentifică ce va fi verificat. Alte valori nu se potrivesc niciodată.",
   "label.managementservice.makeUserGroupMember": "Fă utilizatorul membru al grupului",
   "label.managementservice.makeUserTenantOwner": "Fă utilizatorul proprietar al inquilinului",
   "label.managementservice.makeUserTenantAdmin": "Fă utilizatorul admin al inquilinului",
