@@ -78,10 +78,6 @@ export const methodLabel = (): string => intl.formatMessage({
 	id: 'label.method',
 	defaultMessage: 'Method'
 });
-export const negateLabel = (): string => intl.formatMessage({
-	id: 'label.negate',
-	defaultMessage: 'Negate'
-});
 export const valueLabel = (): string => intl.formatMessage({
 	id: 'label.value',
 	defaultMessage: 'Value'
@@ -1235,13 +1231,65 @@ export const undefinedTenantLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.undefinedTenant',
 	defaultMessage: 'undefined tenant'
 });
-export const assertLabel = (): string => intl.formatMessage({
-	id: 'label.managementservice.assert',
-	defaultMessage: 'Assert'
+export const accessLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.access',
+	defaultMessage: 'Access'
 });
 export const gainLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.gain',
-	defaultMessage: 'Gain'
+	defaultMessage: 'Grant'
+});
+export const rulesHelpTitleLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpTitle',
+	defaultMessage: 'How rules work'
+});
+export const rulesHelpKindsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpKinds',
+	defaultMessage: 'There are two kinds of rule. An Access rule decides who may sign in. A Grant rule decides what someone gets once they are in.'
+});
+export const rulesHelpStepsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpSteps',
+	defaultMessage: 'Allow rules broaden, Block rules narrow. First add Allow rules for the groups of people who should get in, then Block rules for anyone inside those groups who should not.'
+});
+export const rulesHelpClosesLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpCloses',
+	defaultMessage: 'Adding your first Allow rule closes the tenant. Before it, everyone the login provider offers can sign in. After it, only people matching an Allow rule can.'
+});
+export const rulesHelpBlockLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpBlock',
+	defaultMessage: 'A Block always wins and no Allow rule can override it. To keep a group out but let one person in, list the people you want as Allow rules instead.'
+});
+export const rulesHelpOpenLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpOpen',
+	defaultMessage: 'With no Allow rules at all the tenant stays open, and Block rules simply keep people out.'
+});
+export const rulesHelpAdminsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpAdmins',
+	defaultMessage: 'Administrators are never refused. You, the other admins and owners of this tenant, and the super admin can always sign in, so a mistake here cannot lock you out of your own settings.'
+});
+export const rulesHelpGrantLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpGrant',
+	defaultMessage: 'A Grant rule gives a matching user a group membership or an admin role. It is applied at every sign in, so a user who starts matching it later still gets it.'
+});
+export const rulesHelpGrantKeepLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpGrantKeep',
+	defaultMessage: 'Grants are only ever added, never taken away. Someone who stops matching a Grant rule, or whose rule you delete, keeps what they were already given until you remove it by hand.'
+});
+export const rulesHelpGrantAccessLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpGrantAccess',
+	defaultMessage: 'Grant rules do not let anyone in. Someone refused by the Access rules never reaches them, so a Grant rule is no substitute for an Allow rule.'
+});
+export const effectLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.effect',
+	defaultMessage: 'Effect'
+});
+export const blockLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.block',
+	defaultMessage: 'Block'
+});
+export const allowLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.allow',
+	defaultMessage: 'Allow'
 });
 export const containsLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.contains',
@@ -1253,11 +1301,27 @@ export const equalsLabel = (): string => intl.formatMessage({
 });
 export const startswithLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.startswith',
-	defaultMessage: 'startswith'
+	defaultMessage: 'starts with'
 });
 export const endswithLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.endswith',
-	defaultMessage: 'endswith'
+	defaultMessage: 'ends with'
+});
+export const doesNotContainLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.doesNotContain',
+	defaultMessage: 'does not contain'
+});
+export const doesNotEqualLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.doesNotEqual',
+	defaultMessage: 'does not equal'
+});
+export const doesNotStartWithLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.doesNotStartWith',
+	defaultMessage: 'does not start with'
+});
+export const doesNotEndWithLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.doesNotEndWith',
+	defaultMessage: 'does not end with'
 });
 export const actionToRunLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.actionToRun',
