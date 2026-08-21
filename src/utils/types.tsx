@@ -129,6 +129,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	reduxLoggingEnabled: false,
 	clientMontitor: {
 		collectingPeriodInMs: 2000,
+		samplingPeriodInMs: 0, // 0 = stats collected locally only, no data channel transmission
 	},
 	imprintUrl: '',
 	privacyUrl: '',
@@ -188,7 +189,7 @@ export interface EdumeetConfig {
 	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
-	clientMontitor: ClientMonitorConfig;
+	clientMontitor?: ClientMonitorConfig;
 	imprintUrl: string;
 	privacyUrl: string;
 	reactionsTimeout: number;

@@ -19,10 +19,20 @@ const logger = new Logger('RoomActions');
 export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
+	{ mediaService },
 ): Promise<void> => {
 	logger.debug('connect()');
 
-	dispatch(roomActions.updateRoom({ joinInProgress: true }));
+	dispatch(roomActions.updateRoom({ joinInProgress: true, roomId }));
+
+	// Set roomId on the monitor now — before the WebSocket connects — so that
+	// every sample (including ones emitted before roomReady fires) carries the roomId.
+	if (mediaService.monitor) {
+		mediaService.monitor.attachments = {
+			...mediaService.monitor.attachments,
+			roomId,
+		};
+	}
 
 	try {
 		const state = getState();
@@ -79,9 +89,9 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	fileService.tracker = tracker;
 	if (maxFileSize)
 		fileService.maxFileSize = maxFileSize;
-	
-	// this does nothing 
-	// fileService.iceServers = mediaService.iceServers; 
+
+	// this does nothing
+	// fileService.iceServers = mediaService.iceServers;
 
 	dispatch(permissionsActions.setLocked(Boolean(locked)));
 	dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
@@ -103,7 +113,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 
 	dispatch(drawingActions.setDrawingBgColor(drawing.bgColor));
 	dispatch(drawingActions.InitiateCanvas(drawing.canvasState));
-	
+
 	// On long-disconnect reconnect, producerClosed may have fired before joinRoom runs,
 	// setting audioMuted/videoMuted=true and lostAudio/lostVideo=true. Clear the lost
 	// flags and restart media regardless of muted state (mirrors peerReconnected logic).
