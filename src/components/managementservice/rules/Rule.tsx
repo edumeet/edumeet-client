@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { accessIdLabel, accessLabel, actionLabel, actionToRunLabel, addNewLabel, allowLabel, applyLabel, blockLabel, cancelLabel, closeLabel, containsLabel, deleteLabel, effectLabel, endswithLabel, equalsLabel, gainLabel, genericItemDescLabel,
 	rulesHelpTitleLabel, rulesHelpKindsLabel, rulesHelpStepsLabel, rulesHelpClosesLabel, rulesHelpBlockLabel, rulesHelpOpenLabel,
-	rulesHelpAdminsLabel, rulesHelpGrantLabel, rulesHelpGrantKeepLabel, rulesHelpGrantAccessLabel, makeUserGroupMemberLabel, makeUserSuperAdminLabel, makeUserTenantAdminLabel, makeUserTenantOwnerLabel, manageItemLabel, methodLabel, nameLabel, parameterHelpLabel, parameterLabel, startswithLabel, tenantLabel, typeLablel, undefinedTenantLabel, valueLabel, doesNotContainLabel, doesNotEqualLabel, doesNotStartWithLabel, doesNotEndWithLabel } from '../../translated/translatedComponents';
+	matchesAnyoneLabel, rulesHelpAdminsLabel, rulesHelpGrantLabel, rulesHelpGrantKeepLabel, rulesHelpGrantAccessLabel, makeUserGroupMemberLabel, makeUserSuperAdminLabel, makeUserTenantAdminLabel, makeUserTenantOwnerLabel, manageItemLabel, methodLabel, nameLabel, parameterHelpLabel, parameterLabel, startswithLabel, tenantLabel, typeLablel, undefinedTenantLabel, valueLabel, doesNotContainLabel, doesNotEqualLabel, doesNotStartWithLabel, doesNotEndWithLabel } from '../../translated/translatedComponents';
 
 // The only attributes an SSO login carries into the rule hooks (see
 // OAuthTenantStrategy.getEntityData on the management server). The field stays
@@ -31,6 +31,10 @@ const RULE_PARAMETERS = [ 'email', 'name', 'ssoId', 'tenantId' ];
 // no other spelling, so such a rule must keep reading correctly in the table and in
 // the dialog rather than silently appearing as its opposite.
 const CONDITIONS = [
+	// The catch-all. It tests nothing, so the parameter and value fields are hidden
+	// when it is chosen. It ranks below every real rule, which is how a tenant states
+	// "refuse anyone no other rule mentions" as a row rather than a hidden default.
+	{ id: 'anyone', method: 'anyone', negate: false, label: matchesAnyoneLabel },
 	{ id: 'contains', method: 'contains', negate: false, label: containsLabel },
 	{ id: 'notcontains', method: 'contains', negate: true, label: doesNotContainLabel },
 	{ id: 'equals', method: 'equals', negate: false, label: equalsLabel },
@@ -178,14 +182,24 @@ const RuleTable = () => {
 	const sameId = (a: unknown, b: unknown): boolean => String(a) === String(b);
 
 	const conditionId = findCondition(method, negate)?.id ?? '';
+	// the catch-all tests nothing, so it has no parameter and no value to show
+	const isCatchAll = method === 'anyone';
 
 	// Only the plain comparisons can be chosen. A rule written before the negated
 	// forms were withdrawn keeps its own option in the list so that opening it
 	// shows what it actually does, and leaving the field alone does not rewrite it.
-	const conditionOptions = useMemo(
-		() => CONDITIONS.filter((c) => !c.negate || c.id === conditionId),
-		[ conditionId ]
-	);
+	const conditionOptions = useMemo(() => CONDITIONS.filter((c) => {
+		// whatever the rule already uses stays selectable, so opening an existing rule
+		// never rewrites it just by being looked at
+		if (c.id === conditionId) return true;
+		if (c.negate) return false;
+
+		// "matches anyone" only means something as a Block. As an Allow it is a no-op:
+		// an unmatched user is permitted anyway, and it loses every tie to a Block.
+		if (c.method === 'anyone' && type !== 'block') return false;
+
+		return true;
+	}), [ conditionId, type ]);
 
 	// A rule can only grant a group that belongs to the rule's own tenant, so the
 	// picker must not offer groups from anywhere else.
@@ -275,6 +289,13 @@ const RuleTable = () => {
 
 	const handleEffectChange = (event: { target: { value: string; }; }) => {
 		setType(event.target.value);
+
+		// a catch-all only means something as a Block, so switching to Allow clears it
+		// rather than leaving behind a rule that does nothing
+		if (event.target.value !== 'block' && method === 'anyone') {
+			setMethod('');
+			setNegate(false);
+		}
 	};
 	
 	const handleParameterChange = (event: SyntheticEvent<Element, Event>, newValue: string) => {
@@ -288,6 +309,13 @@ const RuleTable = () => {
 		if (condition) {
 			setMethod(condition.method);
 			setNegate(condition.negate);
+
+			// the catch-all tests nothing, so clear the fields it hides rather than
+			// saving values the rule will never look at
+			if (condition.method === 'anyone') {
+				setParameter('');
+				setValue('');
+			}
 		}
 	};
 
@@ -429,9 +457,9 @@ const RuleTable = () => {
 
 					<DialogContentText sx={{ fontWeight: 'bold', mb: 1 }}>{accessLabel()}</DialogContentText>
 					<DialogContentText sx={{ mb: 2 }}>{rulesHelpStepsLabel()}</DialogContentText>
+					<DialogContentText sx={{ mb: 2 }}>{rulesHelpOpenLabel()}</DialogContentText>
 					<DialogContentText sx={{ mb: 2 }}>{rulesHelpClosesLabel()}</DialogContentText>
 					<DialogContentText sx={{ mb: 2 }}>{rulesHelpBlockLabel()}</DialogContentText>
-					<DialogContentText sx={{ mb: 2 }}>{rulesHelpOpenLabel()}</DialogContentText>
 					<DialogContentText sx={{ mb: 3, fontStyle: 'italic' }}>{rulesHelpAdminsLabel()}</DialogContentText>
 
 					<DialogContentText sx={{ fontWeight: 'bold', mb: 1 }}>{gainLabel()}</DialogContentText>
@@ -512,6 +540,7 @@ const RuleTable = () => {
 						</Select>
 					</FormControl>
 					}
+					{!isCatchAll &&
 					<Autocomplete
 						freeSolo
 						options={RULE_PARAMETERS}
@@ -528,6 +557,7 @@ const RuleTable = () => {
 							helperText={parameterHelpLabel()}
 						/>}
 					/>
+					}
 
 					<FormControl
 						sx={{ marginTop: '8px' }}
@@ -546,6 +576,7 @@ const RuleTable = () => {
 							)}
 						</Select>
 					</FormControl>
+					{!isCatchAll &&
 					<TextField
 						margin="dense"
 						id="value"
@@ -556,6 +587,7 @@ const RuleTable = () => {
 						onChange={handleValueChange}
 						value={value}
 					/>
+					}
 					{type==='gain' && 
 					<>
 						<FormControl

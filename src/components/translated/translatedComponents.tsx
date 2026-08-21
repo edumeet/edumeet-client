@@ -1253,15 +1253,15 @@ export const rulesHelpStepsLabel = (): string => intl.formatMessage({
 });
 export const rulesHelpClosesLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.rulesHelpCloses',
-	defaultMessage: 'Adding your first Allow rule closes the tenant. Before it, everyone the login provider offers can sign in. After it, only people matching an Allow rule can.'
+	defaultMessage: 'To admit only the people you list, add a Block rule with the comparison "matches anyone". It applies to everyone no other rule mentions, so your Allow rules become the guest list.'
 });
 export const rulesHelpBlockLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.rulesHelpBlock',
-	defaultMessage: 'A Block always wins and no Allow rule can override it. To keep a group out but let one person in, list the people you want as Allow rules instead.'
+	defaultMessage: 'The most specific matching rule wins. Naming an exact address beats a rule about a group, so you can block a whole provider and still admit one address from it. If two rules are equally specific, Block wins.'
 });
 export const rulesHelpOpenLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.rulesHelpOpen',
-	defaultMessage: 'With no Allow rules at all the tenant stays open, and Block rules simply keep people out.'
+	defaultMessage: 'A tenant is open by default: anyone the login provider offers can sign in unless a Block rule stops them.'
 });
 export const rulesHelpAdminsLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.rulesHelpAdmins',
@@ -1306,6 +1306,10 @@ export const startswithLabel = (): string => intl.formatMessage({
 export const endswithLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.endswith',
 	defaultMessage: 'ends with'
+});
+export const matchesAnyoneLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.matchesAnyone',
+	defaultMessage: 'matches anyone'
 });
 export const doesNotContainLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.doesNotContain',
