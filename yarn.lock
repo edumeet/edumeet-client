@@ -3084,7 +3084,7 @@ __metadata:
     jwt-decode: "npm:^4.0.0"
     marked: "npm:^18.0.7"
     material-react-table: "npm:^3.2.1"
-    mediasoup-client: "npm:^3.21.0"
+    mediasoup-client: "npm:^3.22.0"
     moment: "npm:^2.30.1"
     native-file-system-adapter: "npm:^3.0.1"
     notistack: "npm:^3.0.2"
@@ -5283,9 +5283,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mediasoup-client@npm:^3.21.0":
-  version: 3.21.0
-  resolution: "mediasoup-client@npm:3.21.0"
+"mediasoup-client@npm:^3.22.0":
+  version: 3.22.0
+  resolution: "mediasoup-client@npm:3.22.0"
   dependencies:
     "@types/debug": "npm:^4.1.13"
     "@types/events-alias": "npm:@types/events@^3.0.3"
@@ -5295,8 +5295,8 @@ __metadata:
     fake-mediastreamtrack: "npm:^2.2.1"
     h264-profile-level-id: "npm:^2.3.3"
     sdp-transform: "npm:^3.0.0"
-    supports-color: "npm:^10.2.2"
-  checksum: 10c0/2d5767ed7a7033d455c8285d51a411089552770b0cc703c8643b23c094fa3fd868a904a3c9191ca857cfbff95a9d5765711302ebc803878172fe6d9b9a3d7265
+    supports-color: "npm:^11.0.0"
+  checksum: 10c0/f5e4bc6c725d2e32ce1e3b33add56243f3502124c837415fe0f83de1b7e672b273202d6975c81bd2e941d310b7689b582b344981ec7c1394eac4d721c0fd901f
   languageName: node
   linkType: hard
 
@@ -7211,10 +7211,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^10.2.2":
-  version: 10.2.2
-  resolution: "supports-color@npm:10.2.2"
-  checksum: 10c0/fb28dd7e0cdf80afb3f2a41df5e068d60c8b4f97f7140de2eaed5b42e075d82a0e980b20a2c0efd2b6d73cfacb55555285d8cc719fa0472220715aefeaa1da7c
+"supports-color@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "supports-color@npm:11.0.0"
+  checksum: 10c0/f89d815d18d5508da54db73d762fa6d6418bced383694a4e05a56331075069010d9f501e6755b14617a00317553a498f07281933be72428eff136dbfe6a80128
   languageName: node
   linkType: hard
 

@@ -90,7 +90,10 @@ export class MediaSender extends EventEmitter {
 		if (this.running) throw new Error('Already producing');
 
 		this.running = true;
-		this.producerOptions = producerOptions;
+		// mediasoup-client 3.22 made abs-capture-time opt-in; before that it was always
+		// negotiated. Keep sending it so the SFU can derive capture instants directly
+		// instead of falling back to estimating them from RTCP Sender Reports.
+		this.producerOptions = { headerExtensionOptions: { absCaptureTime: true }, ...producerOptions };
 		this.codec = codec;
 		this.handleTrack();
 
