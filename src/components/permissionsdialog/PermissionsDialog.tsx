@@ -12,7 +12,9 @@ import {
 	ListItemButton,
 	ListItemIcon,
 	ListItemText,
+	MenuItem,
 	Stack,
+	TextField,
 	Typography,
 	styled,
 } from '@mui/material';
@@ -22,10 +24,13 @@ import { uiActions } from '../../store/slices/uiSlice';
 import { permissions as allClientPermissions } from '../../utils/roles';
 import {
 	applyPermissionsLabel,
+	cannotGrantPermissionLabel,
 	closeLabel,
 	discardChangesLabel,
+	loadRoleLabel,
 	managePermissionsLabel,
 	noLabel,
+	noneLabel,
 	noOtherPeersLabel,
 	pendingChangesLabel,
 	permissionDescriptions,
@@ -42,6 +47,8 @@ import {
 	setRoomPermissions,
 	PermissionUpdate,
 } from '../../store/actions/moderatorPermissionsActions';
+import { getData } from '../../store/actions/managementActions';
+import { Roles } from '../../utils/types';
 
 const SplitContent = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -105,20 +112,17 @@ interface PeerDiff {
 	removed: string[];
 }
 
-const setsEqual = (a: Set<string>, b: Set<string>): boolean => {
-	if (a.size !== b.size) return false;
-	for (const v of a) if (!b.has(v)) return false;
-
-	return true;
-};
-
 const PermissionsDialog = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const open = useAppSelector((state) => state.ui.permissionsDialogOpen);
 	const isModerator = usePermissionSelector(allClientPermissions.MODERATE_ROOM);
 	const callerPermissions = useAppSelector((state) => state.permissions.permissions);
+	// Roles come from the management service, which only answers for a signed in user.
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 
 	const [ peers, setPeers ] = useState<PermissionsPeer[] | null>(null);
+	const [ roles, setRoles ] = useState<Roles[]>([]);
+	const [ selectedRoleId, setSelectedRoleId ] = useState('');
 	const [ selectedPeerIds, setSelectedPeerIds ] = useState<Set<string>>(new Set());
 	// Shared draft set. Auto-seeded from the union of selected peers while clean.
 	// Once the user toggles anything, draftDirty locks it so selection changes
@@ -135,6 +139,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 		() => Object.values(allClientPermissions).filter((p) => p !== allClientPermissions.MODIFY_ROLE),
 		[],
 	);
+	const permissionKeySet = useMemo(() => new Set<string>(permissionKeys), [ permissionKeys ]);
 	const callerPermissionSet = useMemo(() => new Set(callerPermissions), [ callerPermissions ]);
 
 	const reload = useCallback(async () => {
@@ -150,6 +155,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 			setDraft(new Set());
 			setDraftDirty(false);
 			setSelectedPeerIds(new Set());
+			setSelectedRoleId('');
 		} finally {
 			setLoading(false);
 		}
@@ -160,6 +166,30 @@ const PermissionsDialog = (): React.JSX.Element => {
 
 		reload();
 	}, [ open, reload ]);
+
+	// The role catalogue only seeds the draft, so it is fetched once per open
+	// instead of on every reload after an apply.
+	useEffect(() => {
+		if (!open || !loggedIn) {
+			setRoles([]);
+
+			return;
+		}
+
+		let cancelled = false;
+
+		dispatch(getData('roles')).then((result) => {
+			if (cancelled) return;
+
+			const data = (result as { data?: Roles[] } | undefined)?.data ?? [];
+
+			setRoles([ ...data ].sort((a, b) => a.name.localeCompare(b.name)));
+		});
+
+		return () => {
+			cancelled = true;
+		};
+	}, [ open, loggedIn, dispatch ]);
 
 	// Compute the union of permissions for a given set of peer ids. Used to seed
 	// the draft when it is still clean.
@@ -181,6 +211,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 		setDraft(new Set());
 		setDraftDirty(false);
 		setSelectedPeerIds(new Set());
+		setSelectedRoleId('');
 	};
 
 	const handleClose = (): void => {
@@ -200,7 +231,10 @@ const PermissionsDialog = (): React.JSX.Element => {
 		else next.add(peerId);
 
 		setSelectedPeerIds(next);
-		if (!draftDirty) setDraft(computeUnion(next));
+		if (!draftDirty) {
+			setDraft(computeUnion(next));
+			setSelectedRoleId('');
+		}
 	};
 
 	const toggleSelectAll = (): void => {
@@ -211,7 +245,10 @@ const PermissionsDialog = (): React.JSX.Element => {
 			: new Set(peers.map((p) => p.id));
 
 		setSelectedPeerIds(next);
-		if (!draftDirty) setDraft(computeUnion(next));
+		if (!draftDirty) {
+			setDraft(computeUnion(next));
+			setSelectedRoleId('');
+		}
 	};
 
 	const isPermissionChecked = (perm: string): boolean => draft.has(perm);
@@ -220,6 +257,7 @@ const PermissionsDialog = (): React.JSX.Element => {
 		if (selectedPeerIds.size === 0) return;
 
 		setDraftDirty(true);
+		setSelectedRoleId('');
 		setDraft((prev) => {
 			const next = new Set(prev);
 
@@ -239,20 +277,25 @@ const PermissionsDialog = (): React.JSX.Element => {
 			if (!selectedPeerIds.has(peer.id)) continue;
 
 			const original = new Set(peer.permissions);
-
-			if (setsEqual(original, draft)) continue;
-
 			const added: string[] = [];
 			const removed: string[] = [];
 
-			draft.forEach((p) => { if (!original.has(p)) added.push(p); });
-			original.forEach((p) => { if (!draft.has(p)) removed.push(p); });
+			// Only permissions the moderator holds can move; the server ignores the
+			// rest, so listing them as pending would promise a change that never lands.
+			draft.forEach((p) => {
+				if (!original.has(p) && callerPermissionSet.has(p)) added.push(p);
+			});
+			original.forEach((p) => {
+				if (!draft.has(p) && callerPermissionSet.has(p)) removed.push(p);
+			});
+
+			if (added.length === 0 && removed.length === 0) continue;
 
 			diffs.push({ peerId: peer.id, displayName: peer.displayName, added, removed });
 		}
 
 		return diffs;
-	}, [ peers, selectedPeerIds, draft ]);
+	}, [ peers, selectedPeerIds, draft, callerPermissionSet ]);
 
 	const changedUpdates = useMemo<PermissionUpdate[]>(
 		() => peerDiffs.map((d) => ({ peerId: d.peerId, permissions: [ ...draft ] })),
@@ -261,7 +304,38 @@ const PermissionsDialog = (): React.JSX.Element => {
 
 	const handleReset = (): void => {
 		setDraftDirty(false);
+		setSelectedRoleId('');
 		setDraft(computeUnion(selectedPeerIds));
+	};
+
+	// Loading a role flips every checkbox below to that role's value. Rows the
+	// moderator cannot grant stay disabled and are left out of the pending changes,
+	// since the server refuses to add or revoke those either way. MODIFY_ROLE is not
+	// shown at all, so it is carried over untouched rather than silently dropped.
+	const applyRole = (roleId: string): void => {
+		if (roleId === '') {
+			handleReset();
+
+			return;
+		}
+
+		const role = roles.find((r) => String(r.id) === roleId);
+
+		if (!role || selectedPeerIds.size === 0) return;
+
+		const rolePermissions = new Set(role.permissions.map((p) => p.name));
+
+		setSelectedRoleId(roleId);
+		setDraftDirty(true);
+		setDraft((prev) => {
+			const next = new Set<string>(permissionKeys.filter((perm) => rolePermissions.has(perm)));
+
+			prev.forEach((perm) => {
+				if (!permissionKeySet.has(perm)) next.add(perm);
+			});
+
+			return next;
+		});
 	};
 
 	const handleSubmit = async (): Promise<void> => {
@@ -347,6 +421,26 @@ const PermissionsDialog = (): React.JSX.Element => {
 								>
 									{selectPeersFirstLabel()}
 								</Typography>
+								{roles.length > 0 && (
+									<TextField
+										select
+										fullWidth
+										size='small'
+										label={loadRoleLabel()}
+										value={selectedRoleId}
+										onChange={(event) => applyRole(event.target.value)}
+										disabled={selectedPeerIds.size === 0 || submitting}
+										slotProps={{ inputLabel: { shrink: true } }}
+										sx={{ mb: 2 }}
+									>
+										<MenuItem value=''>{noneLabel()}</MenuItem>
+										{roles.map((role) => (
+											<MenuItem key={role.id} value={String(role.id)}>
+												{role.name} ({role.permissions.length})
+											</MenuItem>
+										))}
+									</TextField>
+								)}
 								<List dense disablePadding>
 									{permissionKeys.map((perm) => {
 										const callerLacks = !callerPermissionSet.has(perm);
@@ -365,10 +459,27 @@ const PermissionsDialog = (): React.JSX.Element => {
 													/>
 												</ListItemIcon>
 												<Stack sx={{ py: 1, pr: 1, flex: 1 }}>
-													<PermissionKey variant='body2'>{perm}</PermissionKey>
+													<PermissionKey
+														variant='body2'
+														color={callerLacks ? 'text.disabled' : undefined}
+													>
+														{perm}
+													</PermissionKey>
 													{description && (
-														<Typography variant='caption' color='text.secondary'>
+														<Typography
+															variant='caption'
+															color={callerLacks ? 'text.disabled' : 'text.secondary'}
+														>
 															{description}
+														</Typography>
+													)}
+													{callerLacks && (
+														<Typography
+															variant='caption'
+															color='text.secondary'
+															sx={{ fontStyle: 'italic' }}
+														>
+															{cannotGrantPermissionLabel()}
 														</Typography>
 													)}
 												</Stack>

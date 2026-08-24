@@ -520,6 +520,8 @@
   "label.selectAll": null,
   "label.permissions.selectPeersFirst": null,
   "label.permissions.noOtherPeers": null,
+  "label.permissions.loadRole": null,
+  "label.permissions.cannotGrant": null,
   "label.permissions.apply": null,
   "label.permissions.pendingChanges": null,
   "label.permissions.resetDraft": null,

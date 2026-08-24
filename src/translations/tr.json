@@ -520,6 +520,8 @@
   "label.selectAll": "Tümünü seç",
   "label.permissions.selectPeersFirst": "İzinlerini düzenlemek için bir veya daha fazla katılımcı seçin.",
   "label.permissions.noOtherPeers": "Odada başka katılımcı yok.",
+  "label.permissions.loadRole": "İzinleri rolden yükle",
+  "label.permissions.cannotGrant": "Bu izne sahip değilsiniz, bu nedenle onu veremez veya kaldıramazsınız.",
   "label.permissions.apply": "Değişiklikleri uygula ({count})",
   "label.permissions.pendingChanges": "Bekleyen değişiklikler",
   "label.permissions.resetDraft": "Sıfırla",

@@ -1692,6 +1692,16 @@ export const noOtherPeersLabel = (): string => intl.formatMessage({
 	defaultMessage: 'No other peers are in the room.'
 });
 
+export const loadRoleLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.loadRole',
+	defaultMessage: 'Load permissions from role'
+});
+
+export const cannotGrantPermissionLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.cannotGrant',
+	defaultMessage: 'You do not have this permission, so you cannot grant or revoke it.'
+});
+
 export const applyPermissionsLabel = (count: number): string => intl.formatMessage({
 	id: 'label.permissions.apply',
 	defaultMessage: 'Apply changes ({count})'

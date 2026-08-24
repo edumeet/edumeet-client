@@ -520,6 +520,8 @@
   "label.selectAll": "Selectează tot",
   "label.permissions.selectPeersFirst": "Selectează unul sau mai mulți participanți pentru a le edita permisiunile.",
   "label.permissions.noOtherPeers": "Nu sunt alți participanți în sală.",
+  "label.permissions.loadRole": "Încarcă permisiunile dintr-un rol",
+  "label.permissions.cannotGrant": "Nu aveți această permisiune, deci nu o puteți acorda sau revoca.",
   "label.permissions.apply": "Aplică modificările ({count})",
   "label.permissions.pendingChanges": "Modificări în așteptare",
   "label.permissions.resetDraft": "Resetare",

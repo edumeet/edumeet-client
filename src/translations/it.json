@@ -520,6 +520,8 @@
   "label.selectAll": "Seleziona tutto",
   "label.permissions.selectPeersFirst": "Seleziona uno o più partecipanti per modificare le loro autorizzazioni.",
   "label.permissions.noOtherPeers": "Non ci sono altri partecipanti nella stanza.",
+  "label.permissions.loadRole": "Carica i permessi da un ruolo",
+  "label.permissions.cannotGrant": "Non disponi di questo permesso, quindi non puoi concederlo né revocarlo.",
   "label.permissions.apply": "Applica modifiche ({count})",
   "label.permissions.pendingChanges": "Modifiche in sospeso",
   "label.permissions.resetDraft": "Reimposta",

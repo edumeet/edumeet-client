@@ -520,6 +520,8 @@
   "label.selectAll": "Επιλογή όλων",
   "label.permissions.selectPeersFirst": "Επιλέξτε έναν ή περισσότερους συμμετέχοντες για επεξεργασία των δικαιωμάτων τους.",
   "label.permissions.noOtherPeers": "Δεν υπάρχουν άλλοι συμμετέχοντες στο δωμάτιο.",
+  "label.permissions.loadRole": "Φόρτωση δικαιωμάτων από ρόλο",
+  "label.permissions.cannotGrant": "Δεν έχετε αυτό το δικαίωμα, επομένως δεν μπορείτε να το εκχωρήσετε ή να το αφαιρέσετε.",
   "label.permissions.apply": "Εφαρμογή αλλαγών ({count})",
   "label.permissions.pendingChanges": "Εκκρεμείς αλλαγές",
   "label.permissions.resetDraft": "Επαναφορά",

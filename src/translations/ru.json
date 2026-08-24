@@ -520,6 +520,8 @@
   "label.selectAll": "Выбрать все",
   "label.permissions.selectPeersFirst": "Выберите одного или нескольких участников, чтобы изменить их разрешения.",
   "label.permissions.noOtherPeers": "В комнате нет других участников.",
+  "label.permissions.loadRole": "Загрузить разрешения из роли",
+  "label.permissions.cannotGrant": "У вас нет этого разрешения, поэтому вы не можете его выдать или отозвать.",
   "label.permissions.apply": "Применить изменения ({count})",
   "label.permissions.pendingChanges": "Ожидающие изменения",
   "label.permissions.resetDraft": "Сбросить",

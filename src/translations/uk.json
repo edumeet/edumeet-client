@@ -520,6 +520,8 @@
   "label.selectAll": "Вибрати все",
   "label.permissions.selectPeersFirst": "Виберіть одного або кількох учасників, щоб редагувати їхні дозволи.",
   "label.permissions.noOtherPeers": "У кімнаті немає інших учасників.",
+  "label.permissions.loadRole": "Завантажити дозволи з ролі",
+  "label.permissions.cannotGrant": "У вас немає цього дозволу, тому ви не можете його надати або відкликати.",
   "label.permissions.apply": "Застосувати зміни ({count})",
   "label.permissions.pendingChanges": "Очікувані зміни",
   "label.permissions.resetDraft": "Скинути",

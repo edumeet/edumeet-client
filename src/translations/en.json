@@ -520,6 +520,8 @@
 	"label.selectAll": "Select all",
 	"label.permissions.selectPeersFirst": "Select one or more peers to edit their permissions.",
 	"label.permissions.noOtherPeers": "No other peers are in the room.",
+	"label.permissions.loadRole": "Load permissions from role",
+	"label.permissions.cannotGrant": "You do not have this permission, so you cannot grant or revoke it.",
 	"label.permissions.apply": "Apply changes ({count})",
 	"label.permissions.pendingChanges": "Pending changes",
 	"label.permissions.resetDraft": "Reset",

@@ -520,6 +520,8 @@
   "label.selectAll": "Zaznacz wszystko",
   "label.permissions.selectPeersFirst": "Wybierz jednego lub więcej uczestników, aby edytować ich uprawnienia.",
   "label.permissions.noOtherPeers": "W pokoju nie ma innych uczestników.",
+  "label.permissions.loadRole": "Wczytaj uprawnienia z roli",
+  "label.permissions.cannotGrant": "Nie masz tego uprawnienia, więc nie możesz go przyznać ani odebrać.",
   "label.permissions.apply": "Zastosuj zmiany ({count})",
   "label.permissions.pendingChanges": "Oczekujące zmiany",
   "label.permissions.resetDraft": "Resetuj",

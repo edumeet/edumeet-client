@@ -520,6 +520,8 @@
   "label.selectAll": "Összes kijelölése",
   "label.permissions.selectPeersFirst": "Válasszon ki egy vagy több résztvevőt a jogosultságok szerkesztéséhez.",
   "label.permissions.noOtherPeers": "Nincsen más résztvevő a szobában",
+  "label.permissions.loadRole": "Jogosultságok betöltése szerepkörből",
+  "label.permissions.cannotGrant": "Nem rendelkezik ezzel a jogosultsággal, ezért nem tudja megadni vagy visszavonni.",
   "label.permissions.apply": "Alkalmazás ({count})",
   "label.permissions.pendingChanges": "Függőben lévő változtatások",
   "label.permissions.resetDraft": "Visszaállítás",

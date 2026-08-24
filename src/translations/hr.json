@@ -520,6 +520,8 @@
   "label.selectAll": "Odaberi sve",
   "label.permissions.selectPeersFirst": "Odaberite jednog ili više sudionika za uređivanje njihovih dozvola.",
   "label.permissions.noOtherPeers": "U sobi nema drugih sudionika.",
+  "label.permissions.loadRole": "Učitaj dopuštenja iz uloge",
+  "label.permissions.cannotGrant": "Nemate ovo dopuštenje, pa ga ne možete dodijeliti ni oduzeti.",
   "label.permissions.apply": "Primijeni promjene ({count})",
   "label.permissions.pendingChanges": "Promjene na čekanju",
   "label.permissions.resetDraft": "Resetiraj",

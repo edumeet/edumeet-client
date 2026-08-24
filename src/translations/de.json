@@ -520,6 +520,8 @@
   "label.selectAll": "Alle auswählen",
   "label.permissions.selectPeersFirst": "Wählen Sie einen oder mehrere Teilnehmer aus, um deren Berechtigungen zu bearbeiten.",
   "label.permissions.noOtherPeers": "Es sind keine anderen Teilnehmer im Raum.",
+  "label.permissions.loadRole": "Berechtigungen aus Rolle laden",
+  "label.permissions.cannotGrant": "Sie besitzen diese Berechtigung nicht und können sie daher weder erteilen noch entziehen.",
   "label.permissions.apply": "Änderungen übernehmen ({count})",
   "label.permissions.pendingChanges": "Ausstehende Änderungen",
   "label.permissions.resetDraft": "Zurücksetzen",

@@ -520,6 +520,8 @@
   "label.selectAll": "Vælg alle",
   "label.permissions.selectPeersFirst": "Vælg en eller flere deltagere for at redigere deres tilladelser.",
   "label.permissions.noOtherPeers": "Ingen andre deltagere i rummet.",
+  "label.permissions.loadRole": "Indlæs tilladelser fra rolle",
+  "label.permissions.cannotGrant": "Du har ikke denne tilladelse, så du kan hverken give eller fjerne den.",
   "label.permissions.apply": "Anvend ændringer ({count})",
   "label.permissions.pendingChanges": "Afventende ændringer",
   "label.permissions.resetDraft": "Nulstil",

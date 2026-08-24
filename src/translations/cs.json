@@ -520,6 +520,8 @@
   "label.selectAll": "Vybrat vše",
   "label.permissions.selectPeersFirst": "Vyberte jednoho nebo více účastníků pro úpravu jejich oprávnění.",
   "label.permissions.noOtherPeers": "V místnosti nejsou žádní další účastníci.",
+  "label.permissions.loadRole": "Načíst oprávnění z role",
+  "label.permissions.cannotGrant": "Toto oprávnění nemáte, takže je nemůžete udělit ani odebrat.",
   "label.permissions.apply": "Použít změny ({count})",
   "label.permissions.pendingChanges": "Neuložené změny",
   "label.permissions.resetDraft": "Obnovit",
