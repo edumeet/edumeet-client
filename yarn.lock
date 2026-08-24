@@ -3088,7 +3088,7 @@ __metadata:
     moment: "npm:^2.30.1"
     native-file-system-adapter: "npm:^3.0.1"
     notistack: "npm:^3.0.2"
-    ortc-p2p: "github:edumeet/edumeet-ortc-p2p#0.1.3"
+    ortc-p2p: "github:edumeet/edumeet-ortc-p2p#0.1.4"
     random-string: "npm:^0.2.0"
     react: "npm:^19.2.8"
     react-dom: "npm:^19.2.8"
@@ -5809,19 +5809,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ortc-p2p@github:edumeet/edumeet-ortc-p2p#0.1.3":
-  version: 0.1.3
-  resolution: "ortc-p2p@https://github.com/edumeet/edumeet-ortc-p2p.git#commit=9299def6083fd662a5cd04c8121f6a0e80357e6d"
+"ortc-p2p@github:edumeet/edumeet-ortc-p2p#0.1.4":
+  version: 0.1.4
+  resolution: "ortc-p2p@https://github.com/edumeet/edumeet-ortc-p2p.git#commit=ea5677a9e17514a60c5b4e55a3745c8f36af1b5b"
   dependencies:
     awaitqueue: "npm:^3.0.2"
     debug: "npm:^4.3.4"
     events: "npm:^3.3.0"
     h264-profile-level-id: "npm:^2.0.0"
+    queue-microtask: "npm:^1.2.3"
     sdp-transform: "npm:^2.14.2"
     typescript: "npm:^5.2.2"
     ua-parser-js: "npm:^1.0.37"
-    uuid: "npm:^9.0.1"
-  checksum: 10c0/fbf1780dce522a76fdd6e645035e4e443b2ab451a259d9b82bef44bd7d5b1748afb9de0935e7f4b279fe4c651e261f0f5f61561cb163a2f013c16859d42e42a7
+    uuid: "npm:^11.1.1"
+  checksum: 10c0/b1cae04716854fea8108b4d8e5c725aac2c94067b33de1f2297f10624d29699347c48df60b3ce8ad4353e8a5839d2b21a64d33351a4d8b12939d18d8c3215b5b
   languageName: node
   linkType: hard
 
@@ -7665,7 +7666,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^11.1.0":
+"uuid@npm:^11.1.0, uuid@npm:^11.1.1":
   version: 11.1.1
   resolution: "uuid@npm:11.1.1"
   bin:
@@ -7680,15 +7681,6 @@ __metadata:
   bin:
     uuid: dist-node/bin/uuid
   checksum: 10c0/2d961289097cb68c37d93d1da0b5c3aafc1eb9948a455cca8d0ae53a099b2fe583b8933254a84097f700e6bac2e23033364904df0467c22551d5d9611febcaf6
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^9.0.1":
-  version: 9.0.1
-  resolution: "uuid@npm:9.0.1"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 10c0/1607dd32ac7fc22f2d8f77051e6a64845c9bce5cd3dd8aa0070c074ec73e666a1f63c7b4e0f4bf2bc8b9d59dc85a15e17807446d9d2b17c8485fbc2147b27f9b
   languageName: node
   linkType: hard
 
