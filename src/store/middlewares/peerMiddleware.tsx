@@ -178,9 +178,6 @@ const createPeerMiddleware = ({
 
 							case 'moderator:stopVideo': {
 								dispatch(stopWebcam());
-								// Extra video is a camera too, and has no moderator
-								// control of its own, so a moderator stopping video
-								// would otherwise leave a second camera running.
 								dispatch(stopExtraVideo());
 
 								break;

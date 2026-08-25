@@ -14,11 +14,6 @@ interface ConfirmButtonProps extends Pick<ButtonProps, 'size' | 'color' | 'varia
 	onConfirm: () => void;
 }
 
-/**
- * A button whose action is only dispatched after the user confirms it in a
- * dialog. Used for the room wide moderator actions, which affect every
- * participant and cannot be undone from here.
- */
 const ConfirmButton = ({
 	label,
 	confirmContent,

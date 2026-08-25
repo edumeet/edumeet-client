@@ -40,9 +40,6 @@ const ListHeader = styled(Typography)({
 	fontWeight: 'bolder'
 });
 
-// Own controls sit above the moderator block and are separated from it, so
-// that "Stop receiving video" (local, invisible to others) is not mistaken for
-// "Stop all video" (kills every participant's camera for the whole room).
 const OwnControlsDiv = styled('div')(({ theme }) => ({
 	display: 'flex',
 	flexDirection: 'column',

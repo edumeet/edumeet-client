@@ -32,9 +32,6 @@ export interface MeState {
 	escapeMeeting: boolean;
 	audioMuted: boolean;
 	videoMuted: boolean;
-	// Whether we want to receive the other participants' webcams at all. Lives
-	// here rather than in settings because it must not survive the meeting:
-	// the settings slice is persisted, while this one resets on leave.
 	receiveVideo: boolean;
 	lostAudio: boolean;
 	lostVideo: boolean;
