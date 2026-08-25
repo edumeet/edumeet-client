@@ -32,6 +32,10 @@ export interface MeState {
 	escapeMeeting: boolean;
 	audioMuted: boolean;
 	videoMuted: boolean;
+	// Whether we want to receive the other participants' webcams at all. Lives
+	// here rather than in settings because it must not survive the meeting:
+	// the settings slice is persisted, while this one resets on leave.
+	receiveVideo: boolean;
 	lostAudio: boolean;
 	lostVideo: boolean;
 	webGLSupport: boolean;
@@ -74,6 +78,7 @@ const initialState: MeState = {
 	escapeMeeting: false,
 	audioMuted: edumeetConfig.askForMediaOnJoin ? false : true,
 	videoMuted: edumeetConfig.askForMediaOnJoin ? false : true,
+	receiveVideo: true,
 	lostAudio: false,
 	lostVideo: false,
 	webGLSupport: false,
@@ -157,6 +162,9 @@ const meSlice = createSlice({
 		}),
 		setVideoMuted: ((state, action: PayloadAction<boolean>) => {
 			state.videoMuted = action.payload;
+		}),
+		setReceiveVideo: ((state, action: PayloadAction<boolean>) => {
+			state.receiveVideo = action.payload;
 		}),
 		setLostAudio: ((state, action: PayloadAction<boolean>) => {
 			state.lostAudio = action.payload;

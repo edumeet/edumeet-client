@@ -594,5 +594,11 @@
   "label.meetings.noUpcoming": "Немає майбутніх зустрічей",
   "label.meetings.upcoming": "Майбутні зустрічі",
   "label.management.tenants.testConnection": "Перевірити з'єднання",
-  "settings.showAllAudioOnlyParticipantsLabel": "Показувати кожного учасника без відео окремо"
+  "settings.showAllAudioOnlyParticipantsLabel": "Показувати кожного учасника без відео окремо",
+  "device.stopReceivingVideo": "Зупинити отримання відео",
+  "device.startReceivingVideo": "Почати отримання відео",
+  "room.muteAllConfirm": "Відключити мікрофон усім у кімнаті?",
+  "room.stopAllVideoConfirm": "Зупинити камери всім у кімнаті?",
+  "room.stopAllScreenSharingConfirm": "Зупинити спільне використання екрану всім у кімнаті?",
+  "room.closeMeetingConfirm": "Закрити зустріч і від’єднати всіх у кімнаті?"
 }

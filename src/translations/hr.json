@@ -594,5 +594,11 @@
   "label.meetings.noUpcoming": "Nema nadolazećih sastanaka",
   "label.meetings.upcoming": "Nadolazeći sastanci",
   "label.management.tenants.testConnection": "Testiraj povezivanje",
-  "settings.showAllAudioOnlyParticipantsLabel": "Prikaži svakog sudionika bez videa zasebno"
+  "settings.showAllAudioOnlyParticipantsLabel": "Prikaži svakog sudionika bez videa zasebno",
+  "device.stopReceivingVideo": "Zaustavi primanje videa",
+  "device.startReceivingVideo": "Pokreni primanje videa",
+  "room.muteAllConfirm": "Isključiti mikrofon svima u sobi?",
+  "room.stopAllVideoConfirm": "Isključiti kamere svima u sobi?",
+  "room.stopAllScreenSharingConfirm": "Zaustaviti dijeljenje ekrana svima u sobi?",
+  "room.closeMeetingConfirm": "Završiti sastanak i odspojiti sve u sobi?"
 }

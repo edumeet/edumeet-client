@@ -594,5 +594,11 @@
   "label.meetings.noUpcoming": "Ingen kommende møter",
   "label.meetings.upcoming": "Kommende møter",
   "label.management.tenants.testConnection": "Test tilkobling",
-  "settings.showAllAudioOnlyParticipantsLabel": "Vis hver deltaker uten video for seg"
+  "settings.showAllAudioOnlyParticipantsLabel": "Vis hver deltaker uten video for seg",
+  "device.stopReceivingVideo": "Stopp mottak av video",
+  "device.startReceivingVideo": "Start mottak av video",
+  "room.muteAllConfirm": "Dempe mikrofonen til alle i rommet?",
+  "room.stopAllVideoConfirm": "Slå av kameraene til alle i rommet?",
+  "room.stopAllScreenSharingConfirm": "Stoppe skjermdeling for alle i rommet?",
+  "room.closeMeetingConfirm": "Avslutte møtet og koble fra alle i rommet?"
 }

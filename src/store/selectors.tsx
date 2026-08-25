@@ -28,7 +28,16 @@ const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNo
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
 const headlessSelector: Selector<boolean | undefined> = (state) => state.room.headless;
+const receiveVideoSelector: Selector<boolean> = (state) => state.me.receiveVideo;
 const recordingSelector: Selector<boolean | undefined> = (state) => state.room.recording;
+
+/**
+ * Shared empty result for the video consumer selectors. Returning one stable
+ * array identity keeps the memoized selectors downstream (and the pause/resume
+ * diff in mediaMiddleware) from recomputing on unrelated state changes while
+ * video reception is turned off.
+ */
+const EMPTY_CONSUMERS: StateConsumer[] = [];
 
 export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
 
@@ -164,14 +173,20 @@ const consumerSelectedPeerIdsSelector = createSelector(
  * A peer that has turned off its webcam but is still sharing a screen or an
  * extra video is therefore "video capable" and keeps its tile.
  *
+ * Webcams stop counting while video reception is turned off. Their consumers
+ * still exist and are not remotely paused, so without this a camera we are
+ * deliberately not receiving would keep beating an actual screen sharer to a
+ * spotlight slot and hand it a tile that renders nothing.
+ *
  * @returns {Set<string>} the set of peerIds with live video.
  */
 const videoCapablePeerIdsSelector = createSelector(
 	consumersSelect,
-	(consumers) => new Set(
+	receiveVideoSelector,
+	(consumers, receiveVideo) => new Set(
 		consumers
 			.filter((c) =>
-				(c.source === 'webcam' || c.source === 'screen' || c.source === 'extravideo') &&
+				((c.source === 'webcam' && receiveVideo) || c.source === 'screen' || c.source === 'extravideo') &&
 				!c.remotePaused
 			)
 			.map((c) => c.peerId)
@@ -285,15 +300,26 @@ export const micConsumerSelector = createSelector(
  * Returns the list of webcam state consumers of the peers that are
  * currently selected or spotlighted.
  * 
+ * Empty while video reception is turned off. That is the whole mechanism
+ * behind the feature: mediaMiddleware diffs resumedVideoConsumersSelector,
+ * sees every webcam drop out and pauses them on the server, so they stop
+ * costing downstream bandwidth.
+ * 
  * @returns {StateConsumer[]} the list of webcam state consumers.
  * @see spotlightPeersSelector
+ * @see resumedVideoConsumersSelector
  */
 export const spotlightWebcamConsumerSelector = createSelector(
 	spotlightPeersSelector,
 	consumersSelect,
-	(spotlights, consumers) => consumers.filter(
-		(c) => c.source === 'webcam' && !c.remotePaused && spotlights.includes(c.peerId)
-	)
+	receiveVideoSelector,
+	(spotlights, consumers, receiveVideo) => {
+		if (!receiveVideo) return EMPTY_CONSUMERS;
+
+		return consumers.filter(
+			(c) => c.source === 'webcam' && !c.remotePaused && spotlights.includes(c.peerId)
+		);
+	}
 );
 
 /**
@@ -444,7 +470,10 @@ export const someoneIsRecordingSelector = createSelector(
 export const fullscreenConsumerSelector = createSelector(
 	currentRoomSessionSelector,
 	consumersSelect,
-	(roomSession, consumers) => consumers.find((c) => c.id === roomSession.fullscreenConsumer)
+	receiveVideoSelector,
+	(roomSession, consumers, receiveVideo) => consumers.find(
+		(c) => c.id === roomSession.fullscreenConsumer && (receiveVideo || c.source !== 'webcam')
+	)
 );
 
 /**
@@ -456,7 +485,10 @@ export const fullscreenConsumerSelector = createSelector(
 export const windowedConsumersSelector = createSelector(
 	currentRoomSessionSelector,
 	consumersSelect,
-	(roomSession, consumers) => consumers.filter((c) => roomSession.windowedConsumers.includes(c.id))
+	receiveVideoSelector,
+	(roomSession, consumers, receiveVideo) => consumers.filter(
+		(c) => roomSession.windowedConsumers.includes(c.id) && (receiveVideo || c.source !== 'webcam')
+	)
 );
 
 /**
@@ -472,6 +504,11 @@ export const audioConsumerSelector = createSelector(
 /**
  * Returns the state consumers of all the visible video tiles.
  * This is the list of screen, webcam and extra video tiles, consumers only.
+ * 
+ * mediaMiddleware diffs this list on every action that can change it and
+ * pauses/resumes the corresponding consumers on the server, so anything not in
+ * here costs no downstream bandwidth. Webcams drop out of it entirely while
+ * video reception is turned off.
  * 
  * @returns {StateConsumer[]} the list of state consumers.
  * @see spotlightWebcamConsumerSelector

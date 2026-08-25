@@ -594,5 +594,11 @@
   "label.meetings.noUpcoming": "Nincsenek közelgő konferenciák",
   "label.meetings.upcoming": "Közelgő konferenciák",
   "label.management.tenants.testConnection": "Kapcsolat tesztelése",
-  "settings.showAllAudioOnlyParticipantsLabel": "Minden videó nélküli résztvevő külön megjelenítése"
+  "settings.showAllAudioOnlyParticipantsLabel": "Minden videó nélküli résztvevő külön megjelenítése",
+  "device.stopReceivingVideo": "Videó fogadásának leállítása",
+  "device.startReceivingVideo": "Videó fogadásának indítása",
+  "room.muteAllConfirm": "Elnémítja mindenki mikrofonját a szobában?",
+  "room.stopAllVideoConfirm": "Kikapcsolja mindenki kameráit a szobában?",
+  "room.stopAllScreenSharingConfirm": "Leállítja mindenki képernyőmegosztását a szobában?",
+  "room.closeMeetingConfirm": "Lebontja a konferenciát és lecsatlakoztat mindenkit a szobában?"
 }

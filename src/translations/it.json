@@ -594,5 +594,11 @@
   "label.meetings.noUpcoming": "Nessuna riunione in programma",
   "label.meetings.upcoming": "Prossime riunioni",
   "label.management.tenants.testConnection": "Prova connessione",
-  "settings.showAllAudioOnlyParticipantsLabel": "Mostra separatamente ogni partecipante senza video"
+  "settings.showAllAudioOnlyParticipantsLabel": "Mostra separatamente ogni partecipante senza video",
+  "device.stopReceivingVideo": "Interrompi la ricezione video",
+  "device.startReceivingVideo": "Avvia la ricezione video",
+  "room.muteAllConfirm": "Mutare il microfono di tutti i partecipanti nella stanza?",
+  "room.stopAllVideoConfirm": "Fermare le videocamere di tutti i partecipanti nella stanza?",
+  "room.stopAllScreenSharingConfirm": "Fermare la condivisione schermo di tutti i partecipanti nella stanza?",
+  "room.closeMeetingConfirm": "Terminare il meeting e disconnettere tutti i partecipanti nella stanza?"
 }

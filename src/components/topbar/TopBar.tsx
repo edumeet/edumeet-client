@@ -14,6 +14,7 @@ import LeaveButton from '../textbuttons/LeaveButton';
 import { formatDuration } from '../../utils/formatDuration';
 import LogoutButton from '../controlbuttons/LogoutButton';
 import RecordIcon from '../recordicon/RecordIcon';
+import ReceiveVideoIndicator from '../controlbuttons/ReceiveVideoIndicator';
 import CountdownTimerChip from '../countdowntimer/CountdownTimerChip';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import ControlButton from '../controlbuttons/ControlButton';
@@ -158,6 +159,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 				<TopBarDiv grow={1} />
 				<TopBarDiv marginRight={1}>
 					{ someoneIsRecording && <RecordIcon color='error' /> }
+					<ReceiveVideoIndicator />
 					<Box sx={{ display: { xs: 'block', sm: 'none' } }}>
 						<ControlButton type='iconbutton' onClick={handleClick} >
 							<MoreIcon />

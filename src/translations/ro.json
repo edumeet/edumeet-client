@@ -594,5 +594,11 @@
   "label.meetings.noUpcoming": "Nicio reuniune viitoare",
   "label.meetings.upcoming": "Reuniuni viitoare",
   "label.management.tenants.testConnection": "Testează conexiunea",
-  "settings.showAllAudioOnlyParticipantsLabel": "Afișează separat fiecare participant fără video"
+  "settings.showAllAudioOnlyParticipantsLabel": "Afișează separat fiecare participant fără video",
+  "device.stopReceivingVideo": "Oprește primirea video",
+  "device.startReceivingVideo": "Pornește primirea video",
+  "room.muteAllConfirm": "Amuțiți microfonul tuturor din sală?",
+  "room.stopAllVideoConfirm": "Opriți camerele tuturor din sală?",
+  "room.stopAllScreenSharingConfirm": "Opriți partajarea ecranului pentru toți din sală?",
+  "room.closeMeetingConfirm": "Închideți reuniunea și deconectați pe toți din sală?"
 }

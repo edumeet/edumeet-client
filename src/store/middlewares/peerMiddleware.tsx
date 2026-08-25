@@ -4,7 +4,7 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { peersActions } from '../slices/peersSlice';
 import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { setRaisedHand } from '../actions/meActions';
-import { stopMic, stopScreenSharing, stopWebcam } from '../actions/mediaActions';
+import { stopExtraVideo, stopMic, stopScreenSharing, stopWebcam } from '../actions/mediaActions';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { p2pModeSelector } from '../selectors';
 import { Logger } from '../../utils/Logger';
@@ -178,7 +178,11 @@ const createPeerMiddleware = ({
 
 							case 'moderator:stopVideo': {
 								dispatch(stopWebcam());
-								
+								// Extra video is a camera too, and has no moderator
+								// control of its own, so a moderator stopping video
+								// would otherwise leave a second camera running.
+								dispatch(stopExtraVideo());
+
 								break;
 							}
 

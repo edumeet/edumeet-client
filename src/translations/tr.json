@@ -594,5 +594,11 @@
   "label.meetings.noUpcoming": "Yaklaşan toplantı yok",
   "label.meetings.upcoming": "Yaklaşan toplantılar",
   "label.management.tenants.testConnection": "Bağlantıyı test et",
-  "settings.showAllAudioOnlyParticipantsLabel": "Videosu olmayan her katılımcıyı ayrı ayrı göster"
+  "settings.showAllAudioOnlyParticipantsLabel": "Videosu olmayan her katılımcıyı ayrı ayrı göster",
+  "device.stopReceivingVideo": "Video almayı durdur",
+  "device.startReceivingVideo": "Video almayı başlat",
+  "room.muteAllConfirm": "Odadaki herkesin mikrofonu kapatılsın mı?",
+  "room.stopAllVideoConfirm": "Odadaki herkesin kameraları kapatılsın mı?",
+  "room.stopAllScreenSharingConfirm": "Odadaki herkesin ekran paylaşımı durdurulsun mu?",
+  "room.closeMeetingConfirm": "Toplantı kapatılsın ve odadaki herkesin bağlantısı kesilsin mi?"
 }
