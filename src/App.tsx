@@ -18,6 +18,7 @@ import { Close } from '@mui/icons-material';
 import { meActions } from './store/slices/meSlice';
 import edumeetConfig from './utils/edumeetConfig';
 import VideoBackgroundDialog from './components/backgroundselectdialog/VideoBackgroundDialog';
+import { useWakeLock } from './utils/useWakeLock';
 
 type AppParams = {
 	id: string;
@@ -46,6 +47,8 @@ const App = (): React.JSX.Element => {
 	const roomState = useAppSelector((state) => state.room.state);
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
+
+	useWakeLock(roomState === 'joined' || roomState === 'lobby');
 	
 	useEffect(() => {
 		dispatch(startListeners());
