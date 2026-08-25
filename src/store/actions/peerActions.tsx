@@ -131,14 +131,14 @@ export const stopAllVideo = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('stopAllPeerVideos()');
 
-	dispatch(roomActions.updateRoom({ muteAllInProgress: true }));
+	dispatch(roomActions.updateRoom({ stopAllVideoInProgress: true }));
 
 	try {
 		await signalingService.sendRequest('moderator:stopAllVideo');
 	} catch (error) {
 		logger.error('stopAllPeerVideos() [error:%o]', error);
 	} finally {
-		dispatch(roomActions.updateRoom({ muteAllInProgress: false }));
+		dispatch(roomActions.updateRoom({ stopAllVideoInProgress: false }));
 	}
 };
 
@@ -149,13 +149,13 @@ export const stopAllScreenshare = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('stopAllScreenshare()');
 
-	dispatch(roomActions.updateRoom({ muteAllInProgress: true }));
+	dispatch(roomActions.updateRoom({ stopAllScreenshareInProgress: true }));
 
 	try {
 		await signalingService.sendRequest('moderator:stopAllScreenSharing');
 	} catch (error) {
 		logger.error('stopAllScreenshare() [error:%o]', error);
 	} finally {
-		dispatch(roomActions.updateRoom({ muteAllInProgress: false }));
+		dispatch(roomActions.updateRoom({ stopAllScreenshareInProgress: false }));
 	}
 };

@@ -1,29 +1,24 @@
-import { Button, ButtonProps } from '@mui/material';
+import { ButtonProps } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
+	stopAllVideoConfirmLabel,
 	stopAllVideoLabel,
 } from '../translated/translatedComponents';
 import { stopAllVideo } from '../../store/actions/peerActions';
+import ConfirmButton from './ConfirmButton';
 
 const StopAllVideoButton = ({ size }: Pick<ButtonProps, 'size'> = {}): React.JSX.Element => {
 	const dispatch = useAppDispatch();
-	const muteAllInProgress = useAppSelector((state) => state.room.muteAllInProgress);
-
-	const handleStopAll = (): void => {
-		dispatch(stopAllVideo());
-	};
+	const stopAllVideoInProgress = useAppSelector((state) => state.room.stopAllVideoInProgress);
 
 	return (
-		<Button
-			aria-label={stopAllVideoLabel()}
-			color='error'
-			variant='contained'
-			onClick={handleStopAll}
-			disabled={muteAllInProgress}
+		<ConfirmButton
+			label={stopAllVideoLabel()}
+			confirmContent={stopAllVideoConfirmLabel()}
+			disabled={stopAllVideoInProgress}
+			onConfirm={() => dispatch(stopAllVideo())}
 			size={size}
-		>
-			{ stopAllVideoLabel() }
-		</Button>
+		/>
 	);
 };
 

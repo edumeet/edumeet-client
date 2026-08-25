@@ -594,5 +594,12 @@
   "label.meetings.noUpcoming": "Нет предстоящих встреч",
   "label.meetings.upcoming": "Предстоящие встречи",
   "label.management.tenants.testConnection": "Проверить соединение",
-  "settings.showAllAudioOnlyParticipantsLabel": "Показывать каждого участника без видео отдельно"
+  "settings.showAllAudioOnlyParticipantsLabel": "Показывать каждого участника без видео отдельно",
+  "device.stopReceivingVideo": "Остановить приём видео",
+  "device.startReceivingVideo": "Начать приём видео",
+  "room.muteAllConfirm": "Отключить микрофон у всех в комнате?",
+  "room.stopAllVideoConfirm": "Остановить камеры у всех в комнате?",
+  "room.stopAllScreenSharingConfirm": "Прекратить совместное использование экрана у всех в комнате?",
+  "room.closeMeetingConfirm": "Закрыть видеоконференцию и отключить всех в комнате?",
+  "device.receivingVideoStopped": "Видео других участников не принимается. Нажмите, чтобы снова принимать"
 }

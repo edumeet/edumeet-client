@@ -594,5 +594,12 @@
   "label.meetings.noUpcoming": "Δεν υπάρχουν επερχόμενες συναντήσεις",
   "label.meetings.upcoming": "Επερχόμενες συναντήσεις",
   "label.management.tenants.testConnection": "Δοκιμή σύνδεσης",
-  "settings.showAllAudioOnlyParticipantsLabel": "Εμφάνιση κάθε συμμετέχοντα χωρίς βίντεο ξεχωριστά"
+  "settings.showAllAudioOnlyParticipantsLabel": "Εμφάνιση κάθε συμμετέχοντα χωρίς βίντεο ξεχωριστά",
+  "device.stopReceivingVideo": "Διακοπή λήψης βίντεο",
+  "device.startReceivingVideo": "Έναρξη λήψης βίντεο",
+  "room.muteAllConfirm": "Σίγαση του μικροφώνου όλων στην αίθουσα;",
+  "room.stopAllVideoConfirm": "Απενεργοποίηση των καμερών όλων στην αίθουσα;",
+  "room.stopAllScreenSharingConfirm": "Διακοπή της κοινής χρήσης οθόνης για όλους στην αίθουσα;",
+  "room.closeMeetingConfirm": "Κλείσιμο της συνάντησης και αποσύνδεση όλων στην αίθουσα;",
+  "device.receivingVideoStopped": "Δεν γίνεται λήψη βίντεο από τους άλλους συμμετέχοντες. Κάντε κλικ για να ξεκινήσει ξανά η λήψη"
 }

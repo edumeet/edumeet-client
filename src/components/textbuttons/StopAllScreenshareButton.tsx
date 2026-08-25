@@ -1,29 +1,25 @@
-import { Button, ButtonProps } from '@mui/material';
+import { ButtonProps } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
+	stopAllScreensharingConfirmLabel,
 	stopAllScreensharingLabel,
 } from '../translated/translatedComponents';
 import { stopAllScreenshare } from '../../store/actions/peerActions';
+import ConfirmButton from './ConfirmButton';
 
 const StopAllScreenshareButton = ({ size }: Pick<ButtonProps, 'size'> = {}): React.JSX.Element => {
 	const dispatch = useAppDispatch();
-	const muteAllInProgress = useAppSelector((state) => state.room.muteAllInProgress);
-
-	const handleStopAll = (): void => {
-		dispatch(stopAllScreenshare());
-	};
+	const stopAllScreenshareInProgress =
+		useAppSelector((state) => state.room.stopAllScreenshareInProgress);
 
 	return (
-		<Button
-			aria-label={stopAllScreensharingLabel()}
-			color='error'
-			variant='contained'
-			onClick={handleStopAll}
-			disabled={muteAllInProgress}
+		<ConfirmButton
+			label={stopAllScreensharingLabel()}
+			confirmContent={stopAllScreensharingConfirmLabel()}
+			disabled={stopAllScreenshareInProgress}
+			onConfirm={() => dispatch(stopAllScreenshare())}
 			size={size}
-		>
-			{ stopAllScreensharingLabel() }
-		</Button>
+		/>
 	);
 };
 

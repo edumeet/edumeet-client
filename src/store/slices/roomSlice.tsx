@@ -25,6 +25,7 @@ export interface RoomState {
 	muteAllInProgress?: boolean;
 	lobbyPeersPromotionInProgress?: boolean;
 	stopAllVideoInProgress?: boolean;
+	stopAllScreenshareInProgress?: boolean;
 	closeMeetingInProgress?: boolean;
 	clearChatInProgress?: boolean;
 	clearFileSharingInProgress?: boolean;

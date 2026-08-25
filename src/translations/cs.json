@@ -594,5 +594,12 @@
   "label.meetings.noUpcoming": "Žádné nadcházející schůzky",
   "label.meetings.upcoming": "Nadcházející schůzky",
   "label.management.tenants.testConnection": "Otestovat spojení",
-  "settings.showAllAudioOnlyParticipantsLabel": "Zobrazit každého účastníka bez obrazu samostatně"
+  "settings.showAllAudioOnlyParticipantsLabel": "Zobrazit každého účastníka bez obrazu samostatně",
+  "device.stopReceivingVideo": "Zastavit příjem videa",
+  "device.startReceivingVideo": "Spustit příjem videa",
+  "room.muteAllConfirm": "Ztišit mikrofon všem v místnosti?",
+  "room.stopAllVideoConfirm": "Vypnout kamery všem v místnosti?",
+  "room.stopAllScreenSharingConfirm": "Přerušit sdílení obrazovky všem v místnosti?",
+  "room.closeMeetingConfirm": "Ukončit meeting a odpojit všechny v místnosti?",
+  "device.receivingVideoStopped": "Video od ostatních účastníků se nepřijímá. Kliknutím jej začnete znovu přijímat"
 }

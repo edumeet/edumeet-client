@@ -594,5 +594,12 @@
   "label.meetings.noUpcoming": "Ingen kommende møder",
   "label.meetings.upcoming": "Kommende møder",
   "label.management.tenants.testConnection": "Test forbindelse",
-  "settings.showAllAudioOnlyParticipantsLabel": "Vis hver deltager uden video for sig"
+  "settings.showAllAudioOnlyParticipantsLabel": "Vis hver deltager uden video for sig",
+  "device.stopReceivingVideo": "Stop modtagelse af video",
+  "device.startReceivingVideo": "Start modtagelse af video",
+  "room.muteAllConfirm": "Sæt mikrofonen på lydløs for alle i rummet?",
+  "room.stopAllVideoConfirm": "Slå kameraerne fra for alle i rummet?",
+  "room.stopAllScreenSharingConfirm": "Stop skærmdeling for alle i rummet?",
+  "room.closeMeetingConfirm": "Afslut mødet og afbryd alle i rummet?",
+  "device.receivingVideoStopped": "Modtager ikke video fra de andre deltagere. Klik for at modtage igen"
 }

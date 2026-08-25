@@ -426,6 +426,26 @@ export const closeMeetingLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Close meeting for all'
 });
 
+export const muteAllConfirmLabel = (): string => intl.formatMessage({
+	id: 'room.muteAllConfirm',
+	defaultMessage: 'Mute the microphone of everyone in the room?'
+});
+
+export const stopAllVideoConfirmLabel = (): string => intl.formatMessage({
+	id: 'room.stopAllVideoConfirm',
+	defaultMessage: 'Turn off the cameras of everyone in the room?'
+});
+
+export const stopAllScreensharingConfirmLabel = (): string => intl.formatMessage({
+	id: 'room.stopAllScreenSharingConfirm',
+	defaultMessage: 'Stop screen sharing for everyone in the room?'
+});
+
+export const closeMeetingConfirmLabel = (): string => intl.formatMessage({
+	id: 'room.closeMeetingConfirm',
+	defaultMessage: 'Close the meeting and disconnect everyone in the room?'
+});
+
 export const muteAudioLabel = (): string => intl.formatMessage({
 	id: 'device.muteAudio',
 	defaultMessage: 'Mute audio'
@@ -449,6 +469,21 @@ export const stopVideoLabel = (): string => intl.formatMessage({
 export const startVideoLabel = (): string => intl.formatMessage({
 	id: 'device.startVideo',
 	defaultMessage: 'Start video'
+});
+
+export const stopReceivingVideoLabel = (): string => intl.formatMessage({
+	id: 'device.stopReceivingVideo',
+	defaultMessage: 'Stop receiving video'
+});
+
+export const startReceivingVideoLabel = (): string => intl.formatMessage({
+	id: 'device.startReceivingVideo',
+	defaultMessage: 'Start receiving video'
+});
+
+export const receivingVideoStoppedLabel = (): string => intl.formatMessage({
+	id: 'device.receivingVideoStopped',
+	defaultMessage: 'Not receiving video from other participants. Click to start receiving again'
 });
 
 export const startExtraVideoLabel = (): string => intl.formatMessage({

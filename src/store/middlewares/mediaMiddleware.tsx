@@ -324,7 +324,11 @@ const createMediaMiddleware = ({
 				// setters (like the lastN slider) to trigger a reconcile.
 				settingsActions.setHideNonVideo.match(action) ||
 				settingsActions.setShowAudioOnly.match(action) ||
-				settingsActions.setHideSelfView.match(action)
+				settingsActions.setHideSelfView.match(action) ||
+				// Turning video reception off empties spotlightWebcamConsumerSelector,
+				// so this diff is what actually pauses the incoming webcams on the
+				// server (and resumes them when it is turned back on).
+				meActions.setReceiveVideo.match(action)
 			) {
 				// Make a diff of the current state and the new state to find out
 				// which Consumers need to be paused/resumed.

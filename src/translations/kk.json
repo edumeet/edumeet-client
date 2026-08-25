@@ -594,5 +594,12 @@
   "label.meetings.noUpcoming": null,
   "label.meetings.upcoming": null,
   "label.management.tenants.testConnection": null,
-  "settings.showAllAudioOnlyParticipantsLabel": null
+  "settings.showAllAudioOnlyParticipantsLabel": null,
+  "device.stopReceivingVideo": null,
+  "device.startReceivingVideo": null,
+  "room.muteAllConfirm": null,
+  "room.stopAllVideoConfirm": null,
+  "room.stopAllScreenSharingConfirm": null,
+  "room.closeMeetingConfirm": null,
+  "device.receivingVideoStopped": null
 }
