@@ -600,5 +600,6 @@
   "room.muteAllConfirm": "Відключити мікрофон усім у кімнаті?",
   "room.stopAllVideoConfirm": "Зупинити камери всім у кімнаті?",
   "room.stopAllScreenSharingConfirm": "Зупинити спільне використання екрану всім у кімнаті?",
-  "room.closeMeetingConfirm": "Закрити зустріч і від’єднати всіх у кімнаті?"
+  "room.closeMeetingConfirm": "Закрити зустріч і від’єднати всіх у кімнаті?",
+  "device.receivingVideoStopped": "Відео інших учасників не приймається. Натисніть, щоб знову приймати"
 }

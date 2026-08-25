@@ -600,5 +600,6 @@
   "room.muteAllConfirm": null,
   "room.stopAllVideoConfirm": null,
   "room.stopAllScreenSharingConfirm": null,
-  "room.closeMeetingConfirm": null
+  "room.closeMeetingConfirm": null,
+  "device.receivingVideoStopped": null
 }

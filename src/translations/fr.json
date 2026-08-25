@@ -600,5 +600,6 @@
   "room.muteAllConfirm": "Mettre en sourdine le microphone de tous les participants de la salle ?",
   "room.stopAllVideoConfirm": "Désactiver les caméras de tous les participants de la salle ?",
   "room.stopAllScreenSharingConfirm": "Arrêter le partage d'écran de tous les participants de la salle ?",
-  "room.closeMeetingConfirm": "Fermer la réunion et déconnecter tous les participants de la salle ?"
+  "room.closeMeetingConfirm": "Fermer la réunion et déconnecter tous les participants de la salle ?",
+  "device.receivingVideoStopped": "La vidéo des autres participants n'est pas reçue. Cliquez pour la recevoir à nouveau"
 }

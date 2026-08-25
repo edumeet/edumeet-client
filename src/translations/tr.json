@@ -600,5 +600,6 @@
   "room.muteAllConfirm": "Odadaki herkesin mikrofonu kapatılsın mı?",
   "room.stopAllVideoConfirm": "Odadaki herkesin kameraları kapatılsın mı?",
   "room.stopAllScreenSharingConfirm": "Odadaki herkesin ekran paylaşımı durdurulsun mu?",
-  "room.closeMeetingConfirm": "Toplantı kapatılsın ve odadaki herkesin bağlantısı kesilsin mi?"
+  "room.closeMeetingConfirm": "Toplantı kapatılsın ve odadaki herkesin bağlantısı kesilsin mi?",
+  "device.receivingVideoStopped": "Diğer katılımcıların videosu alınmıyor. Yeniden almak için tıklayın"
 }

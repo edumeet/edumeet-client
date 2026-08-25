@@ -600,5 +600,6 @@
   "room.muteAllConfirm": "Mutare il microfono di tutti i partecipanti nella stanza?",
   "room.stopAllVideoConfirm": "Fermare le videocamere di tutti i partecipanti nella stanza?",
   "room.stopAllScreenSharingConfirm": "Fermare la condivisione schermo di tutti i partecipanti nella stanza?",
-  "room.closeMeetingConfirm": "Terminare il meeting e disconnettere tutti i partecipanti nella stanza?"
+  "room.closeMeetingConfirm": "Terminare il meeting e disconnettere tutti i partecipanti nella stanza?",
+  "device.receivingVideoStopped": "Il video degli altri partecipanti non viene ricevuto. Fare clic per riceverlo di nuovo"
 }

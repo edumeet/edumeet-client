@@ -600,5 +600,6 @@
   "room.muteAllConfirm": "Elnémítja mindenki mikrofonját a szobában?",
   "room.stopAllVideoConfirm": "Kikapcsolja mindenki kameráit a szobában?",
   "room.stopAllScreenSharingConfirm": "Leállítja mindenki képernyőmegosztását a szobában?",
-  "room.closeMeetingConfirm": "Lebontja a konferenciát és lecsatlakoztat mindenkit a szobában?"
+  "room.closeMeetingConfirm": "Lebontja a konferenciát és lecsatlakoztat mindenkit a szobában?",
+  "device.receivingVideoStopped": "Nem érkezik videó a többi résztvevőtől. Kattintson a fogadás újraindításához"
 }

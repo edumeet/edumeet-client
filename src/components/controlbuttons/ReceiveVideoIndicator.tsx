@@ -1,7 +1,10 @@
-import PersonalVideoOffIcon from '@mui/icons-material/PersonalVideoOutlined';
+// Outlined rather than the filled VideocamOff, which WebcamButton already uses
+// for your own camera being off. Same crossed out camera, distinct weight, so
+// the two meanings do not read as the same indicator.
+import VideoOffIcon from '@mui/icons-material/VideocamOffOutlined';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { meActions } from '../../store/slices/meSlice';
-import { startReceivingVideoLabel } from '../translated/translatedComponents';
+import { receivingVideoStoppedLabel } from '../translated/translatedComponents';
 import ControlButton from './ControlButton';
 
 /**
@@ -19,10 +22,10 @@ const ReceiveVideoIndicator = (): React.JSX.Element | null => {
 	return (
 		<ControlButton
 			type='iconbutton'
-			toolTip={startReceivingVideoLabel()}
+			toolTip={receivingVideoStoppedLabel()}
 			onClick={() => dispatch(meActions.setReceiveVideo(true))}
 		>
-			<PersonalVideoOffIcon />
+			<VideoOffIcon />
 		</ControlButton>
 	);
 };

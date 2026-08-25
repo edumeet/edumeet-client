@@ -481,6 +481,11 @@ export const startReceivingVideoLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Start receiving video'
 });
 
+export const receivingVideoStoppedLabel = (): string => intl.formatMessage({
+	id: 'device.receivingVideoStopped',
+	defaultMessage: 'Not receiving video from other participants. Click to start receiving again'
+});
+
 export const startExtraVideoLabel = (): string => intl.formatMessage({
 	id: 'label.addVideo',
 	defaultMessage: 'Add video'

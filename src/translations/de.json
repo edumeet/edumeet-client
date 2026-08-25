@@ -600,5 +600,6 @@
   "room.muteAllConfirm": "Das Mikrofon aller Teilnehmer im Raum stummschalten?",
   "room.stopAllVideoConfirm": "Die Kameras aller Teilnehmer im Raum ausschalten?",
   "room.stopAllScreenSharingConfirm": "Die Bildschirmfreigabe aller Teilnehmer im Raum stoppen?",
-  "room.closeMeetingConfirm": "Das Meeting beenden und alle Teilnehmer im Raum trennen?"
+  "room.closeMeetingConfirm": "Das Meeting beenden und alle Teilnehmer im Raum trennen?",
+  "device.receivingVideoStopped": "Das Video der anderen Teilnehmer wird nicht empfangen. Zum erneuten Empfangen klicken"
 }

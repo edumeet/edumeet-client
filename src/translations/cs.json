@@ -600,5 +600,6 @@
   "room.muteAllConfirm": "Ztišit mikrofon všem v místnosti?",
   "room.stopAllVideoConfirm": "Vypnout kamery všem v místnosti?",
   "room.stopAllScreenSharingConfirm": "Přerušit sdílení obrazovky všem v místnosti?",
-  "room.closeMeetingConfirm": "Ukončit meeting a odpojit všechny v místnosti?"
+  "room.closeMeetingConfirm": "Ukončit meeting a odpojit všechny v místnosti?",
+  "device.receivingVideoStopped": "Video od ostatních účastníků se nepřijímá. Kliknutím jej začnete znovu přijímat"
 }

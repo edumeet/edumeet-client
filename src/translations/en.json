@@ -600,6 +600,7 @@
 	"room.muteAllConfirm": "Mute the microphone of everyone in the room?",
 	"room.stopAllVideoConfirm": "Turn off the cameras of everyone in the room?",
 	"room.stopAllScreenSharingConfirm": "Stop screen sharing for everyone in the room?",
-	"room.closeMeetingConfirm": "Close the meeting and disconnect everyone in the room?"
+	"room.closeMeetingConfirm": "Close the meeting and disconnect everyone in the room?",
+	"device.receivingVideoStopped": "Not receiving video from other participants. Click to start receiving again"
 
 }

@@ -22,7 +22,7 @@ const ReceiveVideoButton = ({ size }: Pick<ButtonProps, 'size'> = {}): React.JSX
 		<Button
 			aria-label={label}
 			color='primary'
-			variant={receiveVideo ? 'outlined' : 'contained'}
+			variant='contained'
 			onClick={() => dispatch(meActions.setReceiveVideo(!receiveVideo))}
 			size={size}
 		>

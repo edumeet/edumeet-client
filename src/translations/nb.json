@@ -600,5 +600,6 @@
   "room.muteAllConfirm": "Dempe mikrofonen til alle i rommet?",
   "room.stopAllVideoConfirm": "Slå av kameraene til alle i rommet?",
   "room.stopAllScreenSharingConfirm": "Stoppe skjermdeling for alle i rommet?",
-  "room.closeMeetingConfirm": "Avslutte møtet og koble fra alle i rommet?"
+  "room.closeMeetingConfirm": "Avslutte møtet og koble fra alle i rommet?",
+  "device.receivingVideoStopped": "Mottar ikke video fra de andre deltakerne. Klikk for å motta igjen"
 }
