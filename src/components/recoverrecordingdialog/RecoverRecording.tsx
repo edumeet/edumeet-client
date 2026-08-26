@@ -25,7 +25,7 @@ let announced = false;
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
 	position: 'fixed',
-	bottom: theme.spacing(9),
+	top: theme.spacing(9),
 	left: theme.spacing(1),
 	zIndex: theme.zIndex.modal + 1,
 	backgroundColor: theme.palette.background.paper,
@@ -71,6 +71,19 @@ const RecoverRecording = ({ notify = false }: RecoverRecordingProps): React.JSX.
 
 	if (!recording) return null;
 
+	const handleOpen = async (): Promise<void> => {
+		const found = await recoverableRecording()
+			.catch((error) => {
+				logger.error('handleOpen() [error:%o]', error);
+
+				return undefined;
+			});
+
+		setRecording(found);
+
+		if (found) setOpen(true);
+	};
+
 	const handleSave = async (): Promise<void> => {
 		setBusy(true);
 
@@ -103,7 +116,7 @@ const RecoverRecording = ({ notify = false }: RecoverRecordingProps): React.JSX.
 		<>
 			{ !open &&
 				<Tooltip title={recoverRecordingTitleLabel()}>
-					<StyledIconButton color='warning' onClick={() => setOpen(true)}>
+					<StyledIconButton color='warning' onClick={handleOpen}>
 						<WarningAmberIcon />
 					</StyledIconButton>
 				</Tooltip>
