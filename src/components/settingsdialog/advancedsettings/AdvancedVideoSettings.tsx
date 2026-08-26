@@ -15,6 +15,7 @@ import {
 	ResolutionSelector
 } from '../SettingsSelectors';
 import { Resolution } from '../../../utils/types';
+import { supportedRecordingMimeTypes } from '../../../utils/recordingMimeTypes';
 
 const resolutions: Array<{ value: Resolution, label: () => string }> = [ {
 	value: 'low',
@@ -37,15 +38,6 @@ const resolutions: Array<{ value: Resolution, label: () => string }> = [ {
 	label: ultraResolutionLabel
 } ];
 const frameRates: Array<number> = [ 1, 5, 10, 15, 20, 25, 30, 60 ];
-const mimeTypeCapability: Record<string, Array<string>> = {
-	'video/webm': [ 'Chrome', 'Firefox', 'Safari' ],
-	'video/webm;codecs="vp8, opus"': [ 'Chrome', 'Firefox', 'Safari' ],
-	'video/webm;codecs="vp9, opus"': [ 'Chrome' ],
-	'video/webm;codecs="h264, opus"': [ 'Chrome' ],
-	'video/mp4': [],
-	'video/mpeg': [],
-	'video/x-matroska;codecs=avc1': [ 'Chrome' ]
-};
 
 const AdvancedVideoSettings = (): React.JSX.Element => {
 	const [ open, setOpen ] = React.useState(false);
@@ -65,7 +57,7 @@ const AdvancedVideoSettings = (): React.JSX.Element => {
 					<ResolutionSelector resolutions={ resolutions } />
 					<FrameRateSelector device='webcam' frameRates={ frameRates } />
 					<FrameRateSelector device='screen' frameRates={ frameRates } />
-					<MimeTypeSelector mimeTypeCapability={ Object.keys(mimeTypeCapability) } />
+					{ supportedRecordingMimeTypes().length > 0 && <MimeTypeSelector /> }
 				</List>
 			</Collapse>
 		</List>

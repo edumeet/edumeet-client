@@ -110,7 +110,7 @@ const ControlButtonsBar = (): React.JSX.Element => {
 				{ /* <ExtraAudio onClick={handleMoreClose} /> */ }
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
-				{ localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
+				{ !isMobile && localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
 				{ !isMobile && <Drawing onClick={handleMoreClose} /> }
 			</FloatingMenu>
 		</>

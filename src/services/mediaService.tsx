@@ -799,7 +799,7 @@ export class MediaService extends EventEmitter {
 
 	get localCapabilities(): LocalCapabilities {
 		return {
-			canRecord: Boolean(MediaRecorder),
+			canRecord: Boolean(MediaRecorder) && Boolean(navigator.mediaDevices.getDisplayMedia),
 			canTranscribe: Boolean(window.webkitSpeechRecognition) && edumeetConfig.transcriptionEnabled,
 		};
 	}
