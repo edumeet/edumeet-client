@@ -1418,6 +1418,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/dom-mediacapture-transform@npm:^0.1.11":
+  version: 0.1.12
+  resolution: "@types/dom-mediacapture-transform@npm:0.1.12"
+  dependencies:
+    "@types/dom-webcodecs": "npm:*"
+  checksum: 10c0/340d31b37dd12c4c145d9cb1e10057376bcbefeb32833bb829a9cea430e04ddc6f5a942479f92ad9f33adb8ee0fe208675cb1f3f1ad501c8e8c50f0a14cd496c
+  languageName: node
+  linkType: hard
+
+"@types/dom-webcodecs@npm:*":
+  version: 0.1.19
+  resolution: "@types/dom-webcodecs@npm:0.1.19"
+  checksum: 10c0/bb6e04daf5c22eda547db38ddc000d978b5af6203a519962859439a14c3455ce89edeea33d9464f698872a3540971c20c7cda354a5535b1a3bc18cbdddcdf843
+  languageName: node
+  linkType: hard
+
+"@types/dom-webcodecs@npm:0.1.13":
+  version: 0.1.13
+  resolution: "@types/dom-webcodecs@npm:0.1.13"
+  checksum: 10c0/16683fd0330fdfbb867affec1c18fd493d88433a4ec66257579adc5d07b07e9492268b4401e9017b7388b13750722365b0392b375e39c84e74f564d5b4f634a4
+  languageName: node
+  linkType: hard
+
 "@types/eslint@npm:^8.4.5":
   version: 8.56.12
   resolution: "@types/eslint@npm:8.56.12"
@@ -3084,9 +3107,9 @@ __metadata:
     jwt-decode: "npm:^4.0.0"
     marked: "npm:^18.0.7"
     material-react-table: "npm:^3.2.1"
+    mediabunny: "npm:^1.55.3"
     mediasoup-client: "npm:^3.22.0"
     moment: "npm:^2.30.1"
-    native-file-system-adapter: "npm:^3.0.1"
     notistack: "npm:^3.0.2"
     ortc-p2p: "github:edumeet/edumeet-ortc-p2p#0.1.4"
     random-string: "npm:^0.2.0"
@@ -3710,7 +3733,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fetch-blob@npm:^3.1.2, fetch-blob@npm:^3.1.4, fetch-blob@npm:^3.2.0":
+"fetch-blob@npm:^3.1.2, fetch-blob@npm:^3.1.4":
   version: 3.2.0
   resolution: "fetch-blob@npm:3.2.0"
   dependencies:
@@ -5283,6 +5306,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mediabunny@npm:^1.55.3":
+  version: 1.55.3
+  resolution: "mediabunny@npm:1.55.3"
+  dependencies:
+    "@types/dom-mediacapture-transform": "npm:^0.1.11"
+    "@types/dom-webcodecs": "npm:0.1.13"
+  checksum: 10c0/490c5ce3d50ae57af2d3460eefb6ffa90e1b8c9ad987e263a23ca41a1678cd38009e5e35f658596e26df49f228b78de957ba5b43c41fc9424981d33d10d12520
+  languageName: node
+  linkType: hard
+
 "mediasoup-client@npm:^3.22.0":
   version: 3.22.0
   resolution: "mediasoup-client@npm:3.22.0"
@@ -5506,18 +5539,6 @@ __metadata:
   version: 2.2.2
   resolution: "napi-macros@npm:2.2.2"
   checksum: 10c0/cc85daaf82a4f585d30561047cef0f3e702be769b5cf2ffadc6242bc5a1033f6b8269012e54178baf66f022bd18aa9ebb619f1b530cc19c1f9b96f9689affd50
-  languageName: node
-  linkType: hard
-
-"native-file-system-adapter@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "native-file-system-adapter@npm:3.0.1"
-  dependencies:
-    fetch-blob: "npm:^3.2.0"
-  dependenciesMeta:
-    fetch-blob:
-      optional: true
-  checksum: 10c0/2a60cd7fa6b92a85b1fc9dbbda91135f66af424e240e36c7c3708b987330844fb689e29a92a8a472d7216f685423e863af8acfb4b9a7bd73c0f6093fff4bf2fd
   languageName: node
   linkType: hard
 

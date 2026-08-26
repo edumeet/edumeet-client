@@ -5,6 +5,7 @@ import randomString from 'random-string';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { enterRoomLabel, myRoomsLabel, copyRoomLabel, copiedRoomLabel, joinLabel, roomNameLabel, imprintLabel, joinConsentLabel, privacyPolicyLabel } from '../../components/translated/translatedComponents';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
+import RecoverRecording from '../../components/recoverrecordingdialog/RecoverRecording';
 import StyledBackground from '../../components/StyledBackground';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { QRCode } from 'react-qrcode-logo';
@@ -120,6 +121,7 @@ const LandingPage = (): React.JSX.Element | null => {
 
 	return (
 		<StyledBackground>
+			<RecoverRecording />
 			<GenericDialog
 				showFooter={true}
 				precallTitleBackground={true}

@@ -910,7 +910,62 @@ export const selectScreenSharingFrameRateLabel = (): string => intl.formatMessag
 
 export const selectRecordingsPreferredMimeTypeLabel = (): string => intl.formatMessage({
 	id: 'settings.recordingsPreferredMimeType',
-	defaultMessage: 'Select your preferred video mime type'
+	defaultMessage: 'Select your preferred recording mime type'
+});
+
+export const discardLabel = (): string => intl.formatMessage({
+	id: 'label.discard',
+	defaultMessage: 'Discard'
+});
+
+export const savingRecordingLabel = (): string => intl.formatMessage({
+	id: 'room.savingRecording',
+	defaultMessage: 'Saving recording'
+});
+
+export const recoverRecordingTitleLabel = (): string => intl.formatMessage({
+	id: 'room.recoverRecordingTitle',
+	defaultMessage: 'Unsaved recording found'
+});
+
+export const recoverRecordingTextLabel = (): string => intl.formatMessage({
+	id: 'room.recoverRecordingText',
+	defaultMessage: 'A recording from an interrupted session is still stored in this browser. Save it now, or discard it.'
+});
+
+export const recoverRecordingSaveLabel = (): string => intl.formatMessage({
+	id: 'room.recoverRecordingSave',
+	defaultMessage: 'Save recording'
+});
+
+export const localRecordingFailedLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingFailed',
+	defaultMessage: 'The recording failed'
+});
+
+export const localRecordingSplitLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingSplit',
+	defaultMessage: 'Storage is running low. The recording was saved and a new one was started'
+});
+
+export const localRecordingSaveFailedLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingSaveFailed',
+	defaultMessage: 'Could not save the recording'
+});
+
+export const localRecordingUnsupportedLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingUnsupported',
+	defaultMessage: 'Recording is not supported in this browser'
+});
+
+export const manualRecordingMimeTypeLabel = (): string => intl.formatMessage({
+	id: 'settings.manualRecordingMimeType',
+	defaultMessage: 'Choose the recording format manually'
+});
+
+export const recordingBrowserDefaultLabel = (): string => intl.formatMessage({
+	id: 'settings.recordingBrowserDefault',
+	defaultMessage: 'browser default'
 });
 
 export const showStatsLabel = (): string => intl.formatMessage({

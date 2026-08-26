@@ -20,6 +20,7 @@ export interface RoomState {
 	updateBreakoutInProgress?: boolean;
 	transitBreakoutRoomInProgress?: boolean;
 	recording?: boolean;
+	savingRecording?: boolean;
 	lockInProgress?: boolean;
 	localeInProgress?: boolean;
 	muteAllInProgress?: boolean;
@@ -56,6 +57,7 @@ const initialState: RoomState = {
 	roomMode: 'P2P',
 	state: 'new',
 	recording: false,
+	savingRecording: false,
 	breakoutsEnabled: true,
 	chatEnabled: true,
 	filesharingEnabled: true,

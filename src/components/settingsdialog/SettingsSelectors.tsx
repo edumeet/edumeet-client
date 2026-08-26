@@ -1,10 +1,15 @@
 import {
+	Checkbox,
 	FormControl,
+	FormControlLabel,
 	FormHelperText,
 	MenuItem,
 	Select,
-	SelectChangeEvent
+	SelectChangeEvent,
+	Stack,
+	Typography
 } from '@mui/material';
+import { useEffect } from 'react';
 import {
 	updateVideoSettings,
 	updateAudioSettings,
@@ -16,6 +21,8 @@ import {
 	selectAudioChannelCountLabel,
 	selectAudioSampleRateLabel,
 	selectAudioSampleSizeLabel,
+	manualRecordingMimeTypeLabel,
+	recordingBrowserDefaultLabel,
 	selectOpusPtimeLabel,
 	selectRecordingsPreferredMimeTypeLabel,
 	selectResolutionLabel,
@@ -23,6 +30,12 @@ import {
 	selectWebcamFrameRateLabel
 } from '../translated/translatedComponents';
 import { settingsActions } from '../../store/slices/settingsSlice';
+import {
+	isRecordingMimeTypeSupported,
+	RecordingMimeType,
+	resolveRecordingMimeType,
+	supportedRecordingMimeTypes
+} from '../../utils/recordingMimeTypes';
 
 interface ResolutionSelectorProps {
 	resolutions: Array<{ value: Resolution, label: () => string }>
@@ -112,48 +125,56 @@ export const FrameRateSelector = ({
 	);
 };
 
-interface MimeTypeSelectorProps {
-	mimeTypeCapability: Array<string>;
-}
-
-export const MimeTypeSelector = ({
-	mimeTypeCapability
-}: MimeTypeSelectorProps): React.JSX.Element => {
-	const getRecorderSupportedMimeTypes = () => {
-		const mimeTypes: Array<string> = [];
-
-		if (typeof MediaRecorder === 'undefined') {
-			window.MediaRecorder.isTypeSupported = () => {
-				return false;
-			};
-		}
-
-		for (const mimeType of mimeTypeCapability) {
-			if (MediaRecorder.isTypeSupported(mimeType) && !mimeTypes.includes(mimeType)) {
-				mimeTypes.push(mimeType);
-			}
-		}
-
-		return mimeTypes;
-	};
-
+export const MimeTypeSelector = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
-	const mimeTypes = getRecorderSupportedMimeTypes();
+	const mimeTypes = supportedRecordingMimeTypes();
+	const manual = useAppSelector((state) => state.settings.manualRecordingMimeType);
 	const mimeType = useAppSelector((state) => state.settings.preferredRecorderMimeType);
+	const resolved = resolveRecordingMimeType(manual ? mimeType : undefined);
+
+	useEffect(() => {
+		if (mimeType && !isRecordingMimeTypeSupported(mimeType)) {
+			dispatch(settingsActions.setPreferredRecorderMimeType(''));
+			dispatch(settingsActions.setManualRecordingMimeType(false));
+		}
+	}, [ mimeType ]);
+
+	const typeName = (type: RecordingMimeType): string =>
+		(type.browserDefault ? `${type.name} (${recordingBrowserDefaultLabel()})` : type.name);
 
 	return (
 		<FormControl fullWidth>
+			<FormControlLabel
+				control={
+					<Checkbox
+						checked={manual}
+						onChange={(event): void => {
+							dispatch(settingsActions.setManualRecordingMimeType(event.target.checked));
+						}}
+					/>
+				}
+				label={ manualRecordingMimeTypeLabel() }
+			/>
 			<Select
-				value={ mimeType }
+				value={ (manual ? mimeType : resolved?.mimeType) ?? '' }
+				disabled={ !manual }
 				onChange={(event: SelectChangeEvent<string>): void => {
 					dispatch(settingsActions.setPreferredRecorderMimeType(event.target.value));
+				}}
+				renderValue={(value): string => {
+					const selected = mimeTypes.find((type) => type.mimeType === value);
+
+					return selected ? typeName(selected) : '';
 				}}
 				displayEmpty
 				autoWidth
 			>
-				{ mimeTypes.map((value, index) => (
-					<MenuItem key={index} value={value} >
-						{ value }
+				{ mimeTypes.map((type) => (
+					<MenuItem key={type.mimeType} value={type.mimeType} >
+						<Stack>
+							<Typography variant='body2'>{ typeName(type) }</Typography>
+							<Typography variant='caption' color='text.secondary'>{ type.mimeType }</Typography>
+						</Stack>
 					</MenuItem>
 				)) }
 			</Select>

@@ -18,6 +18,7 @@ import { Close } from '@mui/icons-material';
 import { meActions } from './store/slices/meSlice';
 import edumeetConfig from './utils/edumeetConfig';
 import VideoBackgroundDialog from './components/backgroundselectdialog/VideoBackgroundDialog';
+import RecoverRecording from './components/recoverrecordingdialog/RecoverRecording';
 import { useWakeLock } from './utils/useWakeLock';
 
 type AppParams = {
@@ -69,15 +70,22 @@ const App = (): React.JSX.Element => {
 		if (roomState !== 'joined' && roomState !== 'lobby') return;
 
 		const onBeforeUnload = (event: BeforeUnloadEvent) => {
-			dispatch(stopRecording());
 			event.preventDefault();
 			event.returnValue = '';
 		};
 
+		const onPageHide = (event: PageTransitionEvent) => {
+			if (event.persisted) return;
+
+			dispatch(stopRecording(true));
+		};
+
 		window.addEventListener('beforeunload', onBeforeUnload);
+		window.addEventListener('pagehide', onPageHide);
 
 		return () => {
 			window.removeEventListener('beforeunload', onBeforeUnload);
+			window.removeEventListener('pagehide', onPageHide);
 		};
 	}, [ roomState ]);
 
@@ -131,6 +139,7 @@ const App = (): React.JSX.Element => {
 				</StyledBackground>
 			</SnackbarProvider>
 			<VideoBackgroundDialog />
+			<RecoverRecording notify />
 		</>
 	);
 };
