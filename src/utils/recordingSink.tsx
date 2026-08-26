@@ -146,6 +146,10 @@ const runCleanup = async (): Promise<void> => {
 	for (const name of pending) await removeFile(name);
 };
 
+const preloadRemux = (): void => {
+	import('./recordingRemux').catch((error) => logger.debug('preloadRemux() [error:%o]', error));
+};
+
 const persistStorage = async (): Promise<boolean> => {
 	if (typeof navigator.storage?.persist !== 'function') return false;
 
@@ -384,6 +388,7 @@ class OpfsSink implements RecordingSink {
 
 	public async open(): Promise<void> {
 		persistStorage().then((persisted) => logger.debug('open() [persisted:%s]', persisted));
+		preloadRemux();
 
 		await runCleanup();
 		await this.#file.open();
