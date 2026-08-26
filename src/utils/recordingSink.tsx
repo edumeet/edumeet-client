@@ -314,15 +314,22 @@ const deliverToDestination = async (
 	extension: string,
 	destination: FileSystemFileHandle
 ): Promise<void> => {
+	const started = Date.now();
+
 	try {
 		const { remuxRecording } = await import('./recordingRemux');
 
 		await remuxRecording(file, extension, await destinationWriter(destination));
+
+		return logger.debug('deliverToDestination() [remuxed:%s bytes, elapsed:%sms]',
+			file.size, Date.now() - started);
 	} catch (error) {
 		logger.error('deliverToDestination() [error:%o]', error);
-
-		await copyToDestination(file, destination);
 	}
+
+	await copyToDestination(file, destination);
+
+	logger.debug('deliverToDestination() [copied:%s bytes, elapsed:%sms]', file.size, Date.now() - started);
 };
 
 const deliverAsDownload = async (file: File, filename: string, extension: string): Promise<void> => {
@@ -348,7 +355,7 @@ const deliverAsDownload = async (file: File, filename: string, extension: string
 		downloadFile(remuxed, filename);
 		scheduleCleanup(name);
 
-		return;
+		return logger.debug('deliverAsDownload() [remuxed:%s bytes]', remuxed.size);
 	} catch (error) {
 		logger.error('deliverAsDownload() [error:%o]', error);
 

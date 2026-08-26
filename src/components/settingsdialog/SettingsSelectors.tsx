@@ -130,7 +130,10 @@ export const MimeTypeSelector = (): React.JSX.Element => {
 	const mimeTypes = supportedRecordingMimeTypes();
 	const manual = useAppSelector((state) => state.settings.manualRecordingMimeType);
 	const mimeType = useAppSelector((state) => state.settings.preferredRecorderMimeType);
+	const recording = useAppSelector((state) => state.room.recording);
+	const savingRecording = useAppSelector((state) => state.room.savingRecording);
 	const resolved = resolveRecordingMimeType(manual ? mimeType : undefined);
+	const locked = Boolean(recording || savingRecording);
 
 	useEffect(() => {
 		if (mimeType && !isRecordingMimeTypeSupported(mimeType)) {
@@ -148,6 +151,7 @@ export const MimeTypeSelector = (): React.JSX.Element => {
 				control={
 					<Checkbox
 						checked={manual}
+						disabled={locked}
 						onChange={(event): void => {
 							dispatch(settingsActions.setManualRecordingMimeType(event.target.checked));
 						}}
@@ -157,7 +161,7 @@ export const MimeTypeSelector = (): React.JSX.Element => {
 			/>
 			<Select
 				value={ (manual ? mimeType : resolved?.mimeType) ?? '' }
-				disabled={ !manual }
+				disabled={ !manual || locked }
 				onChange={(event: SelectChangeEvent<string>): void => {
 					dispatch(settingsActions.setPreferredRecorderMimeType(event.target.value));
 				}}
