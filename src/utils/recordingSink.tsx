@@ -335,6 +335,16 @@ const savePicker = (options: RecordingSinkOptions): Promise<FileSystemFileHandle
 	});
 };
 
+const removeDestination = async (destination?: FileSystemFileHandle): Promise<void> => {
+	const removable = destination as unknown as { remove?: () => Promise<void> } | undefined;
+
+	try {
+		await removable?.remove?.();
+	} catch (error) {
+		logger.debug('removeDestination() [error:%o]', error);
+	}
+};
+
 const copyToDestination = async (file: File, destination: FileSystemFileHandle): Promise<void> => {
 	const writable = await destination.createWritable();
 
@@ -464,6 +474,7 @@ class OpfsSink implements RecordingSink {
 		if (!file || file.size === 0) {
 			writeStored(METADATA_KEY, undefined);
 			await removeFile(this.#metadata.name);
+			await removeDestination(this.#destination);
 
 			throw new Error('nothing was recorded');
 		}
@@ -552,6 +563,9 @@ export const createRecordingSink = async (options: RecordingSinkOptions): Promis
 
 	return new MemorySink(options.filename);
 };
+
+export const hasPendingRecording = (): boolean =>
+	Boolean(readStored<RecordingMetadata>(METADATA_KEY)?.name);
 
 export const recoverableRecording = async (): Promise<RecoverableRecording | undefined> => {
 	const metadata = readStored<RecordingMetadata>(METADATA_KEY);

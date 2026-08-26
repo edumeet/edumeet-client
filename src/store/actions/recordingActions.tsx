@@ -4,6 +4,7 @@ import { roomActions } from '../slices/roomSlice';
 import { Logger } from '../../utils/Logger';
 import {
 	createRecordingSink,
+	hasPendingRecording,
 	recoverableRecording,
 	RecordingSink,
 	storageHeadroom
@@ -100,9 +101,10 @@ const closeSink = (notify = true): AppThunk<void> => (dispatch) => {
 
 	closing = current.close()
 		.catch((error) => {
-			logger.error('closeSink() [error:%o]', error);
+			if (!notify) return logger.debug('closeSink() [error:%o]', error);
 
-			if (notify) dispatch(notifyError(localRecordingSaveFailedLabel()));
+			logger.error('closeSink() [error:%o]', error);
+			dispatch(notifyError(localRecordingSaveFailedLabel()));
 		})
 		.finally(() => dispatch(roomActions.updateRoom({ savingRecording: false })));
 };
@@ -216,7 +218,7 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 		return logger.error('Recording is not supported');
 	}
 
-	if (await recoverableRecording()) {
+	if (hasPendingRecording() && await recoverableRecording()) {
 		dispatch(notifyWarning(localRecordingPendingLabel()));
 
 		return logger.warn('recordingActions.start [pending:%s]', 'unsaved recording');
@@ -226,10 +228,17 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 
 	setBaseName(new URL(getState().signaling.url).searchParams.get('roomId'));
 
+	const pickerOpened = Date.now();
+
 	try {
 		await openSegmentSink(true);
+
+		logger.debug('recordingActions.start [picker:%sms]', Date.now() - pickerOpened);
 	} catch (error) {
-		if (isUserCancelled(error)) return;
+		if (isUserCancelled(error)) {
+			return logger.debug('recordingActions.start [cancelled:%sms, error:%s]',
+				Date.now() - pickerOpened, String(error));
+		}
 
 		logger.error('recordingActions.start [error:%o]', error);
 		dispatch(notifyError(localRecordingFailedLabel()));
@@ -311,9 +320,12 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 		dispatch(startStorageMonitor());
 		dispatch(roomActions.updateRoom({ recording: true }));
 	} catch (error) {
-		logger.error('recordingActions.start [error:%o]', error);
-
-		if (!isUserCancelled(error)) dispatch(notifyError(localRecordingFailedLabel()));
+		if (isUserCancelled(error)) {
+			logger.debug('recordingActions.start [cancelled:%s]', String(error));
+		} else {
+			logger.error('recordingActions.start [error:%o]', error);
+			dispatch(notifyError(localRecordingFailedLabel()));
+		}
 
 		runDetachListeners();
 		screenStream?.getTracks().forEach((track) => track.stop());
