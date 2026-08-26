@@ -6,6 +6,7 @@ import { notificationsActions } from '../../store/slices/notificationsSlice';
 import GenericDialog from '../genericdialog/GenericDialog';
 import {
 	discardLabel,
+	localRecordingGoneLabel,
 	localRecordingSaveFailedLabel,
 	recoverRecordingSaveLabel,
 	recoverRecordingTextLabel,
@@ -81,7 +82,12 @@ const RecoverRecording = ({ notify = false }: RecoverRecordingProps): React.JSX.
 
 		setRecording(found);
 
-		if (found) setOpen(true);
+		if (found) return setOpen(true);
+
+		dispatch(notificationsActions.enqueueNotification({
+			message: localRecordingGoneLabel(),
+			options: { variant: 'info' }
+		}));
 	};
 
 	const handleSave = async (): Promise<void> => {

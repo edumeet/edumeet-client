@@ -943,9 +943,19 @@ export const localRecordingFailedLabel = (): string => intl.formatMessage({
 	defaultMessage: 'The recording failed'
 });
 
+export const localRecordingGoneLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingGone',
+	defaultMessage: 'There is no unsaved recording left'
+});
+
 export const localRecordingSplitLabel = (): string => intl.formatMessage({
 	id: 'room.localRecordingSplit',
 	defaultMessage: 'Storage is running low. The recording was saved and a new one was started'
+});
+
+export const localRecordingPendingLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingPending',
+	defaultMessage: 'Save or discard the unsaved recording before starting a new one'
 });
 
 export const localRecordingSaveFailedLabel = (): string => intl.formatMessage({

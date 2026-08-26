@@ -2,11 +2,17 @@ import type { Consumer } from 'mediasoup-client/lib/Consumer';
 import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { Logger } from '../../utils/Logger';
-import { createRecordingSink, RecordingSink, storageHeadroom } from '../../utils/recordingSink';
+import {
+	createRecordingSink,
+	recoverableRecording,
+	RecordingSink,
+	storageHeadroom
+} from '../../utils/recordingSink';
 import { RecordingMimeType, resolveRecordingMimeType } from '../../utils/recordingMimeTypes';
 import { notificationsActions } from '../slices/notificationsSlice';
 import {
 	localRecordingFailedLabel,
+	localRecordingPendingLabel,
 	localRecordingSaveFailedLabel,
 	localRecordingSplitLabel,
 	localRecordingUnsupportedLabel
@@ -73,6 +79,13 @@ const notifyError = (message: string): AppThunk<void> => (dispatch) => {
 	dispatch(notificationsActions.enqueueNotification({
 		message,
 		options: { variant: 'error' }
+	}));
+};
+
+const notifyWarning = (message: string): AppThunk<void> => (dispatch) => {
+	dispatch(notificationsActions.enqueueNotification({
+		message,
+		options: { variant: 'warning' }
 	}));
 };
 
@@ -195,6 +208,12 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 		dispatch(notifyError(localRecordingUnsupportedLabel()));
 
 		return logger.error('Recording is not supported');
+	}
+
+	if (await recoverableRecording()) {
+		dispatch(notifyWarning(localRecordingPendingLabel()));
+
+		return logger.warn('recordingActions.start [pending:%s]', 'unsaved recording');
 	}
 
 	recordingType = recordingMimeType;
