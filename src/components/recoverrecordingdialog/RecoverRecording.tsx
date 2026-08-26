@@ -25,9 +25,9 @@ let announced = false;
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
 	position: 'fixed',
-	bottom: theme.spacing(2),
-	left: theme.spacing(2),
-	zIndex: theme.zIndex.drawer,
+	bottom: theme.spacing(9),
+	left: theme.spacing(1),
+	zIndex: theme.zIndex.modal + 1,
 	backgroundColor: theme.palette.background.paper,
 	'&:hover': {
 		backgroundColor: theme.palette.background.paper
@@ -101,11 +101,13 @@ const RecoverRecording = ({ notify = false }: RecoverRecordingProps): React.JSX.
 
 	return (
 		<>
-			<Tooltip title={recoverRecordingTitleLabel()}>
-				<StyledIconButton color='warning' onClick={() => setOpen(true)}>
-					<WarningAmberIcon />
-				</StyledIconButton>
-			</Tooltip>
+			{ !open &&
+				<Tooltip title={recoverRecordingTitleLabel()}>
+					<StyledIconButton color='warning' onClick={() => setOpen(true)}>
+						<WarningAmberIcon />
+					</StyledIconButton>
+				</Tooltip>
+			}
 			<GenericDialog
 				open={open}
 				onClose={() => setOpen(false)}

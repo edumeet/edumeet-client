@@ -6,6 +6,7 @@ const logger = new Logger('RecordingSink');
 
 const OPFS_DIRECTORY = 'recordings';
 const METADATA_KEY = 'edumeetRecording';
+const RECORDING_LOCK = 'edumeetRecordingInProgress';
 const CLEANUP_KEY = 'edumeetRecordingCleanup';
 const DOWNLOAD_URL_LIFETIME = 60000;
 
@@ -144,6 +145,37 @@ const runCleanup = async (): Promise<void> => {
 	writeStored(CLEANUP_KEY, undefined);
 
 	for (const name of pending) await removeFile(name);
+};
+
+let releaseRecordingLock: (() => void) | undefined;
+
+const holdRecordingLock = (): void => {
+	if (!navigator.locks) return;
+
+	navigator.locks
+		.request(RECORDING_LOCK, () => new Promise<void>((resolve) => {
+			releaseRecordingLock = resolve;
+		}))
+		.catch((error) => logger.debug('holdRecordingLock() [error:%o]', error));
+};
+
+const dropRecordingLock = (): void => {
+	releaseRecordingLock?.();
+	releaseRecordingLock = undefined;
+};
+
+const recordingInProgress = async (): Promise<boolean> => {
+	if (!navigator.locks) return false;
+
+	try {
+		const { held = [] } = await navigator.locks.query();
+
+		return held.some((lock) => lock.name === RECORDING_LOCK);
+	} catch (error) {
+		logger.debug('recordingInProgress() [error:%o]', error);
+
+		return false;
+	}
 };
 
 const preloadRemux = (): void => {
@@ -396,6 +428,7 @@ class OpfsSink implements RecordingSink {
 	public async open(): Promise<void> {
 		persistStorage().then((persisted) => logger.debug('open() [persisted:%s]', persisted));
 		preloadRemux();
+		holdRecordingLock();
 
 		await runCleanup();
 		await this.#file.open();
@@ -420,6 +453,8 @@ class OpfsSink implements RecordingSink {
 	public async close(): Promise<void> {
 		await this.#queue;
 		await this.#file.close();
+
+		dropRecordingLock();
 
 		const handle = await fileHandle(this.#metadata.name, false);
 		const file = await handle?.getFile();
@@ -520,6 +555,7 @@ export const recoverableRecording = async (): Promise<RecoverableRecording | und
 	const metadata = readStored<RecordingMetadata>(METADATA_KEY);
 
 	if (!metadata?.filename || !metadata.name) return undefined;
+	if (await recordingInProgress()) return undefined;
 
 	const handle = await fileHandle(metadata.name, false);
 	const file = await handle?.getFile();
