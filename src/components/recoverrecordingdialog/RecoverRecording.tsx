@@ -5,9 +5,10 @@ import { useAppDispatch } from '../../store/hooks';
 import { notificationsActions } from '../../store/slices/notificationsSlice';
 import GenericDialog from '../genericdialog/GenericDialog';
 import {
-	discardLabel,
+	cancelLabel,
 	localRecordingGoneLabel,
 	localRecordingSaveFailedLabel,
+	recoverRecordingDeleteLabel,
 	recoverRecordingSaveLabel,
 	recoverRecordingTextLabel,
 	recoverRecordingTitleLabel
@@ -141,8 +142,11 @@ const RecoverRecording = ({ notify = false }: RecoverRecordingProps): React.JSX.
 				}
 				actions={
 					<>
-						<Button onClick={handleDiscard} disabled={busy}>
-							{ discardLabel() }
+						<Button onClick={() => setOpen(false)} disabled={busy}>
+							{ cancelLabel() }
+						</Button>
+						<Button onClick={handleDiscard} disabled={busy} color='error'>
+							{ recoverRecordingDeleteLabel() }
 						</Button>
 						<Button
 							onClick={handleSave}

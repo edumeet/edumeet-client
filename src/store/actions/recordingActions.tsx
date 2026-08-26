@@ -107,7 +107,7 @@ const closeSink = (notify = true): AppThunk<void> => (dispatch) => {
 		.finally(() => dispatch(roomActions.updateRoom({ savingRecording: false })));
 };
 
-const startSegment = (usePicker: boolean): AppThunk<Promise<void>> => async (dispatch) => {
+const openSegmentSink = async (usePicker: boolean): Promise<void> => {
 	if (!recordingType) throw new Error('no recording mime type');
 
 	sink = await createRecordingSink({
@@ -116,6 +116,10 @@ const startSegment = (usePicker: boolean): AppThunk<Promise<void>> => async (dis
 		extension: recordingType.extension,
 		usePicker
 	});
+};
+
+const startSegmentRecorder = (): AppThunk<void> => (dispatch) => {
+	if (!recordingType) throw new Error('no recording mime type');
 
 	recorder = new MediaRecorder(recorderStream, {
 		mimeType: recordingType.mimeType,
@@ -154,7 +158,9 @@ const rollOverRecording = (): AppThunk<Promise<void>> => async (dispatch) => {
 	try {
 		await stopRecorder();
 		await closing;
-		await dispatch(startSegment(false));
+		await openSegmentSink(false);
+
+		dispatch(startSegmentRecorder());
 
 		dispatch(notificationsActions.enqueueNotification({
 			message: localRecordingSplitLabel(),
@@ -219,6 +225,17 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 	recordingType = recordingMimeType;
 
 	setBaseName(new URL(getState().signaling.url).searchParams.get('roomId'));
+
+	try {
+		await openSegmentSink(true);
+	} catch (error) {
+		if (isUserCancelled(error)) return;
+
+		logger.error('recordingActions.start [error:%o]', error);
+		dispatch(notifyError(localRecordingFailedLabel()));
+
+		return;
+	}
 
 	try {
 		audioContext = new AudioContext();
@@ -287,7 +304,7 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 
 		recorderStream = new MediaStream([ mixedAudioTrack, screenVideotrack ]);
 
-		await dispatch(startSegment(true));
+		dispatch(startSegmentRecorder());
 
 		signalingService.notify('recording', { recording: true });
 

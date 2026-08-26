@@ -913,11 +913,6 @@ export const selectRecordingsPreferredMimeTypeLabel = (): string => intl.formatM
 	defaultMessage: 'Select your preferred recording mime type'
 });
 
-export const discardLabel = (): string => intl.formatMessage({
-	id: 'label.discard',
-	defaultMessage: 'Discard'
-});
-
 export const savingRecordingLabel = (): string => intl.formatMessage({
 	id: 'room.savingRecording',
 	defaultMessage: 'Saving recording'
@@ -931,6 +926,11 @@ export const recoverRecordingTitleLabel = (): string => intl.formatMessage({
 export const recoverRecordingTextLabel = (): string => intl.formatMessage({
 	id: 'room.recoverRecordingText',
 	defaultMessage: 'A recording from an interrupted session is still stored in this browser. Save it now, or discard it.'
+});
+
+export const recoverRecordingDeleteLabel = (): string => intl.formatMessage({
+	id: 'room.recoverRecordingDelete',
+	defaultMessage: 'Delete video'
 });
 
 export const recoverRecordingSaveLabel = (): string => intl.formatMessage({

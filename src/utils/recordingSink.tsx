@@ -366,6 +366,7 @@ const deliverToDestination = async (
 
 const deliverAsDownload = async (file: File, filename: string, extension: string): Promise<void> => {
 	const name = `remux-${Date.now()}`;
+	const started = Date.now();
 	const headroom = await storageHeadroom();
 
 	if (headroom !== undefined && headroom < file.size) {
@@ -387,7 +388,8 @@ const deliverAsDownload = async (file: File, filename: string, extension: string
 		downloadFile(remuxed, filename);
 		scheduleCleanup(name);
 
-		return logger.debug('deliverAsDownload() [remuxed:%s bytes]', remuxed.size);
+		return logger.debug('deliverAsDownload() [remuxed:%s bytes, elapsed:%sms]',
+			remuxed.size, Date.now() - started);
 	} catch (error) {
 		logger.error('deliverAsDownload() [error:%o]', error);
 
