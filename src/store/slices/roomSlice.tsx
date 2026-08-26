@@ -21,6 +21,7 @@ export interface RoomState {
 	transitBreakoutRoomInProgress?: boolean;
 	recording?: boolean;
 	savingRecording?: boolean;
+	savingProgress?: number;
 	lockInProgress?: boolean;
 	localeInProgress?: boolean;
 	muteAllInProgress?: boolean;

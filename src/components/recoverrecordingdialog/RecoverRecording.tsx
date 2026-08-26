@@ -53,6 +53,7 @@ const RecoverRecording = ({ notify = false }: RecoverRecordingProps): React.JSX.
 	const [ recording, setRecording ] = useState<RecoverableRecording | undefined>();
 	const [ open, setOpen ] = useState(false);
 	const [ busy, setBusy ] = useState(false);
+	const [ progress, setProgress ] = useState(0);
 
 	useEffect(() => {
 		recoverableRecording()
@@ -93,9 +94,10 @@ const RecoverRecording = ({ notify = false }: RecoverRecordingProps): React.JSX.
 
 	const handleSave = async (): Promise<void> => {
 		setBusy(true);
+		setProgress(0);
 
 		try {
-			await saveRecoveredRecording();
+			await saveRecoveredRecording((value) => setProgress(Math.round(value * 100)));
 			setRecording(undefined);
 		} catch (error) {
 			logger.error('handleSave() [error:%o]', error);
@@ -152,9 +154,15 @@ const RecoverRecording = ({ notify = false }: RecoverRecordingProps): React.JSX.
 							onClick={handleSave}
 							disabled={busy}
 							variant='contained'
-							startIcon={busy ? <CircularProgress size={16} color='inherit' /> : undefined}
+							startIcon={busy ? <CircularProgress
+								size={16}
+								color='inherit'
+								variant={progress ? 'determinate' : 'indeterminate'}
+								value={progress}
+							/> : undefined}
 						>
-							{ recoverRecordingSaveLabel() }
+							{ busy && progress ? `${recoverRecordingSaveLabel()} ${progress}%` :
+								recoverRecordingSaveLabel() }
 						</Button>
 					</>
 				}

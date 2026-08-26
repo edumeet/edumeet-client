@@ -15,6 +15,10 @@ import { Logger } from './Logger';
 
 const logger = new Logger('RecordingRemux');
 
+/* eslint-disable no-unused-vars */
+export type ProgressCallback = (progress: number) => void;
+/* eslint-enable no-unused-vars */
+
 export interface PositionedWriter {
 	/* eslint-disable no-unused-vars */
 	write(data: Uint8Array<ArrayBuffer>, position: number): Promise<void>;
@@ -39,11 +43,14 @@ const streamTarget = (writer: PositionedWriter): StreamTarget => new StreamTarge
 export const remuxRecording = async (
 	file: File,
 	extension: string,
-	writer: PositionedWriter
+	writer: PositionedWriter,
+	onProgress?: ProgressCallback
 ): Promise<void> => {
 	const input = new Input({ formats: ALL_FORMATS, source: new BlobSource(file) });
 	const output = new Output({ format: outputFormat(extension), target: streamTarget(writer) });
 	const conversion = await Conversion.init({ input, output });
+
+	if (onProgress) conversion.onProgress = (progress) => onProgress(progress);
 
 	if (!conversion.isValid) {
 		logger.warn('remuxRecording() [discarded:%o]', conversion.discardedTracks);
@@ -52,5 +59,4 @@ export const remuxRecording = async (
 	}
 
 	await conversion.execute();
-	await writer.close();
 };

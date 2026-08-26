@@ -22,7 +22,9 @@ const Recording = ({
 	const canRecord = useAppSelector((state) => state.me.canRecord);
 	const recording = useAppSelector((state) => state.room.recording);
 	const savingRecording = useAppSelector((state) => state.room.savingRecording);
-	const recordTip = savingRecording ? savingRecordingLabel() :
+	const savingProgress = useAppSelector((state) => state.room.savingProgress);
+	const recordTip = savingRecording ?
+		(savingProgress ? `${savingRecordingLabel()} ${savingProgress}%` : savingRecordingLabel()) :
 		recording ? stopRecordingLabel() : startRecordingLabel();
 
 	return (
@@ -39,7 +41,11 @@ const Recording = ({
 
 			}}
 		>
-			{savingRecording ? <CircularProgress size={20} /> :
+			{savingRecording ? <CircularProgress
+				size={20}
+				variant={savingProgress ? 'determinate' : 'indeterminate'}
+				value={savingProgress}
+			/> :
 				recording ? <StopIcon /> : <RecordIcon />}
 			<MoreActions>
 				{recordTip}

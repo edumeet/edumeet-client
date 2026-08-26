@@ -13,7 +13,9 @@ import { RecordingMimeType, resolveRecordingMimeType } from '../../utils/recordi
 import { notificationsActions } from '../slices/notificationsSlice';
 import {
 	localRecordingFailedLabel,
+	localRecordingNotStartedLabel,
 	localRecordingPendingLabel,
+	localRecordingPickerClosedLabel,
 	localRecordingSaveFailedLabel,
 	localRecordingSplitLabel,
 	localRecordingUnsupportedLabel
@@ -46,6 +48,8 @@ let baseName = 'recording';
 let closing: Promise<void> | undefined;
 let storageMonitor: number | undefined;
 let rollingOver = false;
+let active = false;
+let lastProgress = -1;
 let detachListeners: Array<() => void> = [];
 
 const recordingFilename = (): string => {
@@ -90,6 +94,23 @@ const notifyWarning = (message: string): AppThunk<void> => (dispatch) => {
 	}));
 };
 
+const notifyInfo = (message: string): AppThunk<void> => (dispatch) => {
+	dispatch(notificationsActions.enqueueNotification({
+		message,
+		options: { variant: 'info' }
+	}));
+};
+
+const reportProgress = (progress: number): AppThunk<void> => (dispatch) => {
+	const percent = Math.min(100, Math.round(progress * 100));
+
+	if (percent === lastProgress) return;
+
+	lastProgress = percent;
+
+	dispatch(roomActions.updateRoom({ savingProgress: percent }));
+};
+
 const closeSink = (notify = true): AppThunk<void> => (dispatch) => {
 	const current = sink;
 
@@ -97,7 +118,9 @@ const closeSink = (notify = true): AppThunk<void> => (dispatch) => {
 
 	if (!current) return;
 
-	dispatch(roomActions.updateRoom({ savingRecording: true }));
+	lastProgress = -1;
+
+	dispatch(roomActions.updateRoom({ savingRecording: true, savingProgress: 0 }));
 
 	closing = current.close()
 		.catch((error) => {
@@ -106,17 +129,22 @@ const closeSink = (notify = true): AppThunk<void> => (dispatch) => {
 			logger.error('closeSink() [error:%o]', error);
 			dispatch(notifyError(localRecordingSaveFailedLabel()));
 		})
-		.finally(() => dispatch(roomActions.updateRoom({ savingRecording: false })));
+		.finally(() => {
+			lastProgress = -1;
+
+			dispatch(roomActions.updateRoom({ savingRecording: false, savingProgress: undefined }));
+		});
 };
 
-const openSegmentSink = async (usePicker: boolean): Promise<void> => {
+const openSegmentSink = (usePicker: boolean): AppThunk<Promise<void>> => async (dispatch) => {
 	if (!recordingType) throw new Error('no recording mime type');
 
 	sink = await createRecordingSink({
 		filename: recordingFilename(),
 		mimeType: recordingType.mimeType,
 		extension: recordingType.extension,
-		usePicker
+		usePicker,
+		onProgress: (progress) => dispatch(reportProgress(progress))
 	});
 };
 
@@ -160,7 +188,10 @@ const rollOverRecording = (): AppThunk<Promise<void>> => async (dispatch) => {
 	try {
 		await stopRecorder();
 		await closing;
-		await openSegmentSink(false);
+
+		if (!active) return logger.debug('rollOverRecording() [aborted:%s]', 'recording stopped');
+
+		await dispatch(openSegmentSink(false));
 
 		dispatch(startSegmentRecorder());
 
@@ -230,20 +261,33 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 
 	const pickerOpened = Date.now();
 
+	let pageHidden = false;
+
+	const onVisibilityChange = (): void => {
+		if (document.visibilityState === 'hidden') pageHidden = true;
+	};
+
+	document.addEventListener('visibilitychange', onVisibilityChange);
+
 	try {
-		await openSegmentSink(true);
+		await dispatch(openSegmentSink(true));
 
 		logger.debug('recordingActions.start [picker:%sms]', Date.now() - pickerOpened);
 	} catch (error) {
 		if (isUserCancelled(error)) {
-			return logger.debug('recordingActions.start [cancelled:%sms, error:%s]',
-				Date.now() - pickerOpened, String(error));
+			dispatch(notifyInfo(pageHidden ?
+				localRecordingPickerClosedLabel() : localRecordingNotStartedLabel()));
+
+			return logger.debug('recordingActions.start [cancelled:%sms, hidden:%s, error:%s]',
+				Date.now() - pickerOpened, pageHidden, String(error));
 		}
 
 		logger.error('recordingActions.start [error:%o]', error);
 		dispatch(notifyError(localRecordingFailedLabel()));
 
 		return;
+	} finally {
+		document.removeEventListener('visibilitychange', onVisibilityChange);
 	}
 
 	try {
@@ -315,6 +359,8 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 
 		dispatch(startSegmentRecorder());
 
+		active = true;
+
 		signalingService.notify('recording', { recording: true });
 
 		dispatch(startStorageMonitor());
@@ -322,11 +368,15 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 	} catch (error) {
 		if (isUserCancelled(error)) {
 			logger.debug('recordingActions.start [cancelled:%s]', String(error));
+			dispatch(notifyInfo(localRecordingNotStartedLabel()));
 		} else {
 			logger.error('recordingActions.start [error:%o]', error);
 			dispatch(notifyError(localRecordingFailedLabel()));
 		}
 
+		active = false;
+
+		stopStorageMonitor();
 		runDetachListeners();
 		screenStream?.getTracks().forEach((track) => track.stop());
 		audioContext?.close();
@@ -339,7 +389,11 @@ export const stopRecording = (immediate = false): AppThunk<void> => (
 	_getState,
 	{ signalingService }
 ) => {
-	logger.debug('stopRecording() [immediate:%s]', immediate);
+	logger.debug('stopRecording() [immediate:%s, active:%s]', immediate, active);
+
+	if (!active) return;
+
+	active = false;
 
 	signalingService.notify('recording', { recording: false });
 

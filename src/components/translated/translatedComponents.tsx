@@ -953,9 +953,19 @@ export const localRecordingSplitLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Storage is running low. The recording was saved and a new one was started'
 });
 
+export const localRecordingNotStartedLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingNotStarted',
+	defaultMessage: 'Recording was not started'
+});
+
 export const localRecordingPendingLabel = (): string => intl.formatMessage({
 	id: 'room.localRecordingPending',
 	defaultMessage: 'Save or discard the unsaved recording before starting a new one'
+});
+
+export const localRecordingPickerClosedLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingPickerClosed',
+	defaultMessage: 'The browser closed the save dialog, please try again'
 });
 
 export const localRecordingSaveFailedLabel = (): string => intl.formatMessage({

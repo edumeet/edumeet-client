@@ -1,6 +1,6 @@
 import { Logger } from './Logger';
 import { recordingContainer } from './recordingMimeTypes';
-import type { PositionedWriter } from './recordingRemux';
+import type { PositionedWriter, ProgressCallback } from './recordingRemux';
 
 const logger = new Logger('RecordingSink');
 
@@ -28,6 +28,7 @@ export interface RecordingSinkOptions {
 	mimeType: string;
 	extension: string;
 	usePicker?: boolean;
+	onProgress?: ProgressCallback;
 }
 
 export interface RecordingSink {
@@ -218,6 +219,7 @@ class OpfsFile {
 	#pending?: { resolve: () => void, reject: (error: Error) => void };
 	/* eslint-enable no-unused-vars */
 	public failed = false;
+	#closed = false;
 
 	constructor(name: string) {
 		this.#name = name;
@@ -259,6 +261,10 @@ class OpfsFile {
 	}
 
 	public async close(): Promise<void> {
+		if (this.#closed) return;
+
+		this.#closed = true;
+
 		try {
 			await this.#request({ type: 'close' });
 		} catch (error) {
@@ -277,14 +283,13 @@ class OpfsFile {
 	}
 }
 
-const opfsWriter = async (name: string): Promise<PositionedWriter & { name: string }> => {
+const opfsWriter = async (name: string): Promise<PositionedWriter> => {
 	const target = new OpfsFile(name);
 	let queue = Promise.resolve();
 
 	await target.open();
 
 	return {
-		name,
 		write: (data, position) => {
 			const buffer = data.slice().buffer;
 
@@ -301,10 +306,17 @@ const opfsWriter = async (name: string): Promise<PositionedWriter & { name: stri
 
 const destinationWriter = async (destination: FileSystemFileHandle): Promise<PositionedWriter> => {
 	const stream = await destination.createWritable();
+	let closed = false;
 
 	return {
 		write: (data, position) => stream.write({ type: 'write', position, data }),
-		close: () => stream.close()
+		close: async () => {
+			if (closed) return;
+
+			closed = true;
+
+			await stream.close();
+		}
 	};
 };
 
@@ -354,19 +366,25 @@ const copyToDestination = async (file: File, destination: FileSystemFileHandle):
 const deliverToDestination = async (
 	file: File,
 	extension: string,
-	destination: FileSystemFileHandle
+	destination: FileSystemFileHandle,
+	onProgress?: ProgressCallback
 ): Promise<void> => {
 	const started = Date.now();
+	const writer = await destinationWriter(destination);
 
 	try {
 		const { remuxRecording } = await import('./recordingRemux');
 
-		await remuxRecording(file, extension, await destinationWriter(destination));
+		await remuxRecording(file, extension, writer, onProgress);
+		await writer.close();
 
 		return logger.debug('deliverToDestination() [remuxed:%s bytes, elapsed:%sms]',
 			file.size, Date.now() - started);
 	} catch (error) {
 		logger.error('deliverToDestination() [error:%o]', error);
+
+		await writer.close().catch((closeError) =>
+			logger.debug('deliverToDestination() [error:%o]', closeError));
 	}
 
 	await copyToDestination(file, destination);
@@ -374,7 +392,12 @@ const deliverToDestination = async (
 	logger.debug('deliverToDestination() [copied:%s bytes, elapsed:%sms]', file.size, Date.now() - started);
 };
 
-const deliverAsDownload = async (file: File, filename: string, extension: string): Promise<void> => {
+const deliverAsDownload = async (
+	file: File,
+	filename: string,
+	extension: string,
+	onProgress?: ProgressCallback
+): Promise<void> => {
 	const name = `remux-${Date.now()}`;
 	const started = Date.now();
 	const headroom = await storageHeadroom();
@@ -385,10 +408,15 @@ const deliverAsDownload = async (file: File, filename: string, extension: string
 		return downloadFile(file, filename);
 	}
 
+	let writer: PositionedWriter | undefined;
+
 	try {
 		const { remuxRecording } = await import('./recordingRemux');
 
-		await remuxRecording(file, extension, await opfsWriter(name));
+		writer = await opfsWriter(name);
+
+		await remuxRecording(file, extension, writer, onProgress);
+		await writer.close();
 
 		const handle = await fileHandle(name, false);
 		const remuxed = await handle?.getFile();
@@ -403,6 +431,8 @@ const deliverAsDownload = async (file: File, filename: string, extension: string
 	} catch (error) {
 		logger.error('deliverAsDownload() [error:%o]', error);
 
+		await writer?.close().catch((closeError) =>
+			logger.debug('deliverAsDownload() [error:%o]', closeError));
 		await removeFile(name);
 	}
 
@@ -412,13 +442,14 @@ const deliverAsDownload = async (file: File, filename: string, extension: string
 const deliver = async (
 	file: File,
 	metadata: RecordingMetadata,
-	destination?: FileSystemFileHandle
+	destination?: FileSystemFileHandle,
+	onProgress?: ProgressCallback
 ): Promise<void> => {
 	if (destination) {
-		await deliverToDestination(file, metadata.extension, destination);
+		await deliverToDestination(file, metadata.extension, destination, onProgress);
 		await removeFile(metadata.name);
 	} else {
-		await deliverAsDownload(file, metadata.filename, metadata.extension);
+		await deliverAsDownload(file, metadata.filename, metadata.extension, onProgress);
 		scheduleCleanup(metadata.name);
 	}
 
@@ -428,12 +459,18 @@ const deliver = async (
 class OpfsSink implements RecordingSink {
 	#metadata: RecordingMetadata;
 	#destination?: FileSystemFileHandle;
+	#onProgress?: ProgressCallback;
 	#file: OpfsFile;
 	#queue: Promise<void> = Promise.resolve();
 
-	constructor(metadata: RecordingMetadata, destination?: FileSystemFileHandle) {
+	constructor(
+		metadata: RecordingMetadata,
+		destination?: FileSystemFileHandle,
+		onProgress?: ProgressCallback
+	) {
 		this.#metadata = metadata;
 		this.#destination = destination;
+		this.#onProgress = onProgress;
 		this.#file = new OpfsFile(metadata.name);
 	}
 
@@ -479,7 +516,7 @@ class OpfsSink implements RecordingSink {
 			throw new Error('nothing was recorded');
 		}
 
-		await deliver(file, this.#metadata, this.#destination);
+		await deliver(file, this.#metadata, this.#destination, this.#onProgress);
 
 		if (this.#file.failed) throw new Error('some recorded data was lost');
 	}
@@ -541,7 +578,7 @@ export const createRecordingSink = async (options: RecordingSinkOptions): Promis
 				filename: options.filename,
 				name: `rec-${Date.now()}`,
 				extension: options.extension
-			}, destination);
+			}, destination, options.onProgress);
 
 			await sink.open();
 
@@ -585,7 +622,7 @@ export const recoverableRecording = async (): Promise<RecoverableRecording | und
 	return { filename: metadata.filename, size: file.size };
 };
 
-export const saveRecoveredRecording = async (): Promise<void> => {
+export const saveRecoveredRecording = async (onProgress?: ProgressCallback): Promise<void> => {
 	const metadata = readStored<RecordingMetadata>(METADATA_KEY);
 
 	if (!metadata?.filename || !metadata.name) throw new Error('nothing to recover');
@@ -601,7 +638,7 @@ export const saveRecoveredRecording = async (): Promise<void> => {
 
 	if (!file || file.size === 0) throw new Error('nothing to recover');
 
-	await deliver(file, { ...metadata, extension }, destination);
+	await deliver(file, { ...metadata, extension }, destination, onProgress);
 };
 
 export const discardRecoveredRecording = async (): Promise<void> => {
