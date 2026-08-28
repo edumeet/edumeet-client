@@ -616,5 +616,12 @@
   "room.stopAllVideoConfirm": "Odadaki herkesin kameraları kapatılsın mı?",
   "room.stopAllScreenSharingConfirm": "Odadaki herkesin ekran paylaşımı durdurulsun mu?",
   "room.closeMeetingConfirm": "Toplantı kapatılsın ve odadaki herkesin bağlantısı kesilsin mi?",
-  "device.receivingVideoStopped": "Diğer katılımcıların videosu alınmıyor. Yeniden almak için tıklayın"
+  "device.receivingVideoStopped": "Diğer katılımcıların videosu alınmıyor. Yeniden almak için tıklayın",
+  "label.directMessages": "Doğrudan mesajlar",
+  "label.sendPrivateMessage": "Özel mesaj gönder",
+  "label.privateChatInput": "{displayName} kişisine özel mesaj",
+  "label.backToRoomChat": "Oda sohbetine dön",
+  "label.hideConversation": "Konuşmayı gizle",
+  "label.peerLeftMeeting": "{displayName} toplantıdan ayrıldı",
+  "label.chatMessageFailed": "Mesaj iletilemedi"
 }

@@ -616,5 +616,12 @@
   "room.stopAllVideoConfirm": "Fermare le videocamere di tutti i partecipanti nella stanza?",
   "room.stopAllScreenSharingConfirm": "Fermare la condivisione schermo di tutti i partecipanti nella stanza?",
   "room.closeMeetingConfirm": "Terminare il meeting e disconnettere tutti i partecipanti nella stanza?",
-  "device.receivingVideoStopped": "Il video degli altri partecipanti non viene ricevuto. Fare clic per riceverlo di nuovo"
+  "device.receivingVideoStopped": "Il video degli altri partecipanti non viene ricevuto. Fare clic per riceverlo di nuovo",
+  "label.directMessages": "Messaggi diretti",
+  "label.sendPrivateMessage": "Invia messaggio privato",
+  "label.privateChatInput": "Messaggio privato a {displayName}",
+  "label.backToRoomChat": "Torna alla chat della stanza",
+  "label.hideConversation": "Nascondi conversazione",
+  "label.peerLeftMeeting": "{displayName} ha lasciato la riunione",
+  "label.chatMessageFailed": "Impossibile consegnare il messaggio"
 }

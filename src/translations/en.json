@@ -617,5 +617,12 @@
 	"room.stopAllScreenSharingConfirm": "Stop screen sharing for everyone in the room?",
 	"room.closeMeetingConfirm": "Close the meeting and disconnect everyone in the room?",
 	"device.receivingVideoStopped": "Not receiving video from other participants. Click to start receiving again"
-
+,
+	"label.directMessages": "Direct messages",
+	"label.sendPrivateMessage": "Send private message",
+	"label.privateChatInput": "Private message to {displayName}",
+	"label.backToRoomChat": "Back to room chat",
+	"label.hideConversation": "Hide conversation",
+	"label.peerLeftMeeting": "{displayName} left the meeting",
+	"label.chatMessageFailed": "Could not deliver the message"
 }

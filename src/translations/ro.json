@@ -616,5 +616,12 @@
   "room.stopAllVideoConfirm": "Opriți camerele tuturor din sală?",
   "room.stopAllScreenSharingConfirm": "Opriți partajarea ecranului pentru toți din sală?",
   "room.closeMeetingConfirm": "Închideți reuniunea și deconectați pe toți din sală?",
-  "device.receivingVideoStopped": "Nu se primește video de la ceilalți participanți. Faceți clic pentru a primi din nou"
+  "device.receivingVideoStopped": "Nu se primește video de la ceilalți participanți. Faceți clic pentru a primi din nou",
+  "label.directMessages": "Mesaje directe",
+  "label.sendPrivateMessage": "Trimite mesaj privat",
+  "label.privateChatInput": "Mesaj privat către {displayName}",
+  "label.backToRoomChat": "Înapoi la chatul camerei",
+  "label.hideConversation": "Ascunde conversația",
+  "label.peerLeftMeeting": "{displayName} a părăsit întâlnirea",
+  "label.chatMessageFailed": "Mesajul nu a putut fi livrat"
 }

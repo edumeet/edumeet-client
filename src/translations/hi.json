@@ -616,5 +616,12 @@
   "room.stopAllVideoConfirm": null,
   "room.stopAllScreenSharingConfirm": null,
   "room.closeMeetingConfirm": null,
-  "device.receivingVideoStopped": null
+  "device.receivingVideoStopped": null,
+  "label.directMessages": null,
+  "label.sendPrivateMessage": null,
+  "label.privateChatInput": null,
+  "label.backToRoomChat": null,
+  "label.hideConversation": null,
+  "label.peerLeftMeeting": null,
+  "label.chatMessageFailed": null
 }

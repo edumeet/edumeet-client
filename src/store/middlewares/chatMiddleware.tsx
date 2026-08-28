@@ -2,6 +2,7 @@ import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { directMessagesActions } from '../slices/directMessagesSlice';
 import { uiActions } from '../slices/uiSlice';
 import { Logger } from '../../utils/Logger';
 
@@ -30,6 +31,18 @@ const createChatMiddleware = ({
 								break;
 							}
 
+							case 'privateChatMessage': {
+								const { chatMessage } = notification.data;
+								const { chatOpen, activeChatThread } = getState().ui;
+
+								dispatch(directMessagesActions.addDirectMessage({
+									peerId: chatMessage.peerId,
+									message: chatMessage,
+									unread: !(chatOpen && activeChatThread === chatMessage.peerId),
+								}));
+								break;
+							}
+
 							case 'moderator:clearChat': {
 								dispatch(roomSessionsActions.clearChat());
 								dispatch(uiActions.resetUnreadMessages());
@@ -47,7 +60,7 @@ const createChatMiddleware = ({
 				roomSessionsActions.addMessage.match(action) &&
 				action.payload.peerId !== getState().me.id &&
 				action.payload.sessionId === getState().me.sessionId &&
-				!getState().ui.chatOpen
+				!(getState().ui.chatOpen && !getState().ui.activeChatThread)
 			) {
 				dispatch(uiActions.addToUnreadMessages());
 			}

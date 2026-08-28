@@ -616,5 +616,12 @@
   "room.stopAllVideoConfirm": "Isključiti kamere svima u sobi?",
   "room.stopAllScreenSharingConfirm": "Zaustaviti dijeljenje ekrana svima u sobi?",
   "room.closeMeetingConfirm": "Završiti sastanak i odspojiti sve u sobi?",
-  "device.receivingVideoStopped": "Video ostalih sudionika se ne prima. Kliknite za ponovno primanje"
+  "device.receivingVideoStopped": "Video ostalih sudionika se ne prima. Kliknite za ponovno primanje",
+  "label.directMessages": "Izravne poruke",
+  "label.sendPrivateMessage": "Pošalji privatnu poruku",
+  "label.privateChatInput": "Privatna poruka za {displayName}",
+  "label.backToRoomChat": "Natrag na chat sobe",
+  "label.hideConversation": "Sakrij razgovor",
+  "label.peerLeftMeeting": "{displayName} je napustio(la) sastanak",
+  "label.chatMessageFailed": "Poruku nije bilo moguće isporučiti"
 }

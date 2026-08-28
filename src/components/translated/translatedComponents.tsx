@@ -136,6 +136,41 @@ export const chatInputLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Enter chat message...'
 });
 
+export const directMessagesLabel = (): string => intl.formatMessage({
+	id: 'label.directMessages',
+	defaultMessage: 'Direct messages'
+});
+
+export const sendPrivateMessageLabel = (): string => intl.formatMessage({
+	id: 'label.sendPrivateMessage',
+	defaultMessage: 'Send private message'
+});
+
+export const privateChatInputLabel = (displayName: string): string => intl.formatMessage({
+	id: 'label.privateChatInput',
+	defaultMessage: 'Private message to {displayName}'
+}, { displayName });
+
+export const backToRoomChatLabel = (): string => intl.formatMessage({
+	id: 'label.backToRoomChat',
+	defaultMessage: 'Back to room chat'
+});
+
+export const hideConversationLabel = (): string => intl.formatMessage({
+	id: 'label.hideConversation',
+	defaultMessage: 'Hide conversation'
+});
+
+export const peerLeftMeetingLabel = (displayName: string): string => intl.formatMessage({
+	id: 'label.peerLeftMeeting',
+	defaultMessage: '{displayName} left the meeting'
+}, { displayName });
+
+export const chatMessageFailedLabel = (): string => intl.formatMessage({
+	id: 'label.chatMessageFailed',
+	defaultMessage: 'Could not deliver the message'
+});
+
 export const chatScrollToBottomLabel = (): string => intl.formatMessage({
 	id: 'label.chatScrollToBottom',
 	defaultMessage: 'Scroll to bottom'

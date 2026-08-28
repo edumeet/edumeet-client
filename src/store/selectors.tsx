@@ -10,6 +10,7 @@ import { RoomSession } from './slices/roomSessionsSlice';
 import { MeState } from './slices/meSlice';
 import edumeetConfig from './../utils/edumeetConfig';
 import { DrawingState } from './slices/drawingSlice';
+import { DirectMessageThread } from './slices/directMessagesSlice';
 
 // eslint-disable-next-line no-unused-vars
 type Selector<S> = (state: RootState) => S;
@@ -30,6 +31,9 @@ const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
 const headlessSelector: Selector<boolean | undefined> = (state) => state.room.headless;
 const receiveVideoSelector: Selector<boolean> = (state) => state.me.receiveVideo;
 const recordingSelector: Selector<boolean | undefined> = (state) => state.room.recording;
+const directMessagesSelect: Selector<Record<string, DirectMessageThread>> = (state) => state.directMessages;
+const unreadMessagesSelect: Selector<number> = (state) => state.ui.unreadMessages;
+const activeChatThreadSelect: Selector<string | null> = (state) => state.ui.activeChatThread;
 
 /**
  * Shared empty result for the video consumer selectors. Returning one stable
@@ -423,6 +427,44 @@ export const filesSelector = createSelector(
 export const chatMessagesSelector = createSelector(
 	currentRoomSessionSelector,
 	(roomSession) => roomSession.chatHistory
+);
+
+const lastActivity = (thread: DirectMessageThread): number =>
+	thread.messages[thread.messages.length - 1]?.timestamp ?? Number.MAX_SAFE_INTEGER;
+
+/**
+ * Returns the visible private chat threads, most recently active first.
+ * 
+ * @returns {DirectMessageThread[]} the threads.
+ */
+export const directMessageThreadsSelector = createSelector(
+	directMessagesSelect,
+	(threads) => Object.values(threads)
+		.filter((thread) => !thread.hidden)
+		.sort((a, b) => lastActivity(b) - lastActivity(a))
+);
+
+/**
+ * Returns the private chat thread that is currently open, if any.
+ * 
+ * @returns {DirectMessageThread | undefined} the thread.
+ */
+export const activeDirectMessageThreadSelector = createSelector(
+	directMessagesSelect,
+	activeChatThreadSelect,
+	(threads, activeThread) => (activeThread ? threads[activeThread] : undefined)
+);
+
+/**
+ * Returns the number of unread messages in the room chat and all private chats.
+ * 
+ * @returns {number} the number of unread messages.
+ */
+export const totalUnreadMessagesSelector = createSelector(
+	unreadMessagesSelect,
+	directMessagesSelect,
+	(unreadMessages, threads) => Object.values(threads)
+		.reduce((unread, thread) => unread + thread.unread, unreadMessages)
 );
 
 /**

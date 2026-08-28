@@ -616,5 +616,12 @@
   "room.stopAllVideoConfirm": "Απενεργοποίηση των καμερών όλων στην αίθουσα;",
   "room.stopAllScreenSharingConfirm": "Διακοπή της κοινής χρήσης οθόνης για όλους στην αίθουσα;",
   "room.closeMeetingConfirm": "Κλείσιμο της συνάντησης και αποσύνδεση όλων στην αίθουσα;",
-  "device.receivingVideoStopped": "Δεν γίνεται λήψη βίντεο από τους άλλους συμμετέχοντες. Κάντε κλικ για να ξεκινήσει ξανά η λήψη"
+  "device.receivingVideoStopped": "Δεν γίνεται λήψη βίντεο από τους άλλους συμμετέχοντες. Κάντε κλικ για να ξεκινήσει ξανά η λήψη",
+  "label.directMessages": "Άμεσα μηνύματα",
+  "label.sendPrivateMessage": "Αποστολή ιδιωτικού μηνύματος",
+  "label.privateChatInput": "Ιδιωτικό μήνυμα προς {displayName}",
+  "label.backToRoomChat": "Επιστροφή στη συνομιλία της αίθουσας",
+  "label.hideConversation": "Απόκρυψη συνομιλίας",
+  "label.peerLeftMeeting": "Ο/Η {displayName} αποχώρησε από τη συνάντηση",
+  "label.chatMessageFailed": "Δεν ήταν δυνατή η παράδοση του μηνύματος"
 }

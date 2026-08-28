@@ -246,6 +246,17 @@ export interface ChatMessage {
 	text?: string;
 }
 
+export const MAX_DISPLAY_NAME_LENGTH = 128;
+export const MAX_CHAT_MESSAGE_LENGTH = 10000;
+
+export interface DirectChatMessage {
+	peerId: string;
+	to: string;
+	displayName?: string;
+	timestamp?: number;
+	text?: string;
+}
+
 export interface FilesharingFile {
 	peerId: string;
 	sessionId: string;

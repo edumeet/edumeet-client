@@ -616,5 +616,12 @@
   "room.stopAllVideoConfirm": "Kikapcsolja mindenki kameráit a szobában?",
   "room.stopAllScreenSharingConfirm": "Leállítja mindenki képernyőmegosztását a szobában?",
   "room.closeMeetingConfirm": "Lebontja a konferenciát és lecsatlakoztat mindenkit a szobában?",
-  "device.receivingVideoStopped": "Nem érkezik videó a többi résztvevőtől. Kattintson a fogadás újraindításához"
+  "device.receivingVideoStopped": "Nem érkezik videó a többi résztvevőtől. Kattintson a fogadás újraindításához",
+  "label.directMessages": "Közvetlen üzenetek",
+  "label.sendPrivateMessage": "Privát üzenet küldése",
+  "label.privateChatInput": "Privát üzenet neki: {displayName}",
+  "label.backToRoomChat": "Vissza a szoba csevegéséhez",
+  "label.hideConversation": "Beszélgetés elrejtése",
+  "label.peerLeftMeeting": "{displayName} elhagyta a megbeszélést",
+  "label.chatMessageFailed": "Az üzenetet nem sikerült kézbesíteni"
 }

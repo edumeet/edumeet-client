@@ -1,11 +1,12 @@
 import FloatingMenu from '../floatingmenu/FloatingMenu';
-import { usePeer, usePeerConsumers, usePermissionSelector } from '../../store/hooks';
+import { usePeer, usePeerConsumers, usePermissionSelector, useAppSelector } from '../../store/hooks';
 import AudioGainSlider from '../audiogainslider/AudioGainSlider';
 import { permissions } from '../../utils/roles';
 import StopAudio from '../menuitems/StopAudio';
 import StopVideo from '../menuitems/StopVideo';
 import StopScreenshare from '../menuitems/StopScreenshare';
 import Kick from '../menuitems/Kick';
+import SendPrivateMessage from '../menuitems/SendPrivateMessage';
 
 interface PeerMenuProps {
 	anchorEl: HTMLElement | null | undefined;
@@ -30,6 +31,8 @@ const PeerMenu = ({
 }: PeerMenuProps): React.JSX.Element => {
 	const peer = usePeer(peerId);
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
+	const canChat = usePermissionSelector(permissions.SEND_CHAT);
+	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
 	const {
 		micConsumer,
 		webcamConsumer,
@@ -48,6 +51,7 @@ const PeerMenu = ({
 					open={isMoreMenuOpen}
 					onClose={onClick}
 				>
+					{ chatEnabled && canChat && <SendPrivateMessage onClick={onClick} peer={peer} /> }
 					{ micConsumer && <AudioGainSlider consumer={micConsumer} /> }
 					{ isModerator && micConsumer && <StopAudio onClick={onClick} peer={peer} /> }
 					{ isModerator && webcamConsumer && <StopVideo onClick={onClick} peer={peer} /> }

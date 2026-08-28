@@ -616,5 +616,12 @@
   "room.stopAllVideoConfirm": "Slå kameraerne fra for alle i rummet?",
   "room.stopAllScreenSharingConfirm": "Stop skærmdeling for alle i rummet?",
   "room.closeMeetingConfirm": "Afslut mødet og afbryd alle i rummet?",
-  "device.receivingVideoStopped": "Modtager ikke video fra de andre deltagere. Klik for at modtage igen"
+  "device.receivingVideoStopped": "Modtager ikke video fra de andre deltagere. Klik for at modtage igen",
+  "label.directMessages": "Direkte beskeder",
+  "label.sendPrivateMessage": "Send privat besked",
+  "label.privateChatInput": "Privat besked til {displayName}",
+  "label.backToRoomChat": "Tilbage til rummets chat",
+  "label.hideConversation": "Skjul samtale",
+  "label.peerLeftMeeting": "{displayName} forlod mødet",
+  "label.chatMessageFailed": "Beskeden kunne ikke leveres"
 }

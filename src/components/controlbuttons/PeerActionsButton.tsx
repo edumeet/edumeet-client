@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PeerMenu from '../peermenu/PeerMenu';
-import { usePeerConsumers, usePermissionSelector } from '../../store/hooks';
+import { useAppSelector, usePeerConsumers, usePermissionSelector } from '../../store/hooks';
 import { permissions } from '../../utils/roles';
 import MoreButton from './MoreButton';
 
@@ -14,9 +14,11 @@ const PeerActionsButton = ({
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
 
 	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
+	const canChat = usePermissionSelector(permissions.SEND_CHAT);
+	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
 	const { micConsumer } = usePeerConsumers(peerId);
 
-	const shouldShow = peerId && (isModerator || micConsumer);
+	const shouldShow = Boolean(peerId && (isModerator || micConsumer || (chatEnabled && canChat)));
 
 	const handleMenuClose = () => {
 		setMoreAnchorEl(null);

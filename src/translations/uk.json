@@ -616,5 +616,12 @@
   "room.stopAllVideoConfirm": "Зупинити камери всім у кімнаті?",
   "room.stopAllScreenSharingConfirm": "Зупинити спільне використання екрану всім у кімнаті?",
   "room.closeMeetingConfirm": "Закрити зустріч і від’єднати всіх у кімнаті?",
-  "device.receivingVideoStopped": "Відео інших учасників не приймається. Натисніть, щоб знову приймати"
+  "device.receivingVideoStopped": "Відео інших учасників не приймається. Натисніть, щоб знову приймати",
+  "label.directMessages": "Особисті повідомлення",
+  "label.sendPrivateMessage": "Надіслати приватне повідомлення",
+  "label.privateChatInput": "Приватне повідомлення для {displayName}",
+  "label.backToRoomChat": "Назад до чату кімнати",
+  "label.hideConversation": "Сховати розмову",
+  "label.peerLeftMeeting": "{displayName} залишив(ла) зустріч",
+  "label.chatMessageFailed": "Не вдалося доставити повідомлення"
 }
