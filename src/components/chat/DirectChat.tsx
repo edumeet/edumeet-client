@@ -1,4 +1,4 @@
-import { alpha, Box, IconButton, styled, Typography } from '@mui/material';
+import { Box, IconButton, styled, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useEffect } from 'react';
 import { useAppDispatch } from '../../store/hooks';
@@ -6,6 +6,7 @@ import { sendDirectChat } from '../../store/actions/chatActions';
 import { directMessagesActions, DirectMessageThread } from '../../store/slices/directMessagesSlice';
 import { uiActions } from '../../store/slices/uiSlice';
 import ChatHistory from './ChatHistory';
+import { directChatBackground } from './directChatTint';
 import ChatInput from './ChatInput';
 import {
 	backToRoomChatLabel,
@@ -19,7 +20,7 @@ const DirectChatDiv = styled('div')(({ theme }) => ({
 	width: '100%',
 	height: '100%',
 	overflowY: 'auto',
-	backgroundColor: alpha(theme.palette.primary.main, 0.08),
+	backgroundColor: directChatBackground(theme),
 }));
 
 const HeaderDiv = styled(Box)(({ theme }) => ({

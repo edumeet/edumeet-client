@@ -136,6 +136,11 @@ export const chatInputLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Enter chat message...'
 });
 
+export const roomChatLabel = (): string => intl.formatMessage({
+	id: 'label.roomChat',
+	defaultMessage: 'Room chat'
+});
+
 export const directMessagesLabel = (): string => intl.formatMessage({
 	id: 'label.directMessages',
 	defaultMessage: 'Direct messages'

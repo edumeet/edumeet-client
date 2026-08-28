@@ -617,6 +617,7 @@
   "room.stopAllScreenSharingConfirm": "Die Bildschirmfreigabe aller Teilnehmer im Raum stoppen?",
   "room.closeMeetingConfirm": "Das Meeting beenden und alle Teilnehmer im Raum trennen?",
   "device.receivingVideoStopped": "Das Video der anderen Teilnehmer wird nicht empfangen. Zum erneuten Empfangen klicken",
+  "label.roomChat": "Raum-Chat",
   "label.directMessages": "Direktnachrichten",
   "label.sendPrivateMessage": "Private Nachricht senden",
   "label.privateChatInput": "Private Nachricht an {displayName}",

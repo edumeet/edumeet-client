@@ -1,4 +1,4 @@
-import { Badge, Box, IconButton, Paper, styled } from '@mui/material';
+import { Box, IconButton, Paper, styled } from '@mui/material';
 import { Peer } from '../../store/slices/peersSlice';
 import PanIcon from '@mui/icons-material/BackHand';
 import { useAppDispatch, useAppSelector, usePeerConsumers, usePermissionSelector } from '../../store/hooks';
@@ -66,7 +66,6 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 	const isSelected = useAppSelector((state) => state.roomSessions[peer.sessionId].selectedPeers.includes(peer.id));
 	const canChat = usePermissionSelector(permissions.SEND_CHAT);
 	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
-	const unreadMessages = useAppSelector((state) => state.directMessages[peer.id]?.unread ?? 0);
 
 	const shouldShow = Boolean(isModerator || micConsumer || (chatEnabled && canChat));
 	const hasAudio = micConsumer && !micConsumer.localPaused && !micConsumer.remotePaused;
@@ -79,9 +78,7 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 				if (isSelected) dispatch(roomSessionsActions.deselectPeer({ sessionId: peer.sessionId, peerId: peer.id }));
 				else dispatch(roomSessionsActions.selectPeer({ sessionId: peer.sessionId, peerId: peer.id }));
 			}}>
-				<Badge color='primary' badgeContent={unreadMessages} overlap='circular'>
-					<PeerAvatar src={peer.picture?.trim() || '/images/buddy.svg'} />
-				</Badge>
+				<PeerAvatar src={peer.picture?.trim() || '/images/buddy.svg'} />
 				{ peer.recording && <RecordIcon color='error' /> }
 				{ peer.raisedHand &&
 					<IconButton
@@ -111,7 +108,7 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 					size='small'
 				/>
 			</PeerDiv>
-			{ shouldShow && <PeerMenu anchorEl={moreAnchorEl} peerId={peer.id} onClick={handleMenuClose} /> }
+			{ shouldShow && <PeerMenu anchorEl={moreAnchorEl} peerId={peer.id} displayName={peer.displayName} onClick={handleMenuClose} /> }
 		</>
 	);
 };

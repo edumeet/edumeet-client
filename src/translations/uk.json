@@ -617,6 +617,7 @@
   "room.stopAllScreenSharingConfirm": "Зупинити спільне використання екрану всім у кімнаті?",
   "room.closeMeetingConfirm": "Закрити зустріч і від’єднати всіх у кімнаті?",
   "device.receivingVideoStopped": "Відео інших учасників не приймається. Натисніть, щоб знову приймати",
+  "label.roomChat": "Чат кімнати",
   "label.directMessages": "Особисті повідомлення",
   "label.sendPrivateMessage": "Надіслати приватне повідомлення",
   "label.privateChatInput": "Приватне повідомлення для {displayName}",

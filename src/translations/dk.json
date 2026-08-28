@@ -617,6 +617,7 @@
   "room.stopAllScreenSharingConfirm": "Stop skærmdeling for alle i rummet?",
   "room.closeMeetingConfirm": "Afslut mødet og afbryd alle i rummet?",
   "device.receivingVideoStopped": "Modtager ikke video fra de andre deltagere. Klik for at modtage igen",
+  "label.roomChat": "Rummets chat",
   "label.directMessages": "Direkte beskeder",
   "label.sendPrivateMessage": "Send privat besked",
   "label.privateChatInput": "Privat besked til {displayName}",

@@ -617,6 +617,7 @@
   "room.stopAllScreenSharingConfirm": "¿Detener la compartición de pantalla de todos los participantes de la sala?",
   "room.closeMeetingConfirm": "¿Cerrar la reunión y desconectar a todos los participantes de la sala?",
   "device.receivingVideoStopped": "No se recibe vídeo de los demás participantes. Haga clic para volver a recibirlo",
+  "label.roomChat": "Chat de la sala",
   "label.directMessages": "Mensajes directos",
   "label.sendPrivateMessage": "Enviar mensaje privado",
   "label.privateChatInput": "Mensaje privado para {displayName}",

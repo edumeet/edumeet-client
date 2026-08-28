@@ -617,6 +617,7 @@
   "room.stopAllScreenSharingConfirm": "Zaustaviti dijeljenje ekrana svima u sobi?",
   "room.closeMeetingConfirm": "Završiti sastanak i odspojiti sve u sobi?",
   "device.receivingVideoStopped": "Video ostalih sudionika se ne prima. Kliknite za ponovno primanje",
+  "label.roomChat": "Chat sobe",
   "label.directMessages": "Izravne poruke",
   "label.sendPrivateMessage": "Pošalji privatnu poruku",
   "label.privateChatInput": "Privatna poruka za {displayName}",

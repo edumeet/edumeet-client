@@ -617,6 +617,7 @@
   "room.stopAllScreenSharingConfirm": "Přerušit sdílení obrazovky všem v místnosti?",
   "room.closeMeetingConfirm": "Ukončit meeting a odpojit všechny v místnosti?",
   "device.receivingVideoStopped": "Video od ostatních účastníků se nepřijímá. Kliknutím jej začnete znovu přijímat",
+  "label.roomChat": "Chat místnosti",
   "label.directMessages": "Přímé zprávy",
   "label.sendPrivateMessage": "Odeslat soukromou zprávu",
   "label.privateChatInput": "Soukromá zpráva pro {displayName}",

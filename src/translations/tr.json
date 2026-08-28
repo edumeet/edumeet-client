@@ -617,6 +617,7 @@
   "room.stopAllScreenSharingConfirm": "Odadaki herkesin ekran paylaşımı durdurulsun mu?",
   "room.closeMeetingConfirm": "Toplantı kapatılsın ve odadaki herkesin bağlantısı kesilsin mi?",
   "device.receivingVideoStopped": "Diğer katılımcıların videosu alınmıyor. Yeniden almak için tıklayın",
+  "label.roomChat": "Oda sohbeti",
   "label.directMessages": "Doğrudan mesajlar",
   "label.sendPrivateMessage": "Özel mesaj gönder",
   "label.privateChatInput": "{displayName} kişisine özel mesaj",

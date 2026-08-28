@@ -27,14 +27,15 @@ const directMessagesSlice = createSlice({
 	name: 'directMessages',
 	initialState,
 	reducers: {
-		openThread: ((state, action: PayloadAction<{ peerId: string, displayName?: string }>) => {
-			const { peerId, displayName } = action.payload;
+		openThread: ((state, action: PayloadAction<{ peerId: string, displayName?: string, peerGone?: boolean }>) => {
+			const { peerId, displayName, peerGone } = action.payload;
 
 			if (!state[peerId]) state[peerId] = createThread(peerId, displayName);
 
 			const thread = state[peerId];
 
 			if (displayName) thread.displayName = displayName;
+			if (peerGone !== undefined) thread.peerGone = peerGone;
 
 			thread.hidden = false;
 			thread.unread = 0;

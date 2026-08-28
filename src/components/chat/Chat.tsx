@@ -32,7 +32,7 @@ const Chat = (): React.JSX.Element => {
 		<ChatDiv>
 			{ isChatModerator && <ChatModerator /> }
 			<ThreadList />
-			<ChatHistory messages={chatMessages} />
+			<ChatHistory messages={chatMessages} peerActions />
 			{ canChat && <ChatInput label={chatInputLabel()} onSend={(message) => dispatch(sendChat(message))} /> }
 		</ChatDiv>
 	);

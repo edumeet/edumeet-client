@@ -95,17 +95,22 @@ export const sendDirectChat = (to: string, message: string): AppThunk<Promise<bo
  * This thunk action opens the private chat thread with a peer.
  * 
  * @param peerId - Id of the peer to chat with.
+ * @param fallbackName - Name to use when the peer has already left.
  * @returns {AppThunk<void>}
  */
-export const openDirectChat = (peerId: string): AppThunk<void> => (
+export const openDirectChat = (peerId: string, fallbackName?: string): AppThunk<void> => (
 	dispatch,
 	getState
 ): void => {
 	logger.debug('openDirectChat() [peerId:"%s"]', peerId);
 
-	const displayName = getState().peers[peerId]?.displayName;
+	const peer = getState().peers[peerId];
 
-	dispatch(directMessagesActions.openThread({ peerId, displayName }));
+	dispatch(directMessagesActions.openThread({
+		peerId,
+		displayName: peer?.displayName ?? fallbackName,
+		peerGone: !peer,
+	}));
 	dispatch(uiActions.setUi({ chatOpen: true, activeChatThread: peerId }));
 };
 

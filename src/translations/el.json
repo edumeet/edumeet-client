@@ -617,6 +617,7 @@
   "room.stopAllScreenSharingConfirm": "Διακοπή της κοινής χρήσης οθόνης για όλους στην αίθουσα;",
   "room.closeMeetingConfirm": "Κλείσιμο της συνάντησης και αποσύνδεση όλων στην αίθουσα;",
   "device.receivingVideoStopped": "Δεν γίνεται λήψη βίντεο από τους άλλους συμμετέχοντες. Κάντε κλικ για να ξεκινήσει ξανά η λήψη",
+  "label.roomChat": "Συνομιλία αίθουσας",
   "label.directMessages": "Άμεσα μηνύματα",
   "label.sendPrivateMessage": "Αποστολή ιδιωτικού μηνύματος",
   "label.privateChatInput": "Ιδιωτικό μήνυμα προς {displayName}",

@@ -23,9 +23,10 @@ interface HistoryMessage {
 
 interface ChatHistoryProps {
 	messages: HistoryMessage[];
+	peerActions?: boolean;
 }
 
-const ChatHistory = ({ messages }: ChatHistoryProps): React.JSX.Element => {
+const ChatHistory = ({ messages, peerActions }: ChatHistoryProps): React.JSX.Element => {
 	const chatHistoryRef = useRef<ScrollingList>(null);
 	const [ atBottom, setAtBottom ] = useState(true);
 	const meId = useAppSelector((state) => state.me.id);
@@ -60,6 +61,8 @@ const ChatHistory = ({ messages }: ChatHistoryProps): React.JSX.Element => {
 							text={message.text}
 							isMe={message.peerId === meId}
 							format={format}
+							peerId={message.peerId}
+							peerActions={peerActions}
 						/>
 					);
 				})}

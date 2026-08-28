@@ -1,4 +1,4 @@
-import { Box, IconButton, Paper, styled, Tooltip, Typography } from '@mui/material';
+import { Box, Divider, IconButton, Paper, styled, Tooltip, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -7,7 +7,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { directMessageThreadsSelector } from '../../store/selectors';
 import { directMessagesActions, DirectMessageThread } from '../../store/slices/directMessagesSlice';
 import { uiActions } from '../../store/slices/uiSlice';
-import { directMessagesLabel, hideConversationLabel, meLabel } from '../translated/translatedComponents';
+import { directMessagesLabel, hideConversationLabel, roomChatLabel } from '../translated/translatedComponents';
+import { directChatBackground } from './directChatTint';
 
 const ThreadListDiv = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -36,7 +37,7 @@ const ThreadDiv = styled(Paper)(({ theme }) => ({
 	padding: theme.spacing(0.5),
 	marginTop: theme.spacing(0.5),
 	cursor: 'pointer',
-	backgroundColor: theme.sideContentItemColor,
+	backgroundColor: directChatBackground(theme),
 	'& .hideThread': {
 		visibility: 'hidden',
 	},
@@ -59,6 +60,11 @@ const UnreadCount = styled(Box)(({ theme }) => ({
 	fontSize: theme.typography.caption.fontSize,
 }));
 
+const RoomChatDivider = styled(Divider)(({ theme }) => ({
+	marginTop: theme.spacing(1),
+	marginBottom: theme.spacing(0.5),
+}));
+
 const ThreadText = styled(Box)({
 	display: 'flex',
 	flexDirection: 'column',
@@ -72,26 +78,13 @@ const EllipsisTypography = styled(Typography)({
 	whiteSpace: 'nowrap',
 });
 
-// The messages render as markdown, so the row preview has to show the rendered
-// intent rather than the source.
-const previewText = (text = ''): string => text
-	.replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
-	.replace(/[*_~`>#]/g, '')
-	.replace(/\s+/g, ' ')
-	.trim();
-
 const ThreadRow = ({ thread }: { thread: DirectMessageThread }): React.JSX.Element => {
 	const dispatch = useAppDispatch();
-	const meId = useAppSelector((state) => state.me.id);
-	const lastMessage = thread.messages[thread.messages.length - 1];
-	const preview = lastMessage &&
-		`${lastMessage.peerId === meId ? `${meLabel()}: ` : ''}${previewText(lastMessage.text)}`;
 
 	return (
 		<ThreadDiv onClick={() => dispatch(uiActions.setUi({ activeChatThread: thread.peerId }))}>
 			<ThreadText>
 				<EllipsisTypography variant='body2'>{ thread.displayName }</EllipsisTypography>
-				<EllipsisTypography variant='caption' color='text.disabled'>{ preview }</EllipsisTypography>
 			</ThreadText>
 			{ thread.unread > 0 && <UnreadCount>{ thread.unread }</UnreadCount> }
 			<Tooltip title={hideConversationLabel()}>
@@ -130,6 +123,8 @@ const ThreadList = (): React.JSX.Element | null => {
 					{ threads.map((thread) => <ThreadRow key={thread.peerId} thread={thread} />) }
 				</ThreadRows>
 			}
+			<RoomChatDivider />
+			<Typography variant='caption' color='text.disabled'>{ roomChatLabel() }</Typography>
 		</ThreadListDiv>
 	);
 };
