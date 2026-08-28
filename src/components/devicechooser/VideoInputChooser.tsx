@@ -1,4 +1,3 @@
-import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { updatePreviewWebcam, updateWebcam } from '../../store/actions/mediaActions';
 import {
@@ -7,12 +6,11 @@ import {
 	useDeviceSelector
 } from '../../store/hooks';
 import {
-	applyLabel,
 	noVideoDevicesLabel,
 	selectVideoDeviceLabel,
 	videoDeviceLabel
 } from '../translated/translatedComponents';
-import DeviceChooser, { ChooserDiv } from './DeviceChooser';
+import DeviceChooser, { ApplyButton, ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { meActions } from '../../store/slices/meSlice';
 import { BlurButton, VideoBackgroundButton } from '../settingsdialog/SettingsSwitches';
@@ -74,14 +72,10 @@ const VideoInputChooser = ({
 					{ withBlur && <BlurButton disabled={videoDevices.length === 0 || videoInProgress} /> }
 					{ withVideoBackground && <VideoBackgroundButton disabled={videoDevices.length === 0 || videoInProgress} /> }
 					{ withConfirm && (selectedVideoDevice !== videoDevice) && (
-						<Button
-							style={{ minWidth: 'fit-content' }}
-							variant='text'
+						<ApplyButton
 							onClick={handleConfirm}
 							disabled={videoInProgress}
-						>
-							{applyLabel()}
-						</Button>
+						/>
 					)}
 				</>}
 			/>
