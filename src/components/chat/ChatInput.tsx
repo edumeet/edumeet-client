@@ -42,6 +42,7 @@ const ChatInput = ({ label, onSend, disabled }: ChatInputProps): React.JSX.Eleme
 				value={message}
 				margin='dense'
 				maxLength={MAX_CHAT_MESSAGE_LENGTH}
+				autoComplete='off'
 				disabled={disabled}
 				setValue={setMessage}
 				onEnter={handleSendMessage}

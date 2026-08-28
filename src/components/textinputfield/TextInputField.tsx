@@ -16,6 +16,7 @@ interface TextInputFieldProps {
 	randomizeOnBlank?: boolean;
 	autoFocus?: boolean;
 	maxLength?: number;
+	autoComplete?: string;
 }
 
 const TextInputField = ({
