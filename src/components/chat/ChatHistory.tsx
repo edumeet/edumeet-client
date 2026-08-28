@@ -1,6 +1,8 @@
 import { Button, styled } from '@mui/material';
-import { Suspense, useRef, useState } from 'react';
-import { useAppSelector } from '../../store/hooks';
+import { Suspense, useMemo, useRef, useState } from 'react';
+import { shallowEqual } from 'react-redux';
+import { useAppSelector, usePermissionSelector } from '../../store/hooks';
+import { permissions } from '../../utils/roles';
 import ScrollingList from '../scrollinglist/ScrollingList';
 import { chatScrollToBottomLabel } from '../translated/translatedComponents';
 import { lazy } from 'react';
@@ -30,6 +32,11 @@ const ChatHistory = ({ messages, peerActions }: ChatHistoryProps): React.JSX.Ele
 	const chatHistoryRef = useRef<ScrollingList>(null);
 	const [ atBottom, setAtBottom ] = useState(true);
 	const meId = useAppSelector((state) => state.me.id);
+	const canChat = usePermissionSelector(permissions.SEND_CHAT);
+	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
+	const peerIds = useAppSelector((state) => Object.keys(state.peers), shallowEqual);
+	const presentPeers = useMemo(() => new Set(peerIds), [ peerIds ]);
+	const showPeerActions = Boolean(peerActions && chatEnabled && canChat);
 
 	return (
 		<Suspense>
@@ -62,7 +69,7 @@ const ChatHistory = ({ messages, peerActions }: ChatHistoryProps): React.JSX.Ele
 							isMe={message.peerId === meId}
 							format={format}
 							peerId={message.peerId}
-							peerActions={peerActions}
+							peerActions={showPeerActions && presentPeers.has(message.peerId)}
 						/>
 					);
 				})}

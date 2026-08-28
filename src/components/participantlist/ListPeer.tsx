@@ -108,7 +108,7 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 					size='small'
 				/>
 			</PeerDiv>
-			{ shouldShow && <PeerMenu anchorEl={moreAnchorEl} peerId={peer.id} displayName={peer.displayName} onClick={handleMenuClose} /> }
+			{ shouldShow && <PeerMenu anchorEl={moreAnchorEl} peerId={peer.id} onClick={handleMenuClose} /> }
 		</>
 	);
 };

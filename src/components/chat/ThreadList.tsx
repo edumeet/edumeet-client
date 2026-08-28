@@ -7,8 +7,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { directMessageThreadsSelector } from '../../store/selectors';
 import { directMessagesActions, DirectMessageThread } from '../../store/slices/directMessagesSlice';
 import { uiActions } from '../../store/slices/uiSlice';
-import { directMessagesLabel, hideConversationLabel, roomChatLabel } from '../translated/translatedComponents';
-import { directChatBackground } from './directChatTint';
+import { directMessagesLabel, hideConversationLabel } from '../translated/translatedComponents';
+import { directChatBackground, directChatHoverBackground } from './directChatTint';
 
 const ThreadListDiv = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -41,6 +41,10 @@ const ThreadDiv = styled(Paper)(({ theme }) => ({
 	'& .hideThread': {
 		visibility: 'hidden',
 	},
+	transition: theme.transitions.create('background-color'),
+	'&:hover': {
+		backgroundColor: directChatHoverBackground(theme),
+	},
 	'&:hover .hideThread': {
 		visibility: 'visible',
 	},
@@ -62,7 +66,6 @@ const UnreadCount = styled(Box)(({ theme }) => ({
 
 const RoomChatDivider = styled(Divider)(({ theme }) => ({
 	marginTop: theme.spacing(1),
-	marginBottom: theme.spacing(0.5),
 }));
 
 const ThreadText = styled(Box)({
@@ -113,7 +116,7 @@ const ThreadList = (): React.JSX.Element | null => {
 	return (
 		<ThreadListDiv>
 			<ThreadListHeader onClick={() => setCollapsed(!collapsed)}>
-				<Typography variant='caption' color='text.disabled'>{ directMessagesLabel() }</Typography>
+				<Typography variant='body2' color='text.secondary' sx={{ fontWeight: 600 }}>{ directMessagesLabel() }</Typography>
 				<IconButton size='small' aria-label={directMessagesLabel()}>
 					{ collapsed ? <ExpandMoreIcon fontSize='small' /> : <ExpandLessIcon fontSize='small' /> }
 				</IconButton>
@@ -124,7 +127,6 @@ const ThreadList = (): React.JSX.Element | null => {
 				</ThreadRows>
 			}
 			<RoomChatDivider />
-			<Typography variant='caption' color='text.disabled'>{ roomChatLabel() }</Typography>
 		</ThreadListDiv>
 	);
 };

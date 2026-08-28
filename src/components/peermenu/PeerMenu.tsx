@@ -19,7 +19,6 @@ interface PeerMenuProps {
 		horizontal: number | 'center' | 'left' | 'right';
 	};
 	peerId: string;
-	displayName?: string;
 	onClick?: () => void;
 }
 
@@ -28,7 +27,6 @@ const PeerMenu = ({
 	anchorOrigin = { vertical: 'bottom', horizontal: 'left' },
 	transformOrigin = { vertical: 'top', horizontal: 'left' },
 	peerId,
-	displayName,
 	onClick = (): void => {}
 }: PeerMenuProps): React.JSX.Element => {
 	const peer = usePeer(peerId);
@@ -44,21 +42,25 @@ const PeerMenu = ({
 	const isMoreMenuOpen = Boolean(anchorEl);
 
 	return (
-		<FloatingMenu
-			anchorEl={anchorEl}
-			anchorOrigin={anchorOrigin}
-			transformOrigin={transformOrigin}
-			open={isMoreMenuOpen}
-			onClose={onClick}
-		>
-			{ chatEnabled && canChat &&
-				<SendPrivateMessage onClick={onClick} peerId={peerId} displayName={peer?.displayName ?? displayName} /> }
-			{ peer && micConsumer && <AudioGainSlider consumer={micConsumer} /> }
-			{ peer && isModerator && micConsumer && <StopAudio onClick={onClick} peer={peer} /> }
-			{ peer && isModerator && webcamConsumer && <StopVideo onClick={onClick} peer={peer} /> }
-			{ peer && isModerator && screenConsumer && <StopScreenshare onClick={onClick} peer={peer} /> }
-			{ peer && isModerator && <Kick onClick={onClick} peer={peer} /> }
-		</FloatingMenu>
+		<>
+			{ peer && (
+				<FloatingMenu
+					anchorEl={anchorEl}
+					anchorOrigin={anchorOrigin}
+					transformOrigin={transformOrigin}
+					open={isMoreMenuOpen}
+					onClose={onClick}
+				>
+					{ chatEnabled && canChat &&
+						<SendPrivateMessage onClick={onClick} peerId={peer.id} displayName={peer.displayName} /> }
+					{ micConsumer && <AudioGainSlider consumer={micConsumer} /> }
+					{ isModerator && micConsumer && <StopAudio onClick={onClick} peer={peer} /> }
+					{ isModerator && webcamConsumer && <StopVideo onClick={onClick} peer={peer} /> }
+					{ isModerator && screenConsumer && <StopScreenshare onClick={onClick} peer={peer} /> }
+					{ isModerator && <Kick onClick={onClick} peer={peer} /> }
+				</FloatingMenu>
+			) }
+		</>
 	);
 };
 

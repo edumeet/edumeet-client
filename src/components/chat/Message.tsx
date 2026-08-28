@@ -2,9 +2,8 @@ import { IconButton, styled, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from 'react';
 import { FormattedTime } from 'react-intl';
-import { useAppSelector, usePermissionSelector } from '../../store/hooks';
-import { permissions } from '../../utils/roles';
-import PeerMenu from '../peermenu/PeerMenu';
+import FloatingMenu from '../floatingmenu/FloatingMenu';
+import SendPrivateMessage from '../menuitems/SendPrivateMessage';
 import { meLabel, moreActionsLabel } from '../translated/translatedComponents';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
@@ -116,9 +115,7 @@ const Message = ({
 	peerActions
 }: MessageProps): React.JSX.Element => {
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>(null);
-	const canChat = usePermissionSelector(permissions.SEND_CHAT);
-	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
-	const showActions = Boolean(peerActions && peerId && !isMe && chatEnabled && canChat);
+	const showActions = Boolean(peerActions && peerId && !isMe);
 	const linkRenderer = new marked.Renderer();
 
 	linkRenderer.link = ({ href, title, tokens }) => {
@@ -165,12 +162,17 @@ const Message = ({
 					</>
 				}
 				{ peerId && moreAnchorEl &&
-					<PeerMenu
+					<FloatingMenu
 						anchorEl={moreAnchorEl}
-						peerId={peerId}
-						displayName={name}
-						onClick={() => setMoreAnchorEl(null)}
-					/>
+						open
+						onClose={() => setMoreAnchorEl(null)}
+					>
+						<SendPrivateMessage
+							onClick={() => setMoreAnchorEl(null)}
+							peerId={peerId}
+							displayName={name}
+						/>
+					</FloatingMenu>
 				}
 				{ text &&
 					<Typography
