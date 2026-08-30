@@ -247,6 +247,17 @@ export interface ChatMessage {
 	text?: string;
 }
 
+export const MAX_DISPLAY_NAME_LENGTH = 128;
+export const MAX_CHAT_MESSAGE_LENGTH = 10000;
+
+export interface DirectChatMessage {
+	peerId: string;
+	to: string;
+	displayName?: string;
+	timestamp?: number;
+	text?: string;
+}
+
 export interface FilesharingFile {
 	peerId: string;
 	sessionId: string;
@@ -477,6 +488,8 @@ export type Rule = {
 	value: string,
 	action: string,
 	type: string,
+	// only meaningful when action is 'groupUsers', where it holds the group id
+	accessId?: string,
 }
 export type Meeting = {
 	id?: number,

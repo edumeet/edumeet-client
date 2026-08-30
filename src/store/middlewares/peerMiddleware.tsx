@@ -4,7 +4,7 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { peersActions } from '../slices/peersSlice';
 import { LobbyPeer, lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { setRaisedHand } from '../actions/meActions';
-import { stopMic, stopScreenSharing, stopWebcam } from '../actions/mediaActions';
+import { stopExtraVideo, stopMic, stopScreenSharing, stopWebcam } from '../actions/mediaActions';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
 import { settingsActions } from '../slices/settingsSlice';
 import { p2pModeSelector } from '../selectors';
@@ -179,6 +179,7 @@ const createPeerMiddleware = ({
 
 							case 'moderator:stopVideo': {
 								dispatch(stopWebcam());
+								dispatch(stopExtraVideo());
 
 								break;
 							}

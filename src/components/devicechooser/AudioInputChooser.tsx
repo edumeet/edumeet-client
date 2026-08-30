@@ -1,4 +1,3 @@
-import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
 import {
@@ -7,12 +6,11 @@ import {
 	useDeviceSelector
 } from '../../store/hooks';
 import {
-	applyLabel,
 	audioInputDeviceLabel,
 	noAudioInputDevicesLabel,
 	selectAudioInputDeviceLabel
 } from '../translated/translatedComponents';
-import DeviceChooser, { ChooserDiv } from './DeviceChooser';
+import DeviceChooser, { ApplyButton, ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { meActions } from '../../store/slices/meSlice';
 
@@ -68,14 +66,10 @@ const AudioInputChooser = ({
 						disabled={audioDevices.length < 2 || audioInProgress}
 						devices={audioDevices}
 						extraButtons={<>{ withConfirm && (selectedAudioDevice !== audioDevice) && (
-							<Button
-								style={{ minWidth: 'fit-content' }}
-								variant='text'
+							<ApplyButton
 								onClick={handleConfirm}
 								disabled={audioInProgress}
-							>
-								{applyLabel()}
-							</Button>
+							/>
 						)}</>}
 					/>
 				</ChooserDiv>

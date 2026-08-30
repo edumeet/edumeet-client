@@ -7,6 +7,16 @@ import { roomActions } from '../slices/roomSlice';
 import { Logger } from '../../utils/Logger';
 import { ImageKeys } from '../../services/clientImageService';
 import { notificationsActions } from '../slices/notificationsSlice';
+// The room server rejects a produce request for a source the peer's role is not
+// allowed to share. The permissions arrive (as permissionAdded notifications)
+// before roomReady, so they are already in the store by the time we auto-start
+// media on join, and we can skip the produce entirely instead of letting it fail.
+import {
+	audioPermissionSelector,
+	extraVideoPermissionSelector,
+	screenPermissionSelector,
+	videoPermissionSelector,
+} from '../selectors';
 
 const logger = new Logger('MediaActions');
 
@@ -493,6 +503,12 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 ) => {
 	logger.debug('updateMic() [newDeviceId:%s]', newDeviceId);
 
+	if (!audioPermissionSelector(getState())) {
+		logger.debug('updateMic() role is not allowed to share audio, not producing');
+
+		return;
+	}
+
 	dispatch(meActions.setAudioInProgress(true));
 
 	const start = !mediaService.mediaSenders['mic'].running;
@@ -701,6 +717,12 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 ) => {
 	logger.debug('updateWebcam [newDeviceId:%s]', newDeviceId);
 
+	if (!videoPermissionSelector(getState())) {
+		logger.debug('updateWebcam() role is not allowed to share video, not producing');
+
+		return;
+	}
+
 	dispatch(meActions.setVideoInProgress(true));
 
 	const start = !mediaService.mediaSenders['webcam'].running;
@@ -869,6 +891,12 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 ) => {
 	logger.debug('updateScreenSharing()');
 
+	if (!screenPermissionSelector(getState())) {
+		logger.debug('updateScreenSharing() role is not allowed to share the screen, not producing');
+
+		return;
+	}
+
 	dispatch(meActions.setScreenSharingInProgress(true));
 
 	let audioTrack: MediaStreamTrack | null = null;
@@ -950,6 +978,16 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 
 			([ audioTrack ] = stream.getAudioTracks());
 
+			// Screen audio is a separate producer that the server gates on
+			// SHARE_AUDIO, so drop the captured track when the role has only
+			// SHARE_SCREEN.
+			if (audioTrack && !audioPermissionSelector(getState())) {
+				logger.debug('updateScreenSharing() role is not allowed to share audio, dropping the screen audio track');
+
+				audioTrack.stop();
+				audioTrack = null;
+			}
+
 			if (audioTrack) {
 				await mediaService.mediaSenders['screenaudio'].start({
 					track: audioTrack,
@@ -1016,6 +1054,12 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 	{ mediaService, deviceService, config, effectsService }
 ) => {
 	logger.debug('startExtraVideo [newDeviceId:%s]', newDeviceId);
+
+	if (!extraVideoPermissionSelector(getState())) {
+		logger.debug('startExtraVideo() role is not allowed to share extra video, not producing');
+
+		return;
+	}
 
 	dispatch(meActions.setVideoInProgress(true));
 

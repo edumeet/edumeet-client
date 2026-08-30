@@ -1,4 +1,4 @@
-import { Box, Typography, styled } from '@mui/material';
+import { Box, Divider, Typography, styled } from '@mui/material';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 import {
 	useAppSelector,
@@ -28,6 +28,7 @@ import PulsingBadge from '../pulsingbadge/PulsingBadge';
 import DroppableWrapper from '../draganddrop/DroppableWrapper';
 import DraggableWrapper from '../draganddrop/DraggableWrapper';
 import GhostObject from '../draganddrop/GhostObject';
+import ReceiveVideoButton from '../textbuttons/ReceiveVideoButton';
 
 const ParticipantListDiv = styled(Box)(({ theme }) => ({
 	width: '100%',
@@ -38,6 +39,13 @@ const ParticipantListDiv = styled(Box)(({ theme }) => ({
 const ListHeader = styled(Typography)({
 	fontWeight: 'bolder'
 });
+
+const OwnControlsDiv = styled('div')(({ theme }) => ({
+	display: 'flex',
+	flexDirection: 'column',
+	gap: theme.spacing(0.5),
+	marginBottom: theme.spacing(1),
+}));
 
 const ParticipantList = (): React.JSX.Element => {
 	useAppSelector((state) => state.settings.locale);
@@ -66,6 +74,10 @@ const ParticipantList = (): React.JSX.Element => {
 
 	return (
 		<ParticipantListDiv>
+			<OwnControlsDiv>
+				<ReceiveVideoButton size='small' />
+			</OwnControlsDiv>
+			<Divider sx={{ mb: 1 }} />
 			{ isModerator && <>
 				<ListModerator />
 				{ edumeetConfig.countdownTimerEnabled && <>

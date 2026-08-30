@@ -33,15 +33,23 @@ const DefaultTable = () => {
 				header: '#'
 			},
 			{
-				accessorKey: 'tenantId',
+				// the row shows the tenant name, so filtering/sorting/search must
+				// use the name too, not the raw tenantId
+				id: 'tenantId',
+				accessorFn: (row) => getTenantName(tenants, String(row.tenantId)),
 				header: tenantLabel(),
-				Cell: ({ row }) => getTenantName(tenants, row.original.tenantId),
 			}
 		],
 		[ tenants ],
 	);
 
 	const [ data, setData ] = useState<DefaultOptionTypes>([]);
+
+	// MRT caches accessorFn results per row and only rebuilds its rows when the
+	// data array identity changes. The rows and the lookups above are fetched
+	// concurrently, so hand it a fresh array when a lookup resolves after the
+	// rows, otherwise the resolved names stay stuck on their placeholder.
+	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, tenants ]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 
@@ -552,7 +560,7 @@ const DefaultTable = () => {
 					const r = row.getAllCells();
 
 					const tid = r[0].getValue();
-					const ttenantId = r[1].getValue();
+					const ttenantId: unknown = row.original.tenantId;
 
 					if (typeof tid === 'number') {
 						setId(tid);
@@ -617,7 +625,7 @@ const DefaultTable = () => {
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={tableData} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
 				}

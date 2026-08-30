@@ -1,11 +1,10 @@
 import { Button, styled } from '@mui/material';
-import { Suspense, useRef, useState } from 'react';
-import { useAppSelector } from '../../store/hooks';
-import { ChatMessage } from '../../utils/types';
+import { Suspense, useMemo, useRef, useState } from 'react';
+import { shallowEqual } from 'react-redux';
+import { useAppSelector, usePermissionSelector } from '../../store/hooks';
+import { permissions } from '../../utils/roles';
 import ScrollingList from '../scrollinglist/ScrollingList';
 import { chatScrollToBottomLabel } from '../translated/translatedComponents';
-// import Message, { MessageFormat } from './Message';
-import { chatMessagesSelector } from '../../store/selectors';
 import { lazy } from 'react';
 import type { MessageFormat } from './Message';
 
@@ -17,11 +16,27 @@ const ScrollToBottom = styled(Button)(({ theme }) => ({
 	marginBottom: theme.spacing(1),
 }));
 
-const ChatHistory = (): React.JSX.Element => {
+interface HistoryMessage {
+	peerId: string;
+	displayName?: string;
+	timestamp?: number;
+	text?: string;
+}
+
+interface ChatHistoryProps {
+	messages: HistoryMessage[];
+	peerActions?: boolean;
+}
+
+const ChatHistory = ({ messages, peerActions }: ChatHistoryProps): React.JSX.Element => {
 	const chatHistoryRef = useRef<ScrollingList>(null);
-	const chatMessages = useAppSelector(chatMessagesSelector);
 	const [ atBottom, setAtBottom ] = useState(true);
 	const meId = useAppSelector((state) => state.me.id);
+	const canChat = usePermissionSelector(permissions.SEND_CHAT);
+	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
+	const peerIds = useAppSelector((state) => Object.keys(state.peers), shallowEqual);
+	const presentPeers = useMemo(() => new Set(peerIds), [ peerIds ]);
+	const showPeerActions = Boolean(peerActions && chatEnabled && canChat);
 
 	return (
 		<Suspense>
@@ -31,10 +46,10 @@ const ChatHistory = (): React.JSX.Element => {
 					setAtBottom(isAtBottom);
 				}}
 			>
-				{ chatMessages.map((message: ChatMessage, i: number) => {
+				{ messages.map((message: HistoryMessage, i: number) => {
 					const curr = message.peerId;
-					const prev = chatMessages[i - 1]?.peerId;
-					const next = chatMessages[i + 1]?.peerId;
+					const prev = messages[i - 1]?.peerId;
+					const next = messages[i + 1]?.peerId;
 
 					let format: MessageFormat = 'single';
 
@@ -47,12 +62,14 @@ const ChatHistory = (): React.JSX.Element => {
 
 					return (
 						<Message
-							key={message.timestamp}
+							key={`${message.peerId}-${message.timestamp}-${i}`}
 							time={message.timestamp}
 							name={message.displayName}
 							text={message.text}
 							isMe={message.peerId === meId}
 							format={format}
+							peerId={message.peerId}
+							peerActions={showPeerActions && presentPeers.has(message.peerId)}
 						/>
 					);
 				})}

@@ -1,26 +1,36 @@
 import { Send } from '@mui/icons-material';
 import { IconButton, styled } from '@mui/material';
 import { useState } from 'react';
-import { sendChat } from '../../store/actions/chatActions';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppSelector } from '../../store/hooks';
 import TextInputField from '../textinputfield/TextInputField';
-import { chatInputLabel } from '../translated/translatedComponents';
 import { fullscreenConsumerSelector } from '../../store/selectors';
+import { MAX_CHAT_MESSAGE_LENGTH } from '../../utils/types';
 
 const ChatInputDiv = styled('div')(({ theme }) => ({
 	marginLeft: theme.spacing(1),
 	marginRight: theme.spacing(1),
 }));
 
-const ChatInput = (): React.JSX.Element => {
-	const dispatch = useAppDispatch();
+interface ChatInputProps {
+	label: string;
+	// eslint-disable-next-line no-unused-vars
+	onSend: (message: string) => Promise<boolean>;
+	disabled?: boolean;
+}
+
+const ChatInput = ({ label, onSend, disabled }: ChatInputProps): React.JSX.Element => {
 	const [ message, setMessage ] = useState<string>('');
 
-	const handleSendMessage = () => {
-		if (message.trim()) {
-			dispatch(sendChat(message.trim()));
-			setMessage('');
-		}
+	const handleSendMessage = async () => {
+		const text = message.trim();
+
+		if (!text) return;
+
+		setMessage('');
+
+		const sent = await onSend(text);
+
+		if (!sent) setMessage((current) => current || text);
 	};
 
 	const consumer = useAppSelector(fullscreenConsumerSelector);
@@ -28,16 +38,19 @@ const ChatInput = (): React.JSX.Element => {
 	return (
 		<ChatInputDiv>
 			<TextInputField
-				label={ consumer ? '' : chatInputLabel()}
+				label={ consumer ? '' : label}
 				value={message}
 				margin='dense'
+				maxLength={MAX_CHAT_MESSAGE_LENGTH}
+				autoComplete='off'
+				disabled={disabled}
 				setValue={setMessage}
 				onEnter={handleSendMessage}
 				endAdornment={
 					<IconButton
-						aria-label={chatInputLabel()}
+						aria-label={label}
 						size='small'
-						disabled={!message}
+						disabled={disabled || !message}
 						onClick={handleSendMessage}
 					>
 						<Send />

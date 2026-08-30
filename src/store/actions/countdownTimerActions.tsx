@@ -114,7 +114,7 @@ AppThunk<Promise<void>> => async (
 
 	try {
 		
-		signalingService.sendRequest('moderator:setCountdownTimerInitialTime', time);
+		await signalingService.sendRequest('moderator:setCountdownTimerInitialTime', time);
 
 		dispatch(roomActions.setCountdownTimerRemainingTime(time));
 		

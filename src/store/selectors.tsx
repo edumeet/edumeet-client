@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { MediaDevice } from '../services/deviceService';
 import { Transcript } from '../services/mediaService';
-import { Permission } from '../utils/roles';
+import { Permission, permissions } from '../utils/roles';
 import { StateConsumer } from './slices/consumersSlice';
 import { LobbyPeer } from './slices/lobbyPeersSlice';
 import { Peer } from './slices/peersSlice';
@@ -10,6 +10,7 @@ import { RoomSession } from './slices/roomSessionsSlice';
 import { MeState } from './slices/meSlice';
 import edumeetConfig from './../utils/edumeetConfig';
 import { DrawingState } from './slices/drawingSlice';
+import { DirectMessageThread } from './slices/directMessagesSlice';
 
 // eslint-disable-next-line no-unused-vars
 type Selector<S> = (state: RootState) => S;
@@ -28,7 +29,19 @@ const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNo
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
 const headlessSelector: Selector<boolean | undefined> = (state) => state.room.headless;
+const receiveVideoSelector: Selector<boolean> = (state) => state.me.receiveVideo;
 const recordingSelector: Selector<boolean | undefined> = (state) => state.room.recording;
+const directMessagesSelect: Selector<Record<string, DirectMessageThread>> = (state) => state.directMessages;
+const unreadMessagesSelect: Selector<number> = (state) => state.ui.unreadMessages;
+const activeChatThreadSelect: Selector<string | null> = (state) => state.ui.activeChatThread;
+
+/**
+ * Shared empty result for the video consumer selectors. Returning one stable
+ * array identity keeps the memoized selectors downstream (and the pause/resume
+ * diff in mediaMiddleware) from recomputing on unrelated state changes while
+ * video reception is turned off.
+ */
+const EMPTY_CONSUMERS: StateConsumer[] = [];
 
 export const isMobileSelector: Selector<boolean> = (state) => state.me.browser.platform === 'mobile';
 
@@ -164,14 +177,20 @@ const consumerSelectedPeerIdsSelector = createSelector(
  * A peer that has turned off its webcam but is still sharing a screen or an
  * extra video is therefore "video capable" and keeps its tile.
  *
+ * Webcams stop counting while video reception is turned off. Their consumers
+ * still exist and are not remotely paused, so without this a camera we are
+ * deliberately not receiving would keep beating an actual screen sharer to a
+ * spotlight slot and hand it a tile that renders nothing.
+ *
  * @returns {Set<string>} the set of peerIds with live video.
  */
 const videoCapablePeerIdsSelector = createSelector(
 	consumersSelect,
-	(consumers) => new Set(
+	receiveVideoSelector,
+	(consumers, receiveVideo) => new Set(
 		consumers
 			.filter((c) =>
-				(c.source === 'webcam' || c.source === 'screen' || c.source === 'extravideo') &&
+				((c.source === 'webcam' && receiveVideo) || c.source === 'screen' || c.source === 'extravideo') &&
 				!c.remotePaused
 			)
 			.map((c) => c.peerId)
@@ -285,15 +304,26 @@ export const micConsumerSelector = createSelector(
  * Returns the list of webcam state consumers of the peers that are
  * currently selected or spotlighted.
  * 
+ * Empty while video reception is turned off. That is the whole mechanism
+ * behind the feature: mediaMiddleware diffs resumedVideoConsumersSelector,
+ * sees every webcam drop out and pauses them on the server, so they stop
+ * costing downstream bandwidth.
+ * 
  * @returns {StateConsumer[]} the list of webcam state consumers.
  * @see spotlightPeersSelector
+ * @see resumedVideoConsumersSelector
  */
 export const spotlightWebcamConsumerSelector = createSelector(
 	spotlightPeersSelector,
 	consumersSelect,
-	(spotlights, consumers) => consumers.filter(
-		(c) => c.source === 'webcam' && !c.remotePaused && spotlights.includes(c.peerId)
-	)
+	receiveVideoSelector,
+	(spotlights, consumers, receiveVideo) => {
+		if (!receiveVideo) return EMPTY_CONSUMERS;
+
+		return consumers.filter(
+			(c) => c.source === 'webcam' && !c.remotePaused && spotlights.includes(c.peerId)
+		);
+	}
 );
 
 /**
@@ -399,6 +429,44 @@ export const chatMessagesSelector = createSelector(
 	(roomSession) => roomSession.chatHistory
 );
 
+const lastActivity = (thread: DirectMessageThread): number =>
+	thread.messages[thread.messages.length - 1]?.timestamp ?? Number.MAX_SAFE_INTEGER;
+
+/**
+ * Returns the visible private chat threads, most recently active first.
+ * 
+ * @returns {DirectMessageThread[]} the threads.
+ */
+export const directMessageThreadsSelector = createSelector(
+	directMessagesSelect,
+	(threads) => Object.values(threads)
+		.filter((thread) => !thread.hidden)
+		.sort((a, b) => lastActivity(b) - lastActivity(a))
+);
+
+/**
+ * Returns the private chat thread that is currently open, if any.
+ * 
+ * @returns {DirectMessageThread | undefined} the thread.
+ */
+export const activeDirectMessageThreadSelector = createSelector(
+	directMessagesSelect,
+	activeChatThreadSelect,
+	(threads, activeThread) => (activeThread ? threads[activeThread] : undefined)
+);
+
+/**
+ * Returns the number of unread messages in the room chat and all private chats.
+ * 
+ * @returns {number} the number of unread messages.
+ */
+export const totalUnreadMessagesSelector = createSelector(
+	unreadMessagesSelect,
+	directMessagesSelect,
+	(unreadMessages, threads) => Object.values(threads)
+		.reduce((unread, thread) => unread + thread.unread, unreadMessages)
+);
+
 /**
  * Returns the creationTimestamp of the roomSession I am in.
  * 
@@ -444,7 +512,10 @@ export const someoneIsRecordingSelector = createSelector(
 export const fullscreenConsumerSelector = createSelector(
 	currentRoomSessionSelector,
 	consumersSelect,
-	(roomSession, consumers) => consumers.find((c) => c.id === roomSession.fullscreenConsumer)
+	receiveVideoSelector,
+	(roomSession, consumers, receiveVideo) => consumers.find(
+		(c) => c.id === roomSession.fullscreenConsumer && (receiveVideo || c.source !== 'webcam')
+	)
 );
 
 /**
@@ -456,7 +527,10 @@ export const fullscreenConsumerSelector = createSelector(
 export const windowedConsumersSelector = createSelector(
 	currentRoomSessionSelector,
 	consumersSelect,
-	(roomSession, consumers) => consumers.filter((c) => roomSession.windowedConsumers.includes(c.id))
+	receiveVideoSelector,
+	(roomSession, consumers, receiveVideo) => consumers.filter(
+		(c) => roomSession.windowedConsumers.includes(c.id) && (receiveVideo || c.source !== 'webcam')
+	)
 );
 
 /**
@@ -472,6 +546,11 @@ export const audioConsumerSelector = createSelector(
 /**
  * Returns the state consumers of all the visible video tiles.
  * This is the list of screen, webcam and extra video tiles, consumers only.
+ * 
+ * mediaMiddleware diffs this list on every action that can change it and
+ * pauses/resumes the corresponding consumers on the server, so anything not in
+ * here costs no downstream bandwidth. Webcams drop out of it entirely while
+ * video reception is turned off.
  * 
  * @returns {StateConsumer[]} the list of state consumers.
  * @see spotlightWebcamConsumerSelector
@@ -696,3 +775,12 @@ export const makeIsActiveSpeakerSelector = (id: string): Selector<boolean> => {
 };
 
 export const makePermissionSelector = (permission: Permission): Selector<boolean> => createSelector(mePermissionsSelect, (p) => p.includes(permission));
+
+// Permissions that are checked outside React, where the usePermissionSelector
+// hook is not available (thunks, event listeners). Built once at module level so
+// the memoization is shared rather than rebuilt on every call.
+export const audioPermissionSelector = makePermissionSelector(permissions.SHARE_AUDIO);
+export const videoPermissionSelector = makePermissionSelector(permissions.SHARE_VIDEO);
+export const screenPermissionSelector = makePermissionSelector(permissions.SHARE_SCREEN);
+export const extraVideoPermissionSelector = makePermissionSelector(permissions.SHARE_EXTRA_VIDEO);
+export const lockPermissionSelector = makePermissionSelector(permissions.CHANGE_ROOM_LOCK);

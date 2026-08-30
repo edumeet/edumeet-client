@@ -109,22 +109,24 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				accessorKey: 'id',
 				header: '#'
 			},
+			// these columns show a resolved name, so the accessor must return that
+			// name too, otherwise filtering/sorting/search runs on the raw id
 			{
-				accessorKey: 'userId',
-				header: userLabel(),
-				Cell: ({ row }) => getUserName(String(row.original.userId))
+				id: 'userId',
+				accessorFn: (row) => getUserName(String(row.userId)),
+				header: userLabel()
 
 			},
 			{
-				accessorKey: 'roleId',
-				header: roleLabel(),
-				Cell: ({ row }) => getRoleName(String(row.original.roleId))
+				id: 'roleId',
+				accessorFn: (row) => getRoleName(String(row.roleId)),
+				header: roleLabel()
 
 			},
 			{
-				accessorKey: 'roomId',
-				header: roomLabel(),
-				Cell: ({ row }) => getRoomName(String(row.original.roomId))
+				id: 'roomId',
+				accessorFn: (row) => getRoomName(String(row.roomId)),
+				header: roomLabel()
 
 			},
 
@@ -141,6 +143,12 @@ const RoomUserRoleTable = (props: RoomProp) => {
 	);
 
 	const [ data, setData ] = useState([]);
+
+	// MRT caches accessorFn results per row and only rebuilds its rows when the
+	// data array identity changes. The rows and the lookups above are fetched
+	// concurrently, so hand it a fresh array when a lookup resolves after the
+	// rows, otherwise the resolved names stay stuck on their placeholder.
+	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, rooms, roles, users ]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ userId, setUserId ] = useState(0);
@@ -498,8 +506,8 @@ const RoomUserRoleTable = (props: RoomProp) => {
 					const r = row.getAllCells();
 
 					const tid = r[0].getValue();
-					const tuserId = r[1].getValue();
-					const troleId = r[2].getValue();
+					const tuserId: unknown = row.original.userId;
+					const troleId: unknown = row.original.roleId;
 
 					/* const troomId=r[3].getValue(); */
 
@@ -546,7 +554,7 @@ const RoomUserRoleTable = (props: RoomProp) => {
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={tableData} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
 					id: false

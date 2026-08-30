@@ -39,13 +39,14 @@ const TenantTable = () => {
 				header: descLabel()
 			},
 			{
-				accessorKey: 'allowedMediaNodeRegions',
-				header: mediaNodeRegionsLabel(),
-				Cell: ({ cell }) => {
-					const v = cell.getValue() as string[] | null | undefined;
+				// filtering/search must see the joined region list, not the raw array
+				id: 'allowedMediaNodeRegions',
+				accessorFn: (row) => {
+					const v = row.allowedMediaNodeRegions as string[] | null | undefined;
 
 					return v && v.length > 0 ? v.join(', ') : '—';
 				},
+				header: mediaNodeRegionsLabel(),
 			}
 		],
 		[],

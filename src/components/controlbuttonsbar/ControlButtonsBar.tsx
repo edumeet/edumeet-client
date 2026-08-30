@@ -1,4 +1,5 @@
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { uiActions } from '../../store/slices/uiSlice';
 import MediaControls from '../../components/mediacontrols/MediaControls';
 import MicButton from '../../components/controlbuttons/MicButton';
 import WebcamButton from '../../components/controlbuttons/WebcamButton';
@@ -8,7 +9,7 @@ import { isMobileSelector } from '../../store/selectors';
 import ParticipantsButton from '../controlbuttons/ParticipantsButton';
 import ChatButton from '../controlbuttons/ChatButton';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ParticipantList from '../participantlist/ParticipantList';
 import Chat from '../chat/Chat';
 import { styled } from '@mui/material/styles';
@@ -32,6 +33,7 @@ const Container = styled(Box)<ContainerProps>(({ height, width }) => ({
 }));
 
 const ControlButtonsBar = (): React.JSX.Element => {
+	const dispatch = useAppDispatch();
 	const isMobile = useAppSelector(isMobileSelector);
 	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
 	const filesharingEnabled = useAppSelector((state) => state.room.filesharingEnabled);
@@ -41,6 +43,8 @@ const ControlButtonsBar = (): React.JSX.Element => {
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled); // eslint-disable-line
 	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
+	const chatOpen = useAppSelector((state) => state.ui.chatOpen);
+	const activeChatThread = useAppSelector((state) => state.ui.activeChatThread);
 
 	const [ participantListAnchorEl, setParticipantAnchorEl ] = useState<HTMLElement | null>();
 	const isParticipantListOpen = Boolean(participantListAnchorEl);
@@ -48,7 +52,22 @@ const ControlButtonsBar = (): React.JSX.Element => {
 
 	const [ chatAnchorEl, setChatAnchorEl ] = useState<HTMLElement | null>();
 	const isChatOpen = Boolean(chatAnchorEl);
-	const handleChatClose = () => setChatAnchorEl(null);
+	const handleChatClose = () => {
+		setChatAnchorEl(null);
+
+		if (chatOpen) dispatch(uiActions.setUi({ chatOpen: false }));
+	};
+
+	const chatButtonRef = useRef<HTMLDivElement>(null);
+
+	// On mobile the chat lives in a popover owned by this component, so opening a
+	// private chat from the participant list has to anchor that popover here.
+	useEffect(() => {
+		if (!isMobile || !chatOpen || !activeChatThread) return;
+
+		setParticipantAnchorEl(null);
+		setChatAnchorEl(chatButtonRef.current);
+	}, [ isMobile, chatOpen, activeChatThread ]);
 
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>();
 	const isMoreOpen = Boolean(moreAnchorEl);
@@ -70,7 +89,11 @@ const ControlButtonsBar = (): React.JSX.Element => {
 				{ !isMobile && <ParticipantsButton toolTipLocation='bottom' onColor='primary' /> }
 				{ isMobile && <ParticipantsButton onClick={(event) => setParticipantAnchorEl(event.currentTarget)} toolTipLocation='bottom' /> }
 				{ !isMobile && chatEnabled && <ChatButton toolTipLocation='bottom' onColor='primary' /> }
-				{ isMobile && chatEnabled && <ChatButton onClick={(event) => setChatAnchorEl(event.currentTarget)} toolTipLocation='bottom' /> }
+				{ isMobile && chatEnabled &&
+					<Box ref={chatButtonRef} sx={{ display: 'flex' }}>
+						<ChatButton onClick={(event) => setChatAnchorEl(event.currentTarget)} toolTipLocation='bottom' />
+					</Box>
+				}
 				<MoreButton onClick={(event) => setMoreAnchorEl(event.currentTarget)} toolTipLocation='bottom' />
 			</MediaControls>
 			{ isMobile &&
@@ -110,7 +133,7 @@ const ControlButtonsBar = (): React.JSX.Element => {
 				{ /* <ExtraAudio onClick={handleMoreClose} /> */ }
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
-				{ localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
+				{ !isMobile && localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
 				{ !isMobile && <Drawing onClick={handleMoreClose} /> }
 			</FloatingMenu>
 		</>

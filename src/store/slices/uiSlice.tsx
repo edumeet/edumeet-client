@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { roomSessionsActions } from './roomSessionsSlice';
+import { directMessagesActions } from './directMessagesSlice';
+import { roomActions } from './roomSlice';
 
 export type SettingsTab = 'media' | 'appearance' | 'advanced' | 'management';
 
@@ -21,6 +23,7 @@ export interface UiState {
 	currentSettingsTab: SettingsTab;
 	showStats: boolean;
 	chatOpen: boolean;
+	activeChatThread: string | null;
 	participantListOpen: boolean;
 	drawingOpen: boolean;
 	unseenFiles: number;
@@ -44,6 +47,7 @@ const initialState: UiState = {
 	permissionsDialogOpen: false,
 	currentSettingsTab: 'media',
 	chatOpen: false,
+	activeChatThread: null,
 	participantListOpen: false,
 	drawingOpen: false,
 	unseenFiles: 0,
@@ -54,10 +58,11 @@ const uiSlice = createSlice({
 	initialState,
 	reducers: {
 		setUi: ((state, action: PayloadAction<UiUpdate>) => {
-			const unreadMessages = action.payload.chatOpen ? 0 : state.unreadMessages;
+			const next = { ...state, ...action.payload };
+			const unreadMessages = next.chatOpen && !next.activeChatThread ? 0 : state.unreadMessages;
 			const unseenFiles = action.payload.filesharingOpen ? 0 : state.unseenFiles;
 
-			return { ...state, ...action.payload, unreadMessages, unseenFiles };
+			return { ...next, unreadMessages, unseenFiles };
 		}),
 		setCurrentSettingsTab: ((
 			state,
@@ -80,6 +85,16 @@ const uiSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
+			.addCase(roomActions.setState, (state, action) => {
+				if (action.payload === 'left') state.activeChatThread = null;
+			})
+			.addCase(directMessagesActions.hideThread, (state, action) => {
+				if (state.activeChatThread !== action.payload) return;
+
+				state.activeChatThread = null;
+
+				if (state.chatOpen) state.unreadMessages = 0;
+			})
 			.addCase(roomSessionsActions.addMessages, (state, action) => {
 				if (state.chatOpen) return;
 

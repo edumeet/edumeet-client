@@ -46,15 +46,18 @@ const RoleTable = () => {
 				header: descLabel()
 			},
 			{
-				accessorKey: 'tenantId',
-				header: tenantLabel(),
-				Cell: ({ row }) => getTenantName(String(row.original.tenantId))
+				// the row shows the tenant name, so filtering/sorting/search must
+				// use the name too, not the raw tenantId
+				id: 'tenantId',
+				accessorFn: (row) => getTenantName(String(row.tenantId)),
+				header: tenantLabel()
 
 			},
 			{
-				accessorKey: 'permissions',
+				// filtering/search must see the permission names, not the objects
+				id: 'permissions',
+				accessorFn: (row) => row.permissions.map((single: Permissions) => single.name).join(', '),
 				header: permissionsLabel(),
-				Cell: ({ row }) => row.original.permissions.map((single: Permissions) => single.name).join(', '),
 			},
 
 		],
@@ -62,6 +65,12 @@ const RoleTable = () => {
 	);
 
 	const [ data, setData ] = useState([]);
+
+	// MRT caches accessorFn results per row and only rebuilds its rows when the
+	// data array identity changes. The rows and the lookups above are fetched
+	// concurrently, so hand it a fresh array when a lookup resolves after the
+	// rows, otherwise the resolved names stay stuck on their placeholder.
+	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, tenants ]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ name, setName ] = useState('');
@@ -376,7 +385,7 @@ const RoleTable = () => {
 
 					const tname = r[1].getValue();
 					const tdescription = r[2].getValue();
-					const ttenantId = r[3].getValue();
+					const ttenantId: unknown = row.original.tenantId;
 
 					if (typeof tid === 'number') {
 						setId(tid);
@@ -436,7 +445,7 @@ const RoleTable = () => {
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={tableData} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
 				}

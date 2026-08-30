@@ -7,12 +7,13 @@ import ControlButton, { ControlButtonProps } from './ControlButton';
 import { showChatLabel } from '../translated/translatedComponents';
 import { uiActions } from '../../store/slices/uiSlice';
 import PulsingBadge from '../pulsingbadge/PulsingBadge';
+import { totalUnreadMessagesSelector } from '../../store/selectors';
 
 const ChatButton = ({
 	...props
 }: ControlButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
-	const unreadMessages = useAppSelector((state) => state.ui.unreadMessages);
+	const unreadMessages = useAppSelector(totalUnreadMessagesSelector);
 	const chatOpen = useAppSelector((state) => state.ui.chatOpen);
 	const openChatTab = () => dispatch(uiActions.setUi({ chatOpen: !chatOpen }));
 

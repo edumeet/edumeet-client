@@ -1,7 +1,8 @@
 import { Box, IconButton, Paper, styled } from '@mui/material';
 import { Peer } from '../../store/slices/peersSlice';
 import PanIcon from '@mui/icons-material/BackHand';
-import { useAppDispatch, useAppSelector, usePeerConsumers } from '../../store/hooks';
+import { useAppDispatch, useAppSelector, usePeerConsumers, usePermissionSelector } from '../../store/hooks';
+import { permissions } from '../../utils/roles';
 import { lowerPeerHand } from '../../store/actions/peerActions';
 import Volume from '../volume/Volume';
 import { useState } from 'react';
@@ -63,8 +64,10 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 	const handleMenuClose = () => setMoreAnchorEl(null);
 
 	const isSelected = useAppSelector((state) => state.roomSessions[peer.sessionId].selectedPeers.includes(peer.id));
-	
-	const shouldShow = Boolean(isModerator || micConsumer);
+	const canChat = usePermissionSelector(permissions.SEND_CHAT);
+	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
+
+	const shouldShow = Boolean(isModerator || micConsumer || (chatEnabled && canChat));
 	const hasAudio = micConsumer && !micConsumer.localPaused && !micConsumer.remotePaused;
 	const hasVideo = webcamConsumer && !webcamConsumer.localPaused && !webcamConsumer.remotePaused;
 	const hasScreen = screenConsumer && !screenConsumer.localPaused && !screenConsumer.remotePaused;

@@ -17,6 +17,7 @@ import { meActions } from '../../store/slices/meSlice';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 import { canSelectAudioOutput } from '../../store/selectors';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { MAX_DISPLAY_NAME_LENGTH } from '../../utils/types';
 
 interface JoinProps {
 	roomId: string;
@@ -79,6 +80,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 							value={displayName}
 							setValue={handleDisplayNameChange}
 							onEnter={handleJoin}
+							maxLength={MAX_DISPLAY_NAME_LENGTH}
 							startAdornment={<AccountCircle />}
 							autoFocus
 						/>

@@ -4,6 +4,7 @@ import { setDisplayName } from '../../store/actions/meActions';
 import { useAppDispatch } from '../../store/hooks';
 import StateIndicators from '../stateindicators/StateIndicators';
 import { meLabel } from '../translated/translatedComponents';
+import { MAX_DISPLAY_NAME_LENGTH } from '../../utils/types';
 import MeStateIndicators from '../stateindicators/MeStateIndicators';
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -73,6 +74,7 @@ const DisplayName = ({
 						handleFinished();
 				}}
 				onBlur={handleFinished}
+				slotProps={{ htmlInput: { maxLength: MAX_DISPLAY_NAME_LENGTH } }}
 				color='primary'
 				autoFocus
 			/>

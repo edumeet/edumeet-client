@@ -78,10 +78,6 @@ export const methodLabel = (): string => intl.formatMessage({
 	id: 'label.method',
 	defaultMessage: 'Method'
 });
-export const negateLabel = (): string => intl.formatMessage({
-	id: 'label.negate',
-	defaultMessage: 'Negate'
-});
 export const valueLabel = (): string => intl.formatMessage({
 	id: 'label.value',
 	defaultMessage: 'Value'
@@ -138,6 +134,46 @@ export const raiseHandLabel = (): string => intl.formatMessage({
 export const chatInputLabel = (): string => intl.formatMessage({
 	id: 'label.chatInput',
 	defaultMessage: 'Enter chat message...'
+});
+
+export const roomChatLabel = (): string => intl.formatMessage({
+	id: 'label.roomChat',
+	defaultMessage: 'Room chat'
+});
+
+export const directMessagesLabel = (): string => intl.formatMessage({
+	id: 'label.directMessages',
+	defaultMessage: 'Direct messages'
+});
+
+export const sendPrivateMessageLabel = (): string => intl.formatMessage({
+	id: 'label.sendPrivateMessage',
+	defaultMessage: 'Send private message'
+});
+
+export const privateChatInputLabel = (displayName: string): string => intl.formatMessage({
+	id: 'label.privateChatInput',
+	defaultMessage: 'Private message to {displayName}'
+}, { displayName });
+
+export const backToRoomChatLabel = (): string => intl.formatMessage({
+	id: 'label.backToRoomChat',
+	defaultMessage: 'Back to room chat'
+});
+
+export const hideConversationLabel = (): string => intl.formatMessage({
+	id: 'label.hideConversation',
+	defaultMessage: 'Hide conversation'
+});
+
+export const peerLeftMeetingLabel = (displayName: string): string => intl.formatMessage({
+	id: 'label.peerLeftMeeting',
+	defaultMessage: '{displayName} left the meeting'
+}, { displayName });
+
+export const chatMessageFailedLabel = (): string => intl.formatMessage({
+	id: 'label.chatMessageFailed',
+	defaultMessage: 'Could not deliver the message'
 });
 
 export const chatScrollToBottomLabel = (): string => intl.formatMessage({
@@ -430,6 +466,26 @@ export const closeMeetingLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Close meeting for all'
 });
 
+export const muteAllConfirmLabel = (): string => intl.formatMessage({
+	id: 'room.muteAllConfirm',
+	defaultMessage: 'Mute the microphone of everyone in the room?'
+});
+
+export const stopAllVideoConfirmLabel = (): string => intl.formatMessage({
+	id: 'room.stopAllVideoConfirm',
+	defaultMessage: 'Turn off the cameras of everyone in the room?'
+});
+
+export const stopAllScreensharingConfirmLabel = (): string => intl.formatMessage({
+	id: 'room.stopAllScreenSharingConfirm',
+	defaultMessage: 'Stop screen sharing for everyone in the room?'
+});
+
+export const closeMeetingConfirmLabel = (): string => intl.formatMessage({
+	id: 'room.closeMeetingConfirm',
+	defaultMessage: 'Close the meeting and disconnect everyone in the room?'
+});
+
 export const muteAudioLabel = (): string => intl.formatMessage({
 	id: 'device.muteAudio',
 	defaultMessage: 'Mute audio'
@@ -453,6 +509,21 @@ export const stopVideoLabel = (): string => intl.formatMessage({
 export const startVideoLabel = (): string => intl.formatMessage({
 	id: 'device.startVideo',
 	defaultMessage: 'Start video'
+});
+
+export const stopReceivingVideoLabel = (): string => intl.formatMessage({
+	id: 'device.stopReceivingVideo',
+	defaultMessage: 'Stop receiving video'
+});
+
+export const startReceivingVideoLabel = (): string => intl.formatMessage({
+	id: 'device.startReceivingVideo',
+	defaultMessage: 'Start receiving video'
+});
+
+export const receivingVideoStoppedLabel = (): string => intl.formatMessage({
+	id: 'device.receivingVideoStopped',
+	defaultMessage: 'Not receiving video from other participants. Click to start receiving again'
 });
 
 export const startExtraVideoLabel = (): string => intl.formatMessage({
@@ -879,7 +950,82 @@ export const selectScreenSharingFrameRateLabel = (): string => intl.formatMessag
 
 export const selectRecordingsPreferredMimeTypeLabel = (): string => intl.formatMessage({
 	id: 'settings.recordingsPreferredMimeType',
-	defaultMessage: 'Select your preferred video mime type'
+	defaultMessage: 'Select your preferred recording mime type'
+});
+
+export const savingRecordingLabel = (): string => intl.formatMessage({
+	id: 'room.savingRecording',
+	defaultMessage: 'Saving recording'
+});
+
+export const recoverRecordingTitleLabel = (): string => intl.formatMessage({
+	id: 'room.recoverRecordingTitle',
+	defaultMessage: 'Unsaved recording found'
+});
+
+export const recoverRecordingTextLabel = (): string => intl.formatMessage({
+	id: 'room.recoverRecordingText',
+	defaultMessage: 'A recording from an interrupted session is still stored in this browser. Save it now, or discard it.'
+});
+
+export const recoverRecordingDeleteLabel = (): string => intl.formatMessage({
+	id: 'room.recoverRecordingDelete',
+	defaultMessage: 'Delete video'
+});
+
+export const recoverRecordingSaveLabel = (): string => intl.formatMessage({
+	id: 'room.recoverRecordingSave',
+	defaultMessage: 'Save recording'
+});
+
+export const localRecordingFailedLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingFailed',
+	defaultMessage: 'The recording failed'
+});
+
+export const localRecordingGoneLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingGone',
+	defaultMessage: 'There is no unsaved recording left'
+});
+
+export const localRecordingSplitLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingSplit',
+	defaultMessage: 'Storage is running low. The recording was saved and a new one was started'
+});
+
+export const localRecordingNotStartedLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingNotStarted',
+	defaultMessage: 'Recording was not started'
+});
+
+export const localRecordingPendingLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingPending',
+	defaultMessage: 'Save or discard the unsaved recording before starting a new one'
+});
+
+export const localRecordingPickerClosedLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingPickerClosed',
+	defaultMessage: 'The browser closed the save dialog, please try again'
+});
+
+export const localRecordingSaveFailedLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingSaveFailed',
+	defaultMessage: 'Could not save the recording'
+});
+
+export const localRecordingUnsupportedLabel = (): string => intl.formatMessage({
+	id: 'room.localRecordingUnsupported',
+	defaultMessage: 'Recording is not supported in this browser'
+});
+
+export const manualRecordingMimeTypeLabel = (): string => intl.formatMessage({
+	id: 'settings.manualRecordingMimeType',
+	defaultMessage: 'Choose the recording format manually'
+});
+
+export const recordingBrowserDefaultLabel = (): string => intl.formatMessage({
+	id: 'settings.recordingBrowserDefault',
+	defaultMessage: 'browser default'
 });
 
 export const showStatsLabel = (): string => intl.formatMessage({
@@ -1235,13 +1381,65 @@ export const undefinedTenantLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.undefinedTenant',
 	defaultMessage: 'undefined tenant'
 });
-export const assertLabel = (): string => intl.formatMessage({
-	id: 'label.managementservice.assert',
-	defaultMessage: 'Assert'
+export const accessLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.access',
+	defaultMessage: 'Access'
 });
 export const gainLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.gain',
-	defaultMessage: 'Gain'
+	defaultMessage: 'Grant'
+});
+export const rulesHelpTitleLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpTitle',
+	defaultMessage: 'How rules work'
+});
+export const rulesHelpKindsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpKinds',
+	defaultMessage: 'There are two kinds of rule. An Access rule decides who may sign in. A Grant rule decides what someone gets once they are in.'
+});
+export const rulesHelpStepsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpSteps',
+	defaultMessage: 'Allow rules broaden, Block rules narrow. First add Allow rules for the groups of people who should get in, then Block rules for anyone inside those groups who should not.'
+});
+export const rulesHelpClosesLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpCloses',
+	defaultMessage: 'To admit only the people you list, add a Block rule with the comparison "matches anyone". It applies to everyone no other rule mentions, so your Allow rules become the guest list.'
+});
+export const rulesHelpBlockLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpBlock',
+	defaultMessage: 'The most specific matching rule wins. Naming an exact address beats a rule about a group, so you can block a whole provider and still admit one address from it. If two rules are equally specific, Block wins.'
+});
+export const rulesHelpOpenLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpOpen',
+	defaultMessage: 'A tenant is open by default: anyone the login provider offers can sign in unless a Block rule stops them.'
+});
+export const rulesHelpAdminsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpAdmins',
+	defaultMessage: 'Administrators are never refused. You, the other admins and owners of this tenant, and the super admin can always sign in, so a mistake here cannot lock you out of your own settings.'
+});
+export const rulesHelpGrantLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpGrant',
+	defaultMessage: 'A Grant rule gives a matching user a group membership or an admin role. It is applied at every sign in, so a user who starts matching it later still gets it.'
+});
+export const rulesHelpGrantKeepLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpGrantKeep',
+	defaultMessage: 'Grants are only ever added, never taken away. Someone who stops matching a Grant rule, or whose rule you delete, keeps what they were already given until you remove it by hand.'
+});
+export const rulesHelpGrantAccessLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.rulesHelpGrantAccess',
+	defaultMessage: 'Grant rules do not let anyone in. Someone refused by the Access rules never reaches them, so a Grant rule is no substitute for an Allow rule.'
+});
+export const effectLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.effect',
+	defaultMessage: 'Effect'
+});
+export const blockLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.block',
+	defaultMessage: 'Block'
+});
+export const allowLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.allow',
+	defaultMessage: 'Allow'
 });
 export const containsLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.contains',
@@ -1253,15 +1451,39 @@ export const equalsLabel = (): string => intl.formatMessage({
 });
 export const startswithLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.startswith',
-	defaultMessage: 'startswith'
+	defaultMessage: 'starts with'
 });
 export const endswithLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.endswith',
-	defaultMessage: 'endswith'
+	defaultMessage: 'ends with'
+});
+export const matchesAnyoneLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.matchesAnyone',
+	defaultMessage: 'matches anyone'
+});
+export const doesNotContainLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.doesNotContain',
+	defaultMessage: 'does not contain'
+});
+export const doesNotEqualLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.doesNotEqual',
+	defaultMessage: 'does not equal'
+});
+export const doesNotStartWithLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.doesNotStartWith',
+	defaultMessage: 'does not start with'
+});
+export const doesNotEndWithLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.doesNotEndWith',
+	defaultMessage: 'does not end with'
 });
 export const actionToRunLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.actionToRun',
 	defaultMessage: 'Action to run when condition is satisfied'
+});
+export const parameterHelpLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.parameterHelp',
+	defaultMessage: 'Attribute of the signing in user to test. Other values never match.'
 });
 export const makeUserGroupMemberLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.makeUserGroupMember',
@@ -1618,6 +1840,16 @@ export const selectPeersFirstLabel = (): string => intl.formatMessage({
 export const noOtherPeersLabel = (): string => intl.formatMessage({
 	id: 'label.permissions.noOtherPeers',
 	defaultMessage: 'No other peers are in the room.'
+});
+
+export const loadRoleLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.loadRole',
+	defaultMessage: 'Load permissions from role'
+});
+
+export const cannotGrantPermissionLabel = (): string => intl.formatMessage({
+	id: 'label.permissions.cannotGrant',
+	defaultMessage: 'You do not have this permission, so you cannot grant or revoke it.'
 });
 
 export const applyPermissionsLabel = (count: number): string => intl.formatMessage({

@@ -15,6 +15,8 @@ interface TextInputFieldProps {
 	endAdornment?: ReactNode;
 	randomizeOnBlank?: boolean;
 	autoFocus?: boolean;
+	maxLength?: number;
+	autoComplete?: string;
 }
 
 const TextInputField = ({
@@ -25,6 +27,7 @@ const TextInputField = ({
 	startAdornment,
 	endAdornment,
 	randomizeOnBlank,
+	maxLength,
 	...rest
 }: TextInputFieldProps): React.JSX.Element => {
 	return (
@@ -40,7 +43,8 @@ const TextInputField = ({
 					endAdornment: (
 						<InputAdornment position='end' children={endAdornment} />
 					),
-				}
+				},
+				htmlInput: maxLength ? { maxLength } : undefined,
 			}}
 			onChange={(event: ChangeEvent<HTMLInputElement>) => {
 				setValue(event.target.value);

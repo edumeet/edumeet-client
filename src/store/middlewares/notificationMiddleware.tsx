@@ -3,6 +3,7 @@ import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { peersActions } from '../slices/peersSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { roomSessionsActions } from '../slices/roomSessionsSlice';
+import { directMessagesActions } from '../slices/directMessagesSlice';
 import { roomActions } from '../slices/roomSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { HTMLMediaElementWithSink } from '../../utils/types';
@@ -180,6 +181,14 @@ const createNotificationMiddleware = ({
 				if (
 					roomSessionsActions.addMessage.match(action) &&
 					action.payload.peerId !== getState().me.id
+				) {
+					playNotificationSounds('chatMessage');
+				}
+
+				// Private chat message
+				if (
+					directMessagesActions.addDirectMessage.match(action) &&
+					action.payload.message.peerId !== getState().me.id
 				) {
 					playNotificationSounds('chatMessage');
 				}

@@ -1,6 +1,10 @@
-import { styled, Typography } from '@mui/material';
+import { IconButton, styled, Typography } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { useState } from 'react';
 import { FormattedTime } from 'react-intl';
-import { meLabel } from '../translated/translatedComponents';
+import FloatingMenu from '../floatingmenu/FloatingMenu';
+import SendPrivateMessage from '../menuitems/SendPrivateMessage';
+import { meLabel, moreActionsLabel } from '../translated/translatedComponents';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 
@@ -97,6 +101,8 @@ interface MessageProps {
 	text?: string;
 	isMe: boolean;
 	format: MessageFormat;
+	peerId?: string;
+	peerActions?: boolean;
 }
 
 const Message = ({
@@ -104,8 +110,12 @@ const Message = ({
 	name,
 	text,
 	isMe,
-	format
+	format,
+	peerId,
+	peerActions
 }: MessageProps): React.JSX.Element => {
+	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>(null);
+	const showActions = Boolean(peerActions && peerId && !isMe);
 	const linkRenderer = new marked.Renderer();
 
 	linkRenderer.link = ({ href, title, tokens }) => {
@@ -134,12 +144,35 @@ const Message = ({
 			>
 				{(format === 'single' || format ==='combinedBegin') &&
 					<>
-						<Typography variant='body2' sx={{ display: 'flex' }}>
+						<Typography variant='body2' sx={{ display: 'flex', alignItems: 'center' }}>
 							<b>{ isMe ? meLabel() : name }</b><StyledMessageTime>
 								&nbsp;- { <FormattedTime value={new Date(time || Date.now())} hour12={false}/> }
 							</StyledMessageTime>
+							{ showActions &&
+								<IconButton
+									aria-label={moreActionsLabel()}
+									size='small'
+									sx={{ padding: 0, marginLeft: 0.5 }}
+									onClick={(event) => setMoreAnchorEl(event.currentTarget)}
+								>
+									<MoreVertIcon fontSize='small' />
+								</IconButton>
+							}
 						</Typography>
 					</>
+				}
+				{ peerId && moreAnchorEl &&
+					<FloatingMenu
+						anchorEl={moreAnchorEl}
+						open
+						onClose={() => setMoreAnchorEl(null)}
+					>
+						<SendPrivateMessage
+							onClick={() => setMoreAnchorEl(null)}
+							peerId={peerId}
+							displayName={name}
+						/>
+					</FloatingMenu>
 				}
 				{ text &&
 					<Typography

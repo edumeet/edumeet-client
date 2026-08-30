@@ -1,3 +1,11 @@
 [[IgnoredVulns]]
 id = "CVE-2024-29415"
-reason = "Your reason for ignoring this vulnerability"
+# ip@2.0.1, reached via webtorrent -> bittorrent-tracker. Not exploitable here and
+# not fixable:
+#   * No patched version exists. The advisory (GHSA-2p57-rm9w-gvfp) lists
+#     last_affected 2.0.1 with no fix, and node-ip is unmaintained.
+#   * The code path is never shipped. bittorrent-tracker imports ip only in
+#     lib/server/parse-udp.js (UDP tracker server), and its package.json browser
+#     field maps ./server.js to false, so it is excluded from the browser bundle.
+# Re-check if bittorrent-tracker ever drops the ip dependency.
+reason = "ip@2.0.1 has no patched version upstream (node-ip unmaintained); the affected isPublic path lives in bittorrent-tracker's UDP tracker server, which the browser field excludes from our bundle."

@@ -21,11 +21,14 @@ export interface RoomState {
 	updateBreakoutInProgress?: boolean;
 	transitBreakoutRoomInProgress?: boolean;
 	recording?: boolean;
+	savingRecording?: boolean;
+	savingProgress?: number;
 	lockInProgress?: boolean;
 	localeInProgress?: boolean;
 	muteAllInProgress?: boolean;
 	lobbyPeersPromotionInProgress?: boolean;
 	stopAllVideoInProgress?: boolean;
+	stopAllScreenshareInProgress?: boolean;
 	closeMeetingInProgress?: boolean;
 	clearChatInProgress?: boolean;
 	clearFileSharingInProgress?: boolean;
@@ -56,6 +59,7 @@ const initialState: RoomState = {
 	roomMode: 'P2P',
 	state: 'new',
 	recording: false,
+	savingRecording: false,
 	breakoutsEnabled: true,
 	chatEnabled: true,
 	filesharingEnabled: true,

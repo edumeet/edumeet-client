@@ -40,20 +40,24 @@ const UserTable = () => {
 				header: ssoIdLabel()
 			},
 			{
-				accessorKey: 'tenantId',
-				header: tenantLabel(),
-				Cell: ({ row }) => getTenantName(String(row.original.tenantId))
+				// the row shows the tenant name, so filtering/sorting/search must
+				// use the name too, not the raw tenantId
+				id: 'tenantId',
+				accessorFn: (row) => getTenantName(String(row.tenantId)),
+				header: tenantLabel()
 
 			},
 			{
-				accessorKey: 'email',
-				header: emailHeaderLabel(),
-				Cell: ({ cell }) => (cell.getValue<string>() ? String(cell.getValue<string>()) : hiddenEmailLabel())
+				// resolve the placeholder in the accessor so the filters and the search
+				// box match the text the row actually shows
+				id: 'email',
+				accessorFn: (row) => (row.email ? String(row.email) : hiddenEmailLabel()),
+				header: emailHeaderLabel()
 			},
 			{
-				accessorKey: 'name',
-				header: nameLabel(),
-				Cell: ({ cell }) => (cell.getValue<string>() ? String(cell.getValue<string>()) : hiddenNameLabel())
+				id: 'name',
+				accessorFn: (row) => (row.name ? String(row.name) : hiddenNameLabel()),
+				header: nameLabel()
 			},
 			{
 				accessorKey: 'avatar',
@@ -82,6 +86,12 @@ const UserTable = () => {
 	);
 
 	const [ data, setData ] = useState<User[]>([]);
+
+	// MRT caches accessorFn results per row and only rebuilds its rows when the
+	// data array identity changes. The rows and the lookups above are fetched
+	// concurrently, so hand it a fresh array when a lookup resolves after the
+	// rows, otherwise the resolved names stay stuck on their placeholder.
+	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, tenants ]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ ssoId, setSsoId ] = useState('');
@@ -330,7 +340,7 @@ const UserTable = () => {
 				}
 			})}
 			columns={columns}
-			data={data}
+			data={tableData}
 			initialState={{
 				columnVisibility: {
 					avatar: false,

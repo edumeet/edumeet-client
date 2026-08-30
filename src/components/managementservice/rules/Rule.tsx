@@ -2,12 +2,78 @@ import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { useMRTLocalization } from '../../../utils/mrtLocalization';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel, Box } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Autocomplete, FormControl, InputLabel, Select, MenuItem, IconButton } from '@mui/material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import React from 'react';
 import { Groups, Rule, Tenant } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
-import { accessIdLabel, actionLabel, actionToRunLabel, addNewLabel, applyLabel, assertLabel, cancelLabel, containsLabel, deleteLabel, endswithLabel, equalsLabel, gainLabel, genericItemDescLabel, makeUserGroupMemberLabel, makeUserSuperAdminLabel, makeUserTenantAdminLabel, makeUserTenantOwnerLabel, manageItemLabel, methodLabel, nameLabel, negateLabel, parameterLabel, startswithLabel, tenantLabel, typeLablel, undefinedTenantLabel, valueLabel } from '../../translated/translatedComponents';
+import { accessIdLabel, accessLabel, actionLabel, actionToRunLabel, addNewLabel, allowLabel, applyLabel, blockLabel, cancelLabel, closeLabel, containsLabel, deleteLabel, effectLabel, endswithLabel, equalsLabel, gainLabel, genericItemDescLabel,
+	rulesHelpTitleLabel, rulesHelpKindsLabel, rulesHelpStepsLabel, rulesHelpClosesLabel, rulesHelpBlockLabel, rulesHelpOpenLabel,
+	matchesAnyoneLabel, rulesHelpAdminsLabel, rulesHelpGrantLabel, rulesHelpGrantKeepLabel, rulesHelpGrantAccessLabel, makeUserGroupMemberLabel, makeUserSuperAdminLabel, makeUserTenantAdminLabel, makeUserTenantOwnerLabel, manageItemLabel, methodLabel, nameLabel, parameterHelpLabel, parameterLabel, startswithLabel, tenantLabel, typeLablel, undefinedTenantLabel, valueLabel, doesNotContainLabel, doesNotEqualLabel, doesNotStartWithLabel, doesNotEndWithLabel } from '../../translated/translatedComponents';
+
+// The only attributes an SSO login carries into the rule hooks (see
+// OAuthTenantStrategy.getEntityData on the management server). The field stays
+// free text so rules predating this list keep their value, but anything outside
+// it can never match.
+const RULE_PARAMETERS = [ 'email', 'name', 'ssoId', 'tenantId' ];
+
+// The server stores the comparison and its inversion separately (method + negate),
+// but a reader should not have to combine two controls in their head to work out
+// what a rule means. The dialog offers both directions as one list and maps the
+// choice back onto the two stored columns, so the data model is unchanged.
+// The negated forms are no longer offered. On an access rule they only ever faked
+// "allow everyone except", and that composed wrongly: two of them OR together and
+// stop excluding anything. Block and Allow cover the same ground correctly.
+//
+// They stay in this list for DISPLAY. `negate` is still honoured by the server and
+// remains a permanent part of Grant rules, where "grant to everyone except X" has
+// no other spelling, so such a rule must keep reading correctly in the table and in
+// the dialog rather than silently appearing as its opposite.
+const CONDITIONS = [
+	// The catch-all. It tests nothing, so the parameter and value fields are hidden
+	// when it is chosen. It ranks below every real rule, which is how a tenant states
+	// "refuse anyone no other rule mentions" as a row rather than a hidden default.
+	{ id: 'anyone', method: 'anyone', negate: false, label: matchesAnyoneLabel },
+	{ id: 'contains', method: 'contains', negate: false, label: containsLabel },
+	{ id: 'notcontains', method: 'contains', negate: true, label: doesNotContainLabel },
+	{ id: 'equals', method: 'equals', negate: false, label: equalsLabel },
+	{ id: 'notequals', method: 'equals', negate: true, label: doesNotEqualLabel },
+	{ id: 'startswith', method: 'startswith', negate: false, label: startswithLabel },
+	{ id: 'notstartswith', method: 'startswith', negate: true, label: doesNotStartWithLabel },
+	{ id: 'endswith', method: 'endswith', negate: false, label: endswithLabel },
+	{ id: 'notendswith', method: 'endswith', negate: true, label: doesNotEndWithLabel },
+];
+
+// `type` is stored flat, but it answers two questions: which category of rule this
+// is, and - for an access rule - whether it lets people in or keeps them out. The
+// dialog asks them separately so a row never has to be decoded.
+const CATEGORY_ACCESS = 'access';
+const CATEGORY_GAIN = 'gain';
+
+const ACCESS_EFFECTS = [
+	{ id: 'block', label: blockLabel },
+	{ id: 'allow', label: allowLabel },
+];
+
+const categoryOf = (type: string): string => (type === CATEGORY_GAIN ? CATEGORY_GAIN : CATEGORY_ACCESS);
+
+const typeText = (type: unknown): string => {
+	if (type === CATEGORY_GAIN) return gainLabel();
+	const effect = ACCESS_EFFECTS.find((e) => e.id === type);
+
+	// falls back to the raw value so a rule stored with an unrecognised type stays
+	// visible rather than rendering as an empty cell
+	return effect ? effect.label() : String(type ?? '');
+};
+
+const findCondition = (method: unknown, negate: unknown) =>
+	CONDITIONS.find((c) => c.method === method && c.negate === Boolean(negate));
+
+// Falls back to the raw stored method so a rule saved with an unrecognised
+// comparison stays visible rather than rendering as an empty cell.
+const conditionText = (method: unknown, negate: unknown): string =>
+	findCondition(method, negate)?.label() ?? String(method ?? '');
 
 const RuleTable = () => {
 	const dispatch = useAppDispatch();
@@ -15,7 +81,9 @@ const RuleTable = () => {
 
 	type TenantOptionTypes = Array<Tenant>
 
-	const [ tenants, setTenants ] = useState<TenantOptionTypes>([ { 'id': 0, 'name': '', 'description': '' } ]);
+	// empty until the fetch resolves; a placeholder row would be preselected as the
+	// rule's tenant by handleClickOpen and shown as a nameless option
+	const [ tenants, setTenants ] = useState<TenantOptionTypes>([]);
 	const { superAdmin } = useAppSelector((state) => state.management);
 
 	const getTenantName = (id: string): string => {
@@ -41,12 +109,17 @@ const RuleTable = () => {
 				header: nameLabel()
 			},
 			{
-				accessorKey: 'tenantId',
-				header: tenantLabel(),
-				Cell: ({ row }) => getTenantName(String(row.original.tenantId ?? ''))
+				// the row shows the tenant name, so filtering/sorting/search must
+				// use the name too, not the raw tenantId
+				id: 'tenantId',
+				accessorFn: (row) => getTenantName(String(row.tenantId ?? '')),
+				header: tenantLabel()
 			},
 			{
-				accessorKey: 'type',
+				// shows Block / Allow / Grant rather than the stored discriminator.
+				// accessorFn (not Cell) so search and column filters see what is shown.
+				id: 'type',
+				accessorFn: (row) => typeText(row.type),
 				header: typeLablel()
 			},
 			{
@@ -54,12 +127,13 @@ const RuleTable = () => {
 				header: parameterLabel()
 			},
 			{
-				accessorKey: 'method',
+				// method and negate are one idea, so the list shows them as one phrase
+				// ("does not end with") rather than a comparison plus a separate yes/no
+				// column the reader has to combine. accessorFn (not Cell) so search and
+				// column filters work on what is displayed.
+				id: 'method',
+				accessorFn: (row) => conditionText(row.method, row.negate),
 				header: methodLabel()
-			},
-			{
-				accessorKey: 'negate',
-				header: negateLabel()
 			},
 			{
 				accessorKey: 'value',
@@ -79,14 +153,14 @@ const RuleTable = () => {
 
 	const [ data, setData ] = useState([]);
 
+	// MRT caches accessorFn results per row and only rebuilds its rows when the
+	// data array identity changes. The rows and the lookups above are fetched
+	// concurrently, so hand it a fresh array when a lookup resolves after the
+	// rows, otherwise the resolved names stay stuck on their placeholder.
+	const tableData = useMemo(() => [ ...(data ?? []) ], [ data, tenants ]);
+
 	type GroupsOptionTypes = Array<Groups>
-	const [ groups, setGroups ] = useState<GroupsOptionTypes>([ {
-		'id': 0,
-		'name': '',   
-		'description': '',
-		'tenantId': 0
-	}
-	]);
+	const [ groups, setGroups ] = useState<GroupsOptionTypes>([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ id, setId ] = useState(0);
 	const [ name, setName ] = useState('');
@@ -101,6 +175,38 @@ const RuleTable = () => {
 	const [ cantPatch ] = useState(false);
 	const [ cantDelete, setCantDelete ] = useState(false);
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
+
+	// Postgres returns the bigint id columns as strings, so ids coming from the API
+	// and ids held in local state are not always the same type. Compare on the
+	// string form, the way the rest of this file's lookups do.
+	const sameId = (a: unknown, b: unknown): boolean => String(a) === String(b);
+
+	const conditionId = findCondition(method, negate)?.id ?? '';
+	// the catch-all tests nothing, so it has no parameter and no value to show
+	const isCatchAll = method === 'anyone';
+
+	// Only the plain comparisons can be chosen. A rule written before the negated
+	// forms were withdrawn keeps its own option in the list so that opening it
+	// shows what it actually does, and leaving the field alone does not rewrite it.
+	const conditionOptions = useMemo(() => CONDITIONS.filter((c) => {
+		// whatever the rule already uses stays selectable, so opening an existing rule
+		// never rewrites it just by being looked at
+		if (c.id === conditionId) return true;
+		if (c.negate) return false;
+
+		// "matches anyone" only means something as a Block. As an Allow it is a no-op:
+		// an unmatched user is permitted anyway, and it loses every tie to a Block.
+		if (c.method === 'anyone' && type !== 'block') return false;
+
+		return true;
+	}), [ conditionId, type ]);
+
+	// A rule can only grant a group that belongs to the rule's own tenant, so the
+	// picker must not offer groups from anywhere else.
+	const tenantGroups = useMemo(
+		() => groups.filter((g) => sameId(g.tenantId, tenantId)),
+		[ groups, tenantId ]
+	);
 
 	async function fetchProduct() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -136,15 +242,28 @@ const RuleTable = () => {
 	}, []);
 
 	const [ open, setOpen ] = React.useState(false);
+	const [ helpOpen, setHelpOpen ] = React.useState(false);
 
 	const handleClickOpen = () => {
 		setId(0);
 		setName('');
-		setTenantId(0);
 		setCantDelete(true);
 		setOpen(true);
-		setTenantIdOption(undefined);
-		setType('');
+
+		// Preselect a tenant, the same way Groups does. A tenant admin only ever sees
+		// their own, and a super admin is no longer pinned to theirs server side, so
+		// leaving this blank would mean the rule has no tenant to belong to.
+		if (tenants.length > 0) {
+			setTenantId(Number(tenants[0].id));
+			setTenantIdOption(tenants[0]);
+		} else {
+			setTenantId(0);
+			setTenantIdOption(undefined);
+		}
+
+		// a new rule starts as an access rule that blocks, so the effect is never
+		// left undecided and the stored type is always a real value
+		setType('block');
 		setParameter('');
 		setMethod('');
 		setNegate(false);
@@ -162,20 +281,42 @@ const RuleTable = () => {
 		setName(event.target.value);
 	};
 
-	const handleTypeChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+	// Choosing the category sets the stored type; an access rule starts as a Block
+	// so the effect is never left undecided.
+	const handleCategoryChange = (event: { target: { value: string; }; }) => {
+		setType(event.target.value === CATEGORY_GAIN ? CATEGORY_GAIN : 'block');
+	};
+
+	const handleEffectChange = (event: { target: { value: string; }; }) => {
 		setType(event.target.value);
+
+		// a catch-all only means something as a Block, so switching to Allow clears it
+		// rather than leaving behind a rule that does nothing
+		if (event.target.value !== 'block' && method === 'anyone') {
+			setMethod('');
+			setNegate(false);
+		}
 	};
 	
-	const handleParameterChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-		setParameter(event.target.value);
+	const handleParameterChange = (event: SyntheticEvent<Element, Event>, newValue: string) => {
+		setParameter(newValue);
 	};
 	
-	const handleMethodChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-		setMethod(event.target.value);
-	};
-	
-	const handleNegateChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
-		setNegate(event.target.checked);
+	// One control, two stored columns
+	const handleMethodChange = (event: { target: { value: string; }; }) => {
+		const condition = CONDITIONS.find((c) => c.id === event.target.value);
+
+		if (condition) {
+			setMethod(condition.method);
+			setNegate(condition.negate);
+
+			// the catch-all tests nothing, so clear the fields it hides rather than
+			// saving values the rule will never look at
+			if (condition.method === 'anyone') {
+				setParameter('');
+				setValue('');
+			}
+		}
 	};
 
 	const handleValueChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -191,12 +332,15 @@ const RuleTable = () => {
 
 	const handleTenantIdChange = (event: SyntheticEvent<Element, Event>, newValue: Tenant) => {
 		if (newValue) {
-			if (typeof newValue.id != 'number') {
-				setTenantId(parseInt(newValue.id));
-			} else {
-				setTenantId(newValue.id);
-			}
+			const newTenantId = typeof newValue.id != 'number' ? parseInt(newValue.id) : newValue.id;
+
+			setTenantId(newTenantId);
 			setTenantIdOption(newValue);
+
+			// The selected group belongs to the tenant we just moved away from
+			if (accessId && !groups.some((g) => sameId(g.id, accessId) && sameId(g.tenantId, newTenantId))) {
+				setAccessId('');
+			}
 		}
 	};
 
@@ -217,6 +361,14 @@ const RuleTable = () => {
 	};
 
 	const addTenant = async () => {
+
+		// A rule is always scoped to a tenant, and a super admin is no longer pinned
+		// to their own, so submitting without one would fail the foreign key.
+		if (tenantId === 0) {
+			setIsLoading(false);
+
+			return;
+		}
 
 		// add new data / mod data / error
 		if (name != '' && id === 0) {
@@ -298,8 +450,34 @@ const RuleTable = () => {
 				{addNewLabel()}
 			</Button>
 			<hr />
+			<Dialog open={helpOpen} onClose={() => setHelpOpen(false)}>
+				<DialogTitle>{rulesHelpTitleLabel()}</DialogTitle>
+				<DialogContent>
+					<DialogContentText sx={{ mb: 2 }}>{rulesHelpKindsLabel()}</DialogContentText>
+
+					<DialogContentText sx={{ fontWeight: 'bold', mb: 1 }}>{accessLabel()}</DialogContentText>
+					<DialogContentText sx={{ mb: 2 }}>{rulesHelpStepsLabel()}</DialogContentText>
+					<DialogContentText sx={{ mb: 2 }}>{rulesHelpOpenLabel()}</DialogContentText>
+					<DialogContentText sx={{ mb: 2 }}>{rulesHelpClosesLabel()}</DialogContentText>
+					<DialogContentText sx={{ mb: 2 }}>{rulesHelpBlockLabel()}</DialogContentText>
+					<DialogContentText sx={{ mb: 3, fontStyle: 'italic' }}>{rulesHelpAdminsLabel()}</DialogContentText>
+
+					<DialogContentText sx={{ fontWeight: 'bold', mb: 1 }}>{gainLabel()}</DialogContentText>
+					<DialogContentText sx={{ mb: 2 }}>{rulesHelpGrantLabel()}</DialogContentText>
+					<DialogContentText sx={{ mb: 2 }}>{rulesHelpGrantKeepLabel()}</DialogContentText>
+					<DialogContentText>{rulesHelpGrantAccessLabel()}</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => setHelpOpen(false)}>{closeLabel()}</Button>
+				</DialogActions>
+			</Dialog>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>{manageItemLabel()}</DialogTitle>
+				<DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+					{manageItemLabel()}
+					<IconButton onClick={() => setHelpOpen(true)} aria-label={rulesHelpTitleLabel()} size="small">
+						<InfoOutlinedIcon />
+					</IconButton>
+				</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
 						{genericItemDescLabel()}
@@ -327,7 +505,7 @@ const RuleTable = () => {
 						sx={{ marginTop: '8px' }}
 						renderInput={(params) => <TextField {...params} label={tenantLabel()} />}
 					/>
-					<FormControl 
+					<FormControl
 						sx={{ marginTop: '8px' }}
 						fullWidth >
 						<InputLabel id="type-label">{typeLablel()}</InputLabel>
@@ -335,25 +513,51 @@ const RuleTable = () => {
 							required
 							labelId="type-label"
 							id="type"
-							value={type}
+							value={categoryOf(type)}
 							label={typeLablel()}
-							onChange={handleTypeChange}
+							onChange={handleCategoryChange}
 						>
-							<MenuItem value={'assert'}>{assertLabel()}</MenuItem>
-							<MenuItem value={'gain'}>{gainLabel()}</MenuItem>
+							<MenuItem value={CATEGORY_ACCESS}>{accessLabel()}</MenuItem>
+							<MenuItem value={CATEGORY_GAIN}>{gainLabel()}</MenuItem>
 						</Select>
 					</FormControl>
-					<TextField
-						margin="dense"
-						id="parameter"
-						label={parameterLabel()}
-						type="text"
-						required
+					{categoryOf(type) === CATEGORY_ACCESS &&
+					<FormControl
+						sx={{ marginTop: '8px' }}
+						fullWidth>
+						<InputLabel id="effect-label">{effectLabel()}</InputLabel>
+						<Select
+							required
+							labelId="effect-label"
+							id="effect"
+							value={ACCESS_EFFECTS.some((e) => e.id === type) ? type : 'block'}
+							label={effectLabel()}
+							onChange={handleEffectChange}
+						>
+							{ACCESS_EFFECTS.map((e) =>
+								<MenuItem key={e.id} value={e.id}>{e.label()}</MenuItem>
+							)}
+						</Select>
+					</FormControl>
+					}
+					{!isCatchAll &&
+					<Autocomplete
+						freeSolo
+						options={RULE_PARAMETERS}
+						inputValue={parameter}
+						onInputChange={handleParameterChange}
 						fullWidth
 						sx={{ marginTop: '8px' }}
-						onChange={handleParameterChange}
-						value={parameter}
+						renderInput={(params) => <TextField
+							{...params}
+							margin="dense"
+							id="parameter"
+							label={parameterLabel()}
+							required
+							helperText={parameterHelpLabel()}
+						/>}
 					/>
+					}
 
 					<FormControl
 						sx={{ marginTop: '8px' }}
@@ -362,27 +566,17 @@ const RuleTable = () => {
 						<Select
 							labelId="method-label"
 							id="method"
-							value={method}
+							value={conditionId}
 							label={methodLabel()}
 							required
 							onChange={handleMethodChange}
 						>
-							<MenuItem value={'contains'}>{containsLabel()}</MenuItem>
-							<MenuItem value={'equals'}>{equalsLabel()}</MenuItem>
-							<MenuItem value={'startswith'}>{startswithLabel()}</MenuItem>
-							<MenuItem value={'endswith'}>{endswithLabel()}</MenuItem>
+							{conditionOptions.map((c) =>
+								<MenuItem key={c.id} value={c.id}>{c.label()}</MenuItem>
+							)}
 						</Select>
 					</FormControl>
-					<Box
-						sx= {{
-							display: 'flex',
-							justifyContent: 'center',
-							alignItems: 'center'
-						}}
-					>
-						<FormControlLabel style={{ textAlign: 'center' }} control={<Checkbox onChange={handleNegateChange} checked={negate} />} label={negateLabel()} />
-					</Box>
-
+					{!isCatchAll &&
 					<TextField
 						margin="dense"
 						id="value"
@@ -393,6 +587,7 @@ const RuleTable = () => {
 						onChange={handleValueChange}
 						value={value}
 					/>
+					}
 					{type==='gain' && 
 					<>
 						<FormControl
@@ -423,14 +618,16 @@ const RuleTable = () => {
 							<Select
 								labelId="accessid-label"
 								id="accessid"
-								value={accessId}
+								// groups load asynchronously; show nothing rather than an
+								// out-of-range value until the matching option exists
+								value={tenantGroups.some((g) => sameId(g.id, accessId)) ? accessId : ''}
 								disabled={type !== 'gain'}
 								label={accessIdLabel()}
 								required
 								onChange={handleAccessIdChange}
 							>
-								{Object.entries(groups).map(([ , v ]) =>
-									<MenuItem value={v.id}>{v.name}</MenuItem>
+								{tenantGroups.map((g) =>
+									<MenuItem key={g.id} value={String(g.id)}>{g.name}</MenuItem>
 								)}
 							</Select>
 						</FormControl>
@@ -442,95 +639,44 @@ const RuleTable = () => {
 				<DialogActions>
 					<Button onClick={delTenant} disabled={cantDelete} color='warning'>{deleteLabel()}</Button>
 					<Button onClick={handleClose}>{cancelLabel()}</Button>
-					<Button onClick={addTenant} disabled={cantPatch}>{applyLabel()}</Button>
+					<Button onClick={addTenant} disabled={cantPatch || tenantId === 0}>{applyLabel()}</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
 		<MaterialReactTable localization={localization}
 			muiTableBodyRowProps={({ row }) => ({
 				onClick: async () => {
-					const r = row.getAllCells();
-					const tid = r[0].getValue();
-					const tname = r[1].getValue();
-					const ttenantId = r[2].getValue();
+					// Always read the record, never the rendered cells. Several columns
+					// display a derived label (tenant name, condition phrase), and
+					// reading those back by column index has twice put the wrong value
+					// into this dialog.
+					const rule = row.original;
+					// bigint columns arrive as strings from Postgres and numbers from
+					// MySQL, so normalise rather than testing typeof
+					const text = (v: unknown): string => (v == null ? '' : String(v));
+					const ruleTenantId = rule.tenantId == null ? 0 : parseInt(text(rule.tenantId));
 
-					const ttype = r[3].getValue(); 
-					const tparameter = r[4].getValue();
-					const tmethod = r[5].getValue();
-					const tnegate = r[6].getValue();
-					const tvalue = r[7].getValue();
-					const taction = r[8].getValue();
-					const taccessid = r[9].getValue();
+					setId(parseInt(text(rule.id)) || 0);
+					setName(text(rule.name));
 
-					if (typeof tid === 'number') {
-						setId(tid);
-					} else if (typeof tid == 'string') {
-						setId(parseInt(tid));
-					}
+					setTenantId(Number.isNaN(ruleTenantId) ? 0 : ruleTenantId);
+					setTenantIdOption(tenants.find((x) => sameId(x.id, rule.tenantId)));
 
-					if (typeof tname === 'string') {
-						setName(tname);
-					} else {
-						setName('');
-					}
-					
-					if (typeof ttenantId === 'number') {
-						const ttenant = tenants.find((x) => x.id == ttenantId);
-
-						if (ttenant) {
-							setTenantIdOption(ttenant);
-						}
-						setTenantId(ttenantId);
-					} else if (typeof ttenantId === 'string') {
-						const ttenant = tenants.find((x) => x.id == parseInt(ttenantId));
-
-						if (ttenant) {
-							setTenantIdOption(ttenant);
-						}
-						setTenantId(parseInt(ttenantId));
-					} else {
-						setTenantId(0);
-					}
-
-					if (typeof ttype === 'string') {
-						setType(ttype);
-					} else {
-						setType('');
-					}
-					if (typeof tparameter === 'string') {
-						setParameter(tparameter);
-					} else {
-						setParameter('');
-					}
-					if (typeof tmethod === 'string') {
-						setMethod(tmethod);
-					} else {
-						setMethod('');
-					}
-					if (typeof tnegate === 'boolean') {
-						setNegate(tnegate);
-					}
-					if (typeof tvalue === 'string') {
-						setValue(tvalue);
-					} else {
-						setValue('');
-					}
-					if (typeof taction === 'string') {
-						setAction(taction);
-					} else {
-						setAction('');
-					}
-					if (typeof taccessid === 'string') {
-						setAccessId(taccessid);
-					} else {
-						setAccessId('');
-					}
+					setType(text(rule.type));
+					setParameter(text(rule.parameter));
+					setMethod(text(rule.method));
+					setNegate(Boolean(rule.negate));
+					setValue(text(rule.value));
+					setAction(text(rule.action));
+					// stored as a string, but normalise so the group Select can match
+					// its (stringified) option values and preselect the group
+					setAccessId(text(rule.accessId));
 
 					handleClickOpenNoreset();
 				}
 			})}
 			columns={columns}
-			data={data} // fallback to array if data is undefined
+			data={tableData} // fallback to array if data is undefined
 			initialState={{
 				columnVisibility: {
 				}

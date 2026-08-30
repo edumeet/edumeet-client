@@ -1,4 +1,6 @@
 import {
+	Button,
+	ButtonProps,
 	FormControl,
 	InputLabel,
 	MenuItem,
@@ -7,6 +9,7 @@ import {
 } from '@mui/material';
 import { memo, ReactElement } from 'react';
 import { MediaDevice } from '../../services/deviceService';
+import { applyLabel } from '../translated/translatedComponents';
 
 interface DeviceChooserProps {
 	value: string;
@@ -27,6 +30,18 @@ export const ChooserDiv = styled('div')(({ theme }) => ({
 	gap: theme.spacing(1),
 	margin: theme.spacing(2, 0)
 }));
+
+export const ApplyButton = (props: ButtonProps): React.JSX.Element => (
+	<Button
+		sx={{ minWidth: 'fit-content', marginRight: 1 }}
+		variant='contained'
+		color='error'
+		size='small'
+		{...props}
+	>
+		{ applyLabel() }
+	</Button>
+);
 
 const DeviceChooser = ({
 	value,

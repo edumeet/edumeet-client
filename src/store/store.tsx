@@ -48,6 +48,7 @@ import { createContext } from 'react';
 import { DeviceService } from '../services/deviceService';
 import { FileService } from '../services/fileService';
 import roomSessionsSlice from './slices/roomSessionsSlice';
+import directMessagesSlice from './slices/directMessagesSlice';
 import type { Application } from '@feathersjs/feathers/lib';
 import { EffectsService } from '../services/effectsService';
 import { ClientMonitor } from '@observertc/client-monitor-js';
@@ -124,6 +125,7 @@ const middlewareOptions = {
 
 const reducer = combineReducers({
 	consumers: consumersSlice.reducer,
+	directMessages: directMessagesSlice.reducer,
 	notifications: notificationsSlice.reducer,
 	lobbyPeers: lobbyPeersSlice.reducer,
 	me: meSlice.reducer,
