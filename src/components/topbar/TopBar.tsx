@@ -142,7 +142,6 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 	const menuItems = <>{ fullscreenEnabled && <FullscreenButton type='iconbutton' fullscreen={fullscreen} onClick={onFullscreen} /> }
 		<SettingsButton type='iconbutton' />
 		{ canLock && <LockButton type='iconbutton' /> }
-		{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 		{ loginEnabled && (loggedIn ? <LogoutButton type='iconbutton' /> : <LoginButton type='iconbutton' />) }</>;
 
 	const isEnabled = useAppSelector((state) => state.room.countdownTimer.isEnabled);
@@ -165,6 +164,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 					<SavingRecordingIndicator />
 					{ e2eeEnabled && <E2eeIndicator /> }
 					<ReceiveVideoIndicator />
+					{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 					<Box sx={{ display: { xs: 'block', sm: 'none' } }}>
 						<ControlButton type='iconbutton' onClick={handleClick} >
 							<MoreIcon />
