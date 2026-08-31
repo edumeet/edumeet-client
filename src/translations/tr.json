@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Yaklaşan toplantılar",
   "label.management.tenants.testConnection": "Bağlantıyı test et",
   "settings.showAllAudioOnlyParticipantsLabel": "Videosu olmayan her katılımcıyı ayrı ayrı göster",
+  "label.managementservice.endToEndEncryption": "Uçtan uca şifreleme",
+  "label.managementservice.endToEndEncryptionTooltip": "Etkinleştirildiğinde, bu kiracının odalarındaki medya uçtan uca şifrelenir. Kilit bunu zorunlu kılar, böylece oda sahipleri kapatamaz.",
+  "room.e2eeUnsupported": "Bu oda, tarayıcınızın desteklemediği uçtan uca şifreleme gerektiriyor. Katılmak için Chrome, Edge veya Firefox tarayıcısının güncel bir sürümünü kullanın.",
+  "room.endToEndEncrypted": "Bu oda uçtan uca şifrelidir",
+  "room.peerE2eeSecuring": "Güvenli hale getiriliyor, bu katılımcının anahtarı bekleniyor",
+  "room.peerIdentityChanged": "Güvenlik uyarısı: {peer} adlı katılımcının şifreleme kimliği değişti. Bu, yeniden bağlanırken olabilir, ancak birinin bağlantıyı ele geçirdiğini de gösterebilir. Hassas bir şey paylaşmadan önce kişiyle doğrulayın.",
+  "room.peerIdentityChangedShort": "Şifreleme kimliği değişti, bu katılımcıyı doğrulayın",
   "device.stopReceivingVideo": "Video almayı durdur",
   "device.startReceivingVideo": "Video almayı başlat",
   "room.muteAllConfirm": "Odadaki herkesin mikrofonu kapatılsın mı?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Oda sohbetine dön",
   "label.hideConversation": "Konuşmayı gizle",
   "label.peerLeftMeeting": "{displayName} toplantıdan ayrıldı",
-  "label.chatMessageFailed": "Mesaj iletilemedi"
+  "label.chatMessageFailed": "Mesaj iletilemedi",
+  "room.e2eeSecuring": "Oda güvenliği sağlanıyor, şifreleme henüz doğrulanmadı",
+  "room.e2eeFailed": "Bu oda uçtan uca şifreleme gerektiriyor ancak tarayıcınız ortamı şifrelemedi. Korumasız gönderilmesini önlemek için odadan çıkarıldınız."
 }

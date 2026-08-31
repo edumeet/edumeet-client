@@ -16,6 +16,7 @@ import { ClientMonitor } from '@observertc/client-monitor-js';
 import { safePromise } from '../utils/safePromise';
 import { ProducerSource } from '../utils/types';
 import { MediaSender } from '../utils/mediaSender';
+import type { E2eeService } from './e2eeService';
 import { Logger } from '../utils/Logger';
 import edumeetConfig from '../utils/edumeetConfig';
 import { fileService } from '../store/store';
@@ -121,6 +122,7 @@ export class MediaService extends EventEmitter {
 	public previewWebcamTrack: MediaStreamTrack | null = null;
 
 	public mediaSenders: MediaSenders;
+	public e2eeService?: E2eeService; // set by store.tsx; attaches encrypt/decrypt transforms when E2EE is on
 
 	private peerDevices: Map<string, PeerDevice> = new Map(); // PeerId -> P2PDevice
 	private peerSendTransports: Map<string, Promise<PeerTransport>> = new Map(); // PeerId -> P2PTransport
@@ -523,6 +525,9 @@ export class MediaService extends EventEmitter {
 
 							break;
 						}
+
+						// E2EE: decrypt this remote stream before it reaches the decoder (no-op when E2EE is off).
+						void this.e2eeService?.protectReceiver(consumer.rtpReceiver, rtpParameters?.codecs?.[0]?.mimeType);
 
 						const {
 							paused: consumerPaused,
@@ -929,7 +934,19 @@ export class MediaService extends EventEmitter {
 			dtlsParameters,
 			sctpParameters,
 			iceServers: this.iceServers,
+			// Chrome gates its encoded-transform pipeline on this RTCConfiguration flag; without it a
+			// transform attaches and is then never fed, so media goes out unencrypted. This is the
+			// setting mediasoup's own E2EE example relies on. Harmless where it is not needed.
+			additionalSettings: { encodedInsertableStreams: true } as Partial<RTCConfiguration>,
 		});
+
+		if (creator === 'createSendTransport') {
+			// The E2EE watchdog measures from here, not from when the transform attached: no frame can
+			// reach the transform before the transport is connected.
+			transport.on('connectionstatechange', (connectionState) => {
+				if (connectionState === 'connected') this.e2eeService?.notifyMediaFlowPossible();
+			});
+		}
 
 		// eslint-disable-next-line no-shadow
 		transport.on('connect', ({ dtlsParameters }, callback, errback) => {

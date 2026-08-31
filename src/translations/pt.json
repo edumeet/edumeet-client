@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Próximas reuniões",
   "label.management.tenants.testConnection": "Testar ligação",
   "settings.showAllAudioOnlyParticipantsLabel": "Mostrar cada participante sem vídeo separadamente",
+  "label.managementservice.endToEndEncryption": "Encriptação ponta a ponta",
+  "label.managementservice.endToEndEncryptionTooltip": "Quando ativada, os conteúdos multimédia nas salas deste inquilino são encriptados ponta a ponta. O cadeado força a ativação, para que os proprietários das salas não a possam desativar.",
+  "room.e2eeUnsupported": "Esta sala requer encriptação ponto a ponto, que o seu navegador não suporta. Utilize uma versão recente do Chrome, Edge ou Firefox para entrar.",
+  "room.endToEndEncrypted": "Esta sala está encriptada ponta a ponta",
+  "room.peerE2eeSecuring": "A proteger, à espera da chave deste participante",
+  "room.peerIdentityChanged": "Aviso de segurança: a identidade de encriptação de {peer} mudou. Isto pode acontecer ao reconectar, mas também pode indicar que alguém está a intercetar a ligação. Confirme com a pessoa antes de partilhar algo confidencial.",
+  "room.peerIdentityChangedShort": "Identidade de encriptação alterada, verifique este participante",
   "device.stopReceivingVideo": "Parar de receber vídeo",
   "device.startReceivingVideo": "Começar a receber vídeo",
   "room.muteAllConfirm": "Mutar o microfone de todos os participantes da sala?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Voltar ao chat da sala",
   "label.hideConversation": "Ocultar conversa",
   "label.peerLeftMeeting": "{displayName} saiu da reunião",
-  "label.chatMessageFailed": "Não foi possível entregar a mensagem"
+  "label.chatMessageFailed": "Não foi possível entregar a mensagem",
+  "room.e2eeSecuring": "A proteger esta sala, encriptação ainda não confirmada",
+  "room.e2eeFailed": "Esta sala requer encriptação ponto a ponto, mas o seu navegador não encriptou os conteúdos. Foi removido da sala para evitar enviá-los sem proteção."
 }

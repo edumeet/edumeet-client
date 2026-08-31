@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Nadchodzące spotkania",
   "label.management.tenants.testConnection": "Testuj połączenie",
   "settings.showAllAudioOnlyParticipantsLabel": "Pokazywanie każdego uczestnika bez wideo osobno",
+  "label.managementservice.endToEndEncryption": "Szyfrowanie end-to-end",
+  "label.managementservice.endToEndEncryptionTooltip": "Po włączeniu multimedia w pokojach tego najemcy są szyfrowane end-to-end. Blokada wymusza włączenie, więc właściciele pokojów nie mogą go wyłączyć.",
+  "room.e2eeUnsupported": "Ten pokój wymaga szyfrowania end-to-end, którego Twoja przeglądarka nie obsługuje. Aby dołączyć, użyj aktualnej wersji przeglądarki Chrome, Edge lub Firefox.",
+  "room.endToEndEncrypted": "Ten pokój jest szyfrowany end-to-end",
+  "room.peerE2eeSecuring": "Zabezpieczanie, oczekiwanie na klucz tego uczestnika",
+  "room.peerIdentityChanged": "Ostrzeżenie bezpieczeństwa: tożsamość szyfrowania uczestnika {peer} uległa zmianie. Może się to zdarzyć po ponownym połączeniu, ale może też oznaczać, że ktoś przechwytuje połączenie. Zweryfikuj to z tą osobą przed udostępnieniem czegokolwiek poufnego.",
+  "room.peerIdentityChangedShort": "Tożsamość szyfrowania zmieniona, zweryfikuj tego uczestnika",
   "device.stopReceivingVideo": "Zatrzymaj odbieranie wideo",
   "device.startReceivingVideo": "Rozpocznij odbieranie wideo",
   "room.muteAllConfirm": "Wyciszyć mikrofon wszystkim w pokoju?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Powrót do czatu pokoju",
   "label.hideConversation": "Ukryj rozmowę",
   "label.peerLeftMeeting": "{displayName} opuścił(a) spotkanie",
-  "label.chatMessageFailed": "Nie udało się dostarczyć wiadomości"
+  "label.chatMessageFailed": "Nie udało się dostarczyć wiadomości",
+  "room.e2eeSecuring": "Zabezpieczanie pokoju, szyfrowanie jeszcze niepotwierdzone",
+  "room.e2eeFailed": "Ten pokój wymaga szyfrowania end-to-end, ale Twoja przeglądarka nie zaszyfrowała mediów. Zostałeś usunięty z pokoju, aby nie wysyłać ich bez ochrony."
 }

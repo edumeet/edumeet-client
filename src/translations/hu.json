@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Közelgő konferenciák",
   "label.management.tenants.testConnection": "Kapcsolat tesztelése",
   "settings.showAllAudioOnlyParticipantsLabel": "Minden videó nélküli résztvevő külön megjelenítése",
+  "label.managementservice.endToEndEncryption": "Végpontok közötti titkosítás",
+  "label.managementservice.endToEndEncryptionTooltip": "Ha engedélyezve van, a bérlő szobáiban a média végpontok között titkosított. A zár kötelezővé teszi, így a szobatulajdonosok nem kapcsolhatják ki.",
+  "room.e2eeUnsupported": "Ez a szoba végpontok közötti titkosítást igényel, amelyet a böngészője nem támogat. A csatlakozáshoz használja a Chrome, az Edge vagy a Firefox friss verzióját.",
+  "room.endToEndEncrypted": "Ez a szoba végpontok között titkosított",
+  "room.peerE2eeSecuring": "Védelem folyamatban, várakozás a résztvevő kulcsára",
+  "room.peerIdentityChanged": "Biztonsági figyelmeztetés: {peer} titkosítási azonosítója megváltozott. Ez előfordulhat újracsatlakozáskor, de azt is jelezheti, hogy valaki lehallgatja a kapcsolatot. Egyeztessen a személlyel, mielőtt bármi érzékenyet megosztana.",
+  "room.peerIdentityChangedShort": "A titkosítási azonosító megváltozott, ellenőrizze ezt a résztvevőt",
   "device.stopReceivingVideo": "Videó fogadásának leállítása",
   "device.startReceivingVideo": "Videó fogadásának indítása",
   "room.muteAllConfirm": "Elnémítja mindenki mikrofonját a szobában?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Vissza a szoba csevegéséhez",
   "label.hideConversation": "Beszélgetés elrejtése",
   "label.peerLeftMeeting": "{displayName} elhagyta a megbeszélést",
-  "label.chatMessageFailed": "Az üzenetet nem sikerült kézbesíteni"
+  "label.chatMessageFailed": "Az üzenetet nem sikerült kézbesíteni",
+  "room.e2eeSecuring": "A szoba védelme folyamatban, a titkosítás még nincs megerősítve",
+  "room.e2eeFailed": "Ez a szoba végpontok közötti titkosítást igényel, de a böngészője nem titkosította a médiát. Eltávolítottuk a szobából, hogy ne küldje védelem nélkül."
 }

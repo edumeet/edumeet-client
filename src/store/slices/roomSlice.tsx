@@ -42,6 +42,7 @@ export interface RoomState {
 	raiseHandEnabled?: boolean;
 	reactionsEnabled?: boolean;
 	localRecordingEnabled?: boolean;
+	e2eeEnabled?: boolean;
 	videoCodec?: VideoCodec;
 	simulcast?: boolean;
 	audioCodec?: string;

@@ -9,6 +9,7 @@ import Room from './views/room/Room';
 import { sendFiles } from './store/actions/filesharingActions';
 import { uiActions } from './store/slices/uiSlice';
 import { roomActions } from './store/slices/roomSlice';
+import { notificationsActions } from './store/slices/notificationsSlice';
 import { stopRecording } from './store/actions/recordingActions';
 import { permissions } from './utils/roles';
 import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
@@ -113,6 +114,22 @@ const App = (): React.JSX.Element => {
 			window.location.href = window.location.origin + target;
 		}
 	}, [ roomState, id, edumeetConfig.keepRoomNameOnLeave ]);
+
+	/**
+	 * Surface a join error carried across the page reload (e.g. refused admission
+	 * because the room mandates E2EE and this browser can't encrypt media).
+	 */
+	useEffect(() => {
+		const msg = sessionStorage.getItem('edumeet.joinError');
+
+		if (msg) {
+			sessionStorage.removeItem('edumeet.joinError');
+			dispatch(notificationsActions.enqueueNotification({
+				message: msg,
+				options: { variant: 'error', persist: true }
+			}));
+		}
+	}, [ dispatch ]);
 
 	/**
 	 * Detect WebGL-support.

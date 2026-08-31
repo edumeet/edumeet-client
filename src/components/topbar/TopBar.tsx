@@ -19,6 +19,7 @@ import ReceiveVideoIndicator from '../controlbuttons/ReceiveVideoIndicator';
 import CountdownTimerChip from '../countdowntimer/CountdownTimerChip';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import ControlButton from '../controlbuttons/ControlButton';
+import E2eeIndicator from '../e2eeindicator/E2eeIndicator';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -96,6 +97,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 	const [ meetingDuration, setMeetingDuration ] = useState<number>(0);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const someoneIsRecording = useAppSelector(someoneIsRecordingSelector);
+	const e2eeEnabled = useAppSelector((state) => state.room.e2eeEnabled);
 
 	useEffect(() => {
 		if (roomCreationTimestamp) {
@@ -161,6 +163,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 				<TopBarDiv marginRight={1}>
 					{ someoneIsRecording && <RecordIcon color='error' /> }
 					<SavingRecordingIndicator />
+					{ e2eeEnabled && <E2eeIndicator /> }
 					<ReceiveVideoIndicator />
 					<Box sx={{ display: { xs: 'block', sm: 'none' } }}>
 						<ControlButton type='iconbutton' onClick={handleClick} >

@@ -1,6 +1,7 @@
 import { Box, IconButton, Paper, styled } from '@mui/material';
 import { Peer } from '../../store/slices/peersSlice';
 import PanIcon from '@mui/icons-material/BackHand';
+import E2eeIndicator from '../e2eeindicator/E2eeIndicator';
 import { useAppDispatch, useAppSelector, usePeerConsumers, usePermissionSelector } from '../../store/hooks';
 import { permissions } from '../../utils/roles';
 import { lowerPeerHand } from '../../store/actions/peerActions';
@@ -64,6 +65,9 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 	const handleMenuClose = () => setMoreAnchorEl(null);
 
 	const isSelected = useAppSelector((state) => state.roomSessions[peer.sessionId].selectedPeers.includes(peer.id));
+	const e2eeEnabled = useAppSelector((state) => state.room.e2eeEnabled);
+	const peerSecured = useAppSelector((state) => Boolean(state.e2ee.securedPeers[peer.id]));
+	const peerIdentityChanged = useAppSelector((state) => Boolean(state.e2ee.identityChangedPeers[peer.id]));
 	const canChat = usePermissionSelector(permissions.SEND_CHAT);
 	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
 
@@ -94,6 +98,7 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 				}
 				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
 				<StyledIcons>
+					{ e2eeEnabled && <E2eeIndicator peer peerSecured={peerSecured} identityChanged={peerIdentityChanged} small /> }
 					{ hasScreen && /* <StyledChip disabled label={ */ <ScreenShareIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
 					{ hasVideo && /* <StyledChip disabled label={ */ <WebcamIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
 					{ hasAudio && /* <StyledChip disabled label={ */ <MicUnMutedIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }

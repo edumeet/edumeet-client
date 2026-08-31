@@ -463,6 +463,7 @@ export type Room = {
 	localRecordingEnabled: boolean,
 	owners?: Array<RoomOwners>,
 	breakoutsEnabled: boolean,
+	endToEndEncryption?: boolean,
 };
 
 export type Groups = {
@@ -569,6 +570,8 @@ export type Default = {
 	managerManagedRoomNumberLimit: string, // number,
 	disableUnmanaged: boolean | undefined,
 	disableUnmanagedLock: boolean | undefined,
+	endToEndEncryption: boolean | undefined,
+	endToEndEncryptionLock: boolean | undefined,
 	lockedUnmanaged: boolean | undefined,
 	raiseHandEnabledUnmanaged: boolean | undefined,
 	localRecordingEnabledUnmanaged: boolean | undefined,

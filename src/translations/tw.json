@@ -610,6 +610,13 @@
   "label.meetings.upcoming": null,
   "label.management.tenants.testConnection": null,
   "settings.showAllAudioOnlyParticipantsLabel": null,
+  "label.managementservice.endToEndEncryption": null,
+  "label.managementservice.endToEndEncryptionTooltip": null,
+  "room.e2eeUnsupported": null,
+  "room.endToEndEncrypted": null,
+  "room.peerE2eeSecuring": null,
+  "room.peerIdentityChanged": null,
+  "room.peerIdentityChangedShort": null,
   "device.stopReceivingVideo": null,
   "device.startReceivingVideo": null,
   "room.muteAllConfirm": null,
@@ -624,5 +631,7 @@
   "label.backToRoomChat": null,
   "label.hideConversation": null,
   "label.peerLeftMeeting": null,
-  "label.chatMessageFailed": null
+  "label.chatMessageFailed": null,
+  "room.e2eeSecuring": null,
+  "room.e2eeFailed": null
 }

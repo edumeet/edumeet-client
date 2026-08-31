@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Prossime riunioni",
   "label.management.tenants.testConnection": "Prova connessione",
   "settings.showAllAudioOnlyParticipantsLabel": "Mostra separatamente ogni partecipante senza video",
+  "label.managementservice.endToEndEncryption": "Crittografia end-to-end",
+  "label.managementservice.endToEndEncryptionTooltip": "Se attivata, i contenuti multimediali nelle stanze di questo tenant sono crittografati end-to-end. Il lucchetto la impone, così i proprietari delle stanze non possono disattivarla.",
+  "room.e2eeUnsupported": "Questa stanza richiede la crittografia end-to-end, che il tuo browser non supporta. Per partecipare, usa una versione recente di Chrome, Edge o Firefox.",
+  "room.endToEndEncrypted": "Questa stanza è crittografata end-to-end",
+  "room.peerE2eeSecuring": "Protezione in corso, in attesa della chiave di questo partecipante",
+  "room.peerIdentityChanged": "Avviso di sicurezza: l'identità di crittografia di {peer} è cambiata. Può accadere durante una riconnessione, ma potrebbe anche indicare che qualcuno sta intercettando la connessione. Verifica con la persona prima di condividere informazioni riservate.",
+  "room.peerIdentityChangedShort": "Identità di crittografia cambiata, verifica questo partecipante",
   "device.stopReceivingVideo": "Interrompi la ricezione video",
   "device.startReceivingVideo": "Avvia la ricezione video",
   "room.muteAllConfirm": "Mutare il microfono di tutti i partecipanti nella stanza?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Torna alla chat della stanza",
   "label.hideConversation": "Nascondi conversazione",
   "label.peerLeftMeeting": "{displayName} ha lasciato la riunione",
-  "label.chatMessageFailed": "Impossibile consegnare il messaggio"
+  "label.chatMessageFailed": "Impossibile consegnare il messaggio",
+  "room.e2eeSecuring": "Protezione della stanza in corso, crittografia non ancora confermata",
+  "room.e2eeFailed": "Questa stanza richiede la crittografia end-to-end, ma il tuo browser non ha crittografato i contenuti. Sei stato rimosso dalla stanza per evitare di inviarli non protetti."
 }
