@@ -43,6 +43,7 @@ const Recording = ({
 		>
 			{savingRecording ? <CircularProgress
 				size={20}
+				color='inherit'
 				variant={savingProgress ? 'determinate' : 'indeterminate'}
 				value={savingProgress}
 			/> :
