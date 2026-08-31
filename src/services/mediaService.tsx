@@ -935,9 +935,13 @@ export class MediaService extends EventEmitter {
 			sctpParameters,
 			iceServers: this.iceServers,
 			// Chrome gates its encoded-transform pipeline on this RTCConfiguration flag; without it a
-			// transform attaches and is then never fed, so media goes out unencrypted. This is the
-			// setting mediasoup's own E2EE example relies on. Harmless where it is not needed.
-			additionalSettings: { encodedInsertableStreams: true } as Partial<RTCConfiguration>,
+			// transform attaches and is then never fed, so media would go out unencrypted. It is set
+			// ONLY when E2EE is on for this room: with the flag on and no transform attached Chrome
+			// still builds the pipeline, nothing consumes it, and no media flows at all. E2EE is
+			// resolved at roomReady, before the transports are created, so this is known by now.
+			...(this.e2eeService?.enabled
+				? { additionalSettings: { encodedInsertableStreams: true } as Partial<RTCConfiguration> }
+				: {}),
 		});
 
 		if (creator === 'createSendTransport') {
