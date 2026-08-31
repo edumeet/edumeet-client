@@ -1517,6 +1517,42 @@ export const disableUnmanagedRoomsLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.disableUnmanagedRooms',
 	defaultMessage: 'Disable unmanaged rooms'
 });
+export const endToEndEncryptionLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.endToEndEncryption',
+	defaultMessage: 'End-to-end encryption'
+});
+export const endToEndEncryptionTooltipLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.endToEndEncryptionTooltip',
+	defaultMessage: 'When enabled, media in this tenant\'s rooms is end-to-end encrypted. The lock forces it on so room owners cannot turn it off.'
+});
+export const roomE2eeUnsupportedLabel = (): string => intl.formatMessage({
+	id: 'room.e2eeUnsupported',
+	defaultMessage: 'This room requires end-to-end encryption, which your browser does not support. Please use a recent version of Chrome, Edge or Firefox to join.'
+});
+export const roomE2eeSecuringLabel = (): string => intl.formatMessage({
+	id: 'room.e2eeSecuring',
+	defaultMessage: 'Securing this room, encryption not confirmed yet'
+});
+export const roomE2eeFailedLabel = (): string => intl.formatMessage({
+	id: 'room.e2eeFailed',
+	defaultMessage: 'This room requires end-to-end encryption, but your browser did not encrypt the media. You have been removed from the room to avoid sending it unprotected.'
+});
+export const endToEndEncryptedLabel = (): string => intl.formatMessage({
+	id: 'room.endToEndEncrypted',
+	defaultMessage: 'This room is end-to-end encrypted'
+});
+export const peerE2eeSecuringLabel = (): string => intl.formatMessage({
+	id: 'room.peerE2eeSecuring',
+	defaultMessage: 'Securing, waiting for this participant\'s key'
+});
+export const peerIdentityChangedLabel = (peer: string): string => intl.formatMessage({
+	id: 'room.peerIdentityChanged',
+	defaultMessage: 'Security warning: the encryption identity of {peer} has changed. This can happen on reconnect, but could also indicate someone intercepting the connection. Verify with them before sharing anything sensitive.'
+}, { peer });
+export const peerIdentityChangedShortLabel = (): string => intl.formatMessage({
+	id: 'room.peerIdentityChangedShort',
+	defaultMessage: 'Encryption identity changed, verify this participant'
+});
 export const roomLockedMgmtLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.roomLocked',
 	defaultMessage: 'Room locked'

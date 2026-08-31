@@ -30,6 +30,7 @@ import createChatMiddleware from './middlewares/chatMiddleware';
 import createNotificationMiddleware from './middlewares/notificationMiddleware';
 import createCountdownTimerMiddleware from './middlewares/countdownTimerMiddleware';
 import createDrawingMiddleware from './middlewares/drawingMiddleware';
+import createE2eeMiddleware from './middlewares/e2eeMiddleware';
 import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
 import consumersSlice from './slices/consumersSlice';
@@ -48,12 +49,14 @@ import { createContext } from 'react';
 import { DeviceService } from '../services/deviceService';
 import { FileService } from '../services/fileService';
 import roomSessionsSlice from './slices/roomSessionsSlice';
+import e2eeSlice from './slices/e2eeSlice';
 import directMessagesSlice from './slices/directMessagesSlice';
 import type { Application } from '@feathersjs/feathers/lib';
 import { EffectsService } from '../services/effectsService';
 import { ClientMonitor } from '@observertc/client-monitor-js';
 import createEffectsMiddleware from './middlewares/effectsMiddleware';
 import { ClientImageService } from '../services/clientImageService';
+import { E2eeService } from '../services/e2eeService';
 
 declare global {
 	interface Window {
@@ -74,6 +77,7 @@ export interface MiddlewareOptions {
 	deviceService: DeviceService;
 	signalingService: SignalingService;
 	managementService: Promise<Application>;
+	e2eeService: E2eeService;
 	config: EdumeetConfig;
 }
 
@@ -96,7 +100,9 @@ const managementService = (async () => {
 		.configure(authentication());
 })() as Promise<Application>;
 
+export const e2eeService = new E2eeService();
 export const mediaService = new MediaService({ signalingService }, monitor);
+mediaService.e2eeService = e2eeService;
 export const fileService = new FileService();
 export const clientImageService = new ClientImageService();
 const effectsService = new EffectsService();
@@ -120,7 +126,8 @@ const middlewareOptions = {
 	deviceService,
 	signalingService,
 	managementService,
-	effectsService
+	effectsService,
+	e2eeService
 };
 
 const reducer = combineReducers({
@@ -134,6 +141,7 @@ const reducer = combineReducers({
 	management: managementSlice.reducer,
 	room: roomSlice.reducer,
 	roomSessions: roomSessionsSlice.reducer,
+	e2ee: e2eeSlice.reducer,
 	settings: settingsSlice.reducer,
 	signaling: signalingSlice.reducer,
 	ui: uiSlice.reducer,
@@ -164,6 +172,7 @@ export const store = configureStore({
 			createEffectsMiddleware(middlewareOptions),
 			createCountdownTimerMiddleware(middlewareOptions),
 			createDrawingMiddleware(middlewareOptions),
+			createE2eeMiddleware(middlewareOptions),
 			...(edumeetConfig.reduxLoggingEnabled ? [ createLogger({
 				duration: true,
 				timestamp: false,

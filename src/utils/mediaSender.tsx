@@ -300,9 +300,19 @@ export class MediaSender extends EventEmitter {
 
 		if (!this.mediaService.sendTransport) throw new Error('Send transport not ready');
 
+		const clonedTrack = this.track?.clone();
+
+		// E2EE: hold the real media until the encrypt transform is attached. Otherwise the sender can
+		// emit plaintext frames (including the first keyframe) before the transform takes effect — the
+		// produce() round-trip alone is long enough for frames to escape. A disabled track sends only
+		// black/silence (no real content); we re-enable it once the transform is on.
+		const holdForE2ee = Boolean(this.mediaService.e2eeService?.enabled) && Boolean(clonedTrack);
+
+		if (holdForE2ee && clonedTrack) clonedTrack.enabled = false;
+
 		const producerOptions = {
 			...this.producerOptions,
-			track: this.track?.clone()
+			track: clonedTrack
 		};
 
 		const producer = await this.mediaService.sendTransport.produce({
@@ -328,6 +338,24 @@ export class MediaSender extends EventEmitter {
 		}
 
 		this.producer = producer;
+
+		// E2EE: the codec comes from the negotiated producer, not this.codec. No start() call site
+		// supplies a codec, so this.codec is always undefined and would be read as Opus; the receive
+		// side reads this same field, so taking it from here keeps both transforms on one value.
+		const codecMimeType = producer.rtpParameters?.codecs?.[0]?.mimeType;
+
+		// E2EE: attach the encrypt transform before any real media flows (no-op when E2EE is off).
+		if (holdForE2ee) {
+			await this.mediaService.e2eeService?.protectSender(producer.rtpSender, codecMimeType);
+			// Attaching is not enough: a browser can accept the transform and never feed it, which is
+			// how plaintext used to escape while the UI showed a shield. Hold the real track until the
+			// worker confirms it is processing frames. If that never happens the watchdog removes us
+			// from the room, so the track simply stays off rather than sending anything unprotected.
+			await this.mediaService.e2eeService?.whenProtectionActive();
+			if (clonedTrack) clonedTrack.enabled = true;
+		} else {
+			void this.mediaService.e2eeService?.protectSender(producer.rtpSender, codecMimeType);
+		}
 
 		producer.observer.on('pause', pauseListener);
 		producer.observer.on('resume', resumeListener);

@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Próximas reuniones",
   "label.management.tenants.testConnection": "Probar conexión",
   "settings.showAllAudioOnlyParticipantsLabel": "Mostrar cada participante sin vídeo por separado",
+  "label.managementservice.endToEndEncryption": "Cifrado de extremo a extremo",
+  "label.managementservice.endToEndEncryptionTooltip": "Si se activa, los medios en las salas de este inquilino se cifran de extremo a extremo. El candado lo fuerza, de modo que los propietarios de las salas no pueden desactivarlo.",
+  "room.e2eeUnsupported": "Esta sala requiere cifrado de extremo a extremo, que su navegador no admite. Utilice una versión reciente de Chrome, Edge o Firefox para unirse.",
+  "room.endToEndEncrypted": "Esta sala está cifrada de extremo a extremo",
+  "room.peerE2eeSecuring": "Asegurando, esperando la clave de este participante",
+  "room.peerIdentityChanged": "Advertencia de seguridad: la identidad de cifrado de {peer} ha cambiado. Esto puede ocurrir al reconectar, pero también podría indicar que alguien está interceptando la conexión. Verifícalo con esa persona antes de compartir algo confidencial.",
+  "room.peerIdentityChangedShort": "La identidad de cifrado cambió, verifica a este participante",
   "device.stopReceivingVideo": "Dejar de recibir vídeo",
   "device.startReceivingVideo": "Empezar a recibir vídeo",
   "room.muteAllConfirm": "¿Silenciar el micrófono de todos los participantes de la sala?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Volver al chat de la sala",
   "label.hideConversation": "Ocultar conversación",
   "label.peerLeftMeeting": "{displayName} salió de la reunión",
-  "label.chatMessageFailed": "No se pudo entregar el mensaje"
+  "label.chatMessageFailed": "No se pudo entregar el mensaje",
+  "room.e2eeSecuring": "Asegurando esta sala, cifrado aún no confirmado",
+  "room.e2eeFailed": "Esta sala requiere cifrado de extremo a extremo, pero su navegador no cifró los medios. Se le ha retirado de la sala para evitar enviarlos sin protección."
 }

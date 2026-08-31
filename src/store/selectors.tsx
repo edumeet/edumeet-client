@@ -56,6 +56,21 @@ export const isSinkIdSupported = (): boolean => {
 
 export const canSelectAudioOutput: Selector<boolean> = () => isSinkIdSupported();
 
+// Whether this browser can do E2EE (WebRTC Encoded Transform). Used to gate the E2EE feature and to
+// refuse admission to a room that mandates E2EE. RTCRtpScriptTransform exists in Chrome 110+/
+// Firefox 117+/Safari 15.4+, BUT Firefox lays out encoded frames differently from Chromium, so
+// cross-browser FF<->Chromium media corrupts (validated 2026-06-24). Until that interop gap is
+// solved we restrict E2EE to the Blink engine (Chrome/Edge/Opera/Brave/Vivaldi...; excludes Firefox
+// and untested Safari) so E2EE rooms never mix incompatible engines; other browsers are cleanly
+// bounced by the capability gate. Browser detection via the shared bowser parser, for consistency.
+// Chrome, Edge and Firefox all encrypt and interoperate (verified 2026-08-31), so this is a plain
+// capability check. A browser that accepts the transform without ever feeding it is caught at
+// runtime instead: the sender holds real media until the worker confirms it is processing frames,
+// and the watchdog removes the participant if that never happens.
+export const isInsertableStreamsSupported = (): boolean =>
+	typeof window !== 'undefined' &&
+	'RTCRtpScriptTransform' in window;
+
 /**
  * Returns the peers as an array.
  * 

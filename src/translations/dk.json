@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Kommende møder",
   "label.management.tenants.testConnection": "Test forbindelse",
   "settings.showAllAudioOnlyParticipantsLabel": "Vis hver deltager uden video for sig",
+  "label.managementservice.endToEndEncryption": "End-to-end-kryptering",
+  "label.managementservice.endToEndEncryptionTooltip": "Når den er aktiveret, er medier i denne lejers rum end-to-end-krypteret. Låsen gennemtvinger den, så rumejere ikke kan slå den fra.",
+  "room.e2eeUnsupported": "Dette rum kræver end-to-end-kryptering, som din browser ikke understøtter. Brug en nyere version af Chrome, Edge eller Firefox for at deltage.",
+  "room.endToEndEncrypted": "Dette rum er end-to-end-krypteret",
+  "room.peerE2eeSecuring": "Sikrer, venter på denne deltagers nøgle",
+  "room.peerIdentityChanged": "Sikkerhedsadvarsel: krypteringsidentiteten for {peer} er ændret. Det kan ske ved genopkobling, men kan også betyde, at nogen aflytter forbindelsen. Bekræft med personen, før du deler noget følsomt.",
+  "room.peerIdentityChangedShort": "Krypteringsidentitet ændret, bekræft denne deltager",
   "device.stopReceivingVideo": "Stop modtagelse af video",
   "device.startReceivingVideo": "Start modtagelse af video",
   "room.muteAllConfirm": "Sæt mikrofonen på lydløs for alle i rummet?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Tilbage til rummets chat",
   "label.hideConversation": "Skjul samtale",
   "label.peerLeftMeeting": "{displayName} forlod mødet",
-  "label.chatMessageFailed": "Beskeden kunne ikke leveres"
+  "label.chatMessageFailed": "Beskeden kunne ikke leveres",
+  "room.e2eeSecuring": "Sikrer dette rum, kryptering endnu ikke bekræftet",
+  "room.e2eeFailed": "Dette rum kræver end-to-end-kryptering, men din browser krypterede ikke mediet. Du er blevet fjernet fra rummet for at undgå at sende det ubeskyttet."
 }

@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Nadcházející schůzky",
   "label.management.tenants.testConnection": "Otestovat spojení",
   "settings.showAllAudioOnlyParticipantsLabel": "Zobrazit každého účastníka bez obrazu samostatně",
+  "label.managementservice.endToEndEncryption": "Koncové šifrování",
+  "label.managementservice.endToEndEncryptionTooltip": "Když je povoleno, média v místnostech tohoto nájemce jsou koncově šifrována. Zámek to vynutí, takže vlastníci místností to nemohou vypnout.",
+  "room.e2eeUnsupported": "Tato místnost vyžaduje koncové šifrování, které váš prohlížeč nepodporuje. Pro připojení použijte aktuální verzi prohlížeče Chrome, Edge nebo Firefox.",
+  "room.endToEndEncrypted": "Tato místnost je koncově šifrovaná",
+  "room.peerE2eeSecuring": "Zabezpečování, čeká se na klíč tohoto účastníka",
+  "room.peerIdentityChanged": "Bezpečnostní upozornění: šifrovací identita účastníka {peer} se změnila. Může se to stát při opětovném připojení, ale může to také znamenat, že někdo odposlouchává spojení. Než budete sdílet něco citlivého, ověřte to s danou osobou.",
+  "room.peerIdentityChangedShort": "Šifrovací identita se změnila, ověřte tohoto účastníka",
   "device.stopReceivingVideo": "Zastavit příjem videa",
   "device.startReceivingVideo": "Spustit příjem videa",
   "room.muteAllConfirm": "Ztišit mikrofon všem v místnosti?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Zpět do chatu místnosti",
   "label.hideConversation": "Skrýt konverzaci",
   "label.peerLeftMeeting": "{displayName} opustil(a) schůzku",
-  "label.chatMessageFailed": "Zprávu se nepodařilo doručit"
+  "label.chatMessageFailed": "Zprávu se nepodařilo doručit",
+  "room.e2eeSecuring": "Zabezpečování místnosti, šifrování zatím nepotvrzeno",
+  "room.e2eeFailed": "Tato místnost vyžaduje koncové šifrování, ale váš prohlížeč média nezašifroval. Byli jste z místnosti odebráni, aby se neodesílala nechráněná."
 }

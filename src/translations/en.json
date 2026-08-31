@@ -610,14 +610,20 @@
 	"label.meetings.upcoming": "Upcoming meetings",
 	"label.management.tenants.testConnection": "Test connection",
 	"settings.showAllAudioOnlyParticipantsLabel": "Show each participant with no video separately",
+	"label.managementservice.endToEndEncryption": "End-to-end encryption",
+	"label.managementservice.endToEndEncryptionTooltip": "When enabled, media in this tenant's rooms is end-to-end encrypted. The lock forces it on so room owners cannot turn it off.",
+	"room.e2eeUnsupported": "This room requires end-to-end encryption, which your browser does not support. Please use a recent version of Chrome, Edge or Firefox to join.",
+	"room.endToEndEncrypted": "This room is end-to-end encrypted",
+	"room.peerE2eeSecuring": "Securing, waiting for this participant's key",
+	"room.peerIdentityChanged": "Security warning: the encryption identity of {peer} has changed. This can happen on reconnect, but could also indicate someone intercepting the connection. Verify with them before sharing anything sensitive.",
+	"room.peerIdentityChangedShort": "Encryption identity changed, verify this participant",
 	"device.stopReceivingVideo": "Stop receiving video",
 	"device.startReceivingVideo": "Start receiving video",
 	"room.muteAllConfirm": "Mute the microphone of everyone in the room?",
 	"room.stopAllVideoConfirm": "Turn off the cameras of everyone in the room?",
 	"room.stopAllScreenSharingConfirm": "Stop screen sharing for everyone in the room?",
 	"room.closeMeetingConfirm": "Close the meeting and disconnect everyone in the room?",
-	"device.receivingVideoStopped": "Not receiving video from other participants. Click to start receiving again"
-,
+	"device.receivingVideoStopped": "Not receiving video from other participants. Click to start receiving again",
 	"label.roomChat": "Room chat",
 	"label.directMessages": "Direct messages",
 	"label.sendPrivateMessage": "Send private message",
@@ -625,5 +631,7 @@
 	"label.backToRoomChat": "Back to room chat",
 	"label.hideConversation": "Hide conversation",
 	"label.peerLeftMeeting": "{displayName} left the meeting",
-	"label.chatMessageFailed": "Could not deliver the message"
+	"label.chatMessageFailed": "Could not deliver the message",
+	"room.e2eeSecuring": "Securing this room, encryption not confirmed yet",
+	"room.e2eeFailed": "This room requires end-to-end encryption, but your browser did not encrypt the media. You have been removed from the room to avoid sending it unprotected."
 }
