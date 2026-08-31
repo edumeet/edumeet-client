@@ -2,7 +2,7 @@ import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { useMRTLocalization } from '../../../utils/mrtLocalization';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete, Tooltip } from '@mui/material';
 import React from 'react';
 import { GroupRoles, Roles, Room, RoomOwners, Tenant, User } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
@@ -10,7 +10,7 @@ import { createRoomWithParams, deleteData, getData, patchData } from '../../../s
 import RoomOwnerTable from './RoomOwner';
 import RoomUserRoleTable from './roomUserRole';
 import MeetingsTable from '../meetings/Meetings';
-import { addNewLabel, applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, createdAtLabel, creatorIdLabel, defaultRoleLabel, deleteLabel, descLabel, filesharingEnabledLabel, genericItemDescLabel, groupRolesLabel, hiddenEmailLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, ownersLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roomBgLabel, roomLockedLabel, tenantLabel, undefinedLabel, updatedAtLabel, yesLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, createdAtLabel, endToEndEncryptionLabel, endToEndEncryptionTooltipLabel, creatorIdLabel, defaultRoleLabel, deleteLabel, descLabel, filesharingEnabledLabel, genericItemDescLabel, groupRolesLabel, hiddenEmailLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, ownersLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roomBgLabel, roomLockedLabel, tenantLabel, undefinedLabel, updatedAtLabel, yesLabel } from '../../translated/translatedComponents';
 
 export interface RoomProp {
 	roomId: number;
@@ -192,7 +192,14 @@ const RoomTable = () => {
 					(cell.getValue() === true ? yesLabel() : noLabel()),
 				filterVariant: 'checkbox'
 			},
-			
+			{
+				accessorKey: 'endToEndEncryption',
+				header: endToEndEncryptionLabel(),
+				Cell: ({ cell }) =>
+					(cell.getValue() === true ? yesLabel() : noLabel()),
+				filterVariant: 'checkbox'
+			},
+
 		],
 		[ tenants, roles, users ],
 	);
@@ -219,6 +226,9 @@ const RoomTable = () => {
 	const [ maxActiveVideos, setMaxActiveVideos ] = useState(0);
 	const [ locked, setLocked ] = useState(false);
 	const [ chatEnabled, setChatEnabled ] = useState(false);
+	const [ endToEndEncryption, setEndToEndEncryption ] = useState(false);
+	// Tenant defaults, used to tell when E2EE is locked (mandated) for the selected tenant.
+	const [ defaults, setDefaults ] = useState<Array<{ tenantId: number | string; endToEndEncryption?: boolean; endToEndEncryptionLock?: boolean }>>([]);
 	const [ raiseHandEnabled, setRaiseHandEnabled ] = useState(false);
 	const [ reactionsEnabled, setReactionsEnabled ] = useState(false);
 	const [ filesharingEnabled, setFilesharingEnabled ] = useState(false);
@@ -277,6 +287,13 @@ const RoomTable = () => {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch(getData('defaults')).then((tdata: any) => {
+			if (tdata != undefined) {
+				setDefaults(tdata.data);
+			}
+		});
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch(getData('tenantInviteConfigs')).then((tdata: any) => {
 			const list = tdata?.data;
 
@@ -327,6 +344,7 @@ const RoomTable = () => {
 		setFilesharingEnabled(true);
 		setLocalRecordingEnabled(true);
 		setBreakoutsEnabled(true);
+		setEndToEndEncryption(false); // E2EE off by default for new rooms
 
 		setOpen(true);
 	};
@@ -380,6 +398,15 @@ const RoomTable = () => {
 	const handleChatEnabledChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
 		setChatEnabled(event.target.checked);
 	};
+	const handleEndToEndEncryptionChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
+		setEndToEndEncryption(event.target.checked);
+	};
+	// When the selected tenant's default has E2EE locked, the room server forces the tenant value and
+	// ignores any per-room value, so the per-room toggle is disabled (mandated) for everyone — a
+	// super-admin changes the policy via the tenant default. (String compare: tenantId may be a bigint string.)
+	const tenantE2eeDefault = defaults.find((d) => String(d.tenantId) === String(tenantId));
+	const e2eeLocked = Boolean(tenantE2eeDefault?.endToEndEncryptionLock);
+	const e2eeForcedValue = Boolean(tenantE2eeDefault?.endToEndEncryption);
 	const handleRaiseHandEnabledChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
 		setRaiseHandEnabled(event.target.checked);
 	};
@@ -428,7 +455,8 @@ const RoomTable = () => {
 				reactionsEnabled: reactionsEnabled,
 				filesharingEnabled: filesharingEnabled,
 				localRecordingEnabled: localRecordingEnabled,
-				breakoutsEnabled: breakoutsEnabled
+				breakoutsEnabled: breakoutsEnabled,
+				endToEndEncryption: endToEndEncryption
 			})).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -448,6 +476,7 @@ const RoomTable = () => {
 				filesharingEnabled: filesharingEnabled,
 				localRecordingEnabled: localRecordingEnabled,
 				breakoutsEnabled: breakoutsEnabled,
+				endToEndEncryption: endToEndEncryption,
 			};
 			
 			if (defaultRoleId) {
@@ -556,6 +585,13 @@ const RoomTable = () => {
 					<FormControlLabel control={<Checkbox checked={filesharingEnabled} onChange={handleFilesharingEnabledChange} />} label={filesharingEnabledLabel()} />
 					<FormControlLabel control={<Checkbox checked={localRecordingEnabled} onChange={handleLocalRecordingEnabledChange} />} label={localRecordingEnabledLabel()} />
 					<FormControlLabel control={<Checkbox checked={breakoutsEnabled} onChange={handleBreakoutsEnabledChange} />} label={breakoutsEnabledLabel()} />
+					{ e2eeLocked ?
+						<Tooltip title={endToEndEncryptionTooltipLabel()}>
+							<FormControlLabel control={<Checkbox checked={e2eeForcedValue} disabled />} label={endToEndEncryptionLabel()} />
+						</Tooltip>
+						:
+						<FormControlLabel control={<Checkbox checked={endToEndEncryption} onChange={handleEndToEndEncryptionChange} />} label={endToEndEncryptionLabel()} />
+					}
 					
 					{ id !=0 && <>
 						<RoomOwnerTable roomId={id} />
@@ -592,6 +628,7 @@ const RoomTable = () => {
 					const tlocalRecordingEnabled=r[16].getValue();
 					
 					const tbreakoutsEnabled=r[19].getValue();
+					const tendToEndEncryption=r[20].getValue();
 
 					if (typeof tid === 'number') {
 						setId(tid);
@@ -704,6 +741,11 @@ const RoomTable = () => {
 					} else {
 						setBreakoutsEnabled(false);
 					}
+					if (tendToEndEncryption === true) {
+						setEndToEndEncryption(true);
+					} else {
+						setEndToEndEncryption(false);
+					}
 
 					handleClickOpenNoreset();
 
@@ -728,6 +770,7 @@ const RoomTable = () => {
 					filesharingEnabled: false,
 					localRecordingEnabled: false,
 					reactionsEnabled: false,
+					endToEndEncryption: false,
 				}
 			}}
 			state={{ isLoading }}

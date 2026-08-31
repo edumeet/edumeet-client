@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Reuniuni viitoare",
   "label.management.tenants.testConnection": "Testează conexiunea",
   "settings.showAllAudioOnlyParticipantsLabel": "Afișează separat fiecare participant fără video",
+  "label.managementservice.endToEndEncryption": "Criptare end-to-end",
+  "label.managementservice.endToEndEncryptionTooltip": "Când este activată, conținutul media din camerele acestui chiriaș este criptat end-to-end. Lacătul o impune, astfel încât proprietarii camerelor nu o pot dezactiva.",
+  "room.e2eeUnsupported": "Această cameră necesită criptare end-to-end, pe care browserul dumneavoastră nu o acceptă. Folosiți o versiune recentă de Chrome, Edge sau Firefox pentru a intra.",
+  "room.endToEndEncrypted": "Această cameră este criptată end-to-end",
+  "room.peerE2eeSecuring": "Se securizează, se așteaptă cheia acestui participant",
+  "room.peerIdentityChanged": "Avertisment de securitate: identitatea de criptare a {peer} s-a schimbat. Acest lucru se poate întâmpla la reconectare, dar ar putea indica și că cineva interceptează conexiunea. Verifică cu persoana respectivă înainte de a partaja ceva sensibil.",
+  "room.peerIdentityChangedShort": "Identitatea de criptare s-a schimbat, verifică acest participant",
   "device.stopReceivingVideo": "Oprește primirea video",
   "device.startReceivingVideo": "Pornește primirea video",
   "room.muteAllConfirm": "Amuțiți microfonul tuturor din sală?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Înapoi la chatul camerei",
   "label.hideConversation": "Ascunde conversația",
   "label.peerLeftMeeting": "{displayName} a părăsit întâlnirea",
-  "label.chatMessageFailed": "Mesajul nu a putut fi livrat"
+  "label.chatMessageFailed": "Mesajul nu a putut fi livrat",
+  "room.e2eeSecuring": "Se securizează camera, criptarea nu este încă confirmată",
+  "room.e2eeFailed": "Această cameră necesită criptare end-to-end, dar browserul dumneavoastră nu a criptat conținutul media. Ați fost eliminat din cameră pentru a evita trimiterea lui neprotejată."
 }

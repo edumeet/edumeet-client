@@ -12,7 +12,13 @@ import { settingsActions } from '../slices/settingsSlice';
 import { peersActions } from '../slices/peersSlice';
 import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { drawingActions } from '../slices/drawingSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { isInsertableStreamsSupported } from '../selectors';
+import { roomE2eeUnsupportedLabel } from '../../components/translated/translatedComponents';
 import { Logger } from '../../utils/Logger';
+
+// Survives the full page reload that setState('left') triggers (App.tsx) — read + shown on landing.
+export const JOIN_ERROR_KEY = 'edumeet.joinError';
 
 const logger = new Logger('RoomMiddleware');
 
@@ -32,6 +38,26 @@ const createRoomMiddleware = ({
 		}
 
 		if (signalingActions.connect.match(action)) {
+			// Capability gate: a room that mandates E2EE can't admit a browser with no
+			// RTCRtpScriptTransform. Refuse early (works both at lobby AND on admission) and bounce to
+			// the Join page with a clear reason carried across the reload, so a lobby-held user isn't
+			// left waiting only to be rejected after admission.
+			const refuseIfE2eeUnsupported = (endToEndEncryption?: boolean): boolean => {
+				if (!endToEndEncryption || isInsertableStreamsSupported()) return false;
+
+				logger.warn('room requires E2EE but this browser has no RTCRtpScriptTransform — refusing');
+				try {
+					sessionStorage.setItem(JOIN_ERROR_KEY, roomE2eeUnsupportedLabel());
+				} catch { /* sessionStorage may be unavailable (private mode) — still leave */ }
+				dispatch(notificationsActions.enqueueNotification({
+					message: roomE2eeUnsupportedLabel(),
+					options: { variant: 'error', persist: true }
+				}));
+				dispatch(roomActions.setState('left'));
+
+				return true;
+			};
+
 			signalingService.on('notification', (notification) => {
 				try {
 					switch (notification.method) {
@@ -46,9 +72,13 @@ const createRoomMiddleware = ({
 								raiseHandEnabled,
 								reactionsEnabled,
 								localRecordingEnabled,
+								endToEndEncryption,
 								settings,
 								// TODO: get the rest of the data from the server
 							} = notification.data;
+
+							// Final safety net (the lobby gate below normally catches this earlier).
+							if (refuseIfE2eeUnsupported(endToEndEncryption)) break;
 
 							// Clear any stale sessions from a prior long-disconnect reconnect
 							// where the server closed the peer and sends roomReady again.
@@ -68,6 +98,7 @@ const createRoomMiddleware = ({
 								raiseHandEnabled,
 								reactionsEnabled,
 								localRecordingEnabled,
+								e2eeEnabled: endToEndEncryption,
 								logo: settings.logo,
 								backgroundImage: settings.background,
 								videoCodec: settings.videoCodec ?? 'vp8',
@@ -118,6 +149,9 @@ const createRoomMiddleware = ({
 						}
 
 						case 'enteredLobby': {
+							// Refuse here, before the user waits in the lobby for admission they can't use.
+							if (refuseIfE2eeUnsupported(notification.data?.endToEndEncryption)) break;
+
 							dispatch(roomActions.setState('lobby'));
 							dispatch(setDisplayName(getState().settings.displayName));
 							dispatch(setPicture(getState().me.picture || ''));

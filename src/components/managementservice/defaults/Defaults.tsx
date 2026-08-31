@@ -9,7 +9,7 @@ import { Roles, Tenant, TenantOptionTypes, RoleOptionTypes, DefaultOptionTypes, 
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
-import { addNewLabel, applyLabel, breakoutRoomsServiceLabel, cancelLabel, chatServiceLabel, configurationLockLabel, defaultRoleIdLabel, deleteLabel, disableUnmanagedRoomsLabel, disableUnmanagedRoomsTooltipLabel, filesharingServiceLabel, genericItemDescLabel, liveNumberLimitLabel, localRecordingMgmtLabel, manageItemLabel, managerManagedRoomNumberLimitLabel, maxFileSizedLabel, nameCannotBeEmptyLabel, numberLimitLabel, raiseHandMgmtLabel, reactionsEnabledLabel, roomBackgroundURLLabel, roomLockedMgmtLabel, roomLockedTooltipLabel, roomLogoURLLabel, roomOptionStateLabel, roomTrackerLabel, tenantLabel, trackerHelperTextLabel, unmanagedLabel, userManagedRoomNumberLimitLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, breakoutRoomsServiceLabel, cancelLabel, chatServiceLabel, configurationLockLabel, defaultRoleIdLabel, deleteLabel, disableUnmanagedRoomsLabel, disableUnmanagedRoomsTooltipLabel, endToEndEncryptionLabel, endToEndEncryptionTooltipLabel, filesharingServiceLabel, genericItemDescLabel, liveNumberLimitLabel, localRecordingMgmtLabel, manageItemLabel, managerManagedRoomNumberLimitLabel, maxFileSizedLabel, nameCannotBeEmptyLabel, numberLimitLabel, raiseHandMgmtLabel, reactionsEnabledLabel, roomBackgroundURLLabel, roomLockedMgmtLabel, roomLockedTooltipLabel, roomLogoURLLabel, roomOptionStateLabel, roomTrackerLabel, tenantLabel, trackerHelperTextLabel, unmanagedLabel, userManagedRoomNumberLimitLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import { getTenantName } from '../../../utils/management';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -59,6 +59,8 @@ const DefaultTable = () => {
 	const [ managerManagedRoomNumberLimit, setManagerManagedRoomNumberLimit ] = useState(0);
 	const [ disableUnmanaged, setDisableUnmanaged ] = useState(false);
 	const [ disableUnmanagedLock, setDisableUnmanagedLock ] = useState(false);
+	const [ endToEndEncryption, setEndToEndEncryption ] = useState(false);
+	const [ endToEndEncryptionLock, setEndToEndEncryptionLock ] = useState(false);
 	const [ lockedUnmanaged, setLockUnmanaged ] = useState(false);
 	const [ raiseHandEnabledUnmanaged, setRaiseHandEnabledUnmanaged ] = useState(false);
 	const [ reactionsEnabledUnmanaged, setReactionsEnabledUnmanaged ] = useState(false);
@@ -289,6 +291,8 @@ const DefaultTable = () => {
 					managerManagedRoomNumberLimit: managerManagedRoomNumberLimit,
 					disableUnmanaged: disableUnmanaged,
 					disableUnmanagedLock: disableUnmanagedLock,
+					endToEndEncryption: endToEndEncryption,
+					endToEndEncryptionLock: endToEndEncryptionLock,
 					lockedUnmanaged: lockedUnmanaged,
 					raiseHandEnabledUnmanaged: raiseHandEnabledUnmanaged,
 					reactionsEnabledUnmanaged: reactionsEnabledUnmanaged,
@@ -432,6 +436,11 @@ const DefaultTable = () => {
 									<td><Tooltip title={disableUnmanagedRoomsTooltipLabel()} placement="right"><span>{disableUnmanagedRoomsLabel()}</span></Tooltip></td>
 									<td><Checkbox disabled={(disableUnmanagedLock && !superAdmin) || fieldsDisabled} checked={disableUnmanaged} onClick={() => setDisableUnmanaged(Boolean(!disableUnmanaged))} /></td>
 									<td><Checkbox disabled={!superAdmin || fieldsDisabled} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={disableUnmanagedLock} onClick={() => setDisableUnmanagedLock(Boolean(!disableUnmanagedLock))} /></td>
+								</tr>
+								<tr>
+									<td><Tooltip title={endToEndEncryptionTooltipLabel()} placement="right"><span>{endToEndEncryptionLabel()}</span></Tooltip></td>
+									<td><Checkbox disabled={(endToEndEncryptionLock && !superAdmin) || fieldsDisabled} checked={endToEndEncryption} onClick={() => setEndToEndEncryption(Boolean(!endToEndEncryption))} /></td>
+									<td><Checkbox disabled={!superAdmin || fieldsDisabled} checkedIcon={<LockIcon />} icon={<LockOpenIcon />} checked={endToEndEncryptionLock} onClick={() => setEndToEndEncryptionLock(Boolean(!endToEndEncryptionLock))} /></td>
 								</tr>
 								<tr>
 									<td><Tooltip title={roomLockedTooltipLabel()} placement="right"><span>{roomLockedMgmtLabel()}</span></Tooltip></td>
@@ -596,6 +605,8 @@ const DefaultTable = () => {
 						setManagerManagedRoomNumberLimit(parseInt(d.managerManagedRoomNumberLimit));
 						setDisableUnmanaged(Boolean(d.disableUnmanaged));
 						setDisableUnmanagedLock(Boolean(d.disableUnmanagedLock));
+						setEndToEndEncryption(Boolean(d.endToEndEncryption));
+						setEndToEndEncryptionLock(Boolean(d.endToEndEncryptionLock));
 						setLockUnmanaged(Boolean(d.lockedUnmanaged));
 						setRaiseHandEnabledUnmanaged(Boolean(d.raiseHandEnabledUnmanaged));
 						setLocalRecordingEnabledUnmanaged(Boolean(d.localRecordingEnabledUnmanaged));

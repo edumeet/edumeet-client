@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Nadolazeći sastanci",
   "label.management.tenants.testConnection": "Testiraj povezivanje",
   "settings.showAllAudioOnlyParticipantsLabel": "Prikaži svakog sudionika bez videa zasebno",
+  "label.managementservice.endToEndEncryption": "End-to-end enkripcija",
+  "label.managementservice.endToEndEncryptionTooltip": "Kada je omogućeno, mediji u sobama ovog zakupca su end-to-end enkriptirani. Lokot to nameće, pa ga vlasnici soba ne mogu isključiti.",
+  "room.e2eeUnsupported": "Ova soba zahtijeva end-to-end enkripciju koju vaš preglednik ne podržava. Za pridruživanje upotrijebite noviju verziju preglednika Chrome, Edge ili Firefox.",
+  "room.endToEndEncrypted": "Ova soba je end-to-end enkriptirana",
+  "room.peerE2eeSecuring": "Osiguravanje, čeka se ključ ovog sudionika",
+  "room.peerIdentityChanged": "Sigurnosno upozorenje: identitet enkripcije sudionika {peer} se promijenio. To se može dogoditi pri ponovnom povezivanju, ali može značiti i da netko presreće vezu. Provjerite s tom osobom prije nego što podijelite nešto osjetljivo.",
+  "room.peerIdentityChangedShort": "Identitet enkripcije promijenjen, provjerite ovog sudionika",
   "device.stopReceivingVideo": "Zaustavi primanje videa",
   "device.startReceivingVideo": "Pokreni primanje videa",
   "room.muteAllConfirm": "Isključiti mikrofon svima u sobi?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Natrag na chat sobe",
   "label.hideConversation": "Sakrij razgovor",
   "label.peerLeftMeeting": "{displayName} je napustio(la) sastanak",
-  "label.chatMessageFailed": "Poruku nije bilo moguće isporučiti"
+  "label.chatMessageFailed": "Poruku nije bilo moguće isporučiti",
+  "room.e2eeSecuring": "Osiguravanje sobe, enkripcija još nije potvrđena",
+  "room.e2eeFailed": "Ova soba zahtijeva end-to-end enkripciju, ali vaš preglednik nije šifrirao medije. Uklonjeni ste iz sobe kako se ne bi slali nezaštićeni."
 }

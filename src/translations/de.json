@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Bevorstehende Besprechungen",
   "label.management.tenants.testConnection": "Verbindung testen",
   "settings.showAllAudioOnlyParticipantsLabel": "Jeden Teilnehmer ohne Video einzeln anzeigen",
+  "label.managementservice.endToEndEncryption": "Ende-zu-Ende-Verschlüsselung",
+  "label.managementservice.endToEndEncryptionTooltip": "Wenn aktiviert, werden Medien in den Räumen dieses Mandanten Ende-zu-Ende-verschlüsselt. Das Schloss erzwingt die Aktivierung, sodass Raumbesitzer sie nicht deaktivieren können.",
+  "room.e2eeUnsupported": "Dieser Raum erfordert Ende-zu-Ende-Verschlüsselung, die Ihr Browser nicht unterstützt. Bitte verwenden Sie eine aktuelle Version von Chrome, Edge oder Firefox, um beizutreten.",
+  "room.endToEndEncrypted": "Dieser Raum ist Ende-zu-Ende-verschlüsselt",
+  "room.peerE2eeSecuring": "Wird gesichert, warten auf den Schlüssel dieses Teilnehmers",
+  "room.peerIdentityChanged": "Sicherheitswarnung: Die Verschlüsselungsidentität von {peer} hat sich geändert. Das kann bei einer erneuten Verbindung passieren, könnte aber auch darauf hindeuten, dass jemand die Verbindung abfängt. Bestätigen Sie es mit der Person, bevor Sie etwas Vertrauliches teilen.",
+  "room.peerIdentityChangedShort": "Verschlüsselungsidentität geändert, überprüfen Sie diesen Teilnehmer",
   "device.stopReceivingVideo": "Videoempfang beenden",
   "device.startReceivingVideo": "Videoempfang starten",
   "room.muteAllConfirm": "Das Mikrofon aller Teilnehmer im Raum stummschalten?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Zurück zum Raum-Chat",
   "label.hideConversation": "Unterhaltung ausblenden",
   "label.peerLeftMeeting": "{displayName} hat das Meeting verlassen",
-  "label.chatMessageFailed": "Die Nachricht konnte nicht zugestellt werden"
+  "label.chatMessageFailed": "Die Nachricht konnte nicht zugestellt werden",
+  "room.e2eeSecuring": "Raum wird gesichert, Verschlüsselung noch nicht bestätigt",
+  "room.e2eeFailed": "Dieser Raum erfordert Ende-zu-Ende-Verschlüsselung, aber Ihr Browser hat die Medien nicht verschlüsselt. Sie wurden aus dem Raum entfernt, damit nichts ungeschützt gesendet wird."
 }

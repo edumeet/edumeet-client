@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Майбутні зустрічі",
   "label.management.tenants.testConnection": "Перевірити з'єднання",
   "settings.showAllAudioOnlyParticipantsLabel": "Показувати кожного учасника без відео окремо",
+  "label.managementservice.endToEndEncryption": "Наскрізне шифрування",
+  "label.managementservice.endToEndEncryptionTooltip": "Якщо ввімкнено, медіа в кімнатах цього орендаря наскрізно шифруються. Замок примусово вмикає це, тож власники кімнат не можуть його вимкнути.",
+  "room.e2eeUnsupported": "Ця кімната потребує наскрізного шифрування, яке ваш браузер не підтримує. Щоб приєднатися, скористайтеся сучасною версією Chrome, Edge або Firefox.",
+  "room.endToEndEncrypted": "Ця кімната захищена наскрізним шифруванням",
+  "room.peerE2eeSecuring": "Захищення, очікування ключа цього учасника",
+  "room.peerIdentityChanged": "Попередження безпеки: ідентичність шифрування учасника {peer} змінилася. Це може статися під час повторного підключення, але також може означати, що хтось перехоплює з'єднання. Підтвердіть це з цією особою, перш ніж ділитися чимось конфіденційним.",
+  "room.peerIdentityChangedShort": "Ідентичність шифрування змінилася, перевірте цього учасника",
   "device.stopReceivingVideo": "Зупинити отримання відео",
   "device.startReceivingVideo": "Почати отримання відео",
   "room.muteAllConfirm": "Відключити мікрофон усім у кімнаті?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Назад до чату кімнати",
   "label.hideConversation": "Сховати розмову",
   "label.peerLeftMeeting": "{displayName} залишив(ла) зустріч",
-  "label.chatMessageFailed": "Не вдалося доставити повідомлення"
+  "label.chatMessageFailed": "Не вдалося доставити повідомлення",
+  "room.e2eeSecuring": "Захист кімнати, шифрування ще не підтверджено",
+  "room.e2eeFailed": "Ця кімната потребує наскрізного шифрування, але ваш браузер не зашифрував медіа. Вас вилучено з кімнати, щоб не надсилати їх незахищеними."
 }

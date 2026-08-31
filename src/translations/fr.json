@@ -610,6 +610,13 @@
   "label.meetings.upcoming": "Réunions à venir",
   "label.management.tenants.testConnection": "Tester la connexion",
   "settings.showAllAudioOnlyParticipantsLabel": "Afficher chaque participant sans vidéo séparément",
+  "label.managementservice.endToEndEncryption": "Chiffrement de bout en bout",
+  "label.managementservice.endToEndEncryptionTooltip": "Lorsqu'il est activé, les médias des salles de ce locataire sont chiffrés de bout en bout. Le verrou l'impose, de sorte que les propriétaires de salle ne peuvent pas le désactiver.",
+  "room.e2eeUnsupported": "Cette salle nécessite un chiffrement de bout en bout que votre navigateur ne prend pas en charge. Veuillez utiliser une version récente de Chrome, Edge ou Firefox pour rejoindre.",
+  "room.endToEndEncrypted": "Cette salle est chiffrée de bout en bout",
+  "room.peerE2eeSecuring": "Sécurisation, en attente de la clé de ce participant",
+  "room.peerIdentityChanged": "Avertissement de sécurité : l'identité de chiffrement de {peer} a changé. Cela peut se produire lors d'une reconnexion, mais pourrait aussi indiquer que quelqu'un intercepte la connexion. Vérifiez avec cette personne avant de partager quoi que ce soit de sensible.",
+  "room.peerIdentityChangedShort": "Identité de chiffrement modifiée, vérifiez ce participant",
   "device.stopReceivingVideo": "Arrêter la réception vidéo",
   "device.startReceivingVideo": "Démarrer la réception vidéo",
   "room.muteAllConfirm": "Mettre en sourdine le microphone de tous les participants de la salle ?",
@@ -624,5 +631,7 @@
   "label.backToRoomChat": "Retour au chat de la salle",
   "label.hideConversation": "Masquer la conversation",
   "label.peerLeftMeeting": "{displayName} a quitté la réunion",
-  "label.chatMessageFailed": "Impossible de remettre le message"
+  "label.chatMessageFailed": "Impossible de remettre le message",
+  "room.e2eeSecuring": "Sécurisation de la salle, chiffrement pas encore confirmé",
+  "room.e2eeFailed": "Cette salle nécessite un chiffrement de bout en bout, mais votre navigateur n'a pas chiffré les médias. Vous avez été retiré de la salle afin de ne rien envoyer sans protection."
 }
