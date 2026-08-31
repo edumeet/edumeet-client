@@ -124,9 +124,10 @@ function tick(diag: Diag): void {
 }
 
 // Leading bytes the SFU must read for keyframe detection (must stay clear). Derived from the CODEC
-// (passed in, identical on sender + receiver) and the BITSTREAM — never from frame.type, which
-// Firefox and Chromium expose differently and so desynced the clear-byte split, corrupting media
-// between FF and Chromium even though the key was correct.
+// (passed in, so identical on sender and receiver) and from the BITSTREAM, never from frame.type.
+// Both ends must compute the same split or every frame fails to authenticate, and frame.type is a
+// field each engine populates for itself rather than something carried on the wire, so it is the
+// wrong thing to key on even where two engines happen to agree.
 function clearBytes(frame: any, codec: string): number {
 	if (codec === 'opus') return 1; // audio: Opus TOC byte
 	if (codec === 'vp9') return 0; // VP9: keyframe + layers live in the RTP descriptor
