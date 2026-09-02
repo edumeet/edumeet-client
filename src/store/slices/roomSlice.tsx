@@ -13,6 +13,7 @@ interface CountdownTimerState {
 }
 
 export interface RoomState {
+	roomId?: string;
 	headless?: boolean;
 	logo?: string;
 	backgroundImage?: string;
