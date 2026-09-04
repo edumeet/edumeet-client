@@ -71,6 +71,15 @@ describe('chooseSendCodec with encryption', () => {
 		expect(chooseSendCodec([ pcmu, opus ], { e2ee: true, kind: 'audio' })).toBeUndefined();
 	});
 
+	it('never picks an audio codec for a video track from a real, mixed capabilities list', () => {
+		const rtx = { mimeType: 'video/rtx', clockRate: 90000 };
+		const routerOrdered = [ opus, vp8, rtx, vp9, rtx, h264, rtx ];
+
+		expect(chooseSendCodec(routerOrdered, { e2ee: true, kind: 'video' })).toBe(vp8);
+		expect(chooseSendCodec([ opus, h264, vp9 ], { e2ee: true, kind: 'video' })).toBe(vp9);
+		expect(chooseSendCodec([ opus, h264, av1 ], { e2ee: true, kind: 'video' })).toBeUndefined();
+	});
+
 	it('returns the offered object itself, so negotiation parameters travel with it', () => {
 		const chosen = chooseSendCodec([ h264, vp8 ], { e2ee: true, kind: 'video' });
 
