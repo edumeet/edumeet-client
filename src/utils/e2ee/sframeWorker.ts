@@ -8,6 +8,22 @@ const subtle = (globalThis as any).crypto.subtle;
 
 const enc: { key?: CryptoKey; keyId: number; counter: number } = { keyId: 0, counter: 0 };
 const dec = { keys: new Map<number, CryptoKey>() };
+
+// Keys a sender may still have frames in flight under. Rotation is seamless because the receiver
+// keeps the previous key while the new one takes over, so two is all that is ever needed.
+const KEYS_KEPT_PER_SENDER = 2;
+
+// keyId is namespace(24 bits) | epoch(8 bits), and the namespace identifies the sender, so keys can
+// be aged out per sender without the worker knowing anything about peers. Without this the map grows
+// for the life of the session and every key ever received stays valid, so an SFU could replay old
+// frames indefinitely. It also makes the epoch wrapping after 256 rotations a non-event: no key old
+// enough to collide with a reused id is still here.
+function evictOldKeys(namespace: number): void {
+	const mine = [ ...dec.keys.keys() ].filter((k) => (k >>> 8) === namespace);
+
+	for (const stale of mine.slice(0, Math.max(0, mine.length - KEYS_KEPT_PER_SENDER)))
+		dec.keys.delete(stale);
+}
 const encTransformers: any[] = [];
 const decTransformers: any[] = [];
 
@@ -302,9 +318,20 @@ function requestKeyFrames(transformers: any[], method: 'generateKeyFrame' | 'sen
 		report({ level: 'debug', event: 'encKey', keyId: enc.keyId });
 		// Our key changed (rotation) -> emit a fresh keyframe so receivers re-sync.
 		requestKeyFrames(encTransformers, 'generateKeyFrame');
+	} else if (m.type === 'dropKeys') {
+		// A peer left: nothing they sent can still be decodable, so drop their keys outright.
+		for (const k of [ ...dec.keys.keys() ].filter((k2) => (k2 >>> 8) === (m.namespace >>> 0)))
+			dec.keys.delete(k);
+
+		report({ level: 'debug', event: 'dropKeys', namespace: m.namespace >>> 0, knownKeyIds: [ ...dec.keys.keys() ] });
 	} else if (m.type === 'decKey') {
-		dec.keys.set(m.keyId >>> 0, m.key);
-		report({ level: 'debug', event: 'decKey', keyId: m.keyId >>> 0, knownKeyIds: [ ...dec.keys.keys() ] });
+		const keyId = m.keyId >>> 0;
+
+		// Delete first so the Map's insertion order tracks recency, which is what eviction reads.
+		dec.keys.delete(keyId);
+		dec.keys.set(keyId, m.key);
+		evictOldKeys(keyId >>> 8);
+		report({ level: 'debug', event: 'decKey', keyId, knownKeyIds: [ ...dec.keys.keys() ] });
 		// A remote key arrived/rotated -> request a keyframe so our decoder starts clean.
 		requestKeyFrames(decTransformers, 'sendKeyFrameRequest');
 	}

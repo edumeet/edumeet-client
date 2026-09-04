@@ -1,6 +1,6 @@
 import { WebCryptoKeyProvider } from '../utils/e2ee/WebCryptoKeyProvider';
 import { IdentityStatus, LocalKey, WrappedKeyMessage } from '../utils/e2ee/E2eeKeyProvider';
-import { Bytes } from '../utils/e2ee/crypto';
+import { Bytes, peerNamespace } from '../utils/e2ee/crypto';
 import { Logger } from '../utils/Logger';
 import { browserInfo } from '../utils/deviceInfo';
 
@@ -239,6 +239,10 @@ export class E2eeService {
 
 	removePeer(peerId: string): void {
 		this.#provider?.removePeer(peerId);
+
+		// The worker holds this peer's media keys and knows nothing about peers, so tell it to drop
+		// them. Otherwise they stay valid for the rest of the session and old frames remain replayable.
+		void peerNamespace(peerId).then((namespace) => this.#decWorker?.postMessage({ type: 'dropKeys', namespace }));
 	}
 
 	wrapLocalKeyFor(peerId: string): Promise<WrappedKeyMessage> {
