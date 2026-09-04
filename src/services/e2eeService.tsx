@@ -15,6 +15,16 @@ const logger = new Logger('E2eeService');
 // room that will not work, not how long plaintext escapes.
 const ENCRYPTION_VERIFY_MS = 3000;
 
+// Upper bound on how long a sender waits for its own transform to confirm before giving up on that
+// stream. This is a hang guard, not a security bound: the guarantee comes from never enabling the
+// track without confirmation, so this only has to stop an await lasting forever. It is deliberately
+// generous, because the wait starts before the transport connects and a slow ICE negotiation must
+// never be mistaken for a browser that refuses to encrypt.
+const PROTECTION_WAIT_MS = 30000;
+
+// eslint-disable-next-line no-unused-vars
+type ProtectionWaiter = (confirmed: boolean) => void;
+
 // Never fall back to 'opus' for an unrecognised mimeType: the worker splits audio at 1 clear byte
 // and video at 3 or 10, so mislabelling a video stream as audio desynchronises encrypt from decrypt
 // and every frame is dropped with no error. An unknown codec gets its own value, which lands on the
@@ -77,10 +87,11 @@ export class E2eeService {
 	#protectionActive = false;
 	#transformAttached = false;
 	#mediaFlowPossible = false;
-	#protectionResolve?: () => void;
-	// Resolves once an encrypt transform has actually handled a frame. The sender awaits this before
-	// releasing real media, so nothing unprotected is ever sent, not even for the watchdog's window.
-	#protectionPromise = new Promise<void>((resolve) => { this.#protectionResolve = resolve; });
+	#tidSeq = 0;
+	// transform id -> the sender waiting for that specific transform to prove it is handling frames.
+	// This is per transform on purpose: a single shared promise would release a later producer, a
+	// screen share say, on confirmation that belonged to the first one.
+	#pendingProtection = new Map<number, ProtectionWaiter>();
 	#verifyTimer?: ReturnType<typeof setTimeout>;
 	#unverifiedReported = false;
 
@@ -95,8 +106,23 @@ export class E2eeService {
 		return this.#encryptVerified;
 	}
 
-	whenProtectionActive(): Promise<void> {
-		return this.#protectionPromise;
+	// Resolves true once THIS transform has handled a frame, false if it never does. A sender must not
+	// release real media on anything less.
+	whenProtectionActive(tid?: number): Promise<boolean> {
+		if (!this.#enabled || typeof tid !== 'number') return Promise.resolve(true);
+
+		return new Promise<boolean>((resolve) => {
+			const timer = setTimeout(() => {
+				this.#pendingProtection.delete(tid);
+				logger.error('E2EE transform never handled a frame, leaving the track disabled [tid:%d]', tid);
+				resolve(false);
+			}, PROTECTION_WAIT_MS);
+
+			this.#pendingProtection.set(tid, (confirmed) => {
+				clearTimeout(timer);
+				resolve(confirmed);
+			});
+		});
 	}
 
 	// Called when the sending transport connects, i.e. the first moment a frame could reach the
@@ -112,10 +138,20 @@ export class E2eeService {
 
 		if (d?.type !== 'e2eeDiag') return;
 
-		if (d.event === 'pipeLive' && d.op === 'encrypt' && !this.#protectionActive) {
-			this.#protectionActive = true;
-			if (this.#verifyTimer) clearTimeout(this.#verifyTimer);
-			this.#protectionResolve?.();
+		if (d.event === 'pipeLive' && d.op === 'encrypt') {
+			const waiter = this.#pendingProtection.get(d.id);
+
+			if (waiter) {
+				this.#pendingProtection.delete(d.id);
+				waiter(true);
+			}
+
+			// The watchdog only asks whether this browser encrypts at all, so the first confirmation
+			// settles it; a later transform that stalls is handled by its own waiter above.
+			if (!this.#protectionActive) {
+				this.#protectionActive = true;
+				if (this.#verifyTimer) clearTimeout(this.#verifyTimer);
+			}
 		}
 
 		// Either direction counts here: successfully decrypting a peer proves the crypto is working just
@@ -150,37 +186,42 @@ export class E2eeService {
 	}
 
 	// ---- media pipeline: attach transforms ----
-	async protectSender(sender?: RTCRtpSender, codecMime?: string): Promise<void> {
-		if (!this.#enabled || !sender) return;
+	async protectSender(sender?: RTCRtpSender, codecMime?: string): Promise<number | undefined> {
+		if (!this.#enabled || !sender) return undefined;
 		await this.#ready;
-		this.#attach(sender, 'encrypt', codecMime);
+
+		return this.#attach(sender, 'encrypt', codecMime);
 	}
 
-	async protectReceiver(receiver?: RTCRtpReceiver, codecMime?: string): Promise<void> {
-		if (!this.#enabled || !receiver) return;
+	async protectReceiver(receiver?: RTCRtpReceiver, codecMime?: string): Promise<number | undefined> {
+		if (!this.#enabled || !receiver) return undefined;
 		await this.#ready;
-		this.#attach(receiver, 'decrypt', codecMime);
+
+		return this.#attach(receiver, 'decrypt', codecMime);
 	}
 
-	#attach(target: RTCRtpSender | RTCRtpReceiver, operation: 'encrypt' | 'decrypt', codecMime?: string): void {
+	#attach(target: RTCRtpSender | RTCRtpReceiver, operation: 'encrypt' | 'decrypt', codecMime?: string): number | undefined {
 		const worker = operation === 'encrypt' ? this.#encWorker : this.#decWorker;
 
-		if (!worker) return;
+		if (!worker) return undefined;
 
 		// RTCRtpScriptTransform / .transform are not in the DOM lib version here — use loose typing.
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const Transform = (globalThis as any).RTCRtpScriptTransform;
+		const tid = ++this.#tidSeq;
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(target as any).transform = new Transform(worker, { operation, codec: normalizeCodec(codecMime) });
+		(target as any).transform = new Transform(worker, { operation, codec: normalizeCodec(codecMime), tid });
 
-		logger.debug('E2EE %s transform attached [codec: %s] — awaiting confirmation that frames are actually encrypted',
-			operation, normalizeCodec(codecMime));
+		logger.debug('E2EE %s transform attached [tid:%d, codec:%s] — awaiting confirmation that frames are actually encrypted',
+			operation, tid, normalizeCodec(codecMime));
 
 		if (operation === 'encrypt') {
 			this.#transformAttached = true;
 			this.#startEncryptionWatchdog();
 		}
+
+		return tid;
 	}
 
 	// ---- signaling middleware: key exchange delegation ----

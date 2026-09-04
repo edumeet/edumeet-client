@@ -370,13 +370,18 @@ export class MediaSender extends EventEmitter {
 
 		// E2EE: attach the encrypt transform before any real media flows (no-op when E2EE is off).
 		if (holdForE2ee) {
-			await this.mediaService.e2eeService?.protectSender(producer.rtpSender, codecMimeType);
 			// Attaching is not enough: a browser can accept the transform and never feed it, which is
-			// how plaintext used to escape while the UI showed a shield. Hold the real track until the
-			// worker confirms it is processing frames. If that never happens the watchdog removes us
-			// from the room, so the track simply stays off rather than sending anything unprotected.
-			await this.mediaService.e2eeService?.whenProtectionActive();
-			if (clonedTrack) clonedTrack.enabled = true;
+			// how plaintext used to escape while the UI showed a shield. Hold the real track until
+			// THIS producer's own transform confirms it is processing frames. Waiting on a shared
+			// signal would release a second producer on the first one's confirmation.
+			const tid = await this.mediaService.e2eeService?.protectSender(producer.rtpSender, codecMimeType);
+			const protectedNow = await this.mediaService.e2eeService?.whenProtectionActive(tid);
+
+			if (!protectedNow) {
+				logger.error('E2EE never confirmed for this producer, leaving it silent [codec:%s]', codecMimeType);
+			} else if (clonedTrack) {
+				clonedTrack.enabled = true;
+			}
 		} else {
 			void this.mediaService.e2eeService?.protectSender(producer.rtpSender, codecMimeType);
 		}

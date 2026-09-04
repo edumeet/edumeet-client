@@ -320,7 +320,22 @@ const STALL_CHECK_MS = 5000;
 	const t = event?.transformer;
 	const op = t?.options?.operation;
 	const codec = t?.options?.codec;
-	const diag: Diag = { id: ++diagSeq, op, codec, seen: 0, ok: 0, passed: 0, drops: {}, windowDrops: {}, windowSeen: 0, windowOk: 0, nextSummary: 0 };
+	// The main thread assigns the id so it can tell which transform a report belongs to and release
+	// that specific sender. Fall back to a local counter if it ever attaches without one.
+	const tid = t?.options?.tid;
+	const diag: Diag = {
+		id: typeof tid === 'number' ? tid : ++diagSeq,
+		op,
+		codec,
+		seen: 0,
+		ok: 0,
+		passed: 0,
+		drops: {},
+		windowDrops: {},
+		windowSeen: 0,
+		windowOk: 0,
+		nextSummary: 0
+	};
 
 	report({
 		level: 'debug',
