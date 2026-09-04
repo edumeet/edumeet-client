@@ -311,4 +311,24 @@ describe('E2EE middleware', () => {
 		expect(service.ratchetLocalKey).toHaveBeenCalledTimes(1);
 		expect(keysSentTo(signaling)).toEqual([ 'bob' ]);
 	});
+
+	it('never hands a newcomer the key from before the advance, even when their reply lands inside the batch window', async () => {
+		const { signaling, service } = setup();
+
+		await signaling.deliver('e2eeIdentity', identity('bob'));
+		await vi.advanceTimersByTimeAsync(150);
+		await signaling.deliver('e2eeIdentity', identity('bob'));
+
+		expect(keysSentTo(signaling)).toEqual([]);
+		expect(service.ratchetLocalKey).not.toHaveBeenCalled();
+
+		await vi.advanceTimersByTimeAsync(50);
+
+		expect(service.ratchetLocalKey).toHaveBeenCalledTimes(1);
+		expect(keysSentTo(signaling)).toEqual([ 'bob' ]);
+
+		await signaling.deliver('e2eeIdentity', identity('bob'));
+
+		expect(keysSentTo(signaling)).toEqual([ 'bob', 'bob' ]);
+	});
 });

@@ -196,11 +196,17 @@ const createE2eeMiddleware = ({ signalingService, e2eeService }: MiddlewareOptio
 								if (firstContact) {
 									await announceIdentity(peerId);
 									scheduleArrival(peerId);
-								} else if (status !== 'changed') {
+								} else if (status !== 'changed' && !arriving.has(peerId)) {
 									// Not a new peer, so this is them asking for our key. Refused when the
 									// identity just changed: identities are generated per join and peer ids are
 									// not reused, so a changed one for a peer we already know is not a peer
 									// reconnecting, and answering would hand our key to whoever supplied it.
+									//
+									// Also refused while their arrival is still in the batch window. A newcomer
+									// answers our announcement with one of their own, which arrives here looking
+									// exactly like a request, and answering it would hand them the key from
+									// before the advance, which is the key the advance exists to keep from them.
+									// The batch sends them the advanced key moments later.
 									await answerKeyRequest(peerId);
 								}
 
