@@ -109,7 +109,17 @@ export class E2eeService {
 	// Resolves true once THIS transform has handled a frame, false if it never does. A sender must not
 	// release real media on anything less.
 	whenProtectionActive(tid?: number): Promise<boolean> {
-		if (!this.#enabled || typeof tid !== 'number') return Promise.resolve(true);
+		// Nothing to wait for when E2EE is off: senders in that case never hold their track anyway.
+		if (!this.#enabled) return Promise.resolve(true);
+
+		// With E2EE on, no transform id means no transform was attached, which is a failure and must
+		// not read as success. Returning true here would release real media with nothing protecting it,
+		// which is the fail-open this whole design exists to avoid.
+		if (typeof tid !== 'number') {
+			logger.error('E2EE is on but no transform was attached, refusing to release media');
+
+			return Promise.resolve(false);
+		}
 
 		return new Promise<boolean>((resolve) => {
 			const timer = setTimeout(() => {

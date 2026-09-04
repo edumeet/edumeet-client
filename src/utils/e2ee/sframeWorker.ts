@@ -9,9 +9,10 @@ const subtle = (globalThis as any).crypto.subtle;
 const enc: { key?: CryptoKey; keyId: number; counter: number } = { keyId: 0, counter: 0 };
 const dec = { keys: new Map<number, CryptoKey>() };
 
-// Keys a sender may still have frames in flight under. Rotation is seamless because the receiver
-// keeps the previous key while the new one takes over, so two is all that is ever needed.
-const KEYS_KEPT_PER_SENDER = 2;
+// Keys a sender may still have frames in flight under. Two would cover a single rotation, but
+// rotations are not coalesced, so two peers leaving together produce two in quick succession and
+// frames under the oldest key would be dropped. Three covers that at the cost of one CryptoKey.
+const KEYS_KEPT_PER_SENDER = 3;
 
 // keyId is namespace(24 bits) | epoch(8 bits), and the namespace identifies the sender, so keys can
 // be aged out per sender without the worker knowing anything about peers. Without this the map grows
