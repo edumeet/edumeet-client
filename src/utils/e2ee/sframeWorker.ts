@@ -4,27 +4,14 @@
 // Codec-aware clear header (Phase 0, source-proven vs mediasoup): VP8 10/3, VP9 0, Opus audio 1.
 // Keys arrive via postMessage (CryptoKey is structured-cloneable); never leaves the worker.
 
-const subtle = (globalThis as any).crypto.subtle;
+import { DecryptKeyStore } from './keyStore';
+import { clearBytes, nonceFor, open, parseFrame, seal } from './frameCrypto';
 
-const enc: { key?: CryptoKey; keyId: number; counter: number } = { keyId: 0, counter: 0 };
-const dec = { keys: new Map<number, CryptoKey>() };
-
-// Keys a sender may still have frames in flight under. Two would cover a single rotation, but
-// rotations are not coalesced, so two peers leaving together produce two in quick succession and
-// frames under the oldest key would be dropped. Three covers that at the cost of one CryptoKey.
-const KEYS_KEPT_PER_SENDER = 3;
-
-// keyId is namespace(24 bits) | epoch(8 bits), and the namespace identifies the sender, so keys can
-// be aged out per sender without the worker knowing anything about peers. Without this the map grows
-// for the life of the session and every key ever received stays valid, so an SFU could replay old
-// frames indefinitely. It also makes the epoch wrapping after 256 rotations a non-event: no key old
-// enough to collide with a reused id is still here.
-function evictOldKeys(namespace: number): void {
-	const mine = [ ...dec.keys.keys() ].filter((k) => (k >>> 8) === namespace);
-
-	for (const stale of mine.slice(0, Math.max(0, mine.length - KEYS_KEPT_PER_SENDER)))
-		dec.keys.delete(stale);
-}
+// `used` records whether anything has actually been encrypted under the current key. Advancing on a
+// newcomer's arrival exists to keep them from reading what came before, so it is only worth anything
+// once something has been sent under the key being left behind.
+const enc: { key?: CryptoKey; keyId: number; counter: number; used: boolean } = { keyId: 0, counter: 0, used: false };
+const dec = new DecryptKeyStore((namespace) => report({ level: 'debug', event: 'keyNeeded', namespace }));
 const encTransformers: any[] = [];
 const decTransformers: any[] = [];
 
@@ -36,8 +23,6 @@ const decTransformers: any[] = [];
 // first few frames of each stream in full, then a rolling counter summary.
 const DEBUG_FRAMES = 3;
 const SUMMARY_MS = 5000;
-const NONCE_BYTES = 12;
-const GCM_TAG_BYTES = 16;
 
 type Diag = {
 	id: number;
@@ -140,43 +125,12 @@ function tick(diag: Diag): void {
 	diag.windowOk = diag.ok;
 }
 
-// Leading bytes the SFU must read for keyframe detection (must stay clear). Derived from the CODEC
-// (passed in, so identical on sender and receiver) and from the BITSTREAM, never from frame.type.
-// Both ends must compute the same split or every frame fails to authenticate, and frame.type is a
-// field each engine populates for itself rather than something carried on the wire, so it is the
-// wrong thing to key on even where two engines happen to agree.
-function clearBytes(frame: any, codec: string): number {
-	if (codec === 'opus') return 1; // audio: Opus TOC byte
-	if (codec === 'vp9') return 0; // VP9: keyframe + layers live in the RTP descriptor
-
-	if (codec === 'vp8') {
-		// VP8 frame tag: P bit (bit 0 of byte 0) = 0 => keyframe (10-byte header), else delta (3).
-		// byte 0 is always within the clear header, so this reads the same on encrypt and decrypt.
-		const b0 = new Uint8Array(frame.data, 0, 1)[0];
-
-		return (b0 & 0x01) === 0 ? 10 : 3;
-	}
-
-	return 3; // h264/other: not supported for E2EE, keep a minimal clear header
-}
-
-// 12-byte nonce = keyId(4) ‖ counter(8); also the SFrame header so decrypt is stateless.
-function nonceFor(keyId: number, counter: number): Uint8Array {
-	const b = new Uint8Array(12);
-	const dv = new DataView(b.buffer);
-
-	dv.setUint32(0, keyId >>> 0);
-	dv.setBigUint64(4, BigInt(counter));
-	
-	return b;
-}
-
 async function encrypt(frame: any, controller: any, codec: string, diag: Diag): Promise<void> {
 	diag.seen++;
 	if (!enc.key) return drop(diag, 'noEncKey'); // no key yet -> don't emit cleartext
 	try {
-		const header = clearBytes(frame, codec);
 		const data = new Uint8Array(frame.data);
+		const header = clearBytes(data, codec);
 		// A frame with nothing past the clear header (Opus DTX/silence) would be authenticated with a
 		// zero-length AAD here while the receiver reads a header-length AAD, so GCM would reject every
 		// one of them. Nothing in such a frame is secret, so pass it through untouched.
@@ -190,8 +144,6 @@ async function encrypt(frame: any, controller: any, codec: string, diag: Diag): 
 			return;
 		}
 
-		const clear = data.subarray(0, header);
-		const payload = data.subarray(header);
 		const nonce = nonceFor(enc.keyId, enc.counter++);
 
 		if (diag.seen <= DEBUG_FRAMES) {
@@ -208,14 +160,14 @@ async function encrypt(frame: any, controller: any, codec: string, diag: Diag): 
 			});
 		}
 
-		const ct = new Uint8Array(await subtle.encrypt({ name: 'AES-GCM', iv: nonce, additionalData: clear }, enc.key, payload));
-		const out = new Uint8Array(header + 12 + ct.length);
-
-		out.set(clear, 0);
-		out.set(nonce, header);
-		out.set(ct, header + 12);
-		frame.data = out.buffer;
+		frame.data = (await seal(data, header, enc.key, nonce)).buffer;
 		diag.ok++;
+
+		if (!enc.used) {
+			enc.used = true;
+			report({ level: 'debug', event: 'encKeyUsed', keyId: enc.keyId });
+		}
+
 		// Proof that this stream is genuinely being encrypted, not merely that a transform was attached.
 		if (diag.ok === 1) report({ level: 'debug', id: diag.id, op: 'encrypt', codec, event: 'firstFrame' });
 		markHandled(diag, 'encrypt', codec);
@@ -228,17 +180,17 @@ async function encrypt(frame: any, controller: any, codec: string, diag: Diag): 
 
 async function decrypt(frame: any, controller: any, codec: string, diag: Diag): Promise<void> {
 	diag.seen++;
-	if (dec.keys.size === 0) return drop(diag, 'noDecKeys');
-	try {
-		const header = clearBytes(frame, codec);
-		const data = new Uint8Array(frame.data);
-		// A sender emits exactly two shapes: a passthrough frame with nothing past the clear header, or
-		// an encrypted one carrying a nonce, a tag and at least one byte of payload. Every size between
-		// those is unreachable for a peer, so a frame in that band did not come from one. Passing it on
-		// would hand the decoder unauthenticated bytes that an SFU could have injected, and at low Opus
-		// bitrates that band is large enough to carry audible audio, so it is dropped instead.
+	if (dec.size === 0) return drop(diag, 'noDecKeys');
 
-		if (data.length <= header) {
+	let derived = false;
+	let namespace = -1;
+
+	try {
+		const data = new Uint8Array(frame.data);
+		const shape = parseFrame(data, codec);
+		const { header } = shape;
+
+		if (shape.kind === 'passthrough') {
 			diag.passed++;
 			markHandled(diag, 'decrypt', codec);
 			controller.enqueue(frame);
@@ -247,17 +199,21 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 			return;
 		}
 
-		if (data.length < header + NONCE_BYTES + GCM_TAG_BYTES + 1) {
+		if (shape.kind === 'impossible') {
 			drop(diag, 'impossibleLength', { bytes: data.length, header });
 			tick(diag);
 
 			return;
 		}
 
-		const clear = data.subarray(0, header);
-		const nonce = data.subarray(header, header + 12);
-		const keyId = new DataView(nonce.buffer, nonce.byteOffset, 12).getUint32(0);
-		const key = dec.keys.get(keyId);
+		const { keyId } = shape;
+
+		namespace = keyId >>> 8;
+
+		const chain = dec.has(keyId) ? undefined : await dec.deriveChain(keyId);
+		const key = chain ? chain[chain.length - 1].entry.key : dec.get(keyId)?.key;
+
+		derived = Boolean(chain);
 
 		if (diag.seen <= DEBUG_FRAMES) {
 			report({
@@ -269,21 +225,30 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 				header,
 				keyId,
 				haveKey: Boolean(key),
-				knownKeyIds: [ ...dec.keys.keys() ],
+				derived,
+				knownKeyIds: dec.knownKeyIds(),
 				wireHead: hex(data, Math.min(16, data.length)),
 				...frameShape(frame)
 			});
 		}
 
-		// An unknown keyId is the signature of a clear-byte disagreement between sender and receiver:
-		// the nonce is read at the wrong offset, so this is ciphertext being parsed as a header.
-		if (!key) return drop(diag, 'unknownKeyId', { keyId, knownKeyIds: [ ...dec.keys.keys() ], header });
-		const ct = data.subarray(header + 12);
-		const pt = new Uint8Array(await subtle.decrypt({ name: 'AES-GCM', iv: nonce, additionalData: clear }, key, ct));
-		const out = new Uint8Array(header + pt.length);
+		// A keyId we hold no key for and cannot derive one for. Either the sender's key never reached
+		// us, or we have fallen further behind their advances than we will derive, or this is not a
+		// keyId at all because the clear byte count disagrees and we are reading ciphertext as a
+		// header. The first two are recoverable and the count below is what starts that.
+		if (!key) {
+			dec.missed(namespace);
 
-		out.set(clear, 0);
-		out.set(pt, header);
+			return drop(diag, 'unknownKeyId', { keyId, knownKeyIds: dec.knownKeyIds(), header });
+		}
+		const out = await open(shape, key);
+
+		// Authenticated, so a derived key was the right guess and is worth keeping. Anything that fails
+		// past this point is not the derivation's doing, so stop attributing it to one.
+		derived = false;
+		dec.decrypted(namespace);
+		if (chain) dec.commitChain(chain);
+
 		frame.data = out.buffer;
 		diag.ok++;
 		if (diag.ok === 1) report({ level: 'debug', id: diag.id, op: 'decrypt', codec, event: 'firstFrame' });
@@ -291,7 +256,15 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 		controller.enqueue(frame);
 	} catch (error) {
 		// Correct keyId but failed authentication: same key, different clear/ciphertext split.
-		drop(diag, 'gcmAuthFailed', { error: String(error), bytes: frame.data?.byteLength, header: clearBytes(frame, codec) });
+		if (!derived) drop(diag, 'gcmAuthFailed', { error: String(error), bytes: frame.data?.byteLength, header: clearBytes(new Uint8Array(frame.data), codec) });
+
+		// A derived key that does not authenticate means the sender replaced its key rather than
+		// advancing it, which is what a departure does. Usually the replacement is already on its way,
+		// so this is a short gap, and the count is there for when it is not.
+		else {
+			dec.missed(namespace);
+			drop(diag, 'ratchetMiss', { bytes: frame.data?.byteLength });
+		}
 	}
 	tick(diag);
 }
@@ -315,24 +288,20 @@ function requestKeyFrames(transformers: any[], method: 'generateKeyFrame' | 'sen
 	const m: any = e.data;
 
 	if (m.type === 'encKey') {
-		enc.key = m.key; enc.keyId = m.keyId >>> 0; enc.counter = 0;
-		report({ level: 'debug', event: 'encKey', keyId: enc.keyId });
-		// Our key changed (rotation) -> emit a fresh keyframe so receivers re-sync.
-		requestKeyFrames(encTransformers, 'generateKeyFrame');
+		enc.key = m.key; enc.keyId = m.keyId >>> 0; enc.counter = 0; enc.used = false;
+		report({ level: 'debug', event: 'encKey', keyId: enc.keyId, ratcheted: Boolean(m.ratcheted) });
+		// A replaced key needs a fresh keyframe so receivers re-sync. An advanced one does not, since
+		// receivers derive it and keep decoding, and forcing one per arrival would spike every camera
+		// in the room at exactly the moment people are joining.
+		if (!m.ratcheted) requestKeyFrames(encTransformers, 'generateKeyFrame');
 	} else if (m.type === 'dropKeys') {
-		// A peer left: nothing they sent can still be decodable, so drop their keys outright.
-		for (const k of [ ...dec.keys.keys() ].filter((k2) => (k2 >>> 8) === (m.namespace >>> 0)))
-			dec.keys.delete(k);
-
-		report({ level: 'debug', event: 'dropKeys', namespace: m.namespace >>> 0, knownKeyIds: [ ...dec.keys.keys() ] });
+		dec.dropNamespace(m.namespace >>> 0);
+		report({ level: 'debug', event: 'dropKeys', namespace: m.namespace >>> 0, knownKeyIds: dec.knownKeyIds() });
 	} else if (m.type === 'decKey') {
 		const keyId = m.keyId >>> 0;
 
-		// Delete first so the Map's insertion order tracks recency, which is what eviction reads.
-		dec.keys.delete(keyId);
-		dec.keys.set(keyId, m.key);
-		evictOldKeys(keyId >>> 8);
-		report({ level: 'debug', event: 'decKey', keyId, knownKeyIds: [ ...dec.keys.keys() ] });
+		dec.set(keyId, { key: m.key, raw: m.raw });
+		report({ level: 'debug', event: 'decKey', keyId, knownKeyIds: dec.knownKeyIds() });
 		// A remote key arrived/rotated -> request a keyframe so our decoder starts clean.
 		requestKeyFrames(decTransformers, 'sendKeyFrameRequest');
 	}

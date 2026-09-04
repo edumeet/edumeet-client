@@ -7,14 +7,9 @@ import { SignalingService } from '../services/signalingService';
 import { VolumeWatcher } from './volumeWatcher';
 import hark from 'hark';
 import { Logger } from './Logger';
+import { chooseSendCodec, isProtectableCodec } from './e2ee/codecChoice';
 
 const logger = new Logger('MediaSender');
-
-// Codecs the E2EE worker can split correctly. Opus and VP8/VP9 have a fixed or cheaply derived clear
-// header, so the SFU keeps what it needs for forwarding and the rest is encrypted. H264 does not: the
-// browser packetizes NAL units AFTER our transform has run, so encrypting past a fixed offset leaves
-// the packetizer walking ciphertext and the stream is broken rather than protected.
-const E2EE_PROTECTABLE_CODEC = /^(audio\/opus|video\/vp8|video\/vp9)$/i;
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface MediaSender {
@@ -323,11 +318,7 @@ export class MediaSender extends EventEmitter {
 
 		const sendCodecs = this.mediaService.sendRtpCapabilities?.codecs;
 
-		// With E2EE on, choose a codec the worker can protect instead of leaving it to negotiation,
-		// which is free to settle on H264. Without E2EE this keeps the previous behaviour exactly.
-		const preferredCodec = holdForE2ee && clonedTrack?.kind === 'video'
-			? sendCodecs?.find((c) => E2EE_PROTECTABLE_CODEC.test(c.mimeType))
-			: sendCodecs?.find((c) => c.mimeType.toLowerCase() === this.codec);
+		const preferredCodec = chooseSendCodec(sendCodecs, { e2ee: holdForE2ee, kind: clonedTrack?.kind, requested: this.codec });
 
 		const producer = await this.mediaService.sendTransport.produce({
 			...producerOptions,
@@ -359,7 +350,7 @@ export class MediaSender extends EventEmitter {
 		// The preference above normally settles this, but negotiation can still land somewhere the
 		// worker cannot protect. Refuse to send at all rather than emit a stream that would be either
 		// broken by the packetizer or, worse, readable by the media node.
-		if (holdForE2ee && !E2EE_PROTECTABLE_CODEC.test(codecMimeType ?? '')) {
+		if (holdForE2ee && !isProtectableCodec(codecMimeType)) {
 			logger.error('E2EE cannot protect the negotiated codec, not producing [codec:%s]', codecMimeType);
 			producer.close();
 

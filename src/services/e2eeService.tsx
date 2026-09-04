@@ -102,6 +102,15 @@ export class E2eeService {
 	// Fired once, when a frame has demonstrably been encrypted or decrypted.
 	onEncryptionVerified?: () => void;
 
+	readonly #namespaces = new Map<number, string>(); // media key namespace -> peerId
+	#localKeyUsed = false; // has anything been encrypted under the key we currently hold
+
+	// A peer whose media we cannot decrypt, either because their key never reached us or because we
+	// have fallen too far behind their advances. The worker only sees namespaces, so the peer is
+	// resolved here and the caller decides how to ask.
+	// eslint-disable-next-line no-unused-vars
+	onKeyNeeded?: (peerId: string) => void;
+
 	get encryptionVerified(): boolean {
 		return this.#encryptVerified;
 	}
@@ -162,6 +171,16 @@ export class E2eeService {
 				this.#protectionActive = true;
 				if (this.#verifyTimer) clearTimeout(this.#verifyTimer);
 			}
+		}
+
+		if (d.event === 'encKeyUsed' && (d.keyId >>> 0) === this.#provider?.localKey()?.keyId) this.#localKeyUsed = true;
+
+		if (d.event === 'keyNeeded') {
+			const peerId = this.#namespaces.get(d.namespace >>> 0);
+
+			// An unknown namespace is not a peer: a clear-byte disagreement parses ciphertext as a
+			// header and produces key identifiers that belong to nobody. Nothing to ask, so ignore it.
+			if (peerId) this.onKeyNeeded?.(peerId);
 		}
 
 		// Either direction counts here: successfully decrypting a peer proves the crypto is working just
@@ -243,8 +262,12 @@ export class E2eeService {
 		return this.#provider?.hasPeer(peerId) ?? false;
 	}
 
-	addPeer(peerId: string, identityPubKey: Bytes): Promise<IdentityStatus> {
-		return this.#provider!.addPeer(peerId, identityPubKey);
+	async addPeer(peerId: string, identityPubKey: Bytes): Promise<IdentityStatus> {
+		const status = await this.#provider!.addPeer(peerId, identityPubKey);
+
+		this.#namespaces.set(await peerNamespace(peerId), peerId);
+
+		return status;
 	}
 
 	removePeer(peerId: string): void {
@@ -252,7 +275,14 @@ export class E2eeService {
 
 		// The worker holds this peer's media keys and knows nothing about peers, so tell it to drop
 		// them. Otherwise they stay valid for the rest of the session and old frames remain replayable.
-		void peerNamespace(peerId).then((namespace) => this.#decWorker?.postMessage({ type: 'dropKeys', namespace }));
+		// The namespace was recorded when the peer was added, so this needs no await: hashing it again
+		// would leave a gap in which a request for a key could still name a peer who has gone.
+		for (const [ namespace, id ] of this.#namespaces) {
+			if (id !== peerId) continue;
+
+			this.#namespaces.delete(namespace);
+			this.#decWorker?.postMessage({ type: 'dropKeys', namespace });
+		}
 	}
 
 	wrapLocalKeyFor(peerId: string): Promise<WrappedKeyMessage> {
@@ -268,15 +298,31 @@ export class E2eeService {
 		this.#pushLocalKey();
 	}
 
+	// Advancing hides what was sent before a newcomer arrived. With nothing sent under the current key
+	// there is nothing to hide, and advancing anyway would only put us further ahead of the peers who
+	// have had no frames from us to follow, which is exactly the participant this protects: mic and
+	// camera off through a run of arrivals, then unmuting into a room that can no longer read them.
+	async ratchetLocalKey(): Promise<void> {
+		if (!this.#localKeyUsed) {
+			logger.debug('nothing sent under the current key, keeping it rather than advancing');
+
+			return;
+		}
+
+		await this.#provider!.ratchetLocalKey();
+		this.#pushLocalKey(true);
+	}
+
 	async onRemoteKey(fromPeerId: string, keyId: number, iv: Bytes, data: ArrayBuffer): Promise<void> {
 		const update = await this.#provider!.unwrapRemoteKey(fromPeerId, keyId, iv, data);
 
-		this.#decWorker?.postMessage({ type: 'decKey', keyId: update.keyId, key: update.key });
+		this.#decWorker?.postMessage({ type: 'decKey', keyId: update.keyId, key: update.key, raw: update.raw });
 	}
 
-	#pushLocalKey(): void {
+	#pushLocalKey(ratcheted = false): void {
 		const lk: LocalKey | undefined = this.#provider?.localKey();
 
-		if (lk) this.#encWorker?.postMessage({ type: 'encKey', keyId: lk.keyId, key: lk.key });
+		this.#localKeyUsed = false;
+		if (lk) this.#encWorker?.postMessage({ type: 'encKey', keyId: lk.keyId, key: lk.key, ratcheted });
 	}
 }
