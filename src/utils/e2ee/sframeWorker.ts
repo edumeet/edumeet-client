@@ -215,12 +215,23 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 	try {
 		const header = clearBytes(frame, codec);
 		const data = new Uint8Array(frame.data);
-		// Mirror of the sender's short-frame passthrough: anything below this cannot be one of ours.
+		// A sender emits exactly two shapes: a passthrough frame with nothing past the clear header, or
+		// an encrypted one carrying a nonce, a tag and at least one byte of payload. Every size between
+		// those is unreachable for a peer, so a frame in that band did not come from one. Passing it on
+		// would hand the decoder unauthenticated bytes that an SFU could have injected, and at low Opus
+		// bitrates that band is large enough to carry audible audio, so it is dropped instead.
 
-		if (data.length < header + NONCE_BYTES + GCM_TAG_BYTES) {
+		if (data.length <= header) {
 			diag.passed++;
 			markHandled(diag, 'decrypt', codec);
 			controller.enqueue(frame);
+			tick(diag);
+
+			return;
+		}
+
+		if (data.length < header + NONCE_BYTES + GCM_TAG_BYTES + 1) {
+			drop(diag, 'impossibleLength', { bytes: data.length, header });
 			tick(diag);
 
 			return;
