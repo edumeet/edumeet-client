@@ -196,8 +196,10 @@ export class E2eeService {
 		const { type, level, ...rest } = d;
 
 		void type;
-		if (level === 'warn') logger.warn('E2EE worker %o', rest);
-		else logger.debug('E2EE worker %o', rest);
+		// JSON rather than an object: the console only sometimes inlines an object into the text it
+		// saves, and a report written as the word "Object" is a report lost.
+		if (level === 'warn') logger.warn('E2EE worker %j', rest);
+		else logger.debug('E2EE worker %j', rest);
 	};
 
 	#startEncryptionWatchdog(): void {
