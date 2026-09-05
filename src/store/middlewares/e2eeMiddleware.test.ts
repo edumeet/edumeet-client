@@ -67,15 +67,18 @@ const makeService = (enabled: boolean) => {
 		ratchetLocalKey: vi.fn(async () => undefined),
 		onRemoteKey: vi.fn(async () => undefined),
 		enable: vi.fn(async () => undefined),
+		markKeyBurned: vi.fn(),
+		onRotateRequired: undefined as (() => Promise<void>) | undefined,
 		onKeyNeeded: undefined as PeerCallback | undefined,
 		onEncryptionVerified: undefined as (() => void) | undefined,
 		onEncryptionUnverified: undefined as (() => void) | undefined,
 	};
 };
 
-const setup = ({ e2eeEnabled = true, serviceEnabled = true } = {}) => {
+const setup = ({ e2eeEnabled = true, serviceEnabled = true, producers = true } = {}) => {
 	const signaling = makeSignaling();
 	const service = makeService(serviceEnabled);
+	const mediaService = { mediaSenders: { mic: producers ? { producer: {} } : {}, webcam: {} } };
 	const dispatch = vi.fn();
 	const next = vi.fn((action: unknown) => action);
 	const getState = () => ({
@@ -83,7 +86,7 @@ const setup = ({ e2eeEnabled = true, serviceEnabled = true } = {}) => {
 		me: { id: 'me' },
 		peers: { bob: { displayName: 'Bob' } },
 	});
-	const run = createE2eeMiddleware({ signalingService: signaling, e2eeService: service } as unknown as MiddlewareInput)(
+	const run = createE2eeMiddleware({ signalingService: signaling, e2eeService: service, mediaService } as unknown as MiddlewareInput)(
 		{ dispatch, getState } as unknown as ApiInput
 	)(next);
 
@@ -218,6 +221,10 @@ describe('E2EE middleware', () => {
 		run(peersActions.removePeer({ id: 'bob' }));
 		await vi.advanceTimersByTimeAsync(0);
 
+		expect(service.rotateLocalKey).not.toHaveBeenCalled();
+
+		await vi.advanceTimersByTimeAsync(200);
+
 		expect(service.removePeer).toHaveBeenCalledWith('bob');
 		expect(dispatch).toHaveBeenCalledWith(e2eeActions.removePeer({ peerId: 'bob' }));
 		expect(service.rotateLocalKey).toHaveBeenCalledTimes(1);
@@ -298,7 +305,7 @@ describe('E2EE middleware', () => {
 		await signaling.deliver('e2eeIdentity', identity('bob'));
 		await vi.advanceTimersByTimeAsync(200);
 		run(peersActions.removePeer({ id: 'bob' }));
-		await vi.advanceTimersByTimeAsync(0);
+		await vi.advanceTimersByTimeAsync(200);
 		signaling.notify.mockClear();
 		service.ratchetLocalKey.mockClear();
 
@@ -330,5 +337,46 @@ describe('E2EE middleware', () => {
 		await signaling.deliver('e2eeIdentity', identity('bob'));
 
 		expect(keysSentTo(signaling)).toEqual([ 'bob', 'bob' ]);
+	});
+
+	it('replaces its key once for several peers leaving inside the batch window', async () => {
+		const { signaling, service, run } = setup();
+
+		for (const id of [ 'bob', 'carol', 'dave' ]) await signaling.deliver('e2eeIdentity', identity(id));
+		await vi.advanceTimersByTimeAsync(200);
+		signaling.notify.mockClear();
+
+		run(peersActions.removePeer({ id: 'bob' }));
+		await vi.advanceTimersByTimeAsync(100);
+		run(peersActions.removePeer({ id: 'carol' }));
+		await vi.advanceTimersByTimeAsync(100);
+
+		expect(service.rotateLocalKey).toHaveBeenCalledTimes(1);
+		expect(keysSentTo(signaling)).toEqual([ 'dave' ]);
+
+		await vi.advanceTimersByTimeAsync(500);
+
+		expect(service.rotateLocalKey).toHaveBeenCalledTimes(1);
+	});
+
+	it('only marks the key burned while it has no producer, and replaces it when one starts', async () => {
+		const { signaling, service, run } = setup({ producers: false });
+
+		await signaling.deliver('e2eeIdentity', identity('bob'));
+		await signaling.deliver('e2eeIdentity', identity('carol'));
+		await vi.advanceTimersByTimeAsync(200);
+		signaling.notify.mockClear();
+
+		run(peersActions.removePeer({ id: 'bob' }));
+		await vi.advanceTimersByTimeAsync(500);
+
+		expect(service.markKeyBurned).toHaveBeenCalledTimes(1);
+		expect(service.rotateLocalKey).not.toHaveBeenCalled();
+		expect(keysSentTo(signaling)).toEqual([]);
+
+		await service.onRotateRequired!();
+
+		expect(service.rotateLocalKey).toHaveBeenCalledTimes(1);
+		expect(keysSentTo(signaling)).toEqual([ 'carol' ]);
 	});
 });

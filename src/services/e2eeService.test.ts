@@ -345,4 +345,66 @@ describe('E2EE service', () => {
 			expect((delivered.raw as Uint8Array).length).toBe(32);
 		});
 	});
+
+	describe('a key burned by a departure while nothing was being sent', () => {
+		it('is replaced before the next producer attaches its transform', async () => {
+			const { service } = await enabledService();
+			const order: string[] = [];
+
+			service.onRotateRequired = async () => {
+				order.push(`rotate with ${FakeTransform.instances.length} transforms attached`);
+			};
+			service.markKeyBurned();
+
+			await service.protectSender(sender(), 'audio/opus');
+
+			expect(order).toEqual([ 'rotate with 0 transforms attached' ]);
+			expect(FakeTransform.instances).toHaveLength(1);
+		});
+
+		it('is replaced once when several producers start together', async () => {
+			const { service } = await enabledService();
+			const rotate = vi.fn(async () => undefined);
+
+			service.onRotateRequired = rotate;
+			service.markKeyBurned();
+
+			await Promise.all([
+				service.protectSender(sender(), 'audio/opus'),
+				service.protectSender(sender(), 'video/VP8'),
+				service.protectSender(sender(), 'video/VP8'),
+			]);
+
+			expect(rotate).toHaveBeenCalledTimes(1);
+			expect(FakeTransform.instances).toHaveLength(3);
+		});
+
+		it('does not replace an unburned key, and a replacement clears the burn', async () => {
+			const { service } = await enabledService();
+			const rotate = vi.fn(async () => undefined);
+
+			service.onRotateRequired = rotate;
+
+			await service.protectSender(sender(), 'audio/opus');
+			expect(rotate).not.toHaveBeenCalled();
+
+			service.markKeyBurned();
+			await service.rotateLocalKey();
+			await service.protectSender(sender(), 'video/VP8');
+			expect(rotate).not.toHaveBeenCalled();
+		});
+
+		it('still replaces the key locally when nothing is wired to distribute it', async () => {
+			const { service, enc } = await enabledService();
+
+			service.markKeyBurned();
+			await service.protectSender(sender(), 'audio/opus');
+
+			const keys = enc.postedOfType('encKey');
+
+			expect(keys).toHaveLength(2);
+			expect(keys[1].ratcheted).toBe(false);
+			expect((keys[1].keyId as number) & 0xff).toBe(1);
+		});
+	});
 });

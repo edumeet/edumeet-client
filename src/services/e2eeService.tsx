@@ -105,6 +105,39 @@ export class E2eeService {
 	readonly #namespaces = new Map<number, string>(); // media key namespace -> peerId
 	#localKeyUsed = false; // has anything been encrypted under the key we currently hold
 
+	// A departure happened while we had no producer. The leaver holds our key, so it has to be replaced
+	// before we send anything, but with nothing to send there is no reason to do it yet, and in a large
+	// room most participants have nothing to send. It is replaced when the next producer starts, before
+	// that producer's transform is attached, so no frame ever leaves under the burned key.
+	#keyBurned = false;
+	#burnedRotation?: Promise<void>;
+
+	// Set by the middleware, which is the only party that can distribute the replacement.
+	onRotateRequired?: () => Promise<void>;
+
+	markKeyBurned(): void {
+		this.#keyBurned = true;
+	}
+
+	#rotateIfBurned(): Promise<void> {
+		if (!this.#keyBurned) return Promise.resolve();
+
+		// Several producers starting together must share one replacement, not race three.
+		if (!this.#burnedRotation) {
+			this.#burnedRotation = (async () => {
+				this.#keyBurned = false;
+
+				// Without the middleware the key is still replaced; recipients recover it by asking.
+				if (this.onRotateRequired) await this.onRotateRequired();
+				else await this.rotateLocalKey();
+			})().finally(() => {
+				this.#burnedRotation = undefined;
+			});
+		}
+
+		return this.#burnedRotation;
+	}
+
 	// A peer whose media we cannot decrypt, either because their key never reached us or because we
 	// have fallen too far behind their advances. The worker only sees namespaces, so the peer is
 	// resolved here and the caller decides how to ask.
@@ -220,6 +253,7 @@ export class E2eeService {
 	async protectSender(sender?: RTCRtpSender, codecMime?: string): Promise<number | undefined> {
 		if (!this.#enabled || !sender) return undefined;
 		await this.#ready;
+		await this.#rotateIfBurned();
 
 		return this.#attach(sender, 'encrypt', codecMime);
 	}
@@ -296,6 +330,7 @@ export class E2eeService {
 	}
 
 	async rotateLocalKey(): Promise<void> {
+		this.#keyBurned = false;
 		await this.#provider!.rotateLocalKey();
 		this.#pushLocalKey();
 	}

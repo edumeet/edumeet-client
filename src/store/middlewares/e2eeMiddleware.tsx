@@ -17,7 +17,7 @@ const logger = new Logger('E2eeMiddleware');
 // identity; on first contact with a peer we derive a pairwise KEK and send our (wrapped) media key;
 // on leave we replace our key and redistribute it, on join we advance it and send it only to the
 // newcomer. The E2eeService owns the keys/workers; this just routes signals.
-const createE2eeMiddleware = ({ signalingService, e2eeService }: MiddlewareOptions): Middleware => {
+const createE2eeMiddleware = ({ signalingService, e2eeService, mediaService }: MiddlewareOptions): Middleware => {
 	logger.debug('createE2eeMiddleware()');
 
 	const announceIdentity = async (toPeerId?: string): Promise<void> => {
@@ -87,6 +87,41 @@ const createE2eeMiddleware = ({ signalingService, e2eeService }: MiddlewareOptio
 		}, JOIN_BATCH_MS);
 	};
 
+	// A departure burns our key, because the leaver holds it. Replacing it costs a message per remaining
+	// peer, and every remaining peer does the same, so a room emptying pays that per person. Two things
+	// keep it in check. Departures are batched like arrivals, so people leaving together cost one
+	// replacement, at the price of the leaver being able to read up to the batch window. And a
+	// participant with no producer has nothing the leaver could read, so it only marks its key as
+	// burned and replaces it when it next starts sending, which in a lecture is most of the room.
+	const LEAVE_BATCH_MS = 200;
+	let departureTimer: ReturnType<typeof setTimeout> | undefined;
+
+	const hasProducer = (): boolean =>
+		Object.values(mediaService.mediaSenders).some((sender) => Boolean(sender.producer));
+
+	const replaceAndDistribute = async (): Promise<void> => {
+		await e2eeService.rotateLocalKey();
+		await sendKeyToAll();
+	};
+
+	const scheduleDeparture = (): void => {
+		if (departureTimer) return;
+
+		departureTimer = setTimeout(() => {
+			departureTimer = undefined;
+
+			void (async () => {
+				if (!e2eeService.enabled) return;
+
+				try {
+					await replaceAndDistribute();
+				} catch (error) {
+					logger.error('replacing our key after a departure failed [error:%o]', error);
+				}
+			})();
+		}, LEAVE_BATCH_MS);
+	};
+
 	// Asking a peer for their key. There is no request message and none is needed: a peer that already
 	// knows us reads a repeat identity announcement as a request, since nothing else would prompt one.
 	// That keeps recovery on the two notifications the room server already relays.
@@ -118,6 +153,10 @@ const createE2eeMiddleware = ({ signalingService, e2eeService }: MiddlewareOptio
 	const wireUnverifiedHandler = (dispatch: AppDispatch): void => {
 		if (unverifiedHandlerWired) return;
 		unverifiedHandlerWired = true;
+
+		// A key burned by a departure while we had nothing to send is replaced by the service the moment
+		// a producer starts; distributing the replacement is signalling, so it comes back through here.
+		e2eeService.onRotateRequired = replaceAndDistribute;
 
 		// The worker could not decrypt this peer for a sustained run of frames: their key never reached
 		// us, or we fell further behind their advances than we will derive. Announcing to them asks for
@@ -259,10 +298,8 @@ const createE2eeMiddleware = ({ signalingService, e2eeService }: MiddlewareOptio
 				lastResend.delete(action.payload.id);
 
 				if (e2eeActive()) {
-					void (async () => {
-						await e2eeService.rotateLocalKey();
-						await sendKeyToAll();
-					})();
+					if (hasProducer()) scheduleDeparture();
+					else e2eeService.markKeyBurned();
 				}
 			}
 
