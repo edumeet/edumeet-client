@@ -51,6 +51,18 @@ export const unwrapKey = async (kek: CryptoKey, iv: Bytes, data: ArrayBuffer): P
 
 export const randomKeyRaw = (): Bytes => globalThis.crypto.getRandomValues(new Uint8Array(32));
 
+// Advance a media key one step. The next key is derived from the current one and the current one
+// cannot be recovered from it, so everyone already holding a key can move to the next without a
+// message while a newcomer given only the advanced key cannot read anything sent under the old one.
+export const ratchetRaw = async (raw: Bytes): Promise<Bytes> => {
+	const hk = await subtle.importKey('raw', raw, 'HKDF', false, [ 'deriveBits' ]);
+
+	return new Uint8Array(await subtle.deriveBits(
+		{ name: 'HKDF', hash: 'SHA-256', salt: te.encode('edumeet-e2ee/v1'), info: te.encode('ratchet') },
+		hk, 256
+	));
+};
+
 // The per-participant media key, ready for the SFrame worker (non-extractable).
 export const importMediaKey = (raw: Bytes): Promise<CryptoKey> =>
 	subtle.importKey('raw', raw, 'AES-GCM', false, [ 'encrypt', 'decrypt' ]);

@@ -1,6 +1,6 @@
 import { WebCryptoKeyProvider } from '../utils/e2ee/WebCryptoKeyProvider';
 import { IdentityStatus, LocalKey, WrappedKeyMessage } from '../utils/e2ee/E2eeKeyProvider';
-import { Bytes } from '../utils/e2ee/crypto';
+import { Bytes, peerNamespace } from '../utils/e2ee/crypto';
 import { Logger } from '../utils/Logger';
 import { browserInfo } from '../utils/deviceInfo';
 
@@ -14,6 +14,16 @@ const logger = new Logger('E2eeService');
 // sender holds the track until the transform confirms -- so this bounds how long a user sits in a
 // room that will not work, not how long plaintext escapes.
 const ENCRYPTION_VERIFY_MS = 3000;
+
+// Upper bound on how long a sender waits for its own transform to confirm before giving up on that
+// stream. This is a hang guard, not a security bound: the guarantee comes from never enabling the
+// track without confirmation, so this only has to stop an await lasting forever. It is deliberately
+// generous, because the wait starts before the transport connects and a slow ICE negotiation must
+// never be mistaken for a browser that refuses to encrypt.
+const PROTECTION_WAIT_MS = 30000;
+
+// eslint-disable-next-line no-unused-vars
+type ProtectionWaiter = (confirmed: boolean) => void;
 
 // Never fall back to 'opus' for an unrecognised mimeType: the worker splits audio at 1 clear byte
 // and video at 3 or 10, so mislabelling a video stream as audio desynchronises encrypt from decrypt
@@ -77,10 +87,11 @@ export class E2eeService {
 	#protectionActive = false;
 	#transformAttached = false;
 	#mediaFlowPossible = false;
-	#protectionResolve?: () => void;
-	// Resolves once an encrypt transform has actually handled a frame. The sender awaits this before
-	// releasing real media, so nothing unprotected is ever sent, not even for the watchdog's window.
-	#protectionPromise = new Promise<void>((resolve) => { this.#protectionResolve = resolve; });
+	#tidSeq = 0;
+	// transform id -> the sender waiting for that specific transform to prove it is handling frames.
+	// This is per transform on purpose: a single shared promise would release a later producer, a
+	// screen share say, on confirmation that belonged to the first one.
+	#pendingProtection = new Map<number, ProtectionWaiter>();
 	#verifyTimer?: ReturnType<typeof setTimeout>;
 	#unverifiedReported = false;
 
@@ -91,12 +102,79 @@ export class E2eeService {
 	// Fired once, when a frame has demonstrably been encrypted or decrypted.
 	onEncryptionVerified?: () => void;
 
+	readonly #namespaces = new Map<number, string>(); // media key namespace -> peerId
+	#localKeyUsed = false; // has anything been encrypted under the key we currently hold
+
+	// A departure happened while we had no producer. The leaver holds our key, so it has to be replaced
+	// before we send anything, but with nothing to send there is no reason to do it yet, and in a large
+	// room most participants have nothing to send. It is replaced when the next producer starts, before
+	// that producer's transform is attached, so no frame ever leaves under the burned key.
+	#keyBurned = false;
+	#burnedRotation?: Promise<void>;
+
+	// Set by the middleware, which is the only party that can distribute the replacement.
+	onRotateRequired?: () => Promise<void>;
+
+	markKeyBurned(): void {
+		this.#keyBurned = true;
+	}
+
+	#rotateIfBurned(): Promise<void> {
+		if (!this.#keyBurned) return Promise.resolve();
+
+		// Several producers starting together must share one replacement, not race three.
+		if (!this.#burnedRotation) {
+			this.#burnedRotation = (async () => {
+				this.#keyBurned = false;
+
+				// Without the middleware the key is still replaced; recipients recover it by asking.
+				if (this.onRotateRequired) await this.onRotateRequired();
+				else await this.rotateLocalKey();
+			})().finally(() => {
+				this.#burnedRotation = undefined;
+			});
+		}
+
+		return this.#burnedRotation;
+	}
+
+	// A peer whose media we cannot decrypt, either because their key never reached us or because we
+	// have fallen too far behind their advances. The worker only sees namespaces, so the peer is
+	// resolved here and the caller decides how to ask.
+	// eslint-disable-next-line no-unused-vars
+	onKeyNeeded?: (peerId: string) => void;
+
 	get encryptionVerified(): boolean {
 		return this.#encryptVerified;
 	}
 
-	whenProtectionActive(): Promise<void> {
-		return this.#protectionPromise;
+	// Resolves true once THIS transform has handled a frame, false if it never does. A sender must not
+	// release real media on anything less.
+	whenProtectionActive(tid?: number): Promise<boolean> {
+		// Nothing to wait for when E2EE is off: senders in that case never hold their track anyway.
+		if (!this.#enabled) return Promise.resolve(true);
+
+		// With E2EE on, no transform id means no transform was attached, which is a failure and must
+		// not read as success. Returning true here would release real media with nothing protecting it,
+		// which is the fail-open this whole design exists to avoid.
+		if (typeof tid !== 'number') {
+			logger.error('E2EE is on but no transform was attached, refusing to release media');
+
+			return Promise.resolve(false);
+		}
+
+		return new Promise<boolean>((resolve) => {
+			const timer = setTimeout(() => {
+				this.#pendingProtection.delete(tid);
+				logger.error('E2EE transform never handled a frame, leaving the track disabled [tid:%d]', tid);
+				resolve(false);
+			}, PROTECTION_WAIT_MS);
+
+			this.#pendingProtection.set(tid, (confirmed) => {
+				clearTimeout(timer);
+				resolve(confirmed);
+			});
+		});
 	}
 
 	// Called when the sending transport connects, i.e. the first moment a frame could reach the
@@ -112,10 +190,30 @@ export class E2eeService {
 
 		if (d?.type !== 'e2eeDiag') return;
 
-		if (d.event === 'pipeLive' && d.op === 'encrypt' && !this.#protectionActive) {
-			this.#protectionActive = true;
-			if (this.#verifyTimer) clearTimeout(this.#verifyTimer);
-			this.#protectionResolve?.();
+		if (d.event === 'pipeLive' && d.op === 'encrypt') {
+			const waiter = this.#pendingProtection.get(d.id);
+
+			if (waiter) {
+				this.#pendingProtection.delete(d.id);
+				waiter(true);
+			}
+
+			// The watchdog only asks whether this browser encrypts at all, so the first confirmation
+			// settles it; a later transform that stalls is handled by its own waiter above.
+			if (!this.#protectionActive) {
+				this.#protectionActive = true;
+				if (this.#verifyTimer) clearTimeout(this.#verifyTimer);
+			}
+		}
+
+		if (d.event === 'encKeyUsed' && (d.keyId >>> 0) === this.#provider?.localKey()?.keyId) this.#localKeyUsed = true;
+
+		if (d.event === 'keyNeeded') {
+			const peerId = this.#namespaces.get(d.namespace >>> 0);
+
+			// An unknown namespace is not a peer: a clear-byte disagreement parses ciphertext as a
+			// header and produces key identifiers that belong to nobody. Nothing to ask, so ignore it.
+			if (peerId) this.onKeyNeeded?.(peerId);
 		}
 
 		// Either direction counts here: successfully decrypting a peer proves the crypto is working just
@@ -131,8 +229,10 @@ export class E2eeService {
 		const { type, level, ...rest } = d;
 
 		void type;
-		if (level === 'warn') logger.warn('E2EE worker %o', rest);
-		else logger.debug('E2EE worker %o', rest);
+		// JSON rather than an object: the console only sometimes inlines an object into the text it
+		// saves, and a report written as the word "Object" is a report lost.
+		if (level === 'warn') logger.warn('E2EE worker %j', rest);
+		else logger.debug('E2EE worker %j', rest);
 	};
 
 	#startEncryptionWatchdog(): void {
@@ -150,37 +250,43 @@ export class E2eeService {
 	}
 
 	// ---- media pipeline: attach transforms ----
-	async protectSender(sender?: RTCRtpSender, codecMime?: string): Promise<void> {
-		if (!this.#enabled || !sender) return;
+	async protectSender(sender?: RTCRtpSender, codecMime?: string): Promise<number | undefined> {
+		if (!this.#enabled || !sender) return undefined;
 		await this.#ready;
-		this.#attach(sender, 'encrypt', codecMime);
+		await this.#rotateIfBurned();
+
+		return this.#attach(sender, 'encrypt', codecMime);
 	}
 
-	async protectReceiver(receiver?: RTCRtpReceiver, codecMime?: string): Promise<void> {
-		if (!this.#enabled || !receiver) return;
+	async protectReceiver(receiver?: RTCRtpReceiver, codecMime?: string): Promise<number | undefined> {
+		if (!this.#enabled || !receiver) return undefined;
 		await this.#ready;
-		this.#attach(receiver, 'decrypt', codecMime);
+
+		return this.#attach(receiver, 'decrypt', codecMime);
 	}
 
-	#attach(target: RTCRtpSender | RTCRtpReceiver, operation: 'encrypt' | 'decrypt', codecMime?: string): void {
+	#attach(target: RTCRtpSender | RTCRtpReceiver, operation: 'encrypt' | 'decrypt', codecMime?: string): number | undefined {
 		const worker = operation === 'encrypt' ? this.#encWorker : this.#decWorker;
 
-		if (!worker) return;
+		if (!worker) return undefined;
 
 		// RTCRtpScriptTransform / .transform are not in the DOM lib version here — use loose typing.
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const Transform = (globalThis as any).RTCRtpScriptTransform;
+		const tid = ++this.#tidSeq;
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(target as any).transform = new Transform(worker, { operation, codec: normalizeCodec(codecMime) });
+		(target as any).transform = new Transform(worker, { operation, codec: normalizeCodec(codecMime), tid });
 
-		logger.debug('E2EE %s transform attached [codec: %s] — awaiting confirmation that frames are actually encrypted',
-			operation, normalizeCodec(codecMime));
+		logger.debug('E2EE %s transform attached [tid:%d, codec:%s] — awaiting confirmation that frames are actually encrypted',
+			operation, tid, normalizeCodec(codecMime));
 
 		if (operation === 'encrypt') {
 			this.#transformAttached = true;
 			this.#startEncryptionWatchdog();
 		}
+
+		return tid;
 	}
 
 	// ---- signaling middleware: key exchange delegation ----
@@ -192,12 +298,27 @@ export class E2eeService {
 		return this.#provider?.hasPeer(peerId) ?? false;
 	}
 
-	addPeer(peerId: string, identityPubKey: Bytes): Promise<IdentityStatus> {
-		return this.#provider!.addPeer(peerId, identityPubKey);
+	async addPeer(peerId: string, identityPubKey: Bytes): Promise<IdentityStatus> {
+		const status = await this.#provider!.addPeer(peerId, identityPubKey);
+
+		this.#namespaces.set(await peerNamespace(peerId), peerId);
+
+		return status;
 	}
 
 	removePeer(peerId: string): void {
 		this.#provider?.removePeer(peerId);
+
+		// The worker holds this peer's media keys and knows nothing about peers, so tell it to drop
+		// them. Otherwise they stay valid for the rest of the session and old frames remain replayable.
+		// The namespace was recorded when the peer was added, so this needs no await: hashing it again
+		// would leave a gap in which a request for a key could still name a peer who has gone.
+		for (const [ namespace, id ] of this.#namespaces) {
+			if (id !== peerId) continue;
+
+			this.#namespaces.delete(namespace);
+			this.#decWorker?.postMessage({ type: 'dropKeys', namespace });
+		}
 	}
 
 	wrapLocalKeyFor(peerId: string): Promise<WrappedKeyMessage> {
@@ -209,19 +330,39 @@ export class E2eeService {
 	}
 
 	async rotateLocalKey(): Promise<void> {
+		this.#keyBurned = false;
 		await this.#provider!.rotateLocalKey();
 		this.#pushLocalKey();
+	}
+
+	// Advancing hides what was sent before a newcomer arrived. With nothing sent under the current key
+	// there is nothing to hide, and advancing anyway would only put us further ahead of the peers who
+	// have had no frames from us to follow, which is exactly the participant this protects: mic and
+	// camera off through a run of arrivals, then unmuting into a room that can no longer read them.
+	async ratchetLocalKey(): Promise<void> {
+		if (!this.#localKeyUsed) {
+			logger.debug('nothing sent under the current key, keeping it rather than advancing');
+
+			return;
+		}
+
+		await this.#provider!.ratchetLocalKey();
+		this.#pushLocalKey(true);
 	}
 
 	async onRemoteKey(fromPeerId: string, keyId: number, iv: Bytes, data: ArrayBuffer): Promise<void> {
 		const update = await this.#provider!.unwrapRemoteKey(fromPeerId, keyId, iv, data);
 
-		this.#decWorker?.postMessage({ type: 'decKey', keyId: update.keyId, key: update.key });
+		// Logged here as well as in the worker so a gap between the two can be attributed to one side.
+		// Formatted as a string: the browser console's own %d renders a key id above 2^31 as negative.
+		logger.debug('remote key unwrapped, handing it to the worker [keyId:%s]', String(update.keyId));
+		this.#decWorker?.postMessage({ type: 'decKey', keyId: update.keyId, key: update.key, raw: update.raw });
 	}
 
-	#pushLocalKey(): void {
+	#pushLocalKey(ratcheted = false): void {
 		const lk: LocalKey | undefined = this.#provider?.localKey();
 
-		if (lk) this.#encWorker?.postMessage({ type: 'encKey', keyId: lk.keyId, key: lk.key });
+		this.#localKeyUsed = false;
+		if (lk) this.#encWorker?.postMessage({ type: 'encKey', keyId: lk.keyId, key: lk.key, ratcheted });
 	}
 }

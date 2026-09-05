@@ -7,6 +7,7 @@ import { SignalingService } from '../services/signalingService';
 import { VolumeWatcher } from './volumeWatcher';
 import hark from 'hark';
 import { Logger } from './Logger';
+import { chooseSendCodec, isProtectableCodec } from './e2ee/codecChoice';
 
 const logger = new Logger('MediaSender');
 
@@ -315,9 +316,13 @@ export class MediaSender extends EventEmitter {
 			track: clonedTrack
 		};
 
+		const sendCodecs = this.mediaService.sendRtpCapabilities?.codecs;
+
+		const preferredCodec = chooseSendCodec(sendCodecs, { e2ee: holdForE2ee, kind: clonedTrack?.kind, requested: this.codec });
+
 		const producer = await this.mediaService.sendTransport.produce({
 			...producerOptions,
-			codec: this.mediaService.sendRtpCapabilities?.codecs?.find((c) => c.mimeType.toLowerCase() === this.codec)
+			codec: preferredCodec
 		});
 
 		const pauseListener = () => this.signalingService.notify('pauseProducer', { producerId: producer.id });
@@ -337,22 +342,37 @@ export class MediaSender extends EventEmitter {
 			throw new Error('Producer not needed');
 		}
 
-		this.producer = producer;
-
 		// E2EE: the codec comes from the negotiated producer, not this.codec. No start() call site
 		// supplies a codec, so this.codec is always undefined and would be read as Opus; the receive
 		// side reads this same field, so taking it from here keeps both transforms on one value.
 		const codecMimeType = producer.rtpParameters?.codecs?.[0]?.mimeType;
 
+		// The preference above normally settles this, but negotiation can still land somewhere the
+		// worker cannot protect. Refuse to send at all rather than emit a stream that would be either
+		// broken by the packetizer or, worse, readable by the media node.
+		if (holdForE2ee && !isProtectableCodec(codecMimeType)) {
+			logger.error('E2EE cannot protect the negotiated codec, not producing [codec:%s]', codecMimeType);
+			producer.close();
+
+			throw new Error(`E2EE cannot protect codec ${codecMimeType}`);
+		}
+
+		this.producer = producer;
+
 		// E2EE: attach the encrypt transform before any real media flows (no-op when E2EE is off).
 		if (holdForE2ee) {
-			await this.mediaService.e2eeService?.protectSender(producer.rtpSender, codecMimeType);
 			// Attaching is not enough: a browser can accept the transform and never feed it, which is
-			// how plaintext used to escape while the UI showed a shield. Hold the real track until the
-			// worker confirms it is processing frames. If that never happens the watchdog removes us
-			// from the room, so the track simply stays off rather than sending anything unprotected.
-			await this.mediaService.e2eeService?.whenProtectionActive();
-			if (clonedTrack) clonedTrack.enabled = true;
+			// how plaintext used to escape while the UI showed a shield. Hold the real track until
+			// THIS producer's own transform confirms it is processing frames. Waiting on a shared
+			// signal would release a second producer on the first one's confirmation.
+			const tid = await this.mediaService.e2eeService?.protectSender(producer.rtpSender, codecMimeType);
+			const protectedNow = await this.mediaService.e2eeService?.whenProtectionActive(tid);
+
+			if (!protectedNow) {
+				logger.error('E2EE never confirmed for this producer, leaving it silent [codec:%s]', codecMimeType);
+			} else if (clonedTrack) {
+				clonedTrack.enabled = true;
+			}
 		} else {
 			void this.mediaService.e2eeService?.protectSender(producer.rtpSender, codecMimeType);
 		}

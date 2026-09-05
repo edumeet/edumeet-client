@@ -13,6 +13,7 @@ export interface RemoteKeyUpdate {
 	peerId: string;
 	keyId: number;
 	key: CryptoKey; // a remote sender's media key, for decrypting their frames
+	raw: Bytes; // the same key as bytes, so the worker can advance it without another message
 }
 
 export interface WrappedKeyMessage {
@@ -38,6 +39,7 @@ export interface E2eeKeyProvider {
 
 	localKey(): LocalKey | undefined;
 	rotateLocalKey(): Promise<LocalKey>;
+	ratchetLocalKey(): Promise<LocalKey>;
 
 	wrapLocalKeyFor(peerId: string): Promise<WrappedKeyMessage>;
 	wrapLocalKeyForAll(): Promise<WrappedKeyMessage[]>;

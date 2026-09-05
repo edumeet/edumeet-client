@@ -1,5 +1,5 @@
 import { E2eeKeyProvider, IdentityStatus, LocalKey, RemoteKeyUpdate, WrappedKeyMessage } from './E2eeKeyProvider';
-import { Bytes, deriveKek, Identity, importMediaKey, makeIdentity, peerNamespace, randomKeyRaw, toB64, unwrapKey, wrapKey } from './crypto';
+import { Bytes, deriveKek, Identity, importMediaKey, makeIdentity, peerNamespace, randomKeyRaw, ratchetRaw, toB64, unwrapKey, wrapKey } from './crypto';
 
 // Zero-server-trust, WASM-free key provider:
 //  - one ephemeral ECDH identity per session (TOFU pinned by peers)
@@ -14,6 +14,11 @@ export class WebCryptoKeyProvider implements E2eeKeyProvider {
 	readonly #pinnedIdentities = new Map<string, string>(); // peerId -> TOFU-pinned identity pubkey (b64)
 	#localRaw?: Bytes;
 	#local?: LocalKey;
+	// Key changes run one at a time. A departure's replacement and an arrival's advance can be in
+	// flight together, and each bumps the epoch before it awaits, so left to interleave they would
+	// produce two different keys carrying the same epoch: receivers and our own encoder could then
+	// hold different keys under one identifier, with nothing to say which is right.
+	#keyChange: Promise<unknown> = Promise.resolve();
 
 	constructor(myPeerId: string) {
 		this.#myPeerId = myPeerId;
@@ -62,10 +67,32 @@ export class WebCryptoKeyProvider implements E2eeKeyProvider {
 		return this.#local;
 	}
 
-	async rotateLocalKey(): Promise<LocalKey> {
-		this.#epoch = (this.#epoch + 1) & 0xff;
+	// Replaces the key outright. Used when someone leaves: they hold the old key, so the new one has
+	// to be unrelated to it and has to be delivered to everyone still here.
+	rotateLocalKey(): Promise<LocalKey> {
+		return this.#serialized(() => {
+			this.#epoch = (this.#epoch + 1) & 0xff;
 
-		return this.#freshLocalKey();
+			return this.#freshLocalKey();
+		});
+	}
+
+	// Advances the key instead of replacing it. Used when someone joins: everyone already holding the
+	// old key derives this one themselves, so only the newcomer is sent anything, and the newcomer
+	// cannot run it backwards to read what came before.
+	ratchetLocalKey(): Promise<LocalKey> {
+		return this.#serialized(async () => {
+			if (!this.#localRaw) throw new Error('no local media key');
+
+			// Derive before the epoch moves. The epoch tells receivers how many times to advance, so a
+			// failed derivation that had already bumped it would put the two permanently out of step:
+			// we would label a key one step along as though it were two, and nobody could derive it.
+			const raw = await ratchetRaw(this.#localRaw);
+
+			this.#epoch = (this.#epoch + 1) & 0xff;
+
+			return this.#setLocalKey(raw);
+		});
 	}
 
 	async wrapLocalKeyFor(peerId: string): Promise<WrappedKeyMessage> {
@@ -74,9 +101,14 @@ export class WebCryptoKeyProvider implements E2eeKeyProvider {
 		if (!kek) throw new Error(`no KEK for peer ${peerId}`);
 		if (!this.#localRaw || !this.#local) throw new Error('no local media key');
 
-		const { iv, data } = await wrapKey(kek, this.#localRaw);
+		// Both halves are read before the await. A key change completing during the wrap would
+		// otherwise pair the previous bytes with the new identifier, and the recipient would file a
+		// key under an id it decrypts nothing for.
+		const raw = this.#localRaw;
+		const { keyId } = this.#local;
+		const { iv, data } = await wrapKey(kek, raw);
 
-		return { toPeerId: peerId, keyId: this.#local.keyId, iv, data };
+		return { toPeerId: peerId, keyId, iv, data };
 	}
 
 	async wrapLocalKeyForAll(): Promise<WrappedKeyMessage[]> {
@@ -99,18 +131,31 @@ export class WebCryptoKeyProvider implements E2eeKeyProvider {
 		if ((keyId >>> 8) !== await peerNamespace(fromPeerId))
 			throw new Error(`keyId namespace mismatch for peer ${fromPeerId}`);
 
-		const key = await importMediaKey(await unwrapKey(kek, iv, data));
+		const raw = await unwrapKey(kek, iv, data);
 
-		return { peerId: fromPeerId, keyId, key };
+		return { peerId: fromPeerId, keyId, key: await importMediaKey(raw), raw };
 	}
 
-	async #freshLocalKey(): Promise<LocalKey> {
-		this.#localRaw = randomKeyRaw();
-		this.#local = {
-			keyId: ((this.#namespace << 8) | (this.#epoch & 0xff)) >>> 0,
-			key: await importMediaKey(this.#localRaw),
-		};
+	#freshLocalKey(): Promise<LocalKey> {
+		return this.#setLocalKey(randomKeyRaw());
+	}
+
+	// The bytes and the key are assigned together, after the import. A wrap that ran between the two
+	// would otherwise send the new bytes under the old identifier.
+	async #setLocalKey(raw: Bytes): Promise<LocalKey> {
+		const key = await importMediaKey(raw);
+
+		this.#localRaw = raw;
+		this.#local = { keyId: ((this.#namespace << 8) | (this.#epoch & 0xff)) >>> 0, key };
 
 		return this.#local;
+	}
+
+	#serialized<T>(change: () => Promise<T>): Promise<T> {
+		const run = this.#keyChange.then(change, change);
+
+		this.#keyChange = run.catch(() => undefined);
+
+		return run;
 	}
 }
