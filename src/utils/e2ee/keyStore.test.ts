@@ -164,6 +164,37 @@ describe('committing and evicting', () => {
 	});
 });
 
+describe('a key id whose derivation failed to authenticate', () => {
+	it('is not derived again until a key for that sender is delivered', async () => {
+		const { store } = makeStore();
+
+		store.set(kid(NS, 0), await entry(randomKeyRaw()));
+		expect(await store.deriveChain(kid(NS, 1))).toHaveLength(1);
+
+		store.deriveFailed(kid(NS, 1));
+		expect(await store.deriveChain(kid(NS, 1))).toBeUndefined();
+		expect(await store.deriveChain(kid(NS, 2))).toHaveLength(2);
+
+		store.set(kid(NS, 1), await entry(randomKeyRaw()));
+		expect(store.has(kid(NS, 1))).toBe(true);
+		expect(await store.deriveChain(kid(NS, 2))).toHaveLength(1);
+	});
+
+	it('is forgotten when the sender leaves, and never affects another sender', async () => {
+		const { store } = makeStore();
+
+		store.set(kid(NS, 0), await entry(randomKeyRaw()));
+		store.set(kid(OTHER, 0), await entry(randomKeyRaw()));
+		store.deriveFailed(kid(NS, 1));
+
+		expect(await store.deriveChain(kid(OTHER, 1))).toHaveLength(1);
+
+		store.dropNamespace(NS);
+		store.set(kid(NS, 0), await entry(randomKeyRaw()));
+		expect(await store.deriveChain(kid(NS, 1))).toHaveLength(1);
+	});
+});
+
 describe('asking for a key we cannot derive', () => {
 	const missMany = (store: DecryptKeyStore, ns: number, times: number): void => {
 		for (let i = 0; i < times; i++) store.missed(ns);

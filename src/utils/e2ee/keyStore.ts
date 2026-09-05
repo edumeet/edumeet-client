@@ -39,6 +39,13 @@ export type KeyNeeded = (namespace: number) => void;
 export class DecryptKeyStore {
 	readonly keys = new Map<number, DecEntry>();
 	readonly #missing = new Map<number, { misses: number; asked?: number }>();
+	// Key ids whose derived key failed to authenticate. The sender replaced its key rather than
+	// advancing it, so no derivation from what we hold can ever open these frames, and trying again
+	// on every frame is pure cost: three WebCrypto round trips per frame, at frame rate, for as long
+	// as the replacement takes to arrive. On Firefox that load was enough to hold up the worker's own
+	// message queue, so the replacement itself was delayed by the work of waiting for it. Cleared for
+	// a namespace whenever a key for it is delivered or dropped.
+	readonly #undeliverable = new Set<number>();
 	readonly #onKeyNeeded: KeyNeeded;
 	readonly #now: () => number;
 
@@ -69,6 +76,7 @@ export class DecryptKeyStore {
 		this.keys.set(keyId, entry);
 		this.evictOldKeys(keyId >>> 8);
 		this.#missing.delete(keyId >>> 8);
+		this.#forgetFailures(keyId >>> 8);
 	}
 
 	// A peer left: nothing they sent can still be decodable, so drop their keys outright.
@@ -77,10 +85,20 @@ export class DecryptKeyStore {
 			this.keys.delete(k);
 
 		this.#missing.delete(namespace);
+		this.#forgetFailures(namespace);
 	}
 
 	decrypted(namespace: number): void {
 		this.#missing.delete(namespace);
+	}
+
+	deriveFailed(keyId: number): void {
+		this.#undeliverable.add(keyId);
+	}
+
+	#forgetFailures(namespace: number): void {
+		for (const k of [ ...this.#undeliverable ].filter((k2) => (k2 >>> 8) === namespace))
+			this.#undeliverable.delete(k);
 	}
 
 	missed(namespace: number): void {
@@ -109,6 +127,8 @@ export class DecryptKeyStore {
 	// authenticated under it, so a wrong guess (the sender replaced its key) and a forged keyId both
 	// leave the key map alone instead of evicting keys that work.
 	async deriveChain(keyId: number): Promise<Chain | undefined> {
+		if (this.#undeliverable.has(keyId)) return undefined;
+
 		const namespace = keyId >>> 8;
 		const target = keyId & 0xff;
 		let from: { raw: Bytes; steps: number } | undefined;

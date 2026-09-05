@@ -184,6 +184,7 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 
 	let derived = false;
 	let namespace = -1;
+	let keyId = 0;
 
 	try {
 		const data = new Uint8Array(frame.data);
@@ -206,8 +207,7 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 			return;
 		}
 
-		const { keyId } = shape;
-
+		keyId = shape.keyId;
 		namespace = keyId >>> 8;
 
 		const chain = dec.has(keyId) ? undefined : await dec.deriveChain(keyId);
@@ -262,6 +262,7 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 		// advancing it, which is what a departure does. Usually the replacement is already on its way,
 		// so this is a short gap, and the count is there for when it is not.
 		else {
+			dec.deriveFailed(keyId);
 			dec.missed(namespace);
 			drop(diag, 'ratchetMiss', { bytes: frame.data?.byteLength });
 		}

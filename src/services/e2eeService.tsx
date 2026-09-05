@@ -318,6 +318,8 @@ export class E2eeService {
 	async onRemoteKey(fromPeerId: string, keyId: number, iv: Bytes, data: ArrayBuffer): Promise<void> {
 		const update = await this.#provider!.unwrapRemoteKey(fromPeerId, keyId, iv, data);
 
+		// Logged here as well as in the worker so a gap between the two can be attributed to one side.
+		logger.debug('remote key unwrapped, handing it to the worker [keyId:%d]', update.keyId);
 		this.#decWorker?.postMessage({ type: 'decKey', keyId: update.keyId, key: update.key, raw: update.raw });
 	}
 
