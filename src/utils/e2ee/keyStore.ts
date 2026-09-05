@@ -96,6 +96,10 @@ export class DecryptKeyStore {
 		this.#undeliverable.add(keyId);
 	}
 
+	isUndeliverable(keyId: number): boolean {
+		return this.#undeliverable.has(keyId);
+	}
+
 	#forgetFailures(namespace: number): void {
 		for (const k of [ ...this.#undeliverable ].filter((k2) => (k2 >>> 8) === namespace))
 			this.#undeliverable.delete(k);

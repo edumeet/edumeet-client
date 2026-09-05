@@ -235,11 +235,13 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 		// A keyId we hold no key for and cannot derive one for. Either the sender's key never reached
 		// us, or we have fallen further behind their advances than we will derive, or this is not a
 		// keyId at all because the clear byte count disagrees and we are reading ciphertext as a
-		// header. The first two are recoverable and the count below is what starts that.
+		// header. The first two are recoverable and the count below is what starts that. A key we
+		// already failed to derive is the ordinary gap after a departure, waiting for the replacement
+		// to be delivered, so it is reported under its own name rather than as something unknown.
 		if (!key) {
 			dec.missed(namespace);
 
-			return drop(diag, 'unknownKeyId', { keyId, knownKeyIds: dec.knownKeyIds(), header });
+			return drop(diag, dec.isUndeliverable(keyId) ? 'awaitingReplacement' : 'unknownKeyId', { keyId, knownKeyIds: dec.knownKeyIds(), header });
 		}
 		const out = await open(shape, key);
 

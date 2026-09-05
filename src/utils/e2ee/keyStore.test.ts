@@ -172,10 +172,12 @@ describe('a key id whose derivation failed to authenticate', () => {
 		expect(await store.deriveChain(kid(NS, 1))).toHaveLength(1);
 
 		store.deriveFailed(kid(NS, 1));
+		expect(store.isUndeliverable(kid(NS, 1))).toBe(true);
 		expect(await store.deriveChain(kid(NS, 1))).toBeUndefined();
 		expect(await store.deriveChain(kid(NS, 2))).toHaveLength(2);
 
 		store.set(kid(NS, 1), await entry(randomKeyRaw()));
+		expect(store.isUndeliverable(kid(NS, 1))).toBe(false);
 		expect(store.has(kid(NS, 1))).toBe(true);
 		expect(await store.deriveChain(kid(NS, 2))).toHaveLength(1);
 	});
