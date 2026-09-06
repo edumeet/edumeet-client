@@ -131,7 +131,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		collectingPeriodInMs: 2000,
 	},
 	imprintUrl: '',
-	e2eeProvider: 'pairwise',
+	e2eeProvider: 'mls',
 	privacyUrl: '',
 	reactionsTimeout: 10000,
 	browserWarnings: [],
