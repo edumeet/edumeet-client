@@ -23,6 +23,14 @@ const ENCRYPTION_VERIFY_MS = 3000;
 // never be mistaken for a browser that refuses to encrypt.
 const PROTECTION_WAIT_MS = 30000;
 
+// After an epoch change every receiver has to apply the commit, derive the keys and hand them to its
+// worker before a frame under the new key is readable. A sender that switches the moment its own
+// keys are ready is ahead of them by about that long, and the frames in between are dropped and cost
+// a keyframe. So the decrypt keys go out at once and the encrypt key follows after a pause. Nothing
+// leaks in the pause: a member who left is no longer forwarded anything, and a newcomer could not
+// read the old key's frames either way.
+const ENCRYPT_KEY_GRACE_MS = 250;
+
 // eslint-disable-next-line no-unused-vars
 type ProtectionWaiter = (confirmed: boolean) => void;
 
@@ -130,7 +138,7 @@ export class E2eeService {
 			this.#decWorker?.postMessage({ type: 'dropKeys', namespace });
 		}
 
-		this.#decWorker?.postMessage({ type: 'decKeys', keys: keys.remote.map(({ keyId, key, raw }) => ({ keyId, key, raw })) });
+		this.#decWorker?.postMessage({ type: 'decKeys', ratchet: false, keys: keys.remote.map(({ keyId, key, raw }) => ({ keyId, key, raw })) });
 
 		if (!keys.local) {
 			this.onLeafLost?.();
@@ -138,13 +146,26 @@ export class E2eeService {
 			return;
 		}
 
-		this.#mlsLocalKeyId = keys.local.keyId;
-		this.#localKeyUsed = false;
-		this.#encWorker?.postMessage({ type: 'encKey', keyId: keys.local.keyId, key: keys.local.key, ratcheted: false });
+		const local = keys.local;
+		const push = (): void => {
+			this.#pendingEncKey = undefined;
+			this.#mlsLocalKeyId = local.keyId;
+			this.#localKeyUsed = false;
+			this.#encWorker?.postMessage({ type: 'encKey', keyId: local.keyId, key: local.key, ratcheted: false });
+		};
+
+		if (this.#pendingEncKey) clearTimeout(this.#pendingEncKey);
+
+		// The first key has nothing to wait for: nothing was sent before it, and senders are held on it.
+		if (this.#mlsLocalKeyId === undefined) push();
+		else this.#pendingEncKey = setTimeout(push, ENCRYPT_KEY_GRACE_MS);
+
 		this.#readyResolve();
 
 		logger.debug('MLS epoch keys applied [epoch:%d, members:%d]', keys.epoch, keys.remote.length + 1);
 	}
+
+	#pendingEncKey?: ReturnType<typeof setTimeout>;
 
 	#mls?: MlsKeyProvider;
 	#mlsLocalKeyId?: number;

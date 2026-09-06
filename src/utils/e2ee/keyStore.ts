@@ -38,6 +38,9 @@ export type KeyNeeded = (namespace: number) => void;
 
 export class DecryptKeyStore {
 	readonly keys = new Map<number, DecEntry>();
+	// Keys that arrive by group agreement are never advanced by the sender, so an unknown key id is
+	// a key not delivered yet, not one to derive; deriving would only fail and mark it undeliverable.
+	ratchet = true;
 	readonly #missing = new Map<number, { misses: number; asked?: number }>();
 	// Key ids whose derived key failed to authenticate. The sender replaced its key rather than
 	// advancing it, so no derivation from what we hold can ever open these frames, and trying again
@@ -131,7 +134,7 @@ export class DecryptKeyStore {
 	// authenticated under it, so a wrong guess (the sender replaced its key) and a forged keyId both
 	// leave the key map alone instead of evicting keys that work.
 	async deriveChain(keyId: number): Promise<Chain | undefined> {
-		if (this.#undeliverable.has(keyId)) return undefined;
+		if (!this.ratchet || this.#undeliverable.has(keyId)) return undefined;
 
 		const namespace = keyId >>> 8;
 		const target = keyId & 0xff;

@@ -409,6 +409,33 @@ describe('E2EE service', () => {
 		});
 	});
 	describe('MLS mode', () => {
+		it('hands receivers their keys at once, tells the worker not to ratchet, and lets the sender switch after a pause', async () => {
+			const service = new E2eeService();
+			const provider = await service.enableMls('me');
+			const [ enc, dec ] = FakeWorker.instances;
+
+			await provider.found('room');
+			await service.applyEpochKeys();
+
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+			expect(dec.postedOfType('decKeys')[0].ratchet).toBe(false);
+
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+
+			expect(dec.postedOfType('decKeys')).toHaveLength(2);
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(300);
+
+			const pushed = enc.postedOfType('encKey');
+
+			expect(pushed).toHaveLength(2);
+			expect((pushed[1].keyId as number) & 0xff).toBe(2);
+		});
+
 		it('pushes the epoch keys, and keeps pushing after one application failed', async () => {
 			const service = new E2eeService();
 			const provider = await service.enableMls('me');

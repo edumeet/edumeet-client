@@ -310,6 +310,7 @@ function requestKeyFrames(transformers: any[], method: 'generateKeyFrame' | 'sen
 	} else if (m.type === 'decKeys') {
 		// An epoch change hands over every sender's key at once. Keyframes are requested once for the
 		// batch: asking per key would send every receiver a request per member of the room.
+		if (m.ratchet === false) dec.ratchet = false;
 		for (const k of m.keys) dec.set(k.keyId >>> 0, { key: k.key, raw: k.raw });
 		report({ level: 'debug', event: 'decKeys', count: m.keys.length, knownKeyIds: dec.knownKeyIds() });
 		requestKeyFrames(decTransformers, 'sendKeyFrameRequest');
