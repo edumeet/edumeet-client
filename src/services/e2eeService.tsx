@@ -1,4 +1,5 @@
 import { WebCryptoKeyProvider } from '../utils/e2ee/WebCryptoKeyProvider';
+import { MlsKeyProvider } from '../utils/e2ee/MlsKeyProvider';
 import { IdentityStatus, LocalKey, WrappedKeyMessage } from '../utils/e2ee/E2eeKeyProvider';
 import { Bytes, peerNamespace } from '../utils/e2ee/crypto';
 import { Logger } from '../utils/Logger';
@@ -66,6 +67,93 @@ export class E2eeService {
 		this.#provider = new WebCryptoKeyProvider(myPeerId);
 		await this.#provider.init();
 
+		this.#startWorkers();
+		this.#pushLocalKey();
+		this.#readyResolve();
+	}
+
+	// The group alternative to enable(): keys come from the MLS epoch rather than pairwise exchange.
+	// Readiness is deferred to the first applyEpochKeys(), which happens once the group is joined, so
+	// a sender holds its media until it has a key to encrypt with.
+	async enableMls(myPeerId: string): Promise<MlsKeyProvider> {
+		if (this.#mls?.peerId === myPeerId) return this.#mls;
+
+		this.#enabled = true;
+		logger.debug('E2EE ENABLED with MLS, outgoing/incoming media in this room will be encrypted [peerId: %s]', myPeerId);
+
+		const mls = new MlsKeyProvider(myPeerId);
+
+		await mls.init();
+		this.#mls = mls;
+		this.#mlsLocalKeyId = undefined;
+		if (!this.#encWorker) this.#startWorkers();
+
+		return mls;
+	}
+
+	get mls(): MlsKeyProvider | undefined {
+		return this.#mls;
+	}
+
+	// Pushes the current epoch's keys to the workers: ours to the encrypter, every other member's to
+	// the decrypter, and drops the keys of members no longer in the group. The sender's leaf index is
+	// the key namespace, so the worker's namespace map is rebuilt from the membership each time.
+	applyEpochKeys(): Promise<void> {
+		// Chained so that keys are pushed in order; a failed application is the caller's to see, but it
+		// must not leave the chain rejected, or every application after it would be skipped.
+		this.#applying = this.#applying.catch(() => undefined).then(() => this.#applyEpochKeysNow());
+
+		return this.#applying;
+	}
+
+	// The group has moved on without our leaf in it, so nothing we send can be read: the middleware
+	// answers by rejoining.
+	onLeafLost?: () => void;
+
+	#applying: Promise<void> = Promise.resolve();
+
+	async #applyEpochKeysNow(): Promise<void> {
+		if (!this.#mls?.joined) return;
+
+		const keys = await this.#mls.frameKeys();
+		const present = new Set<number>();
+
+		for (const remote of keys.remote) {
+			present.add(remote.leafIndex);
+			this.#namespaces.set(remote.leafIndex, remote.peerId);
+		}
+
+		for (const namespace of [ ...this.#namespaces.keys() ]) {
+			if (present.has(namespace)) continue;
+
+			this.#namespaces.delete(namespace);
+			this.#decWorker?.postMessage({ type: 'dropKeys', namespace });
+		}
+
+		this.#decWorker?.postMessage({ type: 'decKeys', keys: keys.remote.map(({ keyId, key, raw }) => ({ keyId, key, raw })) });
+
+		if (!keys.local) {
+			this.onLeafLost?.();
+
+			return;
+		}
+
+		this.#mlsLocalKeyId = keys.local.keyId;
+		this.#localKeyUsed = false;
+		this.#encWorker?.postMessage({ type: 'encKey', keyId: keys.local.keyId, key: keys.local.key, ratcheted: false });
+		this.#readyResolve();
+
+		logger.debug('MLS epoch keys applied [epoch:%d, members:%d]', keys.epoch, keys.remote.length + 1);
+	}
+
+	#mls?: MlsKeyProvider;
+	#mlsLocalKeyId?: number;
+
+	#currentLocalKeyId(): number | undefined {
+		return this.#mls ? this.#mlsLocalKeyId : this.#provider?.localKey()?.keyId;
+	}
+
+	#startWorkers(): void {
 		this.#encWorker = new Worker(new URL('../utils/e2ee/sframeWorker.ts', import.meta.url), { type: 'module' });
 		this.#decWorker = new Worker(new URL('../utils/e2ee/sframeWorker.ts', import.meta.url), { type: 'module' });
 
@@ -78,9 +166,6 @@ export class E2eeService {
 
 		this.#encWorker.onmessage = this.#onWorkerDiag;
 		this.#decWorker.onmessage = this.#onWorkerDiag;
-
-		this.#pushLocalKey();
-		this.#readyResolve();
 	}
 
 	#encryptVerified = false;
@@ -206,7 +291,7 @@ export class E2eeService {
 			}
 		}
 
-		if (d.event === 'encKeyUsed' && (d.keyId >>> 0) === this.#provider?.localKey()?.keyId) this.#localKeyUsed = true;
+		if (d.event === 'encKeyUsed' && (d.keyId >>> 0) === this.#currentLocalKeyId()) this.#localKeyUsed = true;
 
 		if (d.event === 'keyNeeded') {
 			const peerId = this.#namespaces.get(d.namespace >>> 0);

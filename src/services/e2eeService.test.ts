@@ -5,6 +5,7 @@ vi.mock('../utils/deviceInfo', () => ({
 }));
 
 import { E2eeService } from './e2eeService';
+import { MlsKeyProvider } from '../utils/e2ee/MlsKeyProvider';
 import { WebCryptoKeyProvider } from '../utils/e2ee/WebCryptoKeyProvider';
 import { peerNamespace } from '../utils/e2ee/crypto';
 
@@ -405,6 +406,26 @@ describe('E2EE service', () => {
 			expect(keys).toHaveLength(2);
 			expect(keys[1].ratcheted).toBe(false);
 			expect((keys[1].keyId as number) & 0xff).toBe(1);
+		});
+	});
+	describe('MLS mode', () => {
+		it('pushes the epoch keys, and keeps pushing after one application failed', async () => {
+			const service = new E2eeService();
+			const provider = await service.enableMls('me');
+			const [ enc, dec ] = FakeWorker.instances;
+
+			await provider.found('room');
+
+			vi.spyOn(MlsKeyProvider.prototype, 'frameKeys').mockRejectedValueOnce(new Error('boom'));
+
+			await expect(service.applyEpochKeys()).rejects.toThrow('boom');
+			expect(enc.postedOfType('encKey')).toHaveLength(0);
+
+			await service.applyEpochKeys();
+
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+			expect(dec.postedOfType('decKeys')).toHaveLength(1);
+			expect(service.enabled).toBe(true);
 		});
 	});
 });

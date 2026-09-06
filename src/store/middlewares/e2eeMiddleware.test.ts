@@ -86,7 +86,7 @@ const setup = ({ e2eeEnabled = true, serviceEnabled = true, producers = true } =
 		me: { id: 'me' },
 		peers: { bob: { displayName: 'Bob' } },
 	});
-	const run = createE2eeMiddleware({ signalingService: signaling, e2eeService: service, mediaService } as unknown as MiddlewareInput)(
+	const run = createE2eeMiddleware({ signalingService: signaling, e2eeService: service, mediaService, config: { e2eeProvider: 'pairwise' } } as unknown as MiddlewareInput)(
 		{ dispatch, getState } as unknown as ApiInput
 	)(next);
 

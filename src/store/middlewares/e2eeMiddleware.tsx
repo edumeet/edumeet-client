@@ -17,8 +17,12 @@ const logger = new Logger('E2eeMiddleware');
 // identity; on first contact with a peer we derive a pairwise KEK and send our (wrapped) media key;
 // on leave we replace our key and redistribute it, on join we advance it and send it only to the
 // newcomer. The E2eeService owns the keys/workers; this just routes signals.
-const createE2eeMiddleware = ({ signalingService, e2eeService, mediaService }: MiddlewareOptions): Middleware => {
+const createE2eeMiddleware = ({ signalingService, e2eeService, mediaService, config }: MiddlewareOptions): Middleware => {
 	logger.debug('createE2eeMiddleware()');
+
+	// The client configuration picks one provider for the whole instance; with MLS selected this
+	// middleware stays idle so the two never both act on a room.
+	const selected = config.e2eeProvider !== 'mls';
 
 	const announceIdentity = async (toPeerId?: string): Promise<void> => {
 		signalingService.notify('e2eeIdentity', {
@@ -189,6 +193,8 @@ const createE2eeMiddleware = ({ signalingService, e2eeService, mediaService }: M
 
 	return ({ dispatch, getState }: { dispatch: AppDispatch; getState: () => RootState }) =>
 		(next) => (action) => {
+			if (!selected) return next(action);
+
 			wireUnverifiedHandler(dispatch);
 
 			const e2eeActive = (): boolean =>

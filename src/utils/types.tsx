@@ -131,6 +131,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		collectingPeriodInMs: 2000,
 	},
 	imprintUrl: '',
+	e2eeProvider: 'pairwise',
 	privacyUrl: '',
 	reactionsTimeout: 10000,
 	browserWarnings: [],
@@ -190,6 +191,7 @@ export interface EdumeetConfig {
 	reduxLoggingEnabled: boolean;
 	clientMontitor: ClientMonitorConfig;
 	imprintUrl: string;
+	e2eeProvider: 'pairwise' | 'mls';
 	privacyUrl: string;
 	reactionsTimeout: number;
 	browserWarnings: BrowserWarning[];
