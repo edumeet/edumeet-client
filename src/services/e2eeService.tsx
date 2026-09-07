@@ -149,8 +149,14 @@ export class E2eeService {
 		}
 
 		const local = keys.local;
+		const now = Date.now();
 
 		if (this.#pendingEncKey) clearTimeout(this.#pendingEncKey);
+		else this.#graceStarted = now;
+
+		// Each commit restarts the pause, but a burst of them must not keep a newcomer waiting: the
+		// switch happens no later than twice the pause after the first commit, with the newest key.
+		const switchAt = Math.min(now + ENCRYPT_KEY_GRACE_MS, this.#graceStarted + (2 * ENCRYPT_KEY_GRACE_MS));
 
 		this.#pendingEncKey = setTimeout(() => {
 			this.#pendingEncKey = undefined;
@@ -158,12 +164,13 @@ export class E2eeService {
 			this.#localKeyUsed = false;
 			this.#encWorker?.postMessage({ type: 'encKey', keyId: local.keyId, key: local.key, ratcheted: false });
 			this.#readyResolve();
-		}, ENCRYPT_KEY_GRACE_MS);
+		}, Math.max(0, switchAt - now));
 
 		logger.debug('MLS epoch keys applied [epoch:%d, members:%d]', keys.epoch, keys.remote.length + 1);
 	}
 
 	#pendingEncKey?: ReturnType<typeof setTimeout>;
+	#graceStarted = 0;
 
 	#mls?: MlsKeyProvider;
 	#mlsLocalKeyId?: number;

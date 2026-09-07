@@ -444,6 +444,37 @@ describe('E2EE service', () => {
 			expect((pushed[1].keyId as number) & 0xff).toBe(2);
 		});
 
+		it('switches within half a second of the first commit of a burst, with the newest key', async () => {
+			const service = new E2eeService();
+			const provider = await service.enableMls('me');
+			const [ enc ] = FakeWorker.instances;
+
+			await provider.found('room');
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(300);
+
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(200);
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(200);
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(80);
+
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+
+			await vi.advanceTimersByTimeAsync(40);
+
+			const pushed = enc.postedOfType('encKey');
+
+			expect(pushed).toHaveLength(2);
+			expect((pushed[1].keyId as number) & 0xff).toBe(3);
+		});
+
 		it('pushes the epoch keys, and keeps pushing after one application failed', async () => {
 			const service = new E2eeService();
 			const provider = await service.enableMls('me');
