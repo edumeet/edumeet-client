@@ -40,6 +40,7 @@ const createMlsMiddleware = ({ signalingService, e2eeService, config }: Middlewa
 	let inbox: Promise<void> = Promise.resolve();
 	let listening = false;
 	let lastEpochCheck = 0;
+	let stateOf: (() => RootState) | undefined;
 	const secured = new Set<string>();
 
 	const mls = (): MlsKeyProvider | undefined => e2eeService.mls;
@@ -266,10 +267,21 @@ const createMlsMiddleware = ({ signalingService, e2eeService, config }: Middlewa
 		return resyncing;
 	};
 
+	// A peer that is back in the room, under the same id, is not departed whatever the set says: the
+	// room can collapse and re-form around a member whose earlier disappearance is still remembered,
+	// and removing it then would throw a present member out of the group.
 	const commitDepartures = async (dispatch: AppDispatch, myPeerId: string): Promise<void> => {
 		const provider = mls();
 
 		if (!provider?.joined || departed.size === 0) return;
+
+		const present = stateOf?.().peers ?? {};
+
+		for (const peerId of [ ...departed ]) {
+			if (present[peerId]) departed.delete(peerId);
+		}
+
+		if (departed.size === 0) return;
 
 		const pending = await provider.commitRemove([ ...departed ]);
 
@@ -342,6 +354,7 @@ const createMlsMiddleware = ({ signalingService, e2eeService, config }: Middlewa
 		(next) => (action) => {
 			if (!selected) return next(action);
 
+			stateOf = getState;
 			wireHandlers(dispatch, getState);
 
 			const active = (): boolean => Boolean(getState().room.e2eeEnabled) && isInsertableStreamsSupported();
@@ -439,6 +452,9 @@ const createMlsMiddleware = ({ signalingService, e2eeService, config }: Middlewa
 				departed.clear();
 				secured.clear();
 			}
+
+			if (peersActions.addPeer.match(action)) departed.delete(action.payload.id);
+			if (peersActions.addPeers.match(action)) for (const peer of action.payload) departed.delete(peer.id);
 
 			if (peersActions.removePeer.match(action) && e2eeService.enabled) {
 				e2eeService.removePeer(action.payload.id);
