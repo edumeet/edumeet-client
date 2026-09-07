@@ -26,9 +26,11 @@ const PROTECTION_WAIT_MS = 30000;
 // After an epoch change every receiver has to apply the commit, derive the keys and hand them to its
 // worker before a frame under the new key is readable. A sender that switches the moment its own
 // keys are ready is ahead of them by about that long, and the frames in between are dropped and cost
-// a keyframe. So the decrypt keys go out at once and the encrypt key follows after a pause. Nothing
-// leaks in the pause: a member who left is no longer forwarded anything, and a newcomer could not
-// read the old key's frames either way.
+// a keyframe. So the decrypt keys go out at once and the encrypt key follows after a pause, the
+// first key included: a newcomer's first frames reach the others before they have applied its join
+// commit just the same, and its own media is held on that key anyway. Nothing leaks in the pause: a
+// member who left is no longer forwarded anything, and a newcomer could not read the old key's
+// frames either way.
 const ENCRYPT_KEY_GRACE_MS = 250;
 
 // eslint-disable-next-line no-unused-vars
@@ -147,20 +149,16 @@ export class E2eeService {
 		}
 
 		const local = keys.local;
-		const push = (): void => {
+
+		if (this.#pendingEncKey) clearTimeout(this.#pendingEncKey);
+
+		this.#pendingEncKey = setTimeout(() => {
 			this.#pendingEncKey = undefined;
 			this.#mlsLocalKeyId = local.keyId;
 			this.#localKeyUsed = false;
 			this.#encWorker?.postMessage({ type: 'encKey', keyId: local.keyId, key: local.key, ratcheted: false });
-		};
-
-		if (this.#pendingEncKey) clearTimeout(this.#pendingEncKey);
-
-		// The first key has nothing to wait for: nothing was sent before it, and senders are held on it.
-		if (this.#mlsLocalKeyId === undefined) push();
-		else this.#pendingEncKey = setTimeout(push, ENCRYPT_KEY_GRACE_MS);
-
-		this.#readyResolve();
+			this.#readyResolve();
+		}, ENCRYPT_KEY_GRACE_MS);
 
 		logger.debug('MLS epoch keys applied [epoch:%d, members:%d]', keys.epoch, keys.remote.length + 1);
 	}

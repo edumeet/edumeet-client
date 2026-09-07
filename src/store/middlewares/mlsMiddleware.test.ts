@@ -120,6 +120,7 @@ const makeProvider = (myPeerId: string) => {
 			return remaining.indexOf(members.find((m) => m.peerId === myPeerId)?.leafIndex ?? -1);
 		}),
 		setMembers: (m: Member[]) => { members = m; joined = true; epoch = Math.max(epoch, 1); },
+		advance: () => { epoch++; },
 	};
 };
 
@@ -716,5 +717,39 @@ describe('MLS middleware', () => {
 		expect(provider.reset).toHaveBeenCalledTimes(1);
 		expect(provider.epoch).toBe(1);
 		expect(dispatch).not.toHaveBeenCalledWith(roomActions.setState('left'));
+	});
+	it('lets a commit that is still being applied finish before asking the server about the epoch', async () => {
+		const { signaling, service, provider, join } = setup();
+
+		signaling.answers.push({ role: 'joiner', epoch: 0, groupInfo: 'gi-one@0' }, { accepted: true, epoch: 1 });
+		await join();
+		signaling.sendRequest.mockClear();
+		service.applyEpochKeys.mockClear();
+
+		let finishApply: () => void = () => undefined;
+
+		provider.applyCommit.mockImplementationOnce(() => new Promise<void>((resolve) => {
+			finishApply = () => {
+				provider.advance();
+				resolve();
+			};
+		}));
+
+		const delivered = signaling.deliver('mlsCommit', { fromPeerId: 'alice', epoch: 2, commit: 'slow-update' });
+
+		await flush();
+		service.onKeyNeeded?.();
+		await flush();
+
+		expect(signaling.sendRequest).not.toHaveBeenCalled();
+
+		signaling.answers.push({ epoch: 2 });
+		finishApply();
+		await delivered;
+		await flush();
+
+		expect(requested(signaling)).toEqual([ 'mlsEpoch' ]);
+		expect(provider.joinExternal).toHaveBeenCalledTimes(1);
+		expect(service.applyEpochKeys).toHaveBeenCalledTimes(2);
 	});
 });

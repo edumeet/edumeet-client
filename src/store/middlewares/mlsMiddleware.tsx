@@ -202,12 +202,16 @@ const createMlsMiddleware = ({ signalingService, e2eeService, config }: Middlewa
 
 	// The worker cannot decrypt someone, which in a quiet room is the only sign that a commit was
 	// missed. The server's epoch says whether that is so; if not, the keys are simply pushed again.
+	// Commits still queued or being applied are let through first: a slow tab is behind the server
+	// for the seconds a commit takes it, and that is not a reason to rejoin.
 	const checkEpoch = async (dispatch: AppDispatch, myPeerId: string): Promise<void> => {
 		const now = Date.now();
 
 		if (now - lastEpochCheck < EPOCH_CHECK_THROTTLE_MS) return;
 
 		lastEpochCheck = now;
+
+		await inbox;
 
 		const provider = mls();
 

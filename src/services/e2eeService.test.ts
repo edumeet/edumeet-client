@@ -417,17 +417,25 @@ describe('E2EE service', () => {
 			await provider.found('room');
 			await service.applyEpochKeys();
 
-			expect(enc.postedOfType('encKey')).toHaveLength(1);
+			const held = service.protectSender(sender(), 'video/vp8');
+
 			expect(dec.postedOfType('decKeys')[0].ratchet).toBe(false);
+			expect(enc.postedOfType('encKey')).toHaveLength(0);
+			expect(await settled(held)).toBe(false);
+
+			await vi.advanceTimersByTimeAsync(300);
+
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+			expect(await settled(held)).toBe(true);
 
 			provider.accept(await provider.commitUpdate());
 			await service.applyEpochKeys();
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
 
-			expect(dec.postedOfType('decKeys')).toHaveLength(2);
+			expect(dec.postedOfType('decKeys')).toHaveLength(3);
 			expect(enc.postedOfType('encKey')).toHaveLength(1);
 
-			provider.accept(await provider.commitUpdate());
-			await service.applyEpochKeys();
 			await vi.advanceTimersByTimeAsync(300);
 
 			const pushed = enc.postedOfType('encKey');
@@ -446,9 +454,10 @@ describe('E2EE service', () => {
 			vi.spyOn(MlsKeyProvider.prototype, 'frameKeys').mockRejectedValueOnce(new Error('boom'));
 
 			await expect(service.applyEpochKeys()).rejects.toThrow('boom');
-			expect(enc.postedOfType('encKey')).toHaveLength(0);
+			expect(dec.postedOfType('decKeys')).toHaveLength(0);
 
 			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(300);
 
 			expect(enc.postedOfType('encKey')).toHaveLength(1);
 			expect(dec.postedOfType('decKeys')).toHaveLength(1);
