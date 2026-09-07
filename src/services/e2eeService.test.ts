@@ -5,6 +5,7 @@ vi.mock('../utils/deviceInfo', () => ({
 }));
 
 import { E2eeService } from './e2eeService';
+import { MlsKeyProvider } from '../utils/e2ee/MlsKeyProvider';
 import { WebCryptoKeyProvider } from '../utils/e2ee/WebCryptoKeyProvider';
 import { peerNamespace } from '../utils/e2ee/crypto';
 
@@ -405,6 +406,93 @@ describe('E2EE service', () => {
 			expect(keys).toHaveLength(2);
 			expect(keys[1].ratcheted).toBe(false);
 			expect((keys[1].keyId as number) & 0xff).toBe(1);
+		});
+	});
+	describe('MLS mode', () => {
+		it('hands receivers their keys at once, tells the worker not to ratchet, and lets the sender switch after a pause', async () => {
+			const service = new E2eeService();
+			const provider = await service.enableMls('me');
+			const [ enc, dec ] = FakeWorker.instances;
+
+			await provider.found('room');
+			await service.applyEpochKeys();
+
+			const held = service.protectSender(sender(), 'video/vp8');
+
+			expect(dec.postedOfType('decKeys')[0].ratchet).toBe(false);
+			expect(enc.postedOfType('encKey')).toHaveLength(0);
+			expect(await settled(held)).toBe(false);
+
+			await vi.advanceTimersByTimeAsync(300);
+
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+			expect(await settled(held)).toBe(true);
+
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+
+			expect(dec.postedOfType('decKeys')).toHaveLength(3);
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+
+			await vi.advanceTimersByTimeAsync(300);
+
+			const pushed = enc.postedOfType('encKey');
+
+			expect(pushed).toHaveLength(2);
+			expect((pushed[1].keyId as number) & 0xff).toBe(2);
+		});
+
+		it('switches within half a second of the first commit of a burst, with the newest key', async () => {
+			const service = new E2eeService();
+			const provider = await service.enableMls('me');
+			const [ enc ] = FakeWorker.instances;
+
+			await provider.found('room');
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(300);
+
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(200);
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(200);
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(80);
+
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+
+			await vi.advanceTimersByTimeAsync(40);
+
+			const pushed = enc.postedOfType('encKey');
+
+			expect(pushed).toHaveLength(2);
+			expect((pushed[1].keyId as number) & 0xff).toBe(3);
+		});
+
+		it('pushes the epoch keys, and keeps pushing after one application failed', async () => {
+			const service = new E2eeService();
+			const provider = await service.enableMls('me');
+			const [ enc, dec ] = FakeWorker.instances;
+
+			await provider.found('room');
+
+			vi.spyOn(MlsKeyProvider.prototype, 'frameKeys').mockRejectedValueOnce(new Error('boom'));
+
+			await expect(service.applyEpochKeys()).rejects.toThrow('boom');
+			expect(dec.postedOfType('decKeys')).toHaveLength(0);
+
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(300);
+
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+			expect(dec.postedOfType('decKeys')).toHaveLength(1);
+			expect(service.enabled).toBe(true);
 		});
 	});
 });

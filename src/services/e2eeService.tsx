@@ -1,4 +1,5 @@
 import { WebCryptoKeyProvider } from '../utils/e2ee/WebCryptoKeyProvider';
+import { MlsKeyProvider } from '../utils/e2ee/MlsKeyProvider';
 import { IdentityStatus, LocalKey, WrappedKeyMessage } from '../utils/e2ee/E2eeKeyProvider';
 import { Bytes, peerNamespace } from '../utils/e2ee/crypto';
 import { Logger } from '../utils/Logger';
@@ -21,6 +22,16 @@ const ENCRYPTION_VERIFY_MS = 3000;
 // generous, because the wait starts before the transport connects and a slow ICE negotiation must
 // never be mistaken for a browser that refuses to encrypt.
 const PROTECTION_WAIT_MS = 30000;
+
+// After an epoch change every receiver has to apply the commit, derive the keys and hand them to its
+// worker before a frame under the new key is readable. A sender that switches the moment its own
+// keys are ready is ahead of them by about that long, and the frames in between are dropped and cost
+// a keyframe. So the decrypt keys go out at once and the encrypt key follows after a pause, the
+// first key included: a newcomer's first frames reach the others before they have applied its join
+// commit just the same, and its own media is held on that key anyway. Nothing leaks in the pause: a
+// member who left is no longer forwarded anything, and a newcomer could not read the old key's
+// frames either way.
+const ENCRYPT_KEY_GRACE_MS = 250;
 
 // eslint-disable-next-line no-unused-vars
 type ProtectionWaiter = (confirmed: boolean) => void;
@@ -66,6 +77,109 @@ export class E2eeService {
 		this.#provider = new WebCryptoKeyProvider(myPeerId);
 		await this.#provider.init();
 
+		this.#startWorkers();
+		this.#pushLocalKey();
+		this.#readyResolve();
+	}
+
+	// The group alternative to enable(): keys come from the MLS epoch rather than pairwise exchange.
+	// Readiness is deferred to the first applyEpochKeys(), which happens once the group is joined, so
+	// a sender holds its media until it has a key to encrypt with.
+	async enableMls(myPeerId: string): Promise<MlsKeyProvider> {
+		if (this.#mls?.peerId === myPeerId) return this.#mls;
+
+		this.#enabled = true;
+		logger.debug('E2EE ENABLED with MLS, outgoing/incoming media in this room will be encrypted [peerId: %s]', myPeerId);
+
+		const mls = new MlsKeyProvider(myPeerId);
+
+		await mls.init();
+		this.#mls = mls;
+		this.#mlsLocalKeyId = undefined;
+		if (!this.#encWorker) this.#startWorkers();
+
+		return mls;
+	}
+
+	get mls(): MlsKeyProvider | undefined {
+		return this.#mls;
+	}
+
+	// Pushes the current epoch's keys to the workers: ours to the encrypter, every other member's to
+	// the decrypter, and drops the keys of members no longer in the group. The sender's leaf index is
+	// the key namespace, so the worker's namespace map is rebuilt from the membership each time.
+	applyEpochKeys(): Promise<void> {
+		// Chained so that keys are pushed in order; a failed application is the caller's to see, but it
+		// must not leave the chain rejected, or every application after it would be skipped.
+		this.#applying = this.#applying.catch(() => undefined).then(() => this.#applyEpochKeysNow());
+
+		return this.#applying;
+	}
+
+	// The group has moved on without our leaf in it, so nothing we send can be read: the middleware
+	// answers by rejoining.
+	onLeafLost?: () => void;
+
+	#applying: Promise<void> = Promise.resolve();
+
+	async #applyEpochKeysNow(): Promise<void> {
+		if (!this.#mls?.joined) return;
+
+		const keys = await this.#mls.frameKeys();
+		const present = new Set<number>();
+
+		for (const remote of keys.remote) {
+			present.add(remote.leafIndex);
+			this.#namespaces.set(remote.leafIndex, remote.peerId);
+		}
+
+		for (const namespace of [ ...this.#namespaces.keys() ]) {
+			if (present.has(namespace)) continue;
+
+			this.#namespaces.delete(namespace);
+			this.#decWorker?.postMessage({ type: 'dropKeys', namespace });
+		}
+
+		this.#decWorker?.postMessage({ type: 'decKeys', ratchet: false, keys: keys.remote.map(({ keyId, key, raw }) => ({ keyId, key, raw })) });
+
+		if (!keys.local) {
+			this.onLeafLost?.();
+
+			return;
+		}
+
+		const local = keys.local;
+		const now = Date.now();
+
+		if (this.#pendingEncKey) clearTimeout(this.#pendingEncKey);
+		else this.#graceStarted = now;
+
+		// Each commit restarts the pause, but a burst of them must not keep a newcomer waiting: the
+		// switch happens no later than twice the pause after the first commit, with the newest key.
+		const switchAt = Math.min(now + ENCRYPT_KEY_GRACE_MS, this.#graceStarted + (2 * ENCRYPT_KEY_GRACE_MS));
+
+		this.#pendingEncKey = setTimeout(() => {
+			this.#pendingEncKey = undefined;
+			this.#mlsLocalKeyId = local.keyId;
+			this.#localKeyUsed = false;
+			this.#encWorker?.postMessage({ type: 'encKey', keyId: local.keyId, key: local.key, ratcheted: false });
+			this.#readyResolve();
+		}, Math.max(0, switchAt - now));
+
+		logger.debug('MLS epoch keys applied [epoch:%d, members:%d]', keys.epoch, keys.remote.length + 1);
+	}
+
+	#pendingEncKey?: ReturnType<typeof setTimeout>;
+	#graceStarted = 0;
+
+	#mls?: MlsKeyProvider;
+	#mlsLocalKeyId?: number;
+
+	#currentLocalKeyId(): number | undefined {
+		return this.#mls ? this.#mlsLocalKeyId : this.#provider?.localKey()?.keyId;
+	}
+
+	#startWorkers(): void {
 		this.#encWorker = new Worker(new URL('../utils/e2ee/sframeWorker.ts', import.meta.url), { type: 'module' });
 		this.#decWorker = new Worker(new URL('../utils/e2ee/sframeWorker.ts', import.meta.url), { type: 'module' });
 
@@ -78,9 +192,6 @@ export class E2eeService {
 
 		this.#encWorker.onmessage = this.#onWorkerDiag;
 		this.#decWorker.onmessage = this.#onWorkerDiag;
-
-		this.#pushLocalKey();
-		this.#readyResolve();
 	}
 
 	#encryptVerified = false;
@@ -206,7 +317,7 @@ export class E2eeService {
 			}
 		}
 
-		if (d.event === 'encKeyUsed' && (d.keyId >>> 0) === this.#provider?.localKey()?.keyId) this.#localKeyUsed = true;
+		if (d.event === 'encKeyUsed' && (d.keyId >>> 0) === this.#currentLocalKeyId()) this.#localKeyUsed = true;
 
 		if (d.event === 'keyNeeded') {
 			const peerId = this.#namespaces.get(d.namespace >>> 0);

@@ -267,4 +267,17 @@ describe('asking for a key we cannot derive', () => {
 		store.missed(NS);
 		expect(onKeyNeeded).toHaveBeenCalledTimes(1);
 	});
+	it('derives nothing when ratcheting is switched off, and reports the key as unknown instead', async () => {
+		const store = new DecryptKeyStore(() => undefined);
+		const raw = new Uint8Array(32).fill(7) as Bytes;
+
+		store.set(0x0100, { key: await importMediaKey(raw), raw });
+
+		expect(await store.deriveChain(0x0101)).toBeDefined();
+
+		store.ratchet = false;
+
+		expect(await store.deriveChain(0x0101)).toBeUndefined();
+		expect(store.isUndeliverable(0x0101)).toBe(false);
+	});
 });

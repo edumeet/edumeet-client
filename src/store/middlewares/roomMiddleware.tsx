@@ -221,7 +221,7 @@ const createRoomMiddleware = ({
 							dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
 							dispatch(meActions.setSessionId(sessionId));
 							dispatch(peersActions.addPeers(peers));
-							dispatch(lobbyPeersActions.addPeers(lobbyPeers));
+							dispatch(lobbyPeersActions.setPeers(lobbyPeers ?? []));
 							dispatch(roomSessionsActions.addMessages({ sessionId: mainSessionId, messages: chatHistory }));
 							dispatch(roomSessionsActions.addFiles({ sessionId: mainSessionId, files: fileHistory }));
 							dispatch(permissionsActions.setLocked(Boolean(locked)));

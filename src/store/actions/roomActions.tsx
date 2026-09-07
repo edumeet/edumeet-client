@@ -86,7 +86,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	dispatch(permissionsActions.setLocked(Boolean(locked)));
 	dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
 	dispatch(peersActions.addPeers(peers));
-	dispatch(lobbyPeersActions.addPeers(lobbyPeers));
+	dispatch(lobbyPeersActions.setPeers(lobbyPeers ?? []));
 	dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 	dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));
 	dispatch(roomActions.joinCountdownTimer(countdownTimer));

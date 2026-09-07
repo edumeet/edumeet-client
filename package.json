@@ -21,6 +21,10 @@
 		"@mui/material": "^9.2.0",
 		"@mui/system": "^9.2.0",
 		"@mui/x-date-pickers": "^9.10.1",
+		"@noble/ciphers": "2.4.0",
+		"@noble/curves": "2.4.0",
+		"@noble/hashes": "2.4.0",
+		"@noble/post-quantum": "0.7.1",
 		"@observertc/client-monitor-js": "^4.1.0",
 		"@observertc/samples-encoder": "^3.0.0",
 		"@reduxjs/toolkit": "^2.12.0",
@@ -55,6 +59,7 @@
 		"reselect": "^5.2.0",
 		"rrule": "^2.8.1",
 		"socket.io-client": "^4.8.3",
+		"ts-mls": "2.0.0-rc.16",
 		"typescript": "^5.9.3",
 		"uuid": "^14.0.1",
 		"webtorrent": "^3.0.21"

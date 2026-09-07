@@ -22,6 +22,9 @@ const lobbyPeersSlice = createSlice({
   
 			return [ ...state, ...newPeers ];
 		}),
+		setPeers: ((_state, action: PayloadAction<LobbyPeer[]>) => {
+			return [ ...action.payload ];
+		}),
 		addPeer: ((state, action: PayloadAction<LobbyPeer>) => {
 			const peer = state.find((p) => p.id === action.payload.id);
 
