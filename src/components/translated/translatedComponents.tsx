@@ -1080,8 +1080,8 @@ export const mediaNodeConnectionSuccess = (): string => intl.formatMessage({
 
 export const roomServerConnectionError = (message: string): string => intl.formatMessage({
 	id: 'svc.roomServerConnectionError',
-	defaultMessage: `Room-server: ${message}`
-});
+	defaultMessage: 'Room-server: {message}'
+}, { message });
 
 export const tenantSettingsLabel = (): string => intl.formatMessage({
 	id: 'label.managementTenantSettings',
@@ -2102,10 +2102,6 @@ export const partstatNeedsActionLabel = (): string => intl.formatMessage({
 export const inviteEmailConfigLabel = (): string => intl.formatMessage({
 	id: 'label.management.tenants.inviteEmailConfig',
 	defaultMessage: 'Invite email (SMTP/IMAP)'
-});
-export const sendTestInviteLabel = (): string => intl.formatMessage({
-	id: 'label.management.tenants.sendTestInvite',
-	defaultMessage: 'Send test invite'
 });
 export const testConnectionLabel = (): string => intl.formatMessage({
 	id: 'label.management.tenants.testConnection',
