@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Începe la",
   "label.management.meetings.endsAt": "Se termină la",
   "label.management.meetings.timezone": "Fus orar",
+  "label.management.meetings.localTimeHint": "În fusul dumneavoastră orar ({zone}): {start} până la {end}",
   "label.management.meetings.inviteLanguage": "Limba invitației",
   "label.management.meetings.repeats": "Repetare",
   "label.management.meetings.showPast": "Afișează reuniunile trecute",

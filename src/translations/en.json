@@ -568,6 +568,7 @@
 	"label.management.meetings.startsAt": "Starts at",
 	"label.management.meetings.endsAt": "Ends at",
 	"label.management.meetings.timezone": "Timezone",
+	"label.management.meetings.localTimeHint": "In your timezone ({zone}): {start} to {end}",
 	"label.management.meetings.inviteLanguage": "Invite language",
 	"label.management.meetings.repeats": "Repeats",
 	"label.management.meetings.showPast": "Show past meetings",

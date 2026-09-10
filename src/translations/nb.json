@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Starter",
   "label.management.meetings.endsAt": "Slutter",
   "label.management.meetings.timezone": "Tidssone",
+  "label.management.meetings.localTimeHint": "I din tidssone ({zone}): {start} til {end}",
   "label.management.meetings.inviteLanguage": "Invitasjonsspråk",
   "label.management.meetings.repeats": "Gjentas",
   "label.management.meetings.showPast": "Vis tidligere møter",

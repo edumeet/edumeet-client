@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Başlangıç",
   "label.management.meetings.endsAt": "Bitiş",
   "label.management.meetings.timezone": "Saat dilimi",
+  "label.management.meetings.localTimeHint": "Saat diliminizde ({zone}): {start} ile {end} arası",
   "label.management.meetings.inviteLanguage": "Davet dili",
   "label.management.meetings.repeats": "Tekrar",
   "label.management.meetings.showPast": "Geçmiş toplantıları göster",

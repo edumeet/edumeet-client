@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Начало",
   "label.management.meetings.endsAt": "Окончание",
   "label.management.meetings.timezone": "Часовой пояс",
+  "label.management.meetings.localTimeHint": "В вашем часовом поясе ({zone}): с {start} до {end}",
   "label.management.meetings.inviteLanguage": "Язык приглашения",
   "label.management.meetings.repeats": "Повторение",
   "label.management.meetings.showPast": "Показать прошедшие встречи",

@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Začíná v",
   "label.management.meetings.endsAt": "Končí v",
   "label.management.meetings.timezone": "Časové pásmo",
+  "label.management.meetings.localTimeHint": "Ve vašem časovém pásmu ({zone}): {start} až {end}",
   "label.management.meetings.inviteLanguage": "Jazyk pozvánky",
   "label.management.meetings.repeats": "Opakování",
   "label.management.meetings.showPast": "Zobrazit proběhlé schůzky",

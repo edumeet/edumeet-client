@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Kezdés",
   "label.management.meetings.endsAt": "Befejezés",
   "label.management.meetings.timezone": "Időzóna",
+  "label.management.meetings.localTimeHint": "Az Ön időzónájában ({zone}): {start} és {end} között",
   "label.management.meetings.inviteLanguage": "Meghívó nyelve",
   "label.management.meetings.repeats": "Ismétlődés",
   "label.management.meetings.showPast": "Korábbi konferenciák megjelenítése",

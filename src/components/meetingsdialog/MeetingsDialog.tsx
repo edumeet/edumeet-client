@@ -12,7 +12,7 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Close } from '@mui/icons-material';
-import { rrulestr } from 'rrule';
+import { nextOccurrenceStart } from '../../utils/meetingOccurrences';
 import { jwtDecode } from 'jwt-decode';
 import GenericDialog from '../genericdialog/GenericDialog';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -29,22 +29,6 @@ import {
 	roomLabel,
 	upcomingMeetingsLabel
 } from '../translated/translatedComponents';
-
-const nextOccurrence = (m: Meeting): number => {
-	const now = Date.now();
-	// Coerce — Postgres bigint comes back as string; Date/rrule would misparse.
-	const startsAt = Number(m.startsAt);
-
-	if (!m.rrule) return startsAt >= now ? startsAt : 0;
-	try {
-		const rule = rrulestr(m.rrule, { dtstart: new Date(startsAt) });
-		const next = rule.after(new Date(now), true);
-
-		return next ? next.getTime() : 0;
-	} catch {
-		return startsAt >= now ? startsAt : 0;
-	}
-};
 
 export interface MeetingsDialogProps {
 	open: boolean;
@@ -86,8 +70,9 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 		if (open) fetchMeetings();
 	}, [ open ]);
 
+	const now = Date.now();
 	const upcoming = meetings
-		.map((m) => ({ meeting: m, next: nextOccurrence(m) }))
+		.map((m) => ({ meeting: m, next: nextOccurrenceStart(m, now) }))
 		.filter((x) => x.next > 0)
 		.sort((a, b) => a.next - b.next)
 		.slice(0, 20);

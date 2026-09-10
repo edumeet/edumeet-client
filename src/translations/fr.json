@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Début",
   "label.management.meetings.endsAt": "Fin",
   "label.management.meetings.timezone": "Fuseau horaire",
+  "label.management.meetings.localTimeHint": "Dans votre fuseau horaire ({zone}) : {start} à {end}",
   "label.management.meetings.inviteLanguage": "Langue de l'invitation",
   "label.management.meetings.repeats": "Récurrence",
   "label.management.meetings.showPast": "Afficher les réunions passées",

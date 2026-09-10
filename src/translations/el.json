@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Έναρξη",
   "label.management.meetings.endsAt": "Λήξη",
   "label.management.meetings.timezone": "Ζώνη ώρας",
+  "label.management.meetings.localTimeHint": "Στη ζώνη ώρας σας ({zone}): {start} έως {end}",
   "label.management.meetings.inviteLanguage": "Γλώσσα πρόσκλησης",
   "label.management.meetings.repeats": "Επανάληψη",
   "label.management.meetings.showPast": "Εμφάνιση παλαιότερων συναντήσεων",

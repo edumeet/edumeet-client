@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Starter",
   "label.management.meetings.endsAt": "Slutter",
   "label.management.meetings.timezone": "Tidszone",
+  "label.management.meetings.localTimeHint": "I din tidszone ({zone}): {start} til {end}",
   "label.management.meetings.inviteLanguage": "Invitationssprog",
   "label.management.meetings.repeats": "Gentagelse",
   "label.management.meetings.showPast": "Vis tidligere møder",

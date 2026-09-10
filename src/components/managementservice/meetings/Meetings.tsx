@@ -21,7 +21,7 @@ import {
 	TextField,
 	Typography
 } from '@mui/material';
-import { rrulestr } from 'rrule';
+import { isMeetingOver } from '../../../utils/meetingOccurrences';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -29,7 +29,7 @@ import moment, { Moment } from 'moment';
 import { Meeting, MeetingAttendee, MeetingOccurrenceRsvp, MeetingPartstat, Room, User } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { localeList } from '../../../utils/intlManager';
-import { browserTimezone, timezoneOptions } from '../../../utils/timezones';
+import { browserTimezone, instantToWallClock, timezoneOptions, wallClockToInstant } from '../../../utils/timezones';
 import { toMomentLocale } from '../../../utils/momentLocale';
 import {
 	createData,
@@ -72,6 +72,7 @@ import {
 	selectButtonLabel,
 	startsAtLabel,
 	timezoneLabel,
+	localTimeHintLabel,
 	titleLabel,
 	userEmailLabel
 } from '../../translated/translatedComponents';
@@ -109,28 +110,22 @@ const partstatColor = (p?: MeetingPartstat): 'success' | 'error' | 'warning' | '
 	}
 };
 
-// A meeting is "past" only when there is nothing left: no future occurrence AND the last
-// occurrence (or single instance) has already ended. Recurring meetings whose last
-// occurrence is still in progress are NOT considered past.
-const isMeetingPast = (m: Meeting, now: number): boolean => {
-	const startsAt = Number(m.startsAt);
-	const endsAt = Number(m.endsAt);
-	const duration = endsAt - startsAt;
+// The pickers hold the meeting zone's wall clock as a browser-local moment: the fields
+// are what the organizer typed, the instant is derived from them plus the chosen zone.
+const wallClockMoment = (ms: number, tz: string): Moment => moment(instantToWallClock(ms, tz));
 
-	if (!m.rrule) return endsAt < now;
-	try {
-		const rule = rrulestr(m.rrule, { dtstart: new Date(startsAt) });
-		const nextStart = rule.after(new Date(now), true);
+const instantOf = (wall: Moment, tz: string): number => wallClockToInstant({
+	year: wall.year(),
+	month: wall.month(),
+	day: wall.date(),
+	hour: wall.hour(),
+	minute: wall.minute()
+}, tz);
 
-		if (nextStart) return false;
-		const lastStart = rule.before(new Date(now), true);
+const formatInZone = (ms: number, tz: string): string => {
+	const text = wallClockMoment(ms, tz).format('YYYY-MM-DD HH:mm');
 
-		if (!lastStart) return true;
-
-		return lastStart.getTime() + duration < now;
-	} catch {
-		return endsAt < now;
-	}
+	return tz === browserTimezone() ? text : `${text} ${tz}`;
 };
 
 const buildRrule = (mode: RepeatMode, interval: number, count: number): string | undefined => {
@@ -283,12 +278,12 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 					// Coerce to Number — Postgres bigint columns come back as strings;
 					// moment() would parse a numeric string as ISO and yield Invalid Date.
 					// The YYYY-MM-DD format keeps lexicographic sorting chronological.
-					accessorFn: (row) => (row.startsAt ? moment(Number(row.startsAt)).format('YYYY-MM-DD HH:mm') : '')
+					accessorFn: (row) => (row.startsAt ? formatInZone(Number(row.startsAt), row.timezone || browserTimezone()) : '')
 				},
 				{
 					id: 'endsAt',
 					header: endsAtLabel(),
-					accessorFn: (row) => (row.endsAt ? moment(Number(row.endsAt)).format('YYYY-MM-DD HH:mm') : '')
+					accessorFn: (row) => (row.endsAt ? formatInZone(Number(row.endsAt), row.timezone || browserTimezone()) : '')
 				},
 				{
 					id: 'rrule',
@@ -351,9 +346,11 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 		if (!isRoomScoped) setRoomIdState(m.roomId);
 		setTitle(m.title ?? '');
 		setDescription(m.description ?? '');
-		setStartsAt(m.startsAt ? moment(Number(m.startsAt)) : null);
-		setEndsAt(m.endsAt ? moment(Number(m.endsAt)) : null);
-		setTimezone(m.timezone ?? browserTimezone());
+		const tz = m.timezone || browserTimezone();
+
+		setStartsAt(m.startsAt ? wallClockMoment(Number(m.startsAt), tz) : null);
+		setEndsAt(m.endsAt ? wallClockMoment(Number(m.endsAt), tz) : null);
+		setTimezone(tz);
 		setLocale(m.locale ?? defaultLocale);
 		const p = parseRrule(m.rrule);
 
@@ -459,8 +456,8 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 		const payload: Partial<Meeting> = {
 			title,
 			description,
-			startsAt: startsAt.valueOf(),
-			endsAt: endsAt.valueOf(),
+			startsAt: instantOf(startsAt, timezone),
+			endsAt: instantOf(endsAt, timezone),
 			timezone,
 			locale,
 			rrule,
@@ -528,7 +525,7 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 		if (showPastMeetings) return [ ...data ];
 		const now = Date.now();
 
-		return data.filter((m) => !isMeetingPast(m, now));
+		return data.filter((m) => !isMeetingOver(m, now));
 	}, [ data, showPastMeetings, rooms ]);
 
 	// Add button: in all-meetings mode require at least one room (else dropdown is empty).
@@ -630,6 +627,15 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 							sx={{ flex: '1 1 240px' }}
 						/>
 					</Box>
+					{startsAt && endsAt && timezone !== browserTimezone() && (
+						<Typography variant='caption' color='text.secondary' sx={{ display: 'block', mt: 0.5 }}>
+							{localTimeHintLabel(
+								browserTimezone(),
+								moment(instantOf(startsAt, timezone)).format('YYYY-MM-DD HH:mm'),
+								moment(instantOf(endsAt, timezone)).format('YYYY-MM-DD HH:mm')
+							)}
+						</Typography>
+					)}
 					<Box sx={{ display: 'flex', gap: 2, mt: 2, flexWrap: 'wrap' }}>
 						<Autocomplete
 							sx={{ flex: '1 1 240px' }}

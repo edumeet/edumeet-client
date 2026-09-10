@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": null,
   "label.management.meetings.endsAt": null,
   "label.management.meetings.timezone": null,
+  "label.management.meetings.localTimeHint": null,
   "label.management.meetings.inviteLanguage": null,
   "label.management.meetings.repeats": null,
   "label.management.meetings.showPast": null,

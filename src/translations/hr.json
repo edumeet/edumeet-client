@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Počinje",
   "label.management.meetings.endsAt": "Završava",
   "label.management.meetings.timezone": "Vremenska zona",
+  "label.management.meetings.localTimeHint": "U vašoj vremenskoj zoni ({zone}): {start} do {end}",
   "label.management.meetings.inviteLanguage": "Jezik pozivnice",
   "label.management.meetings.repeats": "Ponavljanje",
   "label.management.meetings.showPast": "Prikaži prošle sastanke",

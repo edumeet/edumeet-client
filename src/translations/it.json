@@ -568,6 +568,7 @@
   "label.management.meetings.startsAt": "Inizio",
   "label.management.meetings.endsAt": "Fine",
   "label.management.meetings.timezone": "Fuso orario",
+  "label.management.meetings.localTimeHint": "Nel tuo fuso orario ({zone}): dalle {start} alle {end}",
   "label.management.meetings.inviteLanguage": "Lingua dell'invito",
   "label.management.meetings.repeats": "Ripetizione",
   "label.management.meetings.showPast": "Mostra riunioni passate",

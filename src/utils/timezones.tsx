@@ -72,6 +72,64 @@ const buildOptions = (): TimezoneOption[] => {
 
 export const timezoneOptions: TimezoneOption[] = buildOptions();
 
+export interface WallClock {
+	year: number;
+	month: number; // 0-based, as moment and Date use it
+	day: number;
+	hour: number;
+	minute: number;
+}
+
+const wallClockPartsFormat = (tz: string) => new Intl.DateTimeFormat('en-US', {
+	timeZone: tz,
+	hourCycle: 'h23',
+	year: 'numeric',
+	month: '2-digit',
+	day: '2-digit',
+	hour: '2-digit',
+	minute: '2-digit'
+});
+
+export const instantToWallClock = (ms: number, tz: string): WallClock => {
+	const at = new Date(ms);
+
+	try {
+		const parts = wallClockPartsFormat(tz).formatToParts(at);
+		const get = (type: string) => parseInt(parts.find((p) => p.type === type)?.value ?? '0', 10);
+
+		return {
+			year: get('year'),
+			month: get('month') - 1,
+			day: get('day'),
+			hour: get('hour') % 24,
+			minute: get('minute')
+		};
+	} catch {
+		return {
+			year: at.getFullYear(),
+			month: at.getMonth(),
+			day: at.getDate(),
+			hour: at.getHours(),
+			minute: at.getMinutes()
+		};
+	}
+};
+
+// The zone's offset at the guessed instant can differ from the offset at the real one
+// around a DST change, so the offset is resolved twice; the second pass settles it.
+export const wallClockToInstant = (wall: WallClock, tz: string): number => {
+	try {
+		wallClockPartsFormat(tz);
+	} catch {
+		return new Date(wall.year, wall.month, wall.day, wall.hour, wall.minute).getTime();
+	}
+	const asUtc = Date.UTC(wall.year, wall.month, wall.day, wall.hour, wall.minute);
+	const first = asUtc - (offsetMinutesFor(tz, new Date(asUtc)) * 60000);
+	const secondOffset = offsetMinutesFor(tz, new Date(first));
+
+	return asUtc - (secondOffset * 60000);
+};
+
 export const browserTimezone = (): string => {
 	try {
 		return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';

@@ -2019,6 +2019,10 @@ export const timezoneLabel = (): string => intl.formatMessage({
 	id: 'label.management.meetings.timezone',
 	defaultMessage: 'Timezone'
 });
+export const localTimeHintLabel = (zone: string, start: string, end: string): string => intl.formatMessage({
+	id: 'label.management.meetings.localTimeHint',
+	defaultMessage: 'In your timezone ({zone}): {start} to {end}'
+}, { zone, start, end });
 export const inviteLanguageLabel = (): string => intl.formatMessage({
 	id: 'label.management.meetings.inviteLanguage',
 	defaultMessage: 'Invite language'
