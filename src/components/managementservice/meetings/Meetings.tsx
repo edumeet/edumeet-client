@@ -73,6 +73,7 @@ import {
 	startsAtLabel,
 	timezoneLabel,
 	localTimeHintLabel,
+	meetingTokenLabel,
 	titleLabel,
 	userEmailLabel
 } from '../../translated/translatedComponents';
@@ -256,7 +257,8 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 			// eslint-disable-next-line camelcase
 			const cols: MRT_ColumnDef<Meeting>[] = [
 				{ accessorKey: 'id', header: '#' },
-				{ accessorKey: 'title', header: titleLabel() }
+				{ accessorKey: 'title', header: titleLabel() },
+				{ accessorKey: 'meetingToken', header: meetingTokenLabel() }
 			];
 
 			if (!isRoomScoped) {

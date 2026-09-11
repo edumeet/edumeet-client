@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} toplantıdan ayrıldı",
   "label.chatMessageFailed": "Mesaj iletilemedi",
   "room.e2eeSecuring": "Oda güvenliği sağlanıyor, şifreleme henüz doğrulanmadı",
-  "room.e2eeFailed": "Bu oda uçtan uca şifreleme gerektiriyor ancak tarayıcınız ortamı şifrelemedi. Korumasız gönderilmesini önlemek için odadan çıkarıldınız."
+  "room.e2eeFailed": "Bu oda uçtan uca şifreleme gerektiriyor ancak tarayıcınız ortamı şifrelemedi. Korumasız gönderilmesini önlemek için odadan çıkarıldınız.",
+  "label.managementservice.meetingsOnly": "Yalnızca toplantılar",
+  "label.managementservice.meetingsOnlyTooltip": "Etkinleştirildiğinde, bu oda için planlanmış bir toplantının bağlantısına veya belirtecine sahip kişiler dışında kimse giremez, oda sahibi de dahil.",
+  "label.meetingToken": "Toplantı belirteci",
+  "room.meetingTokenRequired": "Bu oda yalnızca planlanmış toplantıları kabul eder. Davetiyenizdeki toplantı belirtecini girin.",
+  "room.meetingTokenInvalid": "Bu toplantı belirteci bu oda için geçerli değil. Davet bağlantısını veya belirteci kontrol edin."
 }

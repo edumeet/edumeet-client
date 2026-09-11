@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} hat das Meeting verlassen",
   "label.chatMessageFailed": "Die Nachricht konnte nicht zugestellt werden",
   "room.e2eeSecuring": "Raum wird gesichert, Verschlüsselung noch nicht bestätigt",
-  "room.e2eeFailed": "Dieser Raum erfordert Ende-zu-Ende-Verschlüsselung, aber Ihr Browser hat die Medien nicht verschlüsselt. Sie wurden aus dem Raum entfernt, damit nichts ungeschützt gesendet wird."
+  "room.e2eeFailed": "Dieser Raum erfordert Ende-zu-Ende-Verschlüsselung, aber Ihr Browser hat die Medien nicht verschlüsselt. Sie wurden aus dem Raum entfernt, damit nichts ungeschützt gesendet wird.",
+  "label.managementservice.meetingsOnly": "Nur Meetings",
+  "label.managementservice.meetingsOnlyTooltip": "Wenn aktiviert, können nur Personen mit dem Link oder Token eines für diesen Raum geplanten Meetings eintreten, auch der Raumbesitzer.",
+  "label.meetingToken": "Meeting-Token",
+  "room.meetingTokenRequired": "Dieser Raum lässt nur geplante Meetings zu. Geben Sie das Meeting-Token aus Ihrer Einladung ein.",
+  "room.meetingTokenInvalid": "Dieses Meeting-Token ist für diesen Raum nicht gültig. Prüfen Sie den Einladungslink oder das Token."
 }

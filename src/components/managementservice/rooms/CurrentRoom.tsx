@@ -1,9 +1,9 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete, Tooltip } from '@mui/material';
 import { Roles, Room } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
-import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, claimRoomNoticeLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roleLabel, roomBgLabel, yesLabel } from '../../translated/translatedComponents';
+import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, claimRoomNoticeLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roleLabel, roomBgLabel, yesLabel, meetingsOnlyLabel, meetingsOnlyTooltipLabel } from '../../translated/translatedComponents';
 import { Logger } from '../../../utils/Logger';
 
 const logger = new Logger('CurrentRoom');
@@ -39,6 +39,7 @@ const CurrentRoomModal = () => {
 	const [ reactionsEnabled, setReactionsEnabled ] = useState(false);
 	const [ filesharingEnabled, setFilesharingEnabled ] = useState(false);
 	const [ localRecordingEnabled, setLocalRecordingEnabled ] = useState(false);
+	const [ meetingsOnly, setMeetingsOnly ] = useState(false);
 
 	const [ managementConnectionError, setManagementConnectionError ] = useState(false);
 
@@ -87,6 +88,7 @@ const CurrentRoomModal = () => {
 				const tfilesharingEnabled=r.filesharingEnabled;
 				const tlocalRecordingEnabled=r.localRecordingEnabled;
 				const tbreakoutsEnabled=r.breakoutsEnabled;
+				const tmeetingsOnly=r.meetingsOnly;
 
 				if (typeof tid === 'number') {
 					setId(tid);
@@ -191,6 +193,7 @@ const CurrentRoomModal = () => {
 				} else {
 					setBreakoutsEnabled(false);
 				}
+				setMeetingsOnly(Boolean(tmeetingsOnly));
 
 				setOpen(true);
 
@@ -272,6 +275,9 @@ const CurrentRoomModal = () => {
 	const handleBreakoutsEnabledChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
 		setBreakoutsEnabled(event.target.checked);
 	};
+	const handleMeetingsOnlyChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
+		setMeetingsOnly(event.target.checked);
+	};
 	const handleClose = () => {
 		setOpen(false);
 	};
@@ -299,6 +305,7 @@ const CurrentRoomModal = () => {
 			filesharingEnabled: filesharingEnabled,
 			localRecordingEnabled: localRecordingEnabled,
 			breakoutsEnabled: breakoutsEnabled,
+			meetingsOnly: meetingsOnly,
 		};
 			
 		if (defaultRoleId) {
@@ -391,6 +398,9 @@ const CurrentRoomModal = () => {
 				<FormControlLabel control={<Checkbox checked={filesharingEnabled} onChange={handleFilesharingEnabledChange} />} label={filesharingEnabledLabel()} />
 				<FormControlLabel control={<Checkbox checked={localRecordingEnabled} onChange={handleLocalRecordingEnabledChange} />} label={localRecordingEnabledLabel()} />
 				<FormControlLabel control={<Checkbox checked={breakoutsEnabled} onChange={handleBreakoutsEnabledChange} />} label={breakoutsEnabledLabel()} />
+				<Tooltip title={meetingsOnlyTooltipLabel()}>
+					<FormControlLabel control={<Checkbox checked={meetingsOnly} onChange={handleMeetingsOnlyChange} />} label={meetingsOnlyLabel()} />
+				</Tooltip>
 					
 			</DialogContent>
 			<DialogActions>

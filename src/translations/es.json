@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} salió de la reunión",
   "label.chatMessageFailed": "No se pudo entregar el mensaje",
   "room.e2eeSecuring": "Asegurando esta sala, cifrado aún no confirmado",
-  "room.e2eeFailed": "Esta sala requiere cifrado de extremo a extremo, pero su navegador no cifró los medios. Se le ha retirado de la sala para evitar enviarlos sin protección."
+  "room.e2eeFailed": "Esta sala requiere cifrado de extremo a extremo, pero su navegador no cifró los medios. Se le ha retirado de la sala para evitar enviarlos sin protección.",
+  "label.managementservice.meetingsOnly": "Solo reuniones",
+  "label.managementservice.meetingsOnlyTooltip": "Cuando está activado, solo pueden entrar las personas con el enlace o el token de una reunión programada para esta sala, incluido el propietario de la sala.",
+  "label.meetingToken": "Token de la reunión",
+  "room.meetingTokenRequired": "Esta sala solo admite reuniones programadas. Introduce el token de la reunión de tu invitación.",
+  "room.meetingTokenInvalid": "Este token de reunión no es válido para esta sala. Comprueba el enlace de la invitación o el token."
 }

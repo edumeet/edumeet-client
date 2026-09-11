@@ -3,6 +3,7 @@ import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
+import { meetingTokenRejected } from '../actions/meetingTokenActions';
 import { setDisplayName, setPicture } from '../actions/meActions';
 import { pauseMic, startExtraVideo, updateMic, updateWebcam } from '../actions/mediaActions';
 import { permissionsActions } from '../slices/permissionsSlice';
@@ -168,6 +169,12 @@ const createRoomMiddleware = ({
 							dispatch(roomSessionsActions.setActiveSpeakerId({ sessionId, peerId, isMe }));
 							break;
 						} 
+
+						case 'meetingTokenRejected': {
+							dispatch(meetingTokenRejected(notification.data.reason));
+
+							break;
+						}
 
 						case 'moderator:kick':
 						case 'escapeMeeting': {

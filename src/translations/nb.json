@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} forlot møtet",
   "label.chatMessageFailed": "Kunne ikke levere meldingen",
   "room.e2eeSecuring": "Sikrer dette rommet, kryptering ikke bekreftet ennå",
-  "room.e2eeFailed": "Dette rommet krever ende-til-ende-kryptering, men nettleseren din krypterte ikke mediet. Du er fjernet fra rommet for å unngå å sende det ubeskyttet."
+  "room.e2eeFailed": "Dette rommet krever ende-til-ende-kryptering, men nettleseren din krypterte ikke mediet. Du er fjernet fra rommet for å unngå å sende det ubeskyttet.",
+  "label.managementservice.meetingsOnly": "Kun møter",
+  "label.managementservice.meetingsOnlyTooltip": "Når dette er slått på, kan bare personer med lenken eller tokenet til et møte som er planlagt for dette rommet, komme inn, også rommets eier.",
+  "label.meetingToken": "Møtetoken",
+  "room.meetingTokenRequired": "Dette rommet slipper bare inn planlagte møter. Skriv inn møtetokenet fra invitasjonen din.",
+  "room.meetingTokenInvalid": "Dette møtetokenet er ikke gyldig for dette rommet. Sjekk invitasjonslenken eller tokenet."
 }

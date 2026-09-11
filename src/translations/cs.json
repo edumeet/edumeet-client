@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} opustil(a) schůzku",
   "label.chatMessageFailed": "Zprávu se nepodařilo doručit",
   "room.e2eeSecuring": "Zabezpečování místnosti, šifrování zatím nepotvrzeno",
-  "room.e2eeFailed": "Tato místnost vyžaduje koncové šifrování, ale váš prohlížeč média nezašifroval. Byli jste z místnosti odebráni, aby se neodesílala nechráněná."
+  "room.e2eeFailed": "Tato místnost vyžaduje koncové šifrování, ale váš prohlížeč média nezašifroval. Byli jste z místnosti odebráni, aby se neodesílala nechráněná.",
+  "label.managementservice.meetingsOnly": "Pouze schůzky",
+  "label.managementservice.meetingsOnlyTooltip": "Pokud je zapnuto, mohou do místnosti vstoupit pouze lidé s odkazem nebo tokenem schůzky naplánované pro tuto místnost, včetně vlastníka místnosti.",
+  "label.meetingToken": "Token schůzky",
+  "room.meetingTokenRequired": "Tato místnost přijímá pouze naplánované schůzky. Zadejte token schůzky z pozvánky.",
+  "room.meetingTokenInvalid": "Tento token schůzky není pro tuto místnost platný. Zkontrolujte odkaz z pozvánky nebo token."
 }

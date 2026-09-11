@@ -6,6 +6,7 @@ import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { roomActions } from './roomSlice';
 import { BackgroundConfig, BackgroundType } from '../../utils/types';
+import type { MeetingTokenRejection } from '../../utils/meetingToken';
 
 export interface MeState {
 	id: string;
@@ -54,6 +55,8 @@ export interface MeState {
 	extraVideoTrackId?: string;
 	extraAudioEnabled: boolean;
 	videoBackgroundEffect: BackgroundConfig | null;
+	meetingToken?: string;
+	meetingTokenRejection?: MeetingTokenRejection;
 }
 
 const initialState: MeState = {
@@ -159,6 +162,12 @@ const meSlice = createSlice({
 		}),
 		setVideoMuted: ((state, action: PayloadAction<boolean>) => {
 			state.videoMuted = action.payload;
+		}),
+		setMeetingToken: ((state, action: PayloadAction<string | undefined>) => {
+			state.meetingToken = action.payload;
+		}),
+		setMeetingTokenRejection: ((state, action: PayloadAction<MeetingTokenRejection | undefined>) => {
+			state.meetingTokenRejection = action.payload;
 		}),
 		setReceiveVideo: ((state, action: PayloadAction<boolean>) => {
 			state.receiveVideo = action.payload;

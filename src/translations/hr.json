@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} je napustio(la) sastanak",
   "label.chatMessageFailed": "Poruku nije bilo moguće isporučiti",
   "room.e2eeSecuring": "Osiguravanje sobe, enkripcija još nije potvrđena",
-  "room.e2eeFailed": "Ova soba zahtijeva end-to-end enkripciju, ali vaš preglednik nije šifrirao medije. Uklonjeni ste iz sobe kako se ne bi slali nezaštićeni."
+  "room.e2eeFailed": "Ova soba zahtijeva end-to-end enkripciju, ali vaš preglednik nije šifrirao medije. Uklonjeni ste iz sobe kako se ne bi slali nezaštićeni.",
+  "label.managementservice.meetingsOnly": "Samo sastanci",
+  "label.managementservice.meetingsOnlyTooltip": "Kada je uključeno, u sobu mogu ući samo osobe s poveznicom ili tokenom sastanka zakazanog za ovu sobu, uključujući vlasnika sobe.",
+  "label.meetingToken": "Token sastanka",
+  "room.meetingTokenRequired": "Ova soba prima samo zakazane sastanke. Unesite token sastanka iz pozivnice.",
+  "room.meetingTokenInvalid": "Ovaj token sastanka nije valjan za ovu sobu. Provjerite poveznicu iz pozivnice ili token."
 }

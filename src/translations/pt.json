@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} saiu da reunião",
   "label.chatMessageFailed": "Não foi possível entregar a mensagem",
   "room.e2eeSecuring": "A proteger esta sala, encriptação ainda não confirmada",
-  "room.e2eeFailed": "Esta sala requer encriptação ponto a ponto, mas o seu navegador não encriptou os conteúdos. Foi removido da sala para evitar enviá-los sem proteção."
+  "room.e2eeFailed": "Esta sala requer encriptação ponto a ponto, mas o seu navegador não encriptou os conteúdos. Foi removido da sala para evitar enviá-los sem proteção.",
+  "label.managementservice.meetingsOnly": "Apenas reuniões",
+  "label.managementservice.meetingsOnlyTooltip": "Quando ativado, só podem entrar as pessoas com o link ou o token de uma reunião agendada para esta sala, incluindo o proprietário da sala.",
+  "label.meetingToken": "Token da reunião",
+  "room.meetingTokenRequired": "Esta sala só admite reuniões agendadas. Introduza o token da reunião do seu convite.",
+  "room.meetingTokenInvalid": "Este token de reunião não é válido para esta sala. Verifique o link do convite ou o token."
 }

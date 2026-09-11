@@ -10,7 +10,7 @@ import { createRoomWithParams, deleteData, getData, patchData } from '../../../s
 import RoomOwnerTable from './RoomOwner';
 import RoomUserRoleTable from './roomUserRole';
 import MeetingsTable from '../meetings/Meetings';
-import { addNewLabel, applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, createdAtLabel, endToEndEncryptionLabel, endToEndEncryptionTooltipLabel, creatorIdLabel, defaultRoleLabel, deleteLabel, descLabel, filesharingEnabledLabel, genericItemDescLabel, groupRolesLabel, hiddenEmailLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, ownersLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roomBgLabel, roomLockedLabel, tenantLabel, undefinedLabel, updatedAtLabel, yesLabel } from '../../translated/translatedComponents';
+import { addNewLabel, applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, createdAtLabel, endToEndEncryptionLabel, endToEndEncryptionTooltipLabel, meetingsOnlyLabel, meetingsOnlyTooltipLabel, creatorIdLabel, defaultRoleLabel, deleteLabel, descLabel, filesharingEnabledLabel, genericItemDescLabel, groupRolesLabel, hiddenEmailLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, ownersLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roomBgLabel, roomLockedLabel, tenantLabel, undefinedLabel, updatedAtLabel, yesLabel } from '../../translated/translatedComponents';
 
 export interface RoomProp {
 	roomId: number;
@@ -199,6 +199,13 @@ const RoomTable = () => {
 					(cell.getValue() === true ? yesLabel() : noLabel()),
 				filterVariant: 'checkbox'
 			},
+			{
+				accessorKey: 'meetingsOnly',
+				header: meetingsOnlyLabel(),
+				Cell: ({ cell }) =>
+					(cell.getValue() ? yesLabel() : noLabel()),
+				filterVariant: 'checkbox'
+			},
 
 		],
 		[ tenants, roles, users ],
@@ -233,6 +240,7 @@ const RoomTable = () => {
 	const [ reactionsEnabled, setReactionsEnabled ] = useState(false);
 	const [ filesharingEnabled, setFilesharingEnabled ] = useState(false);
 	const [ localRecordingEnabled, setLocalRecordingEnabled ] = useState(false);
+	const [ meetingsOnly, setMeetingsOnly ] = useState(false);
 
 	const [ tenantIdOption, setTenantIdOption ] = useState<Tenant | undefined>();
 	
@@ -345,6 +353,7 @@ const RoomTable = () => {
 		setLocalRecordingEnabled(true);
 		setBreakoutsEnabled(true);
 		setEndToEndEncryption(false); // E2EE off by default for new rooms
+		setMeetingsOnly(false);
 
 		setOpen(true);
 	};
@@ -401,6 +410,9 @@ const RoomTable = () => {
 	const handleEndToEndEncryptionChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
 		setEndToEndEncryption(event.target.checked);
 	};
+	const handleMeetingsOnlyChange = (event: { target: { checked: React.SetStateAction<boolean>; }; }) => {
+		setMeetingsOnly(event.target.checked);
+	};
 	// When the selected tenant's default has E2EE locked, the room server forces the tenant value and
 	// ignores any per-room value, so the per-room toggle is disabled (mandated) for everyone — a
 	// super-admin changes the policy via the tenant default. (String compare: tenantId may be a bigint string.)
@@ -456,7 +468,8 @@ const RoomTable = () => {
 				filesharingEnabled: filesharingEnabled,
 				localRecordingEnabled: localRecordingEnabled,
 				breakoutsEnabled: breakoutsEnabled,
-				endToEndEncryption: endToEndEncryption
+				endToEndEncryption: endToEndEncryption,
+				meetingsOnly: meetingsOnly
 			})).then(() => {
 				fetchProduct();
 				setOpen(false);
@@ -477,6 +490,7 @@ const RoomTable = () => {
 				localRecordingEnabled: localRecordingEnabled,
 				breakoutsEnabled: breakoutsEnabled,
 				endToEndEncryption: endToEndEncryption,
+				meetingsOnly: meetingsOnly,
 			};
 			
 			if (defaultRoleId) {
@@ -592,6 +606,9 @@ const RoomTable = () => {
 						:
 						<FormControlLabel control={<Checkbox checked={endToEndEncryption} onChange={handleEndToEndEncryptionChange} />} label={endToEndEncryptionLabel()} />
 					}
+					<Tooltip title={meetingsOnlyTooltipLabel()}>
+						<FormControlLabel control={<Checkbox checked={meetingsOnly} onChange={handleMeetingsOnlyChange} />} label={meetingsOnlyLabel()} />
+					</Tooltip>
 					
 					{ id !=0 && <>
 						<RoomOwnerTable roomId={id} />
@@ -629,6 +646,7 @@ const RoomTable = () => {
 					
 					const tbreakoutsEnabled=r[19].getValue();
 					const tendToEndEncryption=r[20].getValue();
+					const tmeetingsOnly=r[21].getValue();
 
 					if (typeof tid === 'number') {
 						setId(tid);
@@ -746,6 +764,7 @@ const RoomTable = () => {
 					} else {
 						setEndToEndEncryption(false);
 					}
+					setMeetingsOnly(Boolean(tmeetingsOnly));
 
 					handleClickOpenNoreset();
 
@@ -771,6 +790,7 @@ const RoomTable = () => {
 					localRecordingEnabled: false,
 					reactionsEnabled: false,
 					endToEndEncryption: false,
+					meetingsOnly: false,
 				}
 			}}
 			state={{ isLoading }}

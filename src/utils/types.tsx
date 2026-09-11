@@ -466,6 +466,7 @@ export type Room = {
 	owners?: Array<RoomOwners>,
 	breakoutsEnabled: boolean,
 	endToEndEncryption?: boolean,
+	meetingsOnly?: boolean,
 };
 
 export type Groups = {
@@ -505,6 +506,7 @@ export type Meeting = {
 	timezone: string,
 	locale: string,
 	uid?: string,
+	meetingToken?: string,
 	sequence?: number,
 	status?: 'CONFIRMED' | 'CANCELLED',
 	rrule?: string,
