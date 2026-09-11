@@ -3234,7 +3234,7 @@ __metadata:
     marked: "npm:^18.0.7"
     material-react-table: "npm:^3.2.1"
     mediabunny: "npm:^1.55.3"
-    mediasoup-client: "npm:^3.23.1"
+    mediasoup-client: "npm:^3.23.2"
     moment: "npm:^2.30.1"
     notistack: "npm:^3.0.2"
     ortc-p2p: "github:edumeet/edumeet-ortc-p2p#0.1.4"
@@ -5476,9 +5476,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mediasoup-client@npm:^3.23.1":
-  version: 3.23.1
-  resolution: "mediasoup-client@npm:3.23.1"
+"mediasoup-client@npm:^3.23.2":
+  version: 3.23.2
+  resolution: "mediasoup-client@npm:3.23.2"
   dependencies:
     "@types/debug": "npm:^4.1.13"
     "@types/events-alias": "npm:@types/events@^3.0.3"
@@ -5489,7 +5489,7 @@ __metadata:
     h264-profile-level-id: "npm:^2.3.3"
     sdp-transform: "npm:^3.0.0"
     supports-color: "npm:^11.0.0"
-  checksum: 10c0/6851c8332677ae927dbed31eb4e736bb24262ef1086c9168d005d20142eab62ecb80d32e4f46ebc0b35de47b5561aa39418a824bd50d5e3b14657a80e60ec467
+  checksum: 10c0/03e0f7b42df253a0b7623fa9df1535a232c2a3dda14615a0b7f3f219aedb53e90565aa744b5068382b6c4668b587c81fedd274228b9f2177186ebe07a57e3793
   languageName: node
   linkType: hard
 
