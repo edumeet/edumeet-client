@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} ha lasciato la riunione",
   "label.chatMessageFailed": "Impossibile consegnare il messaggio",
   "room.e2eeSecuring": "Protezione della stanza in corso, crittografia non ancora confermata",
-  "room.e2eeFailed": "Questa stanza richiede la crittografia end-to-end, ma il tuo browser non ha crittografato i contenuti. Sei stato rimosso dalla stanza per evitare di inviarli non protetti."
+  "room.e2eeFailed": "Questa stanza richiede la crittografia end-to-end, ma il tuo browser non ha crittografato i contenuti. Sei stato rimosso dalla stanza per evitare di inviarli non protetti.",
+  "label.managementservice.meetingsOnly": "Solo riunioni",
+  "label.managementservice.meetingsOnlyTooltip": "Se attivo, possono entrare solo le persone con il link o il token di una riunione pianificata per questa stanza, proprietario della stanza incluso.",
+  "label.meetingToken": "Token della riunione",
+  "room.meetingTokenRequired": "Questa stanza ammette solo riunioni pianificate. Inserisci il token della riunione presente nell'invito.",
+  "room.meetingTokenInvalid": "Questo token della riunione non è valido per questa stanza. Controlla il link dell'invito o il token."
 }

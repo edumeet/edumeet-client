@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} a părăsit întâlnirea",
   "label.chatMessageFailed": "Mesajul nu a putut fi livrat",
   "room.e2eeSecuring": "Se securizează camera, criptarea nu este încă confirmată",
-  "room.e2eeFailed": "Această cameră necesită criptare end-to-end, dar browserul dumneavoastră nu a criptat conținutul media. Ați fost eliminat din cameră pentru a evita trimiterea lui neprotejată."
+  "room.e2eeFailed": "Această cameră necesită criptare end-to-end, dar browserul dumneavoastră nu a criptat conținutul media. Ați fost eliminat din cameră pentru a evita trimiterea lui neprotejată.",
+  "label.managementservice.meetingsOnly": "Doar întâlniri",
+  "label.managementservice.meetingsOnlyTooltip": "Când este activat, pot intra doar persoanele care au linkul sau tokenul unei întâlniri programate pentru această cameră, inclusiv proprietarul camerei.",
+  "label.meetingToken": "Token de întâlnire",
+  "room.meetingTokenRequired": "Această cameră admite doar întâlniri programate. Introduceți tokenul întâlnirii din invitație.",
+  "room.meetingTokenInvalid": "Acest token de întâlnire nu este valid pentru această cameră. Verificați linkul din invitație sau tokenul."
 }

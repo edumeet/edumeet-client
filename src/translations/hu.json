@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} elhagyta a megbeszélést",
   "label.chatMessageFailed": "Az üzenetet nem sikerült kézbesíteni",
   "room.e2eeSecuring": "A szoba védelme folyamatban, a titkosítás még nincs megerősítve",
-  "room.e2eeFailed": "Ez a szoba végpontok közötti titkosítást igényel, de a böngészője nem titkosította a médiát. Eltávolítottuk a szobából, hogy ne küldje védelem nélkül."
+  "room.e2eeFailed": "Ez a szoba végpontok közötti titkosítást igényel, de a böngészője nem titkosította a médiát. Eltávolítottuk a szobából, hogy ne küldje védelem nélkül.",
+  "label.managementservice.meetingsOnly": "Csak megbeszélések",
+  "label.managementservice.meetingsOnlyTooltip": "Ha be van kapcsolva, csak azok léphetnek be, akik rendelkeznek egy ehhez a szobához ütemezett megbeszélés linkjével vagy tokenjével, a szoba tulajdonosát is beleértve.",
+  "label.meetingToken": "Megbeszélés-token",
+  "room.meetingTokenRequired": "Ez a szoba csak ütemezett megbeszéléseket fogad. Adja meg a meghívóban kapott megbeszélés-tokent.",
+  "room.meetingTokenInvalid": "Ez a megbeszélés-token nem érvényes ehhez a szobához. Ellenőrizze a meghívó linkjét vagy a tokent."
 }

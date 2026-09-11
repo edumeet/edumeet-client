@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": null,
   "label.chatMessageFailed": null,
   "room.e2eeSecuring": null,
-  "room.e2eeFailed": null
+  "room.e2eeFailed": null,
+  "label.managementservice.meetingsOnly": null,
+  "label.managementservice.meetingsOnlyTooltip": null,
+  "label.meetingToken": null,
+  "room.meetingTokenRequired": null,
+  "room.meetingTokenInvalid": null
 }

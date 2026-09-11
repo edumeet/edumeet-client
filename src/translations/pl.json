@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} opuścił(a) spotkanie",
   "label.chatMessageFailed": "Nie udało się dostarczyć wiadomości",
   "room.e2eeSecuring": "Zabezpieczanie pokoju, szyfrowanie jeszcze niepotwierdzone",
-  "room.e2eeFailed": "Ten pokój wymaga szyfrowania end-to-end, ale Twoja przeglądarka nie zaszyfrowała mediów. Zostałeś usunięty z pokoju, aby nie wysyłać ich bez ochrony."
+  "room.e2eeFailed": "Ten pokój wymaga szyfrowania end-to-end, ale Twoja przeglądarka nie zaszyfrowała mediów. Zostałeś usunięty z pokoju, aby nie wysyłać ich bez ochrony.",
+  "label.managementservice.meetingsOnly": "Tylko spotkania",
+  "label.managementservice.meetingsOnlyTooltip": "Gdy włączone, do pokoju mogą wejść tylko osoby z linkiem lub tokenem spotkania zaplanowanego dla tego pokoju, również właściciel pokoju.",
+  "label.meetingToken": "Token spotkania",
+  "room.meetingTokenRequired": "Ten pokój przyjmuje tylko zaplanowane spotkania. Wpisz token spotkania z zaproszenia.",
+  "room.meetingTokenInvalid": "Ten token spotkania nie jest ważny dla tego pokoju. Sprawdź link z zaproszenia lub token."
 }

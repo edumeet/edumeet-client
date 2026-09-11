@@ -18,6 +18,7 @@ import GenericDialog from '../genericdialog/GenericDialog';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getData } from '../../store/actions/managementActions';
 import { Meeting } from '../../utils/types';
+import { meetingJoinPath } from '../../utils/meetingToken';
 import {
 	attendeeRoleLabel,
 	closeLabel,
@@ -77,9 +78,9 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 		.sort((a, b) => a.next - b.next)
 		.slice(0, 20);
 
-	const handleJoin = (roomName: string) => {
+	const handleJoin = (meeting: Meeting) => {
 		onClose();
-		window.location.href = `/${roomName}`;
+		window.location.href = meetingJoinPath(meeting);
 	};
 
 	const handleOpenManagement = () => {
@@ -166,7 +167,7 @@ const MeetingsDialog = ({ open, onClose }: MeetingsDialogProps): React.JSX.Eleme
 									<Button
 										variant='contained'
 										size='small'
-										onClick={() => handleJoin(rName)}
+										onClick={() => handleJoin(meeting)}
 										disabled={!rName}
 										sx={{ alignSelf: 'center' }}
 									>

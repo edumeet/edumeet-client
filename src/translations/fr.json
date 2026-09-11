@@ -634,5 +634,10 @@
   "label.peerLeftMeeting": "{displayName} a quitté la réunion",
   "label.chatMessageFailed": "Impossible de remettre le message",
   "room.e2eeSecuring": "Sécurisation de la salle, chiffrement pas encore confirmé",
-  "room.e2eeFailed": "Cette salle nécessite un chiffrement de bout en bout, mais votre navigateur n'a pas chiffré les médias. Vous avez été retiré de la salle afin de ne rien envoyer sans protection."
+  "room.e2eeFailed": "Cette salle nécessite un chiffrement de bout en bout, mais votre navigateur n'a pas chiffré les médias. Vous avez été retiré de la salle afin de ne rien envoyer sans protection.",
+  "label.managementservice.meetingsOnly": "Réunions uniquement",
+  "label.managementservice.meetingsOnlyTooltip": "Lorsque cette option est activée, seules les personnes disposant du lien ou du jeton d'une réunion planifiée pour cette salle peuvent y entrer, y compris le propriétaire de la salle.",
+  "label.meetingToken": "Jeton de réunion",
+  "room.meetingTokenRequired": "Cette salle n'admet que des réunions planifiées. Saisissez le jeton de réunion de votre invitation.",
+  "room.meetingTokenInvalid": "Ce jeton de réunion n'est pas valide pour cette salle. Vérifiez le lien d'invitation ou le jeton."
 }

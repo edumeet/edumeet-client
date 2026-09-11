@@ -634,5 +634,10 @@
 	"label.peerLeftMeeting": "{displayName} left the meeting",
 	"label.chatMessageFailed": "Could not deliver the message",
 	"room.e2eeSecuring": "Securing this room, encryption not confirmed yet",
-	"room.e2eeFailed": "This room requires end-to-end encryption, but your browser did not encrypt the media. You have been removed from the room to avoid sending it unprotected."
+	"room.e2eeFailed": "This room requires end-to-end encryption, but your browser did not encrypt the media. You have been removed from the room to avoid sending it unprotected.",
+	"label.managementservice.meetingsOnly": "Meetings only",
+	"label.managementservice.meetingsOnlyTooltip": "When enabled, only people with the link or token of a meeting scheduled for this room can enter it, the room owner included.",
+	"label.meetingToken": "Meeting token",
+	"room.meetingTokenRequired": "This room only admits scheduled meetings. Enter the meeting token from your invitation.",
+	"room.meetingTokenInvalid": "This meeting token is not valid for this room. Check the invitation link or the token."
 }

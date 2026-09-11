@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { Button, Box, Link, Typography } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
-import { joinLabel, yourNameLabel, imprintLabel, joinConsentLabel, privacyPolicyLabel } from '../../components/translated/translatedComponents';
-import { AccountCircle } from '@mui/icons-material';
+import { joinLabel, yourNameLabel, imprintLabel, joinConsentLabel, privacyPolicyLabel, meetingTokenLabel, meetingTokenInvalidLabel, meetingTokenRequiredLabel } from '../../components/translated/translatedComponents';
+import { AccountCircle, Key } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
@@ -18,6 +18,8 @@ import AudioOutputChooser from '../../components/devicechooser/AudioOutputChoose
 import { canSelectAudioOutput } from '../../store/selectors';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { MAX_DISPLAY_NAME_LENGTH } from '../../utils/types';
+import { meetingTokenFromUrl, normalizeMeetingToken, takeMeetingTokenRejection } from '../../utils/meetingToken';
+import { notificationsActions } from '../../store/slices/notificationsSlice';
 
 interface JoinProps {
 	roomId: string;
@@ -33,6 +35,8 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 	const videoMuted = useAppSelector((state) => state.me.videoMuted);
 	const showAudioOutputChooser = useAppSelector(canSelectAudioOutput);
+	const meetingToken = useAppSelector((state) => state.me.meetingToken);
+	const meetingTokenRejection = useAppSelector((state) => state.me.meetingTokenRejection);
 
 	const url = new URL(window.location.href);
 	const headless = Boolean(url.searchParams.get('headless'));
@@ -49,7 +53,22 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 
 		if (dn) dispatch(settingsActions.setDisplayName(dn));
 
-		if (headless) {
+		const urlMeetingToken = meetingTokenFromUrl(window.location.href);
+
+		if (urlMeetingToken) dispatch(meActions.setMeetingToken(urlMeetingToken));
+
+		const rejection = takeMeetingTokenRejection();
+
+		if (rejection) {
+			if (rejection.meetingToken) dispatch(meActions.setMeetingToken(rejection.meetingToken));
+			dispatch(meActions.setMeetingTokenRejection(rejection.reason));
+			dispatch(notificationsActions.enqueueNotification({
+				message: rejection.reason === 'invalid' ? meetingTokenInvalidLabel() : meetingTokenRequiredLabel(),
+				options: { variant: 'error' }
+			}));
+		}
+
+		if (headless && !rejection) {
 			dispatch(meActions.setAudioMuted(true));
 			dispatch(meActions.setVideoMuted(true));
 			dispatch(roomActions.setHeadless(true));
@@ -85,6 +104,18 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 							autoFocus
 						/>
 					</ChooserDiv>
+					{ meetingTokenRejection && (
+						<ChooserDiv>
+							<TextInputField
+								label={meetingTokenLabel()}
+								value={meetingToken ?? ''}
+								setValue={(value) => dispatch(meActions.setMeetingToken(normalizeMeetingToken(value)))}
+								onEnter={handleJoin}
+								startAdornment={<Key />}
+								autoFocus
+							/>
+						</ChooserDiv>
+					) }
 				</>
 			}
 			actions={

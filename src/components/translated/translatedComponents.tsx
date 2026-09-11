@@ -2253,3 +2253,24 @@ export const invalidLoginLabel = (): string => intl.formatMessage({
 	id: 'label.notification.invalidLogin',
 	defaultMessage: 'Invalid login'
 });
+
+export const meetingsOnlyLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.meetingsOnly',
+	defaultMessage: 'Meetings only'
+});
+export const meetingsOnlyTooltipLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.meetingsOnlyTooltip',
+	defaultMessage: 'When enabled, only people with the link or token of a meeting scheduled for this room can enter it, the room owner included.'
+});
+export const meetingTokenLabel = (): string => intl.formatMessage({
+	id: 'label.meetingToken',
+	defaultMessage: 'Meeting token'
+});
+export const meetingTokenRequiredLabel = (): string => intl.formatMessage({
+	id: 'room.meetingTokenRequired',
+	defaultMessage: 'This room only admits scheduled meetings. Enter the meeting token from your invitation.'
+});
+export const meetingTokenInvalidLabel = (): string => intl.formatMessage({
+	id: 'room.meetingTokenInvalid',
+	defaultMessage: 'This meeting token is not valid for this room. Check the invitation link or the token.'
+});
