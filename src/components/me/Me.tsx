@@ -14,7 +14,6 @@ import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
 import MeStatsView from '../rtpquality/MeStatsView';
-import QualityIndicator from '../rtpquality/QualityIndicator';
 
 interface MeProps {
 	style: Record<'width' | 'height', number>
@@ -80,8 +79,6 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 
 					<DisplayName disabled={false} displayName={displayName} isMe />
 					{ webcamEnabled && !isMobile && showStats && <MeStatsView source='webcam' /> }
-					<QualityIndicator />
-
 				</VideoBox>
 			)}
 		</>

@@ -1123,13 +1123,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@observertc/client-monitor-js@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@observertc/client-monitor-js@npm:4.1.0"
+"@observertc/client-monitor-js@npm:4.9.1-rc.541":
+  version: 4.9.1-rc.541
+  resolution: "@observertc/client-monitor-js@npm:4.9.1-rc.541"
   dependencies:
     eventemitter3: "npm:^5.0.1"
     ua-parser-js: "npm:^1.0.37"
-  checksum: 10c0/0c5c8c3f2949a4d866d43e326f13e42c443b768e8a4f8c375acd6d272610c1a6966c2afd93e0b02226f8aa7329258fcc5ceb9c4f59b5e27fbbe3304c76fa1133
+  checksum: 10c0/1ac2f23a5973bdfec3cd10c4382f7dc417da055dd57be8eeb1434f48edb21e52b065db1ddae92f1917fff220017b12b386d5e977187bfb0c6776671e3c7c6d70
   languageName: node
   linkType: hard
 
@@ -3197,7 +3197,7 @@ __metadata:
     "@noble/curves": "npm:2.4.0"
     "@noble/hashes": "npm:2.4.0"
     "@noble/post-quantum": "npm:0.7.1"
-    "@observertc/client-monitor-js": "npm:^4.1.0"
+    "@observertc/client-monitor-js": "npm:4.9.1-rc.541"
     "@observertc/samples-encoder": "npm:^3.0.0"
     "@reduxjs/toolkit": "npm:^2.12.0"
     "@types/debug": "npm:^4.1.13"

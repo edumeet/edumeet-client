@@ -21,17 +21,17 @@ const logger = new Logger('MediaMiddleware');
 /**
  * This middleware represents the connection between the
  * MediaService, the Redux store and the React components.
- * 
+ *
  * It listens to the MediaService events and dispatches
  * the corresponding Redux actions.
- * 
+ *
  * It also listens to the Redux actions and calls the
  * MediaService methods.
- * 
+ *
  * This way the MediaService and the Redux store are
  * kept in sync.
- * 
- * @param options - Middleware options. 
+ *
+ * @param options - Middleware options.
  * @returns {Middleware} Redux middleware.
  */
 const createMediaMiddleware = ({
@@ -80,6 +80,8 @@ const createMediaMiddleware = ({
 						remotePaused: producerPaused,
 						source: consumer.appData.source as ProducerSource,
 					};
+
+					
 
 					dispatch(consumersActions.addConsumer(stateConsumer));
 				});
@@ -253,7 +255,7 @@ const createMediaMiddleware = ({
 						dispatch(meActions.setExtraAudioEnabled(false));
 					}
 				});
-			
+
 				mediaService.on('lostMediaServer', () => {
 					dispatch(notificationsActions.enqueueNotification({
 						message: lostMediaServerLabel(),
@@ -370,7 +372,7 @@ const createMediaMiddleware = ({
 
 			return next(action);
 		};
-	
+
 	return middleware;
 };
 

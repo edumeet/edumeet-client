@@ -12,7 +12,7 @@ import { VolumeWatcher } from '../utils/volumeWatcher';
 import type { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
 import type { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProducer';
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
-import { ClientMonitor } from '@observertc/client-monitor-js';
+import { ClientMonitor, ClientMonitorEvents } from '@observertc/client-monitor-js';
 import { safePromise } from '../utils/safePromise';
 import { ProducerSource } from '../utils/types';
 import { MediaSender } from '../utils/mediaSender';
@@ -131,7 +131,7 @@ export class MediaService extends EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
-	
+
 	// eslint-disable-next-line no-unused-vars
 	public rejectMediaReady!: (error: Error) => void;
 	public resolveMediaReady!: () => void;
@@ -168,6 +168,7 @@ export class MediaService extends EventEmitter {
 	}
 
 	public reset(): void {
+		this.monitor?.removeSource(this.mediasoup);
 		this.mediasoup = undefined;
 		this.iceServers = [];
 
@@ -186,6 +187,8 @@ export class MediaService extends EventEmitter {
 		}));
 
 		this.createTransports().catch((error) => logger.error('error on creating transports [error:%o]', error));
+
+
 	}
 
 	public close(): void {
@@ -289,7 +292,7 @@ export class MediaService extends EventEmitter {
 						const { peerId, rtpCapabilities } = notification.data;
 
 						const peerDevice = this.getPeerDevice(peerId);
-						
+
 						await peerDevice.load({ remoteRtpCapabilities: rtpCapabilities });
 
 						break;
@@ -309,7 +312,7 @@ export class MediaService extends EventEmitter {
 						const transport = await this.getPeerTransport(peerId, direction === 'send' ? 'recv' : 'send');
 
 						await transport.addIceCandidate({ candidate });
-						
+
 						break;
 					}
 
@@ -410,6 +413,8 @@ export class MediaService extends EventEmitter {
 						peerConsumer.once('transportclose', () => this.changeConsumer(peerConsumer.id, 'close', false));
 
 						this.emit('consumerCreated', peerConsumer, false, false, true);
+
+						this.updateInboundTrackContexts(peerId);
 
 						this.consumerCreationState.delete(id);
 
@@ -589,6 +594,7 @@ export class MediaService extends EventEmitter {
 
 								this.consumerPreferredLayers.set(consumer.id, { spatialLayer, temporalLayer });
 								this.signalingService.notify('setConsumerPreferredLayers', { consumerId: consumer.id, spatialLayer, temporalLayer });
+								this.monitor?.setInboundTrackContext(consumer.track.id, { presentedResolution: { width: resolution.width, height: resolution.height } });
 							});
 
 							consumer.appData.resolutionWatcher = resolutionWatcher;
@@ -623,6 +629,8 @@ export class MediaService extends EventEmitter {
 						// only if) its peer is within the visible spotlight window.
 
 						this.emit('consumerCreated', consumer, paused, consumerPaused, false);
+
+						this.updateInboundTrackContexts(peerId);
 
 						this.consumerCreationState.delete(id);
 
@@ -845,16 +853,58 @@ export class MediaService extends EventEmitter {
 
 		if (change === 'close') {
 			consumer?.[`${change}`]();
-		} else if (local) {
+
+			return;
+		}
+
+		if (local) {
 			consumer?.[`${change}`]();
+
+			this.monitor?.setInboundTrackContext(consumer.track.id, { paused: change === 'pause' });
 		} else {
-			consumer.appData.producerPaused = change === 'pause';
+			const producerPaused = change === 'pause';
+
+			consumer.appData.producerPaused = producerPaused;
+
+			this.monitor?.setInboundTrackContext(consumer.track.id, { remoteOutboundTrackPaused: producerPaused });
 
 			logger.debug({
 				consumerId,
 				change,
 				newProducerPaused: consumer.appData.producerPaused
 			}, 'MediaService: updated producerPaused flag');
+		}
+	}
+
+	/**
+	 * Feeds the client monitor the context it cannot discover on its own for the
+	 * inbound tracks of one peer: whether a track is a camera or a screen share,
+	 * and which video track an audio track belongs to (needed for A/V desync
+	 * detection).
+	 */
+	private updateInboundTrackContexts(peerId: string): void {
+		const monitor = this.monitor;
+
+		if (!monitor) return;
+
+		const sourceOf = (consumer: Consumer | PeerConsumer): ProducerSource | undefined =>
+			consumer.appData.source as ProducerSource | undefined;
+		const peerConsumers = Array.from(this.consumers.values())
+			.filter((consumer) => (consumer.appData.peerId as string | undefined) === peerId);
+		const cameraVideo = peerConsumers.find((consumer) => sourceOf(consumer) === 'webcam');
+		const screenVideo = peerConsumers.find((consumer) => sourceOf(consumer) === 'screen');
+
+		for (const consumer of peerConsumers) {
+			const source = sourceOf(consumer);
+			const isScreenShare = source === 'screen' || source === 'screenaudio';
+			const linkedVideo = isScreenShare ? screenVideo : cameraVideo;
+
+			monitor.setInboundTrackContext(consumer.track.id, {
+				contentType: isScreenShare ? 'screenshare' : 'camera',
+				...(consumer.kind === 'audio' && linkedVideo
+					? { linkedVideoTrackId: linkedVideo.track.id }
+					: {}),
+			});
 		}
 	}
 
@@ -891,11 +941,7 @@ export class MediaService extends EventEmitter {
 			const MediaSoup = await import('mediasoup-client');
 
 			this.mediasoup = new MediaSoup.Device();
-
-			const monitor = await this.monitor;
-
-			if (monitor)
-				monitor.addSource(this.mediasoup);
+			this.monitor?.addSource(this.mediasoup);
 		}
 
 		if (!this.mediasoup.loaded) await this.mediasoup.load({ routerRtpCapabilities });
@@ -909,6 +955,39 @@ export class MediaService extends EventEmitter {
 		this.sendTransport = await this.createTransport('createSendTransport');
 		this.recvTransport = await this.createTransport('createRecvTransport');
 		this.resolveTransportsReady();
+
+		this.startObserverSampling().catch((error) =>
+			logger.error('error starting observer sampling [error:%o]', error)
+		);
+	}
+
+	private async startObserverSampling(): Promise<void> {
+		if (!this.monitor) return;
+		if (!this.monitor.config.samplingPeriodInMs) return;
+
+		logger.debug('startObserverSampling()');
+
+		const dataProducer = await this.produceData({
+			label: 'observertc-samples',
+			ordered: false,
+			maxRetransmits: 0,
+		});
+
+		const onSample = ({ sample }: ClientMonitorEvents['sample-created'][0]) => {
+			if (dataProducer.closed) return;
+
+			try {
+				dataProducer.send(JSON.stringify(sample));
+			} catch (error) {
+				logger.error('startObserverSampling() | error sending sample [error:%o]', error);
+			}
+		};
+
+		this.monitor.on('sample-created', onSample);
+
+		dataProducer.observer.once('close', () => {
+			this.monitor?.off('sample-created', onSample);
+		});
 	}
 
 	private async createTransport(creator: 'createSendTransport' | 'createRecvTransport'): Promise<Transport> {
@@ -1041,10 +1120,14 @@ export class MediaService extends EventEmitter {
 					transport = p2pDevice.createSendTransport({ iceServers: this.iceServers });
 				}
 
-				const monitor = await this.monitor;
+				const monitor = this.monitor;
 
-				if (monitor)
-					monitor.addSource(transport.handler.pc);
+				if (monitor) {
+					const { pc } = transport.handler;
+
+					monitor.addSource(pc);
+					transport.observer.once('close', () => monitor.removeSource(pc));
+				}
 
 				transport.on('icecandidate', (candidate) => {
 					this.signalingService.notify('candidate', {

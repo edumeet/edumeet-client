@@ -1,74 +1,72 @@
-import React, { useEffect, useState } from 'react';
-import { useContext } from 'react';
-import { ServiceContext } from '../../store/store';
-import Stats from './Stats';
-import { SignalCellularAlt } from '@mui/icons-material';
+import React from 'react';
+import { ProducerSource } from '../../utils/types';
+import QualityBadge, { QualityBadgeSize } from './QualityBadge';
+import { Quality, useClientQuality, useInboundTrackStats, useOutboundTrackStats } from './useTrackStats';
 
-const QualityIndicator = (): React.JSX.Element => {
-	const { mediaService } = useContext(ServiceContext);
-	const [ isDistorted, setDistorted ] = useState<boolean>(false);
+interface QualityIndicatorProps {
+	// Consumed video track of a remote peer.
+	consumerId?: string;
+	// Consumed audio track of the same peer.
+	audioConsumerId?: string;
+	// Locally produced source.
+	source?: ProducerSource;
+	fontSize?: QualityBadgeSize;
+	placement?: 'top' | 'bottom' | 'left' | 'right';
+}
 
-	useEffect(() => {
-		// this runs on mount
-		const monitor = mediaService.monitor;
-		
-		if (!monitor) {
-			return;
-		}
+/** The track in the worst shape is the one worth warning about. */
+const worstOf = (candidates: (Quality | undefined)[]): Quality | undefined => {
+	const known = candidates.filter((candidate): candidate is Quality => Boolean(candidate));
 
-		const update = () => {
-			const activeIssues = (monitor as unknown as {
-				activeIssues?: Record<string, unknown[]>;
-			}).activeIssues;
+	if (known.length === 0) return undefined;
 
-			const congestionIssues = activeIssues?.congestion ?? [ ];
+	return known.reduce((worst, candidate) => {
+		if (candidate.score === undefined) return worst;
+		if (worst.score === undefined) return candidate;
 
-			setDistorted(congestionIssues.length > 0);
-		};
+		return candidate.score < worst.score ? candidate : worst;
+	});
+};
 
-		update();
+/**
+ * Quality warning for one participant.
+ *
+ * With no props it reports the client as a whole (which is where congestion
+ * shows up, since that is detected per peer connection rather than per track) -
+ * that is the form used in the top bar for the local user. Given consumer ids
+ * it reports that peer's consumed tracks, which is the form used in the
+ * participant list.
+ *
+ * It is never rendered over a video tile: overlays end up baked into local
+ * recordings, which capture the page.
+ */
+const QualityIndicator = ({
+	consumerId,
+	audioConsumerId,
+	source,
+	fontSize = 'small',
+	placement = 'bottom',
+}: QualityIndicatorProps): React.JSX.Element => {
+	const perPeer = Boolean(consumerId || audioConsumerId || source);
 
-		const onIssue = (issue: unknown) => {
-			const type = (issue as { type?: string }).type;
+	const videoQuality = useInboundTrackStats(consumerId);
+	const audioQuality = useInboundTrackStats(audioConsumerId);
+	const outboundQuality = useOutboundTrackStats(source);
+	const clientQuality = useClientQuality(!perPeer);
 
-			if (type === 'congestion') {
-				update();
-			}
-		};
+	const quality = perPeer
+		? worstOf([ videoQuality, audioQuality, outboundQuality ])
+		: clientQuality;
 
-		const onResolvedIssue = (issue: unknown) => {
-			const type = (issue as { type?: string }).type;
-
-			if (type === 'congestion') {
-				update();
-			}
-		};
-
-		monitor.on('issue', onIssue);
-		monitor.on('resolved-issue', onResolvedIssue);
-
-		return () => {
-			if (!monitor) {
-				return;
-			}
-			
-			monitor.off('issue', onIssue);
-			monitor.off('resolved-issue', onResolvedIssue);
-		};
-	}, [ mediaService, mediaService.monitor ]);
-
-	return (<div>
-		{isDistorted ? (
-			<Stats
-				orientation='vertical'
-				horizontalPlacement='right'
-				verticalPlacement='top'
-			>
-				
-				<SignalCellularAlt style={{ color: 'red' }}/>
-			</Stats>
-		) : (<></>)}
-	</div>);
+	return (
+		<QualityBadge
+			score={quality?.score}
+			reasons={quality?.reasons}
+			issues={quality?.issues}
+			fontSize={fontSize}
+			placement={placement}
+		/>
+	);
 };
 
 export default QualityIndicator;

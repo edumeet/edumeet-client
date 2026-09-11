@@ -127,8 +127,11 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
 	reduxLoggingEnabled: false,
-	clientMontitor: {
+	obfuscateDisplayName: false,
+	clientMonitor: {
 		collectingPeriodInMs: 2000,
+		samplingPeriodInMs: 0, // 0 = stats collected locally only, no data channel transmission
+		watchTabVisibility: true,
 	},
 	imprintUrl: '',
 	e2eeProvider: 'mls',
@@ -189,7 +192,11 @@ export interface EdumeetConfig {
 	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
-	clientMontitor: ClientMonitorConfig;
+	obfuscateDisplayName: boolean;
+	clientMonitor?: ClientMonitorConfig;
+
+	/** @deprecated misspelled, use `clientMonitor` instead. Still honored for backwards compatibility. */
+	clientMontitor?: ClientMonitorConfig;
 	imprintUrl: string;
 	e2eeProvider: 'pairwise' | 'mls';
 	privacyUrl: string;

@@ -8,6 +8,7 @@ import { useAppSelector } from '../../store/hooks';
 import { isMobileSelector, selectedVideoBoxesSelector, videoBoxesSelector } from '../../store/selectors';
 import Spotlights from '../spotlights/Spotlights';
 import ControlButtonsBar from '../controlbuttonsbar/ControlButtonsBar';
+import GeneralStats from '../rtpquality/GeneralStats';
 
 type WrapperContainerProps = {
 	headless: number;
@@ -61,6 +62,19 @@ interface SideContainerProps {
 	width?: string;
 }
 
+// The client level stats panel is part of the stats overlay toggled with 'Q'.
+// Bottom left is the least contested corner: the controls bar is centered, the
+// chat and participant panels are on the right, and the per tile stats windows
+// sit in each tile's top left.
+const GeneralStatsContainer = styled(Box)(({ theme }) => ({
+	position: 'fixed',
+	bottom: theme.spacing(1),
+	left: theme.spacing(1),
+	zIndex: 20,
+	maxHeight: 'calc(100% - 128px)',
+	overflow: 'auto',
+}));
+
 const SideContainer = styled(Paper)<SideContainerProps>(({ theme, height, width }) => ({
 	height,
 	width,
@@ -85,6 +99,7 @@ const MainContent = (): React.JSX.Element => {
 	const headless = useAppSelector((state) => state.room.headless);
 	const spotlightsVisible = useAppSelector(selectedVideoBoxesSelector) > 0;
 	const videosVisible = useAppSelector(videoBoxesSelector) > 0;
+	const showStats = useAppSelector((state) => state.ui.showStats);
 
 	const height = (chatOpen && participantListOpen) && verticalDivide ? '50%' : '100%';
 
@@ -116,6 +131,7 @@ const MainContent = (): React.JSX.Element => {
 	return (
 		<WrapperContainer headless={headless ? 1 : 0} ref={mainContainer}>
 			<ControlButtonsBar />
+			{ !isMobile && showStats && <GeneralStatsContainer><GeneralStats /></GeneralStatsContainer> }
 			<MainContainer horizontal={horizontal ? 1 : 0} >
 				{ spotlightsVisible && <Spotlights windowSize={windowSize} horizontal={horizontal} videos={videosVisible} /> }
 				{ videosVisible && <Democratic windowSize={windowSize} horizontal={spotlightsVisible && horizontal} spotlights={spotlightsVisible} /> }

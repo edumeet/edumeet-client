@@ -88,7 +88,8 @@ const persistConfig = {
 	stateReconciler: autoMergeLevel2,
 	whitelist: [ 'settings' ]
 };
-const monitor = edumeetConfig.clientMontitor ? new ClientMonitor(edumeetConfig.clientMontitor) : undefined;
+const clientMonitorConfig = edumeetConfig.clientMonitor ?? edumeetConfig.clientMontitor;
+const monitor = clientMonitorConfig ? new ClientMonitor(clientMonitorConfig) : undefined;
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
 const managementService = (async () => {
@@ -111,7 +112,7 @@ const effectsService = new EffectsService();
 /**
  * The entire App is wrapped in this context, so that all
  * components can access the mediaService and the fileService.
- * 
+ *
  * @see VideoView.tsx for an example.
  */
 export const ServiceContext = createContext<{

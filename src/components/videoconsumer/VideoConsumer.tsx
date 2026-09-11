@@ -13,7 +13,6 @@ import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
 import DisplayName from '../displayname/DisplayName';
 import MediaControls from '../mediacontrols/MediaControls';
 import PeerStatsView from '../rtpquality/PeerStatsView';
-import QualityIndicator from '../rtpquality/QualityIndicator';
 import VideoBox from '../videobox/VideoBox';
 import VideoView from '../videoview/VideoView';
 import Volume from '../volume/Volume';
@@ -89,7 +88,6 @@ const VideoConsumer = ({ consumer, style, onAspectChange }: VideoConsumerProps):
 						{ !isMobile && <WindowedVideoButton consumerId={consumer.id} toolTipLocation='bottom' /> }
 					</MediaControls>
 					{ !isMobile && showStats && <PeerStatsView consumerId={consumer.id} audioConsumerId={micConsumer?.id} /> }
-					<QualityIndicator />
 				</>
 			}
 		</VideoBox>

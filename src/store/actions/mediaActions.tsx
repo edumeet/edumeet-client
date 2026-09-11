@@ -195,7 +195,7 @@ export const stopTranscription = (): AppThunk<Promise<void>> => async (
  * This thunk action updates the preview audio track
  * with whatever contraints are set in the store. It may
  * also start or restart the track in the process.
- * 
+ *
  * @param options - Options.
  * @returns {AppThunk<Promise<void>>} Promise.
  */
@@ -292,7 +292,7 @@ export const updatePreviewMic = ({
 
 /**
  * This thunk action stops the preview audio track.
- * 
+ *
  * @param options - Options.
  * @returns {void}
  */
@@ -321,7 +321,7 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
  * This thunk action updates the preview video track
  * with whatever contraints are set in the store. It may
  * also start or restart the track in the process.
- * 
+ *
  * @param options - Options.
  * @returns {Promise<void>} Promise.
  */
@@ -429,7 +429,7 @@ export const updatePreviewWebcam = ({
 
 /**
  * This thunk action stops the preview video track.
- * 
+ *
  * @param options - Options.
  * @returns {void}
  */
@@ -463,7 +463,7 @@ export const stopPreviewWebcam = (): AppThunk<Promise<void>> => async (
  * This thunk action updates the audio settings in the store,
  * stops the preview audio track, starts/restarts the main audio
  * track and starts/restarts the preview audio track.
- * 
+ *
  * @param settings - Settings.
  * @returns {Promise<void>} Promise.
  */
@@ -492,7 +492,7 @@ export const updateAudioSettings = (
  * This thunk action starts/restarts the main audio track.
  * It will use the MediaService to create the Producer from it
  * which will send it to the server.
- * 
+ *
  * @param options - Options.
  * @returns {Promise<void>} Promise.
  */
@@ -649,7 +649,7 @@ export const resumeMic = (): AppThunk<void> => (
  * This thunk action updates the video settings in the store,
  * stops the preview video track, starts/restarts the main video
  * track and starts/restarts the preview video track.
- * 
+ *
  * @param settings - Settings.
  * @returns {Promise<void>} Promise.
  */
@@ -706,7 +706,7 @@ export const updateVideoSettings = (settings: VideoSettings = {}): AppThunk<Prom
  * This thunk action starts/restarts the main video track.
  * It will use the MediaService to create the Producer from it
  * which will send it to the server.
- * 
+ *
  * @param options - Options.
  * @returns {Promise<void>} Promise.
  */
@@ -856,8 +856,8 @@ export const stopWebcam = (): AppThunk<void> => (
 /**
  * This thunk action updates the screen sharing settings in the store,
  * starts/restarts the screen sharing track.
- * 
- * @param settings 
+ *
+ * @param settings
  * @returns {Promise<void>} Promise.
  */
 export const updateScreenshareSettings = (
@@ -880,7 +880,7 @@ export const updateScreenshareSettings = (
  * This thunk action starts/restarts the main screen sharing track.
  * It will use the MediaService to create the Producer from it
  * which will send it to the server.
- * 
+ *
  * @param options - Options.
  * @returns {Promise<void>} Promise.
  */
@@ -963,6 +963,7 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 					},
 					appData: { source: 'screen' }
 				});
+
 			} else {
 				await mediaService.mediaSenders['screen'].start({
 					track: videoTrack,
@@ -973,6 +974,7 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 					appData: { source: 'screen' }
 				});
 			}
+			mediaService.monitor?.setOutboundTrackContext(videoTrack.id, { contentType: 'screenshare' });
 
 			dispatch(meActions.setScreenEnabled(true));
 
@@ -1001,6 +1003,7 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 					},
 					appData: { source: 'screenaudio' }
 				});
+				mediaService.monitor?.setOutboundTrackContext(audioTrack.id, { contentType: 'screenshare' });
 
 				dispatch(meActions.setScreenAudioEnabled(true));
 			}
@@ -1044,7 +1047,7 @@ export const stopScreenSharing = (): AppThunk<void> => (
  * This thunk action starts and extra video track.
  * It will use the MediaService to create the Producer from it
  * which will send it to the server.
- * 
+ *
  * @param options - Options.
  * @returns {Promise<void>} Promise.
  */
