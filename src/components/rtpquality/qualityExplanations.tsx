@@ -10,6 +10,10 @@ import { intl } from '../../utils/intlManager';
  * explanation - so a library upgrade that adds a detector degrades gracefully
  * instead of breaking.
  *
+ * The deprecated combined `congestion` detector is deliberately absent:
+ * congestion is reported per direction as `uplink-congestion` and
+ * `downlink-congestion`.
+ *
  * The strings here are the English defaults. They are looked up as
  * `quality.explanation.<key>` in `src/translations/*.json`, and a locale that
  * has no entry for one falls back to the default below.
@@ -52,7 +56,6 @@ const EXPLANATION_DEFAULTS: Record<string, string> = {
 	'blocked-inbound-media-transport': 'Incoming media appears to be blocked by a firewall or proxy.',
 	'blocked-outbound-media-transport': 'Outgoing media appears to be blocked by a firewall or proxy.',
 	'blocked-stun-requests': 'STUN requests are not getting through, so the connection cannot discover a network path.',
-	congestion: 'The connection is carrying more media than it can handle, so quality is being reduced to compensate.',
 	cpulimitation: 'This device is short on CPU, so media quality is being reduced to keep the call running.',
 	'decoder-bottleneck': 'Frames are arriving faster than this device can decode them.',
 	'dtls-handshake-failed': 'The media connection could not be secured, so media cannot flow.',

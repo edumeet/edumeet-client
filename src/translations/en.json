@@ -49,7 +49,6 @@
 	"quality.explanation.blocked-inbound-media-transport": "Incoming media appears to be blocked by a firewall or proxy.",
 	"quality.explanation.blocked-outbound-media-transport": "Outgoing media appears to be blocked by a firewall or proxy.",
 	"quality.explanation.blocked-stun-requests": "STUN requests are not getting through, so the connection cannot discover a network path.",
-	"quality.explanation.congestion": "The connection is carrying more media than it can handle, so quality is being reduced to compensate.",
 	"quality.explanation.cpulimitation": "This device is short on CPU, so media quality is being reduced to keep the call running.",
 	"quality.explanation.decoder-bottleneck": "Frames are arriving faster than this device can decode them.",
 	"quality.explanation.dtls-handshake-failed": "The media connection could not be secured, so media cannot flow.",

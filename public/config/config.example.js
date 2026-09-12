@@ -348,15 +348,29 @@ var config = {
 		samplingPeriodInMs: 5000,
 
 		/**
-		 * Congestion detector — always on by default (sensitivity: 'medium').
-		 * When congestion is detected the monitor calls raiseIssue('congestion')
-		 * which emits 'issue' / 'issue-resolved' events. Congestion is folded
-		 * into the QualityIndicator badge of every tile.
+		 * Congestion detectors, one per direction. Both are on by default and
+		 * raise 'uplink-congestion' / 'downlink-congestion' issues, which feed
+		 * the score reasons behind the quality badge.
 		 *
-		 * Set to null to disable the detector entirely.
+		 * Do NOT use the old combined `congestionDetector` — it is deprecated.
+		 *
+		 * minSeverity: how severe (0..1) an episode has to be before the issue
+		 *              is raised; raise it to get fewer, stronger reports.
+		 * *BloatingSaturatesAt: the bloating value treated as fully saturated
+		 *              when scoring severity — pacer delay for the uplink, jitter
+		 *              buffer delay for the downlink.
+		 *
+		 * Set either to null to disable that direction, or omit both to keep the
+		 * library defaults.
 		 */
-		congestionDetector: {
-			sensitivity: 'medium',
+		uplinkCongestionDetector: {
+			minSeverity: 0.2,
+			pacerBloatingSaturatesAt: 0.5,
+		},
+
+		downlinkCongestionDetector: {
+			minSeverity: 0.2,
+			bufferBloatingSaturatesAt: 0.5,
 		},
 	},
 
