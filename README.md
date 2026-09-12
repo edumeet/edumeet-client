@@ -119,7 +119,6 @@ The client merges your `window.config` with built-in defaults (see `src/utils/ty
 | imprintUrl | Show an imprint link (blank to hide). | `string` | `''` |
 | privacyUrl | Show a privacy notice link (blank to hide). | `string` | `''` |
 | knownRegions | Region codes offered in the management UI's tenant editor for the per-tenant "limit media nodes to specific regions" picker. Values must match region labels in the room-server's `countryToRegion` config. Leave empty to hide the limit toggle. | `string[]` | `[]` |
-| e2eeProvider | Key agreement used in end-to-end encrypted rooms. Use `mls` (one MLS group per room, RFC 9420); `pairwise` selects the earlier per-pair key exchange and is kept only as a fallback. Every client of an instance must use the same value, since a room is either all `mls` or all `pairwise`. Details in the E2EE document of the edumeet repository. | `mls \| pairwise` | `mls` |
 
 #### Theme settings (`config.theme`) (4.2+)
 
