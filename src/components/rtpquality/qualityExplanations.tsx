@@ -1,3 +1,5 @@
+import { intl } from '../../utils/intlManager';
+
 /**
  * Plain language explanations for the score reasons and issue types that
  * `@observertc/client-monitor-js` reports.
@@ -7,8 +9,12 @@
  * not listed here still renders (with its humanized label), it just has no
  * explanation - so a library upgrade that adds a detector degrades gracefully
  * instead of breaking.
+ *
+ * The strings here are the English defaults. They are looked up as
+ * `quality.explanation.<key>` in `src/translations/*.json`, and a locale that
+ * has no entry for one falls back to the default below.
  */
-const QUALITY_EXPLANATIONS: Record<string, string> = {
+const EXPLANATION_DEFAULTS: Record<string, string> = {
 	// Score reasons - inbound video
 	'blocky-video': 'The picture is coarsely compressed, so it looks blocky or smeared. The sender is not getting enough bandwidth for this resolution.',
 	'choppy-video': 'Frames arrive unevenly, so motion stutters even though video is still flowing.',
@@ -69,7 +75,17 @@ const QUALITY_EXPLANATIONS: Record<string, string> = {
 	'capture-track-muted': 'The captured track has been muted by the system.',
 };
 
-/** The explanation for a score reason or issue key, when there is one. */
-export const describeQualityKey = (key: string): string | undefined => QUALITY_EXPLANATIONS[key];
+/**
+ * The translated explanation for a score reason or issue key, when there is one.
+ *
+ * The id is built from the key rather than written out per string, because the
+ * key set is the library's and grows with it - an unknown key simply has no
+ * explanation.
+ */
+export const describeQualityKey = (key: string): string | undefined => {
+	const defaultMessage = EXPLANATION_DEFAULTS[key];
 
-export default QUALITY_EXPLANATIONS;
+	if (!defaultMessage) return undefined;
+
+	return intl.formatMessage({ id: `quality.explanation.${key}`, defaultMessage });
+};

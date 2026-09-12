@@ -128,9 +128,12 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	},
 	reduxLoggingEnabled: false,
 	obfuscateDisplayName: false,
+	connectivityCheckEnabled: true,
 	clientMonitor: {
-		collectingPeriodInMs: 2000,
-		samplingPeriodInMs: 0, // 0 = stats collected locally only, no data channel transmission
+		collectingPeriodInMs: 5000,
+		// Must stay a positive multiple of collectingPeriodInMs; 0 would collect
+		// stats locally only and never send them to the media node.
+		samplingPeriodInMs: 5000,
 		watchTabVisibility: true,
 	},
 	imprintUrl: '',
@@ -192,7 +195,12 @@ export interface EdumeetConfig {
 	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
+
+	/** When true, the display name is masked in the client monitoring attachments. The UI is unaffected. */
 	obfuscateDisplayName: boolean;
+
+	/** Show the top bar connectivity indicator and the participant list connection check. */
+	connectivityCheckEnabled: boolean;
 	clientMonitor?: ClientMonitorConfig;
 
 	/** @deprecated misspelled, use `clientMonitor` instead. Still honored for backwards compatibility. */

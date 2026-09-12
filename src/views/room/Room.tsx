@@ -11,6 +11,7 @@ import FilesharingDialog from '../../components/filesharingdialog/FilesharingDia
 import ExtraVideoDialog from '../../components/extravideodialog/ExtraVideoDialog';
 import PermissionsDialog from '../../components/permissionsdialog/PermissionsDialog';
 import Help from '../../components/helpdialog/HelpDialog';
+import ConnectivityDialog from '../../components/connectivity/ConnectivityDialog';
 import MainContent from '../../components/maincontent/MainContent';
 import HelpButton from '../../components/controlbuttons/HelpButton';
 import { useNotifier, useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -84,6 +85,7 @@ const Room = (): React.JSX.Element => {
 			<FilesharingDialog />
 			<ExtraVideoDialog />
 			<PermissionsDialog />
+			<ConnectivityDialog />
 			<HelpButton type='iconbutton' />
 		</>
 	);

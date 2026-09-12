@@ -196,6 +196,29 @@ var config = {
 	obfuscateDisplayName: false,
 
 	/**
+	 * Optional: connectivity reporting.
+	 *
+	 * When enabled, a red broken-link icon appears in the top bar for as long as
+	 * media cannot get through, and the participant list gets a 'Check
+	 * connection' button. Both open a dialog that walks the steps of connecting
+	 * - network addresses, STUN/TURN reachability, ICE path, DTLS handshake,
+	 * sending media, receiving media - marking each green, red or pending, with
+	 * an explanation of whatever failed. That is what tells a blocked outgoing
+	 * firewall apart from a filtered DTLS handshake or a dead relay.
+	 *
+	 * No dialog ever opens by itself; the user is never interrupted.
+	 *
+	 * Only the connectivity detectors count here. Quality problems (congestion,
+	 * delay, loss, CPU) are reported by the separate quality badge instead - the
+	 * call works in those cases, it is just worse.
+	 *
+	 * Requires `clientMonitor` to be enabled.
+	 *
+	 * Default: true
+	 */
+	connectivityCheckEnabled: true,
+
+	/**
 	 * Optional: enable p2p mode if supported by deployment.
 	 */
 	p2penabled: false,
@@ -300,28 +323,29 @@ var config = {
 	clientMonitor: {
 		/**
 		 * How often (ms) the monitor polls WebRTC getStats().
-		 * Lower values give finer resolution but increase CPU cost.
-		 * Default: 2000
+		 * Lower values give finer resolution but increase CPU cost. This is also
+		 * how often the quality window and the quality badges refresh.
+		 * Default: 5000
 		 */
-		collectingPeriodInMs: 2000,
+		collectingPeriodInMs: 5000,
 
 		/**
 		 * How often (ms) a ClientSample is assembled and sent over the
 		 * 'observertc-samples' data channel to the media node.
 		 *
-		 * 0 (or omit) — samples are NEVER created or sent. Stats are still
-		 *               collected locally (collectingPeriodInMs still runs)
-		 *               so the congestion detector and QualityIndicator work,
-		 *               but nothing is transmitted to the media node.
+		 * 0 — samples are NEVER created or sent. Stats are still collected
+		 *     locally (collectingPeriodInMs still runs) so the scores, the
+		 *     quality window and the quality badges keep working, but nothing
+		 *     is transmitted to the media node.
 		 *
-		 * > 0          — a sample is created and sent every N ms. Must be a
-		 *               positive multiple of collectingPeriodInMs.
-		 *               Only set this when the media node is configured with
-		 *               --s3 or --clientSamplesOutputDirectory.
+		 * > 0 — a sample is created and sent every N ms. Must be a positive
+		 *       multiple of collectingPeriodInMs. The media node only persists
+		 *       them when it runs with --s3 or --clientSamplesOutputDirectory;
+		 *       otherwise they arrive and are discarded.
 		 *
-		 * Default: 0 (disabled)
+		 * Default: 5000 (one sample per collected round)
 		 */
-		samplingPeriodInMs: 0,
+		samplingPeriodInMs: 5000,
 
 		/**
 		 * Congestion detector — always on by default (sensitivity: 'medium').

@@ -88,8 +88,9 @@ const persistConfig = {
 	stateReconciler: autoMergeLevel2,
 	whitelist: [ 'settings' ]
 };
-const clientMonitorConfig = edumeetConfig.clientMonitor ?? edumeetConfig.clientMontitor;
-const monitor = clientMonitorConfig ? new ClientMonitor(clientMonitorConfig) : undefined;
+// The legacy `clientMontitor` key is resolved in edumeetConfig, so only
+// `clientMonitor` is read here.
+const monitor = edumeetConfig.clientMonitor ? new ClientMonitor(edumeetConfig.clientMonitor) : undefined;
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
 const managementService = (async () => {

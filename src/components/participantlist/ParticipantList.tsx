@@ -29,6 +29,7 @@ import DroppableWrapper from '../draganddrop/DroppableWrapper';
 import DraggableWrapper from '../draganddrop/DraggableWrapper';
 import GhostObject from '../draganddrop/GhostObject';
 import ReceiveVideoButton from '../textbuttons/ReceiveVideoButton';
+import ConnectivityButton from '../textbuttons/ConnectivityButton';
 
 const ParticipantListDiv = styled(Box)(({ theme }) => ({
 	width: '100%',
@@ -76,6 +77,7 @@ const ParticipantList = (): React.JSX.Element => {
 		<ParticipantListDiv>
 			<OwnControlsDiv>
 				<ReceiveVideoButton size='small' />
+				<ConnectivityButton size='small' />
 			</OwnControlsDiv>
 			<Divider sx={{ mb: 1 }} />
 			{ isModerator && <>

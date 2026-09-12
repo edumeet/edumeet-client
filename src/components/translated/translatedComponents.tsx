@@ -10,6 +10,96 @@ export const noneLabel = (): string => intl.formatMessage({
 	defaultMessage: 'None'
 });
 
+export const checkConnectionLabel = (): string => intl.formatMessage({
+	id: 'label.checkConnection',
+	defaultMessage: 'Check connection'
+});
+
+export const connectivityProblemTitleLabel = (): string => intl.formatMessage({
+	id: 'connectivity.title',
+	defaultMessage: 'Connection problem detected'
+});
+
+export const connectivityCheckTitleLabel = (): string => intl.formatMessage({
+	id: 'connectivity.titleCheck',
+	defaultMessage: 'Connection check'
+});
+
+export const connectivityProblemLabel = (): string => intl.formatMessage({
+	id: 'connectivity.indicator',
+	defaultMessage: 'Connection problem'
+});
+
+export const connectivityHealthyLabel = (): string => intl.formatMessage({
+	id: 'connectivity.healthy',
+	defaultMessage: 'Your connection looks fine. Every step below is working.'
+});
+
+export const connectivityPendingLabel = (): string => intl.formatMessage({
+	id: 'connectivity.pending',
+	defaultMessage: 'Still setting up the connection. The steps below turn green as they complete.'
+});
+
+export const connectivityCandidatesLabel = (): string => intl.formatMessage({
+	id: 'connectivity.candidates',
+	defaultMessage: 'Network addresses found'
+});
+
+export const connectivityStunLabel = (): string => intl.formatMessage({
+	id: 'connectivity.stun',
+	defaultMessage: 'Server reachable (STUN/TURN)'
+});
+
+export const connectivityIcePathLabel = (): string => intl.formatMessage({
+	id: 'connectivity.icePath',
+	defaultMessage: 'Connection established'
+});
+
+export const connectivityDtlsLabel = (): string => intl.formatMessage({
+	id: 'connectivity.dtls',
+	defaultMessage: 'Encryption handshake (DTLS)'
+});
+
+export const connectivityOutboundLabel = (): string => intl.formatMessage({
+	id: 'connectivity.outbound',
+	defaultMessage: 'Sending media'
+});
+
+export const connectivityInboundLabel = (): string => intl.formatMessage({
+	id: 'connectivity.inbound',
+	defaultMessage: 'Receiving media'
+});
+
+export const connectivityCandidatesHintLabel = (): string => intl.formatMessage({
+	id: 'connectivity.hint.candidates',
+	defaultMessage: 'No local network address could be found. A VPN or virtual network adapter is the usual cause.'
+});
+
+export const connectivityStunHintLabel = (): string => intl.formatMessage({
+	id: 'connectivity.hint.stun',
+	defaultMessage: 'The media server is not answering. A firewall is most likely blocking UDP traffic to it.'
+});
+
+export const connectivityIcePathHintLabel = (): string => intl.formatMessage({
+	id: 'connectivity.hint.icePath',
+	defaultMessage: 'No usable network path to the server. UDP is probably blocked, so a TURN relay over TCP or TLS is needed.'
+});
+
+export const connectivityDtlsHintLabel = (): string => intl.formatMessage({
+	id: 'connectivity.hint.dtls',
+	defaultMessage: 'The network path works but the encryption handshake did not finish. A proxy or security appliance may be filtering DTLS.'
+});
+
+export const connectivityOutboundHintLabel = (): string => intl.formatMessage({
+	id: 'connectivity.hint.outbound',
+	defaultMessage: 'Your audio and video are not leaving this device. An outgoing firewall rule is the usual cause.'
+});
+
+export const connectivityInboundHintLabel = (): string => intl.formatMessage({
+	id: 'connectivity.hint.inbound',
+	defaultMessage: 'No audio or video is arriving. Incoming media is most likely being blocked upstream of this device.'
+});
+
 export const yesLabel = (): string => intl.formatMessage({
 	id: 'label.yes',
 	defaultMessage: 'Yes'

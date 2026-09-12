@@ -20,6 +20,7 @@ export interface UiState {
 	extraVideoDialogOpen: boolean;
 	extraAudioDialogOpen: boolean;
 	permissionsDialogOpen: boolean;
+	connectivityDialogOpen: boolean;
 	currentSettingsTab: SettingsTab;
 	showStats: boolean;
 	chatOpen: boolean;
@@ -45,6 +46,7 @@ const initialState: UiState = {
 	extraVideoDialogOpen: false,
 	extraAudioDialogOpen: false,
 	permissionsDialogOpen: false,
+	connectivityDialogOpen: false,
 	currentSettingsTab: 'media',
 	chatOpen: false,
 	activeChatThread: null,
