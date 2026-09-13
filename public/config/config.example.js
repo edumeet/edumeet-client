@@ -183,6 +183,42 @@ var config = {
 	reduxLoggingEnabled: false,
 
 	/**
+	 * Optional: mask the display name in the ObserveRTC client monitoring
+	 * attachments (see `clientMonitor` below), so that the samples leaving the
+	 * client do not carry real participant names. Each name keeps the first
+	 * letter of every word, the rest is replaced with dots: 'Jane Doe' is sent
+	 * as 'J••• D••'.
+	 *
+	 * This affects monitoring data ONLY — the UI always shows real names.
+	 *
+	 * Default: false
+	 */
+	obfuscateDisplayName: false,
+
+	/**
+	 * Optional: connectivity reporting.
+	 *
+	 * When enabled, a red broken-link icon appears in the top bar for as long as
+	 * media cannot get through, and the participant list gets a 'Check
+	 * connection' button. Both open a dialog that walks the steps of connecting
+	 * - network addresses, STUN/TURN reachability, ICE path, DTLS handshake,
+	 * sending media, receiving media - marking each green, red or pending, with
+	 * an explanation of whatever failed. That is what tells a blocked outgoing
+	 * firewall apart from a filtered DTLS handshake or a dead relay.
+	 *
+	 * No dialog ever opens by itself; the user is never interrupted.
+	 *
+	 * Only the connectivity detectors count here. Quality problems (congestion,
+	 * delay, loss, CPU) are reported by the separate quality badge instead - the
+	 * call works in those cases, it is just worse.
+	 *
+	 * Requires `clientMonitor` to be enabled.
+	 *
+	 * Default: true
+	 */
+	connectivityCheckEnabled: true,
+
+	/**
 	 * Optional: enable p2p mode if supported by deployment.
 	 */
 	p2penabled: false,
@@ -266,11 +302,76 @@ var config = {
 	},
 
 	/**
-	 * ObserverRTC client-monitor configuration (if you use it).
+	 * ObserverRTC client-monitor configuration.
+	 *
+	 * When set, the client collects WebRTC stats, detects congestion and sends
+	 * samples to the media node over a dedicated SCTP data channel
+	 * (label: 'observertc-samples').  The media node writes them to disk or
+	 * S3 depending on its --clientSamplesOutputDirectory / --s3Bucket flags.
+	 *
+	 * Set to `undefined` (or remove the key) to disable monitoring entirely.
+	 *
+	 * The scores and the reasons behind them (per track and for the client as a
+	 * whole) come from this monitor, so disabling it also empties the quality
+	 * window.
+	 *
+	 * NOTE: the key used to be spelled `clientMontitor`. That spelling is still
+	 * accepted, but `clientMonitor` is the one to use.
+	 *
+	 * @see https://github.com/ObserveRTC/client-monitor-js
 	 */
-	clientMontitor: {
-		// enabled: false,
-		// configUrl: ''
+	clientMonitor: {
+		/**
+		 * How often (ms) the monitor polls WebRTC getStats().
+		 * Lower values give finer resolution but increase CPU cost. This is also
+		 * how often the quality window and the quality badges refresh.
+		 * Default: 5000
+		 */
+		collectingPeriodInMs: 5000,
+
+		/**
+		 * How often (ms) a ClientSample is assembled and sent over the
+		 * 'observertc-samples' data channel to the media node.
+		 *
+		 * 0 — samples are NEVER created or sent. Stats are still collected
+		 *     locally (collectingPeriodInMs still runs) so the scores, the
+		 *     quality window and the quality badges keep working, but nothing
+		 *     is transmitted to the media node.
+		 *
+		 * > 0 — a sample is created and sent every N ms. Must be a positive
+		 *       multiple of collectingPeriodInMs. The media node only persists
+		 *       them when it runs with --s3 or --clientSamplesOutputDirectory;
+		 *       otherwise they arrive and are discarded.
+		 *
+		 * Default: 5000 (one sample per collected round)
+		 */
+		samplingPeriodInMs: 5000,
+
+		/**
+		 * Congestion detectors, one per direction. Both are on by default and
+		 * raise 'uplink-congestion' / 'downlink-congestion' issues, which feed
+		 * the score reasons behind the quality badge.
+		 *
+		 * Do NOT use the old combined `congestionDetector` — it is deprecated.
+		 *
+		 * minSeverity: how severe (0..1) an episode has to be before the issue
+		 *              is raised; raise it to get fewer, stronger reports.
+		 * *BloatingSaturatesAt: the bloating value treated as fully saturated
+		 *              when scoring severity — pacer delay for the uplink, jitter
+		 *              buffer delay for the downlink.
+		 *
+		 * Set either to null to disable that direction, or omit both to keep the
+		 * library defaults.
+		 */
+		uplinkCongestionDetector: {
+			minSeverity: 0.2,
+			pacerBloatingSaturatesAt: 0.5,
+		},
+
+		downlinkCongestionDetector: {
+			minSeverity: 0.2,
+			bufferBloatingSaturatesAt: 0.5,
+		},
 	},
 
 	/**

@@ -166,7 +166,7 @@ const roomSessionsSlice = createSlice({
 			const roomSession = state[action.payload.sessionId];
 
 			if (!roomSession) return;
-			
+
 			roomSession.fileHistory.push(action.payload);
 		}),
 		updateFile: ((state, action: PayloadAction<FilesharingFile>) => {

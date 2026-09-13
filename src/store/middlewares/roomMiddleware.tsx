@@ -1,7 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { AppDispatch, MiddlewareOptions, RootState } from '../store';
+import { AppDispatch, mediaService, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { meetingTokenRejected } from '../actions/meetingTokenActions';
 import { setDisplayName, setPicture } from '../actions/meActions';
@@ -17,6 +17,7 @@ import { notificationsActions } from '../slices/notificationsSlice';
 import { isInsertableStreamsSupported } from '../selectors';
 import { roomE2eeUnsupportedLabel } from '../../components/translated/translatedComponents';
 import { Logger } from '../../utils/Logger';
+import { obfuscateDisplayNameForMonitoring } from '../../utils/displayName';
 
 // Survives the full page reload that setState('left') triggers (App.tsx) — read + shown on landing.
 export const JOIN_ERROR_KEY = 'edumeet.joinError';
@@ -112,6 +113,17 @@ const createRoomMiddleware = ({
 							dispatch(roomActions.setState('joined'));
 							dispatch(joinRoom());
 
+							if (mediaService.monitor) {
+								mediaService.monitor.callId = sessionId;
+								mediaService.monitor.clientId = getState().me.id;
+								mediaService.monitor.attachments = {
+									...mediaService.monitor.attachments,
+									roomId: getState().room.roomId,
+									actualSessionId: sessionId,
+									displayName: obfuscateDisplayNameForMonitoring(getState().settings.displayName),
+								};
+							}
+
 							break;
 						}
 
@@ -168,7 +180,7 @@ const createRoomMiddleware = ({
 
 							dispatch(roomSessionsActions.setActiveSpeakerId({ sessionId, peerId, isMe }));
 							break;
-						} 
+						}
 
 						case 'meetingTokenRejected': {
 							dispatch(meetingTokenRejected(notification.data.reason));
@@ -227,6 +239,15 @@ const createRoomMiddleware = ({
 							}));
 							dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
 							dispatch(meActions.setSessionId(sessionId));
+
+							if (mediaService.monitor) {
+								mediaService.monitor.addClientJoinEvent({
+									payload: {
+										comment: 'Peer reconnected',
+									}
+								});
+							}
+
 							dispatch(peersActions.addPeers(peers));
 							dispatch(lobbyPeersActions.setPeers(lobbyPeers ?? []));
 							dispatch(roomSessionsActions.addMessages({ sessionId: mainSessionId, messages: chatHistory }));
@@ -269,6 +290,13 @@ const createRoomMiddleware = ({
 							} = notification.data;
 
 							dispatch(meActions.setSessionId(sessionId));
+
+							if (mediaService.monitor) {
+								mediaService.monitor.attachments = {
+									...mediaService.monitor.attachments,
+									actualSessionId: sessionId,
+								};
+							}
 
 							if (chatHistory)
 								dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));

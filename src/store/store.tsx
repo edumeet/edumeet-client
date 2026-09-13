@@ -88,7 +88,9 @@ const persistConfig = {
 	stateReconciler: autoMergeLevel2,
 	whitelist: [ 'settings' ]
 };
-const monitor = edumeetConfig.clientMontitor ? new ClientMonitor(edumeetConfig.clientMontitor) : undefined;
+// The legacy `clientMontitor` key is resolved in edumeetConfig, so only
+// `clientMonitor` is read here.
+const monitor = edumeetConfig.clientMonitor ? new ClientMonitor(edumeetConfig.clientMonitor) : undefined;
 const signalingService = new SignalingService();
 const deviceService = new DeviceService();
 const managementService = (async () => {
@@ -111,7 +113,7 @@ const effectsService = new EffectsService();
 /**
  * The entire App is wrapped in this context, so that all
  * components can access the mediaService and the fileService.
- * 
+ *
  * @see VideoView.tsx for an example.
  */
 export const ServiceContext = createContext<{

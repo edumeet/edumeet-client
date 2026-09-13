@@ -127,8 +127,14 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		sideContainerBackgroundColor: 'rgba(255, 255, 255, 0.7)',
 	},
 	reduxLoggingEnabled: false,
-	clientMontitor: {
-		collectingPeriodInMs: 2000,
+	obfuscateDisplayName: false,
+	connectivityCheckEnabled: true,
+	clientMonitor: {
+		collectingPeriodInMs: 5000,
+		// Must stay a positive multiple of collectingPeriodInMs; 0 would collect
+		// stats locally only and never send them to the media node.
+		samplingPeriodInMs: 5000,
+		watchTabVisibility: true,
 	},
 	imprintUrl: '',
 	e2eeProvider: 'mls',
@@ -189,7 +195,16 @@ export interface EdumeetConfig {
 	transcriptionEnabled: boolean;
 	theme: ThemeOptions;
 	reduxLoggingEnabled: boolean;
-	clientMontitor: ClientMonitorConfig;
+
+	/** When true, the display name is masked in the client monitoring attachments. The UI is unaffected. */
+	obfuscateDisplayName: boolean;
+
+	/** Show the top bar connectivity indicator and the participant list connection check. */
+	connectivityCheckEnabled: boolean;
+	clientMonitor?: ClientMonitorConfig;
+
+	/** @deprecated misspelled, use `clientMonitor` instead. Still honored for backwards compatibility. */
+	clientMontitor?: ClientMonitorConfig;
 	imprintUrl: string;
 	e2eeProvider: 'pairwise' | 'mls';
 	privacyUrl: string;

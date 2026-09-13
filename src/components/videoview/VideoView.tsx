@@ -97,6 +97,12 @@ const VideoView = ({
 		stream.addTrack(track);
 		currentVideoElement.srcObject = stream;
 
+		// The monitor needs the <video> element that actually renders an inbound
+		// track to detect playout discrepancies and how much the track is scaled up
+		// on screen.
+		if (consumerId)
+			mediaService.monitor?.setInboundTrackContext(track.id, { videoTag: currentVideoElement });
+
 		if (currentVideoElement.readyState >= currentVideoElement.HAVE_METADATA)
 			setLoading(false);
 		else
