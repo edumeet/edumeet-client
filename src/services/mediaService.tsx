@@ -411,6 +411,7 @@ export class MediaService extends EventEmitter {
 						this.consumers.set(peerConsumer.id, peerConsumer);
 
 						peerConsumer.observer.once('close', () => {
+							this.releaseTrackMonitor(peerConsumer.track);
 							this.consumers.delete(peerConsumer.id);
 							this.consumerCurrentLayers.delete(peerConsumer.id);
 							this.consumerPreferredLayers.delete(peerConsumer.id);
@@ -609,6 +610,7 @@ export class MediaService extends EventEmitter {
 						this.consumers.set(consumer.id, consumer);
 
 						consumer.observer.once('close', () => {
+							this.releaseTrackMonitor(consumer.track);
 							this.consumers.delete(consumer.id);
 							this.consumerCurrentLayers.delete(consumer.id);
 							this.consumerPreferredLayers.delete(consumer.id);
@@ -936,6 +938,22 @@ export class MediaService extends EventEmitter {
 		if (track.readyState !== 'live' && !this.monitor?.getInboundTrackMonitor(track.id)) return;
 
 		this.monitor?.setInboundTrackContext(track.id, { videoTag: this.largestInboundVideoElement(track.id) });
+	}
+
+	/**
+	 * mediasoup-client closes a consumer by calling track.stop(), and stop() never
+	 * fires the 'ended' event that client-monitor-js 4.9 relies on to drop a track
+	 * monitor. The monitor then lingers with no media arriving, keeps its
+	 * dry-inbound-track issue raised and drags the client score down for the rest
+	 * of the call. Firing the event the browser withholds runs the library's own
+	 * cleanup, and is harmless once that is fixed upstream.
+	 */
+	private releaseTrackMonitor(track: MediaStreamTrack): void {
+		this.inboundVideoElements.delete(track.id);
+
+		if (!this.monitor) return;
+
+		track.dispatchEvent(new Event('ended'));
 	}
 
 	private largestInboundVideoElement(trackId: string): HTMLVideoElement | undefined {
