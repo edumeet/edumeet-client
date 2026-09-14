@@ -203,9 +203,6 @@ export interface EdumeetConfig {
 	/** Show the top bar connectivity indicator and the participant list connection check. */
 	connectivityCheckEnabled: boolean;
 	clientMonitor?: ClientMonitorConfig;
-
-	/** @deprecated misspelled, use `clientMonitor` instead. Still honored for backwards compatibility. */
-	clientMontitor?: ClientMonitorConfig;
 	imprintUrl: string;
 	e2eeProvider: 'pairwise' | 'mls';
 	privacyUrl: string;

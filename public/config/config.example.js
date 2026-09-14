@@ -310,14 +310,12 @@ var config = {
 	 * (label: 'observertc-samples'), which writes them to disk or S3 depending
 	 * on its --clientSamplesOutputDirectory / --s3Bucket flags.
 	 *
-	 * Set to `undefined` (or remove the key) to disable monitoring entirely.
+	 * Set to `undefined` to disable monitoring entirely. Omitting the key keeps
+	 * the defaults documented below.
 	 *
 	 * The scores and the reasons behind them (per track and for the client as a
 	 * whole) come from this monitor, so disabling it also empties the quality
 	 * window.
-	 *
-	 * NOTE: the key used to be spelled `clientMontitor`. That spelling is still
-	 * accepted, but `clientMonitor` is the one to use.
 	 *
 	 * @see https://github.com/ObserveRTC/client-monitor-js
 	 */
