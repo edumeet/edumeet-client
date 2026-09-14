@@ -12,7 +12,8 @@ import { VolumeWatcher } from '../utils/volumeWatcher';
 import type { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
 import type { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProducer';
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
-import { ClientMonitor, ClientMonitorEvents } from '@observertc/client-monitor-js';
+import { ClientMonitor, ClientMonitorEvents, InboundRtpMonitor } from '@observertc/client-monitor-js';
+import { obfuscateDisplayNameForMonitoring } from '../utils/displayName';
 import { safePromise } from '../utils/safePromise';
 import { ProducerSource } from '../utils/types';
 import { MediaSender } from '../utils/mediaSender';
@@ -131,6 +132,9 @@ export class MediaService extends EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
+	// A track can be rendered by several <video> elements at once (tile plus
+	// fullscreen or windowed view); the monitor gets the largest one.
+	private inboundVideoElements = new Map<string, HTMLVideoElement[]>();
 
 	// eslint-disable-next-line no-unused-vars
 	public rejectMediaReady!: (error: Error) => void;
@@ -151,6 +155,10 @@ export class MediaService extends EventEmitter {
 
 		this.signalingService = signalingService;
 
+		this.monitor?.on('new-inbound-rtp-monitor', ({ inboundRtpMonitor }) => {
+			queueMicrotask(() => this.restoreInboundTrackMonitor(inboundRtpMonitor));
+		});
+
 		this.mediaSenders = {
 			mic: new MediaSender(this, this.signalingService, 'mic').on('closed', () => this.emit('mediaClosed', 'mic')),
 			webcam: new MediaSender(this, this.signalingService, 'webcam').on('closed', () => this.emit('mediaClosed', 'webcam')),
@@ -168,7 +176,7 @@ export class MediaService extends EventEmitter {
 	}
 
 	public reset(): void {
-		this.monitor?.removeSource(this.mediasoup);
+		if (this.mediasoup) this.monitor?.removeSource(this.mediasoup);
 		this.mediasoup = undefined;
 		this.iceServers = [];
 
@@ -187,8 +195,6 @@ export class MediaService extends EventEmitter {
 		}));
 
 		this.createTransports().catch((error) => logger.error('error on creating transports [error:%o]', error));
-
-
 	}
 
 	public close(): void {
@@ -901,11 +907,85 @@ export class MediaService extends EventEmitter {
 
 			monitor.setInboundTrackContext(consumer.track.id, {
 				contentType: isScreenShare ? 'screenshare' : 'camera',
+				paused: consumer.paused,
+				remoteOutboundTrackPaused: Boolean(consumer.appData.producerPaused),
+				videoTag: this.largestInboundVideoElement(consumer.track.id),
 				...(consumer.kind === 'audio' && linkedVideo
 					? { linkedVideoTrackId: linkedVideo.track.id }
 					: {}),
 			});
 		}
+	}
+
+	public addInboundVideoElement(track: MediaStreamTrack, element: HTMLVideoElement): void {
+		const elements = this.inboundVideoElements.get(track.id) ?? [];
+
+		if (!elements.includes(element)) elements.push(element);
+		this.inboundVideoElements.set(track.id, elements);
+		this.monitor?.setInboundTrackContext(track.id, { videoTag: this.largestInboundVideoElement(track.id) });
+	}
+
+	public removeInboundVideoElement(track: MediaStreamTrack, element: HTMLVideoElement): void {
+		const elements = (this.inboundVideoElements.get(track.id) ?? []).filter((known) => known !== element);
+
+		if (elements.length) this.inboundVideoElements.set(track.id, elements);
+		else this.inboundVideoElements.delete(track.id);
+
+		// An ended track never gets a monitor again; writing its context would only
+		// park an entry in the monitor's pending map for good.
+		if (track.readyState !== 'live' && !this.monitor?.getInboundTrackMonitor(track.id)) return;
+
+		this.monitor?.setInboundTrackContext(track.id, { videoTag: this.largestInboundVideoElement(track.id) });
+	}
+
+	private largestInboundVideoElement(trackId: string): HTMLVideoElement | undefined {
+		let largest: HTMLVideoElement | undefined;
+
+		for (const element of this.inboundVideoElements.get(trackId) ?? []) {
+			if (!largest || element.clientWidth * element.clientHeight >= largest.clientWidth * largest.clientHeight)
+				largest = element;
+		}
+
+		return largest;
+	}
+
+	/**
+	 * client-monitor-js 4.9 drops the monitor of an inbound track whose stats
+	 * report was missing for one round, and only re-creates monitors for tracks
+	 * it still holds as pending, which a track it once monitored is not. When the
+	 * report comes back the library announces the new RTP monitor; the live track
+	 * then has to be handed to its peer connection monitor again. Deferred by a
+	 * microtask so the library's own first-time creation runs first.
+	 */
+	private restoreInboundTrackMonitor(inboundRtpMonitor: InboundRtpMonitor): void {
+		const monitor = this.monitor;
+		const trackId = inboundRtpMonitor.trackIdentifier;
+
+		if (!monitor || !trackId || monitor.getInboundTrackMonitor(trackId)) return;
+
+		const consumer = Array.from(this.consumers.values())
+			.find((candidate) => candidate.track.id === trackId && candidate.track.readyState === 'live');
+
+		if (!consumer) return;
+
+		inboundRtpMonitor.getPeerConnection().addMediaStreamTrack(consumer.track, {
+			producerId: consumer.appData.producerId,
+			consumerId: consumer.id,
+		});
+
+		const peerId = consumer.appData.peerId as string | undefined;
+
+		if (peerId) this.updateInboundTrackContexts(peerId);
+	}
+
+	public setMonitorAttachments(attachments: Record<string, unknown>): void {
+		if (!this.monitor) return;
+
+		const masked = 'displayName' in attachments
+			? { ...attachments, displayName: obfuscateDisplayNameForMonitoring(attachments.displayName as string | undefined) }
+			: attachments;
+
+		this.monitor.attachments = { ...this.monitor.attachments, ...masked };
 	}
 
 	public closeDataConsumer(dataConsumerId: string, local = true): void {

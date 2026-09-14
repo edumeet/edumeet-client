@@ -1,6 +1,6 @@
 import React from 'react';
 import { ProducerSource } from '../../utils/types';
-import QualityBadge, { QualityBadgeSize } from './QualityBadge';
+import QualityBadge, { QualityBadgeColor, QualityBadgeSize } from './QualityBadge';
 import { Quality, useClientQuality, useInboundTrackStats, useOutboundTrackStats } from './useTrackStats';
 
 interface QualityIndicatorProps {
@@ -11,6 +11,7 @@ interface QualityIndicatorProps {
 	// Locally produced source.
 	source?: ProducerSource;
 	fontSize?: QualityBadgeSize;
+	color?: QualityBadgeColor;
 	placement?: 'top' | 'bottom' | 'left' | 'right';
 }
 
@@ -45,6 +46,7 @@ const QualityIndicator = ({
 	audioConsumerId,
 	source,
 	fontSize = 'small',
+	color = 'score',
 	placement = 'bottom',
 }: QualityIndicatorProps): React.JSX.Element => {
 	const perPeer = Boolean(consumerId || audioConsumerId || source);
@@ -64,6 +66,7 @@ const QualityIndicator = ({
 			reasons={quality?.reasons}
 			issues={quality?.issues}
 			fontSize={fontSize}
+			color={color}
 			placement={placement}
 		/>
 	);

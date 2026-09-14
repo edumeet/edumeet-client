@@ -196,11 +196,8 @@ const createPeerMiddleware = ({
 				});
 			}
 
-			if (settingsActions.setDisplayName.match(action) && mediaService.monitor) {
-				mediaService.monitor.attachments = {
-					...mediaService.monitor.attachments,
-					displayName: action.payload,
-				};
+			if (settingsActions.setDisplayName.match(action)) {
+				mediaService.setMonitorAttachments({ displayName: action.payload });
 			}
 
 			if (peersActions.addPeer.match(action)) {

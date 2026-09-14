@@ -25,6 +25,9 @@ const WrapperContainer = styled(Box)<WrapperContainerProps>(({ theme, headless }
 	marginBottom: theme.spacing(0.5),
 	marginTop: headless ? theme.spacing(0.5) : 48,
 	gap: theme.spacing(0.5),
+	// Own stacking context: the fullscreen video, a later sibling in Room, covers
+	// everything in here whatever z-index a tile overlay or the stats panel uses.
+	isolation: 'isolate',
 }));
 
 type MainContainerProps = {

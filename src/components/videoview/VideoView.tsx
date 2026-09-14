@@ -97,12 +97,6 @@ const VideoView = ({
 		stream.addTrack(track);
 		currentVideoElement.srcObject = stream;
 
-		// The monitor needs the <video> element that actually renders an inbound
-		// track to detect playout discrepancies and how much the track is scaled up
-		// on screen.
-		if (consumerId)
-			mediaService.monitor?.setInboundTrackContext(track.id, { videoTag: currentVideoElement });
-
 		if (currentVideoElement.readyState >= currentVideoElement.HAVE_METADATA)
 			setLoading(false);
 		else
@@ -123,6 +117,22 @@ const VideoView = ({
 		previewTrackId,
 		senderTrackId,
 	]);
+
+	// The monitor needs the <video> element that actually renders an inbound
+	// track to detect playout discrepancies and how much the track is scaled up
+	// on screen. Registered per mount, not per pause flip, so a tile re-rendering
+	// never displaces an open fullscreen or windowed view of the same track.
+	useEffect(() => {
+		const consumerId = consumer?.id;
+		const element = videoElement.current;
+		const track = consumerId ? mediaService.getConsumer(consumerId)?.track : undefined;
+
+		if (!element || !track) return;
+
+		mediaService.addInboundVideoElement(track, element);
+
+		return () => mediaService.removeInboundVideoElement(track, element);
+	}, [ consumer?.id ]);
 
 	useEffect(() => {
 		const consumerId = consumer?.id;

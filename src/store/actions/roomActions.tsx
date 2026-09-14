@@ -25,14 +25,9 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 
 	dispatch(roomActions.updateRoom({ joinInProgress: true, roomId }));
 
-	// Set roomId on the monitor now — before the WebSocket connects — so that
-	// every sample (including ones emitted before roomReady fires) carries the roomId.
-	if (mediaService.monitor) {
-		mediaService.monitor.attachments = {
-			...mediaService.monitor.attachments,
-			roomId,
-		};
-	}
+	// Set roomId on the monitor before the WebSocket connects, so that every
+	// sample, including ones emitted before roomReady fires, carries the roomId.
+	mediaService.setMonitorAttachments({ roomId });
 
 	try {
 		const state = getState();
@@ -149,14 +144,14 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('reconnectRoom()');
 
-	// 1. Clear stale peer/media state — room sessions are cleared atomically in peerReconnected
+	// 1. Clear stale peer/media state, room sessions are cleared atomically in peerReconnected
 	//    (short disconnect) or in roomReady (long disconnect, see roomMiddleware).
 	dispatch(peersActions.removeAllPeers());
 	dispatch(consumersActions.removeAllConsumers());
 	dispatch(lobbyPeersActions.removeAllPeers());
 
 	// 2. Stop all active senders so they restart cleanly after rejoin.
-	//    local=true (default) suppresses mediaClosed — avoids setting audioMuted/videoMuted here.
+	//    local=true (default) suppresses mediaClosed, avoids setting audioMuted/videoMuted here.
 	for (const sender of Object.values(mediaService.mediaSenders)) {
 		sender.stop();
 	}

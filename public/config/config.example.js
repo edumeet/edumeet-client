@@ -1,5 +1,5 @@
 /**
- * eduMEET client configuration (example) — 4.2+
+ * eduMEET client configuration (example), 4.2+
  *
  * This file is loaded by the browser (public/config/config.example.js) and must define
  * a single global `config` object (window.config).
@@ -189,7 +189,7 @@ var config = {
 	 * letter of every word, the rest is replaced with dots: 'Jane Doe' is sent
 	 * as 'J••• D••'.
 	 *
-	 * This affects monitoring data ONLY — the UI always shows real names.
+	 * This affects monitoring data ONLY, the UI always shows real names.
 	 *
 	 * Default: false
 	 */
@@ -304,10 +304,11 @@ var config = {
 	/**
 	 * ObserverRTC client-monitor configuration.
 	 *
-	 * When set, the client collects WebRTC stats, detects congestion and sends
+	 * When set, the client collects WebRTC stats and detects congestion for the
+	 * quality window and badges. With samplingPeriodInMs above 0 it also sends
 	 * samples to the media node over a dedicated SCTP data channel
-	 * (label: 'observertc-samples').  The media node writes them to disk or
-	 * S3 depending on its --clientSamplesOutputDirectory / --s3Bucket flags.
+	 * (label: 'observertc-samples'), which writes them to disk or S3 depending
+	 * on its --clientSamplesOutputDirectory / --s3Bucket flags.
 	 *
 	 * Set to `undefined` (or remove the key) to disable monitoring entirely.
 	 *
@@ -333,31 +334,31 @@ var config = {
 		 * How often (ms) a ClientSample is assembled and sent over the
 		 * 'observertc-samples' data channel to the media node.
 		 *
-		 * 0 — samples are NEVER created or sent. Stats are still collected
-		 *     locally (collectingPeriodInMs still runs) so the scores, the
-		 *     quality window and the quality badges keep working, but nothing
-		 *     is transmitted to the media node.
+		 * 0: samples are NEVER created or sent. Stats are still collected
+		 *    locally (collectingPeriodInMs still runs) so the scores, the
+		 *    quality window and the quality badges keep working, but nothing
+		 *    is transmitted to the media node.
 		 *
-		 * > 0 — a sample is created and sent every N ms. Must be a positive
-		 *       multiple of collectingPeriodInMs. The media node only persists
-		 *       them when it runs with --s3 or --clientSamplesOutputDirectory;
-		 *       otherwise they arrive and are discarded.
+		 * > 0: a sample is created and sent every N ms. Must be a positive
+		 *      multiple of collectingPeriodInMs. The media node only persists
+		 *      them when it runs with --s3 or --clientSamplesOutputDirectory;
+		 *      otherwise they arrive and are discarded.
 		 *
-		 * Default: 5000 (one sample per collected round)
+		 * Default: 0 (collect locally, send nothing)
 		 */
-		samplingPeriodInMs: 5000,
+		samplingPeriodInMs: 0,
 
 		/**
 		 * Congestion detectors, one per direction. Both are on by default and
 		 * raise 'uplink-congestion' / 'downlink-congestion' issues, which feed
 		 * the score reasons behind the quality badge.
 		 *
-		 * Do NOT use the old combined `congestionDetector` — it is deprecated.
+		 * Do NOT use the old combined `congestionDetector`, it is deprecated.
 		 *
 		 * minSeverity: how severe (0..1) an episode has to be before the issue
 		 *              is raised; raise it to get fewer, stronger reports.
 		 * *BloatingSaturatesAt: the bloating value treated as fully saturated
-		 *              when scoring severity — pacer delay for the uplink, jitter
+		 *              when scoring severity: pacer delay for the uplink, jitter
 		 *              buffer delay for the downlink.
 		 *
 		 * Set either to null to disable that direction, or omit both to keep the

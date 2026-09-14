@@ -1,7 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
-import { AppDispatch, mediaService, MiddlewareOptions, RootState } from '../store';
+import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { meetingTokenRejected } from '../actions/meetingTokenActions';
 import { setDisplayName, setPicture } from '../actions/meActions';
@@ -17,7 +17,6 @@ import { notificationsActions } from '../slices/notificationsSlice';
 import { isInsertableStreamsSupported } from '../selectors';
 import { roomE2eeUnsupportedLabel } from '../../components/translated/translatedComponents';
 import { Logger } from '../../utils/Logger';
-import { obfuscateDisplayNameForMonitoring } from '../../utils/displayName';
 
 // Survives the full page reload that setState('left') triggers (App.tsx) — read + shown on landing.
 export const JOIN_ERROR_KEY = 'edumeet.joinError';
@@ -26,6 +25,7 @@ const logger = new Logger('RoomMiddleware');
 
 const createRoomMiddleware = ({
 	signalingService,
+	mediaService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createRoomMiddleware()');
 
@@ -116,13 +116,13 @@ const createRoomMiddleware = ({
 							if (mediaService.monitor) {
 								mediaService.monitor.callId = sessionId;
 								mediaService.monitor.clientId = getState().me.id;
-								mediaService.monitor.attachments = {
-									...mediaService.monitor.attachments,
-									roomId: getState().room.roomId,
-									actualSessionId: sessionId,
-									displayName: obfuscateDisplayNameForMonitoring(getState().settings.displayName),
-								};
 							}
+
+							mediaService.setMonitorAttachments({
+								roomId: getState().room.roomId,
+								actualSessionId: sessionId,
+								displayName: getState().settings.displayName,
+							});
 
 							break;
 						}
@@ -291,12 +291,7 @@ const createRoomMiddleware = ({
 
 							dispatch(meActions.setSessionId(sessionId));
 
-							if (mediaService.monitor) {
-								mediaService.monitor.attachments = {
-									...mediaService.monitor.attachments,
-									actualSessionId: sessionId,
-								};
-							}
+							mediaService.setMonitorAttachments({ actualSessionId: sessionId });
 
 							if (chatHistory)
 								dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));

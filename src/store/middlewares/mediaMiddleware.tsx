@@ -81,8 +81,6 @@ const createMediaMiddleware = ({
 						source: consumer.appData.source as ProducerSource,
 					};
 
-					
-
 					dispatch(consumersActions.addConsumer(stateConsumer));
 				});
 

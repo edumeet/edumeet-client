@@ -166,7 +166,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 					<SavingRecordingIndicator />
 					{ e2eeEnabled && <E2eeIndicator /> }
 					<ConnectivityIndicator />
-					<QualityIndicator fontSize='medium' />
+					<QualityIndicator fontSize='medium' color='inherit' />
 					<ReceiveVideoIndicator />
 					{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 					<Box sx={{ display: { xs: 'block', sm: 'none' } }}>

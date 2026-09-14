@@ -131,9 +131,10 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	connectivityCheckEnabled: true,
 	clientMonitor: {
 		collectingPeriodInMs: 5000,
-		// Must stay a positive multiple of collectingPeriodInMs; 0 would collect
-		// stats locally only and never send them to the media node.
-		samplingPeriodInMs: 5000,
+		// 0 collects stats locally for the quality window and badges without sending
+		// samples to the media node; a deployment that stores them sets a positive
+		// multiple of collectingPeriodInMs.
+		samplingPeriodInMs: 0,
 		watchTabVisibility: true,
 	},
 	imprintUrl: '',

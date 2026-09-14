@@ -1,10 +1,21 @@
-import { SignalCellular0Bar, SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar, SignalCellular4Bar, SignalCellularAlt } from '@mui/icons-material';
+import {
+	SignalCellular0Bar,
+	SignalCellular1Bar,
+	SignalCellular2Bar,
+	SignalCellular3Bar,
+	SignalCellular4Bar,
+	SignalCellularConnectedNoInternet0Bar,
+} from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
 import { MAX_SCORE, QualityIssue, ScoreReason, formatScore, scoreColor } from './qualityScore';
 
 export type QualityBadgeSize = 'inherit' | 'small' | 'medium' | 'large';
+
+// `score` colours the icon by the score; `inherit` leaves the colour to the
+// surroundings, which is what the app bar demands of every icon in it.
+export type QualityBadgeColor = 'score' | 'inherit';
 
 interface QualityBadgeProps {
 	// Score on the monitor's 0..5 scale, undefined when it is not known (yet).
@@ -16,6 +27,7 @@ interface QualityBadgeProps {
 	// Stay hidden while the quality is good. Defaults to true.
 	hideWhenGood?: boolean;
 	fontSize?: QualityBadgeSize;
+	color?: QualityBadgeColor;
 	placement?: 'top' | 'bottom' | 'left' | 'right';
 }
 
@@ -28,18 +40,22 @@ const Explanation = styled('div')(({ theme }) => ({
 	maxWidth: '22rem',
 }));
 
-const iconForScore = (score: number | undefined, fontSize: QualityBadgeSize): React.JSX.Element => {
-	const color = scoreColor(score);
+const BARS = [ SignalCellular0Bar, SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar, SignalCellular4Bar ];
 
+const iconForScore = (
+	score: number | undefined,
+	fontSize: QualityBadgeSize,
+	color: QualityBadgeColor,
+): React.JSX.Element => {
 	// Nothing scored yet but something is wrong: report it without pretending to
 	// know how bad it is.
-	if (score === undefined || Number.isNaN(score)) return <SignalCellularAlt fontSize={fontSize} style={{ color: red[400] }} />;
-	if (score < 1) return <SignalCellular0Bar fontSize={fontSize} style={{ color }} />;
-	if (score < 2) return <SignalCellular1Bar fontSize={fontSize} style={{ color }} />;
-	if (score < 3) return <SignalCellular2Bar fontSize={fontSize} style={{ color }} />;
-	if (score < 4) return <SignalCellular3Bar fontSize={fontSize} style={{ color }} />;
+	if (score === undefined || Number.isNaN(score)) {
+		return <SignalCellularConnectedNoInternet0Bar fontSize={fontSize} style={color === 'score' ? { color: red[400] } : undefined} />;
+	}
 
-	return <SignalCellular4Bar fontSize={fontSize} style={{ color }} />;
+	const Icon = BARS[Math.max(0, Math.min(Math.floor(score), BARS.length - 1))];
+
+	return <Icon fontSize={fontSize} style={color === 'score' ? { color: scoreColor(score) } : undefined} />;
 };
 
 /**
@@ -57,6 +73,7 @@ const QualityBadge = ({
 	issues = [],
 	hideWhenGood = true,
 	fontSize = 'small',
+	color = 'score',
 	placement = 'bottom',
 }: QualityBadgeProps): React.JSX.Element => {
 	const hasScore = score !== undefined && !Number.isNaN(score);
@@ -84,7 +101,7 @@ const QualityBadge = ({
 
 	return (
 		<Tooltip title={tooltip} placement={placement}>
-			{ iconForScore(score, fontSize) }
+			{ iconForScore(score, fontSize, color) }
 		</Tooltip>
 	);
 };
