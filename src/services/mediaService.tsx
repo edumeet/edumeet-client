@@ -12,7 +12,7 @@ import { VolumeWatcher } from '../utils/volumeWatcher';
 import type { DataConsumer } from 'mediasoup-client/lib/DataConsumer';
 import type { DataProducer, DataProducerOptions } from 'mediasoup-client/lib/DataProducer';
 import { ResolutionWatcher } from '../utils/resolutionWatcher';
-import { ClientMonitor, ClientMonitorEvents, InboundRtpMonitor } from '@observertc/client-monitor-js';
+import { ClientMonitor, ClientMonitorEvents } from '@observertc/client-monitor-js';
 import { obfuscateDisplayNameForMonitoring } from '../utils/displayName';
 import { safePromise } from '../utils/safePromise';
 import { ProducerSource } from '../utils/types';
@@ -154,10 +154,6 @@ export class MediaService extends EventEmitter {
 		super();
 
 		this.signalingService = signalingService;
-
-		this.monitor?.on('new-inbound-rtp-monitor', ({ inboundRtpMonitor }) => {
-			queueMicrotask(() => this.restoreInboundTrackMonitor(inboundRtpMonitor));
-		});
 
 		this.mediaSenders = {
 			mic: new MediaSender(this, this.signalingService, 'mic').on('closed', () => this.emit('mediaClosed', 'mic')),
@@ -941,12 +937,13 @@ export class MediaService extends EventEmitter {
 	}
 
 	/**
-	 * mediasoup-client closes a consumer by calling track.stop(), and stop() never
-	 * fires the 'ended' event that client-monitor-js 4.9 relies on to drop a track
-	 * monitor. The monitor then lingers with no media arriving, keeps its
-	 * dry-inbound-track issue raised and drags the client score down for the rest
-	 * of the call. Firing the event the browser withholds runs the library's own
-	 * cleanup, and is harmless once that is fixed upstream.
+	 * mediasoup-client closes a consumer with track.stop(), which never fires the
+	 * 'ended' event client-monitor-js listens for to drop a track monitor. Since
+	 * 4.9.1 its detectors go quiet once the track is no longer live, but the
+	 * monitor itself stays until the browser stops reporting the track's stats:
+	 * a round later, or for the whole call when the consumer held the first
+	 * m-section, which mediasoup-client only disables. Firing the event runs the
+	 * library's own cleanup at once.
 	 */
 	private releaseTrackMonitor(track: MediaStreamTrack): void {
 		this.inboundVideoElements.delete(track.id);
@@ -965,35 +962,6 @@ export class MediaService extends EventEmitter {
 		}
 
 		return largest;
-	}
-
-	/**
-	 * client-monitor-js 4.9 drops the monitor of an inbound track whose stats
-	 * report was missing for one round, and only re-creates monitors for tracks
-	 * it still holds as pending, which a track it once monitored is not. When the
-	 * report comes back the library announces the new RTP monitor; the live track
-	 * then has to be handed to its peer connection monitor again. Deferred by a
-	 * microtask so the library's own first-time creation runs first.
-	 */
-	private restoreInboundTrackMonitor(inboundRtpMonitor: InboundRtpMonitor): void {
-		const monitor = this.monitor;
-		const trackId = inboundRtpMonitor.trackIdentifier;
-
-		if (!monitor || !trackId || monitor.getInboundTrackMonitor(trackId)) return;
-
-		const consumer = Array.from(this.consumers.values())
-			.find((candidate) => candidate.track.id === trackId && candidate.track.readyState === 'live');
-
-		if (!consumer) return;
-
-		inboundRtpMonitor.getPeerConnection().addMediaStreamTrack(consumer.track, {
-			producerId: consumer.appData.producerId,
-			consumerId: consumer.id,
-		});
-
-		const peerId = consumer.appData.peerId as string | undefined;
-
-		if (peerId) this.updateInboundTrackContexts(peerId);
 	}
 
 	public setMonitorAttachments(attachments: Record<string, unknown>): void {
