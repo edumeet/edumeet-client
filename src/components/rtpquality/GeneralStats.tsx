@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { ServiceContext } from '../../store/store';
 import ScoreSection from './ScoreSection';
-import { useClientQuality } from './useTrackStats';
+import { useOwnSideQuality } from './useProblems';
 
 const Panel = styled('div')(({ theme }) => ({
 	display: 'flex',
@@ -59,7 +59,7 @@ const kbps = (bitrate?: number): string => `${Math.ceil((bitrate ?? 0) / 1000)} 
  */
 const GeneralStats = (): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
-	const quality = useClientQuality();
+	const quality = useOwnSideQuality();
 	const [ rows, setRows ] = useState<Row[]>([]);
 
 	useEffect(() => {
@@ -80,9 +80,6 @@ const GeneralStats = (): React.JSX.Element => {
 			}, {
 				name: 'Upstream video',
 				value: kbps(monitor.sendingVideoBitrate),
-			}, {
-				name: 'Available in',
-				value: kbps(monitor.totalAvailableIncomingBitrate),
 			}, {
 				name: 'Available out',
 				value: kbps(monitor.totalAvailableOutgoingBitrate),

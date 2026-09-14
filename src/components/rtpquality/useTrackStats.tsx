@@ -165,60 +165,6 @@ const outboundTrackStats = (
 };
 
 /**
- * Client level quality: the score the monitor calculates for the whole client
- * (uplink, downlink and every track together) plus every issue currently
- * active anywhere on it.
- *
- * This is what belongs in a single, global indicator - it already accounts for
- * congestion, which is detected per peer connection rather than per track.
- *
- * Pass `enabled: false` where the value is not used (the component also has a
- * per-peer mode) so that it does not subscribe to the monitor for nothing.
- */
-export const useClientQuality = (enabled = true): Quality | undefined => {
-	const { mediaService } = useContext(ServiceContext);
-	const [ quality, setQuality ] = useState<Quality | undefined>();
-
-	useEffect(() => {
-		const monitor: ClientMonitor | undefined = mediaService.monitor;
-
-		setQuality(undefined);
-
-		if (!monitor || !enabled) return;
-
-		const refresh = () => {
-			const issues = new Set<string>();
-
-			for (const issueKey of Array.from(monitor.activeIssues.keys())) {
-				const type = monitor.activeIssues.get(issueKey)?.type;
-
-				if (type) issues.add(type);
-			}
-
-			setQuality({
-				score: monitor.score,
-				reasons: toScoreReasons(monitor.scoreReasons),
-				issues: toQualityIssues(issues),
-			});
-		};
-
-		refresh();
-
-		monitor.on('stats-collected', refresh);
-		monitor.on('issue', refresh);
-		monitor.on('issue-resolved', refresh);
-
-		return () => {
-			monitor.off('stats-collected', refresh);
-			monitor.off('issue', refresh);
-			monitor.off('issue-resolved', refresh);
-		};
-	}, [ mediaService, mediaService.monitor, enabled ]);
-
-	return quality;
-};
-
-/**
  * Subscribes to the client monitor and re-reads the stats of one inbound
  * (consumed) track on every collected stats round.
  *

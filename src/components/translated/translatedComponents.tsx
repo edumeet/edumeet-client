@@ -105,6 +105,38 @@ export const connectivityInboundHintLabel = (): string => intl.formatMessage({
 	defaultMessage: 'No audio or video is arriving. Incoming media is most likely being blocked upstream of this device.'
 });
 
+export const ownProblemLabel = (kind: 'uplink' | 'downlink' | 'cpu' | 'capture' | 'loss' | 'sending'): string => {
+	switch (kind) {
+		case 'uplink':
+			return intl.formatMessage({ id: 'problem.uplink', defaultMessage: 'Your upload is saturated. Turning off your camera or screen share helps.' });
+		case 'downlink':
+			return intl.formatMessage({ id: 'problem.downlink', defaultMessage: 'Your download is saturated. Stopping incoming video relieves it.' });
+		case 'cpu':
+			return intl.formatMessage({ id: 'problem.cpu', defaultMessage: 'This device is out of processing power. Closing other applications helps.' });
+		case 'capture':
+			return intl.formatMessage({ id: 'problem.capture', defaultMessage: 'Your camera or microphone stopped delivering media. Check the device.' });
+		case 'loss':
+			return intl.formatMessage({ id: 'problem.loss', defaultMessage: 'Your network is losing packets. Another network may work better.' });
+		case 'sending':
+			return intl.formatMessage({ id: 'problem.sending', defaultMessage: 'What others receive from you is poor.' });
+	}
+};
+
+export const noVideoArrivingLabel = (displayName: string): string => intl.formatMessage({
+	id: 'peer.noVideoArriving',
+	defaultMessage: 'No video is arriving from {displayName}'
+}, { displayName });
+
+export const noAudioArrivingLabel = (displayName: string): string => intl.formatMessage({
+	id: 'peer.noAudioArriving',
+	defaultMessage: 'No audio is arriving from {displayName}'
+}, { displayName });
+
+export const noMediaArrivingLabel = (displayName: string): string => intl.formatMessage({
+	id: 'peer.noMediaArriving',
+	defaultMessage: 'No audio or video is arriving from {displayName}'
+}, { displayName });
+
 export const yesLabel = (): string => intl.formatMessage({
 	id: 'label.yes',
 	defaultMessage: 'Yes'

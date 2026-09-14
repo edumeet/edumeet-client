@@ -14,7 +14,7 @@ import WebcamIcon from '@mui/icons-material/VideocamOutlined';
 import MoreButton from '../controlbuttons/MoreButton';
 import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
 import RecordIcon from '../recordicon/RecordIcon';
-import QualityIndicator from '../rtpquality/QualityIndicator';
+import PeerMediaIndicator from '../rtpquality/PeerMediaIndicator';
 
 interface ListPeerProps {
 	peer: Peer;
@@ -103,8 +103,9 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 					{ hasScreen && /* <StyledChip disabled label={ */ <ScreenShareIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
 					{ hasVideo && /* <StyledChip disabled label={ */ <WebcamIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
 					{ hasAudio && /* <StyledChip disabled label={ */ <MicUnMutedIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }
-					<QualityIndicator
-						consumerId={webcamConsumer?.id ?? screenConsumer?.id}
+					<PeerMediaIndicator
+						displayName={peer.displayName ?? ''}
+						videoConsumerId={webcamConsumer?.id ?? screenConsumer?.id}
 						audioConsumerId={micConsumer?.id}
 					/>
 				</StyledIcons>

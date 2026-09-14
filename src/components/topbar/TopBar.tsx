@@ -16,7 +16,7 @@ import LogoutButton from '../controlbuttons/LogoutButton';
 import RecordIcon from '../recordicon/RecordIcon';
 import SavingRecordingIndicator from '../recordicon/SavingRecordingIndicator';
 import ReceiveVideoIndicator from '../controlbuttons/ReceiveVideoIndicator';
-import QualityIndicator from '../rtpquality/QualityIndicator';
+import OwnProblemIndicator from '../rtpquality/OwnProblemIndicator';
 import ConnectivityIndicator from '../connectivity/ConnectivityIndicator';
 import CountdownTimerChip from '../countdowntimer/CountdownTimerChip';
 import MoreIcon from '@mui/icons-material/MoreVert';
@@ -166,7 +166,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 					<SavingRecordingIndicator />
 					{ e2eeEnabled && <E2eeIndicator /> }
 					<ConnectivityIndicator />
-					<QualityIndicator fontSize='medium' color='inherit' sustained />
+					<OwnProblemIndicator />
 					<ReceiveVideoIndicator />
 					{ canPromote && lobbyPeersLength > 0 && <LobbyButton type='iconbutton' /> }
 					<Box sx={{ display: { xs: 'block', sm: 'none' } }}>

@@ -5,7 +5,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { ServiceContext } from '../../store/store';
 import { uiActions } from '../../store/slices/uiSlice';
 import edumeetConfig from '../../utils/edumeetConfig';
-import { problemGraceMs, useSustained } from '../../utils/useSustained';
+import { PROBLEM_INDICATOR_GRACE_ROUNDS, graceMs, useSustained } from '../../utils/useSustained';
 import { connectivityProblemLabel } from '../translated/translatedComponents';
 import { useConnectivityLabels } from './connectivityLabels';
 import { useConnectivityReport } from './useConnectivityReport';
@@ -28,7 +28,7 @@ const ConnectivityIndicator = (): React.JSX.Element => {
 	const report = useConnectivityReport(edumeetConfig.connectivityCheckEnabled);
 
 	const culprit = report?.culprit;
-	const sustained = useSustained(Boolean(culprit), problemGraceMs(mediaService.monitor));
+	const sustained = useSustained(Boolean(culprit), graceMs(mediaService.monitor, PROBLEM_INDICATOR_GRACE_ROUNDS));
 
 	if (!culprit || !sustained) return <></>;
 
