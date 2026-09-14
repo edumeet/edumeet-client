@@ -8,6 +8,7 @@ import {
 	closeLabel,
 	connectivityCheckTitleLabel,
 	connectivityHealthyLabel,
+	connectivityNothingToReceiveLabel,
 	connectivityPendingLabel,
 	connectivityProblemTitleLabel,
 } from '../translated/translatedComponents';
@@ -90,7 +91,9 @@ const ConnectivityDialog = (): React.JSX.Element => {
 							{ statusIcon(check.status) }
 							<RowText>
 								<Typography variant='body2'>{ labels.checks[check.id] }</Typography>
-								{ check.detail && <Detail variant='caption'>{ check.detail }</Detail> }
+								{ check.status === 'skipped'
+									? <Detail variant='caption'>{ connectivityNothingToReceiveLabel() }</Detail>
+									: check.detail && <Detail variant='caption'>{ check.detail }</Detail> }
 								{ check.issues.map((issue) => (
 									<Detail key={issue.key} variant='caption'>
 										{ issue.description ?? issue.label }

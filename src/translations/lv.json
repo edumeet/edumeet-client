@@ -645,6 +645,7 @@
   "connectivity.titleCheck": null,
   "connectivity.indicator": null,
   "connectivity.healthy": null,
+  "connectivity.nothingToReceive": null,
   "connectivity.pending": null,
   "connectivity.candidates": null,
   "connectivity.stun": null,

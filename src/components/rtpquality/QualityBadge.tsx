@@ -9,6 +9,7 @@ import {
 import { Tooltip } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
+import { useSustained } from '../../utils/useSustained';
 import { MAX_SCORE, QualityIssue, ScoreReason, formatScore, scoreColor } from './qualityScore';
 
 export type QualityBadgeSize = 'inherit' | 'small' | 'medium' | 'large';
@@ -28,6 +29,8 @@ interface QualityBadgeProps {
 	hideWhenGood?: boolean;
 	fontSize?: QualityBadgeSize;
 	color?: QualityBadgeColor;
+	// Show only once the quality has been poor for this long. 0 shows at once.
+	graceMs?: number;
 	placement?: 'top' | 'bottom' | 'left' | 'right';
 }
 
@@ -74,12 +77,15 @@ const QualityBadge = ({
 	hideWhenGood = true,
 	fontSize = 'small',
 	color = 'score',
+	graceMs = 0,
 	placement = 'bottom',
 }: QualityBadgeProps): React.JSX.Element => {
 	const hasScore = score !== undefined && !Number.isNaN(score);
+	const quiet = issues.length === 0
+		&& (score === undefined || Number.isNaN(score) || (hideWhenGood && score >= GOOD_SCORE_THRESHOLD));
+	const sustained = useSustained(!quiet, graceMs);
 
-	if (!hasScore && issues.length === 0) return <></>;
-	if (hideWhenGood && issues.length === 0 && score !== undefined && score >= GOOD_SCORE_THRESHOLD) return <></>;
+	if (!sustained) return <></>;
 
 	const tooltip = (
 		<>

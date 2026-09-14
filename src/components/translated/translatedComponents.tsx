@@ -32,7 +32,12 @@ export const connectivityProblemLabel = (): string => intl.formatMessage({
 
 export const connectivityHealthyLabel = (): string => intl.formatMessage({
 	id: 'connectivity.healthy',
-	defaultMessage: 'Your connection looks fine. Every step below is working.'
+	defaultMessage: 'Your connection looks fine. Nothing below reports a problem.'
+});
+
+export const connectivityNothingToReceiveLabel = (): string => intl.formatMessage({
+	id: 'connectivity.nothingToReceive',
+	defaultMessage: 'Nobody else is in the room, so there is nothing to receive.'
 });
 
 export const connectivityPendingLabel = (): string => intl.formatMessage({

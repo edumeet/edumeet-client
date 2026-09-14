@@ -66,10 +66,23 @@ export const CHECK_ORDER: ConnectivityCheckId[] = [
 	'inbound',
 ];
 
-const activeIssuesOf = (monitor: ClientMonitor, id: ConnectivityCheckId): QualityIssue[] => {
+/**
+ * These describe one track, the rest describe the connection. A single track
+ * going dry while other media flows is a quality problem for that peer, not a
+ * connectivity failure, so they only count while nothing is getting through in
+ * that direction at all.
+ */
+const TRACK_LEVEL_ISSUE_TYPES = new Set([ 'dry-inbound-track', 'dry-outbound-track', 'rtp-sender-stalled' ]);
+
+const activeIssuesOf = (
+	monitor: ClientMonitor,
+	id: ConnectivityCheckId,
+	stalled: boolean,
+): QualityIssue[] => {
 	const types: string[] = [];
 
 	for (const type of CHECK_ISSUE_TYPES[id]) {
+		if (!stalled && TRACK_LEVEL_ISSUE_TYPES.has(type)) continue;
 		if (monitor.getActiveIssuesByType(type).length > 0) types.push(type);
 	}
 
@@ -160,8 +173,13 @@ export const buildConnectivityReport = (
 		return 'pending';
 	};
 
+	const stalled: Partial<Record<ConnectivityCheckId, boolean>> = {
+		outbound: sending === 0,
+		inbound: receiving === 0,
+	};
+
 	const checks: ConnectivityCheck[] = CHECK_ORDER.map((id) => {
-		const issues = activeIssuesOf(monitor, id);
+		const issues = activeIssuesOf(monitor, id, stalled[id] ?? true);
 
 		switch (id) {
 			case 'candidates':

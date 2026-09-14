@@ -10,6 +10,7 @@
   "connectivity.titleCheck": "Hálózati útvonal ellenőrzése",
   "connectivity.indicator": "Hálózati útvonal probléma",
   "connectivity.healthy": "A hálózati útvonal megfelelő.",
+  "connectivity.nothingToReceive": "Nincs más résztvevő a szobában, így nincs mit fogadni.",
   "connectivity.pending": "A kapcsolat ellenőrzése még folyamatban van.",
   "connectivity.candidates": "Felderített hálózati címek",
   "connectivity.stun": "A STUN/TURN szerver elérhető ",

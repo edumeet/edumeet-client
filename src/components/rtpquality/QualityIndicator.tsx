@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ServiceContext } from '../../store/store';
+import { problemGraceMs } from '../../utils/useSustained';
 import { ProducerSource } from '../../utils/types';
 import QualityBadge, { QualityBadgeColor, QualityBadgeSize } from './QualityBadge';
 import { Quality, useClientQuality, useInboundTrackStats, useOutboundTrackStats } from './useTrackStats';
@@ -12,6 +14,9 @@ interface QualityIndicatorProps {
 	source?: ProducerSource;
 	fontSize?: QualityBadgeSize;
 	color?: QualityBadgeColor;
+	// Appear only once the quality has been poor for a couple of collecting rounds,
+	// so that the churn of a peer joining or leaving cannot light the badge.
+	sustained?: boolean;
 	placement?: 'top' | 'bottom' | 'left' | 'right';
 }
 
@@ -47,8 +52,10 @@ const QualityIndicator = ({
 	source,
 	fontSize = 'small',
 	color = 'score',
+	sustained = false,
 	placement = 'bottom',
 }: QualityIndicatorProps): React.JSX.Element => {
+	const { mediaService } = useContext(ServiceContext);
 	const perPeer = Boolean(consumerId || audioConsumerId || source);
 
 	const videoQuality = useInboundTrackStats(consumerId);
@@ -67,6 +74,7 @@ const QualityIndicator = ({
 			issues={quality?.issues}
 			fontSize={fontSize}
 			color={color}
+			graceMs={sustained ? problemGraceMs(mediaService.monitor) : 0}
 			placement={placement}
 		/>
 	);
