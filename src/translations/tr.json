@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Bağlantı kesildi. Yeniden bağlanılıyor (deneme {attempt})...",
   "label.notification.noTenantFound": "Kiracı bulunamadı",
   "label.notification.invalidLogin": "Geçersiz oturum açma",
+  "label.notification.sessionEnded": "Oturumunuz sona erdi. Lütfen tekrar oturum açın.",
+  "label.notification.loginTabBlocked": "Tarayıcı oturum açma sayfasını engelledi. Bu site için açılır pencerelere izin verin ve tekrar deneyin.",
   "label.managePermissions": "İzinleri yönet",
   "label.selectAll": "Tümünü seç",
   "label.permissions.selectPeersFirst": "İzinlerini düzenlemek için bir veya daha fazla katılımcı seçin.",

@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "З'єднання втрачено. Повторне підключення (спроба {attempt})...",
   "label.notification.noTenantFound": "Орендаря не знайдено",
   "label.notification.invalidLogin": "Неправильний вхід",
+  "label.notification.sessionEnded": "Ваш сеанс завершено. Будь ласка, увійдіть знову.",
+  "label.notification.loginTabBlocked": "Браузер заблокував сторінку входу. Дозвольте спливаючі вікна для цього сайту та спробуйте ще раз.",
   "label.managePermissions": "Керувати дозволами",
   "label.selectAll": "Вибрати все",
   "label.permissions.selectPeersFirst": "Виберіть одного або кількох учасників, щоб редагувати їхні дозволи.",

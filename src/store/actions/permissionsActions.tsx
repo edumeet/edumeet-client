@@ -8,7 +8,12 @@ import { notificationsActions } from '../slices/notificationsSlice';
 import { managamentActions } from '../slices/managementSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
-import { invalidLoginLabel, noTenantFoundLabel } from '../../components/translated/translatedComponents';
+import {
+	invalidLoginLabel,
+	loginTabBlockedLabel,
+	noTenantFoundLabel,
+	sessionEndedLabel
+} from '../../components/translated/translatedComponents';
 
 const logger = new Logger('PermissionsActions');
 
@@ -16,6 +21,8 @@ const logger = new Logger('PermissionsActions');
 let tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
 
 const REFRESH_BEFORE_EXPIRY_MS = 5 * 60 * 1000; // refresh 5 min before expiry
+
+export const REFRESH_RETRY_DELAYS_MS = [ 5_000, 15_000, 30_000, 60_000, 120_000 ];
 
 const scheduleTokenRefresh = (token: string): AppThunk<void> => (
 	dispatch
@@ -64,19 +71,37 @@ export const login = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('login()');
 
+	// Opened before any await: browsers only allow a new tab inside the click itself.
+	const loginTab = window.open('about:blank', 'loginWindow');
+
+	if (!loginTab) {
+		dispatch(notificationsActions.enqueueNotification({
+			message: loginTabBlockedLabel(),
+			options: { variant: 'error' }
+		}));
+
+		return logger.error('login() | the browser blocked the login tab');
+	}
+
 	const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
 
 	if (!tenantId) {
+		loginTab.close();
+
 		dispatch(notificationsActions.enqueueNotification({
 			message: noTenantFoundLabel(),
 			options: { variant: 'error' }
 		}));
 
 		return logger.error('login() | no tenant found');
-
-	} else {
-		window.open(`${config.managementUrl}/oauth/tenant?tenantId=${tenantId}`, 'loginWindow');
 	}
+
+	const params = new URLSearchParams({
+		tenantId: String(tenantId),
+		origin: window.location.origin
+	});
+
+	loginTab.location.href = `${config.managementUrl}/oauth/tenant?${params.toString()}`;
 };
 
 export const adminLogin = (email: string, password: string): AppThunk<Promise<void>> => async (
@@ -292,17 +317,26 @@ export const promotePeers = (): AppThunk<Promise<void>> => async (
 	}
 };
 
-export const refreshToken = (): AppThunk<Promise<void>> => async (
+export const refreshToken = (attempt = 0): AppThunk<Promise<void>> => async (
 	dispatch,
-	_getState,
+	getState,
 	{ managementService }
 ): Promise<void> => {
-	logger.debug('refreshToken()');
+	logger.debug('refreshToken() [attempt: %d]', attempt);
+
+	const sentToken = getState().permissions.token;
+	const signedInOrOutMeanwhile = () => getState().permissions.token !== sentToken;
 
 	try {
 		const management = await managementService;
 		const result = await management.service('token-refresh').create({});
 		const newToken: string = result.accessToken;
+
+		if (signedInOrOutMeanwhile()) {
+			logger.debug('refreshToken() - the user signed in or out while refreshing, result ignored');
+
+			return;
+		}
 
 		await management.authentication.setAccessToken(newToken);
 		dispatch(updateLoginState(newToken));
@@ -314,20 +348,80 @@ export const refreshToken = (): AppThunk<Promise<void>> => async (
 			exp ? new Date(exp * 1000).toISOString() : 'unknown'
 		);
 	} catch (error) {
-		logger.error('refreshToken() - failed [error: %o]', error);
-		// Do not force a logout here; let the existing token expire naturally.
-		// If the token is already expired the next API call will trigger handleAuthError.
+		if (signedInOrOutMeanwhile()) {
+			logger.debug('refreshToken() - the user signed in or out while refreshing, error ignored [error: %o]', error);
+
+			return;
+		}
+
+		const code = typeof error === 'object' && error !== null && 'code' in error
+			? (error as { code?: unknown }).code
+			: undefined;
+
+		if (code === 401 || code === 403) {
+			logger.warn('refreshToken() - session ended by the server [code: %s]', code);
+
+			await (await managementService).authentication.removeAccessToken();
+
+			const roomState = getState().room.state;
+
+			dispatch(updateLoginState(undefined, { keepRoomIdentity: roomState === 'joined' || roomState === 'lobby' }));
+			dispatch(notificationsActions.enqueueNotification({
+				message: sessionEndedLabel(),
+				options: { variant: 'warning' }
+			}));
+
+			return;
+		}
+
+		const delay = REFRESH_RETRY_DELAYS_MS[attempt];
+
+		if (delay === undefined) {
+			logger.error('refreshToken() - failed, giving up [error: %o]', error);
+
+			return;
+		}
+
+		logger.warn('refreshToken() - failed, retrying in %d s [error: %o]', delay / 1000, error);
+
+		tokenRefreshTimer = setTimeout(() => {
+			dispatch(refreshToken(attempt + 1));
+		}, delay);
 	}
 };
 
-export const updateLoginState = (inputToken?: string): AppThunk<void> => async (
+export const updateLoginState = (
+	inputToken?: string,
+	{ keepRoomIdentity = false }: { keepRoomIdentity?: boolean } = {}
+): AppThunk<void> => async (
 	dispatch,
 	getState,
 	{ signalingService }
 ): Promise<void> => {
-	logger.debug('updateLoginState()');
+	logger.debug('updateLoginState() [keepRoomIdentity: %s]', keepRoomIdentity);
 
 	const token = inputToken && inputToken.length > 0 ? inputToken : undefined;
+
+	if (token) {
+		logger.debug('updateLoginState() setting token and loggedIn=true');
+		dispatch(permissionsActions.setToken(token));
+		dispatch(permissionsActions.setLoggedIn(true));
+		dispatch(scheduleTokenRefresh(token));
+	} else {
+		logger.debug('updateLoginState() removing token and loggedIn=false');
+		dispatch(permissionsActions.setToken());
+		dispatch(permissionsActions.setLoggedIn(false));
+		dispatch(managamentActions.clearUser());
+
+		if (tokenRefreshTimer !== null) {
+			clearTimeout(tokenRefreshTimer);
+			tokenRefreshTimer = null;
+		}
+	}
+
+	// The room server keeps the identity the peer joined with; the next join uses the new state.
+	if (keepRoomIdentity) return;
+
 	const currentUrl = getState().signaling.url;
 
 	let nextUrl: string | undefined = currentUrl;
@@ -346,23 +440,6 @@ export const updateLoginState = (inputToken?: string): AppThunk<void> => async (
 		}
 	} catch (error) {
 		logger.warn('updateLoginState() failed to parse URL [error: %o]', error);
-	}
-
-	if (token) {
-		logger.debug('updateLoginState() setting token and loggedIn=true');
-		dispatch(permissionsActions.setToken(token));
-		dispatch(permissionsActions.setLoggedIn(true));
-		dispatch(scheduleTokenRefresh(token));
-	} else {
-		logger.debug('updateLoginState() removing token and loggedIn=false');
-		dispatch(permissionsActions.setToken());
-		dispatch(permissionsActions.setLoggedIn(false));
-		dispatch(managamentActions.clearUser());
-
-		if (tokenRefreshTimer !== null) {
-			clearTimeout(tokenRefreshTimer);
-			tokenRefreshTimer = null;
-		}
 	}
 
 	if (nextUrl && nextUrl !== currentUrl) {

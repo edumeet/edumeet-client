@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Veza izgubljena. Ponovno spajanje (pokušaj {attempt})...",
   "label.notification.noTenantFound": "Najmoprimac nije pronađen",
   "label.notification.invalidLogin": "Neispravna prijava",
+  "label.notification.sessionEnded": "Vaša sesija je istekla. Prijavite se ponovno.",
+  "label.notification.loginTabBlocked": "Preglednik je blokirao stranicu za prijavu. Dopustite skočne prozore za ovu stranicu i pokušajte ponovno.",
   "label.managePermissions": "Upravljaj dozvolama",
   "label.selectAll": "Odaberi sve",
   "label.permissions.selectPeersFirst": "Odaberite jednog ili više sudionika za uređivanje njihovih dozvola.",

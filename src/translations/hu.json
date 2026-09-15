@@ -606,6 +606,8 @@
   "label.notification.signalingReconnecting": "Kapcsolat megszakadt. Újracsatlakozás (próbálkozás: {attempt})...",
   "label.notification.noTenantFound": "Bérlő nem található",
   "label.notification.invalidLogin": "Érvénytelen bejelentkezés",
+  "label.notification.sessionEnded": "A munkamenete lejárt. Kérjük, jelentkezzen be újra.",
+  "label.notification.loginTabBlocked": "A böngésző letiltotta a bejelentkezési oldalt. Engedélyezze a felugró ablakokat ehhez az oldalhoz, és próbálja újra.",
   "label.managePermissions": "Jogosultság kezelés",
   "label.selectAll": "Összes kijelölése",
   "label.permissions.selectPeersFirst": "Válasszon ki egy vagy több résztvevőt a jogosultságok szerkesztéséhez.",

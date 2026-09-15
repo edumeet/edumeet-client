@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Verbindung verloren. Wiederverbindung (Versuch {attempt})...",
   "label.notification.noTenantFound": "Mandant nicht gefunden",
   "label.notification.invalidLogin": "Ungültige Anmeldung",
+  "label.notification.sessionEnded": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+  "label.notification.loginTabBlocked": "Der Browser hat die Anmeldeseite blockiert. Erlauben Sie Pop-ups für diese Website und versuchen Sie es erneut.",
   "label.managePermissions": "Berechtigungen verwalten",
   "label.selectAll": "Alle auswählen",
   "label.permissions.selectPeersFirst": "Wählen Sie einen oder mehrere Teilnehmer aus, um deren Berechtigungen zu bearbeiten.",

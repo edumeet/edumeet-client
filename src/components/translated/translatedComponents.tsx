@@ -2381,6 +2381,16 @@ export const invalidLoginLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Invalid login'
 });
 
+export const sessionEndedLabel = (): string => intl.formatMessage({
+	id: 'label.notification.sessionEnded',
+	defaultMessage: 'Your session has ended. Please sign in again.'
+});
+
+export const loginTabBlockedLabel = (): string => intl.formatMessage({
+	id: 'label.notification.loginTabBlocked',
+	defaultMessage: 'The browser blocked the sign in page. Allow pop-ups for this site and try again.'
+});
+
 export const meetingsOnlyLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.meetingsOnly',
 	defaultMessage: 'Meetings only'

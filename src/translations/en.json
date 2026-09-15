@@ -606,6 +606,8 @@
 	"label.notification.signalingReconnecting": "Connection lost. Reconnecting (attempt {attempt})...",
 	"label.notification.noTenantFound": "No tenant found",
 	"label.notification.invalidLogin": "Invalid login",
+	"label.notification.sessionEnded": "Your session has ended. Please sign in again.",
+	"label.notification.loginTabBlocked": "The browser blocked the sign in page. Allow pop-ups for this site and try again.",
 	"label.managePermissions": "Manage permissions",
 	"label.selectAll": "Select all",
 	"label.permissions.selectPeersFirst": "Select one or more peers to edit their permissions.",
