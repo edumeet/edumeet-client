@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Spojení ztraceno. Znovu se připojuji (pokus {attempt})...",
   "label.notification.noTenantFound": "Tenant nenalezen",
   "label.notification.invalidLogin": "Neplatné přihlášení",
+  "label.notification.sessionEnded": "Vaše relace skončila. Přihlaste se prosím znovu.",
+  "label.notification.loginTabBlocked": "Prohlížeč zablokoval přihlašovací stránku. Povolte pro tento web vyskakovací okna a zkuste to znovu.",
   "label.managePermissions": "Spravovat oprávnění",
   "label.selectAll": "Vybrat vše",
   "label.permissions.selectPeersFirst": "Vyberte jednoho nebo více účastníků pro úpravu jejich oprávnění.",

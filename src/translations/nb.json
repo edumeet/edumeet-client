@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Forbindelse mistet. Kobler til på nytt (forsøk {attempt})...",
   "label.notification.noTenantFound": "Leietaker ikke funnet",
   "label.notification.invalidLogin": "Ugyldig pålogging",
+  "label.notification.sessionEnded": "Økten din er avsluttet. Logg inn på nytt.",
+  "label.notification.loginTabBlocked": "Nettleseren blokkerte påloggingssiden. Tillat popup-vinduer for dette nettstedet og prøv på nytt.",
   "label.managePermissions": "Administrer tillatelser",
   "label.selectAll": "Velg alle",
   "label.permissions.selectPeersFirst": "Velg én eller flere deltakere for å redigere tillatelsene deres.",

@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": null,
   "label.notification.noTenantFound": null,
   "label.notification.invalidLogin": null,
+  "label.notification.sessionEnded": null,
+  "label.notification.loginTabBlocked": null,
   "label.managePermissions": null,
   "label.selectAll": null,
   "label.permissions.selectPeersFirst": null,

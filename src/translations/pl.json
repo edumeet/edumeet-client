@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Utracono połączenie. Ponawiam (próba {attempt})...",
   "label.notification.noTenantFound": "Nie znaleziono tenanta",
   "label.notification.invalidLogin": "Nieprawidłowe dane logowania",
+  "label.notification.sessionEnded": "Twoja sesja wygasła. Zaloguj się ponownie.",
+  "label.notification.loginTabBlocked": "Przeglądarka zablokowała stronę logowania. Zezwól na wyskakujące okna dla tej witryny i spróbuj ponownie.",
   "label.managePermissions": "Zarządzaj uprawnieniami",
   "label.selectAll": "Zaznacz wszystko",
   "label.permissions.selectPeersFirst": "Wybierz jednego lub więcej uczestników, aby edytować ich uprawnienia.",

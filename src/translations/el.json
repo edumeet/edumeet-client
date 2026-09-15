@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Η σύνδεση χάθηκε. Γίνεται επανασύνδεση (προσπάθεια {attempt})...",
   "label.notification.noTenantFound": "Δεν βρέθηκε ο ενοικιαστής",
   "label.notification.invalidLogin": "Μη έγκυρη σύνδεση",
+  "label.notification.sessionEnded": "Η συνεδρία σας έληξε. Παρακαλώ συνδεθείτε ξανά.",
+  "label.notification.loginTabBlocked": "Το πρόγραμμα περιήγησης μπλόκαρε τη σελίδα σύνδεσης. Επιτρέψτε τα αναδυόμενα παράθυρα για αυτόν τον ιστότοπο και δοκιμάστε ξανά.",
   "label.managePermissions": "Διαχείριση δικαιωμάτων",
   "label.selectAll": "Επιλογή όλων",
   "label.permissions.selectPeersFirst": "Επιλέξτε έναν ή περισσότερους συμμετέχοντες για επεξεργασία των δικαιωμάτων τους.",

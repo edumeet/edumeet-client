@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Connexion perdue. Reconnexion (tentative {attempt})...",
   "label.notification.noTenantFound": "Locataire introuvable",
   "label.notification.invalidLogin": "Identifiants invalides",
+  "label.notification.sessionEnded": "Votre session a expiré. Veuillez vous reconnecter.",
+  "label.notification.loginTabBlocked": "Le navigateur a bloqué la page de connexion. Autorisez les fenêtres pop-up pour ce site et réessayez.",
   "label.managePermissions": "Gérer les permissions",
   "label.selectAll": "Tout sélectionner",
   "label.permissions.selectPeersFirst": "Sélectionnez un ou plusieurs participants pour modifier leurs permissions.",

@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Forbindelse mistet. Genopretter forbindelse (forsøg {attempt})...",
   "label.notification.noTenantFound": "Lejer ikke fundet",
   "label.notification.invalidLogin": "Ugyldigt login",
+  "label.notification.sessionEnded": "Din session er udløbet. Log venligst ind igen.",
+  "label.notification.loginTabBlocked": "Browseren blokerede login-siden. Tillad pop op-vinduer for dette websted, og prøv igen.",
   "label.managePermissions": "Administrer tilladelser",
   "label.selectAll": "Vælg alle",
   "label.permissions.selectPeersFirst": "Vælg en eller flere deltagere for at redigere deres tilladelser.",

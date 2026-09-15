@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Connessione persa. Riconnessione (tentativo {attempt})...",
   "label.notification.noTenantFound": "Tenant non trovato",
   "label.notification.invalidLogin": "Accesso non valido",
+  "label.notification.sessionEnded": "La sessione è terminata. Accedi di nuovo.",
+  "label.notification.loginTabBlocked": "Il browser ha bloccato la pagina di accesso. Consenti i pop-up per questo sito e riprova.",
   "label.managePermissions": "Gestisci autorizzazioni",
   "label.selectAll": "Seleziona tutto",
   "label.permissions.selectPeersFirst": "Seleziona uno o più partecipanti per modificare le loro autorizzazioni.",

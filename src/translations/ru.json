@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Соединение потеряно. Повторное подключение (попытка {attempt})...",
   "label.notification.noTenantFound": "Арендатор не найден",
   "label.notification.invalidLogin": "Неверный логин",
+  "label.notification.sessionEnded": "Ваш сеанс завершён. Войдите снова.",
+  "label.notification.loginTabBlocked": "Браузер заблокировал страницу входа. Разрешите всплывающие окна для этого сайта и попробуйте снова.",
   "label.managePermissions": "Управлять разрешениями",
   "label.selectAll": "Выбрать все",
   "label.permissions.selectPeersFirst": "Выберите одного или нескольких участников, чтобы изменить их разрешения.",

@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Conexão perdida. Reconectando (tentativa {attempt})...",
   "label.notification.noTenantFound": "Inquilino não encontrado",
   "label.notification.invalidLogin": "Login inválido",
+  "label.notification.sessionEnded": "Sua sessão terminou. Faça login novamente.",
+  "label.notification.loginTabBlocked": "O navegador bloqueou a página de login. Permita pop-ups para este site e tente novamente.",
   "label.managePermissions": "Gerir permissões",
   "label.selectAll": "Selecionar tudo",
   "label.permissions.selectPeersFirst": "Selecione um ou mais participantes para editar as respetivas permissões.",

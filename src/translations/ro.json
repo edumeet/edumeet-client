@@ -532,6 +532,8 @@
   "label.notification.signalingReconnecting": "Conexiune pierdută. Se reconectează (încercarea {attempt})...",
   "label.notification.noTenantFound": "Chiriaș negăsit",
   "label.notification.invalidLogin": "Autentificare invalidă",
+  "label.notification.sessionEnded": "Sesiunea s-a încheiat. Autentifică-te din nou.",
+  "label.notification.loginTabBlocked": "Browserul a blocat pagina de autentificare. Permite ferestrele pop-up pentru acest site și încearcă din nou.",
   "label.managePermissions": "Gestionează permisiuni",
   "label.selectAll": "Selectează tot",
   "label.permissions.selectPeersFirst": "Selectează unul sau mai mulți participanți pentru a le edita permisiunile.",
