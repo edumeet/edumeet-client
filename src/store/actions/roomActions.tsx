@@ -25,9 +25,10 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 
 	dispatch(roomActions.updateRoom({ joinInProgress: true, roomId }));
 
-	// Set roomId on the monitor before the WebSocket connects, so that every
-	// sample, including ones emitted before roomReady fires, carries the roomId.
-	mediaService.setMonitorAttachments({ roomId });
+	// Set tenantFqdn and roomId on the monitor before the WebSocket connects, so
+	// that every sample, including ones emitted before roomReady fires, carries them.
+	// tenantFqdn is the value the signaling URL sends for tenant resolution.
+	mediaService.setMonitorAttachments({ tenantFqdn: window.location.hostname, roomId });
 
 	try {
 		const state = getState();
