@@ -672,24 +672,34 @@ export class MediaService extends EventEmitter {
 						dataConsumer.observer.once('close', () => this.dataConsumers.delete(dataConsumer.id));
 						dataConsumer.once('transportclose', () => this.closeDataConsumer(dataConsumer.id, false));
 
+						// Opening a message is asynchronous, so they are handled one at a time to keep the
+						// interim results of one utterance in the order they were sent.
+						let reading = Promise.resolve();
+
 						dataConsumer.on('message', (message) => {
-							if (typeof message !== 'string') return;
+							reading = reading.catch(() => undefined).then(async () => {
+								const text = await this.readDataMessage(message, peerId);
 
-							const { method, data } = JSON.parse(message);
+								if (text === undefined) return;
 
-							switch (method) {
-								case 'transcript': {
-									const { transcript, id: transcriptionId, done } = data;
+								const { method, data } = JSON.parse(text);
 
-									this.emit('transcript', { id: transcriptionId, transcript, peerId, done });
+								switch (method) {
+									case 'transcript': {
+										const { transcript, id: transcriptionId, done } = data;
 
-									break;
+										this.emit('transcript', { id: transcriptionId, transcript, peerId, done });
+
+										break;
+									}
+
+									default: {
+										logger.warn('unknown dataConsumer method "%s"', method);
+									}
 								}
+							});
 
-								default: {
-									logger.warn('unknown dataConsumer method "%s"', method);
-								}
-							}
+							reading.catch((error) => logger.warn('dataConsumer message not handled [peerId:%s, error:%o]', peerId, error));
 						});
 
 						this.emit('dataConsumerCreated', dataConsumer);
@@ -974,6 +984,30 @@ export class MediaService extends EventEmitter {
 		this.monitor.attachments = { ...this.monitor.attachments, ...masked };
 	}
 
+	// In an end-to-end encrypted room a message that is not sealed did not come from a member's
+	// client, so it is dropped rather than shown. Outside one only text is expected.
+	private async readDataMessage(message: unknown, peerId: string): Promise<string | undefined> {
+		if (!this.e2eeService?.enabled) return typeof message === 'string' ? message : undefined;
+
+		if (typeof message === 'string') {
+			logger.warn('unencrypted data message in an end-to-end encrypted room, dropped [peerId:%s]', peerId);
+
+			return undefined;
+		}
+
+		let bytes: Uint8Array<ArrayBuffer> | undefined;
+
+		if (message instanceof ArrayBuffer) bytes = new Uint8Array(message);
+		else if (message instanceof Blob) bytes = new Uint8Array(await message.arrayBuffer());
+		else if (ArrayBuffer.isView(message)) bytes = new Uint8Array(message.buffer as ArrayBuffer, message.byteOffset, message.byteLength);
+
+		if (!bytes) return undefined;
+
+		const opened = await this.e2eeService.openMessage(bytes);
+
+		return opened && new TextDecoder().decode(opened);
+	}
+
 	public closeDataConsumer(dataConsumerId: string, local = true): void {
 		logger.debug('closeDataConsumer [dataConsumerId:%s]', dataConsumerId);
 
@@ -1030,6 +1064,9 @@ export class MediaService extends EventEmitter {
 	private async startObserverSampling(): Promise<void> {
 		if (!this.monitor) return;
 		if (!this.monitor.config.samplingPeriodInMs) return;
+		// The media node reads these samples, and that is what an end-to-end encrypted room keeps
+		// from it. The room server refuses the channel as well; not opening it saves the refusal.
+		if (this.e2eeService?.enabled) return logger.debug('startObserverSampling() | not in an end-to-end encrypted room');
 
 		logger.debug('startObserverSampling()');
 
@@ -1262,6 +1299,22 @@ export class MediaService extends EventEmitter {
 		this.speechRecognition.interimResults = true;
 
 		let transcriptId = Math.round(Math.random() * 10000000);
+		// Sealing is asynchronous, so sends are chained to keep the interim results of one utterance
+		// in the order they were produced.
+		let sending = Promise.resolve();
+		const send = (payload: string): Promise<void> => {
+			sending = sending.catch(() => undefined).then(async () => {
+				if (!this.e2eeService?.enabled) return dataProducer.send(payload);
+
+				const sealed = await this.e2eeService.sealMessage(new TextEncoder().encode(payload));
+
+				if (!sealed) return logger.warn('transcript dropped, there is no key to encrypt it with yet');
+
+				dataProducer.send(sealed);
+			});
+
+			return sending;
+		};
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		this.speechRecognition.onresult = (event: any) => {
@@ -1286,11 +1339,7 @@ export class MediaService extends EventEmitter {
 				}
 			});
 
-			try {
-				dataProducer.send(data);
-			} catch (error) {
-				logger.error('dataProducer error sending message [error:%o]', error);
-			}
+			send(data).catch((error) => logger.error('dataProducer error sending message [error:%o]', error));
 
 			if (isFinal) { // We want to send the transcript now
 				logger.debug('speech final result [transcript:%s]', speechResult);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Bytes, importMediaKey, randomKeyRaw, ratchetRaw } from './crypto';
+import { Bytes, importMediaKey, randomKeyRaw } from './crypto';
 import { clearBytes, GCM_TAG_BYTES, NONCE_BYTES, nonceFor, open, parseFrame, seal, sealFrame, Sealed } from './frameCrypto';
 
 const KEY_ID = ((0xabcdef << 8) | 5) >>> 0;
@@ -173,24 +173,23 @@ describe('tampering', () => {
 });
 
 describe('wrong keys', () => {
-	it('rejects another key and the next key in the chain alike', async () => {
+	it('rejects any key but the one it was sealed under', async () => {
 		const raw = randomKeyRaw();
 		const key = await importMediaKey(raw);
 		const wire = await sealedBytes(frame(40, 0x78), 'opus', key);
 		const shape = parsedSealed(wire, 'opus');
 
 		await expect(open(shape, await importMediaKey(randomKeyRaw()))).rejects.toThrow();
-		await expect(open(shape, await importMediaKey(await ratchetRaw(raw)))).rejects.toThrow();
 		await expect(open(shape, key)).resolves.toBeDefined();
 	});
 
-	it('opens under the advanced key once the sender has advanced', async () => {
+	it('opens under the new key once the sender has moved to it', async () => {
 		const raw = randomKeyRaw();
-		const advanced = await ratchetRaw(raw);
-		const wire = await sealedBytes(frame(40, 0x78), 'opus', await importMediaKey(advanced));
+		const next = randomKeyRaw();
+		const wire = await sealedBytes(frame(40, 0x78), 'opus', await importMediaKey(next));
 
 		await expect(open(parsedSealed(wire, 'opus'), await importMediaKey(raw))).rejects.toThrow();
-		await expect(open(parsedSealed(wire, 'opus'), await importMediaKey(advanced))).resolves.toBeDefined();
+		await expect(open(parsedSealed(wire, 'opus'), await importMediaKey(next))).resolves.toBeDefined();
 	});
 });
 

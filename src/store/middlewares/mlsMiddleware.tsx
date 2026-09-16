@@ -25,12 +25,10 @@ const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout
 
 // Group key agreement over the room server's MLS delivery service. The server orders commits and
 // hands newcomers the current GroupInfo; every member derives the frame keys of every sender from
-// the epoch secret, so no key is ever sent. Selected by the client configuration; the pairwise
-// middleware stays idle while this one runs, and the other way round.
-const createMlsMiddleware = ({ signalingService, e2eeService, config }: MiddlewareOptions): Middleware => {
+// the epoch secret, so no key is ever sent.
+const createMlsMiddleware = ({ signalingService, e2eeService }: MiddlewareOptions): Middleware => {
 	logger.debug('createMlsMiddleware()');
 
-	const selected = config.e2eeProvider === 'mls';
 	const departed = new Set<string>();
 	let departureTimer: ReturnType<typeof setTimeout> | undefined;
 	let fallbackTimer: ReturnType<typeof setTimeout> | undefined;
@@ -352,8 +350,6 @@ const createMlsMiddleware = ({ signalingService, e2eeService, config }: Middlewa
 
 	return ({ dispatch, getState }: { dispatch: AppDispatch; getState: () => RootState }) =>
 		(next) => (action) => {
-			if (!selected) return next(action);
-
 			stateOf = getState;
 			wireHandlers(dispatch, getState);
 

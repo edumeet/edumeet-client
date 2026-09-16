@@ -115,7 +115,7 @@ The client merges your `window.config` with built-in defaults (see `src/utils/ty
 | title | Application title. | `string` | `edumeet` |
 | randomizeOnBlank | Randomize room name when blank. | `boolean` | `true` |
 | keepRoomNameOnLeave | (4.2+) Keep the room name in the URL when leaving the room. | `boolean` | `true` |
-| transcriptionEnabled | Enable transcription. | `boolean` | `true` |
+| transcriptionEnabled | Enable transcription. The text comes from the browser's own speech recognition, which sends the speaker's audio to the browser vendor's service (Google for Chrome, Microsoft for Edge). End-to-end encryption does not cover that step; in an end-to-end encrypted room only the transcript sent to the other participants is encrypted. | `boolean` | `true` |
 | imprintUrl | Show an imprint link (blank to hide). | `string` | `''` |
 | privacyUrl | Show a privacy notice link (blank to hide). | `string` | `''` |
 | knownRegions | Region codes offered in the management UI's tenant editor for the per-tenant "limit media nodes to specific regions" picker. Values must match region labels in the room-server's `countryToRegion` config. Leave empty to hide the limit toggle. | `string[]` | `[]` |

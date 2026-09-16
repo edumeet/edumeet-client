@@ -30,7 +30,6 @@ import createChatMiddleware from './middlewares/chatMiddleware';
 import createNotificationMiddleware from './middlewares/notificationMiddleware';
 import createCountdownTimerMiddleware from './middlewares/countdownTimerMiddleware';
 import createDrawingMiddleware from './middlewares/drawingMiddleware';
-import createE2eeMiddleware from './middlewares/e2eeMiddleware';
 import createMlsMiddleware from './middlewares/mlsMiddleware';
 import roomSlice from './slices/roomSlice';
 import meSlice from './slices/meSlice';
@@ -173,7 +172,6 @@ export const store = configureStore({
 			createEffectsMiddleware(middlewareOptions),
 			createCountdownTimerMiddleware(middlewareOptions),
 			createDrawingMiddleware(middlewareOptions),
-			createE2eeMiddleware(middlewareOptions),
 			createMlsMiddleware(middlewareOptions),
 			...(edumeetConfig.reduxLoggingEnabled ? [ createLogger({
 				duration: true,

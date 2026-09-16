@@ -138,7 +138,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 		watchTabVisibility: true,
 	},
 	imprintUrl: '',
-	e2eeProvider: 'mls',
 	privacyUrl: '',
 	reactionsTimeout: 10000,
 	browserWarnings: [],
@@ -204,7 +203,6 @@ export interface EdumeetConfig {
 	connectivityCheckEnabled: boolean;
 	clientMonitor?: ClientMonitorConfig;
 	imprintUrl: string;
-	e2eeProvider: 'pairwise' | 'mls';
 	privacyUrl: string;
 	reactionsTimeout: number;
 	browserWarnings: BrowserWarning[];

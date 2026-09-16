@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { roomActions } from './roomSlice';
 
 interface E2eeState {
-	// peerId -> true once we've received that peer's media key (i.e. we can decrypt their
-	// media and the pairwise secure channel is established). Drives the peer-list indicator.
+	// peerId -> true once the group epoch that includes that peer is applied (i.e. we can decrypt
+	// their media). Drives the peer-list indicator.
 	securedPeers: Record<string, boolean>;
 	// peerId -> true if the peer's TOFU-pinned identity key later CHANGED (possible MITM).
 	identityChangedPeers: Record<string, boolean>;

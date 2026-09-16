@@ -1,7 +1,7 @@
-import { WebCryptoKeyProvider } from '../utils/e2ee/WebCryptoKeyProvider';
 import { MlsKeyProvider } from '../utils/e2ee/MlsKeyProvider';
-import { IdentityStatus, LocalKey, WrappedKeyMessage } from '../utils/e2ee/E2eeKeyProvider';
-import { Bytes, peerNamespace } from '../utils/e2ee/crypto';
+import { Bytes } from '../utils/e2ee/crypto';
+import { DecryptKeyStore } from '../utils/e2ee/keyStore';
+import { MessageOpener, MessageSealer } from '../utils/e2ee/messageCrypto';
 import { Logger } from '../utils/Logger';
 import { browserInfo } from '../utils/deviceInfo';
 
@@ -53,49 +53,38 @@ const normalizeCodec = (mime?: string): string => {
 	return 'unknown';
 };
 
-// Owns the encrypt/decrypt workers + the key provider, and attaches the RTCRtpScriptTransform to our
-// senders/receivers. The signaling middleware drives key exchange; the media pipeline calls
+// Owns the encrypt/decrypt workers and the MLS key provider, and attaches the RTCRtpScriptTransform
+// to our senders/receivers. The MLS middleware drives the group; the media pipeline calls
 // protectSender()/protectReceiver() right after produce()/consume().
 export class E2eeService {
 	#enabled = false;
-	#provider?: WebCryptoKeyProvider;
 	#encWorker?: Worker;
 	#decWorker?: Worker;
 	#readyResolve!: () => void;
 	readonly #ready: Promise<void> = new Promise((resolve) => { this.#readyResolve = resolve; });
 
+	// Data channel messages are sealed and opened on this thread, so the keys the decrypt worker holds
+	// are mirrored here and the sender's current key is handed to the sealer whenever the worker gets it.
+	readonly #messageKeys = new DecryptKeyStore((namespace) => this.#keyNeeded(namespace));
+	readonly #sealer = new MessageSealer();
+	readonly #opener = new MessageOpener(this.#messageKeys);
+
 	get enabled(): boolean {
 		return this.#enabled;
 	}
 
-	async enable(myPeerId: string): Promise<void> {
-		if (this.#enabled) return;
-
-		this.#enabled = true; // mark intent synchronously so protectSender/Receiver await readiness
-		logger.debug('E2EE ENABLED — outgoing/incoming media in this room will be encrypted [peerId: %s]', myPeerId);
-
-		this.#provider = new WebCryptoKeyProvider(myPeerId);
-		await this.#provider.init();
-
-		this.#startWorkers();
-		this.#pushLocalKey();
-		this.#readyResolve();
-	}
-
-	// The group alternative to enable(): keys come from the MLS epoch rather than pairwise exchange.
 	// Readiness is deferred to the first applyEpochKeys(), which happens once the group is joined, so
 	// a sender holds its media until it has a key to encrypt with.
 	async enableMls(myPeerId: string): Promise<MlsKeyProvider> {
 		if (this.#mls?.peerId === myPeerId) return this.#mls;
 
-		this.#enabled = true;
+		this.#enabled = true; // mark intent synchronously so protectSender/Receiver await readiness
 		logger.debug('E2EE ENABLED with MLS, outgoing/incoming media in this room will be encrypted [peerId: %s]', myPeerId);
 
 		const mls = new MlsKeyProvider(myPeerId);
 
 		await mls.init();
 		this.#mls = mls;
-		this.#mlsLocalKeyId = undefined;
 		if (!this.#encWorker) this.#startWorkers();
 
 		return mls;
@@ -138,9 +127,11 @@ export class E2eeService {
 
 			this.#namespaces.delete(namespace);
 			this.#decWorker?.postMessage({ type: 'dropKeys', namespace });
+			this.#messageKeys.dropNamespace(namespace);
 		}
 
-		this.#decWorker?.postMessage({ type: 'decKeys', ratchet: false, keys: keys.remote.map(({ keyId, key, raw }) => ({ keyId, key, raw })) });
+		this.#decWorker?.postMessage({ type: 'decKeys', keys: keys.remote.map(({ keyId, key, raw }) => ({ keyId, key, raw })) });
+		for (const { keyId, key, raw } of keys.remote) this.#messageKeys.set(keyId, { key, raw });
 
 		if (!keys.local) {
 			this.onLeafLost?.();
@@ -160,9 +151,8 @@ export class E2eeService {
 
 		this.#pendingEncKey = setTimeout(() => {
 			this.#pendingEncKey = undefined;
-			this.#mlsLocalKeyId = local.keyId;
-			this.#localKeyUsed = false;
-			this.#encWorker?.postMessage({ type: 'encKey', keyId: local.keyId, key: local.key, ratcheted: false });
+			this.#encWorker?.postMessage({ type: 'encKey', keyId: local.keyId, key: local.key });
+			void this.#sealer.setKey(local.keyId, local.raw);
 			this.#readyResolve();
 		}, Math.max(0, switchAt - now));
 
@@ -173,11 +163,6 @@ export class E2eeService {
 	#graceStarted = 0;
 
 	#mls?: MlsKeyProvider;
-	#mlsLocalKeyId?: number;
-
-	#currentLocalKeyId(): number | undefined {
-		return this.#mls ? this.#mlsLocalKeyId : this.#provider?.localKey()?.keyId;
-	}
 
 	#startWorkers(): void {
 		this.#encWorker = new Worker(new URL('../utils/e2ee/sframeWorker.ts', import.meta.url), { type: 'module' });
@@ -206,52 +191,17 @@ export class E2eeService {
 	#verifyTimer?: ReturnType<typeof setTimeout>;
 	#unverifiedReported = false;
 
-	// Set by the e2ee middleware. Fired when E2EE is on but nothing is actually being encrypted, so
+	// Set by the MLS middleware. Fired when E2EE is on but nothing is actually being encrypted, so
 	// the app can stop presenting the room as protected rather than silently sending plaintext.
 	onEncryptionUnverified?: () => void;
 
 	// Fired once, when a frame has demonstrably been encrypted or decrypted.
 	onEncryptionVerified?: () => void;
 
-	readonly #namespaces = new Map<number, string>(); // media key namespace -> peerId
-	#localKeyUsed = false; // has anything been encrypted under the key we currently hold
+	readonly #namespaces = new Map<number, string>(); // media key namespace (leaf index) -> peerId
 
-	// A departure happened while we had no producer. The leaver holds our key, so it has to be replaced
-	// before we send anything, but with nothing to send there is no reason to do it yet, and in a large
-	// room most participants have nothing to send. It is replaced when the next producer starts, before
-	// that producer's transform is attached, so no frame ever leaves under the burned key.
-	#keyBurned = false;
-	#burnedRotation?: Promise<void>;
-
-	// Set by the middleware, which is the only party that can distribute the replacement.
-	onRotateRequired?: () => Promise<void>;
-
-	markKeyBurned(): void {
-		this.#keyBurned = true;
-	}
-
-	#rotateIfBurned(): Promise<void> {
-		if (!this.#keyBurned) return Promise.resolve();
-
-		// Several producers starting together must share one replacement, not race three.
-		if (!this.#burnedRotation) {
-			this.#burnedRotation = (async () => {
-				this.#keyBurned = false;
-
-				// Without the middleware the key is still replaced; recipients recover it by asking.
-				if (this.onRotateRequired) await this.onRotateRequired();
-				else await this.rotateLocalKey();
-			})().finally(() => {
-				this.#burnedRotation = undefined;
-			});
-		}
-
-		return this.#burnedRotation;
-	}
-
-	// A peer whose media we cannot decrypt, either because their key never reached us or because we
-	// have fallen too far behind their advances. The worker only sees namespaces, so the peer is
-	// resolved here and the caller decides how to ask.
+	// A peer whose media we cannot decrypt because we have not applied the epoch they send under.
+	// The worker only sees namespaces, so the peer is resolved here and the caller checks the epoch.
 	// eslint-disable-next-line no-unused-vars
 	onKeyNeeded?: (peerId: string) => void;
 
@@ -317,15 +267,7 @@ export class E2eeService {
 			}
 		}
 
-		if (d.event === 'encKeyUsed' && (d.keyId >>> 0) === this.#currentLocalKeyId()) this.#localKeyUsed = true;
-
-		if (d.event === 'keyNeeded') {
-			const peerId = this.#namespaces.get(d.namespace >>> 0);
-
-			// An unknown namespace is not a peer: a clear-byte disagreement parses ciphertext as a
-			// header and produces key identifiers that belong to nobody. Nothing to ask, so ignore it.
-			if (peerId) this.onKeyNeeded?.(peerId);
-		}
+		if (d.event === 'keyNeeded') this.#keyNeeded(d.namespace >>> 0);
 
 		// Either direction counts here: successfully decrypting a peer proves the crypto is working just
 		// as well as encrypting our own media, and a receive-only participant has nothing to encrypt --
@@ -346,6 +288,14 @@ export class E2eeService {
 		else logger.debug('E2EE worker %j', rest);
 	};
 
+	#keyNeeded(namespace: number): void {
+		const peerId = this.#namespaces.get(namespace);
+
+		// An unknown namespace is not a peer: a clear-byte disagreement parses ciphertext as a
+		// header and produces key identifiers that belong to nobody. Nothing to ask, so ignore it.
+		if (peerId) this.onKeyNeeded?.(peerId);
+	}
+
 	#startEncryptionWatchdog(): void {
 		if (this.#verifyTimer || this.#protectionActive) return;
 		if (!this.#transformAttached || !this.#mediaFlowPossible) return;
@@ -364,7 +314,6 @@ export class E2eeService {
 	async protectSender(sender?: RTCRtpSender, codecMime?: string): Promise<number | undefined> {
 		if (!this.#enabled || !sender) return undefined;
 		await this.#ready;
-		await this.#rotateIfBurned();
 
 		return this.#attach(sender, 'encrypt', codecMime);
 	}
@@ -400,80 +349,30 @@ export class E2eeService {
 		return tid;
 	}
 
-	// ---- signaling middleware: key exchange delegation ----
-	getIdentityPublicKey(): Promise<Bytes> {
-		return this.#provider!.getIdentityPublicKey();
-	}
-
-	hasPeer(peerId: string): boolean {
-		return this.#provider?.hasPeer(peerId) ?? false;
-	}
-
-	async addPeer(peerId: string, identityPubKey: Bytes): Promise<IdentityStatus> {
-		const status = await this.#provider!.addPeer(peerId, identityPubKey);
-
-		this.#namespaces.set(await peerNamespace(peerId), peerId);
-
-		return status;
-	}
-
+	// A peer left the room. Their keys are dropped at once rather than when the next epoch is
+	// applied: otherwise they stay valid until then and old frames remain replayable.
 	removePeer(peerId: string): void {
-		this.#provider?.removePeer(peerId);
-
-		// The worker holds this peer's media keys and knows nothing about peers, so tell it to drop
-		// them. Otherwise they stay valid for the rest of the session and old frames remain replayable.
-		// The namespace was recorded when the peer was added, so this needs no await: hashing it again
-		// would leave a gap in which a request for a key could still name a peer who has gone.
 		for (const [ namespace, id ] of this.#namespaces) {
 			if (id !== peerId) continue;
 
 			this.#namespaces.delete(namespace);
 			this.#decWorker?.postMessage({ type: 'dropKeys', namespace });
+			this.#messageKeys.dropNamespace(namespace);
 		}
 	}
 
-	wrapLocalKeyFor(peerId: string): Promise<WrappedKeyMessage> {
-		return this.#provider!.wrapLocalKeyFor(peerId);
+	// ---- data channel messages ----
+	// Nothing is returned without a key: the caller drops the message rather than sending it clear.
+	async sealMessage(plain: Bytes): Promise<Bytes | undefined> {
+		if (!this.#enabled) return undefined;
+		await this.#ready;
+
+		return this.#sealer.seal(plain);
 	}
 
-	wrapLocalKeyForAll(): Promise<WrappedKeyMessage[]> {
-		return this.#provider!.wrapLocalKeyForAll();
-	}
+	async openMessage(sealed: Bytes): Promise<Bytes | undefined> {
+		if (!this.#enabled) return undefined;
 
-	async rotateLocalKey(): Promise<void> {
-		this.#keyBurned = false;
-		await this.#provider!.rotateLocalKey();
-		this.#pushLocalKey();
-	}
-
-	// Advancing hides what was sent before a newcomer arrived. With nothing sent under the current key
-	// there is nothing to hide, and advancing anyway would only put us further ahead of the peers who
-	// have had no frames from us to follow, which is exactly the participant this protects: mic and
-	// camera off through a run of arrivals, then unmuting into a room that can no longer read them.
-	async ratchetLocalKey(): Promise<void> {
-		if (!this.#localKeyUsed) {
-			logger.debug('nothing sent under the current key, keeping it rather than advancing');
-
-			return;
-		}
-
-		await this.#provider!.ratchetLocalKey();
-		this.#pushLocalKey(true);
-	}
-
-	async onRemoteKey(fromPeerId: string, keyId: number, iv: Bytes, data: ArrayBuffer): Promise<void> {
-		const update = await this.#provider!.unwrapRemoteKey(fromPeerId, keyId, iv, data);
-
-		// Logged here as well as in the worker so a gap between the two can be attributed to one side.
-		// Formatted as a string: the browser console's own %d renders a key id above 2^31 as negative.
-		logger.debug('remote key unwrapped, handing it to the worker [keyId:%s]', String(update.keyId));
-		this.#decWorker?.postMessage({ type: 'decKey', keyId: update.keyId, key: update.key, raw: update.raw });
-	}
-
-	#pushLocalKey(ratcheted = false): void {
-		const lk: LocalKey | undefined = this.#provider?.localKey();
-
-		this.#localKeyUsed = false;
-		if (lk) this.#encWorker?.postMessage({ type: 'encKey', keyId: lk.keyId, key: lk.key, ratcheted });
+		return this.#opener.open(sealed);
 	}
 }

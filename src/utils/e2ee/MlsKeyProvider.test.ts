@@ -225,7 +225,7 @@ describe('MlsKeyProvider', () => {
 		await relay(joinAsBob, impostor, [ alice ]);
 
 		// The library keeps both leaves: only a resync replaces one, and this was a plain join. The
-		// warning is the defence, as it is in the pairwise design; the group itself does not judge.
+		// warning is the defence; the group itself does not judge.
 		expect(changed).toEqual([ 'bob' ]);
 		expect(alice.members().filter((m) => m.peerId === 'bob').length).toBe(2);
 	});

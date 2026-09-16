@@ -94,8 +94,8 @@ export class MlsKeyProvider {
 	readonly #pins = new Map<string, string>();
 
 	// A member's signature key changed under a peer id we had already seen. Peer ids are not reused
-	// and a returning member keeps its key pair, so this is the same signal the pairwise design
-	// raises as a changed identity: worth a warning, not a reason to drop out of the group.
+	// and a returning member keeps its key pair, so this reads as a changed identity: worth a
+	// warning, not a reason to drop out of the group.
 	// eslint-disable-next-line no-unused-vars
 	onIdentityChanged?: (peerId: string) => void;
 

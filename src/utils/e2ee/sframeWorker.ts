@@ -7,10 +7,7 @@
 import { DecryptKeyStore } from './keyStore';
 import { clearBytes, nonceFor, open, parseFrame, seal } from './frameCrypto';
 
-// `used` records whether anything has actually been encrypted under the current key. Advancing on a
-// newcomer's arrival exists to keep them from reading what came before, so it is only worth anything
-// once something has been sent under the key being left behind.
-const enc: { key?: CryptoKey; keyId: number; counter: number; used: boolean } = { keyId: 0, counter: 0, used: false };
+const enc: { key?: CryptoKey; keyId: number; counter: number } = { keyId: 0, counter: 0 };
 const dec = new DecryptKeyStore((namespace) => report({ level: 'debug', event: 'keyNeeded', namespace }));
 const encTransformers: any[] = [];
 const decTransformers: any[] = [];
@@ -163,11 +160,6 @@ async function encrypt(frame: any, controller: any, codec: string, diag: Diag): 
 		frame.data = (await seal(data, header, enc.key, nonce)).buffer;
 		diag.ok++;
 
-		if (!enc.used) {
-			enc.used = true;
-			report({ level: 'debug', event: 'encKeyUsed', keyId: enc.keyId });
-		}
-
 		// Proof that this stream is genuinely being encrypted, not merely that a transform was attached.
 		if (diag.ok === 1) report({ level: 'debug', id: diag.id, op: 'encrypt', codec, event: 'firstFrame' });
 		markHandled(diag, 'encrypt', codec);
@@ -182,7 +174,6 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 	diag.seen++;
 	if (dec.size === 0) return drop(diag, 'noDecKeys');
 
-	let derived = false;
 	let namespace = -1;
 	let keyId = 0;
 
@@ -210,10 +201,7 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 		keyId = shape.keyId;
 		namespace = keyId >>> 8;
 
-		const chain = dec.has(keyId) ? undefined : await dec.deriveChain(keyId);
-		const key = chain ? chain[chain.length - 1].entry.key : dec.get(keyId)?.key;
-
-		derived = Boolean(chain);
+		const key = dec.get(keyId)?.key;
 
 		if (diag.seen <= DEBUG_FRAMES) {
 			report({
@@ -225,31 +213,23 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 				header,
 				keyId,
 				haveKey: Boolean(key),
-				derived,
 				knownKeyIds: dec.knownKeyIds(),
 				wireHead: hex(data, Math.min(16, data.length)),
 				...frameShape(frame)
 			});
 		}
 
-		// A keyId we hold no key for and cannot derive one for. Either the sender's key never reached
-		// us, or we have fallen further behind their advances than we will derive, or this is not a
-		// keyId at all because the clear byte count disagrees and we are reading ciphertext as a
-		// header. The first two are recoverable and the count below is what starts that. A key we
-		// already failed to derive is the ordinary gap after a departure, waiting for the replacement
-		// to be delivered, so it is reported under its own name rather than as something unknown.
+		// A keyId we hold no key for. Either the epoch the sender is on has not been applied here yet,
+		// or this is not a keyId at all because the clear byte count disagrees and we are reading
+		// ciphertext as a header. The first is recoverable and the count below is what starts that.
 		if (!key) {
 			dec.missed(namespace);
 
-			return drop(diag, dec.isUndeliverable(keyId) ? 'awaitingReplacement' : 'unknownKeyId', { keyId, knownKeyIds: dec.knownKeyIds(), header });
+			return drop(diag, 'unknownKeyId', { keyId, knownKeyIds: dec.knownKeyIds(), header });
 		}
 		const out = await open(shape, key);
 
-		// Authenticated, so a derived key was the right guess and is worth keeping. Anything that fails
-		// past this point is not the derivation's doing, so stop attributing it to one.
-		derived = false;
 		dec.decrypted(namespace);
-		if (chain) dec.commitChain(chain);
 
 		frame.data = out.buffer;
 		diag.ok++;
@@ -258,16 +238,7 @@ async function decrypt(frame: any, controller: any, codec: string, diag: Diag): 
 		controller.enqueue(frame);
 	} catch (error) {
 		// Correct keyId but failed authentication: same key, different clear/ciphertext split.
-		if (!derived) drop(diag, 'gcmAuthFailed', { error: String(error), bytes: frame.data?.byteLength, header: clearBytes(new Uint8Array(frame.data), codec) });
-
-		// A derived key that does not authenticate means the sender replaced its key rather than
-		// advancing it, which is what a departure does. Usually the replacement is already on its way,
-		// so this is a short gap, and the count is there for when it is not.
-		else {
-			dec.deriveFailed(keyId);
-			dec.missed(namespace);
-			drop(diag, 'ratchetMiss', { bytes: frame.data?.byteLength });
-		}
+		drop(diag, 'gcmAuthFailed', { error: String(error), bytes: frame.data?.byteLength, header: clearBytes(new Uint8Array(frame.data), codec) });
 	}
 	tick(diag);
 }
@@ -291,26 +262,16 @@ function requestKeyFrames(transformers: any[], method: 'generateKeyFrame' | 'sen
 	const m: any = e.data;
 
 	if (m.type === 'encKey') {
-		enc.key = m.key; enc.keyId = m.keyId >>> 0; enc.counter = 0; enc.used = false;
-		report({ level: 'debug', event: 'encKey', keyId: enc.keyId, ratcheted: Boolean(m.ratcheted) });
-		// A replaced key needs a fresh keyframe so receivers re-sync. An advanced one does not, since
-		// receivers derive it and keep decoding, and forcing one per arrival would spike every camera
-		// in the room at exactly the moment people are joining.
-		if (!m.ratcheted) requestKeyFrames(encTransformers, 'generateKeyFrame');
+		enc.key = m.key; enc.keyId = m.keyId >>> 0; enc.counter = 0;
+		report({ level: 'debug', event: 'encKey', keyId: enc.keyId });
+		// A new key needs a fresh keyframe so receivers re-sync.
+		requestKeyFrames(encTransformers, 'generateKeyFrame');
 	} else if (m.type === 'dropKeys') {
 		dec.dropNamespace(m.namespace >>> 0);
 		report({ level: 'debug', event: 'dropKeys', namespace: m.namespace >>> 0, knownKeyIds: dec.knownKeyIds() });
-	} else if (m.type === 'decKey') {
-		const keyId = m.keyId >>> 0;
-
-		dec.set(keyId, { key: m.key, raw: m.raw });
-		report({ level: 'debug', event: 'decKey', keyId, knownKeyIds: dec.knownKeyIds() });
-		// A remote key arrived/rotated -> request a keyframe so our decoder starts clean.
-		requestKeyFrames(decTransformers, 'sendKeyFrameRequest');
 	} else if (m.type === 'decKeys') {
 		// An epoch change hands over every sender's key at once. Keyframes are requested once for the
 		// batch: asking per key would send every receiver a request per member of the room.
-		if (m.ratchet === false) dec.ratchet = false;
 		for (const k of m.keys) dec.set(k.keyId >>> 0, { key: k.key, raw: k.raw });
 		report({ level: 'debug', event: 'decKeys', count: m.keys.length, knownKeyIds: dec.knownKeyIds() });
 		requestKeyFrames(decTransformers, 'sendKeyFrameRequest');

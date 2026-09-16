@@ -6,8 +6,6 @@ vi.mock('../utils/deviceInfo', () => ({
 
 import { E2eeService } from './e2eeService';
 import { MlsKeyProvider } from '../utils/e2ee/MlsKeyProvider';
-import { WebCryptoKeyProvider } from '../utils/e2ee/WebCryptoKeyProvider';
-import { peerNamespace } from '../utils/e2ee/crypto';
 
 // eslint-disable-next-line no-unused-vars
 type Listener = (e: MessageEvent) => void;
@@ -52,14 +50,37 @@ const diag = (worker: FakeWorker, event: string, extra: Record<string, unknown> 
 const sender = (): RTCRtpSender => ({} as unknown as RTCRtpSender);
 const receiver = (): RTCRtpReceiver => ({} as unknown as RTCRtpReceiver);
 
+// A member alone in its group, with the first epoch's keys applied and the sender key switched.
 const enabledService = async () => {
 	const service = new E2eeService();
+	const provider = await service.enableMls('me');
 
-	await service.enable('me');
+	await provider.found('room');
+	await service.applyEpochKeys();
+	await vi.advanceTimersByTimeAsync(300);
 
 	const [ enc, dec ] = FakeWorker.instances;
 
-	return { service, enc, dec };
+	return { service, provider, enc, dec };
+};
+
+// Two members of one group, both with the epoch that holds them applied.
+const group = async () => {
+	const alice = new E2eeService();
+	const bob = new E2eeService();
+	const a = await alice.enableMls('alice');
+	const b = await bob.enableMls('bob');
+	const pending = await b.joinExternal(await a.found('room'));
+
+	b.accept(pending);
+	await a.applyCommit(pending.commit);
+	await alice.applyEpochKeys();
+	await bob.applyEpochKeys();
+	await vi.advanceTimersByTimeAsync(300);
+
+	const [ aliceEnc, aliceDec, bobEnc, bobDec ] = FakeWorker.instances;
+
+	return { alice, bob, a, b, aliceEnc, aliceDec, bobEnc, bobDec };
 };
 
 // Whether a promise has settled, without waiting on it: the waiters here must stay pending until
@@ -88,23 +109,22 @@ describe('E2EE service', () => {
 	});
 
 	describe('enabling', () => {
-		it('starts two workers and hands the encrypt worker the initial key', async () => {
-			const { service, enc, dec } = await enabledService();
+		it('starts two workers and hands the encrypt worker the first epoch key', async () => {
+			const { service, provider, enc, dec } = await enabledService();
 			const [ first ] = enc.postedOfType('encKey');
 
 			expect(service.enabled).toBe(true);
 			expect(FakeWorker.instances).toHaveLength(2);
-			expect(first.ratcheted).toBe(false);
-			expect((first.keyId as number) >>> 8).toBe(await peerNamespace('me'));
+			expect((first.keyId as number) >>> 8).toBe(provider.myLeafIndex);
 			expect((first.keyId as number) & 0xff).toBe(0);
-			expect(dec.posted).toEqual([]);
+			expect(dec.postedOfType('decKeys')).toHaveLength(1);
+			expect((dec.postedOfType('decKeys')[0].keys as unknown[])).toHaveLength(0);
 		});
 
-		it('is idempotent', async () => {
-			const { service } = await enabledService();
+		it('keeps its provider and workers for the same peer id', async () => {
+			const { service, provider } = await enabledService();
 
-			await service.enable('me');
-
+			expect(await service.enableMls('me')).toBe(provider);
 			expect(FakeWorker.instances).toHaveLength(2);
 		});
 	});
@@ -260,156 +280,135 @@ describe('E2EE service', () => {
 			expect(await service.protectSender(undefined, 'video/VP8')).toBeUndefined();
 			expect(FakeTransform.instances).toHaveLength(0);
 		});
-	});
 
-	describe('advancing the local key', () => {
-		it('only advances once something was encrypted under the current key', async () => {
-			const { service, enc } = await enabledService();
-			const keyIdOf = (index: number): number => enc.postedOfType('encKey')[index].keyId as number;
+		it('holds a sender until the first key is switched to', async () => {
+			const service = new E2eeService();
+			const provider = await service.enableMls('me');
 
-			await service.ratchetLocalKey();
-			expect(enc.postedOfType('encKey')).toHaveLength(1);
+			await provider.found('room');
+			await service.applyEpochKeys();
 
-			diag(enc, 'encKeyUsed', { keyId: keyIdOf(0) });
-			await service.ratchetLocalKey();
-			expect(enc.postedOfType('encKey')).toHaveLength(2);
-			expect(enc.postedOfType('encKey')[1].ratcheted).toBe(true);
-			expect(keyIdOf(1) & 0xff).toBe(1);
+			const held = service.protectSender(sender(), 'video/vp8');
 
-			diag(enc, 'encKeyUsed', { keyId: keyIdOf(0) });
-			await service.ratchetLocalKey();
-			expect(enc.postedOfType('encKey')).toHaveLength(2);
+			expect(await settled(held)).toBe(false);
 
-			diag(enc, 'encKeyUsed', { keyId: keyIdOf(1) });
-			await service.ratchetLocalKey();
-			expect(enc.postedOfType('encKey')).toHaveLength(3);
-		});
+			await vi.advanceTimersByTimeAsync(300);
 
-		it('replaces the key on rotate regardless and starts the count over', async () => {
-			const { service, enc } = await enabledService();
-
-			await service.rotateLocalKey();
-
-			const [ , replaced ] = enc.postedOfType('encKey');
-
-			expect(replaced.ratcheted).toBe(false);
-			expect((replaced.keyId as number) & 0xff).toBe(1);
-
-			await service.ratchetLocalKey();
-			expect(enc.postedOfType('encKey')).toHaveLength(2);
+			expect(await settled(held)).toBe(true);
 		});
 	});
 
-	describe('peers', () => {
-		it('asks for a key only for a namespace that belongs to a known peer', async () => {
-			const { service, dec } = await enabledService();
-			const bob = new WebCryptoKeyProvider('bob');
-			const needed = vi.fn();
+	describe('members', () => {
+		it('hands the decrypt worker the other member\'s key under its leaf index', async () => {
+			const { aliceDec, b } = await group();
+			const latest = aliceDec.postedOfType('decKeys').at(-1)!;
+			const [ delivered ] = latest.keys as Array<Record<string, unknown>>;
 
-			await bob.init();
-			await service.addPeer('bob', await bob.getIdentityPublicKey());
-			service.onKeyNeeded = needed;
-
-			const namespace = await peerNamespace('bob');
-
-			diag(dec, 'keyNeeded', { namespace });
-			expect(needed).toHaveBeenCalledWith('bob');
-
-			diag(dec, 'keyNeeded', { namespace: 0x123456 });
-			expect(needed).toHaveBeenCalledTimes(1);
-
-			service.removePeer('bob');
-			await vi.advanceTimersByTimeAsync(0);
-			diag(dec, 'keyNeeded', { namespace });
-
-			expect(needed).toHaveBeenCalledTimes(1);
-			expect(dec.postedOfType('dropKeys')).toEqual([ { type: 'dropKeys', namespace } ]);
-		});
-
-		it('hands an unwrapped remote key, with its bytes, to the decrypt worker', async () => {
-			const { service, dec } = await enabledService();
-			const bob = new WebCryptoKeyProvider('bob');
-
-			await bob.init();
-			await bob.addPeer('me', await service.getIdentityPublicKey());
-			await service.addPeer('bob', await bob.getIdentityPublicKey());
-
-			const msg = await bob.wrapLocalKeyFor('me');
-
-			await service.onRemoteKey('bob', msg.keyId, msg.iv, msg.data);
-
-			const [ delivered ] = dec.postedOfType('decKey');
-
-			expect(delivered.keyId).toBe(msg.keyId);
+			expect((delivered.keyId as number) >>> 8).toBe(b.myLeafIndex);
 			expect((delivered.key as CryptoKey).algorithm.name).toBe('AES-GCM');
-			expect(delivered.raw).toBeInstanceOf(Uint8Array);
 			expect((delivered.raw as Uint8Array).length).toBe(32);
 		});
-	});
 
-	describe('a key burned by a departure while nothing was being sent', () => {
-		it('is replaced before the next producer attaches its transform', async () => {
-			const { service } = await enabledService();
-			const order: string[] = [];
+		it('asks for a key only for a namespace that belongs to a member', async () => {
+			const { alice, aliceDec, b } = await group();
+			const needed = vi.fn();
 
-			service.onRotateRequired = async () => {
-				order.push(`rotate with ${FakeTransform.instances.length} transforms attached`);
-			};
-			service.markKeyBurned();
+			alice.onKeyNeeded = needed;
 
-			await service.protectSender(sender(), 'audio/opus');
+			diag(aliceDec, 'keyNeeded', { namespace: b.myLeafIndex });
+			expect(needed).toHaveBeenCalledWith('bob');
 
-			expect(order).toEqual([ 'rotate with 0 transforms attached' ]);
-			expect(FakeTransform.instances).toHaveLength(1);
+			diag(aliceDec, 'keyNeeded', { namespace: 0x123456 });
+			expect(needed).toHaveBeenCalledTimes(1);
+
+			alice.removePeer('bob');
+			diag(aliceDec, 'keyNeeded', { namespace: b.myLeafIndex });
+
+			expect(needed).toHaveBeenCalledTimes(1);
+			expect(aliceDec.postedOfType('dropKeys')).toEqual([ { type: 'dropKeys', namespace: b.myLeafIndex } ]);
 		});
 
-		it('is replaced once when several producers start together', async () => {
-			const { service } = await enabledService();
-			const rotate = vi.fn(async () => undefined);
+		it('drops the keys of a member the next epoch no longer holds', async () => {
+			const { alice, a, aliceDec, b } = await group();
+			const removal = await a.commitRemove([ 'bob' ]);
 
-			service.onRotateRequired = rotate;
-			service.markKeyBurned();
+			a.accept(removal!);
+			await alice.applyEpochKeys();
 
-			await Promise.all([
-				service.protectSender(sender(), 'audio/opus'),
-				service.protectSender(sender(), 'video/VP8'),
-				service.protectSender(sender(), 'video/VP8'),
-			]);
-
-			expect(rotate).toHaveBeenCalledTimes(1);
-			expect(FakeTransform.instances).toHaveLength(3);
-		});
-
-		it('does not replace an unburned key, and a replacement clears the burn', async () => {
-			const { service } = await enabledService();
-			const rotate = vi.fn(async () => undefined);
-
-			service.onRotateRequired = rotate;
-
-			await service.protectSender(sender(), 'audio/opus');
-			expect(rotate).not.toHaveBeenCalled();
-
-			service.markKeyBurned();
-			await service.rotateLocalKey();
-			await service.protectSender(sender(), 'video/VP8');
-			expect(rotate).not.toHaveBeenCalled();
-		});
-
-		it('still replaces the key locally when nothing is wired to distribute it', async () => {
-			const { service, enc } = await enabledService();
-
-			service.markKeyBurned();
-			await service.protectSender(sender(), 'audio/opus');
-
-			const keys = enc.postedOfType('encKey');
-
-			expect(keys).toHaveLength(2);
-			expect(keys[1].ratcheted).toBe(false);
-			expect((keys[1].keyId as number) & 0xff).toBe(1);
+			expect(aliceDec.postedOfType('dropKeys')).toEqual([ { type: 'dropKeys', namespace: b.myLeafIndex } ]);
 		});
 	});
-	describe('MLS mode', () => {
-		it('hands receivers their keys at once, tells the worker not to ratchet, and lets the sender switch after a pause', async () => {
+
+	describe('data channel messages', () => {
+		const text = new TextEncoder();
+		const utf8 = new TextDecoder();
+
+		it('seals and opens nothing while encryption is off', async () => {
+			const service = new E2eeService();
+
+			expect(await service.sealMessage(text.encode('hi'))).toBeUndefined();
+			expect(await service.openMessage(new Uint8Array(64))).toBeUndefined();
+		});
+
+		it('is read by the other member, and by nobody outside the epoch', async () => {
+			const { alice, bob } = await group();
+			const sealed = await alice.sealMessage(text.encode('hello bob'));
+
+			expect(utf8.decode(await bob.openMessage(sealed!))).toBe('hello bob');
+			expect(await alice.openMessage(sealed!)).toBeUndefined();
+
+			const { service: stranger } = await enabledService();
+
+			expect(await stranger.openMessage(sealed!)).toBeUndefined();
+		});
+
+		it('moves to the new epoch key with the sender, and still reads the previous one', async () => {
+			const { alice, bob, a, b } = await group();
+			const before = await alice.sealMessage(text.encode('before'));
+			const update = await a.commitUpdate();
+
+			a.accept(update);
+			await b.applyCommit(update.commit);
+			await alice.applyEpochKeys();
+			await bob.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(300);
+
+			const after = await alice.sealMessage(text.encode('after'));
+
+			// Epoch 0 was founded, 1 added bob, 2 is the update.
+			expect(new DataView(after!.buffer).getUint32(0) & 0xff).toBe(2);
+			expect(utf8.decode(await bob.openMessage(after!))).toBe('after');
+			expect(utf8.decode(await bob.openMessage(before!))).toBe('before');
+		});
+
+		it('stops reading a member that left', async () => {
+			const { alice, bob } = await group();
+			const sealed = await alice.sealMessage(text.encode('hello bob'));
+
+			bob.removePeer('alice');
+
+			expect(await bob.openMessage(sealed!)).toBeUndefined();
+		});
+
+		it('waits for the first key like a sender does', async () => {
+			const service = new E2eeService();
+			const provider = await service.enableMls('me');
+
+			await provider.found('room');
+			await service.applyEpochKeys();
+
+			const held = service.sealMessage(text.encode('early'));
+
+			expect(await settled(held)).toBe(false);
+
+			await vi.advanceTimersByTimeAsync(300);
+
+			expect(await held).toBeDefined();
+		});
+	});
+
+	describe('epoch keys', () => {
+		it('hands receivers their keys at once and lets the sender switch after a pause', async () => {
 			const service = new E2eeService();
 			const provider = await service.enableMls('me');
 			const [ enc, dec ] = FakeWorker.instances;
@@ -419,7 +418,7 @@ describe('E2EE service', () => {
 
 			const held = service.protectSender(sender(), 'video/vp8');
 
-			expect(dec.postedOfType('decKeys')[0].ratchet).toBe(false);
+			expect(dec.postedOfType('decKeys')).toHaveLength(1);
 			expect(enc.postedOfType('encKey')).toHaveLength(0);
 			expect(await settled(held)).toBe(false);
 

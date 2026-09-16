@@ -124,7 +124,7 @@ const makeProvider = (myPeerId: string) => {
 	};
 };
 
-const setup = ({ e2eeEnabled = true, e2eeProvider = 'mls' } = {}) => {
+const setup = ({ e2eeEnabled = true } = {}) => {
 	const signaling = makeSignaling();
 	const provider = makeProvider('me');
 	const service = {
@@ -146,7 +146,7 @@ const setup = ({ e2eeEnabled = true, e2eeProvider = 'mls' } = {}) => {
 	const next = vi.fn((action: unknown) => action);
 	const peersInRoom: Record<string, { id: string }> = {};
 	const getState = () => ({ room: { e2eeEnabled }, me: { id: 'me' }, peers: peersInRoom });
-	const run = createMlsMiddleware({ signalingService: signaling, e2eeService: service, config: { e2eeProvider } } as unknown as MiddlewareInput)(
+	const run = createMlsMiddleware({ signalingService: signaling, e2eeService: service } as unknown as MiddlewareInput)(
 		{ dispatch, getState } as unknown as ApiInput
 	)(next);
 
@@ -170,15 +170,6 @@ describe('MLS middleware', () => {
 	afterEach(() => {
 		vi.useRealTimers();
 		vi.clearAllMocks();
-	});
-
-	it('stays idle when the client is configured for the pairwise provider', async () => {
-		const { service, signaling, join } = setup({ e2eeProvider: 'pairwise' });
-
-		await join();
-
-		expect(service.enableMls).not.toHaveBeenCalled();
-		expect(signaling.sendRequest).not.toHaveBeenCalled();
 	});
 
 	it('founds the group when it is first, publishes the GroupInfo and applies the epoch keys', async () => {

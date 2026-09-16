@@ -6,25 +6,15 @@ import {
 	KEY_NEEDED_INTERVAL_MS,
 	KEYS_KEPT_PER_SENDER,
 	KeyNeeded,
-	MAX_RATCHET_STEPS,
 	MISSING_TRACKED,
 } from './keyStore';
-import { Bytes, importMediaKey, randomKeyRaw, ratchetRaw } from './crypto';
+import { Bytes, importMediaKey, randomKeyRaw } from './crypto';
 
 const NS = 0xabcdef;
 const OTHER = 0x123456;
 
 const kid = (ns: number, epoch: number): number => (((ns << 8) | (epoch & 0xff)) >>> 0);
-const hex = (bytes: Uint8Array): string => Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 const entry = async (raw: Bytes): Promise<DecEntry> => ({ key: await importMediaKey(raw), raw });
-
-const advance = async (raw: Bytes, steps: number): Promise<Bytes> => {
-	let out = raw;
-
-	for (let i = 0; i < steps; i++) out = await ratchetRaw(out);
-
-	return out;
-};
 
 const makeStore = (now: () => number = () => 0) => {
 	const onKeyNeeded = vi.fn<KeyNeeded>();
@@ -37,98 +27,15 @@ const epochsOf = (store: DecryptKeyStore, ns: number): number[] =>
 		.filter((k) => (k >>> 8) === ns)
 		.map((k) => k & 0xff);
 
-describe('deriving a sender key we were never sent', () => {
-	it('derives one step and lands on the target id', async () => {
-		const { store } = makeStore();
-		const k0 = randomKeyRaw();
-
-		store.set(kid(NS, 0), await entry(k0));
-
-		const chain = await store.deriveChain(kid(NS, 1));
-
-		expect(chain).toHaveLength(1);
-		expect(chain?.[0].id).toBe(kid(NS, 1));
-		expect(hex(chain![0].entry.raw)).toBe(hex(await ratchetRaw(k0)));
-	});
-
-	it('derives several steps in order', async () => {
-		const { store } = makeStore();
-		const k0 = randomKeyRaw();
-
-		store.set(kid(NS, 0), await entry(k0));
-
-		const chain = await store.deriveChain(kid(NS, 5));
-
-		expect(chain?.map((c) => c.id & 0xff)).toEqual([ 1, 2, 3, 4, 5 ]);
-		expect(hex(chain![4].entry.raw)).toBe(hex(await advance(k0, 5)));
-	});
-
-	it('wraps the epoch at 256', async () => {
-		const { store } = makeStore();
-		const k250 = randomKeyRaw();
-
-		store.set(kid(NS, 250), await entry(k250));
-
-		const chain = await store.deriveChain(kid(NS, 2));
-
-		expect(chain?.map((c) => c.id & 0xff)).toEqual([ 251, 252, 253, 254, 255, 0, 1, 2 ]);
-		expect(hex(chain![7].entry.raw)).toBe(hex(await advance(k250, 8)));
-	});
-
-	it('refuses to derive further than the bound', async () => {
+describe('holding and evicting', () => {
+	it('trims a sender to the window, oldest first', async () => {
 		const { store } = makeStore();
 
-		store.set(kid(NS, 0), await entry(randomKeyRaw()));
+		for (let e = 0; e <= KEYS_KEPT_PER_SENDER; e++) store.set(kid(NS, e), await entry(randomKeyRaw()));
 
-		expect(await store.deriveChain(kid(NS, MAX_RATCHET_STEPS))).toHaveLength(MAX_RATCHET_STEPS);
-		expect(await store.deriveChain(kid(NS, MAX_RATCHET_STEPS + 1))).toBeUndefined();
-	});
-
-	it('refuses the same epoch and anything behind it', async () => {
-		const { store } = makeStore();
-
-		store.set(kid(NS, 5), await entry(randomKeyRaw()));
-
-		expect(await store.deriveChain(kid(NS, 5))).toBeUndefined();
-		expect(await store.deriveChain(kid(NS, 4))).toBeUndefined();
-	});
-
-	it('never starts from another sender', async () => {
-		const { store } = makeStore();
-
-		store.set(kid(OTHER, 0), await entry(randomKeyRaw()));
-
-		expect(await store.deriveChain(kid(NS, 1))).toBeUndefined();
-	});
-
-	it('starts from the nearest key behind the target', async () => {
-		const { store } = makeStore();
-		const k0 = randomKeyRaw();
-		const k3 = await advance(k0, 3);
-
-		store.set(kid(NS, 0), await entry(k0));
-		store.set(kid(NS, 3), await entry(k3));
-
-		const chain = await store.deriveChain(kid(NS, 4));
-
-		expect(chain).toHaveLength(1);
-		expect(hex(chain![0].entry.raw)).toBe(hex(await ratchetRaw(k3)));
-	});
-});
-
-describe('committing and evicting', () => {
-	it('keeps the target after a maximal catch-up and trims to the window', async () => {
-		const { store } = makeStore();
-
-		store.set(kid(NS, 0), await entry(randomKeyRaw()));
-
-		const chain = await store.deriveChain(kid(NS, MAX_RATCHET_STEPS));
-
-		store.commitChain(chain!);
-
-		expect(store.has(kid(NS, MAX_RATCHET_STEPS))).toBe(true);
 		expect(epochsOf(store, NS)).toHaveLength(KEYS_KEPT_PER_SENDER);
-		expect(Math.min(...epochsOf(store, NS))).toBe(MAX_RATCHET_STEPS - KEYS_KEPT_PER_SENDER + 1);
+		expect(Math.min(...epochsOf(store, NS))).toBe(1);
+		expect(store.has(kid(NS, KEYS_KEPT_PER_SENDER))).toBe(true);
 	});
 
 	it('evicts per sender only', async () => {
@@ -164,40 +71,7 @@ describe('committing and evicting', () => {
 	});
 });
 
-describe('a key id whose derivation failed to authenticate', () => {
-	it('is not derived again until a key for that sender is delivered', async () => {
-		const { store } = makeStore();
-
-		store.set(kid(NS, 0), await entry(randomKeyRaw()));
-		expect(await store.deriveChain(kid(NS, 1))).toHaveLength(1);
-
-		store.deriveFailed(kid(NS, 1));
-		expect(store.isUndeliverable(kid(NS, 1))).toBe(true);
-		expect(await store.deriveChain(kid(NS, 1))).toBeUndefined();
-		expect(await store.deriveChain(kid(NS, 2))).toHaveLength(2);
-
-		store.set(kid(NS, 1), await entry(randomKeyRaw()));
-		expect(store.isUndeliverable(kid(NS, 1))).toBe(false);
-		expect(store.has(kid(NS, 1))).toBe(true);
-		expect(await store.deriveChain(kid(NS, 2))).toHaveLength(1);
-	});
-
-	it('is forgotten when the sender leaves, and never affects another sender', async () => {
-		const { store } = makeStore();
-
-		store.set(kid(NS, 0), await entry(randomKeyRaw()));
-		store.set(kid(OTHER, 0), await entry(randomKeyRaw()));
-		store.deriveFailed(kid(NS, 1));
-
-		expect(await store.deriveChain(kid(OTHER, 1))).toHaveLength(1);
-
-		store.dropNamespace(NS);
-		store.set(kid(NS, 0), await entry(randomKeyRaw()));
-		expect(await store.deriveChain(kid(NS, 1))).toHaveLength(1);
-	});
-});
-
-describe('asking for a key we cannot derive', () => {
+describe('asking for a key we do not hold', () => {
 	const missMany = (store: DecryptKeyStore, ns: number, times: number): void => {
 		for (let i = 0; i < times; i++) store.missed(ns);
 	};
@@ -266,18 +140,5 @@ describe('asking for a key we cannot derive', () => {
 
 		store.missed(NS);
 		expect(onKeyNeeded).toHaveBeenCalledTimes(1);
-	});
-	it('derives nothing when ratcheting is switched off, and reports the key as unknown instead', async () => {
-		const store = new DecryptKeyStore(() => undefined);
-		const raw = new Uint8Array(32).fill(7) as Bytes;
-
-		store.set(0x0100, { key: await importMediaKey(raw), raw });
-
-		expect(await store.deriveChain(0x0101)).toBeDefined();
-
-		store.ratchet = false;
-
-		expect(await store.deriveChain(0x0101)).toBeUndefined();
-		expect(store.isUndeliverable(0x0101)).toBe(false);
 	});
 });
