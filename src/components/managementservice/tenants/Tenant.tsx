@@ -231,29 +231,29 @@ const TenantTable = () => {
 							</Box>
 						</Collapse>
 					</div>}
-					<h4>{botsLabel()}</h4>
-					<Tooltip title={botPolicyTooltipLabel()} placement="top-start">
-						<TextField
-							select
-							margin="dense"
-							id="botPolicy"
-							label={botPolicyLabel()}
-							fullWidth
-							value={botPolicy}
-							onChange={(event) => setBotPolicy(event.target.value as BotPolicy)}
-						>
-							{ botPolicies.map((policy) => <MenuItem key={policy} value={policy}>{botPolicyOptionLabel(policy)}</MenuItem>) }
-						</TextField>
-					</Tooltip>
 					{ id !=0 && <>
-						<h5>{botCredentialsLabel()}</h5>
-						<TenantBotCredentialTable tenantId={id} />
 						<h4>{`${tenantLabel()} ${fqdnLabel()}`}</h4>
 						<TenantFQDNTable tenantId={id} />
 						<h4>{`${tenantLabel()} ${authenticationLabel()}`}</h4>
 						<TenantOAuthTable tenantId={id} />
 						<h4>{`${tenantLabel()} ${inviteEmailConfigLabel()}`}</h4>
 						<TenantInviteConfigPanel tenantId={id} />
+						<h4>{botsLabel()}</h4>
+						<Tooltip title={botPolicyTooltipLabel()} placement="top-start">
+							<TextField
+								select
+								margin="dense"
+								id="botPolicy"
+								label={botPolicyLabel()}
+								fullWidth
+								value={botPolicy}
+								onChange={(event) => setBotPolicy(event.target.value as BotPolicy)}
+							>
+								{ botPolicies.map((policy) => <MenuItem key={policy} value={policy}>{botPolicyOptionLabel(policy)}</MenuItem>) }
+							</TextField>
+						</Tooltip>
+						<h5>{botCredentialsLabel()}</h5>
+						<TenantBotCredentialTable tenantId={id} />
 					</>}
 
 				</DialogContent>
