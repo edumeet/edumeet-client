@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Aucune réunion à venir",
   "label.meetings.upcoming": "Réunions à venir",
   "label.management.tenants.testConnection": "Tester la connexion",
+  "room.botsInRoom": "Bots dans la salle",
   "settings.groupAudioOnlyLabel": "Regrouper les participants sans vidéo",
   "label.managementservice.endToEndEncryption": "Chiffrement de bout en bout",
   "label.managementservice.endToEndEncryptionTooltip": "Lorsqu'il est activé, les médias des salles de ce locataire sont chiffrés de bout en bout. Le verrou l'impose, de sorte que les propriétaires de salle ne peuvent pas le désactiver.",

@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Нет предстоящих встреч",
   "label.meetings.upcoming": "Предстоящие встречи",
   "label.management.tenants.testConnection": "Проверить соединение",
+  "room.botsInRoom": "Боты в комнате",
   "settings.groupAudioOnlyLabel": "Группировать участников без видео",
   "label.managementservice.endToEndEncryption": "Сквозное шифрование",
   "label.managementservice.endToEndEncryptionTooltip": "Если включено, медиа в комнатах этого арендатора шифруются сквозным шифрованием. Замок принудительно включает это, поэтому владельцы комнат не могут его отключить.",

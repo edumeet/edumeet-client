@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Nessuna riunione in programma",
   "label.meetings.upcoming": "Prossime riunioni",
   "label.management.tenants.testConnection": "Prova connessione",
+  "room.botsInRoom": "Bot nella stanza",
   "settings.groupAudioOnlyLabel": "Raggruppa i partecipanti senza video",
   "label.managementservice.endToEndEncryption": "Crittografia end-to-end",
   "label.managementservice.endToEndEncryptionTooltip": "Se attivata, i contenuti multimediali nelle stanze di questo tenant sono crittografati end-to-end. Il lucchetto la impone, così i proprietari delle stanze non possono disattivarla.",

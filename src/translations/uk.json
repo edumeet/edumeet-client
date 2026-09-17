@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Немає майбутніх зустрічей",
   "label.meetings.upcoming": "Майбутні зустрічі",
   "label.management.tenants.testConnection": "Перевірити з'єднання",
+  "room.botsInRoom": "Боти в кімнаті",
   "settings.groupAudioOnlyLabel": "Групувати учасників без відео",
   "label.managementservice.endToEndEncryption": "Наскрізне шифрування",
   "label.managementservice.endToEndEncryptionTooltip": "Якщо ввімкнено, медіа в кімнатах цього орендаря наскрізно шифруються. Замок примусово вмикає це, тож власники кімнат не можуть його вимкнути.",

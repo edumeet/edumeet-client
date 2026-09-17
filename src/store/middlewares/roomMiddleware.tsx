@@ -55,6 +55,7 @@ const createRoomMiddleware = ({
 					message: roomE2eeUnsupportedLabel(),
 					options: { variant: 'error', persist: true }
 				}));
+				dispatch(roomActions.setLeaveReason('e2eeUnsupported'));
 				dispatch(roomActions.setState('left'));
 
 				return true;
@@ -188,8 +189,15 @@ const createRoomMiddleware = ({
 							break;
 						}
 
-						case 'moderator:kick':
+						case 'moderator:kick': {
+							dispatch(roomActions.setLeaveReason('kicked'));
+							dispatch(leaveRoom());
+
+							break;
+						}
+
 						case 'escapeMeeting': {
+							dispatch(roomActions.setLeaveReason('meetingEnded'));
 							dispatch(leaveRoom());
 
 							break;

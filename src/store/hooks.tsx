@@ -117,6 +117,7 @@ let displayed: SnackbarKey[] = [];
 export const useNotifier = (): void => {
 	const dispatch = useAppDispatch();
 	const notifications = useAppSelector((store) => store.notifications);
+	const headless = useAppSelector((store) => store.room.headless);
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 	const storeDisplayed = (id: SnackbarKey) => {
@@ -131,6 +132,12 @@ export const useNotifier = (): void => {
 		notifications.forEach(({ key, message, options = {} }) => {
 			if (displayed.includes(key)) return;
 
+			if (headless) {
+				dispatch(notificationsActions.removeNotification(key));
+
+				return;
+			}
+
 			enqueueSnackbar(message, {
 				key,
 				...options,
@@ -142,7 +149,7 @@ export const useNotifier = (): void => {
 
 			storeDisplayed(key);
 		});
-	}, [ notifications, closeSnackbar, enqueueSnackbar, dispatch ]);
+	}, [ notifications, closeSnackbar, enqueueSnackbar, dispatch, headless ]);
 };
 
 /**

@@ -22,6 +22,7 @@ import CountdownTimerChip from '../countdowntimer/CountdownTimerChip';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import ControlButton from '../controlbuttons/ControlButton';
 import E2eeIndicator from '../e2eeindicator/E2eeIndicator';
+import BotsIndicator from '../botsindicator/BotsIndicator';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -100,6 +101,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const someoneIsRecording = useAppSelector(someoneIsRecordingSelector);
 	const e2eeEnabled = useAppSelector((state) => state.room.e2eeEnabled);
+	const headless = useAppSelector((state) => state.room.headless);
 
 	useEffect(() => {
 		if (roomCreationTimestamp) {
@@ -161,7 +163,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 					}
 				</TopBarDiv>
 				<TopBarDiv grow={1} />
-				<TopBarDiv marginRight={1}>
+				{ !headless && <TopBarDiv marginRight={1}>
 					{ someoneIsRecording && <RecordIcon color='error' /> }
 					<SavingRecordingIndicator />
 					{ e2eeEnabled && <E2eeIndicator /> }
@@ -201,7 +203,8 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 					<Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
 						{menuItems}
 					</Box>
-				</TopBarDiv>
+				</TopBarDiv> }
+				<BotsIndicator />
 				<TopBarDiv marginRight={1}>
 					<StyledChip size='small' label={ formatDuration(meetingDuration) } />
 				</TopBarDiv>
@@ -210,7 +213,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 						<CountdownTimerChip />
 					</TopBarDiv>
 				}
-				<LeaveButton />
+				{ !headless && <LeaveButton /> }
 			</Toolbar>
 		</StyledAppBar>
 	);

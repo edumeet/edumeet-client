@@ -1,6 +1,6 @@
+import { peersArraySelector } from '../../store/selectors';
 import { Button, styled } from '@mui/material';
 import { Suspense, useMemo, useRef, useState } from 'react';
-import { shallowEqual } from 'react-redux';
 import { useAppSelector, usePermissionSelector } from '../../store/hooks';
 import { permissions } from '../../utils/roles';
 import ScrollingList from '../scrollinglist/ScrollingList';
@@ -34,8 +34,8 @@ const ChatHistory = ({ messages, peerActions }: ChatHistoryProps): React.JSX.Ele
 	const meId = useAppSelector((state) => state.me.id);
 	const canChat = usePermissionSelector(permissions.SEND_CHAT);
 	const chatEnabled = useAppSelector((state) => state.room.chatEnabled);
-	const peerIds = useAppSelector((state) => Object.keys(state.peers), shallowEqual);
-	const presentPeers = useMemo(() => new Set(peerIds), [ peerIds ]);
+	const peers = useAppSelector(peersArraySelector);
+	const presentPeers = useMemo(() => new Set(peers.map((p) => p.id)), [ peers ]);
 	const showPeerActions = Boolean(peerActions && chatEnabled && canChat);
 
 	return (

@@ -1,3 +1,4 @@
+import { roomActions } from '../slices/roomSlice';
 import { Middleware } from '@reduxjs/toolkit';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
@@ -78,6 +79,7 @@ const createSignalingMiddleware = ({
 			});
 
 			signalingService.once('close', () => {
+				dispatch(roomActions.setLeaveReason('connectionClosed'));
 				dispatch(leaveRoom());
 			});
 

@@ -25,4 +25,10 @@ describe('getSignalingUrl', () => {
 	it('leaves the meeting token out when there is none', () => {
 		expect(getSignalingUrl('p1', 'board', 'rk', 'jwt')).not.toContain('meetingToken');
 	});
+
+	it('tells the server about a headless page, and only then', () => {
+		expect(new URL(getSignalingUrl('p1', 'board', 'rk', undefined, undefined, true)).searchParams.get('headless')).toBe('1');
+		expect(getSignalingUrl('p1', 'board', 'rk', undefined, undefined, false)).not.toContain('headless');
+		expect(getSignalingUrl('p1', 'board', 'rk', undefined)).not.toContain('headless');
+	});
 });

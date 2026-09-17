@@ -1,7 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { headlessFromUrl } from '../../utils/headless';
 
 export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left' | 'mgmt-admin';
+export type LeaveReason =
+	| 'meetingTokenRequired'
+	| 'meetingTokenInvalid'
+	| 'e2eeUnsupported'
+	| 'e2eeFailed'
+	| 'kicked'
+	| 'meetingEnded'
+	| 'connectionClosed'
+	| 'joinErrorPending'
+	| 'left';
 export type RoomMode = 'P2P' | 'SFU';
 export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';
 
@@ -15,6 +26,7 @@ interface CountdownTimerState {
 export interface RoomState {
 	roomId?: string;
 	headless?: boolean;
+	leaveReason?: LeaveReason;
 	logo?: string;
 	backgroundImage?: string;
 	joinInProgress?: boolean;
@@ -55,6 +67,7 @@ export interface RoomState {
 type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'countdownTimer'>;
 
 const initialState: RoomState = {
+	headless: headlessFromUrl(typeof window === 'undefined' ? undefined : window.location.href) === true,
 	logo: edumeetConfig.theme.logo,
 	backgroundImage: edumeetConfig.theme.backgroundImage,
 	roomMode: 'P2P',
@@ -89,6 +102,10 @@ const roomSlice = createSlice({
 		}),
 		setHeadless: ((state, action: PayloadAction<boolean>) => {
 			state.headless = action.payload;
+		}),
+		// The first reason is the one that explains the leave; later ones are consequences.
+		setLeaveReason: ((state, action: PayloadAction<LeaveReason>) => {
+			if (!state.leaveReason) state.leaveReason = action.payload;
 		}),
 		setMode: ((state, action: PayloadAction<RoomMode>) => {
 			state.roomMode = action.payload;

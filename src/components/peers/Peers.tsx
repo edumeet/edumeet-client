@@ -66,7 +66,6 @@ const Peers = ({ style }: PeersProps): React.JSX.Element => {
 	const groupAudioOnly = useAppSelector((state) => state.settings.groupAudioOnly);
 	const hideNonVideo = useAppSelector((state) => state.settings.hideNonVideo);
 	const activeSpeaker = useAppSelector(activeSpeakerIsAudioOnlySelector);
-	const headless = useAppSelector((state) => state.room.headless);
 	const audioOnlyPeers = useAppSelector(audioOnlySessionPeersSelector);
 	const spotlightAudioOnlyPeers = useAppSelector(spotlightAudioOnlyPeersSelector);
 
@@ -85,7 +84,7 @@ const Peers = ({ style }: PeersProps): React.JSX.Element => {
 
 	return (
 		<>
-			{ !hideNonVideo && !headless && groupAudioOnly && audioOnlyPeers.length > 0 && 
+			{ !hideNonVideo && groupAudioOnly && audioOnlyPeers.length > 0 && 
 				<VideoBox
 					activeSpeaker={activeSpeaker}
 					order={10}
@@ -104,7 +103,7 @@ const Peers = ({ style }: PeersProps): React.JSX.Element => {
 					} variant='filled' onClick={ () => openUsersTab() } />
 				</VideoBox>
 			}
-			{ !hideNonVideo && !headless && !groupAudioOnly &&
+			{ !hideNonVideo && !groupAudioOnly &&
 				spotlightAudioOnlyPeers.map((peer) => (
 					
 					<AudioPeerBox

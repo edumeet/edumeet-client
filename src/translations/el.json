@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Δεν υπάρχουν επερχόμενες συναντήσεις",
   "label.meetings.upcoming": "Επερχόμενες συναντήσεις",
   "label.management.tenants.testConnection": "Δοκιμή σύνδεσης",
+  "room.botsInRoom": "Bots στην αίθουσα",
   "settings.groupAudioOnlyLabel": "Ομαδοποίηση συμμετεχόντων χωρίς βίντεο",
   "label.managementservice.endToEndEncryption": "Κρυπτογράφηση από άκρο σε άκρο",
   "label.managementservice.endToEndEncryptionTooltip": "Όταν είναι ενεργοποιημένη, τα πολυμέσα στις αίθουσες αυτού του μισθωτή κρυπτογραφούνται από άκρο σε άκρο. Η κλειδαριά την επιβάλλει, ώστε οι ιδιοκτήτες αιθουσών να μην μπορούν να την απενεργοποιήσουν.",

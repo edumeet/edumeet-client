@@ -9,7 +9,9 @@ import AudioInputChooser from '../../components/devicechooser/AudioInputChooser'
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import { roomActions } from '../../store/slices/roomSlice';
-import { settingsActions } from '../../store/slices/settingsSlice';
+import settingsSlice, { settingsActions } from '../../store/slices/settingsSlice';
+import { HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, layoutSettingsActions } from '../../utils/headless';
+import { JOIN_ERROR_KEY } from '../../store/middlewares/roomMiddleware';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
@@ -25,7 +27,15 @@ interface JoinProps {
 	roomId: string;
 }
 
-const Join = ({ roomId }: JoinProps): React.JSX.Element => {
+const hasStoredJoinError = (): boolean => {
+	try {
+		return Boolean(sessionStorage.getItem(JOIN_ERROR_KEY));
+	} catch {
+		return false;
+	}
+};
+
+const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 	useNotifier();
 	const dispatch = useAppDispatch();
 
@@ -38,8 +48,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 	const meetingToken = useAppSelector((state) => state.me.meetingToken);
 	const meetingTokenRejection = useAppSelector((state) => state.me.meetingTokenRejection);
 
-	const url = new URL(window.location.href);
-	const headless = Boolean(url.searchParams.get('headless'));
+	const headless = useAppSelector((state) => state.room.headless);
 
 	const handleDisplayNameChange = (value: string) => dispatch(settingsActions.setDisplayName(value.trim() ? value : value.trim()));
 
@@ -68,19 +77,27 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element => {
 			}));
 		}
 
-		if (headless && !rejection) {
-			dispatch(meActions.setAudioMuted(true));
-			dispatch(meActions.setVideoMuted(true));
-			dispatch(roomActions.setHeadless(true));
-			dispatch(settingsActions.setHideSelfView(true));
-			dispatch(settingsActions.setMaxActiveVideos(100));
+		// headless=0 undoes the preset a headless link saved earlier in this browser.
+		if (headlessFromUrl(window.location.href) === false)
+			layoutSettingsActions(settingsSlice.getInitialState()).forEach(dispatch);
 
-			handleJoin();
-		}
+		if (!headless) return;
+
+		layoutSettingsActions(HEADLESS_PRESET).forEach(dispatch);
+		dispatch(meActions.setAudioMuted(true));
+		dispatch(meActions.setVideoMuted(true));
+
+		// App shows and clears this error after us; only look at it here.
+		const plan = headlessJoinPlan({ rejection: rejection?.reason, joinErrorPending: hasStoredJoinError() });
+
+		if (plan.reason) dispatch(roomActions.setLeaveReason(plan.reason));
+		if (plan.autoJoin) handleJoin();
 	}, []);
 
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
+
+	if (headless) return null;
 
 	return (
 		<GenericDialog

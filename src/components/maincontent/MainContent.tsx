@@ -10,20 +10,16 @@ import Spotlights from '../spotlights/Spotlights';
 import ControlButtonsBar from '../controlbuttonsbar/ControlButtonsBar';
 import GeneralStats from '../rtpquality/GeneralStats';
 
-type WrapperContainerProps = {
-	headless: number;
-};
-
-const WrapperContainer = styled(Box)<WrapperContainerProps>(({ theme, headless }) => ({
+const WrapperContainer = styled(Box)(({ theme }) => ({
 	width: 'calc(100% - 8px)',
-	height: headless ? 'calc(100% - 8px)' : 'calc(100% - 52px)',
+	height: 'calc(100% - 52px)',
 	display: 'flex',
 	justifyContent: 'center',
 	alignItems: 'center',
 	marginLeft: theme.spacing(0.5),
 	marginRight: theme.spacing(0.5),
 	marginBottom: theme.spacing(0.5),
-	marginTop: headless ? theme.spacing(0.5) : 48,
+	marginTop: 48,
 	gap: theme.spacing(0.5),
 	// Own stacking context: the fullscreen video, a later sibling in Room, covers
 	// everything in here whatever z-index a tile overlay or the stats panel uses.
@@ -132,8 +128,8 @@ const MainContent = (): React.JSX.Element => {
 	}, []);
 
 	return (
-		<WrapperContainer headless={headless ? 1 : 0} ref={mainContainer}>
-			<ControlButtonsBar />
+		<WrapperContainer ref={mainContainer}>
+			{ !headless && <ControlButtonsBar /> }
 			{ !isMobile && showStats && <GeneralStatsContainer><GeneralStats /></GeneralStatsContainer> }
 			<MainContainer horizontal={horizontal ? 1 : 0} >
 				{ spotlightsVisible && <Spotlights windowSize={windowSize} horizontal={horizontal} videos={videosVisible} /> }

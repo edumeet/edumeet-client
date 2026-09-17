@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Nema nadolazećih sastanaka",
   "label.meetings.upcoming": "Nadolazeći sastanci",
   "label.management.tenants.testConnection": "Testiraj povezivanje",
+  "room.botsInRoom": "Botovi u sobi",
   "settings.groupAudioOnlyLabel": "Grupiraj sudionike bez videa",
   "label.managementservice.endToEndEncryption": "End-to-end enkripcija",
   "label.managementservice.endToEndEncryptionTooltip": "Kada je omogućeno, mediji u sobama ovog zakupca su end-to-end enkriptirani. Lokot to nameće, pa ga vlasnici soba ne mogu isključiti.",

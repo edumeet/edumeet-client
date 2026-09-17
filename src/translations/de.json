@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Keine bevorstehenden Besprechungen",
   "label.meetings.upcoming": "Bevorstehende Besprechungen",
   "label.management.tenants.testConnection": "Verbindung testen",
+  "room.botsInRoom": "Bots im Raum",
   "settings.groupAudioOnlyLabel": "Teilnehmer ohne Video gruppieren",
   "label.managementservice.endToEndEncryption": "Ende-zu-Ende-Verschlüsselung",
   "label.managementservice.endToEndEncryptionTooltip": "Wenn aktiviert, werden Medien in den Räumen dieses Mandanten Ende-zu-Ende-verschlüsselt. Das Schloss erzwingt die Aktivierung, sodass Raumbesitzer sie nicht deaktivieren können.",

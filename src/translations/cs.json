@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Žádné nadcházející schůzky",
   "label.meetings.upcoming": "Nadcházející schůzky",
   "label.management.tenants.testConnection": "Otestovat spojení",
+  "room.botsInRoom": "Boti v místnosti",
   "settings.groupAudioOnlyLabel": "Seskupit účastníky bez obrazu",
   "label.managementservice.endToEndEncryption": "Koncové šifrování",
   "label.managementservice.endToEndEncryptionTooltip": "Když je povoleno, média v místnostech tohoto nájemce jsou koncově šifrována. Zámek to vynutí, takže vlastníci místností to nemohou vypnout.",

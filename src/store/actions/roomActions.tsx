@@ -38,7 +38,7 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		const meetingToken = state.me.meetingToken;
 		const encodedRoomId = encodeURIComponent(roomId);
 
-		const url = getSignalingUrl(peerId, encodedRoomId, reconnectKey, token, meetingToken);
+		const url = getSignalingUrl(peerId, encodedRoomId, reconnectKey, token, meetingToken, state.room.headless);
 
 		dispatch(signalingActions.setUrl(url));
 		dispatch(signalingActions.connect());
@@ -130,6 +130,8 @@ export const leaveRoom = (): AppThunk<Promise<void>> => async (
 	getState
 ): Promise<void> => {
 	logger.debug('leaveRoom()');
+
+	dispatch(roomActions.setLeaveReason('left'));
 
 	if (getState().room.recording)
 		dispatch(stopRecording());

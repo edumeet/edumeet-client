@@ -138,6 +138,29 @@ Three appearance switches decide what happens to participants who have no video 
 | Hide participants with no video | `hideNonVideo: true` | Nobody without video is shown, not even the speaker, and the group switch is disabled. Your own tile stays. |
 | Hide self view | `hideSelfView: true` | Your own tile is removed and its slot goes to another participant. Your own screen share is hidden as well. |
 
+#### Headless view for recorders and streamers
+
+A page opened with `?headless=1` (or `headless=true`) is meant for a headless browser that records, streams or transcribes the room. It joins on its own and shows nothing but the room:
+
+- No join dialog, no lobby dialog, no device preview, so the browser is never asked for a camera or microphone. The microphone and camera stay muted; the bot never sends media.
+- The top bar keeps the logo, the meeting timer and the countdown timer. Its buttons and status icons are not shown; neither are the control bar, the help button, the lobby dialog and the drawing toolbar. Names stay on every tile, the buttons on the tiles do not.
+- Pop-up notifications are dropped and notification sounds are off, so they never end up in the capture.
+- The layout follows the appearance settings above with this preset, saved like any other change: self view hidden, participants without video ungrouped, nothing hidden, sounds off. Opening a link with `?headless=0` (or `headless=false`) in the same browser puts those four settings back to their defaults.
+- Outside the room (connecting, waiting in the lobby, refused, kicked, meeting ended) the page shows only the background and does not reload or rejoin. The status attributes below tell the recorder what happened.
+- `?displayName=` names the bot, `?meetingToken=` works as for anyone else.
+
+The room-server treats a headless peer as a bot rather than a participant: it is not shown in the participant list or counted, it cannot chat, share, draw, raise a hand or vote to end the meeting, it never becomes the first-participant admin of a room, and it does not keep a room open once the last participant has left. Everyone in the room sees a bot icon with the count in the top bar; its tooltip lists the bots' names. The browser running the page needs its autoplay policy relaxed, since there is no click-to-play fallback for remote audio.
+
+#### Status attributes on the document
+
+Every client writes three attributes on the `<html>` element for debugging and for recorders. They only ever hold codes from the lists below, never names, ids or tokens.
+
+| Attribute | Values |
+| :--- | :--- |
+| `data-edumeet-state` | `new`, `lobby`, `joined`, `left`, `mgmt-admin` |
+| `data-edumeet-connection` | `new`, `connecting`, `connected`, `reconnecting`, `disconnected` |
+| `data-edumeet-reason` | absent until the client stops, then the first of: `meetingTokenRequired`, `meetingTokenInvalid`, `e2eeUnsupported`, `e2eeFailed`, `kicked`, `meetingEnded`, `connectionClosed`, `joinErrorPending` (a headless page did not auto-join because an earlier join error is still stored), `left` (the user left) |
+
 #### Theme settings (`config.theme`) (4.2+)
 
 Theme/UI parameters live under `config.theme` (they were previously shown mixed into the main table).

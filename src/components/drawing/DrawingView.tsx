@@ -38,7 +38,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 	// drawing setup   
 	const isMobile = useAppSelector(isMobileSelector);
 	const showEdit = true; // Visual feedback for other clients
-	const disableDraw = isMobile; // Disables drawing for some - currently only mobile
+	const headless = useAppSelector((state) => state.room.headless);
+	const disableDraw = isMobile || headless; // Disables drawing for some - mobile and the headless view
 	
 	// canvas
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -981,7 +982,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 				sx={{
 					borderTop: '1px solid gray',
 					backgroundColor: 'lightgray',
-					justifyContent: 'center'
+					justifyContent: 'center',
+					display: headless ? 'none' : undefined,
 				}}
 				ref={menuRef}
 				direction='row'

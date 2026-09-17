@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../utils/edumeetConfig', () => ({ default: { theme: {} } }));
 
-import { spotlightAudioOnlyPeersSelector, spotlightPeersSelector, videoBoxesSelector } from './selectors';
+import { botsSelector, peersArraySelector, spotlightAudioOnlyPeersSelector, spotlightPeersSelector, videoBoxesSelector } from './selectors';
 import { RootState } from './store';
 import { StateConsumer } from './slices/consumersSlice';
 import { Peer } from './slices/peersSlice';
@@ -187,10 +187,26 @@ describe('spotlightPeersSelector budget', () => {
 		expect(videoBoxesSelector(ungrouped)).toBe(4);
 	});
 
-	it('keeps the headless view on the grouped ranking without a box', () => {
+	it('treats the headless view like any client with the same settings', () => {
 		const s = state({ ...crowded, headless: true, hideSelfView: true, groupAudioOnly: false, spotlights: [ 'A1', 'C1', 'C2', 'C3', 'C4', 'C5', 'A2', 'A3' ] });
 
-		expect(spotlightPeersSelector(s)).toEqual([ 'C1', 'C2', 'C3', 'C4' ]);
+		expect(spotlightPeersSelector(s)).toEqual([ 'A1', 'C1', 'C2', 'C3' ]);
 		expect(videoBoxesSelector(s)).toBe(4);
+	});
+});
+
+describe('headless peers', () => {
+	it('are left out of every participant list and only listed by botsSelector', () => {
+		const s = state({ peers: [ 'C1', 'A1' ], cameras: [ 'C1' ], spotlights: [ 'C1', 'A1' ], groupAudioOnly: false });
+		const withBot = { ...s, peers: { ...s.peers, bot: { id: 'bot', sessionId: SESSION, displayName: 'Recorder', headless: true } } } as RootState;
+		const withBotSpotlighted = {
+			...withBot,
+			roomSessions: { [SESSION]: { ...withBot.roomSessions[SESSION], spotlights: [ 'bot', 'C1', 'A1' ] } },
+		} as RootState;
+
+		expect(ids(peersArraySelector(withBotSpotlighted))).toEqual([ 'C1', 'A1' ]);
+		expect(ids(botsSelector(withBotSpotlighted))).toEqual([ 'bot' ]);
+		expect(ids(spotlightAudioOnlyPeersSelector(withBotSpotlighted))).toEqual([ 'A1' ]);
+		expect(videoBoxesSelector(withBotSpotlighted)).toBe(3);
 	});
 });

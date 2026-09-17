@@ -20,6 +20,8 @@ import moment from 'moment';
 import { roomActions } from '../../store/slices/roomSlice';
 
 const Room = (): React.JSX.Element => {
+	const headless = useAppSelector((state) => state.room.headless);
+
 	useNotifier();
 
 	const [ isFullscreen, setFullscreen ] = useState(false);
@@ -79,14 +81,14 @@ const Room = (): React.JSX.Element => {
 			<MainContent />
 			<FullscreenVideo />
 			<BackgroundSelectDialog />
-			<LobbyDialog />
+			{ !headless && <LobbyDialog /> }
 			<Settings />
 			<Help />
 			<FilesharingDialog />
 			<ExtraVideoDialog />
 			<PermissionsDialog />
 			<ConnectivityDialog />
-			<HelpButton type='iconbutton' />
+			{ !headless && <HelpButton type='iconbutton' /> }
 		</>
 	);
 };

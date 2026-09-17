@@ -19,10 +19,11 @@ import AudioOutputChooser from '../../components/devicechooser/AudioOutputChoose
 import { canSelectAudioOutput } from '../../store/selectors';
 import edumeetConfig from '../../utils/edumeetConfig';
 
-const Lobby = (): React.JSX.Element => {
+const Lobby = (): React.JSX.Element | null => {
 	useNotifier();
 
 	const dispatch = useAppDispatch();
+	const headless = useAppSelector((state) => state.room.headless);
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
 	const showAudioOutputChooser = useAppSelector(canSelectAudioOutput);
@@ -35,6 +36,8 @@ const Lobby = (): React.JSX.Element => {
 
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';
 	const imprintUrl = edumeetConfig.imprintUrl ?? '';
+
+	if (headless) return null;
 
 	return (
 		<GenericDialog

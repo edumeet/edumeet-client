@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Nicio reuniune viitoare",
   "label.meetings.upcoming": "Reuniuni viitoare",
   "label.management.tenants.testConnection": "Testează conexiunea",
+  "room.botsInRoom": "Boți în cameră",
   "settings.groupAudioOnlyLabel": "Grupează participanții fără video",
   "label.managementservice.endToEndEncryption": "Criptare end-to-end",
   "label.managementservice.endToEndEncryptionTooltip": "Când este activată, conținutul media din camerele acestui chiriaș este criptat end-to-end. Lacătul o impune, astfel încât proprietarii camerelor nu o pot dezactiva.",

@@ -21,6 +21,7 @@ import edumeetConfig from './utils/edumeetConfig';
 import VideoBackgroundDialog from './components/backgroundselectdialog/VideoBackgroundDialog';
 import RecoverRecording from './components/recoverrecordingdialog/RecoverRecording';
 import { useWakeLock } from './utils/useWakeLock';
+import { useDocumentStatus } from './utils/documentStatus';
 
 type AppParams = {
 	id: string;
@@ -49,8 +50,10 @@ const App = (): React.JSX.Element => {
 	const roomState = useAppSelector((state) => state.room.state);
 	const id = (useParams<AppParams>() as AppParams).id.toLowerCase();
 	const hasFilesharingPermission = usePermissionSelector(permissions.SHARE_FILE);
+	const headless = useAppSelector((state) => state.room.headless);
 
 	useWakeLock(roomState === 'joined' || roomState === 'lobby');
+	useDocumentStatus();
 	
 	useEffect(() => {
 		dispatch(startListeners());
@@ -81,14 +84,14 @@ const App = (): React.JSX.Element => {
 			dispatch(stopRecording(true));
 		};
 
-		window.addEventListener('beforeunload', onBeforeUnload);
+		if (!headless) window.addEventListener('beforeunload', onBeforeUnload);
 		window.addEventListener('pagehide', onPageHide);
 
 		return () => {
 			window.removeEventListener('beforeunload', onBeforeUnload);
 			window.removeEventListener('pagehide', onPageHide);
 		};
-	}, [ roomState ]);
+	}, [ roomState, headless ]);
 
 	const handleFileDrop = (event: React.DragEvent<HTMLDivElement>): void => {
 		event.preventDefault();
@@ -104,7 +107,9 @@ const App = (): React.JSX.Element => {
 	};
 
 	useEffect(() => {
-		if (roomState ==='left') {
+		// A headless page stays on the background after leaving: the redirect would show
+		// the join dialog to the recorder, or rejoin in a loop after a kick.
+		if (roomState === 'left' && !headless) {
 			const target = (id && edumeetConfig.keepRoomNameOnLeave) ? `/${id}` : '/';
 
 			// Use window.location.href instead of navigate() + reload() to avoid
@@ -113,7 +118,7 @@ const App = (): React.JSX.Element => {
 			// and the JWT to be incorrectly deleted from localStorage.
 			window.location.href = window.location.origin + target;
 		}
-	}, [ roomState, id, edumeetConfig.keepRoomNameOnLeave ]);
+	}, [ roomState, id, edumeetConfig.keepRoomNameOnLeave, headless ]);
 
 	/**
 	 * Surface a join error carried across the page reload (e.g. refused admission
@@ -156,7 +161,7 @@ const App = (): React.JSX.Element => {
 				</StyledBackground>
 			</SnackbarProvider>
 			<VideoBackgroundDialog />
-			<RecoverRecording notify />
+			{ !headless && <RecoverRecording notify /> }
 		</>
 	);
 };

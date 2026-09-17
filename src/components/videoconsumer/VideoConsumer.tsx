@@ -76,9 +76,9 @@ const VideoConsumer = ({ consumer, style, onAspectChange }: VideoConsumerProps):
 			)}
 			<VideoView consumer={consumer} contain={contain} onAspectChange={onAspectChange} />
 			{ micConsumer && <Volume consumer={micConsumer} /> }
+			<DisplayName displayName={peer?.displayName} peerId={peerId} />
 			{ !headless &&
 				<>
-					<DisplayName displayName={peer?.displayName} peerId={peerId} />
 					<MediaControls
 						orientation='horizontal'
 						horizontalPlacement='center'

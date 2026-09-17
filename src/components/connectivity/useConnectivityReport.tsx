@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
+import { peersArraySelector } from '../../store/selectors';
 import { ServiceContext } from '../../store/store';
 import { ConnectivityReport, buildConnectivityReport } from './connectivityReport';
 
@@ -12,7 +13,7 @@ import { ConnectivityReport, buildConnectivityReport } from './connectivityRepor
  */
 export const useConnectivityReport = (enabled = true): ConnectivityReport | undefined => {
 	const { mediaService } = useContext(ServiceContext);
-	const peerCount = useAppSelector((state) => Object.keys(state.peers).length);
+	const peerCount = useAppSelector(peersArraySelector).length;
 	const roomState = useAppSelector((state) => state.room.state);
 	const [ report, setReport ] = useState<ConnectivityReport | undefined>();
 

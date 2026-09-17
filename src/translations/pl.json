@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Brak nadchodzących spotkań",
   "label.meetings.upcoming": "Nadchodzące spotkania",
   "label.management.tenants.testConnection": "Testuj połączenie",
+  "room.botsInRoom": "Boty w pokoju",
   "settings.groupAudioOnlyLabel": "Grupowanie uczestników bez wideo",
   "label.managementservice.endToEndEncryption": "Szyfrowanie end-to-end",
   "label.managementservice.endToEndEncryptionTooltip": "Po włączeniu multimedia w pokojach tego najemcy są szyfrowane end-to-end. Blokada wymusza włączenie, więc właściciele pokojów nie mogą go wyłączyć.",

@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Ingen kommende møder",
   "label.meetings.upcoming": "Kommende møder",
   "label.management.tenants.testConnection": "Test forbindelse",
+  "room.botsInRoom": "Bots i rummet",
   "settings.groupAudioOnlyLabel": "Gruppér deltagere uden video",
   "label.managementservice.endToEndEncryption": "End-to-end-kryptering",
   "label.managementservice.endToEndEncryptionTooltip": "Når den er aktiveret, er medier i denne lejers rum end-to-end-krypteret. Låsen gennemtvinger den, så rumejere ikke kan slå den fra.",

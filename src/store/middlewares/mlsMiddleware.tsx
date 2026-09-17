@@ -54,6 +54,7 @@ const createMlsMiddleware = ({ signalingService, e2eeService }: MiddlewareOption
 			message: roomE2eeFailedLabel(),
 			options: { variant: 'error', persist: true }
 		}));
+		dispatch(roomActions.setLeaveReason('e2eeFailed'));
 		dispatch(roomActions.setState('left'));
 	};
 

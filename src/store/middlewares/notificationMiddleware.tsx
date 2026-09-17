@@ -142,7 +142,7 @@ const createNotificationMiddleware = ({
 
 		return (next) => (action) => {
 			// New peer joined: batch the snackbar (independent of sound settings).
-			if (peersActions.addPeer.match(action)) {
+			if (peersActions.addPeer.match(action) && !action.payload.headless) {
 				queueJoinNotification(action.payload.displayName);
 			}
 
@@ -204,7 +204,7 @@ const createNotificationMiddleware = ({
 				}
 
 				// New peer
-				if (peersActions.addPeer.match(action)) {
+				if (peersActions.addPeer.match(action) && !action.payload.headless) {
 					playNotificationSounds('newPeer');
 				}
 

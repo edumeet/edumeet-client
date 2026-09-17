@@ -21,6 +21,7 @@ export interface Peer {
 	reaction?: string | null;
 	reactionTimestamp?: number;
 	recording?: boolean;
+	headless?: boolean;
 	transcripts?: Transcript[];
 }
 

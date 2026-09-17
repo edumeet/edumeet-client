@@ -40,6 +40,7 @@ const createPeerMiddleware = ({
 									raisedHand,
 									raisedHandTimestamp,
 									recording,
+									headless,
 								} = notification.data;
 
 								dispatch(peersActions.addPeer({
@@ -50,6 +51,7 @@ const createPeerMiddleware = ({
 									raisedHand,
 									raisedHandTimestamp,
 									recording,
+									headless,
 									transcripts: [],
 								}));
 

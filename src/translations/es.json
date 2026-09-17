@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "No hay reuniones próximas",
   "label.meetings.upcoming": "Próximas reuniones",
   "label.management.tenants.testConnection": "Probar conexión",
+  "room.botsInRoom": "Bots en la sala",
   "settings.groupAudioOnlyLabel": "Agrupar participantes sin vídeo",
   "label.managementservice.endToEndEncryption": "Cifrado de extremo a extremo",
   "label.managementservice.endToEndEncryptionTooltip": "Si se activa, los medios en las salas de este inquilino se cifran de extremo a extremo. El candado lo fuerza, de modo que los propietarios de las salas no pueden desactivarlo.",

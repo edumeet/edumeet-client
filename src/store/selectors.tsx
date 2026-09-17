@@ -28,7 +28,6 @@ const groupAudioOnlySelector: Selector<boolean> = (state) => state.settings.grou
 const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNonVideo;
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
-const headlessSelector: Selector<boolean | undefined> = (state) => state.room.headless;
 const receiveVideoSelector: Selector<boolean> = (state) => state.me.receiveVideo;
 const recordingSelector: Selector<boolean | undefined> = (state) => state.room.recording;
 const directMessagesSelect: Selector<Record<string, DirectMessageThread>> = (state) => state.directMessages;
@@ -71,9 +70,16 @@ export const isInsertableStreamsSupported = (): boolean =>
  * 
  * @returns {Peer[]} the peers.
  */
+// Headless peers (recorders, streamers) are not participants: nothing built on
+// this list shows or counts them. botsSelector is the one place that lists them.
 export const peersArraySelector = createSelector(
 	peersSelector,
-	(peers) => Object.values(peers)
+	(peers) => Object.values(peers).filter((p) => !p.headless)
+);
+
+export const botsSelector = createSelector(
+	peersSelector,
+	(peers) => Object.values(peers).filter((p) => p.headless)
 );
 
 /**
@@ -221,7 +227,7 @@ const videoCapablePeerIdsSelector = createSelector(
  *    recently.
  *  - One box is reserved for the collapsed audio-only group when it will be
  *    shown (there is at least one peer without video, or cameras get cropped),
- *    unless "hide participants without video" or headless is on.
+ *    unless "hide participants without video" is on.
  *
  * With participants without video ungrouped, every peer in the list gets a
  * tile of its own, so the list order alone (sharers, pinned peers, then most
@@ -241,7 +247,6 @@ export const spotlightPeersSelector = createSelector(
 	hideNonVideoSelector,
 	groupAudioOnlySelector,
 	hideSelfViewSelector,
-	headlessSelector,
 	(
 		maxActiveVideos,
 		roomSession,
@@ -251,7 +256,6 @@ export const spotlightPeersSelector = createSelector(
 		hideNonVideo,
 		groupAudioOnly,
 		hideSelfView,
-		headless,
 	) => {
 		if (!roomSession) return [];
 		const { spotlights, selectedPeers } = roomSession;
@@ -260,7 +264,7 @@ export const spotlightPeersSelector = createSelector(
 		// Self-view occupies one of the slider's boxes; reclaim it when hidden.
 		const budget = maxActiveVideos + (hideSelfView ? 1 : 0);
 
-		if (!hideNonVideo && !groupAudioOnly && !headless) {
+		if (!hideNonVideo && !groupAudioOnly) {
 			return uniqueSet
 				.slice(0, budget)
 				.sort((a, b) => String(a).localeCompare(String(b)));
@@ -277,7 +281,6 @@ export const spotlightPeersSelector = createSelector(
 		// more cameras than the budget allows.
 		const audioBoxShown =
 			!hideNonVideo &&
-			!headless &&
 			(
 				sessionPeers.some((p) => !videoCapablePeerIds.has(p.id)) ||
 				videoPeers.length > budget
@@ -680,7 +683,6 @@ export const videoBoxesSelector = createSelector(
 	spotlightAudioOnlyPeersSelector,
 	groupAudioOnlySelector,
 	hideNonVideoSelector,
-	headlessSelector,
 	(
 		hideSelfView,
 		webcamConsumers,
@@ -688,14 +690,13 @@ export const videoBoxesSelector = createSelector(
 		spotlightAudioOnlyPeers,
 		groupAudioOnly,
 		hideNonVideo,
-		headless,
 	) => {
 		let videoBoxes = hideSelfView ? 0 : 1; // Maybe add a box for Me view
 
 		// Add everyone else's video
 		videoBoxes += webcamConsumers.length;
 
-		if (hideNonVideo || headless) return videoBoxes;
+		if (hideNonVideo) return videoBoxes;
 
 		if (groupAudioOnly) {
 			if (audioOnlyPeers.length > 0) videoBoxes++; // Add the audio only box

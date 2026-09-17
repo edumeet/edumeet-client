@@ -433,6 +433,11 @@ export const hideNoVideoParticipantsLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Hide participants with no video'
 });
 
+export const botsInRoomLabel = (): string => intl.formatMessage({
+	id: 'room.botsInRoom',
+	defaultMessage: 'Bots in the room'
+});
+
 export const enableBackgroundEffectsOnExtraVideoLabel = (): string => intl.formatMessage({
 	id: 'settings.enableBackgroundEffectsOnExtraVideoLabel',
 	defaultMessage: 'Enable background effects on extra video'

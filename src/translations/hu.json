@@ -686,6 +686,7 @@
   "label.meetings.noUpcoming": "Nincsenek közelgő konferenciák",
   "label.meetings.upcoming": "Közelgő konferenciák",
   "label.management.tenants.testConnection": "Kapcsolat tesztelése",
+  "room.botsInRoom": "Botok a szobában",
   "settings.groupAudioOnlyLabel": "Videó nélküli résztvevők csoportosítása",
   "label.managementservice.endToEndEncryption": "Végpontok közötti titkosítás",
   "label.managementservice.endToEndEncryptionTooltip": "Ha engedélyezve van, a bérlő szobáiban a média végpontok között titkosított. A zár kötelezővé teszi, így a szobatulajdonosok nem kapcsolhatják ki.",

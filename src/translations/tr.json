@@ -612,6 +612,7 @@
   "label.meetings.noUpcoming": "Yaklaşan toplantı yok",
   "label.meetings.upcoming": "Yaklaşan toplantılar",
   "label.management.tenants.testConnection": "Bağlantıyı test et",
+  "room.botsInRoom": "Odadaki botlar",
   "settings.groupAudioOnlyLabel": "Videosu olmayan katılımcıları grupla",
   "label.managementservice.endToEndEncryption": "Uçtan uca şifreleme",
   "label.managementservice.endToEndEncryptionTooltip": "Etkinleştirildiğinde, bu kiracının odalarındaki medya uçtan uca şifrelenir. Kilit bunu zorunlu kılar, böylece oda sahipleri kapatamaz.",
