@@ -438,6 +438,26 @@ export const botsInRoomLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Bots in the room'
 });
 
+export const removeBotsLabel = (): string => intl.formatMessage({
+	id: 'room.removeBots',
+	defaultMessage: 'Remove all bots'
+});
+
+export const removeBotsConfirmLabel = (): string => intl.formatMessage({
+	id: 'room.removeBotsConfirm',
+	defaultMessage: 'The recorders and streamers in this room will be disconnected. Continue?'
+});
+
+export const removeBotLabel = (name: string): string => intl.formatMessage({
+	id: 'room.removeBot',
+	defaultMessage: 'Remove {name}'
+}, { name });
+
+export const removeBotConfirmLabel = (name: string): string => intl.formatMessage({
+	id: 'room.removeBotConfirm',
+	defaultMessage: '{name} will be disconnected. Continue?'
+}, { name });
+
 export const enableBackgroundEffectsOnExtraVideoLabel = (): string => intl.formatMessage({
 	id: 'settings.enableBackgroundEffectsOnExtraVideoLabel',
 	defaultMessage: 'Enable background effects on extra video'

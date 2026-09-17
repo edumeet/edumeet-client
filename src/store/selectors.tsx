@@ -102,10 +102,12 @@ export const roomSessionsLengthSelector = createSelector(
 	(roomSessions) => roomSessions.length
 );
 
+// Counts bots too, as it did before they were hidden: two participants and a
+// bot must stay on the media node, or the bot would receive nothing.
 export const p2pModeSelector = createSelector(
 	roomSessionsLengthSelector,
-	peersLengthSelector,
-	(sessions, peers) => sessions === 1 && peers < 2 && edumeetConfig.p2penabled
+	peersSelector,
+	(sessions, peers) => sessions === 1 && Object.keys(peers).length < 2 && edumeetConfig.p2penabled
 );
 
 /**

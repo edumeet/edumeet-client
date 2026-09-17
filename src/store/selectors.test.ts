@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('../utils/edumeetConfig', () => ({ default: { theme: {} } }));
+vi.mock('../utils/edumeetConfig', () => ({ default: { theme: {}, p2penabled: true } }));
 
-import { botsSelector, peersArraySelector, spotlightAudioOnlyPeersSelector, spotlightPeersSelector, videoBoxesSelector } from './selectors';
+import { botsSelector, p2pModeSelector, peersArraySelector, spotlightAudioOnlyPeersSelector, spotlightPeersSelector, videoBoxesSelector } from './selectors';
 import { RootState } from './store';
 import { StateConsumer } from './slices/consumersSlice';
 import { Peer } from './slices/peersSlice';
@@ -208,5 +208,13 @@ describe('headless peers', () => {
 		expect(ids(botsSelector(withBotSpotlighted))).toEqual([ 'bot' ]);
 		expect(ids(spotlightAudioOnlyPeersSelector(withBotSpotlighted))).toEqual([ 'A1' ]);
 		expect(videoBoxesSelector(withBotSpotlighted)).toBe(3);
+	});
+
+	it('keep a call with a bot on the media node instead of peer to peer', () => {
+		const one = state({ peers: [ 'C1' ], cameras: [ 'C1' ], spotlights: [ 'C1' ] });
+		const oneAndBot = { ...one, peers: { ...one.peers, bot: { id: 'bot', sessionId: SESSION, headless: true } } } as RootState;
+
+		expect(p2pModeSelector(one)).toBe(true);
+		expect(p2pModeSelector(oneAndBot)).toBe(false);
 	});
 });
