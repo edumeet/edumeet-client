@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": "Nicio reuniune viitoare",
   "label.meetings.upcoming": "Reuniuni viitoare",
   "label.management.tenants.testConnection": "Testează conexiunea",
-  "settings.showAllAudioOnlyParticipantsLabel": "Afișează separat fiecare participant fără video",
+  "settings.groupAudioOnlyLabel": "Grupează participanții fără video",
   "label.managementservice.endToEndEncryption": "Criptare end-to-end",
   "label.managementservice.endToEndEncryptionTooltip": "Când este activată, conținutul media din camerele acestui chiriaș este criptat end-to-end. Lacătul o impune, astfel încât proprietarii camerelor nu o pot dezactiva.",
   "room.e2eeUnsupported": "Această cameră necesită criptare end-to-end, pe care browserul dumneavoastră nu o acceptă. Folosiți o versiune recentă de Chrome, Edge sau Firefox pentru a intra.",

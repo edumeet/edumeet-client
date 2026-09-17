@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": "Sem reuniões próximas",
   "label.meetings.upcoming": "Próximas reuniões",
   "label.management.tenants.testConnection": "Testar ligação",
-  "settings.showAllAudioOnlyParticipantsLabel": "Mostrar cada participante sem vídeo separadamente",
+  "settings.groupAudioOnlyLabel": "Agrupar participantes sem vídeo",
   "label.managementservice.endToEndEncryption": "Encriptação ponta a ponta",
   "label.managementservice.endToEndEncryptionTooltip": "Quando ativada, os conteúdos multimédia nas salas deste inquilino são encriptados ponta a ponta. O cadeado força a ativação, para que os proprietários das salas não a possam desativar.",
   "room.e2eeUnsupported": "Esta sala requer encriptação ponto a ponto, que o seu navegador não suporta. Utilize uma versão recente do Chrome, Edge ou Firefox para entrar.",

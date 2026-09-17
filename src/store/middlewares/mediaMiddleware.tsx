@@ -319,11 +319,11 @@ const createMediaMiddleware = ({
 				roomSessionsActions.addWindowedConsumer.match(action) ||
 				roomSessionsActions.removeWindowedConsumer.match(action) ||
 				settingsActions.setMaxActiveVideos.match(action) ||
-				// hideNonVideo / showAudioOnly / hideSelfView change the spotlight
+				// hideNonVideo / groupAudioOnly / hideSelfView change the spotlight
 				// budget, so the settings dialog dispatches them via these dedicated
 				// setters (like the lastN slider) to trigger a reconcile.
 				settingsActions.setHideNonVideo.match(action) ||
-				settingsActions.setShowAudioOnly.match(action) ||
+				settingsActions.setGroupAudioOnly.match(action) ||
 				settingsActions.setHideSelfView.match(action) ||
 				meActions.setReceiveVideo.match(action)
 			) {

@@ -686,7 +686,7 @@
 	"label.meetings.noUpcoming": "No upcoming meetings",
 	"label.meetings.upcoming": "Upcoming meetings",
 	"label.management.tenants.testConnection": "Test connection",
-	"settings.showAllAudioOnlyParticipantsLabel": "Show each participant with no video separately",
+	"settings.groupAudioOnlyLabel": "Group participants without video",
 	"label.managementservice.endToEndEncryption": "End-to-end encryption",
 	"label.managementservice.endToEndEncryptionTooltip": "When enabled, media in this tenant's rooms is end-to-end encrypted. The lock forces it on so room owners cannot turn it off.",
 	"room.e2eeUnsupported": "This room requires end-to-end encryption, which your browser does not support. Please use a recent version of Chrome, Edge or Firefox to join.",

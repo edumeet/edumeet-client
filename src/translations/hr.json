@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": "Nema nadolazećih sastanaka",
   "label.meetings.upcoming": "Nadolazeći sastanci",
   "label.management.tenants.testConnection": "Testiraj povezivanje",
-  "settings.showAllAudioOnlyParticipantsLabel": "Prikaži svakog sudionika bez videa zasebno",
+  "settings.groupAudioOnlyLabel": "Grupiraj sudionike bez videa",
   "label.managementservice.endToEndEncryption": "End-to-end enkripcija",
   "label.managementservice.endToEndEncryptionTooltip": "Kada je omogućeno, mediji u sobama ovog zakupca su end-to-end enkriptirani. Lokot to nameće, pa ga vlasnici soba ne mogu isključiti.",
   "room.e2eeUnsupported": "Ova soba zahtijeva end-to-end enkripciju koju vaš preglednik ne podržava. Za pridruživanje upotrijebite noviju verziju preglednika Chrome, Edge ili Firefox.",

@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": "Нет предстоящих встреч",
   "label.meetings.upcoming": "Предстоящие встречи",
   "label.management.tenants.testConnection": "Проверить соединение",
-  "settings.showAllAudioOnlyParticipantsLabel": "Показывать каждого участника без видео отдельно",
+  "settings.groupAudioOnlyLabel": "Группировать участников без видео",
   "label.managementservice.endToEndEncryption": "Сквозное шифрование",
   "label.managementservice.endToEndEncryptionTooltip": "Если включено, медиа в комнатах этого арендатора шифруются сквозным шифрованием. Замок принудительно включает это, поэтому владельцы комнат не могут его отключить.",
   "room.e2eeUnsupported": "Эта комната требует сквозного шифрования, которое ваш браузер не поддерживает. Чтобы присоединиться, используйте актуальную версию Chrome, Edge или Firefox.",

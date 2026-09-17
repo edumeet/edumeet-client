@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": "Немає майбутніх зустрічей",
   "label.meetings.upcoming": "Майбутні зустрічі",
   "label.management.tenants.testConnection": "Перевірити з'єднання",
-  "settings.showAllAudioOnlyParticipantsLabel": "Показувати кожного учасника без відео окремо",
+  "settings.groupAudioOnlyLabel": "Групувати учасників без відео",
   "label.managementservice.endToEndEncryption": "Наскрізне шифрування",
   "label.managementservice.endToEndEncryptionTooltip": "Якщо ввімкнено, медіа в кімнатах цього орендаря наскрізно шифруються. Замок примусово вмикає це, тож власники кімнат не можуть його вимкнути.",
   "room.e2eeUnsupported": "Ця кімната потребує наскрізного шифрування, яке ваш браузер не підтримує. Щоб приєднатися, скористайтеся сучасною версією Chrome, Edge або Firefox.",

@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": "Δεν υπάρχουν επερχόμενες συναντήσεις",
   "label.meetings.upcoming": "Επερχόμενες συναντήσεις",
   "label.management.tenants.testConnection": "Δοκιμή σύνδεσης",
-  "settings.showAllAudioOnlyParticipantsLabel": "Εμφάνιση κάθε συμμετέχοντα χωρίς βίντεο ξεχωριστά",
+  "settings.groupAudioOnlyLabel": "Ομαδοποίηση συμμετεχόντων χωρίς βίντεο",
   "label.managementservice.endToEndEncryption": "Κρυπτογράφηση από άκρο σε άκρο",
   "label.managementservice.endToEndEncryptionTooltip": "Όταν είναι ενεργοποιημένη, τα πολυμέσα στις αίθουσες αυτού του μισθωτή κρυπτογραφούνται από άκρο σε άκρο. Η κλειδαριά την επιβάλλει, ώστε οι ιδιοκτήτες αιθουσών να μην μπορούν να την απενεργοποιήσουν.",
   "room.e2eeUnsupported": "Αυτή η αίθουσα απαιτεί κρυπτογράφηση από άκρο σε άκρο, την οποία το πρόγραμμα περιήγησής σας δεν υποστηρίζει. Χρησιμοποιήστε πρόσφατη έκδοση του Chrome, του Edge ή του Firefox για να συμμετάσχετε.",

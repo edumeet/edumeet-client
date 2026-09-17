@@ -119,6 +119,24 @@ The client merges your `window.config` with built-in defaults (see `src/utils/ty
 | imprintUrl | Show an imprint link (blank to hide). | `string` | `''` |
 | privacyUrl | Show a privacy notice link (blank to hide). | `string` | `''` |
 | knownRegions | Region codes offered in the management UI's tenant editor for the per-tenant "limit media nodes to specific regions" picker. Values must match region labels in the room-server's `countryToRegion` config. Leave empty to hide the limit toggle. | `string[]` | `[]` |
+| groupAudioOnly | Initial value of the "Group participants without video" switch (see below). Replaces `showAudioOnly`, which had the opposite meaning. | `boolean` | `true` |
+| hideNonVideo | Initial value of the "Hide participants with no video" switch (see below). | `boolean` | `false` |
+| hideSelfView | Initial value of the "Hide self view" switch (see below). | `boolean` | `false` |
+
+#### Video tiles and the participants without video
+
+The room shows at most as many tiles as the "Number of visible videos" slider allows (the value the room-server sends is the initial one). Your own tile is one of them. Screen shares, extra videos and the drawing board are shown in their own area and do not count.
+
+The candidates for the remaining tiles are ordered: participants sharing a screen or an extra video first, then participants you pinned in the participant list, then everyone else with the most recent speaker first. A participant who starts speaking while already on screen leaves the layout as it is; only a speaker from outside the visible set takes a tile, from the participant who spoke least recently.
+
+Three appearance switches decide what happens to participants who have no video on screen (camera off, camera not received, or camera left out by the slider):
+
+| Switch | Config key | Behaviour |
+| :--- | :--- | :--- |
+| Group participants without video (default on) | `groupAudioOnly: true` | Cameras are shown first. One tile is reserved for a box that lists everyone without video and lights up when one of them speaks. |
+| Group participants without video off | `groupAudioOnly: false` | Everyone without video gets a tile of their own, counted against the slider like a camera. In a room with more participants than tiles this shows the most recent speakers, whether they have a camera or not; a silent camera can be off screen while a recent speaker without one is on. Turning a camera on or off never moves a tile, it only changes what the tile shows. |
+| Hide participants with no video | `hideNonVideo: true` | Nobody without video is shown, not even the speaker, and the group switch is disabled. Your own tile stays. |
+| Hide self view | `hideSelfView: true` | Your own tile is removed and its slot goes to another participant. Your own screen share is hidden as well. |
 
 #### Theme settings (`config.theme`) (4.2+)
 

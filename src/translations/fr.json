@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": "Aucune réunion à venir",
   "label.meetings.upcoming": "Réunions à venir",
   "label.management.tenants.testConnection": "Tester la connexion",
-  "settings.showAllAudioOnlyParticipantsLabel": "Afficher chaque participant sans vidéo séparément",
+  "settings.groupAudioOnlyLabel": "Regrouper les participants sans vidéo",
   "label.managementservice.endToEndEncryption": "Chiffrement de bout en bout",
   "label.managementservice.endToEndEncryptionTooltip": "Lorsqu'il est activé, les médias des salles de ce locataire sont chiffrés de bout en bout. Le verrou l'impose, de sorte que les propriétaires de salle ne peuvent pas le désactiver.",
   "room.e2eeUnsupported": "Cette salle nécessite un chiffrement de bout en bout que votre navigateur ne prend pas en charge. Veuillez utiliser une version récente de Chrome, Edge ou Firefox pour rejoindre.",

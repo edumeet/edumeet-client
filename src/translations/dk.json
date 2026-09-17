@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": "Ingen kommende møder",
   "label.meetings.upcoming": "Kommende møder",
   "label.management.tenants.testConnection": "Test forbindelse",
-  "settings.showAllAudioOnlyParticipantsLabel": "Vis hver deltager uden video for sig",
+  "settings.groupAudioOnlyLabel": "Gruppér deltagere uden video",
   "label.managementservice.endToEndEncryption": "End-to-end-kryptering",
   "label.managementservice.endToEndEncryptionTooltip": "Når den er aktiveret, er medier i denne lejers rum end-to-end-krypteret. Låsen gennemtvinger den, så rumejere ikke kan slå den fra.",
   "room.e2eeUnsupported": "Dette rum kræver end-to-end-kryptering, som din browser ikke understøtter. Brug en nyere version af Chrome, Edge eller Firefox for at deltage.",

@@ -686,7 +686,7 @@
   "label.meetings.noUpcoming": "Nincsenek közelgő konferenciák",
   "label.meetings.upcoming": "Közelgő konferenciák",
   "label.management.tenants.testConnection": "Kapcsolat tesztelése",
-  "settings.showAllAudioOnlyParticipantsLabel": "Minden videó nélküli résztvevő külön megjelenítése",
+  "settings.groupAudioOnlyLabel": "Videó nélküli résztvevők csoportosítása",
   "label.managementservice.endToEndEncryption": "Végpontok közötti titkosítás",
   "label.managementservice.endToEndEncryptionTooltip": "Ha engedélyezve van, a bérlő szobáiban a média végpontok között titkosított. A zár kötelezővé teszi, így a szobatulajdonosok nem kapcsolhatják ki.",
   "room.e2eeUnsupported": "Ez a szoba végpontok közötti titkosítást igényel, amelyet a böngészője nem támogat. A csatlakozáshoz használja a Chrome, az Edge vagy a Firefox friss verzióját.",

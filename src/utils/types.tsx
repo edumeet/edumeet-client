@@ -20,7 +20,7 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	productionPort: 443,
 	serverHostname: undefined,
 	askForMediaOnJoin: true,
-	showAudioOnly: false,
+	groupAudioOnly: true,
 	hideNonVideo: false,
 	hideSelfView: false,
 	resolution: 'medium',
@@ -162,7 +162,7 @@ export interface EdumeetConfig {
 	productionPort: number;
 	serverHostname?: string;
 	askForMediaOnJoin: boolean;
-	showAudioOnly: boolean;
+	groupAudioOnly: boolean;
 	hideNonVideo: boolean;
 	hideSelfView: boolean;
 	resolution: Resolution;

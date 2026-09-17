@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": "Nessuna riunione in programma",
   "label.meetings.upcoming": "Prossime riunioni",
   "label.management.tenants.testConnection": "Prova connessione",
-  "settings.showAllAudioOnlyParticipantsLabel": "Mostra separatamente ogni partecipante senza video",
+  "settings.groupAudioOnlyLabel": "Raggruppa i partecipanti senza video",
   "label.managementservice.endToEndEncryption": "Crittografia end-to-end",
   "label.managementservice.endToEndEncryptionTooltip": "Se attivata, i contenuti multimediali nelle stanze di questo tenant sono crittografati end-to-end. Il lucchetto la impone, così i proprietari delle stanze non possono disattivarla.",
   "room.e2eeUnsupported": "Questa stanza richiede la crittografia end-to-end, che il tuo browser non supporta. Per partecipare, usa una versione recente di Chrome, Edge o Firefox.",

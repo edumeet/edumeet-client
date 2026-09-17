@@ -5,7 +5,12 @@ import {
 	useAppSelector,
 	usePeerConsumers,
 } from '../../store/hooks';
-import { activeSpeakerIdSelector, activeSpeakerIsAudioOnlySelector, audioOnlySessionPeersSelector } from '../../store/selectors';
+import {
+	activeSpeakerIdSelector,
+	activeSpeakerIsAudioOnlySelector,
+	audioOnlySessionPeersSelector,
+	spotlightAudioOnlyPeersSelector,
+} from '../../store/selectors';
 import VideoBox from '../videobox/VideoBox';
 import { uiActions } from '../../store/slices/uiSlice';
 import DisplayName from '../displayname/DisplayName';
@@ -58,11 +63,12 @@ const Peers = ({ style }: PeersProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const participantListOpen = useAppSelector((state) => state.ui.participantListOpen);
 	const openUsersTab = () => dispatch(uiActions.setUi({ participantListOpen: !participantListOpen }));
-	const showAudioOnly = useAppSelector((state) => state.settings.showAudioOnly);
+	const groupAudioOnly = useAppSelector((state) => state.settings.groupAudioOnly);
 	const hideNonVideo = useAppSelector((state) => state.settings.hideNonVideo);
 	const activeSpeaker = useAppSelector(activeSpeakerIsAudioOnlySelector);
 	const headless = useAppSelector((state) => state.room.headless);
 	const audioOnlyPeers = useAppSelector(audioOnlySessionPeersSelector);
+	const spotlightAudioOnlyPeers = useAppSelector(spotlightAudioOnlyPeersSelector);
 
 	const visiblePeerNames = audioOnlyPeers.slice(0, 3);
 	const rest = audioOnlyPeers.slice(3);
@@ -79,7 +85,7 @@ const Peers = ({ style }: PeersProps): React.JSX.Element => {
 
 	return (
 		<>
-			{ !hideNonVideo && !headless && audioOnlyPeers.length > 0 && !showAudioOnly && 
+			{ !hideNonVideo && !headless && groupAudioOnly && audioOnlyPeers.length > 0 && 
 				<VideoBox
 					activeSpeaker={activeSpeaker}
 					order={10}
@@ -98,8 +104,8 @@ const Peers = ({ style }: PeersProps): React.JSX.Element => {
 					} variant='filled' onClick={ () => openUsersTab() } />
 				</VideoBox>
 			}
-			{ !hideNonVideo && !headless && audioOnlyPeers.length > 0 && showAudioOnly && 
-				audioOnlyPeers.map((peer) => (
+			{ !hideNonVideo && !headless && !groupAudioOnly &&
+				spotlightAudioOnlyPeers.map((peer) => (
 					
 					<AudioPeerBox
 						key={peer.id} // Don't forget a unique key!

@@ -24,7 +24,7 @@ const peersSelector: Selector<Record<string, Peer>> = (state) => state.peers;
 const sessionIdSelector: Selector<string> = (state) => state.me.sessionId;
 const lobbyPeersSelector: Selector<LobbyPeer[]> = (state) => state.lobbyPeers;
 const maxActiveVideosSelector: Selector<number> = (state) => state.settings.maxActiveVideos;
-const showAudioOnlySelector: Selector<boolean> = (state) => state.settings.showAudioOnly;
+const groupAudioOnlySelector: Selector<boolean> = (state) => state.settings.groupAudioOnly;
 const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNonVideo;
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
@@ -212,15 +212,23 @@ const videoCapablePeerIdsSelector = createSelector(
  * cropped to the video-box budget.
  *
  * The budget is derived from maxActiveVideos (the slider, which already
- * reserves a box for the local user). Within it:
+ * reserves a box for the local user). The local user's reserved box is
+ * handed back to the others when self-view is hidden.
+ *
+ * With participants without video grouped (or hidden):
  *  - Peers with live video are prioritized over audio-only peers, so a real
  *    camera is never crowded out by an audio-only peer that merely spoke
  *    recently.
  *  - One box is reserved for the collapsed audio-only group when it will be
  *    shown (there is at least one peer without video, or cameras get cropped),
  *    unless "hide participants without video" or headless is on.
- *  - The local user's reserved box is handed back to a camera when self-view
- *    is hidden.
+ *
+ * With participants without video ungrouped, every peer in the list gets a
+ * tile of its own, so the list order alone (sharers, pinned peers, then most
+ * recent speaker first) decides who is visible and the budget is simply
+ * sliced. A speaker who is already visible keeps the layout as it is; only a
+ * speaker from outside the visible set replaces the peer who spoke least
+ * recently, camera or not.
  *
  * @returns {string[]} the list of peerIds.
 */
@@ -231,7 +239,7 @@ export const spotlightPeersSelector = createSelector(
 	videoCapablePeerIdsSelector,
 	sessionIdPeersSelector,
 	hideNonVideoSelector,
-	showAudioOnlySelector,
+	groupAudioOnlySelector,
 	hideSelfViewSelector,
 	headlessSelector,
 	(
@@ -241,7 +249,7 @@ export const spotlightPeersSelector = createSelector(
 		videoCapablePeerIds,
 		sessionPeers,
 		hideNonVideo,
-		showAudioOnly,
+		groupAudioOnly,
 		hideSelfView,
 		headless,
 	) => {
@@ -249,23 +257,26 @@ export const spotlightPeersSelector = createSelector(
 		const { spotlights, selectedPeers } = roomSession;
 		const uniqueSet = Array.from(new Set([ ...consumerSelectedPeerIds, ...selectedPeers, ...spotlights ]));
 
+		// Self-view occupies one of the slider's boxes; reclaim it when hidden.
+		const budget = maxActiveVideos + (hideSelfView ? 1 : 0);
+
+		if (!hideNonVideo && !groupAudioOnly && !headless) {
+			return uniqueSet
+				.slice(0, budget)
+				.sort((a, b) => String(a).localeCompare(String(b)));
+		}
+
 		// Split candidates into those with live video and those without,
 		// preserving the original priority order in each group.
 		const videoPeers = uniqueSet.filter((id) => videoCapablePeerIds.has(id));
 		const audioPeers = uniqueSet.filter((id) => !videoCapablePeerIds.has(id));
 
-		// Self-view occupies one of the slider's boxes; reclaim it when hidden.
-		const budget = maxActiveVideos + (hideSelfView ? 1 : 0);
-
 		// The collapsed audio-only box appears when non-video peers are not
 		// hidden and at least one peer will end up in it: either a peer with no
 		// live video at all, or a camera that gets cropped because there are
-		// more cameras than the budget allows. With showAudioOnly the peers get
-		// a tile each instead of the collapsed box, and those tiles are rendered
-		// outside this budget, so nothing is reserved for them.
+		// more cameras than the budget allows.
 		const audioBoxShown =
 			!hideNonVideo &&
-			!showAudioOnly &&
 			!headless &&
 			(
 				sessionPeers.some((p) => !videoCapablePeerIds.has(p.id)) ||
@@ -621,6 +632,23 @@ export const audioOnlySessionPeersSelector = createSelector(
 	(peers, consumers) => peers.filter((peer) => !consumers.some((c) => c.peerId === peer.id))
 );
 
+/**
+ * Returns the peers in the current spotlight list that have no video on
+ * screen: the ones that get an avatar tile each when participants without
+ * video are not grouped. Unlike audioOnlySessionPeersSelector this list is
+ * bounded by the video-box budget.
+ *
+ * @returns {Peer[]} the list of peers.
+ */
+export const spotlightAudioOnlyPeersSelector = createSelector(
+	spotlightPeersSelector,
+	sessionIdPeersSelector,
+	resumedVideoConsumersSelector,
+	(spotlights, peers, consumers) => peers.filter(
+		(peer) => spotlights.includes(peer.id) && !consumers.some((c) => c.peerId === peer.id)
+	)
+);
+
 /** Returns true if the current active speaker is an audio only peer.
  * 
  * @returns {boolean} true if the current speaker is an audio only peer.
@@ -649,14 +677,16 @@ export const videoBoxesSelector = createSelector(
 	hideSelfViewSelector,
 	spotlightWebcamConsumerSelector,
 	audioOnlySessionPeersSelector,
-	showAudioOnlySelector,
+	spotlightAudioOnlyPeersSelector,
+	groupAudioOnlySelector,
 	hideNonVideoSelector,
 	headlessSelector,
 	(
 		hideSelfView,
 		webcamConsumers,
 		audioOnlyPeers,
-		showAudioOnly,
+		spotlightAudioOnlyPeers,
+		groupAudioOnly,
 		hideNonVideo,
 		headless,
 	) => {
@@ -665,10 +695,12 @@ export const videoBoxesSelector = createSelector(
 		// Add everyone else's video
 		videoBoxes += webcamConsumers.length;
 
-		if (audioOnlyPeers.length > 0 && !hideNonVideo && !headless && !showAudioOnly) {
-			videoBoxes++; // Add the audio only box
-		} else if (audioOnlyPeers.length > 0 && !hideNonVideo && !headless && showAudioOnly) {
-			videoBoxes+=audioOnlyPeers.length;
+		if (hideNonVideo || headless) return videoBoxes;
+
+		if (groupAudioOnly) {
+			if (audioOnlyPeers.length > 0) videoBoxes++; // Add the audio only box
+		} else {
+			videoBoxes += spotlightAudioOnlyPeers.length;
 		}
 
 		return videoBoxes;

@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": "Žádné nadcházející schůzky",
   "label.meetings.upcoming": "Nadcházející schůzky",
   "label.management.tenants.testConnection": "Otestovat spojení",
-  "settings.showAllAudioOnlyParticipantsLabel": "Zobrazit každého účastníka bez obrazu samostatně",
+  "settings.groupAudioOnlyLabel": "Seskupit účastníky bez obrazu",
   "label.managementservice.endToEndEncryption": "Koncové šifrování",
   "label.managementservice.endToEndEncryptionTooltip": "Když je povoleno, média v místnostech tohoto nájemce jsou koncově šifrována. Zámek to vynutí, takže vlastníci místností to nemohou vypnout.",
   "room.e2eeUnsupported": "Tato místnost vyžaduje koncové šifrování, které váš prohlížeč nepodporuje. Pro připojení použijte aktuální verzi prohlížeče Chrome, Edge nebo Firefox.",

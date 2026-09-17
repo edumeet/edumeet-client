@@ -423,9 +423,9 @@ export const currentlySelectedLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Currently Selected'
 });
 
-export const showAllAudioOnlyParticipantsLabel = (): string => intl.formatMessage({
-	id: 'settings.showAllAudioOnlyParticipantsLabel',
-	defaultMessage: 'Show each participant with no video separately'
+export const groupAudioOnlyLabel = (): string => intl.formatMessage({
+	id: 'settings.groupAudioOnlyLabel',
+	defaultMessage: 'Group participants without video'
 });
 
 export const hideNoVideoParticipantsLabel = (): string => intl.formatMessage({

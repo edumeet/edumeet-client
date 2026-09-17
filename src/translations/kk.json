@@ -612,7 +612,7 @@
   "label.meetings.noUpcoming": null,
   "label.meetings.upcoming": null,
   "label.management.tenants.testConnection": null,
-  "settings.showAllAudioOnlyParticipantsLabel": null,
+  "settings.groupAudioOnlyLabel": null,
   "label.managementservice.endToEndEncryption": null,
   "label.managementservice.endToEndEncryptionTooltip": null,
   "room.e2eeUnsupported": null,
