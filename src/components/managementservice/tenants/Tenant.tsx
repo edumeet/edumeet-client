@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Autocomplete, Box, Button, Chip, Collapse, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox } from '@mui/material';
+import { Autocomplete, Box, Button, Chip, Collapse, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, MenuItem, Tooltip } from '@mui/material';
 // eslint-disable-next-line camelcase
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { useMRTLocalization } from '../../../utils/mrtLocalization';
-import { Tenant, TenantOptionTypes } from '../../../utils/types';
+import { BotPolicy, botPolicies, Tenant, TenantOptionTypes } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import TenantFQDNTable from './TenatnFQDN';
 import TenantOAuthTable from './TenantOAuth';
 import TenantInviteConfigPanel from './TenantInviteConfig';
-import { addNewLabel, allowedMediaNodeRegionsLabel, applyLabel, authenticationLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, limitMediaNodeRegionsLabel, manageItemLabel, mediaNodeRegionsLabel, nameLabel, selectAtLeastOneRegionLabel, tenantLabel } from '../../translated/translatedComponents';
+import TenantBotCredentialTable from './TenantBotCredential';
+import { addNewLabel, allowedMediaNodeRegionsLabel, applyLabel, authenticationLabel, botCredentialsLabel, botPolicyLabel, botPolicyOptionLabel, botPolicyTooltipLabel, botsLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, limitMediaNodeRegionsLabel, manageItemLabel, mediaNodeRegionsLabel, nameLabel, selectAtLeastOneRegionLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import edumeetConfig from '../../../utils/edumeetConfig';
 export interface TenantProp {
@@ -63,6 +64,7 @@ const TenantTable = () => {
 	const [ hideUserDetails, setHideUserDetails ] = useState(true);
 	const [ limitRegions, setLimitRegions ] = useState(false);
 	const [ allowedMediaNodeRegions, setAllowedMediaNodeRegions ] = useState<string[]>([]);
+	const [ botPolicy, setBotPolicy ] = useState<BotPolicy>('disabled');
 
 	async function fetchProduct() {
 		setIsLoading(true);
@@ -91,6 +93,7 @@ const TenantTable = () => {
 		setLimitRegions(false);
 		setAllowedMediaNodeRegions([]);
 		setOpen(true);
+		setBotPolicy('disabled');
 	};
 
 	const handleClickOpenNoreset = () => {
@@ -130,13 +133,13 @@ const TenantTable = () => {
 
 		// add new data / mod data / error
 		if (id === 0) {
-			dispatch(createData({ name, description, hideUserDetails, allowedMediaNodeRegions: regionsPayload }, 'tenants')).then(() => {
+			dispatch(createData({ name, description, hideUserDetails, allowedMediaNodeRegions: regionsPayload, botPolicy }, 'tenants')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
 
 		} else {
-			dispatch(patchData(id, { name: name, description: description, hideUserDetails: hideUserDetails, allowedMediaNodeRegions: regionsPayload }, 'tenants')).then(() => {
+			dispatch(patchData(id, { name: name, description: description, hideUserDetails: hideUserDetails, allowedMediaNodeRegions: regionsPayload, botPolicy }, 'tenants')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
@@ -228,7 +231,23 @@ const TenantTable = () => {
 							</Box>
 						</Collapse>
 					</div>}
+					<h4>{botsLabel()}</h4>
+					<Tooltip title={botPolicyTooltipLabel()} placement="top-start">
+						<TextField
+							select
+							margin="dense"
+							id="botPolicy"
+							label={botPolicyLabel()}
+							fullWidth
+							value={botPolicy}
+							onChange={(event) => setBotPolicy(event.target.value as BotPolicy)}
+						>
+							{ botPolicies.map((policy) => <MenuItem key={policy} value={policy}>{botPolicyOptionLabel(policy)}</MenuItem>) }
+						</TextField>
+					</Tooltip>
 					{ id !=0 && <>
+						<h5>{botCredentialsLabel()}</h5>
+						<TenantBotCredentialTable tenantId={id} />
 						<h4>{`${tenantLabel()} ${fqdnLabel()}`}</h4>
 						<TenantFQDNTable tenantId={id} />
 						<h4>{`${tenantLabel()} ${authenticationLabel()}`}</h4>
@@ -280,6 +299,7 @@ const TenantTable = () => {
 
 					setLimitRegions(hasRegions);
 					setAllowedMediaNodeRegions(hasRegions ? regions : []);
+					setBotPolicy(botPolicies.find((policy) => policy === tenantData?.botPolicy) ?? 'disabled');
 
 					handleClickOpenNoreset();
 

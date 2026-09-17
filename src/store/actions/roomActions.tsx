@@ -38,7 +38,7 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		const meetingToken = state.me.meetingToken;
 		const encodedRoomId = encodeURIComponent(roomId);
 
-		const url = getSignalingUrl(peerId, encodedRoomId, reconnectKey, token, meetingToken, state.room.headless);
+		const url = getSignalingUrl(peerId, encodedRoomId, reconnectKey, token, meetingToken, state.room.headless, state.me.botType, state.me.botSession);
 
 		dispatch(signalingActions.setUrl(url));
 		dispatch(signalingActions.connect());
@@ -78,6 +78,7 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		breakoutRooms,
 		locked,
 		lobbyPeers,
+		sessionId: joinedSessionId,
 	} = await signalingService.sendRequest('join', {
 		displayName,
 		picture,
@@ -92,6 +93,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 
 	dispatch(permissionsActions.setLocked(Boolean(locked)));
 	dispatch(roomSessionsActions.addRoomSessions(breakoutRooms));
+	// A bot sent to a breakout room is placed there by the server at join.
+	if (typeof joinedSessionId === 'string' && joinedSessionId !== sessionId) dispatch(meActions.setSessionId(joinedSessionId));
 	dispatch(peersActions.addPeers(peers));
 	dispatch(lobbyPeersActions.setPeers(lobbyPeers ?? []));
 	dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));

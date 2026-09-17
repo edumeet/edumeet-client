@@ -31,4 +31,13 @@ describe('getSignalingUrl', () => {
 		expect(getSignalingUrl('p1', 'board', 'rk', undefined, undefined, false)).not.toContain('headless');
 		expect(getSignalingUrl('p1', 'board', 'rk', undefined)).not.toContain('headless');
 	});
+	it('carries the bot type for a headless page only', () => {
+		expect(new URL(getSignalingUrl('p1', 'board', 'rk', undefined, undefined, true, 'recorder')).searchParams.get('botType')).toBe('recorder');
+		expect(getSignalingUrl('p1', 'board', 'rk', undefined, undefined, false, 'recorder')).not.toContain('botType');
+		expect(getSignalingUrl('p1', 'board', 'rk', undefined, undefined, true)).not.toContain('botType');
+	});
+	it('carries the breakout session for a headless page only', () => {
+		expect(new URL(getSignalingUrl('p1', 'board', 'rk', undefined, undefined, true, 'recorder', 'sess-1')).searchParams.get('session')).toBe('sess-1');
+		expect(getSignalingUrl('p1', 'board', 'rk', undefined, undefined, false, undefined, 'sess-1')).not.toContain('session');
+	});
 });

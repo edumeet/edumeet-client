@@ -53,9 +53,11 @@ export class RoomServerConnection extends EventEmitter {
 	private getUrl: () => string;
 
 	public static async create({
-		getUrl
+		getUrl,
+		getAuth = () => ({}),
 	}: {
-		getUrl: () => string
+		getUrl: () => string;
+		getAuth?: () => Record<string, string>;
 	}): Promise<RoomServerConnection> {
 		const url = getUrl();
 
@@ -64,6 +66,8 @@ export class RoomServerConnection extends EventEmitter {
 		const { io } = await import('socket.io-client');
 
 		const socket = io(url, {
+			// Read again on every (re)connect, and sent in the handshake body, not the URL.
+			auth: (cb) => cb(getAuth()),
 			transports: [ 'websocket', 'polling' ],
 			rejectUnauthorized: true,
 			closeOnBeforeunload: false,

@@ -204,7 +204,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 						{menuItems}
 					</Box>
 				</TopBarDiv> }
-				<BotsIndicator />
+				{ !headless && <BotsIndicator /> }
 				<TopBarDiv marginRight={1}>
 					<StyledChip size='small' label={ formatDuration(meetingDuration) } />
 				</TopBarDiv>

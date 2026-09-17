@@ -210,6 +210,20 @@ describe('headless peers', () => {
 		expect(videoBoxesSelector(withBotSpotlighted)).toBe(3);
 	});
 
+	it('are shown only in the session the viewer is in', () => {
+		const s = state({ peers: [ 'C1' ], cameras: [ 'C1' ], spotlights: [ 'C1' ] });
+		const peers = {
+			...s.peers,
+			mainBot: { id: 'mainBot', sessionId: SESSION, headless: true },
+			breakoutBot: { id: 'breakoutBot', sessionId: 'breakout-1', headless: true },
+		};
+		const withBots = { ...s, peers } as RootState;
+		const inBreakout = { ...withBots, me: { ...withBots.me, sessionId: 'breakout-1' } } as RootState;
+
+		expect(ids(botsSelector(withBots))).toEqual([ 'mainBot' ]);
+		expect(ids(botsSelector(inBreakout))).toEqual([ 'breakoutBot' ]);
+	});
+
 	it('keep a call with a bot on the media node instead of peer to peer', () => {
 		const one = state({ peers: [ 'C1' ], cameras: [ 'C1' ], spotlights: [ 'C1' ] });
 		const oneAndBot = { ...one, peers: { ...one.peers, bot: { id: 'bot', sessionId: SESSION, headless: true } } } as RootState;

@@ -85,7 +85,12 @@ const createSignalingMiddleware = ({
 
 			(async () => {
 				const socketConnection = await RoomServerConnection.create({
-					getUrl: () => getState().signaling.url
+					getUrl: () => getState().signaling.url,
+					getAuth: (): Record<string, string> => {
+						const { botToken } = getState().me;
+
+						return botToken ? { botToken } : {};
+					},
 				});
 
 				signalingService.addConnection(socketConnection);

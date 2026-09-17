@@ -2010,6 +2010,99 @@ export const selectAtLeastOneRegionLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Select at least one region'
 });
 
+export const botsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.bots',
+	defaultMessage: 'Bots (recorders, streamers, transcribers)'
+});
+
+export const botPolicyLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botPolicy',
+	defaultMessage: 'Who may join as a bot'
+});
+
+export const botPolicyTooltipLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botPolicyTooltip',
+	defaultMessage: 'A bot is a headless browser page that records, streams or transcribes a room. Disabled: no bots. Access token only: a bot needs one of the tokens below, from an allowed address, and then also enters locked and meetings-only rooms. All bots: bots without a token are admitted too, like ordinary participants.'
+});
+
+export const botPolicyOptionLabel = (policy: string): string => {
+	switch (policy) {
+		case 'tokenOnly': return intl.formatMessage({ id: 'label.managementservice.botPolicy.tokenOnly', defaultMessage: 'Only bots with an access token' });
+		case 'all': return intl.formatMessage({ id: 'label.managementservice.botPolicy.all', defaultMessage: 'All bots' });
+		default: return intl.formatMessage({ id: 'label.managementservice.botPolicy.disabled', defaultMessage: 'Disabled' });
+	}
+};
+
+export const botCredentialsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botCredentials',
+	defaultMessage: 'Bot access tokens'
+});
+
+export const botCredentialLabelLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botCredentialLabel',
+	defaultMessage: 'Label'
+});
+
+export const botTokenLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botToken',
+	defaultMessage: 'Access token'
+});
+
+export const botTokenGenerateLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botTokenGenerate',
+	defaultMessage: 'Generate'
+});
+
+export const botTokenCopyLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botTokenCopy',
+	defaultMessage: 'Copy to clipboard'
+});
+
+export const botTokenCopiedLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botTokenCopied',
+	defaultMessage: 'Copied'
+});
+
+export const botTokenHashLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botTokenHash',
+	defaultMessage: 'Stored hash of the token'
+});
+
+export const botTokenShownOnceLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botTokenShownOnce',
+	defaultMessage: 'Generate a token and copy it into the bot\'s configuration now: only its hash is saved, and the token cannot be shown again. If it is lost, delete this entry and create a new one.'
+});
+
+export const allowedIpsLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.allowedIps',
+	defaultMessage: 'Allowed IP addresses'
+});
+
+export const allowedIpsTooltipLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.allowedIpsTooltip',
+	defaultMessage: 'Addresses the bot may connect from, one per line. Single addresses or ranges, IPv4 and IPv6:\n203.0.113.7\n10.0.0.0/8\n2001:db8::1\n2001:db8:1::/48\nAll addresses: 0.0.0.0/0 and ::/0'
+});
+
+export const allowedIpsInvalidLabel = (entries: string): string => intl.formatMessage({
+	id: 'label.managementservice.allowedIpsInvalid',
+	defaultMessage: 'Not an IP address or range: {entries}'
+}, { entries });
+
+export const enabledLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.enabled',
+	defaultMessage: 'Enabled'
+});
+
+export const lastUsedAtLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.lastUsedAt',
+	defaultMessage: 'Last used'
+});
+
+export const neverLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.never',
+	defaultMessage: 'Never'
+});
+
 export const managePermissionsLabel = (): string => intl.formatMessage({
 	id: 'label.managePermissions',
 	defaultMessage: 'Manage permissions'

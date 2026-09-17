@@ -1,3 +1,4 @@
+import { asBotRejection } from '../../utils/headless';
 import { Middleware } from '@reduxjs/toolkit';
 import { roomActions } from '../slices/roomSlice';
 import { signalingActions } from '../slices/signalingSlice';
@@ -185,6 +186,14 @@ const createRoomMiddleware = ({
 
 						case 'meetingTokenRejected': {
 							dispatch(meetingTokenRejected(notification.data.reason));
+
+							break;
+						}
+
+						case 'botRejected': {
+							const reason = asBotRejection(notification.data?.reason);
+
+							if (reason) dispatch(roomActions.setLeaveReason(reason));
 
 							break;
 						}

@@ -9,9 +9,11 @@ import edumeetConfig from './edumeetConfig';
  * @param token - The token of the user.
  * @param meetingToken - The token of the meeting, for rooms that admit meetings only.
  * @param headless - Whether this client is a headless recorder page, kept out of the participants.
+ * @param botType - What kind of bot the headless page is (recorder, transcriber, streamer).
+ * @param botSession - The breakout session a bot is sent to; the main room when absent.
  * @returns {string} The url of the signaling server.
  */
-export const getSignalingUrl = (peerId: string, roomId: string, reconnectKey: string, token: string | undefined, meetingToken?: string, headless = false): string => {
+export const getSignalingUrl = (peerId: string, roomId: string, reconnectKey: string, token: string | undefined, meetingToken?: string, headless = false, botType?: string, botSession?: string): string => {
 	const hostname = edumeetConfig.serverHostname || window.location.hostname;
 	const tenantFqdn = encodeURIComponent(window.location.hostname);
 	const port = import.meta.env.PROD ? edumeetConfig.productionPort : edumeetConfig.developmentPort;
@@ -21,6 +23,8 @@ export const getSignalingUrl = (peerId: string, roomId: string, reconnectKey: st
 	if (token) tokenParam = `&token=${token}`;
 	if (meetingToken) tokenParam += `&meetingToken=${encodeURIComponent(meetingToken)}`;
 	if (headless) tokenParam += '&headless=1';
+	if (headless && botType) tokenParam += `&botType=${encodeURIComponent(botType)}`;
+	if (headless && botSession) tokenParam += `&session=${encodeURIComponent(botSession)}`;
 
 	return `wss://${hostname}:${port}/?peerId=${peerId}&roomId=${roomId}&reconnectKey=${reconnectKey}&tenantFqdn=${tenantFqdn}${tokenParam}`;
 };

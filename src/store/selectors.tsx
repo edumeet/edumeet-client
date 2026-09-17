@@ -77,9 +77,11 @@ export const peersArraySelector = createSelector(
 	(peers) => Object.values(peers).filter((p) => !p.headless)
 );
 
+// The bots in the session the viewer is in: those are the ones recording them.
 export const botsSelector = createSelector(
 	peersSelector,
-	(peers) => Object.values(peers).filter((p) => p.headless)
+	sessionIdSelector,
+	(peers, sessionId) => Object.values(peers).filter((p) => p.headless && p.sessionId === sessionId)
 );
 
 /**

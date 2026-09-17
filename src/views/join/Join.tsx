@@ -10,7 +10,7 @@ import VideoInputChooser from '../../components/devicechooser/VideoInputChooser'
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import { roomActions } from '../../store/slices/roomSlice';
 import settingsSlice, { settingsActions } from '../../store/slices/settingsSlice';
-import { botDisplayName, HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, layoutSettingsActions } from '../../utils/headless';
+import { botDisplayName, botSessionFromUrl, botTokenFromUrl, botTypeFromUrl, HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, hrefWithoutBotToken, layoutSettingsActions } from '../../utils/headless';
 import { JOIN_ERROR_KEY } from '../../store/middlewares/roomMiddleware';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
@@ -85,6 +85,17 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 
 		layoutSettingsActions(HEADLESS_PRESET).forEach(dispatch);
 		dispatch(settingsActions.setDisplayName(botDisplayName(dn)));
+
+		const botToken = botTokenFromUrl(window.location.href);
+
+		if (botToken) {
+			dispatch(meActions.setBotToken(botToken));
+			// Out of the address bar, so it is in no screenshot and no history entry.
+			window.history.replaceState(window.history.state, '', hrefWithoutBotToken(window.location.href));
+		}
+
+		dispatch(meActions.setBotType(botTypeFromUrl(window.location.href)));
+		dispatch(meActions.setBotSession(botSessionFromUrl(window.location.href)));
 		dispatch(meActions.setAudioMuted(true));
 		dispatch(meActions.setVideoMuted(true));
 

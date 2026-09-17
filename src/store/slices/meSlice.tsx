@@ -57,6 +57,9 @@ export interface MeState {
 	videoBackgroundEffect: BackgroundConfig | null;
 	meetingToken?: string;
 	meetingTokenRejection?: MeetingTokenRejection;
+	botToken?: string;
+	botType?: string;
+	botSession?: string;
 }
 
 const initialState: MeState = {
@@ -168,6 +171,15 @@ const meSlice = createSlice({
 		}),
 		setMeetingTokenRejection: ((state, action: PayloadAction<MeetingTokenRejection | undefined>) => {
 			state.meetingTokenRejection = action.payload;
+		}),
+		setBotToken: ((state, action: PayloadAction<string | undefined>) => {
+			state.botToken = action.payload;
+		}),
+		setBotType: ((state, action: PayloadAction<string | undefined>) => {
+			state.botType = action.payload;
+		}),
+		setBotSession: ((state, action: PayloadAction<string | undefined>) => {
+			state.botSession = action.payload;
 		}),
 		setReceiveVideo: ((state, action: PayloadAction<boolean>) => {
 			state.receiveVideo = action.payload;

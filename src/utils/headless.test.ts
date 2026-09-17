@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('./edumeetConfig', () => ({ default: { theme: {}, groupAudioOnly: true, hideNonVideo: false, hideSelfView: false } }));
 vi.mock('./intlManager', () => ({ detect: () => 'en' }));
 
-import { botDisplayName, HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, layoutSettingsActions } from './headless';
+import { asBotRejection, botDisplayName, botSessionFromUrl, botTokenFromUrl, botTypeFromUrl, HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, hrefWithoutBotToken, layoutSettingsActions } from './headless';
 import settingsSlice from '../store/slices/settingsSlice';
 
 describe('headlessFromUrl', () => {
@@ -77,5 +77,43 @@ describe('headlessJoinPlan', () => {
 
 	it('stays out while an earlier join error is still stored', () => {
 		expect(headlessJoinPlan({ joinErrorPending: true })).toEqual({ reason: 'joinErrorPending', autoJoin: false });
+	});
+});
+
+describe('bot token and type in the URL', () => {
+	const href = 'https://meet.example.edu/board?headless=1&botType=recorder#botToken=abc_DEF-123&other=1';
+
+	it('reads the token from the fragment only', () => {
+		expect(botTokenFromUrl(href)).toBe('abc_DEF-123');
+		expect(botTokenFromUrl('https://meet.example.edu/board?botToken=abc')).toBeUndefined();
+		expect(botTokenFromUrl('https://meet.example.edu/board#botToken=')).toBeUndefined();
+		expect(botTokenFromUrl(undefined)).toBeUndefined();
+		expect(botTokenFromUrl('nope')).toBeUndefined();
+	});
+
+	it('removes the token from the address and keeps the rest', () => {
+		expect(hrefWithoutBotToken(href)).toBe('https://meet.example.edu/board?headless=1&botType=recorder#other=1');
+		expect(hrefWithoutBotToken('https://meet.example.edu/board?headless=1#botToken=abc')).toBe('https://meet.example.edu/board?headless=1');
+	});
+
+	it('reads the bot type from the query', () => {
+		expect(botTypeFromUrl(href)).toBe('recorder');
+		expect(botTypeFromUrl('https://meet.example.edu/board?headless=1')).toBeUndefined();
+	});
+
+	it('reads the breakout session from the query', () => {
+		expect(botSessionFromUrl('https://meet.example.edu/board?headless=1&session=abc-123')).toBe('abc-123');
+		expect(botSessionFromUrl(href)).toBeUndefined();
+		expect(botSessionFromUrl('https://meet.example.edu/board?session=')).toBeUndefined();
+	});
+
+	it('accepts only the known refusal reasons', () => {
+		expect(asBotRejection('roomNotOpen')).toBe('roomNotOpen');
+		expect(asBotRejection('botsNotAllowed')).toBe('botsNotAllowed');
+		expect(asBotRejection('botTokenRejected')).toBe('botTokenRejected');
+		expect(asBotRejection('sessionNotOpen')).toBe('sessionNotOpen');
+		expect(asBotRejection('sessionClosed')).toBe('sessionClosed');
+		expect(asBotRejection('kicked')).toBeUndefined();
+		expect(asBotRejection(undefined)).toBeUndefined();
 	});
 });

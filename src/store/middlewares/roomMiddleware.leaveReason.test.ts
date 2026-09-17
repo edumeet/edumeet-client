@@ -56,6 +56,15 @@ describe('roomMiddleware leave reasons', () => {
 		expect(calls()).toEqual([ roomActions.setLeaveReason('meetingEnded'), { type: 'leaveRoom' } ]);
 	});
 
+	it('names the room server\'s refusal of a bot, and ignores an unknown reason', () => {
+		const { calls, deliver } = setup();
+
+		deliver('botRejected', { reason: 'botTokenRejected' });
+		deliver('botRejected', { reason: 'something-else' });
+
+		expect(calls()).toEqual([ roomActions.setLeaveReason('botTokenRejected') ]);
+	});
+
 	it('names an unsupported browser when an encrypted room refuses it', () => {
 		const { calls, deliver } = setup();
 

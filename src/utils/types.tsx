@@ -365,8 +365,22 @@ export type Tenant = {
 	description: string,
 	hideUserDetails?: boolean,
 	allowedMediaNodeRegions?: string[] | null,
+	botPolicy?: BotPolicy | null,
 };
 export type TenantOptionTypes = Array<Tenant>
+
+export type BotPolicy = 'disabled' | 'tokenOnly' | 'all';
+export const botPolicies: BotPolicy[] = [ 'disabled', 'tokenOnly', 'all' ];
+
+export type TenantBotCredential = {
+	id: number,
+	tenantId: number,
+	label: string,
+	allowedIps: string[],
+	enabled?: boolean | number | null,
+	createdAt?: number | null,
+	lastUsedAt?: number | null,
+};
 
 export type TenantFQDN = {
 	id: number,

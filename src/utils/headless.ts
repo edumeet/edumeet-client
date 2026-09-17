@@ -37,6 +37,57 @@ export const headlessFromUrl = (href?: string): boolean | undefined => {
 	return undefined;
 };
 
+export const botRejections = [ 'roomNotOpen', 'botsNotAllowed', 'botTokenRejected', 'sessionNotOpen', 'sessionClosed' ] as const;
+export type BotRejection = typeof botRejections[number];
+
+export const asBotRejection = (value: unknown): BotRejection | undefined =>
+	botRejections.find((reason) => reason === value);
+
+// The token rides in the fragment, which browsers never send to a server, so it
+// stays out of every access log and out of the room server's URL.
+export const botTokenFromUrl = (href?: string): string | undefined => {
+	if (!href) return undefined;
+
+	try {
+		const value = new URLSearchParams(new URL(href).hash.replace(/^#/, '')).get('botToken');
+
+		return value?.trim() || undefined;
+	} catch {
+		return undefined;
+	}
+};
+
+export const hrefWithoutBotToken = (href: string): string => {
+	const url = new URL(href);
+	const params = new URLSearchParams(url.hash.replace(/^#/, ''));
+
+	params.delete('botToken');
+	url.hash = params.toString();
+
+	return url.toString();
+};
+
+// The breakout session a bot is sent to record; absent means the main room.
+export const botSessionFromUrl = (href?: string): string | undefined => {
+	if (!href) return undefined;
+
+	try {
+		return new URL(href).searchParams.get('session')?.trim() || undefined;
+	} catch {
+		return undefined;
+	}
+};
+
+export const botTypeFromUrl = (href?: string): string | undefined => {
+	if (!href) return undefined;
+
+	try {
+		return new URL(href).searchParams.get('botType')?.trim() || undefined;
+	} catch {
+		return undefined;
+	}
+};
+
 export const layoutSettingsActions = ({ hideSelfView, groupAudioOnly, hideNonVideo, notificationSounds }: LayoutSettings) => [
 	settingsActions.setHideSelfView(hideSelfView),
 	settingsActions.setGroupAudioOnly(groupAudioOnly),
