@@ -147,7 +147,7 @@ A page opened with `?headless=1` (or `headless=true`) is meant for a headless br
 - Pop-up notifications are dropped and notification sounds are off, so they never end up in the capture.
 - The layout follows the appearance settings above with this preset, saved like any other change: self view hidden, participants without video ungrouped, nothing hidden, sounds off. Opening a link with `?headless=0` (or `headless=false`) in the same browser puts those four settings back to their defaults.
 - Outside the room (connecting, waiting in the lobby, refused, kicked, meeting ended) the page shows only the background and does not reload or rejoin. The status attributes below tell the recorder what happened.
-- `?displayName=` names the bot, `?meetingToken=` works as for anyone else.
+- `?displayName=` names the bot; without one it is called "Bot" rather than taking a name stored in the browser. `?meetingToken=` works as for anyone else.
 
 The room-server treats a headless peer as a bot rather than a participant: it is not shown in the participant list or counted, it cannot chat, share, draw, raise a hand or vote to end the meeting, it never becomes the first-participant admin of a room, and it does not keep a room open once the last participant has left. Everyone in the room sees a bot icon with the count in the top bar; its tooltip lists the bots' names. The browser running the page needs its autoplay policy relaxed, since there is no click-to-play fallback for remote audio.
 

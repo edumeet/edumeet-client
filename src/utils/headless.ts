@@ -44,6 +44,10 @@ export const layoutSettingsActions = ({ hideSelfView, groupAudioOnly, hideNonVid
 	settingsActions.setNotificationSounds(notificationSounds),
 ];
 
+// A bot is named by its URL; without a usable name it must not borrow the name
+// stored in the browser profile, because that name is shown to everyone as the bot's.
+export const botDisplayName = (fromUrl: string | null | undefined): string => fromUrl?.trim() || 'Bot';
+
 export interface HeadlessJoinPlan {
 	reason?: LeaveReason;
 	autoJoin: boolean;

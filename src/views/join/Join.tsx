@@ -10,7 +10,7 @@ import VideoInputChooser from '../../components/devicechooser/VideoInputChooser'
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import { roomActions } from '../../store/slices/roomSlice';
 import settingsSlice, { settingsActions } from '../../store/slices/settingsSlice';
-import { HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, layoutSettingsActions } from '../../utils/headless';
+import { botDisplayName, HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, layoutSettingsActions } from '../../utils/headless';
 import { JOIN_ERROR_KEY } from '../../store/middlewares/roomMiddleware';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
@@ -84,6 +84,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 		if (!headless) return;
 
 		layoutSettingsActions(HEADLESS_PRESET).forEach(dispatch);
+		dispatch(settingsActions.setDisplayName(botDisplayName(dn)));
 		dispatch(meActions.setAudioMuted(true));
 		dispatch(meActions.setVideoMuted(true));
 
@@ -91,7 +92,9 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 		const plan = headlessJoinPlan({ rejection: rejection?.reason, joinErrorPending: hasStoredJoinError() });
 
 		if (plan.reason) dispatch(roomActions.setLeaveReason(plan.reason));
-		if (plan.autoJoin) handleJoin();
+		// Not handleJoin(): that re-saves the name this render started with and
+		// would overwrite the one just taken from the URL.
+		if (plan.autoJoin) dispatch(connect(roomId));
 	}, []);
 
 	const privacyUrl = edumeetConfig.privacyUrl ?? '';

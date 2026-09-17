@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('./edumeetConfig', () => ({ default: { theme: {}, groupAudioOnly: true, hideNonVideo: false, hideSelfView: false } }));
 vi.mock('./intlManager', () => ({ detect: () => 'en' }));
 
-import { HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, layoutSettingsActions } from './headless';
+import { botDisplayName, HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, layoutSettingsActions } from './headless';
 import settingsSlice from '../store/slices/settingsSlice';
 
 describe('headlessFromUrl', () => {
@@ -48,6 +48,20 @@ describe('the preset and its reset', () => {
 		expect(reset.groupAudioOnly).toBe(initial.groupAudioOnly);
 		expect(reset.hideNonVideo).toBe(initial.hideNonVideo);
 		expect(reset.notificationSounds).toBe(initial.notificationSounds);
+	});
+});
+
+describe('botDisplayName', () => {
+	it('takes the name from the URL', () => {
+		expect(botDisplayName('Recorder')).toBe('Recorder');
+		expect(botDisplayName('  Stream 1 ')).toBe('Stream 1');
+	});
+
+	it('falls back to Bot instead of the name stored in the browser', () => {
+		expect(botDisplayName(null)).toBe('Bot');
+		expect(botDisplayName(undefined)).toBe('Bot');
+		expect(botDisplayName('')).toBe('Bot');
+		expect(botDisplayName('   ')).toBe('Bot');
 	});
 });
 
