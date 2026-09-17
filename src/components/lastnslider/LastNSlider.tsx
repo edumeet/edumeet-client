@@ -11,9 +11,17 @@ const StyledSlider = styled(Box)(({ theme }) => ({
 	paddingBottom: theme.spacing(2),
 }));
 
+const MIN = 2;
+const MAX = 49;
+// Grid-shaped tile counts offered as guides between the two ends.
+const GRID_MARKS = [ 4, 9, 12, 24 ];
+const MARKS = [ MIN, ...GRID_MARKS.filter((value) => value > MIN && value < MAX), MAX ].map((value) => ({ value }));
+
 // The slider counts tiles including the local user; the stored value counts the
-// other participants only, like the room-server and the management UI.
-const toSlider = (lastN: number): number => lastN + 1;
+// other participants only, like the room-server and the management UI. A room
+// limit outside the slider's range is shown at the nearest end rather than off
+// the track, and is only changed if the user moves the thumb.
+const toSlider = (lastN: number): number => Math.min(Math.max(lastN + 1, MIN), MAX);
 const toLastN = (slider: number): number => slider - 1;
 
 const LastNSlider = (): React.JSX.Element => {
@@ -44,20 +52,13 @@ const LastNSlider = (): React.JSX.Element => {
 			</Typography>
 			<Slider
 				value={ sliderValue }
-				min={ 2 }
-				max={ 49 }
+				min={ MIN }
+				max={ MAX }
 				step={ 1 }
 				valueLabelDisplay={ 'auto' }
 				onChange={ handleSliderChange }
 				onChangeCommitted={ handleSliderChangeCommitted }
-				marks={[
-					{ value: 2 },
-					{ value: 4 },
-					{ value: 9 },
-					{ value: 12 },
-					{ value: 25 },
-					{ value: 49 }
-				]}
+				marks={ MARKS }
 			/>
 		</StyledSlider>
 	);
