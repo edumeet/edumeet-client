@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Pokaż ikony po najechaniu myszką",
   "settings.hideNoVideoParticipants": "Ukrywanie uczestników bez wideo",
   "settings.language": "Wybór języka",
-  "settings.lastN": "Liczba widocznych uczestników",
+  "settings.lastN": "Liczba widocznych uczestników (łącznie z Tobą)",
   "settings.layout": "Układ konferencji",
   "settings.manualRecordingMimeType": "Ręcznie wybierz format nagrywania",
   "settings.mirrorOwnVideo": "Lustrzany widok własnego wideo",

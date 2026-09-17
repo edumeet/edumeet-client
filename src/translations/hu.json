@@ -370,7 +370,7 @@
   "settings.tryToLoadAudioDevices": "Audioeszközök betöltése",
   "device.shareScreen": "Képernyőmegosztás",
   "filesharing.downloadError": "Hiba a letöltés közben",
-  "settings.lastN": "Látható résztvevők",
+  "settings.lastN": "Látható résztvevők (Önt is beleértve)",
   "settings.confirmOnExit": "Kilépés megerősítése",
   "svc.mgmtUnavailable": "Menedzsment szolgáltatás: Nem elérhető",
   "svc.mediaNodeUnavailable": "Média-node szolgáltatás: Nem elérhető",

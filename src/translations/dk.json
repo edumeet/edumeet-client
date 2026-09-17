@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Skjulte mediekontroller",
   "settings.hideNoVideoParticipants": "Skjul deltagere uden video",
   "settings.language": "Vælg sprog",
-  "settings.lastN": "Synlige deltagere",
+  "settings.lastN": "Synlige deltagere (inklusive dig)",
   "settings.layout": "Møde visning",
   "settings.manualRecordingMimeType": "Vælg optageformat manuelt",
   "settings.mirrorOwnVideo": "Spejl mit video-feed",

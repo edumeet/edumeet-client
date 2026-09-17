@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Приховані засоби медіа",
   "settings.hideNoVideoParticipants": "Приховати учасників без відео",
   "settings.language": "Вибрати мову",
-  "settings.lastN": "Видимі учасники",
+  "settings.lastN": "Видимі учасники (включно з вами)",
   "settings.layout": "Розміщення кімнати",
   "settings.manualRecordingMimeType": "Вибрати формат запису вручну",
   "settings.mirrorOwnVideo": "Дзеркальний перегляд власного відео",

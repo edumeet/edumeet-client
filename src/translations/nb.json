@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Skjul media knapper",
   "settings.hideNoVideoParticipants": "Skjul deltakere uten video",
   "settings.language": "Språk",
-  "settings.lastN": "Synlige deltakere",
+  "settings.lastN": "Synlige deltakere (inkludert deg)",
   "settings.layout": "Møtelayout",
   "settings.manualRecordingMimeType": "Velg opptaksformat manuelt",
   "settings.mirrorOwnVideo": "Vis eget bilde speilet for deg",

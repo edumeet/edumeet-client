@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Controlli media nascosti",
   "settings.hideNoVideoParticipants": "Nascondi gli partecipanti senza video",
   "settings.language": "Scegli lingua",
-  "settings.lastN": "Partecipanti visibili",
+  "settings.lastN": "Partecipanti visibili (incluso te)",
   "settings.layout": "Aspetto stanza",
   "settings.manualRecordingMimeType": "Scegli manualmente il formato di registrazione",
   "settings.mirrorOwnVideo": "Specchiare il proprio video",

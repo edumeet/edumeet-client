@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Upravljanje skriveno",
   "settings.hideNoVideoParticipants": "Ne prikazuj sudionika bez videa",
   "settings.language": "Jezik",
-  "settings.lastN": "Vidljivi sudionici",
+  "settings.lastN": "Vidljivi sudionici (uključujući vas)",
   "settings.layout": "Način prikaza",
   "settings.manualRecordingMimeType": "Ručno odaberi format snimanja",
   "settings.mirrorOwnVideo": "Prikaz vlastitog videa",

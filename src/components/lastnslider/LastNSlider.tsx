@@ -1,5 +1,5 @@
 import { Box, Slider, Typography, styled } from '@mui/material';
-import { SyntheticEvent, useState } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { setLastNLabel } from '../translated/translatedComponents';
@@ -11,10 +11,17 @@ const StyledSlider = styled(Box)(({ theme }) => ({
 	paddingBottom: theme.spacing(2),
 }));
 
+// The slider counts tiles including the local user; the stored value counts the
+// other participants only, like the room-server and the management UI.
+const toSlider = (lastN: number): number => lastN + 1;
+const toLastN = (slider: number): number => slider - 1;
+
 const LastNSlider = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const lastN = useAppSelector((state) => state.settings.maxActiveVideos);
-	const [ sliderValue, setSliderValue ] = useState<number>(lastN + 1);
+	const [ sliderValue, setSliderValue ] = useState<number>(toSlider(lastN));
+
+	useEffect(() => setSliderValue(toSlider(lastN)), [ lastN ]);
 
 	const handleSliderChange = (event: Event, value: number | number[]): void => {
 		setSliderValue(value as number);
@@ -24,9 +31,9 @@ const LastNSlider = (): React.JSX.Element => {
 		_event: Event | SyntheticEvent,
 		value: number | number[]
 	): void => {
-		const realLastN = (value as number) - 1; // LastN doesn't count the local user
+		const realLastN = toLastN(value as number);
 
-		if (sliderValue !== realLastN)
+		if (realLastN !== lastN)
 			dispatch(settingsActions.setMaxActiveVideos(realLastN));
 	};
 
@@ -39,7 +46,7 @@ const LastNSlider = (): React.JSX.Element => {
 				value={ sliderValue }
 				min={ 2 }
 				max={ 49 }
-				step={null}
+				step={ 1 }
 				valueLabelDisplay={ 'auto' }
 				onChange={ handleSliderChange }
 				onChangeCommitted={ handleSliderChangeCommitted }

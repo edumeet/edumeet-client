@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Gizli medya kontrolleri",
   "settings.hideNoVideoParticipants": "Videosu olmayan katılımcıları gizle",
   "settings.language": "Dil",
-  "settings.lastN": "Görünür katılımcılar",
+  "settings.lastN": "Görünür katılımcılar (siz dahil)",
   "settings.layout": "Oda düzeni",
   "settings.manualRecordingMimeType": "Kayıt biçimini elle seç",
   "settings.mirrorOwnVideo": "Kendi videonu aynala",

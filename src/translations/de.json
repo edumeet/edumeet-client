@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Medienwerkzeugleiste automatisch ausblenden",
   "settings.hideNoVideoParticipants": "Teilnehmer ohne Video ausblenden",
   "settings.language": "Sprache auswählen",
-  "settings.lastN": "Sichtbare Teilnehmer",
+  "settings.lastN": "Sichtbare Teilnehmer (einschließlich Sie)",
   "settings.layout": "Raumlayout",
   "settings.manualRecordingMimeType": "Aufnahmeformat manuell wählen",
   "settings.mirrorOwnVideo": "Ansicht des eigenen Videos spiegeln",

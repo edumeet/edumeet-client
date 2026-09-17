@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Скрытые элементы управления мультимедиа",
   "settings.hideNoVideoParticipants": "Скрыть участников без видео",
   "settings.language": "Выбрать язык",
-  "settings.lastN": "Видимые участники",
+  "settings.lastN": "Видимые участники (включая вас)",
   "settings.layout": "Макет видеоконференции",
   "settings.manualRecordingMimeType": "Выбрать формат записи вручную",
   "settings.mirrorOwnVideo": "Зеркальное отображение моего видео",

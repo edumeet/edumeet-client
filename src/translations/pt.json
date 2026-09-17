@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Controles Ocultos",
   "settings.hideNoVideoParticipants": "Ocultar participantes sem vídeo",
   "settings.language": "Selecionar idioma",
-  "settings.lastN": "Participantes visíveis",
+  "settings.lastN": "Participantes visíveis (incluindo você)",
   "settings.layout": "Disposição da sala",
   "settings.manualRecordingMimeType": "Escolher o formato de gravação manualmente",
   "settings.mirrorOwnVideo": "Espelhar o meu próprio vídeo",

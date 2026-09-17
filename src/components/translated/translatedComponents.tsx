@@ -1017,7 +1017,7 @@ export const selectOpusPtimeLabel = (): string => intl.formatMessage({
 
 export const setLastNLabel = (): string => intl.formatMessage({
 	id: 'settings.lastN',
-	defaultMessage: 'Visible participants'
+	defaultMessage: 'Visible participants (including you)'
 });
 
 export const backgroundBlurLabel = (): string => intl.formatMessage({

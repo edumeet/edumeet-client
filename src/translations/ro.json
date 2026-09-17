@@ -295,7 +295,7 @@
   "settings.hiddenControls": "Comenzi media ascunse",
   "settings.hideNoVideoParticipants": "Ascunde participanții fără video",
   "settings.language": "Selectează limba",
-  "settings.lastN": "Participanți vizibili",
+  "settings.lastN": "Participanți vizibili (inclusiv dumneavoastră)",
   "settings.layout": "Aspectul camerei video",
   "settings.manualRecordingMimeType": "Alegeți manual formatul înregistrării",
   "settings.mirrorOwnVideo": "Oglindește propriul video",

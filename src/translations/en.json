@@ -381,7 +381,7 @@
 	"room.errorJoiningRoom": "Error while joining the room",
 	"device.shareScreen": "Share screen",
 	"filesharing.downloadError": "Download failed",
-	"settings.lastN": "Visible participants",
+	"settings.lastN": "Visible participants (including you)",
 	"settings.confirmOnExit": "Confirm on exit",
 	"svc.mgmtUnavailable": "Management service: Unavailable",
 	"svc.mediaNodeUnavailable": "Media-node service: Unavailable",
