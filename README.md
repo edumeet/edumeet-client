@@ -119,7 +119,6 @@ The client merges your `window.config` with built-in defaults (see `src/utils/ty
 | imprintUrl | Show an imprint link (blank to hide). | `string` | `''` |
 | privacyUrl | Show a privacy notice link (blank to hide). | `string` | `''` |
 | obfuscateDisplayName | Mask display names in the client monitoring samples sent to the media node (`Jane Doe` becomes `J••• D••`). The UI is unaffected. | `boolean` | `false` |
-| obfuscateRoomName | Name the room in the client monitoring samples by its session id instead of its name, so a media node and its sample storage never see room names. The UI is unaffected. | `boolean` | `false` |
 | knownRegions | Region codes offered in the management UI's tenant editor for the per-tenant "limit media nodes to specific regions" picker. Values must match region labels in the room-server's `countryToRegion` config. Leave empty to hide the limit toggle. | `string[]` | `[]` |
 | groupAudioOnly | Initial value of the "Group participants without video" switch (see below). Replaces `showAudioOnly`, which had the opposite meaning. | `boolean` | `true` |
 | hideNonVideo | Initial value of the "Hide participants with no video" switch (see below). | `boolean` | `false` |

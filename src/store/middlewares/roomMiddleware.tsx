@@ -18,7 +18,6 @@ import { notificationsActions } from '../slices/notificationsSlice';
 import { isInsertableStreamsSupported } from '../selectors';
 import { roomE2eeUnsupportedLabel } from '../../components/translated/translatedComponents';
 import { Logger } from '../../utils/Logger';
-import { roomIdForMonitoring } from '../../utils/displayName';
 
 // Survives the full page reload that setState('left') triggers (App.tsx) — read + shown on landing.
 export const JOIN_ERROR_KEY = 'edumeet.joinError';
@@ -122,7 +121,6 @@ const createRoomMiddleware = ({
 							}
 
 							mediaService.setMonitorAttachments({
-								roomId: roomIdForMonitoring(getState().room.roomId, sessionId),
 								actualSessionId: sessionId,
 								displayName: getState().settings.displayName,
 							});

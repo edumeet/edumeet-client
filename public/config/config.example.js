@@ -197,18 +197,6 @@ var config = {
 	obfuscateDisplayName: false,
 
 	/**
-	 * Optional: name the room in the ObserveRTC client monitoring attachments by
-	 * its session id (a random id per room session) instead of its name, so that
-	 * the samples leaving the client do not carry room names, which people may
-	 * choose freely. Stored samples are then filed under that id.
-	 *
-	 * This affects monitoring data ONLY, the UI always shows the room name.
-	 *
-	 * Default: false
-	 */
-	obfuscateRoomName: false,
-
-	/**
 	 * Optional: connectivity reporting.
 	 *
 	 * When enabled, a red broken-link icon appears in the top bar for as long as

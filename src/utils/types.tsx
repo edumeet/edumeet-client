@@ -128,7 +128,6 @@ export const defaultEdumeetConfig: EdumeetConfig = {
 	},
 	reduxLoggingEnabled: false,
 	obfuscateDisplayName: false,
-	obfuscateRoomName: false,
 	connectivityCheckEnabled: true,
 	clientMonitor: {
 		collectingPeriodInMs: 5000,
@@ -199,9 +198,6 @@ export interface EdumeetConfig {
 
 	/** When true, the display name is masked in the client monitoring attachments. The UI is unaffected. */
 	obfuscateDisplayName: boolean;
-
-	/** When true, the client monitoring attachments carry the room's session id instead of its name. The UI is unaffected. */
-	obfuscateRoomName: boolean;
 
 	/** Show the top bar connectivity indicator and the participant list connection check. */
 	connectivityCheckEnabled: boolean;

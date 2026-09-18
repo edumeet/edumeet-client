@@ -38,15 +38,3 @@ export const obfuscateDisplayNameForMonitoring = (displayName?: string): string 
 
 	return maskDisplayName(displayName);
 };
-
-/**
- * The room identifier for the client monitor's attachments: the room name, or
- * the room's session id when the `obfuscateRoomName` config flag is set. The
- * session id is the main room's, which the monitor already uses as its call
- * id, so breakout rooms stay filed under their room.
- */
-export const roomIdForMonitoring = (roomName: string | undefined, sessionId: string): string | undefined => {
-	if (!edumeetConfig.obfuscateRoomName) return roomName;
-
-	return sessionId;
-};
