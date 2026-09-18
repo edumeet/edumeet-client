@@ -1064,9 +1064,6 @@ export class MediaService extends EventEmitter {
 	private async startObserverSampling(): Promise<void> {
 		if (!this.monitor) return;
 		if (!this.monitor.config.samplingPeriodInMs) return;
-		// The media node reads these samples, and that is what an end-to-end encrypted room keeps
-		// from it. The room server refuses the channel as well; not opening it saves the refusal.
-		if (this.e2eeService?.enabled) return logger.debug('startObserverSampling() | not in an end-to-end encrypted room');
 
 		logger.debug('startObserverSampling()');
 
