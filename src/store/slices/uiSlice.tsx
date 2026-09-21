@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { roomSessionsActions } from './roomSessionsSlice';
 import { directMessagesActions } from './directMessagesSlice';
 import { roomActions } from './roomSlice';
+import type { BotJobType } from '../../utils/botJobs';
 
 export type SettingsTab = 'media' | 'appearance' | 'advanced' | 'management';
 
@@ -28,6 +29,8 @@ export interface UiState {
 	participantListOpen: boolean;
 	drawingOpen: boolean;
 	unseenFiles: number;
+	// The kind of bot job a moderator is being asked to confirm.
+	botJobDialog?: BotJobType;
 }
 
 type UiUpdate = Partial<Omit<UiState, 'currentSettingsTab'>>;

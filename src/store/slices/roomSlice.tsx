@@ -17,6 +17,7 @@ export type LeaveReason =
 	| 'botTokenRejected'
 	| 'sessionNotOpen'
 	| 'sessionClosed'
+	| 'jobNotActive'
 	| 'left';
 export type RoomMode = 'P2P' | 'SFU';
 export type VideoCodec = 'vp8' | 'vp9' | 'h264' | 'h265' | 'av1';

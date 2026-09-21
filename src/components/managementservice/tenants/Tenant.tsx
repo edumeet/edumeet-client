@@ -10,7 +10,7 @@ import TenantFQDNTable from './TenatnFQDN';
 import TenantOAuthTable from './TenantOAuth';
 import TenantInviteConfigPanel from './TenantInviteConfig';
 import TenantBotCredentialTable from './TenantBotCredential';
-import { addNewLabel, allowedMediaNodeRegionsLabel, applyLabel, authenticationLabel, botCredentialsLabel, botPolicyLabel, botPolicyOptionLabel, botPolicyTooltipLabel, botsLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, limitMediaNodeRegionsLabel, manageItemLabel, mediaNodeRegionsLabel, nameLabel, selectAtLeastOneRegionLabel, tenantLabel } from '../../translated/translatedComponents';
+import { addNewLabel, allowedMediaNodeRegionsLabel, applyLabel, authenticationLabel, botProvidersLabel, botPolicyLabel, botPolicyOptionLabel, botPolicyTooltipLabel, botsLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, limitMediaNodeRegionsLabel, manageItemLabel, mediaNodeRegionsLabel, nameLabel, selectAtLeastOneRegionLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import edumeetConfig from '../../../utils/edumeetConfig';
 export interface TenantProp {
@@ -252,7 +252,7 @@ const TenantTable = () => {
 								{ botPolicies.map((policy) => <MenuItem key={policy} value={policy}>{botPolicyOptionLabel(policy)}</MenuItem>) }
 							</TextField>
 						</Tooltip>
-						<h5>{botCredentialsLabel()}</h5>
+						<h5>{botProvidersLabel()}</h5>
 						<TenantBotCredentialTable tenantId={id} />
 					</>}
 

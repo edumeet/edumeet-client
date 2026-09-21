@@ -1,6 +1,8 @@
 import { asBotRejection } from '../../utils/headless';
 import { Middleware } from '@reduxjs/toolkit';
 import { roomActions } from '../slices/roomSlice';
+import { botJobsActions } from '../slices/botJobsSlice';
+import { botRetryPlan } from '../../utils/botJobs';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
@@ -16,7 +18,7 @@ import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { drawingActions } from '../slices/drawingSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { isInsertableStreamsSupported } from '../selectors';
-import { roomE2eeUnsupportedLabel } from '../../components/translated/translatedComponents';
+import { botJobFailedLabel, roomE2eeUnsupportedLabel } from '../../components/translated/translatedComponents';
 import { Logger } from '../../utils/Logger';
 
 // Survives the full page reload that setState('left') triggers (App.tsx) — read + shown on landing.
@@ -29,6 +31,8 @@ const createRoomMiddleware = ({
 	mediaService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createRoomMiddleware()');
+
+	let botFirstRefusedAt: number | undefined;
 
 	const middleware: Middleware = ({
 		dispatch, getState
@@ -66,6 +70,8 @@ const createRoomMiddleware = ({
 				try {
 					switch (notification.method) {
 						case 'roomReady': {
+							botFirstRefusedAt = undefined;
+
 							const {
 								sessionId,
 								creationTimestamp,
@@ -191,8 +197,33 @@ const createRoomMiddleware = ({
 
 						case 'botRejected': {
 							const reason = asBotRejection(notification.data?.reason);
+							const { retry, firstRefusedAt } = botRetryPlan({ reason, jobId: getState().me.botJobId, firstRefusedAt: botFirstRefusedAt, now: Date.now() });
+
+							// The page of a job waits for the room to open again. Nothing is written
+							// to the document meanwhile: a reason there tells the recorder it is over.
+							if (retry) {
+								botFirstRefusedAt = firstRefusedAt;
+								dispatch(signalingActions.retry());
+
+								break;
+							}
 
 							if (reason) dispatch(roomActions.setLeaveReason(reason));
+
+							break;
+						}
+
+						case 'botJobs': {
+							dispatch(botJobsActions.setJobs(notification.data?.jobs ?? []));
+
+							break;
+						}
+
+						case 'botJobFailed': {
+							dispatch(notificationsActions.enqueueNotification({
+								message: botJobFailedLabel(String(notification.data?.label ?? '')),
+								options: { variant: 'error', persist: true }
+							}));
 
 							break;
 						}

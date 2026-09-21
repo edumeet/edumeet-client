@@ -37,7 +37,7 @@ export const headlessFromUrl = (href?: string): boolean | undefined => {
 	return undefined;
 };
 
-export const botRejections = [ 'roomNotOpen', 'botsNotAllowed', 'botTokenRejected', 'sessionNotOpen', 'sessionClosed' ] as const;
+export const botRejections = [ 'roomNotOpen', 'botsNotAllowed', 'botTokenRejected', 'sessionNotOpen', 'sessionClosed', 'jobNotActive' ] as const;
 export type BotRejection = typeof botRejections[number];
 
 export const asBotRejection = (value: unknown): BotRejection | undefined =>
@@ -73,6 +73,19 @@ export const botSessionFromUrl = (href?: string): string | undefined => {
 
 	try {
 		return new URL(href).searchParams.get('session')?.trim() || undefined;
+	} catch {
+		return undefined;
+	}
+};
+
+// The job a provider started this page for; the room server gave it the id.
+export const botJobIdFromUrl = (href?: string): string | undefined => {
+	if (!href) return undefined;
+
+	try {
+		const value = new URL(href).searchParams.get('jobId')?.trim();
+
+		return value && /^[0-9a-f-]{36}$/i.test(value) ? value : undefined;
 	} catch {
 		return undefined;
 	}

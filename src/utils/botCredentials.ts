@@ -45,3 +45,30 @@ export const parseRangeList = (text: string): string[] =>
 		.filter((entry) => entry.length > 0);
 
 export const invalidRanges = (entries: string[]): string[] => entries.filter((entry) => !isAddressOrRange(entry));
+
+// The same rule the management server applies: the room server appends its own
+// paths to the address, so it carries no query, fragment or login.
+export const isProviderUrl = (value: string): boolean => {
+	try {
+		const url = new URL(value.trim());
+
+		return url.protocol === 'https:' && !url.search && !url.hash && !url.username && !url.password;
+	} catch {
+		return false;
+	}
+};
+
+// A provider is a job type, an address and a key, all three or none. Emptying the
+// job type and the address turns a provider back into a plain key, and the stored
+// key goes with them; an empty key field otherwise keeps the stored key.
+export const providerFormState = ({ jobType, apiUrl, apiSecret, hasApiSecret }: {
+	jobType: string;
+	apiUrl: string;
+	apiSecret: string;
+	hasApiSecret: boolean;
+}): { cleared: boolean; incomplete: boolean } => {
+	const cleared = jobType === '' && apiUrl.trim() === '' && apiSecret === '';
+	const complete = jobType !== '' && isProviderUrl(apiUrl) && (apiSecret !== '' || hasApiSecret);
+
+	return { cleared, incomplete: !cleared && !complete };
+};

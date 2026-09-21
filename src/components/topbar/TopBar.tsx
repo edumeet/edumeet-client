@@ -23,6 +23,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import ControlButton from '../controlbuttons/ControlButton';
 import E2eeIndicator from '../e2eeindicator/E2eeIndicator';
 import BotsIndicator from '../botsindicator/BotsIndicator';
+import BotJobIcons from '../botjobicons/BotJobIcons';
 
 interface TopBarProps {
 	fullscreenEnabled: boolean;
@@ -165,6 +166,7 @@ const TopBar = ({ fullscreenEnabled, fullscreen, onFullscreen }: TopBarProps): R
 				<TopBarDiv grow={1} />
 				{ !headless && <TopBarDiv marginRight={1}>
 					{ someoneIsRecording && <RecordIcon color='error' /> }
+					<BotJobIcons />
 					<SavingRecordingIndicator />
 					{ e2eeEnabled && <E2eeIndicator /> }
 					<ConnectivityIndicator />

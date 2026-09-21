@@ -10,7 +10,7 @@ import VideoInputChooser from '../../components/devicechooser/VideoInputChooser'
 import GenericDialog from '../../components/genericdialog/GenericDialog';
 import { roomActions } from '../../store/slices/roomSlice';
 import settingsSlice, { settingsActions } from '../../store/slices/settingsSlice';
-import { botDisplayName, botSessionFromUrl, botTokenFromUrl, botTypeFromUrl, HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, hrefWithoutBotToken, layoutSettingsActions } from '../../utils/headless';
+import { botDisplayName, botJobIdFromUrl, botSessionFromUrl, botTokenFromUrl, botTypeFromUrl, HEADLESS_PRESET, headlessFromUrl, headlessJoinPlan, hrefWithoutBotToken, layoutSettingsActions } from '../../utils/headless';
 import { JOIN_ERROR_KEY } from '../../store/middlewares/roomMiddleware';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
@@ -96,6 +96,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 
 		dispatch(meActions.setBotType(botTypeFromUrl(window.location.href)));
 		dispatch(meActions.setBotSession(botSessionFromUrl(window.location.href)));
+		dispatch(meActions.setBotJobId(botJobIdFromUrl(window.location.href)));
 		dispatch(meActions.setAudioMuted(true));
 		dispatch(meActions.setVideoMuted(true));
 

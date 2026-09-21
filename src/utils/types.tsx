@@ -378,8 +378,11 @@ export type TenantBotCredential = {
 	label: string,
 	allowedIps: string[],
 	enabled?: boolean | number | null,
-	createdAt?: number | null,
-	lastUsedAt?: number | null,
+	createdAt?: number | string | null,
+	lastUsedAt?: number | string | null,
+	jobType?: 'recorder' | 'streamer' | 'transcriber' | null,
+	apiUrl?: string | null,
+	hasApiSecret?: boolean,
 };
 
 export type TenantFQDN = {

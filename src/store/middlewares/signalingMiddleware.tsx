@@ -7,6 +7,7 @@ import { notificationsActions } from '../slices/notificationsSlice';
 import { RoomServerConnection } from '../../utils/RoomServerConnection';
 import { leaveRoom, reconnectRoom } from '../actions/roomActions';
 import { Logger } from '../../utils/Logger';
+import { BOT_RETRY_INTERVAL_MS } from '../../utils/botJobs';
 
 const logger = new Logger('SignalingMiddleware');
 
@@ -37,72 +38,96 @@ const createSignalingMiddleware = ({
 	}: {
 		dispatch: AppDispatch,
 		getState: () => RootState
-	}) => (next) => (action) => {
-		if (signalingActions.connect.match(action)) {
-			signalingService.on('connected', () => {
-				dispatch(signalingActions.connected());
+	}) => {
+		let retrying = false;
+		let retryTimer: ReturnType<typeof setTimeout> | undefined;
+
+		const openConnection = async (): Promise<void> => {
+			const socketConnection = await RoomServerConnection.create({
+				getUrl: () => getState().signaling.url,
+				getAuth: (): Record<string, string> => {
+					const { botToken } = getState().me;
+
+					return botToken ? { botToken } : {};
+				},
 			});
 
-			signalingService.on('reconnecting', (attempt) => {
-				logger.debug('reconnecting [attempt:%d]', attempt);
+			signalingService.addConnection(socketConnection);
+		};
 
-				dispatch(signalingActions.reconnecting());
-				dispatch(notificationsActions.enqueueNotification({
-					message: signalingReconnectingLabel(attempt),
-					options: { variant: 'warning' }
-				}));
-			});
-
-			signalingService.on('disconnected', (reason) => {
-				logger.debug('disconnected [reason:%s]', reason);
-
-				mediaService.monitor?.addIssue({
-					type: 'websocket-disconnected',
-					payload: { reason },
+		return (next) => (action) => {
+			if (signalingActions.connect.match(action)) {
+				signalingService.on('connected', () => {
+					dispatch(signalingActions.connected());
 				});
-			});
 
-			signalingService.on('reconnected', () => {
-				logger.debug('reconnected');
+				signalingService.on('reconnecting', (attempt) => {
+					logger.debug('reconnecting [attempt:%d]', attempt);
 
-				dispatch(signalingActions.reconnected());
-				dispatch(reconnectRoom());
-			});
-
-			signalingService.on('error', (error) => {
-				if (getState().signaling.state !== 'reconnecting') {
+					dispatch(signalingActions.reconnecting());
 					dispatch(notificationsActions.enqueueNotification({
-						message: roomServerConnectionError(error.message),
-						options: { variant: 'error' }
+						message: signalingReconnectingLabel(attempt),
+						options: { variant: 'warning' }
 					}));
-				}
-			});
-
-			signalingService.once('close', () => {
-				dispatch(roomActions.setLeaveReason('connectionClosed'));
-				dispatch(leaveRoom());
-			});
-
-			(async () => {
-				const socketConnection = await RoomServerConnection.create({
-					getUrl: () => getState().signaling.url,
-					getAuth: (): Record<string, string> => {
-						const { botToken } = getState().me;
-
-						return botToken ? { botToken } : {};
-					},
 				});
 
-				signalingService.addConnection(socketConnection);
-			})();
-		}
+				signalingService.on('disconnected', (reason) => {
+					logger.debug('disconnected [reason:%s]', reason);
 
-		if (signalingActions.disconnect.match(action)) {
-			signalingService.removeAllListeners();
-			signalingService.disconnect();
-		}
+					mediaService.monitor?.addIssue({
+						type: 'websocket-disconnected',
+						payload: { reason },
+					});
+				});
 
-		return next(action);
+				signalingService.on('reconnected', () => {
+					logger.debug('reconnected');
+
+					dispatch(signalingActions.reconnected());
+					dispatch(reconnectRoom());
+				});
+
+				signalingService.on('error', (error) => {
+					if (getState().signaling.state !== 'reconnecting') {
+						dispatch(notificationsActions.enqueueNotification({
+							message: roomServerConnectionError(error.message),
+							options: { variant: 'error' }
+						}));
+					}
+				});
+
+				signalingService.on('close', () => {
+					// A connection dropped to be made again is not the room being left.
+					if (retrying) return;
+
+					dispatch(roomActions.setLeaveReason('connectionClosed'));
+					dispatch(leaveRoom());
+				});
+
+				void openConnection();
+			}
+
+			if (signalingActions.retry.match(action)) {
+				retrying = true;
+				signalingService.disconnect();
+
+				clearTimeout(retryTimer);
+				retryTimer = setTimeout(() => {
+					retrying = false;
+					void openConnection();
+				}, BOT_RETRY_INTERVAL_MS);
+			}
+
+			if (signalingActions.disconnect.match(action)) {
+				// A page that leaves while it waits to try again must not come back.
+				clearTimeout(retryTimer);
+				retrying = false;
+				signalingService.removeAllListeners();
+				signalingService.disconnect();
+			}
+
+			return next(action);
+		};
 	};
 
 	return middleware;

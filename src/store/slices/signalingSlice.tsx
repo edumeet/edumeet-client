@@ -28,6 +28,10 @@ const signalingSlice = createSlice({
 		reconnected: ((state) => {
 			state.state = 'connected';
 		}),
+		// The same connection attempt made again, with every listener left in place.
+		retry: ((state) => {
+			state.state = 'connecting';
+		}),
 		disconnect: ((state) => {
 			state.state = 'disconnected';
 		}),

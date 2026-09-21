@@ -22,6 +22,7 @@ import VideoBackgroundDialog from './components/backgroundselectdialog/VideoBack
 import RecoverRecording from './components/recoverrecordingdialog/RecoverRecording';
 import { useWakeLock } from './utils/useWakeLock';
 import { useDocumentStatus } from './utils/documentStatus';
+import { useBotStatusHook } from './utils/botStatusHook';
 
 type AppParams = {
 	id: string;
@@ -54,6 +55,7 @@ const App = (): React.JSX.Element => {
 
 	useWakeLock(roomState === 'joined' || roomState === 'lobby');
 	useDocumentStatus();
+	useBotStatusHook();
 	
 	useEffect(() => {
 		dispatch(startListeners());

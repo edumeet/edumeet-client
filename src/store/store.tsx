@@ -32,6 +32,7 @@ import createCountdownTimerMiddleware from './middlewares/countdownTimerMiddlewa
 import createDrawingMiddleware from './middlewares/drawingMiddleware';
 import createMlsMiddleware from './middlewares/mlsMiddleware';
 import roomSlice from './slices/roomSlice';
+import botJobsSlice from './slices/botJobsSlice';
 import meSlice from './slices/meSlice';
 import consumersSlice from './slices/consumersSlice';
 import signalingSlice from './slices/signalingSlice';
@@ -131,6 +132,7 @@ const middlewareOptions = {
 };
 
 const reducer = combineReducers({
+	botJobs: botJobsSlice.reducer,
 	consumers: consumersSlice.reducer,
 	directMessages: directMessagesSlice.reducer,
 	notifications: notificationsSlice.reducer,

@@ -2529,3 +2529,173 @@ export const meetingTokenInvalidLabel = (): string => intl.formatMessage({
 	id: 'room.meetingTokenInvalid',
 	defaultMessage: 'This meeting token is not valid for this room. Check the invitation link or the token.'
 });
+
+export const botJobStartRecorderLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStartRecorder',
+	defaultMessage: 'Start server recording'
+});
+
+export const botJobStartStreamerLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStartStreamer',
+	defaultMessage: 'Start live stream'
+});
+
+export const botJobStartTranscriberLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStartTranscriber',
+	defaultMessage: 'Start server transcription'
+});
+
+export const botJobConfirmRecorderLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobConfirmRecorder',
+	defaultMessage: '{name} will join this room and record everything that is said and shown. Continue?'
+}, { name });
+
+export const botJobConfirmStreamerLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobConfirmStreamer',
+	defaultMessage: '{name} will join this room and stream everything that is said and shown. Continue?'
+}, { name });
+
+export const botJobConfirmTranscriberLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobConfirmTranscriber',
+	defaultMessage: '{name} will join this room and transcribe everything that is said. Continue?'
+}, { name });
+
+export const botJobE2eeNoticeLabel = (): string => intl.formatMessage({
+	id: 'room.botJobE2eeNotice',
+	defaultMessage: 'This room is end-to-end encrypted. The bot takes part in the encryption, so its provider will be able to see and hear the meeting.'
+});
+
+export const botJobProviderLabel = (): string => intl.formatMessage({
+	id: 'room.botJobProvider',
+	defaultMessage: 'Provider'
+});
+
+export const botJobRunningRecorderLabel = (): string => intl.formatMessage({
+	id: 'room.botJobRunningRecorder',
+	defaultMessage: 'This meeting is being recorded'
+});
+
+export const botJobRunningStreamerLabel = (): string => intl.formatMessage({
+	id: 'room.botJobRunningStreamer',
+	defaultMessage: 'This meeting is being streamed live'
+});
+
+export const botJobRunningTranscriberLabel = (): string => intl.formatMessage({
+	id: 'room.botJobRunningTranscriber',
+	defaultMessage: 'This meeting is being transcribed'
+});
+
+export const botJobInterruptedLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobInterrupted',
+	defaultMessage: '{name} lost its connection and is expected back'
+}, { name });
+
+export const botJobStateStartingLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStateStarting',
+	defaultMessage: 'starting'
+});
+
+export const botJobStateJoinedLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStateJoined',
+	defaultMessage: 'preparing'
+});
+
+export const botJobStateRunningLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStateRunning',
+	defaultMessage: 'running'
+});
+
+export const botJobStateStoppingLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStateStopping',
+	defaultMessage: 'stopping'
+});
+
+export const botJobStateInterruptedLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStateInterrupted',
+	defaultMessage: 'reconnecting'
+});
+
+export const botJobStopLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStop',
+	defaultMessage: 'Stop'
+});
+
+export const botJobStopTitleLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobStopTitle',
+	defaultMessage: 'Stop {name}'
+}, { name });
+
+export const botJobStopConfirmLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobStopConfirm',
+	defaultMessage: '{name} will be asked to finish its work and leave. Continue?'
+}, { name });
+
+export const botJobFailedLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobFailed',
+	defaultMessage: '{name} has stopped unexpectedly'
+}, { name });
+
+export const botJobStartFailedLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStartFailed',
+	defaultMessage: 'The bot could not be started'
+});
+
+export const botJobStopFailedLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStopFailed',
+	defaultMessage: 'The bot could not be stopped'
+});
+
+export const botProvidersLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botProviders',
+	defaultMessage: 'Bot providers'
+});
+
+export const botJobTypeLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botJobType',
+	defaultMessage: 'Job type'
+});
+
+export const botJobTypeNoneLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botJobTypeNone',
+	defaultMessage: 'None (access token only)'
+});
+
+export const botJobTypeRecorderLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botJobTypeRecorder',
+	defaultMessage: 'Recording'
+});
+
+export const botJobTypeStreamerLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botJobTypeStreamer',
+	defaultMessage: 'Streaming'
+});
+
+export const botJobTypeTranscriberLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botJobTypeTranscriber',
+	defaultMessage: 'Transcription'
+});
+
+export const botApiUrlLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botApiUrl',
+	defaultMessage: 'Provider API URL'
+});
+
+export const botApiUrlTooltipLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botApiUrlTooltip',
+	defaultMessage: 'The https address of the provider service for this kind of job, as given by the provider. Moderators can then start and stop the job from the room. Leave the job type, this address and the key empty for a bot that is started by hand.'
+});
+
+export const botApiSecretLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botApiSecret',
+	defaultMessage: 'Provider API key'
+});
+
+export const botApiSecretKeepLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botApiSecretKeep',
+	defaultMessage: 'A key is stored. Leave empty to keep it.'
+});
+
+export const botProviderIncompleteLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.botProviderIncomplete',
+	defaultMessage: 'A provider needs a job type, an https API URL and an API key'
+});

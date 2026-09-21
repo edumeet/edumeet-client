@@ -1,4 +1,6 @@
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { shallowEqual } from 'react-redux';
+import { useAppDispatch, useAppSelector, usePermissionSelector } from '../../store/hooks';
+import { permissions } from '../../utils/roles';
 import { uiActions } from '../../store/slices/uiSlice';
 import MediaControls from '../../components/mediacontrols/MediaControls';
 import MicButton from '../../components/controlbuttons/MicButton';
@@ -18,6 +20,8 @@ import ExtraVideo from '../menuitems/ExtraVideo';
 import Transcription from '../menuitems/Transcription';
 import Filesharing from '../menuitems/Filesharing';
 import Recording from '../menuitems/Recording';
+import BotJob from '../menuitems/BotJob';
+import { botJobTypes } from '../../utils/botJobs';
 import Drawing from '../menuitems/Drawing';
 import MoreButton from '../controlbuttons/MoreButton';
 
@@ -40,6 +44,8 @@ const ControlButtonsBar = (): React.JSX.Element => {
 	const localRecordingEnabled = useAppSelector((state) => state.room.localRecordingEnabled);
 	const canRecord = useAppSelector((state) => state.me.canRecord);
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
+	const canModerate = usePermissionSelector(permissions.MODERATE_ROOM);
+	const botProviderTypes = useAppSelector((state) => state.botJobs.providers.map((provider) => provider.jobType), shallowEqual);
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled); // eslint-disable-line
 	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
@@ -134,6 +140,9 @@ const ControlButtonsBar = (): React.JSX.Element => {
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ !isMobile && localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
+				{ canModerate && botJobTypes.filter((type) => botProviderTypes.includes(type)).map((type) => (
+					<BotJob key={type} type={type} onClick={handleMoreClose} />
+				)) }
 				{ !isMobile && <Drawing onClick={handleMoreClose} /> }
 			</FloatingMenu>
 		</>

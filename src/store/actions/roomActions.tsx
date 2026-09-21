@@ -3,6 +3,7 @@ import { meActions } from '../slices/meSlice';
 import { peersActions } from '../slices/peersSlice';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { roomActions } from '../slices/roomSlice';
+import { botJobsActions } from '../slices/botJobsSlice';
 import { drawingActions } from '../slices/drawingSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppThunk, fileService } from '../store';
@@ -32,7 +33,7 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		const meetingToken = state.me.meetingToken;
 		const encodedRoomId = encodeURIComponent(roomId);
 
-		const url = getSignalingUrl(peerId, encodedRoomId, reconnectKey, token, meetingToken, state.room.headless, state.me.botType, state.me.botSession);
+		const url = getSignalingUrl(peerId, encodedRoomId, reconnectKey, token, meetingToken, state.room.headless, state.me.botType, state.me.botSession, state.me.botJobId);
 
 		dispatch(signalingActions.setUrl(url));
 		dispatch(signalingActions.connect());
@@ -73,6 +74,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 		locked,
 		lobbyPeers,
 		sessionId: joinedSessionId,
+		botProviders,
+		botJobs,
 	} = await signalingService.sendRequest('join', {
 		displayName,
 		picture,
@@ -90,6 +93,8 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	// A bot sent to a breakout room is placed there by the server at join.
 	if (typeof joinedSessionId === 'string' && joinedSessionId !== sessionId) dispatch(meActions.setSessionId(joinedSessionId));
 	dispatch(peersActions.addPeers(peers));
+	dispatch(botJobsActions.setProviders(botProviders ?? []));
+	dispatch(botJobsActions.setJobs(botJobs ?? []));
 	dispatch(lobbyPeersActions.setPeers(lobbyPeers ?? []));
 	dispatch(roomSessionsActions.addMessages({ sessionId, messages: chatHistory }));
 	dispatch(roomSessionsActions.addFiles({ sessionId, files: fileHistory }));

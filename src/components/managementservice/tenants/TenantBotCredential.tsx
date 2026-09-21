@@ -13,6 +13,7 @@ import {
 	FormControlLabel,
 	IconButton,
 	InputAdornment,
+	MenuItem,
 	TextField,
 	Tooltip,
 	Typography,
@@ -21,7 +22,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { TenantBotCredential } from '../../../utils/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
-import { generateBotToken, hashBotToken, invalidRanges, parseRangeList } from '../../../utils/botCredentials';
+import { generateBotToken, hashBotToken, invalidRanges, parseRangeList, providerFormState } from '../../../utils/botCredentials';
 import { TenantProp } from './Tenant';
 import {
 	addNewLabel,
@@ -41,13 +42,24 @@ import {
 	deleteLabel,
 	enabledLabel,
 	lastUsedAtLabel,
+	botJobTypeLabel,
+	botJobTypeNoneLabel,
+	botJobTypeRecorderLabel,
+	botJobTypeStreamerLabel,
+	botJobTypeTranscriberLabel,
+	botApiUrlLabel,
+	botApiUrlTooltipLabel,
+	botApiSecretLabel,
+	botApiSecretKeepLabel,
+	botProviderIncompleteLabel,
 	manageItemLabel,
 	neverLabel,
 	noLabel,
 	yesLabel,
 } from '../../translated/translatedComponents';
 
-const formatTime = (value?: number | null): string => (value ? new Date(value).toLocaleString() : neverLabel());
+// Postgres returns bigint columns as strings, so the value is coerced before it becomes a Date.
+const formatTime = (value?: number | string | null): string => (value ? new Date(Number(value)).toLocaleString() : neverLabel());
 
 const TenantBotCredentialTable = (props: TenantProp) => {
 	const tenantId = props.tenantId;
@@ -63,6 +75,15 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 				id: 'allowedIps',
 				accessorFn: (row) => (row.allowedIps ?? []).join(', '),
 				header: allowedIpsLabel(),
+			},
+			{
+				id: 'jobType',
+				accessorFn: (row) => (row.jobType ? {
+					recorder: botJobTypeRecorderLabel(),
+					streamer: botJobTypeStreamerLabel(),
+					transcriber: botJobTypeTranscriberLabel(),
+				}[row.jobType] : ''),
+				header: botJobTypeLabel(),
 			},
 			{
 				id: 'enabled',
@@ -94,6 +115,10 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 	const [ token, setToken ] = useState('');
 	const [ tokenHash, setTokenHash ] = useState('');
 	const [ copied, setCopied ] = useState(false);
+	const [ jobType, setJobType ] = useState('');
+	const [ apiUrl, setApiUrl ] = useState('');
+	const [ apiSecret, setApiSecret ] = useState('');
+	const [ hasApiSecret, setHasApiSecret ] = useState(false);
 
 	async function fetchCredentials() {
 		setIsLoading(true);
@@ -111,7 +136,9 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 
 	const ranges = parseRangeList(rangesText);
 	const badRanges = invalidRanges(ranges);
-	const canApply = label.trim() !== '' && ranges.length > 0 && badRanges.length === 0 && (id !== 0 || tokenHash !== '');
+	// A provider is a job type, an https address and a key, all three or none of them.
+	const { cleared: providerCleared, incomplete: providerIncomplete } = providerFormState({ jobType, apiUrl, apiSecret, hasApiSecret });
+	const canApply = label.trim() !== '' && ranges.length > 0 && badRanges.length === 0 && (id !== 0 || tokenHash !== '') && !providerIncomplete;
 
 	const handleClickOpen = () => {
 		setId(0);
@@ -121,6 +148,10 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 		setToken('');
 		setTokenHash('');
 		setCopied(false);
+		setJobType('');
+		setApiUrl('');
+		setApiSecret('');
+		setHasApiSecret(false);
 		setOpen(true);
 	};
 
@@ -152,13 +183,16 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 	const apply = async () => {
 		if (!canApply) return;
 
+		// An empty key keeps the stored one, and an empty address clears the provider.
+		const provider = apiUrl.trim() === '' ? { apiUrl: '' } : { jobType, apiUrl: apiUrl.trim(), ...(apiSecret ? { apiSecret } : {}) };
+
 		if (id === 0) {
-			dispatch(createData({ tenantId, label, tokenHash, allowedIps: ranges, enabled }, 'tenantBotCredentials')).then(() => {
+			dispatch(createData({ tenantId, label, tokenHash, allowedIps: ranges, enabled, ...(apiUrl.trim() === '' ? {} : provider) }, 'tenantBotCredentials')).then(() => {
 				fetchCredentials();
 				setOpen(false);
 			});
 		} else {
-			dispatch(patchData(id, { label, allowedIps: ranges, enabled }, 'tenantBotCredentials')).then(() => {
+			dispatch(patchData(id, { label, allowedIps: ranges, enabled, ...provider }, 'tenantBotCredentials')).then(() => {
 				fetchCredentials();
 				setOpen(false);
 			});
@@ -238,6 +272,44 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 							helperText={badRanges.length > 0 ? allowedIpsInvalidLabel(badRanges.join(', ')) : ' '}
 						/>
 					</Tooltip>
+					<TextField
+						select
+						margin="dense"
+						id="jobType"
+						label={botJobTypeLabel()}
+						fullWidth
+						value={jobType}
+						onChange={(event) => setJobType(event.target.value)}
+					>
+						<MenuItem value="">{botJobTypeNoneLabel()}</MenuItem>
+						<MenuItem value="recorder">{botJobTypeRecorderLabel()}</MenuItem>
+						<MenuItem value="streamer">{botJobTypeStreamerLabel()}</MenuItem>
+						<MenuItem value="transcriber">{botJobTypeTranscriberLabel()}</MenuItem>
+					</TextField>
+					<Tooltip title={<Typography variant="body2">{botApiUrlTooltipLabel()}</Typography>} placement="top-start">
+						<TextField
+							margin="dense"
+							id="apiUrl"
+							label={botApiUrlLabel()}
+							type="url"
+							placeholder="https://"
+							fullWidth
+							onChange={(event) => setApiUrl(event.target.value)}
+							value={apiUrl}
+						/>
+					</Tooltip>
+					<TextField
+						margin="dense"
+						id="apiSecret"
+						label={botApiSecretLabel()}
+						type="password"
+						autoComplete="new-password"
+						fullWidth
+						onChange={(event) => setApiSecret(event.target.value)}
+						value={apiSecret}
+						error={providerIncomplete}
+						helperText={providerIncomplete ? botProviderIncompleteLabel() : (hasApiSecret && !providerCleared ? botApiSecretKeepLabel() : ' ')}
+					/>
 					<FormControlLabel
 						control={<Checkbox checked={enabled} onChange={(_, checked) => setEnabled(checked)} />}
 						label={enabledLabel()}
@@ -262,6 +334,10 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 					setToken('');
 					setTokenHash('');
 					setCopied(false);
+					setJobType(credential.jobType ?? '');
+					setApiUrl(credential.apiUrl ?? '');
+					setApiSecret('');
+					setHasApiSecret(Boolean(credential.hasApiSecret));
 					setOpen(true);
 				}
 			})}

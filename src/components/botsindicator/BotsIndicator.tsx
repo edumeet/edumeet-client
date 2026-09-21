@@ -5,9 +5,15 @@ import { memo, useState } from 'react';
 import { useAppDispatch, useAppSelector, usePermissionSelector } from '../../store/hooks';
 import { botsSelector } from '../../store/selectors';
 import { kickPeer } from '../../store/actions/peerActions';
+import { stopBotJob } from '../../store/actions/botJobActions';
 import { permissions } from '../../utils/roles';
+import { botJobStateLabel } from '../../utils/botJobLabels';
+import { botMenu } from '../../utils/botJobs';
 import ConfirmButton from '../textbuttons/ConfirmButton';
 import {
+	botJobStopConfirmLabel,
+	botJobStopLabel,
+	botJobStopTitleLabel,
 	botsInRoomLabel,
 	kickLabel,
 	removeBotConfirmLabel,
@@ -37,15 +43,19 @@ const Row = styled(ListItem)(({ theme }) => ({
 
 // Recorder and streamer pages are kept out of the participant list and the
 // count, so this is the one place that discloses them: how many, and who. It is
-// also the only place a moderator can remove them from.
+// also where a moderator ends them: a bot that runs a job is stopped through its
+// provider, which lets the job finish properly, and only a job that is already
+// stopping, or a bot that was started by hand, is removed outright.
 const BotsIndicator = (): React.JSX.Element | null => {
 	useAppSelector((state) => state.settings.locale);
 	const dispatch = useAppDispatch();
 	const bots = useAppSelector(botsSelector);
+	const jobs = useAppSelector((state) => state.botJobs.jobs);
 	const canModerate = usePermissionSelector(permissions.MODERATE_ROOM);
 	const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
 
-	if (bots.length === 0) return null;
+	// A moderator also sees a job whose bot has not arrived yet, to be able to stop it.
+	if (bots.length === 0 && !(canModerate && jobs.length > 0)) return null;
 
 	const nameOf = (bot: { id: string, displayName?: string }): string => bot.displayName || bot.id;
 
@@ -57,9 +67,21 @@ const BotsIndicator = (): React.JSX.Element | null => {
 		);
 	}
 
+	const { plainBots, stoppableJobIds, kickablePeerIds } = botMenu(bots, jobs);
+
 	const remove = (ids: string[]): void => {
 		setAnchorEl(null);
 		ids.forEach((id) => dispatch(kickPeer(id)));
+	};
+
+	const stop = (ids: string[]): void => {
+		setAnchorEl(null);
+		ids.forEach((id) => dispatch(stopBotJob(id)));
+	};
+
+	const removeAll = (): void => {
+		stop(stoppableJobIds);
+		remove(kickablePeerIds);
 	};
 
 	return (
@@ -82,7 +104,30 @@ const BotsIndicator = (): React.JSX.Element | null => {
 				<Panel>
 					<Typography variant='subtitle2'>{ botsInRoomLabel() }</Typography>
 					<List dense>
-						{ bots.map((bot) => (
+						{ jobs.map((job) => (
+							<Row key={job.id} disableGutters data-bot-job-row={job.type}>
+								<ListItemText primary={job.label} secondary={botJobStateLabel(job.state)} />
+								{ job.state === 'stopping' ?
+									job.peerId && <ConfirmButton
+										size='small'
+										variant='outlined'
+										label={kickLabel()}
+										confirmTitle={removeBotLabel(job.label)}
+										confirmContent={<Typography>{ removeBotConfirmLabel(job.label) }</Typography>}
+										onConfirm={() => remove([ job.peerId as string ])}
+									/> :
+									<ConfirmButton
+										size='small'
+										variant='outlined'
+										label={botJobStopLabel()}
+										confirmTitle={botJobStopTitleLabel(job.label)}
+										confirmContent={<Typography>{ botJobStopConfirmLabel(job.label) }</Typography>}
+										onConfirm={() => stop([ job.id ])}
+									/>
+								}
+							</Row>
+						)) }
+						{ plainBots.map((bot) => (
 							<Row key={bot.id} disableGutters>
 								<ListItemText primary={nameOf(bot)} />
 								<ConfirmButton
@@ -96,12 +141,12 @@ const BotsIndicator = (): React.JSX.Element | null => {
 							</Row>
 						)) }
 					</List>
-					{ bots.length > 1 &&
+					{ jobs.length + plainBots.length > 1 &&
 						<ConfirmButton
 							size='small'
 							label={removeBotsLabel()}
 							confirmContent={<Typography>{ removeBotsConfirmLabel() }</Typography>}
-							onConfirm={() => remove(bots.map((bot) => bot.id))}
+							onConfirm={removeAll}
 						/>
 					}
 				</Panel>

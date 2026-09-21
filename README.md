@@ -166,6 +166,33 @@ A bot records one session. Without `session` it is in the main room; with `?sess
 
 A bot with a valid token from an allowed address is verified: it skips the lobby of a locked room and needs no meeting token in a meetings-only room. A bot with a token that does not verify is refused rather than admitted as a plain bot. `botType` (`recorder`, `transcriber` or `streamer`) is passed on to the other participants for information. Outside a tenant (a deployment without a management server) bots need no token.
 
+##### Starting a recording, a stream or a transcription from the room
+
+When a tenant has configured a **bot provider** for a kind of job (an outside service that records,
+streams or transcribes, see
+[BOT-PROVIDER-API.md](https://github.com/edumeet/edumeet/blob/main/BOT-PROVIDER-API.md)), moderators
+get an entry per kind in the More menu: "Start server recording", "Start live stream", "Start server
+transcription". They appear only for a kind the tenant has a provider for, and only for moderators;
+a tenant without providers sees nothing new anywhere.
+
+Starting one is confirmed in a dialog that names the provider, and in an end-to-end encrypted room
+says that the provider will be able to see and hear the meeting. Where a tenant has more than one
+provider of the same kind, the dialog also asks which one.
+
+While a job captures, everyone in the room sees it in the top bar: a blinking red dot for a
+recording, and the icon of the kind for a live stream or a transcription, one icon per kind however
+many jobs of it run. The icon dims while the job's browser is away and expected back. The bot icon
+next to it opens, for a moderator, a row per job with the provider's name, what the job is doing and
+a **Stop** button; stopping asks the provider to finish properly rather than cutting the browser off.
+Bots that belong to no job are removed with **Kick** as before, as is a job whose browser does not
+leave. A job that fails tells the moderators, by the provider's name and reason.
+
+A page that belongs to a job carries `jobId` in its URL and gets one extra function,
+`window.edumeetBot.status(state, reason)`, for the recorder to report `running`, `finished` or
+`failed` with. Such a page also waits: refused with `roomNotOpen` it tries again quietly every 3
+seconds for 30 seconds, writing nothing to the status attributes until it gives up, because after a
+room-server restart the recorder may be back before the first participant is.
+
 #### Status attributes on the document
 
 Every client writes three attributes on the `<html>` element for debugging and for recorders. They only ever hold codes from the lists below, never names, ids or tokens.
