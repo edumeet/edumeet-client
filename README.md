@@ -150,6 +150,8 @@ A page opened with `?headless=1` (or `headless=true`) is meant for a headless br
 - Outside the room (connecting, waiting in the lobby, refused, kicked, meeting ended) the page shows only the background and does not reload or rejoin. The status attributes below tell the recorder what happened.
 - `?displayName=` names the bot; without one it is called "Bot" rather than taking a name stored in the browser. `?meetingToken=` works as for anyone else.
 
+When client monitoring samples are collected (`clientMonitor.samplingPeriodInMs`), a headless page sends them like any client, marked with `headless: true`, its `botType` and, for a job, its `jobId` in the sample attachments; they describe what the page received, since it sends no media.
+
 The room-server treats a headless peer as a bot rather than a participant: it is not shown in the participant list or counted, it cannot chat, share, draw, raise a hand or vote to end the meeting, it never becomes the first-participant admin of a room, and it does not keep a room open once the last participant has left. Everyone in the room sees a bot icon with the count in the top bar; its tooltip lists the bots' names. It counts the bots in the session the viewer is in, so a participant in a breakout room sees the bots of that breakout room. A moderator can click it to see the list and remove a single bot or all of them, after a confirmation. The browser running the page needs its autoplay policy relaxed, since there is no click-to-play fallback for remote audio.
 
 A bot never opens a room: it is refused (`roomNotOpen`, see the status attributes) until at least one participant is in the room, and the recorder has to try again later.

@@ -126,9 +126,14 @@ const createRoomMiddleware = ({
 								mediaService.monitor.clientId = getState().me.id;
 							}
 
+							// A bot's samples are marked, so its figures are not read as a participant's.
+							const { headless } = getState().room;
+							const { botType, botJobId } = getState().me;
+
 							mediaService.setMonitorAttachments({
 								actualSessionId: sessionId,
 								displayName: getState().settings.displayName,
+								...(headless ? { headless: true, ...(botType ? { botType } : {}), ...(botJobId ? { jobId: botJobId } : {}) } : {}),
 							});
 
 							break;

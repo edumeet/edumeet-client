@@ -29,23 +29,26 @@ type ApiInput = Parameters<ReturnType<typeof createRoomMiddleware>>[0];
 
 const jobId = '5b2f1c1e-0000-4000-8000-000000000000';
 
-const setup = (me: Record<string, unknown> = {}) => {
+const setup = (me: Record<string, unknown> = {}, room: Record<string, unknown> = {}) => {
 	let handler: NotificationHandler | undefined;
 	const signalingService = {
 		on: vi.fn((event: string, cb: NotificationHandler) => {
 			if (event === 'notification') handler = cb;
 		}),
 	};
+	const mediaService = { setMonitorAttachments: vi.fn() };
 	const dispatch = vi.fn();
-	const middleware = createRoomMiddleware({ signalingService } as unknown as MiddlewareInput);
-	const invoke = middleware({ dispatch, getState: () => ({ room: { state: 'new' }, me, settings: {} }) } as unknown as ApiInput)(vi.fn());
+	const middleware = createRoomMiddleware({ signalingService, mediaService } as unknown as MiddlewareInput);
+	const invoke = middleware({ dispatch, getState: () => ({ room: { state: 'new', ...room }, me, settings: { displayName: 'Acme Recorder' } }) } as unknown as ApiInput)(vi.fn());
 
 	invoke(signalingActions.connect());
 
 	const calls = () => dispatch.mock.calls.map(([ action ]) => action);
 
-	return { calls, deliver: (method: string, data: Record<string, unknown> = {}) => handler?.({ method, data }) };
+	return { calls, mediaService, deliver: (method: string, data: Record<string, unknown> = {}) => handler?.({ method, data }) };
 };
+
+const roomReady = { sessionId: 's', creationTimestamp: 1, maxActiveVideos: 12, breakoutsEnabled: true, chatEnabled: true, filesharingEnabled: true, raiseHandEnabled: true, reactionsEnabled: true, localRecordingEnabled: true, endToEndEncryption: false, settings: {} };
 
 beforeEach(() => {
 	vi.useFakeTimers();
@@ -125,5 +128,23 @@ describe('bot jobs reaching a participant', () => {
 		expect(action.type).toBe(notificationsActions.enqueueNotification.type);
 		expect(action.payload.message).toBe('Acme Recorder has stopped unexpectedly');
 		expect(JSON.stringify(action.payload)).not.toContain('disk full');
+	});
+});
+
+describe('the monitoring samples of a bot', () => {
+	it('are marked as the samples of a bot, with its kind and its job', () => {
+		const { mediaService, deliver } = setup({ botType: 'recorder', botJobId: jobId }, { headless: true });
+
+		deliver('roomReady', roomReady);
+
+		expect(mediaService.setMonitorAttachments).toHaveBeenCalledWith({ actualSessionId: 's', displayName: 'Acme Recorder', headless: true, botType: 'recorder', jobId });
+	});
+
+	it('carry no such marks for a participant', () => {
+		const { mediaService, deliver } = setup();
+
+		deliver('roomReady', roomReady);
+
+		expect(mediaService.setMonitorAttachments).toHaveBeenCalledWith({ actualSessionId: 's', displayName: 'Acme Recorder' });
 	});
 });
