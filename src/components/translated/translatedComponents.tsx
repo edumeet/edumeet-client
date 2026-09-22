@@ -2699,3 +2699,38 @@ export const botProviderIncompleteLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.botProviderIncomplete',
 	defaultMessage: 'A provider needs a job type, an https API URL and an API key'
 });
+
+export const botJobLoginToRecordLabel = (): string => intl.formatMessage({
+	id: 'room.botJobLoginToRecord',
+	defaultMessage: 'Log in to record'
+});
+
+export const botJobDeliveryNoticeRecorderLabel = (): string => intl.formatMessage({
+	id: 'room.botJobDeliveryNoticeRecorder',
+	defaultMessage: 'When it is ready, the recording is sent by email to the owners of this room and to you.'
+});
+
+export const botJobDeliveryNoticeStreamerLabel = (): string => intl.formatMessage({
+	id: 'room.botJobDeliveryNoticeStreamer',
+	defaultMessage: 'The stream link and any recording of it are sent by email to the owners of this room and to you.'
+});
+
+export const botJobDeliveryNoticeTranscriberLabel = (): string => intl.formatMessage({
+	id: 'room.botJobDeliveryNoticeTranscriber',
+	defaultMessage: 'When it is ready, the transcript is sent by email to the owners of this room and to you.'
+});
+
+export const tenantLocaleLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.tenantLocale',
+	defaultMessage: 'Language of emails'
+});
+
+export const tenantLocaleNoneLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.tenantLocaleNone',
+	defaultMessage: 'Not set (English)'
+});
+
+export const tenantLocaleTooltipLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.tenantLocaleTooltip',
+	defaultMessage: 'The language of the emails this tenant sends, such as the notice that a recording is ready, and the language a new meeting invitation starts with. Empty means English.'
+});

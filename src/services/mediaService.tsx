@@ -20,6 +20,7 @@ import { MediaSender } from '../utils/mediaSender';
 import type { E2eeService } from './e2eeService';
 import { Logger } from '../utils/Logger';
 import edumeetConfig from '../utils/edumeetConfig';
+import { audioOnlyCapabilities, transcriberPage } from '../utils/botJobs';
 import { fileService } from '../store/store';
 
 const logger = new Logger('MediaService');
@@ -241,7 +242,10 @@ export class MediaService extends EventEmitter {
 
 						fileService.reinitWithIceServers(iceServers);
 
-						const { recvRtpCapabilities: rtpCapabilities } = await this.receiveRouterRtpCapabilities(routerRtpCapabilities);
+						const { recvRtpCapabilities } = await this.receiveRouterRtpCapabilities(routerRtpCapabilities);
+						const rtpCapabilities = transcriberPage(window.location.href) && recvRtpCapabilities
+							? audioOnlyCapabilities(recvRtpCapabilities)
+							: recvRtpCapabilities;
 
 						respond({ rtpCapabilities });
 

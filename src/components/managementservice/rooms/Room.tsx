@@ -613,7 +613,7 @@ const RoomTable = () => {
 					{ id !=0 && <>
 						<RoomOwnerTable roomId={id} />
 						<RoomUserRoleTable roomId={id} />
-						{invitesEnabled && <MeetingsTable roomId={id} />}
+						{invitesEnabled && <MeetingsTable roomId={id} tenantId={tenantId || undefined} />}
 					</>}
 					
 				</DialogContent>

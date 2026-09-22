@@ -26,7 +26,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment, { Moment } from 'moment';
-import { Meeting, MeetingAttendee, MeetingOccurrenceRsvp, MeetingPartstat, Room, User } from '../../../utils/types';
+import { Meeting, MeetingAttendee, MeetingOccurrenceRsvp, MeetingPartstat, Room, User, Tenant } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { localeList } from '../../../utils/intlManager';
 import { browserTimezone, instantToWallClock, timezoneOptions, wallClockToInstant } from '../../../utils/timezones';
@@ -162,9 +162,11 @@ export interface MeetingsTableProps {
 	// When omitted, renders the global "all visible meetings" view with a Room column
 	// and dropdown.
 	roomId?: number;
+	// The tenant of that room, for the language a new invitation starts in.
+	tenantId?: number;
 }
 
-const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
+const MeetingsTable = ({ roomId: roomIdProp, tenantId: tenantIdProp }: MeetingsTableProps = {}) => {
 	const isRoomScoped = roomIdProp !== undefined;
 	const dispatch = useAppDispatch();
 	const localization = useMRTLocalization();
@@ -177,6 +179,7 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 
 	const [ data, setData ] = useState<Meeting[]>([]);
 	const [ rooms, setRooms ] = useState<Room[]>([]);
+	const [ tenants, setTenants ] = useState<Tenant[]>([]);
 	const [ users, setUsers ] = useState<User[]>([]);
 	const [ isLoading, setIsLoading ] = useState(false);
 
@@ -195,6 +198,21 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 		.startOf('hour'));
 	const [ timezone, setTimezone ] = useState(browserTimezone());
 	const [ locale, setLocale ] = useState(defaultLocale);
+
+	// A new invitation starts in the language its tenant writes in, when one is set;
+	// the language of the interface is the fallback, as before.
+	const tenantLocale = (tenantId?: number | null): string | undefined => {
+		const tenant = tenantId != null ? tenants.find((t) => Number(t.id) === Number(tenantId)) : (tenants.length === 1 ? tenants[0] : undefined);
+
+		return tenant?.locale || undefined;
+	};
+
+	useEffect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		dispatch(getData('tenants')).then((result: any) => {
+			if (result?.data) setTenants(result.data);
+		});
+	}, []);
 	const [ repeatMode, setRepeatMode ] = useState<RepeatMode>('NEVER');
 	const [ repeatInterval, setRepeatInterval ] = useState(1);
 	const [ repeatCount, setRepeatCount ] = useState(10);
@@ -328,7 +346,7 @@ const MeetingsTable = ({ roomId: roomIdProp }: MeetingsTableProps = {}) => {
 			.add(2, 'hour')
 			.startOf('hour'));
 		setTimezone(browserTimezone());
-		setLocale(defaultLocale);
+		setLocale(tenantLocale(isRoomScoped ? tenantIdProp : (rooms.length > 0 ? rooms[0].tenantId : undefined)) ?? defaultLocale);
 		setRepeatMode('NEVER');
 		setRepeatInterval(1);
 		setRepeatCount(10);

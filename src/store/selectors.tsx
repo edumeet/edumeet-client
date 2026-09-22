@@ -28,6 +28,7 @@ const groupAudioOnlySelector: Selector<boolean> = (state) => state.settings.grou
 const hideNonVideoSelector: Selector<boolean> = (state) => state.settings.hideNonVideo;
 const hideSelfViewSelector: Selector<boolean> = (state) => state.settings.hideSelfView;
 const devicesSelector: Selector<MediaDevice[]> = (state) => state.me.devices;
+const headlessSelector: Selector<boolean> = (state) => Boolean(state.room.headless);
 const receiveVideoSelector: Selector<boolean> = (state) => state.me.receiveVideo;
 const recordingSelector: Selector<boolean | undefined> = (state) => state.room.recording;
 const directMessagesSelect: Selector<Record<string, DirectMessageThread>> = (state) => state.directMessages;
@@ -104,12 +105,24 @@ export const roomSessionsLengthSelector = createSelector(
 	(roomSessions) => roomSessions.length
 );
 
-// Counts bots too, as it did before they were hidden: two participants and a
-// bot must stay on the media node, or the bot would receive nothing.
+// A room with a bot in it stays on the media node. Peer-to-peer media never reaches
+// the media node, so a transcriber would be sent video it declared it cannot take, an
+// operator would see nothing of what the bot receives, and the switch back when the
+// next participant arrives would close the bot's tracks in the middle of a recording.
+// A bot counts wherever it is seen from, the bot's own page included.
 export const p2pModeSelector = createSelector(
 	roomSessionsLengthSelector,
 	peersSelector,
-	(sessions, peers) => sessions === 1 && Object.keys(peers).length < 2 && edumeetConfig.p2penabled
+	headlessSelector,
+	(sessions, peers, headless) => {
+		if (headless) return false;
+
+		const others = Object.values(peers);
+
+		if (others.some((peer) => peer.headless)) return false;
+
+		return sessions === 1 && others.length < 2 && edumeetConfig.p2penabled;
+	}
 );
 
 /**

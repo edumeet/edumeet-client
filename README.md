@@ -175,7 +175,11 @@ streams or transcribes, see
 [BOT-PROVIDER-API.md](https://github.com/edumeet/edumeet/blob/main/BOT-PROVIDER-API.md)), moderators
 get an entry per kind in the More menu: "Start server recording", "Start live stream", "Start server
 transcription". They appear only for a kind the tenant has a provider for, and only for moderators;
-a tenant without providers sees nothing new anywhere.
+a tenant without providers sees nothing new anywhere. Where login is enabled, a moderator who is not signed in sees the entry
+disabled with "Log in to record" (a deployment without login has no such entries): the recording, stream link or transcript is sent by email to the owners of the room and to
+the moderator who started it, resolved from their accounts, so somebody signed in has to start it.
+The confirmation says so. Stopping a job needs the same; a moderator who is not signed in can still remove
+the bot from the bot menu, which ends its job.
 
 Starting one is confirmed in a dialog that names the provider, and in an end-to-end encrypted room
 says that the provider will be able to see and hear the meeting. Where a tenant has more than one
@@ -188,6 +192,13 @@ next to it opens, for a moderator, a row per job with the provider's name, what 
 a **Stop** button; stopping asks the provider to finish properly rather than cutting the browser off.
 Bots that belong to no job are removed with **Kick** as before, as is a job whose browser does not
 leave. A job that fails tells the moderators, by the provider's name and reason.
+
+A transcriber page (`botType=transcriber`) declares no video capability, so it receives audio only
+and no video is decoded or decrypted on it.
+
+A room with a bot in it stays on the media node: a meeting small enough for peer-to-peer media
+goes through the media node while a bot is there, so what the bot receives does not change when
+the next participant arrives.
 
 A page that belongs to a job carries `jobId` in its URL and gets one extra function,
 `window.edumeetBot.status(state, reason)`, for the recorder to report `running`, `finished` or

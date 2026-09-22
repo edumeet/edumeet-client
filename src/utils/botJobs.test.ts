@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('./edumeetConfig', () => ({ default: { serverHostname: 'rooms.example.edu', productionPort: 443, developmentPort: 8443 } }));
 vi.stubGlobal('window', { location: { hostname: 'meet.example.edu' } });
 
-import { BOT_RETRY_INTERVAL_MS, BOT_RETRY_WINDOW_MS, asBotJobType, asBotStatus, botMenu, botRetryPlan, disclosedJobs, disclosedKinds, BotJobInfo } from './botJobs';
+import { BOT_RETRY_INTERVAL_MS, BOT_RETRY_WINDOW_MS, asBotJobType, audioOnlyCapabilities, transcriberPage, asBotStatus, botMenu, botRetryPlan, disclosedJobs, disclosedKinds, BotJobInfo } from './botJobs';
 import { asBotRejection, botJobIdFromUrl } from './headless';
 import { getSignalingUrl } from './signalingHelpers';
 
@@ -92,5 +92,34 @@ describe('what the bot menu offers a moderator', () => {
 
 	it('never kicks the bot of a job that can still be stopped properly', () => {
 		expect(botMenu(bots, jobs).kickablePeerIds).not.toContain('job-bot');
+	});
+});
+
+describe('what a transcriber declares it can receive', () => {
+	it('is audio only, codecs and header extensions alike, with the rest of the capabilities kept', () => {
+		const declared = audioOnlyCapabilities({
+			codecs: [ { kind: 'audio', mimeType: 'audio/opus' }, { kind: 'video', mimeType: 'video/VP8' }, { kind: 'video', mimeType: 'video/rtx' } ],
+			headerExtensions: [ { kind: 'audio', uri: 'urn:ietf:params:rtp-hdrext:ssrc-audio-level' }, { kind: 'video', uri: 'urn:3gpp:video-orientation' } ],
+			fecMechanisms: [],
+		});
+
+		expect(declared.codecs).toEqual([ { kind: 'audio', mimeType: 'audio/opus' } ]);
+		expect(declared.headerExtensions).toEqual([ { kind: 'audio', uri: 'urn:ietf:params:rtp-hdrext:ssrc-audio-level' } ]);
+		expect(declared.fecMechanisms).toEqual([]);
+		expect(audioOnlyCapabilities({})).toEqual({ codecs: [], headerExtensions: [] });
+	});
+});
+
+describe('which page gives up video', () => {
+	it('is a headless transcriber page and nothing else', () => {
+		expect(transcriberPage('https://meet.example.org/r?headless=1&botType=transcriber')).toBe(true);
+		expect(transcriberPage('https://meet.example.org/r?headless=true&botType=transcriber&jobId=x')).toBe(true);
+		// a participant with a stray parameter in a shared link keeps their video
+		expect(transcriberPage('https://meet.example.org/r?botType=transcriber')).toBe(false);
+		expect(transcriberPage('https://meet.example.org/r?headless=0&botType=transcriber')).toBe(false);
+		// the other kinds of bot need video
+		expect(transcriberPage('https://meet.example.org/r?headless=1&botType=recorder')).toBe(false);
+		expect(transcriberPage('https://meet.example.org/r?headless=1')).toBe(false);
+		expect(transcriberPage(undefined)).toBe(false);
 	});
 });

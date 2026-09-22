@@ -2,6 +2,9 @@ import {
 	botJobConfirmRecorderLabel,
 	botJobConfirmStreamerLabel,
 	botJobConfirmTranscriberLabel,
+	botJobDeliveryNoticeRecorderLabel,
+	botJobDeliveryNoticeStreamerLabel,
+	botJobDeliveryNoticeTranscriberLabel,
 	botJobRunningRecorderLabel,
 	botJobRunningStreamerLabel,
 	botJobRunningTranscriberLabel,
@@ -27,6 +30,12 @@ export const botJobConfirmLabel = (type: BotJobType, name: string): string => ({
 	streamer: botJobConfirmStreamerLabel,
 	transcriber: botJobConfirmTranscriberLabel,
 })[type](name);
+
+export const botJobDeliveryNoticeLabel = (type: BotJobType): string => ({
+	recorder: botJobDeliveryNoticeRecorderLabel,
+	streamer: botJobDeliveryNoticeStreamerLabel,
+	transcriber: botJobDeliveryNoticeTranscriberLabel,
+})[type]();
 
 export const botJobRunningLabel = (type: BotJobType): string => ({
 	recorder: botJobRunningRecorderLabel,

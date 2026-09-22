@@ -52,6 +52,7 @@ const BotsIndicator = (): React.JSX.Element | null => {
 	const bots = useAppSelector(botsSelector);
 	const jobs = useAppSelector((state) => state.botJobs.jobs);
 	const canModerate = usePermissionSelector(permissions.MODERATE_ROOM);
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
 
 	// A moderator also sees a job whose bot has not arrived yet, to be able to stop it.
@@ -68,6 +69,9 @@ const BotsIndicator = (): React.JSX.Element | null => {
 	}
 
 	const { plainBots, stoppableJobIds, kickablePeerIds } = botMenu(bots, jobs);
+	// Stopping goes through the provider and the room server takes that only from someone
+	// signed in; anyone else who moderates can still remove the bots outright.
+	const canStop = loggedIn;
 
 	const remove = (ids: string[]): void => {
 		setAnchorEl(null);
@@ -80,8 +84,10 @@ const BotsIndicator = (): React.JSX.Element | null => {
 	};
 
 	const removeAll = (): void => {
-		stop(stoppableJobIds);
-		remove(kickablePeerIds);
+		if (canStop) {
+			stop(stoppableJobIds);
+			remove(kickablePeerIds);
+		} else remove(bots.map((bot) => bot.id));
 	};
 
 	return (
@@ -107,7 +113,7 @@ const BotsIndicator = (): React.JSX.Element | null => {
 						{ jobs.map((job) => (
 							<Row key={job.id} disableGutters data-bot-job-row={job.type}>
 								<ListItemText primary={job.label} secondary={botJobStateLabel(job.state)} />
-								{ job.state === 'stopping' ?
+								{ job.state === 'stopping' || !canStop ?
 									job.peerId && <ConfirmButton
 										size='small'
 										variant='outlined'

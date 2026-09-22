@@ -22,6 +22,7 @@ import Filesharing from '../menuitems/Filesharing';
 import Recording from '../menuitems/Recording';
 import BotJob from '../menuitems/BotJob';
 import { botJobTypes } from '../../utils/botJobs';
+import edumeetConfig from '../../utils/edumeetConfig';
 import Drawing from '../menuitems/Drawing';
 import MoreButton from '../controlbuttons/MoreButton';
 
@@ -140,7 +141,7 @@ const ControlButtonsBar = (): React.JSX.Element => {
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ !isMobile && localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
-				{ canModerate && botJobTypes.filter((type) => botProviderTypes.includes(type)).map((type) => (
+				{ canModerate && edumeetConfig.loginEnabled && botJobTypes.filter((type) => botProviderTypes.includes(type)).map((type) => (
 					<BotJob key={type} type={type} onClick={handleMoreClose} />
 				)) }
 				{ !isMobile && <Drawing onClick={handleMoreClose} /> }

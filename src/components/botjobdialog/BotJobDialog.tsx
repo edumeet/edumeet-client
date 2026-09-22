@@ -5,7 +5,7 @@ import { uiActions } from '../../store/slices/uiSlice';
 import { startBotJob } from '../../store/actions/botJobActions';
 import GenericDialog from '../genericdialog/GenericDialog';
 import { botJobE2eeNoticeLabel, botJobProviderLabel, noLabel, yesLabel } from '../translated/translatedComponents';
-import { botJobConfirmLabel, botJobStartLabel } from '../../utils/botJobLabels';
+import { botJobConfirmLabel, botJobDeliveryNoticeLabel, botJobStartLabel } from '../../utils/botJobLabels';
 
 // A job brings a recorder, streamer or transcriber into the room, so starting one
 // is always confirmed, and in an encrypted room says what that means for the
@@ -55,6 +55,7 @@ const BotJobDialog = (): React.JSX.Element | null => {
 						</TextField>
 					}
 					<Typography>{ botJobConfirmLabel(type, provider.label) }</Typography>
+					<Typography variant='body2'>{ botJobDeliveryNoticeLabel(type) }</Typography>
 					{ e2eeEnabled && <Alert severity='warning'>{ botJobE2eeNoticeLabel() }</Alert> }
 				</Stack>
 			}

@@ -366,6 +366,7 @@ export type Tenant = {
 	hideUserDetails?: boolean,
 	allowedMediaNodeRegions?: string[] | null,
 	botPolicy?: BotPolicy | null,
+	locale?: string | null,
 };
 export type TenantOptionTypes = Array<Tenant>
 

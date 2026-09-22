@@ -231,4 +231,18 @@ describe('headless peers', () => {
 		expect(p2pModeSelector(one)).toBe(true);
 		expect(p2pModeSelector(oneAndBot)).toBe(false);
 	});
+
+	it('keeps a lone participant with a bot on the media node, so the bot is not cut off when the next one arrives', () => {
+		const alone = state({ peers: [], spotlights: [] });
+		const aloneWithBot = { ...alone, peers: { bot: { id: 'bot', sessionId: SESSION, headless: true } } } as unknown as RootState;
+
+		expect(p2pModeSelector(alone)).toBe(true);
+		expect(p2pModeSelector(aloneWithBot)).toBe(false);
+	});
+
+	it('never goes peer to peer on a bot\'s own page', () => {
+		const bot = state({ peers: [ 'C1' ], cameras: [ 'C1' ], spotlights: [ 'C1' ], headless: true });
+
+		expect(p2pModeSelector(bot)).toBe(false);
+	});
 });

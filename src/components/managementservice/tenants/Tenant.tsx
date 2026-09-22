@@ -10,7 +10,8 @@ import TenantFQDNTable from './TenatnFQDN';
 import TenantOAuthTable from './TenantOAuth';
 import TenantInviteConfigPanel from './TenantInviteConfig';
 import TenantBotCredentialTable from './TenantBotCredential';
-import { addNewLabel, allowedMediaNodeRegionsLabel, applyLabel, authenticationLabel, botProvidersLabel, botPolicyLabel, botPolicyOptionLabel, botPolicyTooltipLabel, botsLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, limitMediaNodeRegionsLabel, manageItemLabel, mediaNodeRegionsLabel, nameLabel, selectAtLeastOneRegionLabel, tenantLabel } from '../../translated/translatedComponents';
+import { localeList } from '../../../utils/intlManager';
+import { addNewLabel, allowedMediaNodeRegionsLabel, tenantLocaleLabel, tenantLocaleNoneLabel, tenantLocaleTooltipLabel, applyLabel, authenticationLabel, botProvidersLabel, botPolicyLabel, botPolicyOptionLabel, botPolicyTooltipLabel, botsLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, limitMediaNodeRegionsLabel, manageItemLabel, mediaNodeRegionsLabel, nameLabel, selectAtLeastOneRegionLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import edumeetConfig from '../../../utils/edumeetConfig';
 export interface TenantProp {
@@ -65,6 +66,7 @@ const TenantTable = () => {
 	const [ limitRegions, setLimitRegions ] = useState(false);
 	const [ allowedMediaNodeRegions, setAllowedMediaNodeRegions ] = useState<string[]>([]);
 	const [ botPolicy, setBotPolicy ] = useState<BotPolicy>('disabled');
+	const [ locale, setLocale ] = useState('');
 
 	async function fetchProduct() {
 		setIsLoading(true);
@@ -94,6 +96,7 @@ const TenantTable = () => {
 		setAllowedMediaNodeRegions([]);
 		setOpen(true);
 		setBotPolicy('disabled');
+		setLocale('');
 	};
 
 	const handleClickOpenNoreset = () => {
@@ -133,13 +136,13 @@ const TenantTable = () => {
 
 		// add new data / mod data / error
 		if (id === 0) {
-			dispatch(createData({ name, description, hideUserDetails, allowedMediaNodeRegions: regionsPayload, botPolicy }, 'tenants')).then(() => {
+			dispatch(createData({ name, description, hideUserDetails, allowedMediaNodeRegions: regionsPayload, botPolicy, locale: locale || null }, 'tenants')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
 
 		} else {
-			dispatch(patchData(id, { name: name, description: description, hideUserDetails: hideUserDetails, allowedMediaNodeRegions: regionsPayload, botPolicy }, 'tenants')).then(() => {
+			dispatch(patchData(id, { name: name, description: description, hideUserDetails: hideUserDetails, allowedMediaNodeRegions: regionsPayload, botPolicy, locale: locale || null }, 'tenants')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
@@ -237,6 +240,21 @@ const TenantTable = () => {
 						<h4>{`${tenantLabel()} ${authenticationLabel()}`}</h4>
 						<TenantOAuthTable tenantId={id} />
 						<h4>{`${tenantLabel()} ${inviteEmailConfigLabel()}`}</h4>
+						<Tooltip title={tenantLocaleTooltipLabel()} placement="top-start">
+							<TextField
+								select
+								margin="dense"
+								id="tenantLocale"
+								label={tenantLocaleLabel()}
+								fullWidth
+								value={locale}
+								onChange={(event) => setLocale(event.target.value)}
+							>
+								<MenuItem value="">{tenantLocaleNoneLabel()}</MenuItem>
+								{ localeList.map((entry) => <MenuItem key={entry.file} value={entry.file}>{entry.name}</MenuItem>) }
+								{ locale && !localeList.some((entry) => entry.file === locale) && <MenuItem value={locale}>{locale}</MenuItem> }
+							</TextField>
+						</Tooltip>
 						<TenantInviteConfigPanel tenantId={id} />
 						<h4>{botsLabel()}</h4>
 						<Tooltip title={botPolicyTooltipLabel()} placement="top-start">
@@ -300,6 +318,8 @@ const TenantTable = () => {
 					setLimitRegions(hasRegions);
 					setAllowedMediaNodeRegions(hasRegions ? regions : []);
 					setBotPolicy(botPolicies.find((policy) => policy === tenantData?.botPolicy) ?? 'disabled');
+					// Kept as stored even when the list does not offer it, so an unrelated edit cannot clear it.
+					setLocale(typeof tenantData?.locale === 'string' ? tenantData.locale : '');
 
 					handleClickOpenNoreset();
 

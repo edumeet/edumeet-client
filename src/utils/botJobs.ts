@@ -1,3 +1,5 @@
+import { botTypeFromUrl, headlessFromUrl } from './headless';
+
 export const botJobTypes = [ 'recorder', 'streamer', 'transcriber' ] as const;
 export type BotJobType = typeof botJobTypes[number];
 
@@ -71,6 +73,18 @@ export const botMenu = <Bot extends { id: string }>(bots: Bot[], jobs: BotJobInf
 		kickablePeerIds: [ ...plainBots.map((bot) => bot.id), ...stuck ],
 	};
 };
+
+// A transcriber only listens. Declaring no video codec means the room server never
+// creates a video consumer for it: no transceivers, nothing on the media node, and
+// no video in the encryption path. Cameras, screens and extra video alike.
+export const transcriberPage = (href?: string): boolean =>
+	headlessFromUrl(href) === true && botTypeFromUrl(href) === 'transcriber';
+
+export const audioOnlyCapabilities = <T extends { codecs?: { kind: string }[]; headerExtensions?: { kind: string }[] }>(capabilities: T): T => ({
+	...capabilities,
+	codecs: (capabilities.codecs ?? []).filter((codec) => codec.kind === 'audio'),
+	headerExtensions: (capabilities.headerExtensions ?? []).filter((extension) => extension.kind === 'audio'),
+});
 
 // Part of the provider contract: a page that carries a job and finds the room not
 // open yet tries again for a while, because after a room server restart the bot
