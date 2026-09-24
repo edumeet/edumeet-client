@@ -1,6 +1,6 @@
 import { AppThunk } from '../store';
 import { Logger } from '../../utils/Logger';
-import { BotJobType, asBotStatus } from '../../utils/botJobs';
+import { BotJobType, asBotJobType, asBotStatus } from '../../utils/botJobs';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { botJobStartFailedLabel, botJobStopFailedLabel } from '../../components/translated/translatedComponents';
 
@@ -46,9 +46,11 @@ export const stopBotJob = (jobId: string): AppThunk<Promise<void>> => async (
 
 const MAX_REASON_LENGTH = 200;
 
-// What `window.edumeetBot.status()` does: only the page of a job, once it is in the
-// room, has anything to report. The return value tells the recorder whether it was sent.
-export const sendBotStatus = (status: unknown, reason?: unknown): AppThunk<boolean> => (
+// What `window.edumeetBot.status()` does: only the page of a bot that runs jobs, once
+// it is in the room, has anything to report. A kind names the one job a `finished` or
+// `failed` is about; `running` is always the whole bot's heartbeat. The return value
+// tells the provider whether it was sent.
+export const sendBotStatus = (status: unknown, reason?: unknown, type?: unknown): AppThunk<boolean> => (
 	_dispatch,
 	getState,
 	{ signalingService }
@@ -56,11 +58,16 @@ export const sendBotStatus = (status: unknown, reason?: unknown): AppThunk<boole
 	const { room, me } = getState();
 	const state = asBotStatus(status);
 
-	if (!state || !room.headless || !me.botJobId || room.state !== 'joined') return false;
+	const kind = asBotJobType(type);
+
+	if (!state || !room.headless || !me.botId || room.state !== 'joined') return false;
+	// A kind that is no kind would read as the whole bot, so nothing is sent.
+	if (state !== 'running' && type != null && !kind) return false;
 
 	signalingService.notify('botStatus', {
 		state,
-		...(state === 'failed' && typeof reason === 'string' && reason ? { reason: reason.slice(0, MAX_REASON_LENGTH) } : {})
+		...(state === 'failed' && typeof reason === 'string' && reason ? { reason: reason.slice(0, MAX_REASON_LENGTH) } : {}),
+		...(state !== 'running' && kind ? { type: kind } : {})
 	});
 
 	return true;

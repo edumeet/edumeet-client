@@ -60,7 +60,7 @@ export interface MeState {
 	botToken?: string;
 	botType?: string;
 	botSession?: string;
-	botJobId?: string;
+	botId?: string;
 }
 
 const initialState: MeState = {
@@ -182,8 +182,8 @@ const meSlice = createSlice({
 		setBotSession: ((state, action: PayloadAction<string | undefined>) => {
 			state.botSession = action.payload;
 		}),
-		setBotJobId: ((state, action: PayloadAction<string | undefined>) => {
-			state.botJobId = action.payload;
+		setBotId: ((state, action: PayloadAction<string | undefined>) => {
+			state.botId = action.payload;
 		}),
 		setReceiveVideo: ((state, action: PayloadAction<boolean>) => {
 			state.receiveVideo = action.payload;

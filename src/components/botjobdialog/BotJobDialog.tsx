@@ -6,6 +6,7 @@ import { startBotJob } from '../../store/actions/botJobActions';
 import GenericDialog from '../genericdialog/GenericDialog';
 import { botJobE2eeNoticeLabel, botJobProviderLabel, noLabel, yesLabel } from '../translated/translatedComponents';
 import { botJobConfirmLabel, botJobDeliveryNoticeLabel, botJobStartLabel } from '../../utils/botJobLabels';
+import { kindsOf, providerBotPresent } from '../../utils/botJobs';
 
 // A job brings a recorder, streamer or transcriber into the room, so starting one
 // is always confirmed, and in an encrypted room says what that means for the
@@ -15,9 +16,10 @@ const BotJobDialog = (): React.JSX.Element | null => {
 	const dispatch = useAppDispatch();
 	const type = useAppSelector((state) => state.ui.botJobDialog);
 	const providers = useAppSelector((state) => state.botJobs.providers);
+	const jobs = useAppSelector((state) => state.botJobs.jobs);
 	const e2eeEnabled = useAppSelector((state) => state.room.e2eeEnabled);
 	const [ providerId, setProviderId ] = useState<number | undefined>();
-	const candidates = providers.filter((provider) => provider.jobType === type);
+	const candidates = providers.filter((provider) => type !== undefined && kindsOf(provider).includes(type));
 	const provider = candidates.find((candidate) => candidate.id === providerId) ?? candidates[0];
 
 	useEffect(() => setProviderId(undefined), [ type ]);
@@ -54,7 +56,7 @@ const BotJobDialog = (): React.JSX.Element | null => {
 							)) }
 						</TextField>
 					}
-					<Typography>{ botJobConfirmLabel(type, provider.label) }</Typography>
+					<Typography>{ botJobConfirmLabel(type, provider.label, providerBotPresent(jobs, provider.id)) }</Typography>
 					<Typography variant='body2'>{ botJobDeliveryNoticeLabel(type) }</Typography>
 					{ e2eeEnabled && <Alert severity='warning'>{ botJobE2eeNoticeLabel() }</Alert> }
 				</Stack>

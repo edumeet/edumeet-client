@@ -78,12 +78,13 @@ export const botSessionFromUrl = (href?: string): string | undefined => {
 	}
 };
 
-// The job a provider started this page for; the room server gave it the id.
-export const botJobIdFromUrl = (href?: string): string | undefined => {
+// The bot a provider started this page as; the room server gave it the id, and the
+// bot does every job the room server sends it.
+export const botIdFromUrl = (href?: string): string | undefined => {
 	if (!href) return undefined;
 
 	try {
-		const value = new URL(href).searchParams.get('jobId')?.trim();
+		const value = new URL(href).searchParams.get('botId')?.trim();
 
 		return value && /^[0-9a-f-]{36}$/i.test(value) ? value : undefined;
 	} catch {

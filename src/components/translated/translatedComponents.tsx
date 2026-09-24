@@ -2560,6 +2560,21 @@ export const botJobConfirmTranscriberLabel = (name: string): string => intl.form
 	defaultMessage: '{name} will join this room and transcribe everything that is said. Continue?'
 }, { name });
 
+export const botJobConfirmMoreRecorderLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobConfirmMoreRecorder',
+	defaultMessage: '{name} is already in this room, and will also record everything that is said and shown. Continue?'
+}, { name });
+
+export const botJobConfirmMoreStreamerLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobConfirmMoreStreamer',
+	defaultMessage: '{name} is already in this room, and will also stream everything that is said and shown. Continue?'
+}, { name });
+
+export const botJobConfirmMoreTranscriberLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobConfirmMoreTranscriber',
+	defaultMessage: '{name} is already in this room, and will also transcribe everything that is said. Continue?'
+}, { name });
+
 export const botJobE2eeNoticeLabel = (): string => intl.formatMessage({
 	id: 'room.botJobE2eeNotice',
 	defaultMessage: 'This room is end-to-end encrypted. The bot takes part in the encryption, so its provider will be able to see and hear the meeting.'
@@ -2652,7 +2667,7 @@ export const botProvidersLabel = (): string => intl.formatMessage({
 
 export const botJobTypeLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.botJobType',
-	defaultMessage: 'Job type'
+	defaultMessage: 'Job types'
 });
 
 export const botJobTypeNoneLabel = (): string => intl.formatMessage({
@@ -2682,7 +2697,7 @@ export const botApiUrlLabel = (): string => intl.formatMessage({
 
 export const botApiUrlTooltipLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.botApiUrlTooltip',
-	defaultMessage: 'The https address of the provider service for this kind of job, as given by the provider. Moderators can then start and stop the job from the room. Leave the job type, this address and the key empty for a bot that is started by hand.'
+	defaultMessage: 'The https address of the provider service, as given by the provider. Moderators can then start and stop the ticked kinds of job from the room; one bot of the provider does all of them in a session. Leave the job types, this address and the key empty for a bot that is started by hand.'
 });
 
 export const botApiSecretLabel = (): string => intl.formatMessage({
@@ -2697,7 +2712,7 @@ export const botApiSecretKeepLabel = (): string => intl.formatMessage({
 
 export const botProviderIncompleteLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.botProviderIncomplete',
-	defaultMessage: 'A provider needs a job type, an https API URL and an API key'
+	defaultMessage: 'A provider needs at least one job type, an https API URL and an API key'
 });
 
 export const botJobLoginToRecordLabel = (): string => intl.formatMessage({
@@ -2712,7 +2727,7 @@ export const botJobDeliveryNoticeRecorderLabel = (): string => intl.formatMessag
 
 export const botJobDeliveryNoticeStreamerLabel = (): string => intl.formatMessage({
 	id: 'room.botJobDeliveryNoticeStreamer',
-	defaultMessage: 'The stream link and any recording of it are sent by email to the owners of this room and to you.'
+	defaultMessage: 'The stream goes to the destination configured for it.'
 });
 
 export const botJobDeliveryNoticeTranscriberLabel = (): string => intl.formatMessage({

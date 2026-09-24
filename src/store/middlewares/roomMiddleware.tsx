@@ -128,12 +128,12 @@ const createRoomMiddleware = ({
 
 							// A bot's samples are marked, so its figures are not read as a participant's.
 							const { headless } = getState().room;
-							const { botType, botJobId } = getState().me;
+							const { botType, botId } = getState().me;
 
 							mediaService.setMonitorAttachments({
 								actualSessionId: sessionId,
 								displayName: getState().settings.displayName,
-								...(headless ? { headless: true, ...(botType ? { botType } : {}), ...(botJobId ? { jobId: botJobId } : {}) } : {}),
+								...(headless ? { headless: true, ...(botType ? { botType } : {}), ...(botId ? { botId } : {}) } : {}),
 							});
 
 							break;
@@ -202,7 +202,7 @@ const createRoomMiddleware = ({
 
 						case 'botRejected': {
 							const reason = asBotRejection(notification.data?.reason);
-							const { retry, firstRefusedAt } = botRetryPlan({ reason, jobId: getState().me.botJobId, firstRefusedAt: botFirstRefusedAt, now: Date.now() });
+							const { retry, firstRefusedAt } = botRetryPlan({ reason, botId: getState().me.botId, firstRefusedAt: botFirstRefusedAt, now: Date.now() });
 
 							// The page of a job waits for the room to open again. Nothing is written
 							// to the document meanwhile: a reason there tells the recorder it is over.

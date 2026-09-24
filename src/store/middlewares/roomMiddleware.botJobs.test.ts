@@ -59,9 +59,9 @@ afterEach(() => {
 	vi.useRealTimers();
 });
 
-describe('the page of a bot job that finds the room not open', () => {
+describe('the page of a bot that finds the room not open', () => {
 	it('tries again and says nothing of it on the document', () => {
-		const { calls, deliver } = setup({ botJobId: jobId });
+		const { calls, deliver } = setup({ botId: jobId });
 
 		deliver('botRejected', { reason: 'roomNotOpen' });
 
@@ -69,7 +69,7 @@ describe('the page of a bot job that finds the room not open', () => {
 	});
 
 	it('gives up with the reason once the window has passed', () => {
-		const { calls, deliver } = setup({ botJobId: jobId });
+		const { calls, deliver } = setup({ botId: jobId });
 
 		deliver('botRejected', { reason: 'roomNotOpen' });
 		vi.setSystemTime(BOT_RETRY_WINDOW_MS);
@@ -79,7 +79,7 @@ describe('the page of a bot job that finds the room not open', () => {
 	});
 
 	it('gets a whole new window once it has been in the room', () => {
-		const { calls, deliver } = setup({ botJobId: jobId });
+		const { calls, deliver } = setup({ botId: jobId });
 
 		deliver('botRejected', { reason: 'roomNotOpen' });
 		vi.setSystemTime(BOT_RETRY_WINDOW_MS);
@@ -91,14 +91,14 @@ describe('the page of a bot job that finds the room not open', () => {
 	});
 
 	it('does not try again for any other refusal', () => {
-		const { calls, deliver } = setup({ botJobId: jobId });
+		const { calls, deliver } = setup({ botId: jobId });
 
 		deliver('botRejected', { reason: 'jobNotActive' });
 
 		expect(calls()).toEqual([ roomActions.setLeaveReason('jobNotActive') ]);
 	});
 
-	it('does not try again without a job', () => {
+	it('does not try again without a bot id', () => {
 		const { calls, deliver } = setup();
 
 		deliver('botRejected', { reason: 'roomNotOpen' });
@@ -132,12 +132,12 @@ describe('bot jobs reaching a participant', () => {
 });
 
 describe('the monitoring samples of a bot', () => {
-	it('are marked as the samples of a bot, with its kind and its job', () => {
-		const { mediaService, deliver } = setup({ botType: 'recorder', botJobId: jobId }, { headless: true });
+	it('are marked as the samples of a bot, with its kind and its bot id', () => {
+		const { mediaService, deliver } = setup({ botType: 'recorder', botId: jobId }, { headless: true });
 
 		deliver('roomReady', roomReady);
 
-		expect(mediaService.setMonitorAttachments).toHaveBeenCalledWith({ actualSessionId: 's', displayName: 'Acme Recorder', headless: true, botType: 'recorder', jobId });
+		expect(mediaService.setMonitorAttachments).toHaveBeenCalledWith({ actualSessionId: 's', displayName: 'Acme Recorder', headless: true, botType: 'recorder', botId: jobId });
 	});
 
 	it('carry no such marks for a participant', () => {

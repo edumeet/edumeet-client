@@ -11,9 +11,11 @@ import {
 	DialogContentText,
 	DialogTitle,
 	FormControlLabel,
+	FormGroup,
+	FormHelperText,
+	FormLabel,
 	IconButton,
 	InputAdornment,
-	MenuItem,
 	TextField,
 	Tooltip,
 	Typography,
@@ -24,6 +26,7 @@ import { useAppDispatch } from '../../../store/hooks';
 import { createData, deleteData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { generateBotToken, hashBotToken, invalidRanges, parseRangeList, providerFormState } from '../../../utils/botCredentials';
 import { TenantProp } from './Tenant';
+import { BotJobType, botJobTypes } from '../../../utils/botJobs';
 import {
 	addNewLabel,
 	allowedIpsInvalidLabel,
@@ -61,6 +64,12 @@ import {
 // Postgres returns bigint columns as strings, so the value is coerced before it becomes a Date.
 const formatTime = (value?: number | string | null): string => (value ? new Date(Number(value)).toLocaleString() : neverLabel());
 
+const jobTypeLabels: Record<BotJobType, () => string> = {
+	recorder: botJobTypeRecorderLabel,
+	streamer: botJobTypeStreamerLabel,
+	transcriber: botJobTypeTranscriberLabel,
+};
+
 const TenantBotCredentialTable = (props: TenantProp) => {
 	const tenantId = props.tenantId;
 	const dispatch = useAppDispatch();
@@ -77,12 +86,8 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 				header: allowedIpsLabel(),
 			},
 			{
-				id: 'jobType',
-				accessorFn: (row) => (row.jobType ? {
-					recorder: botJobTypeRecorderLabel(),
-					streamer: botJobTypeStreamerLabel(),
-					transcriber: botJobTypeTranscriberLabel(),
-				}[row.jobType] : ''),
+				id: 'jobTypes',
+				accessorFn: (row) => (row.jobTypes ?? []).map((type) => jobTypeLabels[type]()).join(', '),
 				header: botJobTypeLabel(),
 			},
 			{
@@ -115,7 +120,7 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 	const [ token, setToken ] = useState('');
 	const [ tokenHash, setTokenHash ] = useState('');
 	const [ copied, setCopied ] = useState(false);
-	const [ jobType, setJobType ] = useState('');
+	const [ jobTypes, setJobTypes ] = useState<BotJobType[]>([]);
 	const [ apiUrl, setApiUrl ] = useState('');
 	const [ apiSecret, setApiSecret ] = useState('');
 	const [ hasApiSecret, setHasApiSecret ] = useState(false);
@@ -137,7 +142,7 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 	const ranges = parseRangeList(rangesText);
 	const badRanges = invalidRanges(ranges);
 	// A provider is a job type, an https address and a key, all three or none of them.
-	const { cleared: providerCleared, incomplete: providerIncomplete } = providerFormState({ jobType, apiUrl, apiSecret, hasApiSecret });
+	const { cleared: providerCleared, incomplete: providerIncomplete } = providerFormState({ jobTypes, apiUrl, apiSecret, hasApiSecret });
 	const canApply = label.trim() !== '' && ranges.length > 0 && badRanges.length === 0 && (id !== 0 || tokenHash !== '') && !providerIncomplete;
 
 	const handleClickOpen = () => {
@@ -148,7 +153,7 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 		setToken('');
 		setTokenHash('');
 		setCopied(false);
-		setJobType('');
+		setJobTypes([]);
 		setApiUrl('');
 		setApiSecret('');
 		setHasApiSecret(false);
@@ -184,7 +189,7 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 		if (!canApply) return;
 
 		// An empty key keeps the stored one, and an empty address clears the provider.
-		const provider = apiUrl.trim() === '' ? { apiUrl: '' } : { jobType, apiUrl: apiUrl.trim(), ...(apiSecret ? { apiSecret } : {}) };
+		const provider = apiUrl.trim() === '' ? { apiUrl: '' } : { jobTypes, apiUrl: apiUrl.trim(), ...(apiSecret ? { apiSecret } : {}) };
 
 		if (id === 0) {
 			dispatch(createData({ tenantId, label, tokenHash, allowedIps: ranges, enabled, ...(apiUrl.trim() === '' ? {} : provider) }, 'tenantBotCredentials')).then(() => {
@@ -272,21 +277,22 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 							helperText={badRanges.length > 0 ? allowedIpsInvalidLabel(badRanges.join(', ')) : ' '}
 						/>
 					</Tooltip>
-					<TextField
-						select
-						margin="dense"
-						id="jobType"
-						label={botJobTypeLabel()}
-						fullWidth
-						value={jobType}
-						onChange={(event) => setJobType(event.target.value)}
-					>
-						<MenuItem value="">{botJobTypeNoneLabel()}</MenuItem>
-						<MenuItem value="recorder">{botJobTypeRecorderLabel()}</MenuItem>
-						<MenuItem value="streamer">{botJobTypeStreamerLabel()}</MenuItem>
-						<MenuItem value="transcriber">{botJobTypeTranscriberLabel()}</MenuItem>
-					</TextField>
-					<Tooltip title={<Typography variant="body2">{botApiUrlTooltipLabel()}</Typography>} placement="top-start">
+					<FormLabel component="legend" sx={{ mt: 1 }}>{botJobTypeLabel()}</FormLabel>
+					<FormGroup row id="jobTypes">
+						{ botJobTypes.map((type) => (
+							<FormControlLabel
+								key={type}
+								label={jobTypeLabels[type]()}
+								control={<Checkbox
+									checked={jobTypes.includes(type)}
+									onChange={(_, checked) => setJobTypes(botJobTypes.filter((t) => (t === type ? checked : jobTypes.includes(t))))}
+								/>}
+							/>
+						)) }
+					</FormGroup>
+					{ jobTypes.length === 0 && <FormHelperText>{botJobTypeNoneLabel()}</FormHelperText> }
+					{/* It opens over the job types while the address is typed, so it lets clicks through to them. */}
+					<Tooltip title={<Typography variant="body2">{botApiUrlTooltipLabel()}</Typography>} placement="top-start" disableInteractive>
 						<TextField
 							margin="dense"
 							id="apiUrl"
@@ -334,7 +340,7 @@ const TenantBotCredentialTable = (props: TenantProp) => {
 					setToken('');
 					setTokenHash('');
 					setCopied(false);
-					setJobType(credential.jobType ?? '');
+					setJobTypes(botJobTypes.filter((type) => (credential.jobTypes ?? []).includes(type)));
 					setApiUrl(credential.apiUrl ?? '');
 					setApiSecret('');
 					setHasApiSecret(Boolean(credential.hasApiSecret));

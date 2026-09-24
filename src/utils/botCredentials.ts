@@ -58,17 +58,17 @@ export const isProviderUrl = (value: string): boolean => {
 	}
 };
 
-// A provider is a job type, an address and a key, all three or none. Emptying the
-// job type and the address turns a provider back into a plain key, and the stored
-// key goes with them; an empty key field otherwise keeps the stored key.
-export const providerFormState = ({ jobType, apiUrl, apiSecret, hasApiSecret }: {
-	jobType: string;
+// A provider is at least one job type, an address and a key, all three or none.
+// Emptying the job types and the address turns a provider back into a plain key, and
+// the stored key goes with them; an empty key field otherwise keeps the stored key.
+export const providerFormState = ({ jobTypes, apiUrl, apiSecret, hasApiSecret }: {
+	jobTypes: string[];
 	apiUrl: string;
 	apiSecret: string;
 	hasApiSecret: boolean;
 }): { cleared: boolean; incomplete: boolean } => {
-	const cleared = jobType === '' && apiUrl.trim() === '' && apiSecret === '';
-	const complete = jobType !== '' && isProviderUrl(apiUrl) && (apiSecret !== '' || hasApiSecret);
+	const cleared = jobTypes.length === 0 && apiUrl.trim() === '' && apiSecret === '';
+	const complete = jobTypes.length > 0 && isProviderUrl(apiUrl) && (apiSecret !== '' || hasApiSecret);
 
 	return { cleared, incomplete: !cleared && !complete };
 };

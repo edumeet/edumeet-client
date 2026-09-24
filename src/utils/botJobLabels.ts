@@ -2,6 +2,9 @@ import {
 	botJobConfirmRecorderLabel,
 	botJobConfirmStreamerLabel,
 	botJobConfirmTranscriberLabel,
+	botJobConfirmMoreRecorderLabel,
+	botJobConfirmMoreStreamerLabel,
+	botJobConfirmMoreTranscriberLabel,
 	botJobDeliveryNoticeRecorderLabel,
 	botJobDeliveryNoticeStreamerLabel,
 	botJobDeliveryNoticeTranscriberLabel,
@@ -16,6 +19,9 @@ import {
 	botJobStateRunningLabel,
 	botJobStateStartingLabel,
 	botJobStateStoppingLabel,
+	botJobTypeRecorderLabel,
+	botJobTypeStreamerLabel,
+	botJobTypeTranscriberLabel,
 } from '../components/translated/translatedComponents';
 import { BotJobState, BotJobType } from './botJobs';
 
@@ -25,11 +31,22 @@ export const botJobStartLabel = (type: BotJobType): string => ({
 	transcriber: botJobStartTranscriberLabel,
 })[type]();
 
-export const botJobConfirmLabel = (type: BotJobType, name: string): string => ({
+// A provider whose bot is already in the session takes the new kind on there.
+export const botJobConfirmLabel = (type: BotJobType, name: string, botPresent = false): string => (botPresent ? {
+	recorder: botJobConfirmMoreRecorderLabel,
+	streamer: botJobConfirmMoreStreamerLabel,
+	transcriber: botJobConfirmMoreTranscriberLabel,
+} : {
 	recorder: botJobConfirmRecorderLabel,
 	streamer: botJobConfirmStreamerLabel,
 	transcriber: botJobConfirmTranscriberLabel,
 })[type](name);
+
+export const botJobKindLabel = (type: BotJobType): string => ({
+	recorder: botJobTypeRecorderLabel,
+	streamer: botJobTypeStreamerLabel,
+	transcriber: botJobTypeTranscriberLabel,
+})[type]();
 
 export const botJobDeliveryNoticeLabel = (type: BotJobType): string => ({
 	recorder: botJobDeliveryNoticeRecorderLabel,

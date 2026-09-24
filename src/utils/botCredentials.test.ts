@@ -37,15 +37,19 @@ describe('address ranges in the form', () => {
 
 describe('the provider part of the form', () => {
 	const form = (over: Partial<Parameters<typeof providerFormState>[0]> = {}) =>
-		providerFormState({ jobType: '', apiUrl: '', apiSecret: '', hasApiSecret: false, ...over });
+		providerFormState({ jobTypes: [], apiUrl: '', apiSecret: '', hasApiSecret: false, ...over });
 
 	it('is fine when empty, and when a job type, an https address and a key are all there', () => {
 		expect(form()).toEqual({ cleared: true, incomplete: false });
-		expect(form({ jobType: 'recorder', apiUrl: 'https://rec.example.com', apiSecret: 'key' })).toEqual({ cleared: false, incomplete: false });
+		expect(form({ jobTypes: [ 'recorder' ], apiUrl: 'https://rec.example.com', apiSecret: 'key' })).toEqual({ cleared: false, incomplete: false });
+	});
+
+	it('is fine with several job types', () => {
+		expect(form({ jobTypes: [ 'recorder', 'streamer', 'transcriber' ], apiUrl: 'https://rec.example.com', apiSecret: 'key' })).toEqual({ cleared: false, incomplete: false });
 	});
 
 	it('keeps a stored key when the key field is left empty', () => {
-		expect(form({ jobType: 'recorder', apiUrl: 'https://rec.example.com', hasApiSecret: true }).incomplete).toBe(false);
+		expect(form({ jobTypes: [ 'recorder' ], apiUrl: 'https://rec.example.com', hasApiSecret: true }).incomplete).toBe(false);
 	});
 
 	it('lets a provider be turned back into a plain key although a key is stored', () => {
@@ -53,11 +57,11 @@ describe('the provider part of the form', () => {
 	});
 
 	it('is incomplete with a part missing or an address the room server cannot use', () => {
-		expect(form({ jobType: 'recorder' }).incomplete).toBe(true);
+		expect(form({ jobTypes: [ 'recorder' ] }).incomplete).toBe(true);
 		expect(form({ apiUrl: 'https://rec.example.com', apiSecret: 'key' }).incomplete).toBe(true);
-		expect(form({ jobType: 'recorder', apiUrl: 'https://rec.example.com' }).incomplete).toBe(true);
-		expect(form({ jobType: 'recorder', apiUrl: 'http://rec.example.com', apiSecret: 'key' }).incomplete).toBe(true);
-		expect(form({ jobType: 'recorder', apiUrl: 'https://rec.example.com/?a=1', apiSecret: 'key' }).incomplete).toBe(true);
-		expect(form({ jobType: 'recorder', apiUrl: 'https://user:pw@rec.example.com', apiSecret: 'key' }).incomplete).toBe(true);
+		expect(form({ jobTypes: [ 'recorder' ], apiUrl: 'https://rec.example.com' }).incomplete).toBe(true);
+		expect(form({ jobTypes: [ 'recorder' ], apiUrl: 'http://rec.example.com', apiSecret: 'key' }).incomplete).toBe(true);
+		expect(form({ jobTypes: [ 'recorder' ], apiUrl: 'https://rec.example.com/?a=1', apiSecret: 'key' }).incomplete).toBe(true);
+		expect(form({ jobTypes: [ 'recorder' ], apiUrl: 'https://user:pw@rec.example.com', apiSecret: 'key' }).incomplete).toBe(true);
 	});
 });

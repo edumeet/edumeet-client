@@ -7,8 +7,8 @@ import { botsSelector } from '../../store/selectors';
 import { kickPeer } from '../../store/actions/peerActions';
 import { stopBotJob } from '../../store/actions/botJobActions';
 import { permissions } from '../../utils/roles';
-import { botJobStateLabel } from '../../utils/botJobLabels';
-import { botMenu } from '../../utils/botJobs';
+import { botJobKindLabel, botJobStateLabel } from '../../utils/botJobLabels';
+import { botMenu, kickRowJobIds } from '../../utils/botJobs';
 import ConfirmButton from '../textbuttons/ConfirmButton';
 import {
 	botJobStopConfirmLabel,
@@ -72,6 +72,8 @@ const BotsIndicator = (): React.JSX.Element | null => {
 	// Stopping goes through the provider and the room server takes that only from someone
 	// signed in; anyone else who moderates can still remove the bots outright.
 	const canStop = loggedIn;
+	// One provider's bot may run several jobs; its Kick is offered once, on its first row.
+	const kickRows = kickRowJobIds(jobs, canStop);
 
 	const remove = (ids: string[]): void => {
 		setAnchorEl(null);
@@ -112,9 +114,9 @@ const BotsIndicator = (): React.JSX.Element | null => {
 					<List dense>
 						{ jobs.map((job) => (
 							<Row key={job.id} disableGutters data-bot-job-row={job.type}>
-								<ListItemText primary={job.label} secondary={botJobStateLabel(job.state)} />
+								<ListItemText primary={botJobKindLabel(job.type)} secondary={`${job.label}, ${botJobStateLabel(job.state)}`} />
 								{ job.state === 'stopping' || !canStop ?
-									job.peerId && <ConfirmButton
+									kickRows.has(job.id) && <ConfirmButton
 										size='small'
 										variant='outlined'
 										label={kickLabel()}

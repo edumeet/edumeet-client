@@ -381,7 +381,7 @@ export type TenantBotCredential = {
 	enabled?: boolean | number | null,
 	createdAt?: number | string | null,
 	lastUsedAt?: number | string | null,
-	jobType?: 'recorder' | 'streamer' | 'transcriber' | null,
+	jobTypes?: ('recorder' | 'streamer' | 'transcriber')[] | null,
 	apiUrl?: string | null,
 	hasApiSecret?: boolean,
 };

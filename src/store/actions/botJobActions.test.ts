@@ -26,7 +26,7 @@ const run = (thunk: Thunk, state: Record<string, unknown>, signalingService: Rec
 
 const botPage = (over: { room?: Record<string, unknown>, me?: Record<string, unknown> } = {}) => ({
 	room: { headless: true, state: 'joined', ...over.room },
-	me: { botJobId: jobId, ...over.me },
+	me: { botId: jobId, ...over.me },
 });
 
 describe('what window.edumeetBot.status() sends', () => {
@@ -55,6 +55,28 @@ describe('what window.edumeetBot.status() sends', () => {
 		]);
 	});
 
+	it('the kind a finished or failed is about, and no kind with a heartbeat', () => {
+		const notify = vi.fn();
+
+		run(sendBotStatus('failed', 'service down', 'transcriber'), botPage(), { notify });
+		run(sendBotStatus('finished', undefined, 'streamer'), botPage(), { notify });
+		run(sendBotStatus('running', undefined, 'recorder'), botPage(), { notify });
+
+		expect(notify.mock.calls.map(([ , data ]) => data)).toEqual([
+			{ state: 'failed', reason: 'service down', type: 'transcriber' },
+			{ state: 'finished', type: 'streamer' },
+			{ state: 'running' },
+		]);
+	});
+
+	it('nothing when the kind is no kind, rather than a report about the whole bot', () => {
+		const notify = vi.fn();
+
+		expect(run(sendBotStatus('failed', 'x', 'dancer'), botPage(), { notify }).result).toBe(false);
+		expect(run(sendBotStatus('finished', undefined, 42), botPage(), { notify }).result).toBe(false);
+		expect(notify).not.toHaveBeenCalled();
+	});
+
 	it('nothing for a state that does not exist', () => {
 		const notify = vi.fn();
 
@@ -66,7 +88,7 @@ describe('what window.edumeetBot.status() sends', () => {
 		const notify = vi.fn();
 
 		expect(run(sendBotStatus('running'), botPage({ room: { headless: false } }), { notify }).result).toBe(false);
-		expect(run(sendBotStatus('running'), botPage({ me: { botJobId: undefined } }), { notify }).result).toBe(false);
+		expect(run(sendBotStatus('running'), botPage({ me: { botId: undefined } }), { notify }).result).toBe(false);
 
 		for (const state of [ 'new', 'lobby', 'left' ]) expect(run(sendBotStatus('running'), botPage({ room: { state } }), { notify }).result).toBe(false);
 

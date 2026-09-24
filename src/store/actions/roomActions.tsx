@@ -33,7 +33,7 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 		const meetingToken = state.me.meetingToken;
 		const encodedRoomId = encodeURIComponent(roomId);
 
-		const url = getSignalingUrl(peerId, encodedRoomId, reconnectKey, token, meetingToken, state.room.headless, state.me.botType, state.me.botSession, state.me.botJobId);
+		const url = getSignalingUrl(peerId, encodedRoomId, reconnectKey, token, meetingToken, state.room.headless, state.me.botType, state.me.botSession, state.me.botId);
 
 		dispatch(signalingActions.setUrl(url));
 		dispatch(signalingActions.connect());

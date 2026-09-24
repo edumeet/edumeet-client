@@ -21,7 +21,7 @@ import Transcription from '../menuitems/Transcription';
 import Filesharing from '../menuitems/Filesharing';
 import Recording from '../menuitems/Recording';
 import BotJob from '../menuitems/BotJob';
-import { botJobTypes } from '../../utils/botJobs';
+import { offeredKinds } from '../../utils/botJobs';
 import edumeetConfig from '../../utils/edumeetConfig';
 import Drawing from '../menuitems/Drawing';
 import MoreButton from '../controlbuttons/MoreButton';
@@ -46,7 +46,7 @@ const ControlButtonsBar = (): React.JSX.Element => {
 	const canRecord = useAppSelector((state) => state.me.canRecord);
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const canModerate = usePermissionSelector(permissions.MODERATE_ROOM);
-	const botProviderTypes = useAppSelector((state) => state.botJobs.providers.map((provider) => provider.jobType), shallowEqual);
+	const botKinds = useAppSelector((state) => offeredKinds(state.botJobs.providers, state.botJobs.jobs), shallowEqual);
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled); // eslint-disable-line
 	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
@@ -141,7 +141,7 @@ const ControlButtonsBar = (): React.JSX.Element => {
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ !isMobile && localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
-				{ canModerate && edumeetConfig.loginEnabled && botJobTypes.filter((type) => botProviderTypes.includes(type)).map((type) => (
+				{ canModerate && edumeetConfig.loginEnabled && botKinds.map((type) => (
 					<BotJob key={type} type={type} onClick={handleMoreClose} />
 				)) }
 				{ !isMobile && <Drawing onClick={handleMoreClose} /> }
