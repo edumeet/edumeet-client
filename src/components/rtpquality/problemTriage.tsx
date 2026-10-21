@@ -1,7 +1,7 @@
 import type { ClientMonitor, OutboundTrackMonitor } from '@observertc/client-monitor-js';
 import { MAX_SCORE, QualityIssue, ScoreReason, toQualityIssues, toScoreReasons } from './qualityScore';
 
-export type OwnProblemKind = 'uplink' | 'downlink' | 'cpu' | 'capture' | 'loss' | 'sending';
+export type OwnProblemKind = 'loopback' | 'uplink' | 'downlink' | 'cpu' | 'capture' | 'loss' | 'sending';
 
 export type OwnProblem = {
 	kind: OwnProblemKind;
@@ -18,14 +18,24 @@ export type OwnProblem = {
  * inbound tracks is deliberately absent: that media is someone else's to fix,
  * so it belongs on that person's list entry and tile, not in this user's bar.
  * A raised round trip time is absent too; a stable slow path still works and
- * gives the user nothing to act on.
+ * gives the user nothing to act on. A loopback microphone comes first: it is
+ * certain from the device name alone, and whatever else is wrong, nobody hears
+ * this user's voice until it is fixed. A camera delivering fewer frames than
+ * asked (`video-capture-bottleneck`) is absent: a webcam in dim light drops to
+ * about 16 fps while working fine, which is no reason to say it stopped.
+ *
+ * `cpulimitation` stands for the browser's own verdict, not the library's
+ * detector of that name: the detector adds up the encode time of every
+ * simulcast layer, which crosses its threshold on a healthy machine sending
+ * 720p. The browser reports `cpu` only when it is actually cutting resolution
+ * or frame rate for lack of CPU.
  */
 export const OWN_ISSUE_KINDS: ReadonlyArray<readonly [ string, OwnProblemKind ]> = [
+	[ 'loopback-audio-input', 'loopback' ],
 	[ 'uplink-congestion', 'uplink' ],
 	[ 'downlink-congestion', 'downlink' ],
 	[ 'cpulimitation', 'cpu' ],
 	[ 'capture-source-lost', 'capture' ],
-	[ 'video-capture-bottleneck', 'capture' ],
 	[ 'dry-outbound-track', 'capture' ],
 	[ 'transport-loss-sustained', 'loss' ],
 ];
@@ -38,12 +48,26 @@ type ScoredSender = { score: number; reasons: ScoreReason[] };
 const isOutbound = (track: ClientMonitor['tracks'][number]): track is OutboundTrackMonitor =>
 	track.direction === 'outbound';
 
+const sending = (track: OutboundTrackMonitor): boolean => track.readyState === 'live' && !track.paused;
+
+const encoderLimitedByCpu = (monitor: ClientMonitor): boolean =>
+	monitor.tracks.filter(isOutbound).some((track) =>
+		track.kind === 'video' &&
+		sending(track) &&
+		track.getOutboundRtps().some((rtp) => rtp.qualityLimitationReason === 'cpu'));
+
+const ownIssueActive = (monitor: ClientMonitor, type: string): boolean => {
+	if (type === 'cpulimitation') return encoderLimitedByCpu(monitor);
+
+	return monitor.getActiveIssuesByType(type).length > 0;
+};
+
 /** The user's own live, unpaused track in the worst shape, if any is scored. */
 const worstSender = (monitor: ClientMonitor): ScoredSender | undefined => {
 	let worst: ScoredSender | undefined;
 
 	for (const sender of monitor.tracks.filter(isOutbound)) {
-		if (sender.readyState !== 'live' || sender.paused) continue;
+		if (!sending(sender)) continue;
 
 		const score = sender.calculatedScore?.value;
 
@@ -60,7 +84,7 @@ const worstSender = (monitor: ClientMonitor): ScoredSender | undefined => {
  * looks like.
  */
 export const ownProblem = (monitor: ClientMonitor): OwnProblem | undefined => {
-	const active = OWN_ISSUE_KINDS.filter(([ type ]) => monitor.getActiveIssuesByType(type).length > 0);
+	const active = OWN_ISSUE_KINDS.filter(([ type ]) => ownIssueActive(monitor, type));
 	const sender = worstSender(monitor);
 	const poorSending = sender !== undefined && sender.score <= POOR_SENDING_SCORE;
 

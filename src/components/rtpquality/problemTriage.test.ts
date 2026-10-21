@@ -10,6 +10,7 @@ type FakeTrack = {
 	score?: number;
 	reasons?: Record<string, number>;
 	issues?: string[];
+	qualityLimitationReason?: string;
 };
 
 /** Just enough of a ClientMonitor for the triage functions to read. */
@@ -24,6 +25,7 @@ const fakeMonitor = ({ issues = [], tracks = {}, stability = [] }: { issues?: st
 			paused: track.paused ?? false,
 			calculatedScore: { weight: 1, value: track.score, reasons: track.reasons },
 			issues: { keys: () => registry.keys(), get: (key: string) => registry.get(key) },
+			getOutboundRtps: () => [ { qualityLimitationReason: track.qualityLimitationReason } ],
 			registry,
 		} ];
 	}));
@@ -58,8 +60,38 @@ describe('ownProblem', () => {
 	});
 
 	test('when several are active, names them in priority order', () => {
-		expect(ownProblem(fakeMonitor({ issues: [ 'transport-loss-sustained', 'cpulimitation' ] }))?.kind).toBe('cpu');
+		expect(ownProblem(fakeMonitor({
+			issues: [ 'transport-loss-sustained' ],
+			tracks: { cam: { direction: 'outbound', score: 5, qualityLimitationReason: 'cpu' } },
+		}))?.kind).toBe('cpu');
 		expect(ownProblem(fakeMonitor({ issues: [ 'downlink-congestion', 'uplink-congestion' ] }))?.kind).toBe('uplink');
+	});
+
+	test('cpu means the browser cutting quality for it, not the library detector', () => {
+		expect(ownProblem(fakeMonitor({ issues: [ 'cpulimitation' ], tracks: { cam: { direction: 'outbound', score: 5 } } }))).toBeUndefined();
+		expect(ownProblem(fakeMonitor({ tracks: { cam: { direction: 'outbound', score: 5, qualityLimitationReason: 'bandwidth' } } }))).toBeUndefined();
+		expect(ownProblem(fakeMonitor({ tracks: { cam: { direction: 'outbound', score: 5, qualityLimitationReason: 'cpu', paused: true } } }))).toBeUndefined();
+
+		const problem = ownProblem(fakeMonitor({ tracks: { cam: { direction: 'outbound', score: 5, qualityLimitationReason: 'cpu' } } }));
+
+		expect(problem?.kind).toBe('cpu');
+		expect(problem?.issues.map((issue) => issue.key)).toEqual([ 'cpulimitation' ]);
+	});
+
+	test('a camera delivering fewer frames than asked is not a problem on its own', () => {
+		expect(ownProblem(fakeMonitor({
+			tracks: { cam: { direction: 'outbound', score: 4.1, issues: [ 'video-capture-bottleneck' ] } },
+		}))).toBeUndefined();
+	});
+
+	test('a loopback microphone is named before anything else', () => {
+		const problem = ownProblem(fakeMonitor({
+			issues: [ 'uplink-congestion' ],
+			tracks: { mic: { direction: 'outbound', kind: 'audio', score: 5, issues: [ 'loopback-audio-input' ] } },
+		}));
+
+		expect(problem?.kind).toBe('loopback');
+		expect(problem?.issues.map((issue) => issue.key)).toEqual([ 'loopback-audio-input', 'uplink-congestion' ]);
 	});
 
 	test('ignores everything about other people\'s media, however bad', () => {
@@ -101,8 +133,7 @@ describe('ownProblem', () => {
 
 	test('an actionable issue wins the label, poor sending still supplies the reasons', () => {
 		const problem = ownProblem(fakeMonitor({
-			issues: [ 'cpulimitation' ],
-			tracks: { cam: { direction: 'outbound', score: 1, reasons: { 'video-capture-bottleneck': 2 } } },
+			tracks: { cam: { direction: 'outbound', score: 1, reasons: { 'video-capture-bottleneck': 2 }, qualityLimitationReason: 'cpu' } },
 		}));
 
 		expect(problem?.kind).toBe('cpu');

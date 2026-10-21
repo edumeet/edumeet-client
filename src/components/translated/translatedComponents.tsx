@@ -105,8 +105,10 @@ export const connectivityInboundHintLabel = (): string => intl.formatMessage({
 	defaultMessage: 'No audio or video is arriving. Incoming media is most likely being blocked upstream of this device.'
 });
 
-export const ownProblemLabel = (kind: 'uplink' | 'downlink' | 'cpu' | 'capture' | 'loss' | 'sending'): string => {
+export const ownProblemLabel = (kind: 'loopback' | 'uplink' | 'downlink' | 'cpu' | 'capture' | 'loss' | 'sending'): string => {
 	switch (kind) {
+		case 'loopback':
+			return intl.formatMessage({ id: 'problem.loopback', defaultMessage: 'Others hear this computer\'s sound instead of your voice. Choose your real microphone in the settings.' });
 		case 'uplink':
 			return intl.formatMessage({ id: 'problem.uplink', defaultMessage: 'Your upload is saturated. Turning off your camera or screen share helps.' });
 		case 'downlink':

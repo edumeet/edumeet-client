@@ -27,8 +27,9 @@ const EXPLANATION_DEFAULTS: Record<string, string> = {
 	'volatile-fps': 'The time between frames keeps changing, which shows up as uneven, jerky motion.',
 
 	// Score reasons - inbound audio
+	'audio-interruption': 'Incoming audio keeps cutting out, because packets stop arriving for noticeable stretches.',
 	'audio-jitter-buffer-stress': 'The jitter buffer is stretching and compressing audio to cope with irregular arrival, which distorts the sound.',
-	'invented-speech': 'The decoder is filling gaps with invented audio because packets are missing, which sounds robotic or warbly.',
+	'concealed-samples': 'The decoder is covering missing packets by guessing part of the speech, which sounds robotic or warbly.',
 	'synthesized-audio': 'Part of the audio being played was synthesized to cover lost packets rather than actually received.',
 
 	// Score reasons - outbound video
@@ -76,6 +77,7 @@ const EXPLANATION_DEFAULTS: Record<string, string> = {
 	'video-recovery-failed': 'Video stalled and repeated requests for a fresh keyframe have not recovered it.',
 	'capture-source-lost': 'The camera or screen being captured has gone away.',
 	'capture-track-muted': 'The captured track has been muted by the system.',
+	'loopback-audio-input': 'The selected microphone is a loopback device such as Stereo Mix, which records what this computer plays rather than your voice.',
 };
 
 /**

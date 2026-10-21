@@ -370,8 +370,11 @@ export class MediaSender extends EventEmitter {
 
 			if (!protectedNow) {
 				logger.error('E2EE never confirmed for this producer, leaving it silent [codec:%s]', codecMimeType);
-			} else if (clonedTrack) {
-				clonedTrack.enabled = true;
+			} else if (!this.paused && !producer.closed) {
+				// produce() saw a disabled track and created the producer paused. Enabling the track
+				// alone would leave it reporting paused for good, and the stats monitor skips paused
+				// senders, so every outbound check went quiet in E2EE rooms.
+				producer.resume();
 			}
 		} else {
 			void this.mediaService.e2eeService?.protectSender(producer.rtpSender, codecMimeType);
