@@ -187,6 +187,7 @@
   "room.about": "關於",
   "room.accessCodeOff": "已停用會議室密碼",
   "room.accessCodeOn": "已啟用會議室密碼",
+  "room.audioPlaybackBlocked": null,
   "room.browsePeersSpotlight": null,
   "room.cantJoin": "無法加入會議室",
   "room.cantLock": "無法鎖定會議室",

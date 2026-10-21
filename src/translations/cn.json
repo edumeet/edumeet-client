@@ -187,6 +187,7 @@
   "room.about": null,
   "room.accessCodeOff": "房间的访问密码已停用",
   "room.accessCodeOn": "房间的访问密码现已激活",
+  "room.audioPlaybackBlocked": null,
   "room.browsePeersSpotlight": null,
   "room.cantJoin": "无法加入房间",
   "room.cantLock": "无法锁定房间",

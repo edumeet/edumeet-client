@@ -27,6 +27,8 @@ const Lobby = (): React.JSX.Element | null => {
 	const displayName = useAppSelector((state) => state.settings.displayName);
 	const [ localDisplayName, setLocalDisplayName ] = useState(displayName);
 	const showAudioOutputChooser = useAppSelector(canSelectAudioOutput);
+	const audioMuted = useAppSelector((state) => state.me.audioMuted);
+	const videoMuted = useAppSelector((state) => state.me.videoMuted);
 
 	const handleDisplayNameChange = () => {
 		dispatch(setDisplayName(
@@ -45,7 +47,7 @@ const Lobby = (): React.JSX.Element | null => {
 			title={ <PrecallTitle /> }
 			content={
 				<>
-					<MediaPreview />
+					<MediaPreview startAudio={!audioMuted} startVideo={!videoMuted} stopAudio={false} stopVideo={false} />
 					<AudioInputChooser />
 					{showAudioOutputChooser && <AudioOutputChooser /> }
 					<VideoInputChooser withBlur />

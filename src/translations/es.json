@@ -187,6 +187,7 @@
   "room.about": "Acerca de",
   "room.accessCodeOff": "Código de acceso de la sala desactivado",
   "room.accessCodeOn": "Código de acceso de la sala activado",
+  "room.audioPlaybackBlocked": "Tu navegador ha bloqueado el sonido. Haz clic en cualquier lugar para oír a los demás.",
   "room.browsePeersSpotlight": "Explorar participantes destacados",
   "room.cantJoin": "No ha sido posible unirse a la sala",
   "room.cantLock": "No ha sido posible cerrar la sala",

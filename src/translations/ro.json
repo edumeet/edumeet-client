@@ -187,6 +187,7 @@
   "room.about": "Despre",
   "room.accessCodeOff": "Codul de accesare pentru cameră e deactivat",
   "room.accessCodeOn": "Codul de accesare pentru cameră e activat",
+  "room.audioPlaybackBlocked": "Browserul a blocat sunetul. Fă clic oriunde pentru a-i auzi pe ceilalți.",
   "room.browsePeersSpotlight": "Răsfoiește participanții evidențiați",
   "room.cantJoin": "Nu se poate alătura camerei",
   "room.cantLock": "Încercarea de a bloca camera a eșuat",

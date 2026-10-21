@@ -187,6 +187,7 @@
   "room.about": "Über",
   "room.accessCodeOff": "Zugangscode deaktiviert",
   "room.accessCodeOn": "Zugangscode aktiviert",
+  "room.audioPlaybackBlocked": "Dein Browser hat den Ton blockiert. Klicke irgendwo, um die anderen zu hören.",
   "room.browsePeersSpotlight": "Vorherigen/nächsten Teilnehmer anzeigen",
   "room.cantJoin": "Betreten des Raumes nicht möglich",
   "room.cantLock": "Abschließen des Raumes nicht möglich",

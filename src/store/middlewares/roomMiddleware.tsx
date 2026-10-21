@@ -118,8 +118,10 @@ const createRoomMiddleware = ({
 								screenSharingSimulcast: settings.screenSharingSimulcast ?? true,
 							}));
 
+							const fromPrecall = getState().room.state !== 'joined';
+
 							dispatch(roomActions.setState('joined'));
-							dispatch(joinRoom());
+							dispatch(joinRoom({ fromPrecall }));
 
 							if (mediaService.monitor) {
 								mediaService.monitor.callId = sessionId;

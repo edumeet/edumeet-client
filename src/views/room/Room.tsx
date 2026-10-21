@@ -5,6 +5,7 @@ import TopBar from '../../components/topbar/TopBar';
 import FullscreenVideo from '../../components/fullscreenvideo/FullscreenVideo';
 import WindowedVideo from '../../components/windowedvideo/WindowedVideo';
 import AudioPeers from '../../components/audiopeers/AudioPeers';
+import AudioPlaybackAlert from '../../components/audioplaybackalert/AudioPlaybackAlert';
 import BackgroundSelectDialog from '../../components/backgroundselectdialog/BackgroundSelectDialog';
 import LobbyDialog from '../../components/lobbydialog/LobbyDialog';
 import FilesharingDialog from '../../components/filesharingdialog/FilesharingDialog';
@@ -74,6 +75,7 @@ const Room = (): React.JSX.Element => {
 		<>
 			<WindowedVideo />
 			<AudioPeers />
+			{ !headless && <AudioPlaybackAlert /> }
 			<TopBar
 				fullscreenEnabled={fscreen.fullscreenEnabled}
 				fullscreen={isFullscreen}

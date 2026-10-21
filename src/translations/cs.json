@@ -187,6 +187,7 @@
   "room.about": "O programu",
   "room.accessCodeOff": "Přístupový kód místnosti je deaktivován",
   "room.accessCodeOn": "Přístupový kód místnosti je aktivován",
+  "room.audioPlaybackBlocked": "Prohlížeč zablokoval zvuk. Klikněte kamkoli, abyste slyšeli ostatní.",
   "room.browsePeersSpotlight": "Vyhledat účastníky v centru pozornosti",
   "room.cantJoin": "Není možné se připojit do místnosti",
   "room.cantLock": "Není možné uzamknout místnost",

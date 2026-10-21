@@ -4,6 +4,8 @@ import { ServiceContext } from '../../store/store';
 import { HTMLMediaElementWithSink } from '../../utils/types';
 import { isSinkIdSupported } from '../../store/selectors';
 import { Logger } from '../../utils/Logger';
+import { useAppDispatch } from '../../store/hooks';
+import { uiActions } from '../../store/slices/uiSlice';
 
 const logger = new Logger('AudioView');
 
@@ -17,6 +19,7 @@ const AudioView = ({
 	deviceId
 }: AudioViewProps): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
+	const dispatch = useAppDispatch();
 	const audioElement = useRef<HTMLMediaElementWithSink>(null);
 
 	useEffect(() => {
@@ -73,6 +76,54 @@ const AudioView = ({
 		stream.addTrack(track);
 		currentAudioElement.srcObject = stream;
 
+		let active = true;
+		let blocked = false;
+
+		const startPlayback = (): void => {
+			currentAudioElement.play()
+				.then(() => {
+					if (!active || !blocked) return;
+
+					blocked = false;
+					stopWaitingForGesture();
+					dispatch(uiActions.removeBlockedAudioConsumer(consumer.id));
+				})
+				.catch((error: unknown) => {
+					if (!active) return;
+
+					if (!(error instanceof DOMException && error.name === 'NotAllowedError')) {
+						logger.warn('AudioView: play() failed %O',
+							{
+								consumerId: consumer.id,
+								peerId: consumer.peerId,
+								error
+							});
+
+						return;
+					}
+
+					logger.debug('AudioView: playback blocked by autoplay policy %O',
+						{
+							consumerId: consumer.id,
+							peerId: consumer.peerId
+						});
+
+					if (blocked) return;
+
+					blocked = true;
+					document.addEventListener('click', startPlayback, true);
+					document.addEventListener('keydown', startPlayback, true);
+					dispatch(uiActions.addBlockedAudioConsumer(consumer.id));
+				});
+		};
+
+		const stopWaitingForGesture = (): void => {
+			document.removeEventListener('click', startPlayback, true);
+			document.removeEventListener('keydown', startPlayback, true);
+		};
+
+		startPlayback();
+
 		if (deviceId) {
 			logger.debug('AudioView: attempting setSinkId %O',
 				{
@@ -123,6 +174,10 @@ const AudioView = ({
 					consumerId: consumer.id,
 					peerId: consumer.peerId
 				});
+
+			active = false;
+			stopWaitingForGesture();
+			if (blocked) dispatch(uiActions.removeBlockedAudioConsumer(consumer.id));
 
 			if (currentAudioElement) {
 				currentAudioElement.srcObject = null;

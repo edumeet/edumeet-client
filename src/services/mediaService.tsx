@@ -122,6 +122,8 @@ export class MediaService extends EventEmitter {
 
 	public previewMicTrack: MediaStreamTrack | null = null;
 	public previewWebcamTrack: MediaStreamTrack | null = null;
+	public previewMicRequest = 0;
+	public previewWebcamRequest = 0;
 
 	public mediaSenders: MediaSenders;
 	public e2eeService?: E2eeService; // set by store.tsx; attaches encrypt/decrypt transforms when E2EE is on

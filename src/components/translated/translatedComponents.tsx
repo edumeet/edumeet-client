@@ -970,6 +970,11 @@ export const mutedPTTLabel = (): string => intl.formatMessage({
 	defaultMessage: 'You are muted, hold down SPACE-BAR to talk'
 });
 
+export const audioPlaybackBlockedLabel = (): string => intl.formatMessage({
+	id: 'room.audioPlaybackBlocked',
+	defaultMessage: 'Your browser blocked the sound. Click anywhere to hear the others.'
+});
+
 export const usePTTLabel = (): string => intl.formatMessage({
 	id: 'label.usePTT',
 	defaultMessage: 'Use Push-to-Talk'

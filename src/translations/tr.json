@@ -187,6 +187,7 @@
   "room.about": "Hakkında",
   "room.accessCodeOff": "Oda erişim kodu devre dışı bırakıldı",
   "room.accessCodeOn": "Oda erişim kodu etkinleştirildi",
+  "room.audioPlaybackBlocked": "Tarayıcınız sesi engelledi. Diğerlerini duymak için herhangi bir yere tıklayın.",
   "room.browsePeersSpotlight": "Gündeme alınacak katılımcıyı seç",
   "room.cantJoin": "Odaya katılamadınız",
   "room.cantLock": "Oda kilitlenemiyor",

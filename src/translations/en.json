@@ -200,6 +200,7 @@
 	"room.about": "About",
 	"room.accessCodeOff": "Access code for room is now deactivated",
 	"room.accessCodeOn": "Access code for room is now activated",
+	"room.audioPlaybackBlocked": "Your browser blocked the sound. Click anywhere to hear the others.",
 	"room.browsePeersSpotlight": "Browse participants into Spotlight",
 	"room.cantJoin": "Unable to join the room",
 	"room.cantLock": "Unable to lock the room",

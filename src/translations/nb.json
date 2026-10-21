@@ -187,6 +187,7 @@
   "room.about": "Om",
   "room.accessCodeOff": "Tilgangskode for møtet er deaktivert",
   "room.accessCodeOn": "Tilgangskode for møtet er aktivert",
+  "room.audioPlaybackBlocked": "Nettleseren blokkerte lyden. Klikk hvor som helst for å høre de andre.",
   "room.browsePeersSpotlight": "Bytt mellom synlig deltaker",
   "room.cantJoin": "Kunne ikke bli med i møtet",
   "room.cantLock": "Klarte ikke å låse møtet",

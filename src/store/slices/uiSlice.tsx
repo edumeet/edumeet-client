@@ -29,6 +29,7 @@ export interface UiState {
 	participantListOpen: boolean;
 	drawingOpen: boolean;
 	unseenFiles: number;
+	blockedAudioConsumers: string[];
 	// The kind of bot job a moderator is being asked to confirm.
 	botJobDialog?: BotJobType;
 }
@@ -56,6 +57,7 @@ const initialState: UiState = {
 	participantListOpen: false,
 	drawingOpen: false,
 	unseenFiles: 0,
+	blockedAudioConsumers: [],
 };
 
 const uiSlice = createSlice({
@@ -86,6 +88,15 @@ const uiSlice = createSlice({
 		}),
 		resetUnseenFiles: ((state) => {
 			state.unseenFiles = 0;		
+		}),
+		addBlockedAudioConsumer: ((state, action: PayloadAction<string>) => {
+			if (!state.blockedAudioConsumers.includes(action.payload))
+				state.blockedAudioConsumers.push(action.payload);
+		}),
+		removeBlockedAudioConsumer: ((state, action: PayloadAction<string>) => {
+			const index = state.blockedAudioConsumers.indexOf(action.payload);
+
+			if (index !== -1) state.blockedAudioConsumers.splice(index, 1);
 		})
 	},
 	extraReducers: (builder) => {

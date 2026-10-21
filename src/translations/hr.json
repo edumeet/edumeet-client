@@ -187,6 +187,7 @@
   "room.about": "O programu",
   "room.accessCodeOff": "Pristupna šifra sobe je neaktivna",
   "room.accessCodeOn": "Pristupna šifra sobe je aktivna",
+  "room.audioPlaybackBlocked": "Preglednik je blokirao zvuk. Kliknite bilo gdje da biste čuli ostale.",
   "room.browsePeersSpotlight": "Pretražite sudionike u središtu pažnje",
   "room.cantJoin": "Ulaz u sobu nije moguća",
   "room.cantLock": "Zaključavanje sobe nije moguće",

@@ -187,6 +187,7 @@
   "room.about": "Біз туралы",
   "room.accessCodeOff": "Бейнеконференцияға қосылу коды өшірулі",
   "room.accessCodeOn": "Бейнеконференцияға қосылу коды іске қосылды",
+  "room.audioPlaybackBlocked": null,
   "room.browsePeersSpotlight": "Белсенді қатысушыларды қарау",
   "room.cantJoin": "Бейнеконференцияға қосылу мүмкін емес",
   "room.cantLock": "Видеоконференцияға қосылуды жабу мүмкін емес",

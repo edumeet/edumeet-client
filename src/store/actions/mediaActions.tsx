@@ -215,6 +215,7 @@ export const updatePreviewMic = ({
 
 	let track: MediaStreamTrack | undefined | null;
 	const replace = Boolean(mediaService.previewMicTrack);
+	const request = ++mediaService.previewMicRequest;
 
 	try {
 		const {
@@ -277,6 +278,13 @@ export const updatePreviewMic = ({
 			dispatch(settingsActions.setSelectedAudioDevice(trackDeviceId));
 		}
 
+		if (request !== mediaService.previewMicRequest) {
+			logger.debug('updatePreviewMic() preview no longer wanted, stopping its track');
+			track.stop();
+
+			return;
+		}
+
 		mediaService.previewMicTrack = track;
 		dispatch(meActions.setPreviewMicTrackId(track.id));
 	} catch (error) {
@@ -303,18 +311,19 @@ export const stopPreviewMic = (): AppThunk<Promise<void>> => async (
 ) => {
 	logger.debug('stopPreviewMic()');
 
-	dispatch(meActions.setAudioInProgress(true));
+	mediaService.previewMicRequest++;
 
 	const { previewMicTrackId } = getState().me;
 
 	if (previewMicTrackId) {
+		dispatch(meActions.setAudioInProgress(true));
 		dispatch(meActions.setPreviewMicTrackId());
 
 		mediaService.previewMicTrack?.stop();
 		mediaService.previewMicTrack = null;
-	}
 
-	dispatch(meActions.setAudioInProgress(false));
+		dispatch(meActions.setAudioInProgress(false));
+	}
 };
 
 /**
@@ -341,6 +350,7 @@ export const updatePreviewWebcam = ({
 
 	let track: MediaStreamTrack | undefined | null;
 	const replace = Boolean(mediaService.previewWebcamTrack);
+	const request = ++mediaService.previewWebcamRequest;
 
 	try {
 		const {
@@ -415,6 +425,14 @@ export const updatePreviewWebcam = ({
 			await postUpdateDevicesPromise;
 		}
 
+		if (request !== mediaService.previewWebcamRequest) {
+			logger.debug('updatePreviewWebcam() preview no longer wanted, stopping its track');
+			track.stop();
+			effectsService.stop(track.id);
+
+			return;
+		}
+
 		mediaService.previewWebcamTrack = track;
 		dispatch(meActions.setPreviewWebcamTrackId(track.id));
 	} catch (error) {
@@ -440,13 +458,14 @@ export const stopPreviewWebcam = (): AppThunk<Promise<void>> => async (
 ) => {
 	logger.debug('stopPreviewWebcam()');
 
-	dispatch(meActions.setVideoInProgress(true));
+	mediaService.previewWebcamRequest++;
 
 	const { previewWebcamTrackId } = getState().me;
 
 	if (previewWebcamTrackId) {
 		const track = mediaService.previewWebcamTrack;
 
+		dispatch(meActions.setVideoInProgress(true));
 		dispatch(meActions.setPreviewWebcamTrackId());
 
 		if (track) {
@@ -454,9 +473,9 @@ export const stopPreviewWebcam = (): AppThunk<Promise<void>> => async (
 			effectsService.stop(track.id);
 			mediaService.previewWebcamTrack = null;
 		}
-	}
 
-	dispatch(meActions.setVideoInProgress(false));
+		dispatch(meActions.setVideoInProgress(false));
+	}
 };
 
 /**

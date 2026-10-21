@@ -7,7 +7,7 @@ import { botJobsActions } from '../slices/botJobsSlice';
 import { drawingActions } from '../slices/drawingSlice';
 import { signalingActions } from '../slices/signalingSlice';
 import { AppThunk, fileService } from '../store';
-import { startExtraVideo, updateMic, updateWebcam } from './mediaActions';
+import { startExtraVideo, stopPreviewMic, stopPreviewWebcam, updateMic, updateWebcam } from './mediaActions';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
 import { consumersActions } from '../slices/consumersSlice';
 import { getSignalingUrl } from '../../utils/signalingHelpers';
@@ -50,7 +50,7 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 // 2. Discover our capabilities
 // 3. Signal the server that we are ready
 // 4. Update the state
-export const joinRoom = (): AppThunk<Promise<void>> => async (
+const enterRoom = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
 	{ signalingService, mediaService /* , performanceMonitor */ }
@@ -122,9 +122,30 @@ export const joinRoom = (): AppThunk<Promise<void>> => async (
 	if (lostAudio) dispatch(meActions.setLostAudio(false));
 	if (lostVideo) dispatch(meActions.setLostVideo(false));
 
-	if (lostAudio || !getState().me.audioMuted) dispatch(updateMic());
-	if (lostVideo || !getState().me.videoMuted) dispatch(updateWebcam());
+	const startingMedia: Promise<void>[] = [];
+
+	if (lostAudio || !getState().me.audioMuted) startingMedia.push(dispatch(updateMic()));
+	if (lostVideo || !getState().me.videoMuted) startingMedia.push(dispatch(updateWebcam()));
 	if (getState().me.extraVideoEnabled) dispatch(startExtraVideo());
+
+	await Promise.all(startingMedia);
+};
+
+export const joinRoom = ({ fromPrecall = false }: { fromPrecall?: boolean } = {}): AppThunk<Promise<void>> => async (
+	dispatch,
+	_getState,
+	{ mediaService }
+): Promise<void> => {
+	const { previewMicRequest, previewWebcamRequest } = mediaService;
+
+	try {
+		await dispatch(enterRoom());
+	} finally {
+		if (fromPrecall) {
+			if (mediaService.previewMicRequest === previewMicRequest) await dispatch(stopPreviewMic());
+			if (mediaService.previewWebcamRequest === previewWebcamRequest) await dispatch(stopPreviewWebcam());
+		}
+	}
 };
 
 export const leaveRoom = (): AppThunk<Promise<void>> => async (

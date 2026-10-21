@@ -187,6 +187,7 @@
   "room.about": "O programie",
   "room.accessCodeOff": "Kod dostępu do konferencji został wyłączony",
   "room.accessCodeOn": "Kod dostępu do konferencji został włączony",
+  "room.audioPlaybackBlocked": "Przeglądarka zablokowała dźwięk. Kliknij w dowolnym miejscu, aby słyszeć pozostałych.",
   "room.browsePeersSpotlight": "Pokaż poprzedniego/następnego uczestnika",
   "room.cantJoin": "Brak możliwości dołączenia do pokoju",
   "room.cantLock": "Nie można zakluczyć pokoju",

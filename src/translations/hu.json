@@ -194,6 +194,7 @@
   "room.about": "Névjegy",
   "room.accessCodeOff": "A konferencia hozzáférési kód deaktiválva",
   "room.accessCodeOn": "A konferencia hozzáférési kódja aktiválva",
+  "room.audioPlaybackBlocked": "A böngésző letiltotta a hangot. Kattints bárhová, hogy halld a többieket.",
   "room.browsePeersSpotlight": "Résztvevők böngészése",
   "room.cantJoin": "Sikertelen csatlakozás a konferenciához",
   "room.cantLock": "Sikertelen a konferenciába való belépés letiltása",

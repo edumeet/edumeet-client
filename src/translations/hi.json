@@ -187,6 +187,7 @@
   "room.about": "बारे में",
   "room.accessCodeOff": "प्रवेश कोड निष्क्रिय हो गया है",
   "room.accessCodeOn": "प्रवेश कोड सक्रिय हो गया है",
+  "room.audioPlaybackBlocked": null,
   "room.browsePeersSpotlight": "देखिये प्रतिभागी जो स्पॉटलाइट मे हैं",
   "room.cantJoin": "कमरे के प्रवेश होने में असमर्थ",
   "room.cantLock": "कमरे में प्रवेश होने पर रोक लगाने में असमर्थ",
