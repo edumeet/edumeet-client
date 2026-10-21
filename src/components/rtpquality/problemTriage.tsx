@@ -62,12 +62,20 @@ const ownIssueActive = (monitor: ClientMonitor, type: string): boolean => {
 	return monitor.getActiveIssuesByType(type).length > 0;
 };
 
-/** The user's own live, unpaused track in the worst shape, if any is scored. */
+/**
+ * The user's own live, unpaused video track in the worst shape, if any is scored.
+ *
+ * Audio is left out: the library scores an outbound audio track only on
+ * `dry-outbound-track`, which is named on its own above, and on
+ * `silent-audio-source`, which a headset muted at the device raises after a
+ * minute. That mute is deliberate as often as not, so it stays in the quality
+ * window.
+ */
 const worstSender = (monitor: ClientMonitor): ScoredSender | undefined => {
 	let worst: ScoredSender | undefined;
 
 	for (const sender of monitor.tracks.filter(isOutbound)) {
-		if (!sending(sender)) continue;
+		if (sender.kind !== 'video' || !sending(sender)) continue;
 
 		const score = sender.calculatedScore?.value;
 

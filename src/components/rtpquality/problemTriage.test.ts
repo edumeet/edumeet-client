@@ -78,6 +78,12 @@ describe('ownProblem', () => {
 		expect(problem?.issues.map((issue) => issue.key)).toEqual([ 'cpulimitation' ]);
 	});
 
+	test('a silent microphone stays out of the bar, even at a score of 0', () => {
+		expect(ownProblem(fakeMonitor({
+			tracks: { mic: { direction: 'outbound', kind: 'audio', score: 0, reasons: { 'silent-audio-source': 5 }, issues: [ 'silent-audio-source' ] } },
+		}))).toBeUndefined();
+	});
+
 	test('a camera delivering fewer frames than asked is not a problem on its own', () => {
 		expect(ownProblem(fakeMonitor({
 			tracks: { cam: { direction: 'outbound', score: 4.1, issues: [ 'video-capture-bottleneck' ] } },
