@@ -1,5 +1,5 @@
-import { AccountCircle } from '@mui/icons-material';
-import { Box, Link, Typography } from '@mui/material';
+import { AccountCircle, Lock } from '@mui/icons-material';
+import { Alert, Box, CircularProgress, Link, Typography } from '@mui/material';
 import { useState } from 'react';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
 import VideoInputChooser from '../../components/devicechooser/VideoInputChooser';
@@ -47,6 +47,14 @@ const Lobby = (): React.JSX.Element | null => {
 			title={ <PrecallTitle /> }
 			content={
 				<>
+					<Alert
+						severity='info'
+						icon={<Lock />}
+						action={<CircularProgress size={20} color='inherit' sx={{ alignSelf: 'center', mr: 1 }} />}
+						sx={{ mb: 1, alignItems: 'center', fontWeight: 'medium' }}
+					>
+						{roomLockedLabel()}
+					</Alert>
 					<MediaPreview startAudio={!audioMuted} startVideo={!videoMuted} stopAudio={false} stopVideo={false} />
 					<AudioInputChooser />
 					{showAudioOutputChooser && <AudioOutputChooser /> }
@@ -64,7 +72,6 @@ const Lobby = (): React.JSX.Element | null => {
 			}
 			actions={
 				<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-					{roomLockedLabel()}
 					<Box sx={{ display: 'flex' }}>
 						{imprintUrl.trim() !== '' && (
 							<Link href={imprintUrl} target="_blank" color="inherit" underline="none">
