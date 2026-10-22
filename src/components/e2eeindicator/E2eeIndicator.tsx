@@ -1,4 +1,3 @@
-import { Tooltip } from '@mui/material';
 import { memo } from 'react';
 import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined';
 import GppMaybeOutlinedIcon from '@mui/icons-material/GppMaybeOutlined';
@@ -10,6 +9,7 @@ import {
 	peerE2eeSecuringLabel,
 	peerIdentityChangedShortLabel,
 } from '../translated/translatedComponents';
+import IndicatorTooltip from '../indicatortooltip/IndicatorTooltip';
 
 interface E2eeIndicatorProps {
 	// Per-peer variant (peer list): shows key-receipt state. Omit `peer` for the room-level badge.
@@ -45,31 +45,31 @@ const E2eeIndicator = ({
 		// `.MuiSvgIcon-root`, which outranks MUI's colour props, and a shape difference reads the same
 		// for everyone regardless of how colour is perceived. Both icons take the app bar's own colour.
 		return verified ? (
-			<Tooltip title={endToEndEncryptedLabel()}>
+			<IndicatorTooltip title={endToEndEncryptedLabel()}>
 				<GppGoodOutlinedIcon fontSize={fontSize} />
-			</Tooltip>
+			</IndicatorTooltip>
 		) : (
-			<Tooltip title={roomE2eeSecuringLabel()}>
+			<IndicatorTooltip title={roomE2eeSecuringLabel()}>
 				<GppMaybeOutlinedIcon fontSize={fontSize} />
-			</Tooltip>
+			</IndicatorTooltip>
 		);
 	}
 
 	// TOFU violation takes precedence — a changed identity is the thing the user must see.
 	if (identityChanged) {
 		return (
-			<Tooltip title={peerIdentityChangedShortLabel()}>
+			<IndicatorTooltip title={peerIdentityChangedShortLabel()}>
 				<GppBadOutlinedIcon fontSize={fontSize} color='error' />
-			</Tooltip>
+			</IndicatorTooltip>
 		);
 	}
 
 	if (peerSecured) return null;
 
 	return (
-		<Tooltip title={peerE2eeSecuringLabel()}>
+		<IndicatorTooltip title={peerE2eeSecuringLabel()}>
 			<GppMaybeOutlinedIcon fontSize={fontSize} color='disabled' />
-		</Tooltip>
+		</IndicatorTooltip>
 	);
 };
 

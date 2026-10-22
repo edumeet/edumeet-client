@@ -1,4 +1,5 @@
-import { CircularProgress, Tooltip, styled } from '@mui/material';
+import { CircularProgress, styled } from '@mui/material';
+import IndicatorTooltip from '../indicatortooltip/IndicatorTooltip';
 import { useAppSelector } from '../../store/hooks';
 import { savingRecordingLabel } from '../translated/translatedComponents';
 
@@ -15,13 +16,13 @@ const SavingRecordingIndicator = (): React.JSX.Element | null => {
 	const label = progress ? `${savingRecordingLabel()} ${progress}%` : savingRecordingLabel();
 
 	return (
-		<Tooltip title={label}>
+		<IndicatorTooltip title={label}>
 			<StyledProgress
 				size={20}
 				variant={progress ? 'determinate' : 'indeterminate'}
 				value={progress}
 			/>
-		</Tooltip>
+		</IndicatorTooltip>
 	);
 };
 

@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material';
+import IndicatorTooltip from '../indicatortooltip/IndicatorTooltip';
 import { styled } from '@mui/material/styles';
 import { memo } from 'react';
 import { useAppSelector } from '../../store/hooks';
@@ -53,14 +53,14 @@ const BotJobIcons = (): React.JSX.Element | null => {
 				const title = running ? botJobRunningLabel(type) : botJobInterruptedLabel(label);
 
 				return (
-					<Tooltip key={type} title={title}>
+					<IndicatorTooltip key={type} title={title}>
 						<Holder aria-label={title} data-bot-job={type} data-bot-job-state={running ? 'running' : 'interrupted'}>
 							{ running ?
 								(type === 'recorder' ? <RecordingDot /> : <Icon />) :
 								<Dimmed><Icon /></Dimmed>
 							}
 						</Holder>
-					</Tooltip>
+					</IndicatorTooltip>
 				);
 			}) }
 		</>

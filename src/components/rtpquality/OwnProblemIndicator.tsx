@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { Tooltip } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { NetworkCheck } from '@mui/icons-material';
 import { useAppSelector } from '../../store/hooks';
@@ -7,6 +6,7 @@ import { ServiceContext } from '../../store/store';
 import { OWN_PROBLEM_GRACE_ROUNDS, graceMs, useSustained } from '../../utils/useSustained';
 import { ownProblemLabel } from '../translated/translatedComponents';
 import { useOwnProblem } from './useProblems';
+import IndicatorTooltip from '../indicatortooltip/IndicatorTooltip';
 
 const Detail = styled('div')({
 	opacity: 0.85,
@@ -43,9 +43,9 @@ const OwnProblemIndicator = (): React.JSX.Element => {
 	);
 
 	return (
-		<Tooltip title={title} placement='bottom'>
+		<IndicatorTooltip title={title} placement='bottom'>
 			<NetworkCheck fontSize='medium' role='img' aria-label={hint} />
-		</Tooltip>
+		</IndicatorTooltip>
 	);
 };
 

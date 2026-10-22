@@ -1,4 +1,5 @@
 import { Box, Chip, List, ListItem, ListItemText, Popover, Tooltip, Typography } from '@mui/material';
+import IndicatorTooltip from '../indicatortooltip/IndicatorTooltip';
 import { styled } from '@mui/material/styles';
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import { memo, useState } from 'react';
@@ -62,9 +63,9 @@ const BotsIndicator = (): React.JSX.Element | null => {
 
 	if (!canModerate) {
 		return (
-			<Tooltip title={`${botsInRoomLabel()}: ${bots.map(nameOf).join(', ')}`}>
+			<IndicatorTooltip title={`${botsInRoomLabel()}: ${bots.map(nameOf).join(', ')}`}>
 				<StyledChip size='small' icon={<SmartToyOutlinedIcon />} label={bots.length} />
-			</Tooltip>
+			</IndicatorTooltip>
 		);
 	}
 

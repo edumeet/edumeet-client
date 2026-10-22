@@ -1,11 +1,11 @@
 import { useContext } from 'react';
-import { Tooltip } from '@mui/material';
 import { SignalCellularConnectedNoInternet0Bar } from '@mui/icons-material';
 import { useAppSelector } from '../../store/hooks';
 import { ServiceContext } from '../../store/store';
 import { PROBLEM_INDICATOR_GRACE_ROUNDS, graceMs, useSustained } from '../../utils/useSustained';
 import { noAudioArrivingLabel, noMediaArrivingLabel, noVideoArrivingLabel } from '../translated/translatedComponents';
 import { usePeerProblem } from './useProblems';
+import IndicatorTooltip from '../indicatortooltip/IndicatorTooltip';
 
 interface PeerMediaIndicatorProps {
 	displayName: string;
@@ -32,9 +32,9 @@ const PeerMediaIndicator = ({ displayName, audioConsumerId, videoConsumerId }: P
 		: problem.video ? noVideoArrivingLabel(displayName) : noAudioArrivingLabel(displayName);
 
 	return (
-		<Tooltip title={title}>
+		<IndicatorTooltip title={title}>
 			<SignalCellularConnectedNoInternet0Bar fontSize='small' color='error' role='img' aria-label={title} />
-		</Tooltip>
+		</IndicatorTooltip>
 	);
 };
 
