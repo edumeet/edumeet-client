@@ -141,7 +141,7 @@ Three appearance switches decide what happens to participants who have no video 
 
 #### Headless view for recorders and streamers
 
-A page opened with `?headless=1` (or `headless=true`) is meant for a headless browser that records, streams or transcribes the room. It joins on its own and shows nothing but the room:
+A page opened with `?headless=1` (or `headless=true`) is meant for a headless browser that records, streams or transcribes the room. Whoever builds such a bot should read [BOTS.md](https://github.com/edumeet/edumeet/blob/main/BOTS.md), which describes the page from the bot's side; this section is how the client does it. It joins on its own and shows nothing but the room:
 
 - No join dialog, no lobby dialog, no device preview, so the browser is never asked for a camera or microphone. The microphone and camera stay muted; the bot never sends media.
 - The top bar keeps the logo, the meeting timer and the countdown timer. Its buttons and status icons are not shown, the bot icon included; neither are the control bar, the help button, the lobby dialog and the drawing toolbar. Names stay on every tile, the buttons on the tiles do not.
@@ -206,12 +206,13 @@ A room with a bot in it stays on the media node: a meeting small enough for peer
 goes through the media node while a bot is there, so what the bot receives does not change when
 the next participant arrives.
 
-A page that runs jobs carries `botId` in its URL and gets one extra function,
-`window.edumeetBot.status(state, reason, type)`, for the provider to report `running` (the bot's
-heartbeat), `finished` or `failed` with; with a `type`, `finished` and `failed` are about that one
-job, without one about all of them. A `type` that is no kind of job sends nothing. Such a page also waits: refused with `roomNotOpen` it tries again quietly every 3
-seconds for 30 seconds, writing nothing to the status attributes until it gives up, because after a
-room-server restart the recorder may be back before the first participant is.
+A page that runs jobs carries `botId` in its URL. Once the room-server has taken its join, it
+reports itself as running every 20 seconds (`src/utils/botHeartbeat.ts`) and gets
+`window.edumeetBot.status(state, reason, type)` (`src/utils/botStatusHook.ts`); the provider's own
+`running` takes the heartbeat over for good. Refused with `roomNotOpen`, such a page tries again
+quietly every 3 seconds for 30 seconds, writing nothing to the status attributes until it gives up,
+because after a room-server restart the recorder may be back before the first participant is. What
+a bot can do with these is in [BOTS.md](https://github.com/edumeet/edumeet/blob/main/BOTS.md).
 
 #### Status attributes on the document
 
@@ -221,7 +222,7 @@ Every client writes three attributes on the `<html>` element for debugging and f
 | :--- | :--- |
 | `data-edumeet-state` | `new`, `lobby`, `joined`, `left`, `mgmt-admin` |
 | `data-edumeet-connection` | `new`, `connecting`, `connected`, `reconnecting`, `disconnected` |
-| `data-edumeet-reason` | absent until the client stops, then the first of: `meetingTokenRequired`, `meetingTokenInvalid`, `e2eeUnsupported`, `e2eeFailed`, `kicked`, `meetingEnded`, `connectionClosed`, `joinErrorPending` (a headless page did not auto-join because an earlier join error is still stored), `roomNotOpen` (a bot arrived before any participant), `botsNotAllowed` (the tenant admits no bots, or none without a token), `botTokenRejected` (the token, its state or the bot's address did not pass; the room-server log has the detail), `sessionNotOpen` (a bot named a breakout session that does not exist), `sessionClosed` (the breakout session a bot was recording was closed), `left` (the user left) |
+| `data-edumeet-reason` | absent until the client stops, then the first of: `meetingTokenRequired`, `meetingTokenInvalid`, `e2eeUnsupported`, `e2eeFailed`, `kicked`, `meetingEnded`, `connectionClosed`, `joinErrorPending` (a headless page did not auto-join because an earlier join error is still stored), `roomNotOpen` (a bot arrived before any participant), `botsNotAllowed` (the tenant admits no bots, or none without a token), `botTokenRejected` (the token, its state or the bot's address did not pass; the room-server log has the detail), `sessionNotOpen` (a bot named a breakout session that does not exist), `sessionClosed` (the breakout session a bot was recording was closed), `jobNotActive` (a bot that runs jobs has none left, or its `botId` is already live in another browser), `left` (the user left) |
 
 #### Theme settings (`config.theme`) (4.2+)
 

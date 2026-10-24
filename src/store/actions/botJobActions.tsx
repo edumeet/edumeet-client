@@ -60,7 +60,9 @@ export const sendBotStatus = (status: unknown, reason?: unknown, type?: unknown)
 
 	const kind = asBotJobType(type);
 
-	if (!state || !room.headless || !me.botId || room.state !== 'joined') return false;
+	// Only once the room server has taken the join: before that the report reaches a page it
+	// does not yet treat as a bot of a job.
+	if (!state || !room.headless || !me.botId || room.state !== 'joined' || !room.entered) return false;
 	// A kind that is no kind would read as the whole bot, so nothing is sent.
 	if (state !== 'running' && type != null && !kind) return false;
 

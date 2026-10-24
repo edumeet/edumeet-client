@@ -25,7 +25,7 @@ const run = (thunk: Thunk, state: Record<string, unknown>, signalingService: Rec
 };
 
 const botPage = (over: { room?: Record<string, unknown>, me?: Record<string, unknown> } = {}) => ({
-	room: { headless: true, state: 'joined', ...over.room },
+	room: { headless: true, state: 'joined', entered: true, ...over.room },
 	me: { botId: jobId, ...over.me },
 });
 
@@ -91,6 +91,8 @@ describe('what window.edumeetBot.status() sends', () => {
 		expect(run(sendBotStatus('running'), botPage({ me: { botId: undefined } }), { notify }).result).toBe(false);
 
 		for (const state of [ 'new', 'lobby', 'left' ]) expect(run(sendBotStatus('running'), botPage({ room: { state } }), { notify }).result).toBe(false);
+		// the room is ready, but the room server has not taken the join yet
+		expect(run(sendBotStatus('running'), botPage({ room: { entered: false } }), { notify }).result).toBe(false);
 
 		expect(notify).not.toHaveBeenCalled();
 	});

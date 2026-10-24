@@ -120,6 +120,8 @@ const createRoomMiddleware = ({
 
 							const fromPrecall = getState().room.state !== 'joined';
 
+							// A room that is ready again (a long reconnect) has to take the join again too.
+							dispatch(roomActions.setEntered(false));
 							dispatch(roomActions.setState('joined'));
 							dispatch(joinRoom({ fromPrecall }));
 

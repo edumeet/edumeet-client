@@ -81,6 +81,8 @@ const enterRoom = (): AppThunk<Promise<void>> => async (
 		picture,
 	});
 
+	dispatch(roomActions.setEntered(true));
+
 	fileService.tracker = tracker;
 	if (maxFileSize)
 		fileService.maxFileSize = maxFileSize;

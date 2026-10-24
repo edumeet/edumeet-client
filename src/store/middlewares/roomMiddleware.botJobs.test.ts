@@ -148,3 +148,17 @@ describe('the monitoring samples of a bot', () => {
 		expect(mediaService.setMonitorAttachments).toHaveBeenCalledWith({ actualSessionId: 's', displayName: 'Acme Recorder' });
 	});
 });
+
+describe('a room that is ready', () => {
+	it('is not yet entered: the join has still to be taken, also after a long reconnect', () => {
+		const { calls, deliver } = setup({}, { headless: true, state: 'joined' });
+
+		deliver('roomReady', roomReady);
+
+		const order = calls().map((action) => action.type);
+
+		expect(order.indexOf(roomActions.setEntered.type)).toBeGreaterThanOrEqual(0);
+		expect(calls()).toContainEqual(roomActions.setEntered(false));
+		expect(order.indexOf(roomActions.setEntered.type)).toBeLessThan(order.indexOf(roomActions.setState.type));
+	});
+});

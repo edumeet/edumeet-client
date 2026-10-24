@@ -36,6 +36,9 @@ export interface RoomState {
 	logo?: string;
 	backgroundImage?: string;
 	joinInProgress?: boolean;
+	// The room server has taken this page's join, which `state: 'joined'` (the room is
+	// ready) does not yet mean; a bot's reports count only from here.
+	entered?: boolean;
 	updateBreakoutInProgress?: boolean;
 	transitBreakoutRoomInProgress?: boolean;
 	recording?: boolean;
@@ -108,6 +111,9 @@ const roomSlice = createSlice({
 		}),
 		setHeadless: ((state, action: PayloadAction<boolean>) => {
 			state.headless = action.payload;
+		}),
+		setEntered: ((state, action: PayloadAction<boolean>) => {
+			state.entered = action.payload;
 		}),
 		// The first reason is the one that explains the leave; later ones are consequences.
 		setLeaveReason: ((state, action: PayloadAction<LeaveReason>) => {
