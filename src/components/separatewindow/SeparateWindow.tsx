@@ -1,15 +1,19 @@
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
+import rtlPlugin from 'stylis-plugin-rtl';
 import {
 	PropsWithChildren,
 	ReactNode,
 	ReactPortal,
+	useMemo,
 	useEffect,
+	useRef,
 	useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { useConstant } from '../../store/hooks';
+import { useAppSelector, useConstant } from '../../store/hooks';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { getDirection } from '../../utils/direction';
 
 interface SeparateWindowProps extends PropsWithChildren {
 	onClose?: () => void;
@@ -27,11 +31,16 @@ const SeparateWindow = ({
 	const titleEl = useConstant(() => document.createElement('title'));
 	const containerEl = useConstant(() => document.createElement('div'));
 
-	const cache = useConstant(() =>
-		createCache({ key: 'external', container: containerEl })
-	);
+	const locale = useAppSelector((state) => state.settings.locale);
+	const direction = getDirection(locale);
+	const cache = useMemo(() => createCache({
+		key: `external-${direction}`,
+		container: containerEl,
+		stylisPlugins: direction === 'rtl' ? [ rtlPlugin ] : [],
+	}), [ containerEl, direction ]);
 
 	const [ isOpened, setOpened ] = useState(false);
+	const externalWindowRef = useRef<Window | null>(null);
 
 	useEffect(() => {
 		const externalWindow = window.open(
@@ -52,11 +61,24 @@ const SeparateWindow = ({
 		externalWindow.document.body.style.margin = '0';
 		externalWindow.document.head.appendChild(titleEl);
 		externalWindow.document.body.appendChild(containerEl);
+		externalWindowRef.current = externalWindow;
 
 		setOpened(true);
 
-		return () => externalWindow.close();
+		return () => {
+			externalWindowRef.current = null;
+			externalWindow.close();
+		};
 	}, []);
+
+	useEffect(() => {
+		const externalWindow = externalWindowRef.current;
+
+		if (!externalWindow) return;
+
+		externalWindow.document.documentElement.dir = direction;
+		externalWindow.document.documentElement.lang = locale || 'en';
+	}, [ direction, locale ]);
 
 	useEffect(() => {
 		titleEl.innerText = title;
