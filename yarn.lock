@@ -2920,6 +2920,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cssjanus@npm:^2.0.1":
+  version: 2.3.1
+  resolution: "cssjanus@npm:2.3.1"
+  checksum: 10c0/05b5044d5e98f53108c0c15c985f4f6cb0155509b1695f639c52f2055224c9afb96bf1de86943fc7aabfc3a61777b97970a84c36e8b335d6c8e73553ce6cc8dc
+  languageName: node
+  linkType: hard
+
 "cssstyle@npm:^4.2.1":
   version: 4.6.0
   resolution: "cssstyle@npm:4.6.0"
@@ -3253,6 +3260,8 @@ __metadata:
     rollup-plugin-visualizer: "npm:^7.0.1"
     rrule: "npm:^2.8.1"
     socket.io-client: "npm:^4.8.4"
+    stylis: "npm:^4.4.0"
+    stylis-plugin-rtl: "npm:^2.1.1"
     ts-mls: "npm:2.0.0-rc.16"
     typescript: "npm:^5.9.3"
     uuid: "npm:^14.0.2"
@@ -7406,10 +7415,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stylis-plugin-rtl@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "stylis-plugin-rtl@npm:2.1.1"
+  dependencies:
+    cssjanus: "npm:^2.0.1"
+  peerDependencies:
+    stylis: 4.x
+  checksum: 10c0/706640bba51ca75e3a824f781b59e8d8b8d034a10b839aa93daea166aac6cc67a4e7c063496ea8a09c396b639cff9859a42f5d03937d8f89f8922fd6c7435739
+  languageName: node
+  linkType: hard
+
 "stylis@npm:4.2.0":
   version: 4.2.0
   resolution: "stylis@npm:4.2.0"
   checksum: 10c0/a7128ad5a8ed72652c6eba46bed4f416521bc9745a460ef5741edc725252cebf36ee45e33a8615a7057403c93df0866ab9ee955960792db210bb80abd5ac6543
+  languageName: node
+  linkType: hard
+
+"stylis@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "stylis@npm:4.4.0"
+  checksum: 10c0/259be096d90dfbfe903c8656dcb7591e52a421e577e950ef42ebd9ca02f387623a1165dd08761492fb6e92a7a562d62a53a694a10b0a2f6dcd7a0db107b4bf55
   languageName: node
   linkType: hard
 
