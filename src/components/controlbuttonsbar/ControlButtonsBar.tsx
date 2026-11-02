@@ -1,4 +1,3 @@
-import { shallowEqual } from 'react-redux';
 import { useAppDispatch, useAppSelector, usePermissionSelector } from '../../store/hooks';
 import { permissions } from '../../utils/roles';
 import { uiActions } from '../../store/slices/uiSlice';
@@ -11,7 +10,7 @@ import { isMobileSelector } from '../../store/selectors';
 import ParticipantsButton from '../controlbuttons/ParticipantsButton';
 import ChatButton from '../controlbuttons/ChatButton';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import ParticipantList from '../participantlist/ParticipantList';
 import Chat from '../chat/Chat';
 import { styled } from '@mui/material/styles';
@@ -48,7 +47,10 @@ const ControlButtonsBar = (): React.JSX.Element => {
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const canModerate = usePermissionSelector(permissions.MODERATE_ROOM);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
-	const botEntries = useAppSelector((state) => botJobMenuEntries(state.botJobs.providers, state.botJobs.jobs), shallowEqual);
+	const botProviders = useAppSelector((state) => state.botJobs.providers);
+	const botJobs = useAppSelector((state) => state.botJobs.jobs);
+	// Computed here rather than in the selector, which would give new objects on every store change.
+	const botEntries = useMemo(() => botJobMenuEntries(botProviders, botJobs), [ botProviders, botJobs ]);
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled); // eslint-disable-line
 	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
