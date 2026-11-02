@@ -46,6 +46,7 @@ const ControlButtonsBar = (): React.JSX.Element => {
 	const canRecord = useAppSelector((state) => state.me.canRecord);
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const canModerate = usePermissionSelector(permissions.MODERATE_ROOM);
+	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
 	const botKinds = useAppSelector((state) => offeredKinds(state.botJobs.providers, state.botJobs.jobs), shallowEqual);
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled); // eslint-disable-line
 	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
@@ -141,7 +142,7 @@ const ControlButtonsBar = (): React.JSX.Element => {
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ !isMobile && localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
-				{ canModerate && edumeetConfig.loginEnabled && botKinds.map((type) => (
+				{ canModerate && edumeetConfig.loginEnabled && loggedIn && botKinds.map((type) => (
 					<BotJob key={type} type={type} onClick={handleMoreClose} />
 				)) }
 				{ !isMobile && <Drawing onClick={handleMoreClose} /> }
