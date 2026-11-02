@@ -2552,6 +2552,21 @@ export const botJobStartTranscriberLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Start server transcription'
 });
 
+export const botJobStopRecorderLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStopRecorder',
+	defaultMessage: 'Stop server recording'
+});
+
+export const botJobStopStreamerLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStopStreamer',
+	defaultMessage: 'Stop live stream'
+});
+
+export const botJobStopTranscriberLabel = (): string => intl.formatMessage({
+	id: 'room.botJobStopTranscriber',
+	defaultMessage: 'Stop server transcription'
+});
+
 export const botJobConfirmRecorderLabel = (name: string): string => intl.formatMessage({
 	id: 'room.botJobConfirmRecorder',
 	defaultMessage: '{name} will join this room and record everything that is said and shown. Continue?'

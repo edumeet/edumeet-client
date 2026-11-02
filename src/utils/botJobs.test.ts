@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('./edumeetConfig', () => ({ default: { serverHostname: 'rooms.example.edu', productionPort: 443, developmentPort: 8443 } }));
 vi.stubGlobal('window', { location: { hostname: 'meet.example.edu' } });
 
-import { BOT_RETRY_INTERVAL_MS, BOT_RETRY_WINDOW_MS, kickRowJobIds, offeredKinds, providerBotPresent, asBotJobType, audioOnlyCapabilities, transcriberPage, asBotStatus, botMenu, botRetryPlan, disclosedJobs, disclosedKinds, BotJobInfo } from './botJobs';
+import { BOT_RETRY_INTERVAL_MS, BOT_RETRY_WINDOW_MS, botJobMenuEntries, kickRowJobIds, offeredKinds, providerBotPresent, asBotJobType, audioOnlyCapabilities, transcriberPage, asBotStatus, botMenu, botRetryPlan, disclosedJobs, disclosedKinds, BotJobInfo } from './botJobs';
 import { asBotRejection, botIdFromUrl } from './headless';
 import { getSignalingUrl } from './signalingHelpers';
 
@@ -188,5 +188,26 @@ describe('the kinds a moderator is offered to start', () => {
 
 	it('offer a kind again once its job is stopping, as the room server takes it then', () => {
 		expect(offeredKinds([ acme ], [ job('stopping', 'recorder') ])).toEqual([ 'recorder', 'streamer' ]);
+	});
+});
+
+describe('the More menu entries for server jobs', () => {
+	const acme = { id: 9, label: 'Acme', jobTypes: [ 'recorder', 'streamer' ] as BotJobInfo['type'][] };
+	const scribe = { id: 4, label: 'Scribe', jobTypes: [ 'transcriber' ] as BotJobInfo['type'][] };
+
+	it('start every kind some provider offers while none of it runs, in a fixed order', () => {
+		expect(botJobMenuEntries([ scribe, acme ], [])).toEqual([ { type: 'recorder' }, { type: 'streamer' }, { type: 'transcriber' } ]);
+		expect(botJobMenuEntries([], [ job('running') ])).toEqual([]);
+	});
+
+	it('stop the job of a kind that runs in the session, from its start to the moment it stops', () => {
+		for (const state of [ 'starting', 'joined', 'running', 'interrupted' ] as const) {
+			expect(botJobMenuEntries([ acme ], [ job(state, 'recorder') ])).toEqual([ { type: 'recorder', stopJobId: `recorder-${state}` }, { type: 'streamer' } ]);
+		}
+	});
+
+	it('start a kind again once its job is stopping, as the room server takes a new one then', () => {
+		expect(botJobMenuEntries([ acme ], [ job('stopping', 'recorder') ])).toEqual([ { type: 'recorder' }, { type: 'streamer' } ]);
+		expect(botJobMenuEntries([ acme ], [ job('stopping', 'recorder'), job('running', 'recorder') ])).toEqual([ { type: 'recorder', stopJobId: 'recorder-running' }, { type: 'streamer' } ]);
 	});
 });

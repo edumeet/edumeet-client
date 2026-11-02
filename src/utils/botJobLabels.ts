@@ -14,6 +14,9 @@ import {
 	botJobStartRecorderLabel,
 	botJobStartStreamerLabel,
 	botJobStartTranscriberLabel,
+	botJobStopRecorderLabel,
+	botJobStopStreamerLabel,
+	botJobStopTranscriberLabel,
 	botJobStateInterruptedLabel,
 	botJobStateJoinedLabel,
 	botJobStateRunningLabel,
@@ -29,6 +32,12 @@ export const botJobStartLabel = (type: BotJobType): string => ({
 	recorder: botJobStartRecorderLabel,
 	streamer: botJobStartStreamerLabel,
 	transcriber: botJobStartTranscriberLabel,
+})[type]();
+
+export const botJobStopKindLabel = (type: BotJobType): string => ({
+	recorder: botJobStopRecorderLabel,
+	streamer: botJobStopStreamerLabel,
+	transcriber: botJobStopTranscriberLabel,
 })[type]();
 
 // A provider whose bot is already in the session takes the new kind on there.

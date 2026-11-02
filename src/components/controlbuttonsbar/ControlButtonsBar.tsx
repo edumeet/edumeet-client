@@ -21,7 +21,8 @@ import Transcription from '../menuitems/Transcription';
 import Filesharing from '../menuitems/Filesharing';
 import Recording from '../menuitems/Recording';
 import BotJob from '../menuitems/BotJob';
-import { offeredKinds } from '../../utils/botJobs';
+import BotJobStop from '../menuitems/BotJobStop';
+import { botJobMenuEntries } from '../../utils/botJobs';
 import edumeetConfig from '../../utils/edumeetConfig';
 import Drawing from '../menuitems/Drawing';
 import MoreButton from '../controlbuttons/MoreButton';
@@ -47,7 +48,7 @@ const ControlButtonsBar = (): React.JSX.Element => {
 	const canTranscribe = useAppSelector((state) => state.me.canTranscribe);
 	const canModerate = usePermissionSelector(permissions.MODERATE_ROOM);
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
-	const botKinds = useAppSelector((state) => offeredKinds(state.botJobs.providers, state.botJobs.jobs), shallowEqual);
+	const botEntries = useAppSelector((state) => botJobMenuEntries(state.botJobs.providers, state.botJobs.jobs), shallowEqual);
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled); // eslint-disable-line
 	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const reactionsEnabled = useAppSelector((state) => state.room.reactionsEnabled);
@@ -142,7 +143,8 @@ const ControlButtonsBar = (): React.JSX.Element => {
 				{ filesharingEnabled && <Filesharing onClick={handleMoreClose} /> }
 				{ canTranscribe && <Transcription onClick={handleMoreClose} /> }
 				{ !isMobile && localRecordingEnabled && canRecord && <Recording onClick={handleMoreClose} /> }
-				{ canModerate && edumeetConfig.loginEnabled && loggedIn && botKinds.map((type) => (
+				{ canModerate && edumeetConfig.loginEnabled && botEntries.map(({ type, stopJobId }) => (stopJobId ?
+					loggedIn && <BotJobStop key={type} type={type} jobId={stopJobId} onClick={handleMoreClose} /> :
 					<BotJob key={type} type={type} onClick={handleMoreClose} />
 				)) }
 				{ !isMobile && <Drawing onClick={handleMoreClose} /> }

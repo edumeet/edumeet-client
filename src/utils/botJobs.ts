@@ -81,6 +81,15 @@ export const botMenu = <Bot extends { id: string }>(bots: Bot[], jobs: BotJobInf
 export const offeredKinds = (providers: BotProviderInfo[], jobs: BotJobInfo[]): BotJobType[] =>
 	botJobTypes.filter((type) => providers.some((p) => kindsOf(p).includes(type)) && !jobs.some((job) => job.type === type && job.state !== 'stopping'));
 
+// The More menu's entry for each kind a provider offers: the job of that kind that runs in the
+// session is stopped there, any other kind is started.
+export const botJobMenuEntries = (providers: BotProviderInfo[], jobs: BotJobInfo[]): { type: BotJobType; stopJobId?: string }[] =>
+	botJobTypes.filter((type) => providers.some((p) => kindsOf(p).includes(type))).map((type) => {
+		const running = jobs.find((job) => job.type === type && job.state !== 'stopping');
+
+		return running ? { type, stopJobId: running.id } : { type };
+	});
+
 // A room server from before providers offered several kinds sends none here; its
 // providers then offer nothing rather than breaking the page.
 export const kindsOf = (provider: BotProviderInfo): BotJobType[] => (Array.isArray(provider.jobTypes) ? provider.jobTypes : []);
