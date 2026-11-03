@@ -79,9 +79,13 @@ var config = {
 	simulcastSharing: false,
 
 	/**
-	 * Enable/disable transcription UI.
+	 * Enable/disable transcription UI. Off by default for privacy: the
+	 * browser's speech recognition sends the speaker's audio to the browser
+	 * vendor (Google for Chrome, Microsoft for Edge, Apple for Safari),
+	 * outside edumeet and outside end-to-end encryption. Enable it only where
+	 * your privacy notice covers that transfer. See README.md.
 	 */
-	transcriptionEnabled: true,
+	transcriptionEnabled: false,
 
 	/**
 	 * Randomize the room name when it is blank.

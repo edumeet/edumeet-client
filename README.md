@@ -115,7 +115,7 @@ The client merges your `window.config` with built-in defaults (see `src/utils/ty
 | title | Application title. | `string` | `edumeet` |
 | randomizeOnBlank | Randomize room name when blank. | `boolean` | `true` |
 | keepRoomNameOnLeave | (4.2+) Keep the room name in the URL when leaving the room. | `boolean` | `true` |
-| transcriptionEnabled | Enable transcription. The text comes from the browser's own speech recognition, which sends the speaker's audio to the browser vendor's service (Google for Chrome, Microsoft for Edge). End-to-end encryption does not cover that step; in an end-to-end encrypted room only the transcript sent to the other participants is encrypted. | `boolean` | `true` |
+| transcriptionEnabled | Enable transcription. The text comes from the browser's own speech recognition, which sends the speaker's audio to the browser vendor's service (Google for Chrome, Microsoft for Edge, Apple for Safari; Firefox has none), possibly outside the EU. End-to-end encryption does not cover that step; in an end-to-end encrypted room only the transcript sent to the other participants is encrypted. Off by default for that reason: enable it only where the deployment's privacy notice covers the transfer to those vendors. The transcripts are not shown in the room at the moment. | `boolean` | `false` |
 | imprintUrl | Show an imprint link (blank to hide). | `string` | `''` |
 | privacyUrl | Show a privacy notice link (blank to hide). | `string` | `''` |
 | obfuscateDisplayName | Mask display names in the client monitoring samples sent to the media node (`Jane Doe` becomes `J••• D••`). The UI is unaffected. | `boolean` | `false` |
