@@ -175,8 +175,11 @@ transcribes, see
 [BOT-PROVIDER-API.md](https://github.com/edumeet/edumeet/blob/main/BOT-PROVIDER-API.md)), moderators
 get an entry per kind in the More menu: "Start server recording", "Start live stream", "Start server
 transcription". They appear only for a kind a provider of the tenant offers (the tenant editor ticks
-the kinds per provider), only for moderators, and only while no job of that kind runs in the
-moderator's session; a tenant without providers sees nothing new anywhere. Where login is enabled, a moderator who is not signed in sees the entry
+the kinds per provider), only for moderators, and only in a room claimed in the management: in an
+unclaimed room the first participant is a moderator, so the room-server offers no providers there.
+While a job of that kind runs in the moderator's session, the entry offers to stop it instead ("Stop
+server recording", "Stop live stream", "Stop server transcription"), as **Stop** in the bot menu
+does. A tenant without providers sees nothing new anywhere. Where login is enabled, a moderator who is not signed in sees the entry
 disabled with "Log in to record" (a deployment without login has no such entries): the recording or transcript is sent by email to the owners of the room and to
 the moderator who started it, resolved from their accounts, so somebody signed in has to start it.
 The confirmation says so; for a live stream it says the stream goes to its configured destination. Stopping a job needs the same; a moderator who is not signed in can still remove
