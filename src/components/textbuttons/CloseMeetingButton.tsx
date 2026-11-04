@@ -7,17 +7,28 @@ import {
 } from '../translated/translatedComponents';
 import ConfirmButton from './ConfirmButton';
 
-const CloseMeetingButton = ({ size }: Pick<ButtonProps, 'size'>): React.JSX.Element => {
+interface CloseMeetingButtonProps extends Pick<ButtonProps, 'size'> {
+	label?: string;
+	beforeClose?: () => Promise<boolean>;
+}
+
+const CloseMeetingButton = ({ size, label, beforeClose }: CloseMeetingButtonProps): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const closeMeetingInProgress =
 		useAppSelector((state) => state.room.closeMeetingInProgress);
 
+	const handleConfirm = async (): Promise<void> => {
+		if (beforeClose && !(await beforeClose())) return;
+
+		dispatch(closeMeeting());
+	};
+
 	return (
 		<ConfirmButton
-			label={closeMeetingLabel()}
+			label={label ?? closeMeetingLabel()}
 			confirmContent={closeMeetingConfirmLabel()}
 			disabled={closeMeetingInProgress}
-			onConfirm={() => dispatch(closeMeeting())}
+			onConfirm={handleConfirm}
 			size={size}
 		/>
 	);

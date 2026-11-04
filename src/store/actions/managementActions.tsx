@@ -54,17 +54,19 @@ export const getTenantFromFqdn = (fqdn: string): AppThunk<Promise<string | undef
 	return tenantId;
 };
 
-export const createRoom = (roomName: string): AppThunk<Promise<void>> => async (
+export const createRoom = (roomName: string): AppThunk<Promise<boolean>> => async (
 	dispatch,
 	_getState,
 	{ managementService }
-): Promise<void> => {
+): Promise<boolean> => {
 	logger.debug('createRoom() [roomName:%s]', roomName);
 
 	try {
 		await (await managementService).service('rooms').create({
 			name: roomName
 		});
+
+		return true;
 	} catch (error) {
 		if (error instanceof Error) {
 			dispatch(notificationsActions.enqueueNotification({
@@ -73,6 +75,8 @@ export const createRoom = (roomName: string): AppThunk<Promise<void>> => async (
 			}));
 		}
 		dispatch(handleAuthError(error));
+
+		return false;
 	}
 };
 

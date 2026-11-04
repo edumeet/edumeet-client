@@ -2172,7 +2172,17 @@ export const permissionRevokedLabel = (list: string): string => intl.formatMessa
 
 export const claimRoomNoticeLabel = (): string => intl.formatMessage({
 	id: 'label.room.claimNotice',
-	defaultMessage: 'Settings will take effect on the next meeting after everyone has left. Continue?'
+	defaultMessage: 'Claiming makes you the owner of this room. Its settings take effect when the meeting starts again, after everyone has left. Continue?'
+});
+
+export const claimRoomCloseNowNoticeLabel = (): string => intl.formatMessage({
+	id: 'label.room.claimCloseNowNotice',
+	defaultMessage: 'To apply them now, choose "Claim and close meeting for all". This disconnects everyone, and they can join again right away.'
+});
+
+export const claimRoomAndCloseLabel = (): string => intl.formatMessage({
+	id: 'label.room.claimAndClose',
+	defaultMessage: 'Claim and close meeting for all'
 });
 
 export const permissionDescriptions: Record<string, () => string> = {

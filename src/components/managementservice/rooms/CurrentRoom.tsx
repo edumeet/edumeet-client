@@ -1,10 +1,12 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete, Tooltip } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControlLabel, Checkbox, Autocomplete, Tooltip } from '@mui/material';
 import { Roles, Room } from '../../../utils/types';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector, usePermissionSelector } from '../../../store/hooks';
+import { permissions } from '../../../utils/roles';
 import { createRoom, getData, getRoomByName, patchData } from '../../../store/actions/managementActions';
-import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, claimRoomNoticeLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roleLabel, roomBgLabel, yesLabel, meetingsOnlyLabel, meetingsOnlyTooltipLabel } from '../../translated/translatedComponents';
+import { applyLabel, breakoutsEnabledLabel, cancelLabel, chatEnabledLabel, claimRoomLabel, claimRoomNoticeLabel, claimRoomCloseNowNoticeLabel, claimRoomAndCloseLabel, defaultLabel, descLabel, editRoomLabel, filesharingEnabledLabel, genericItemDescLabel, localRecordingEnabledLabel, lockRoomLabel, logoLabel, manageItemLabel, maxActiveVideosLabel, nameLabel, noLabel, raiseHandEnabledLabel, reactionsEnabledLabel, roleLabel, roomBgLabel, yesLabel, meetingsOnlyLabel, meetingsOnlyTooltipLabel } from '../../translated/translatedComponents';
 import { Logger } from '../../../utils/Logger';
+import CloseMeetingButton from '../../textbuttons/CloseMeetingButton';
 
 const logger = new Logger('CurrentRoom');
 
@@ -18,6 +20,7 @@ const CurrentRoomModal = () => {
 	type RoleTypes = Array<Roles>
 
 	const loggedIn = useAppSelector((state) => state.permissions.loggedIn);
+	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 
 	const [ roomExists, setRoomExists ] = useState<boolean | null>(null);
 	const [ roles, setRoles ] = useState<RoleTypes>([ { 'description': 'Test', 'id': 1, 'name': 'Test', 'tenantId': 1, 'permissions': [] } ]);
@@ -290,6 +293,14 @@ const CurrentRoomModal = () => {
 			checkRoomExists();
 		});
 	};
+	const handleClaimBeforeClose = async (): Promise<boolean> => {
+		setClaimConfirmOpen(false);
+		const created = await dispatch(createRoom(window.location.pathname.substring(1).toLowerCase()));
+
+		checkRoomExists();
+
+		return created;
+	};
 
 	const addTenant = async () => {
 
@@ -420,14 +431,20 @@ const CurrentRoomModal = () => {
 			<DialogTitle>{claimRoomLabel()}</DialogTitle>
 			<DialogContent>
 				<DialogContentText>{claimRoomNoticeLabel()}</DialogContentText>
+				{isModerator && <DialogContentText sx={{ mt: 2 }}>{claimRoomCloseNowNoticeLabel()}</DialogContentText>}
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={() => setClaimConfirmOpen(false)} variant='outlined'>
-					{noLabel()}
-				</Button>
-				<Button onClick={handleCreateRoom} variant='contained'>
-					{yesLabel()}
-				</Button>
+				<Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', gap: 1 }}>
+					{isModerator ? <CloseMeetingButton label={claimRoomAndCloseLabel()} beforeClose={handleClaimBeforeClose} /> : <div />}
+					<Box sx={{ display: 'flex', gap: 1 }}>
+						<Button onClick={() => setClaimConfirmOpen(false)} variant='outlined'>
+							{noLabel()}
+						</Button>
+						<Button onClick={handleCreateRoom} variant='contained'>
+							{yesLabel()}
+						</Button>
+					</Box>
+				</Box>
 			</DialogActions>
 		</Dialog>
 	</>;
