@@ -39,7 +39,8 @@ export class SignalingService extends EventEmitter {
 
 		this.closed = true;
 
-		this.connections.items.forEach((c) => c.close());
+		// A copy: each close removes the connection from this.connections, which would skip the next one.
+		[ ...this.connections.items ].forEach((c) => c.close());
 		this.connections.clear();
 
 		this.emit('close');
@@ -48,7 +49,7 @@ export class SignalingService extends EventEmitter {
 	public disconnect(): void {
 		logger.debug('disconnect()');
 
-		this.connections.items.forEach((c) => c.close());
+		[ ...this.connections.items ].forEach((c) => c.close());
 		this.connections.clear();
 	}
 
