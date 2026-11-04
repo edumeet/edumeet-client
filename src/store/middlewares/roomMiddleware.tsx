@@ -18,7 +18,7 @@ import { lobbyPeersActions } from '../slices/lobbyPeersSlice';
 import { drawingActions } from '../slices/drawingSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { isInsertableStreamsSupported } from '../selectors';
-import { botJobFailedLabel, roomE2eeUnsupportedLabel } from '../../components/translated/translatedComponents';
+import { botJobBusyLabel, botJobFailedLabel, roomE2eeUnsupportedLabel } from '../../components/translated/translatedComponents';
 import { Logger } from '../../utils/Logger';
 
 // Survives the full page reload that setState('left') triggers (App.tsx) — read + shown on landing.
@@ -229,9 +229,12 @@ const createRoomMiddleware = ({
 						}
 
 						case 'botJobFailed': {
+							const name = String(notification.data?.label ?? '');
+							const busy = notification.data?.reason === 'providerBusy';
+
 							dispatch(notificationsActions.enqueueNotification({
-								message: botJobFailedLabel(String(notification.data?.label ?? '')),
-								options: { variant: 'error', persist: true }
+								message: busy ? botJobBusyLabel(name) : botJobFailedLabel(name),
+								options: { variant: busy ? 'warning' : 'error', persist: true }
 							}));
 
 							break;

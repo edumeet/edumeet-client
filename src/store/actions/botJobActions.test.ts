@@ -6,6 +6,7 @@ vi.mock('../../services/mediaService', () => ({}));
 vi.mock('../store', () => ({}));
 vi.mock('../../components/translated/translatedComponents', () => ({
 	botJobStartFailedLabel: () => 'The bot could not be started',
+	botJobLimitLabel: (limit: number) => `At most ${limit} at the same time`,
 	botJobStopFailedLabel: () => 'The bot could not be stopped',
 }));
 
@@ -126,5 +127,35 @@ describe('starting and stopping a job from the room', () => {
 		expect(messages.map((action) => action.type)).toEqual([ notificationsActions.enqueueNotification.type, notificationsActions.enqueueNotification.type ]);
 		expect(messages.map((action) => action.payload.message)).toEqual([ 'The bot could not be started', 'The bot could not be stopped' ]);
 		expect(JSON.stringify(messages)).not.toContain('Server error');
+	});
+
+	it('tells the moderator the most jobs the room may run when it already runs them', async () => {
+		const sendRequest = vi.fn(async () => ({ refused: 'tooManyBotJobs', limit: 12 }));
+		const { dispatch, result } = run(startBotJob('recorder'), {}, { sendRequest });
+
+		await result;
+
+		expect(dispatch).toHaveBeenCalledTimes(1);
+		expect(dispatch.mock.calls[0][0]).toMatchObject({ type: notificationsActions.enqueueNotification.type, payload: { message: 'At most 12 at the same time', options: { variant: 'warning' } } });
+	});
+
+	it('falls back to the plain message when the refusal names no usable limit', async () => {
+		for (const answer of [ { refused: 'tooManyBotJobs' }, { refused: 'tooManyBotJobs', limit: 'many' }, { refused: 'tooManyBotJobs', limit: 0 } ]) {
+			const sendRequest = vi.fn(async () => answer);
+			const { dispatch, result } = run(startBotJob('recorder'), {}, { sendRequest });
+
+			await result;
+
+			expect(dispatch.mock.calls[0][0].payload.message).toBe('The bot could not be started');
+		}
+	});
+
+	it('says nothing when the job was taken', async () => {
+		const sendRequest = vi.fn(async () => ({ jobId }));
+		const { dispatch, result } = run(startBotJob('recorder'), {}, { sendRequest });
+
+		await result;
+
+		expect(dispatch).not.toHaveBeenCalled();
 	});
 });

@@ -12,6 +12,7 @@ vi.mock('../actions/meetingTokenActions', () => ({ meetingTokenRejected: vi.fn()
 vi.mock('../../components/translated/translatedComponents', () => ({
 	roomE2eeUnsupportedLabel: () => 'e2ee unsupported',
 	botJobFailedLabel: (name: string) => `${name} has stopped unexpectedly`,
+	botJobBusyLabel: (name: string) => `${name} is busy`,
 }));
 
 import createRoomMiddleware from './roomMiddleware';
@@ -128,6 +129,14 @@ describe('bot jobs reaching a participant', () => {
 		expect(action.type).toBe(notificationsActions.enqueueNotification.type);
 		expect(action.payload.message).toBe('Acme Recorder has stopped unexpectedly');
 		expect(JSON.stringify(action.payload)).not.toContain('disk full');
+	});
+
+	it('tell a moderator when its provider is busy', () => {
+		const { calls, deliver } = setup();
+
+		deliver('botJobFailed', { jobId, label: 'Acme Recorder', reason: 'providerBusy' });
+
+		expect(calls()[0].payload).toMatchObject({ message: 'Acme Recorder is busy', options: { variant: 'warning' } });
 	});
 });
 

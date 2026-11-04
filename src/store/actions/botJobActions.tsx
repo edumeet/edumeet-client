@@ -2,7 +2,7 @@ import { AppThunk } from '../store';
 import { Logger } from '../../utils/Logger';
 import { BotJobType, asBotJobType, asBotStatus } from '../../utils/botJobs';
 import { notificationsActions } from '../slices/notificationsSlice';
-import { botJobStartFailedLabel, botJobStopFailedLabel } from '../../components/translated/translatedComponents';
+import { botJobLimitLabel, botJobStartFailedLabel, botJobStopFailedLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('BotJobActions');
 
@@ -14,7 +14,16 @@ export const startBotJob = (type: BotJobType, providerId?: number): AppThunk<Pro
 	logger.debug('startBotJob() [type: %s]', type);
 
 	try {
-		await signalingService.sendRequest('moderator:startBotJob', { type, providerId });
+		const answer = await signalingService.sendRequest('moderator:startBotJob', { type, providerId });
+
+		if (answer?.refused === 'tooManyBotJobs') {
+			const limit = Number(answer.limit);
+
+			dispatch(notificationsActions.enqueueNotification({
+				message: Number.isInteger(limit) && limit > 0 ? botJobLimitLabel(limit) : botJobStartFailedLabel(),
+				options: { variant: 'warning' }
+			}));
+		}
 	} catch (error) {
 		logger.error('startBotJob() [error:"%o"]', error);
 

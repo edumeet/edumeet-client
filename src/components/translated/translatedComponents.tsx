@@ -2027,6 +2027,21 @@ export const botPolicyLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Who may join as a bot'
 });
 
+export const maxBotJobsPerRoomLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.maxBotJobsPerRoom',
+	defaultMessage: 'Bot jobs per room at the same time'
+});
+
+export const maxBotJobsPerRoomHelperLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.maxBotJobsPerRoomHelper',
+	defaultMessage: '1 to 100, never above the server setting (10 by default). Empty: the server setting.'
+});
+
+export const maxBotJobsPerRoomTooltipLabel = (): string => intl.formatMessage({
+	id: 'label.managementservice.maxBotJobsPerRoomTooltip',
+	defaultMessage: 'How many recordings, live streams and transcriptions one room, its breakout rooms included, may run at the same time.'
+});
+
 export const botPolicyTooltipLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.botPolicyTooltip',
 	defaultMessage: 'A bot is a headless browser page that records, streams or transcribes a room. Disabled: no bots. Access token only: a bot needs one of the tokens below, from an allowed address, and then also enters locked and meetings-only rooms. All bots: bots without a token are admitted too, like ordinary participants.'
@@ -2681,6 +2696,16 @@ export const botJobFailedLabel = (name: string): string => intl.formatMessage({
 	id: 'room.botJobFailed',
 	defaultMessage: '{name} has stopped unexpectedly'
 }, { name });
+
+export const botJobBusyLabel = (name: string): string => intl.formatMessage({
+	id: 'room.botJobBusy',
+	defaultMessage: '{name} is busy. Try again later.'
+}, { name });
+
+export const botJobLimitLabel = (limit: number): string => intl.formatMessage({
+	id: 'room.botJobLimit',
+	defaultMessage: 'This room has reached its limit of recordings, streams and transcriptions running at the same time ({limit}).'
+}, { limit });
 
 export const botJobStartFailedLabel = (): string => intl.formatMessage({
 	id: 'room.botJobStartFailed',

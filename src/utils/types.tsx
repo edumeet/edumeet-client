@@ -367,6 +367,7 @@ export type Tenant = {
 	allowedMediaNodeRegions?: string[] | null,
 	botPolicy?: BotPolicy | null,
 	locale?: string | null,
+	maxBotJobsPerRoom?: number | string | null,
 };
 export type TenantOptionTypes = Array<Tenant>
 

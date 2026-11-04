@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('./edumeetConfig', () => ({ default: { serverHostname: 'rooms.example.edu', productionPort: 443, developmentPort: 8443 } }));
 vi.stubGlobal('window', { location: { hostname: 'meet.example.edu' } });
 
-import { BOT_RETRY_INTERVAL_MS, BOT_RETRY_WINDOW_MS, botJobMenuEntries, kickRowJobIds, offeredKinds, providerBotPresent, asBotJobType, audioOnlyCapabilities, transcriberPage, asBotStatus, botMenu, botRetryPlan, disclosedJobs, disclosedKinds, BotJobInfo } from './botJobs';
+import { BOT_RETRY_INTERVAL_MS, BOT_RETRY_WINDOW_MS, botJobMenuEntries, kickRowJobIds, offeredKinds, providerBotPresent, asBotJobType, audioOnlyCapabilities, transcriberPage, asBotStatus, botMenu, botRetryPlan, disclosedJobs, disclosedKinds, BotJobInfo, MAX_BOT_JOBS_PER_ROOM, parseMaxBotJobs } from './botJobs';
 import { asBotRejection, botIdFromUrl } from './headless';
 import { getSignalingUrl } from './signalingHelpers';
 
@@ -209,5 +209,19 @@ describe('the More menu entries for server jobs', () => {
 	it('start a kind again once its job is stopping, as the room server takes a new one then', () => {
 		expect(botJobMenuEntries([ acme ], [ job('stopping', 'recorder') ])).toEqual([ { type: 'recorder' }, { type: 'streamer' } ]);
 		expect(botJobMenuEntries([ acme ], [ job('stopping', 'recorder'), job('running', 'recorder') ])).toEqual([ { type: 'recorder', stopJobId: 'recorder-running' }, { type: 'streamer' } ]);
+	});
+});
+
+describe('the bot jobs a room of a tenant may run, as typed in the tenant form', () => {
+	it('is empty for the server default, or a whole number from 1 to the most the management server takes', () => {
+		expect(parseMaxBotJobs('')).toBeNull();
+		expect(parseMaxBotJobs('  ')).toBeNull();
+		expect(parseMaxBotJobs('1')).toBe(1);
+		expect(parseMaxBotJobs(' 25 ')).toBe(25);
+		expect(parseMaxBotJobs(String(MAX_BOT_JOBS_PER_ROOM))).toBe(100);
+	});
+
+	it('refuses anything the management server would refuse', () => {
+		for (const text of [ '0', '101', '-1', '2.5', '1e1', 'ten', '0x10' ]) expect(parseMaxBotJobs(text)).toBeUndefined();
 	});
 });

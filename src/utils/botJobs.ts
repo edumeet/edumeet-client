@@ -147,3 +147,16 @@ export const botRetryPlan = ({ reason, botId, firstRefusedAt, now }: {
 
 	return now + BOT_RETRY_INTERVAL_MS - since <= BOT_RETRY_WINDOW_MS ? { retry: true, firstRefusedAt: since } : { retry: false };
 };
+
+export const MAX_BOT_JOBS_PER_ROOM = 100;
+
+export const parseMaxBotJobs = (text: string): number | null | undefined => {
+	const trimmed = text.trim();
+
+	if (trimmed === '') return null;
+	if (!/^\d+$/.test(trimmed)) return undefined;
+
+	const value = Number(trimmed);
+
+	return value >= 1 && value <= MAX_BOT_JOBS_PER_ROOM ? value : undefined;
+};

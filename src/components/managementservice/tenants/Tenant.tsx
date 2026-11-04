@@ -4,6 +4,7 @@ import { Autocomplete, Box, Button, Chip, Collapse, Dialog, DialogTitle, DialogC
 import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
 import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { BotPolicy, botPolicies, Tenant, TenantOptionTypes } from '../../../utils/types';
+import { MAX_BOT_JOBS_PER_ROOM, parseMaxBotJobs } from '../../../utils/botJobs';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, patchData } from '../../../store/actions/managementActions';
 import TenantFQDNTable from './TenatnFQDN';
@@ -11,7 +12,7 @@ import TenantOAuthTable from './TenantOAuth';
 import TenantInviteConfigPanel from './TenantInviteConfig';
 import TenantBotCredentialTable from './TenantBotCredential';
 import { localeList } from '../../../utils/intlManager';
-import { addNewLabel, allowedMediaNodeRegionsLabel, tenantLocaleLabel, tenantLocaleNoneLabel, tenantLocaleTooltipLabel, applyLabel, authenticationLabel, botProvidersLabel, botPolicyLabel, botPolicyOptionLabel, botPolicyTooltipLabel, botsLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, limitMediaNodeRegionsLabel, manageItemLabel, mediaNodeRegionsLabel, nameLabel, selectAtLeastOneRegionLabel, tenantLabel } from '../../translated/translatedComponents';
+import { addNewLabel, allowedMediaNodeRegionsLabel, tenantLocaleLabel, tenantLocaleNoneLabel, tenantLocaleTooltipLabel, applyLabel, authenticationLabel, botProvidersLabel, botPolicyLabel, botPolicyOptionLabel, botPolicyTooltipLabel, botsLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, limitMediaNodeRegionsLabel, manageItemLabel, maxBotJobsPerRoomHelperLabel, maxBotJobsPerRoomLabel, maxBotJobsPerRoomTooltipLabel, mediaNodeRegionsLabel, nameLabel, selectAtLeastOneRegionLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import edumeetConfig from '../../../utils/edumeetConfig';
 export interface TenantProp {
@@ -66,6 +67,7 @@ const TenantTable = () => {
 	const [ limitRegions, setLimitRegions ] = useState(false);
 	const [ allowedMediaNodeRegions, setAllowedMediaNodeRegions ] = useState<string[]>([]);
 	const [ botPolicy, setBotPolicy ] = useState<BotPolicy>('disabled');
+	const [ maxBotJobs, setMaxBotJobs ] = useState('');
 	const [ locale, setLocale ] = useState('');
 
 	async function fetchProduct() {
@@ -96,6 +98,7 @@ const TenantTable = () => {
 		setAllowedMediaNodeRegions([]);
 		setOpen(true);
 		setBotPolicy('disabled');
+		setMaxBotJobs('');
 		setLocale('');
 	};
 
@@ -127,7 +130,8 @@ const TenantTable = () => {
 		}
 	};
 
-	const canApply = name.trim() !== '' && (!limitRegions || allowedMediaNodeRegions.length > 0);
+	const maxBotJobsValue = parseMaxBotJobs(maxBotJobs);
+	const canApply = name.trim() !== '' && (!limitRegions || allowedMediaNodeRegions.length > 0) && maxBotJobsValue !== undefined;
 
 	const addTenant = async () => {
 		if (!canApply) return;
@@ -136,13 +140,13 @@ const TenantTable = () => {
 
 		// add new data / mod data / error
 		if (id === 0) {
-			dispatch(createData({ name, description, hideUserDetails, allowedMediaNodeRegions: regionsPayload, botPolicy, locale: locale || null }, 'tenants')).then(() => {
+			dispatch(createData({ name, description, hideUserDetails, allowedMediaNodeRegions: regionsPayload, botPolicy, maxBotJobsPerRoom: maxBotJobsValue, locale: locale || null }, 'tenants')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
 
 		} else {
-			dispatch(patchData(id, { name: name, description: description, hideUserDetails: hideUserDetails, allowedMediaNodeRegions: regionsPayload, botPolicy, locale: locale || null }, 'tenants')).then(() => {
+			dispatch(patchData(id, { name: name, description: description, hideUserDetails: hideUserDetails, allowedMediaNodeRegions: regionsPayload, botPolicy, maxBotJobsPerRoom: maxBotJobsValue, locale: locale || null }, 'tenants')).then(() => {
 				fetchProduct();
 				setOpen(false);
 			});
@@ -270,6 +274,19 @@ const TenantTable = () => {
 								{ botPolicies.map((policy) => <MenuItem key={policy} value={policy}>{botPolicyOptionLabel(policy)}</MenuItem>) }
 							</TextField>
 						</Tooltip>
+						<Tooltip title={maxBotJobsPerRoomTooltipLabel()} placement="top-start">
+							<TextField
+								margin="dense"
+								id="maxBotJobsPerRoom"
+								label={maxBotJobsPerRoomLabel()}
+								fullWidth
+								value={maxBotJobs}
+								onChange={(event) => setMaxBotJobs(event.target.value)}
+								error={maxBotJobsValue === undefined}
+								helperText={maxBotJobsPerRoomHelperLabel()}
+								slotProps={{ htmlInput: { inputMode: 'numeric', maxLength: String(MAX_BOT_JOBS_PER_ROOM).length } }}
+							/>
+						</Tooltip>
 						<h5>{botProvidersLabel()}</h5>
 						<TenantBotCredentialTable tenantId={id} />
 					</>}
@@ -318,6 +335,7 @@ const TenantTable = () => {
 					setLimitRegions(hasRegions);
 					setAllowedMediaNodeRegions(hasRegions ? regions : []);
 					setBotPolicy(botPolicies.find((policy) => policy === tenantData?.botPolicy) ?? 'disabled');
+					setMaxBotJobs(tenantData?.maxBotJobsPerRoom == null ? '' : String(tenantData.maxBotJobsPerRoom));
 					// Kept as stored even when the list does not offer it, so an unrelated edit cannot clear it.
 					setLocale(typeof tenantData?.locale === 'string' ? tenantData.locale : '');
 
