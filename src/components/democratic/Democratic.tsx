@@ -6,11 +6,13 @@ import Me from '../me/Me';
 import VideoConsumer from '../videoconsumer/VideoConsumer';
 import Peers from '../peers/Peers';
 import { Box } from '@mui/material';
+import { useElementSize } from '../../utils/useElementSize';
 
 type DemocraticDivProps = {
 	headless: number;
 	horizontal: number;
 	spotlights: number;
+	share?: number;
 };
 
 const DemocraticDiv = styled(Box)<DemocraticDivProps>(({
@@ -18,6 +20,7 @@ const DemocraticDiv = styled(Box)<DemocraticDivProps>(({
 	headless,
 	horizontal,
 	spotlights,
+	share,
 }) => ({
 	width: horizontal ? '25rem' : '100%',
 	height: headless ? `calc(${horizontal || !spotlights ? '100%' : '25rem'} - 8px)` : `calc(${horizontal || !spotlights ? '100%' : '25rem'} - 64px)`,
@@ -30,18 +33,29 @@ const DemocraticDiv = styled(Box)<DemocraticDivProps>(({
 	justifyContent: 'center',
 	alignItems: 'center',
 	alignContent: 'center',
+	// A share chosen by dragging the divider to the screen share. It covers the
+	// bottom margin too, so it matches the space taken in the layout.
+	...(share !== undefined && spotlights && {
+		flex: '0 0 auto',
+		...(horizontal ?
+			{ width: `${share * 100}%` } :
+			{ height: `calc(${share * 100}% - ${headless ? 0 : 64}px)` }),
+	}),
 }));
 
 type DemocraticProps = {
 	windowSize: number;
 	horizontal: boolean;
 	spotlights: boolean;
+	// Share (0-1) of the video area to take next to the spotlights.
+	share?: number;
 };
 
 const Democratic = ({
 	windowSize,
 	horizontal,
 	spotlights,
+	share,
 }: DemocraticProps): React.JSX.Element => {
 	const theme = useTheme();
 	const peersRef = useRef<HTMLDivElement>(null);
@@ -54,6 +68,7 @@ const Democratic = ({
 	const webcamConsumers = useAppSelector(spotlightWebcamConsumerSelector);
 	const currentSession = useAppSelector((state) => state.me.sessionId);
 	const headless = useAppSelector((state) => state.room.headless);
+	const ownSize = useElementSize(peersRef);
 	const [ dimensions, setDimensions ] = useState<Record<'peerWidth' | 'peerHeight', number>>({ peerWidth: 320, peerHeight: 240 });
 
 	const updateDimensions = (): void => {
@@ -110,7 +125,8 @@ const Democratic = ({
 		currentSession,
 		webcamConsumers,
 		horizontal,
-		spotlights
+		spotlights,
+		ownSize,
 	]);
 
 	const style = {
@@ -119,7 +135,7 @@ const Democratic = ({
 	};
 
 	return (
-		<DemocraticDiv ref={peersRef} headless={headless ? 1 : 0} horizontal={horizontal ? 1 : 0} spotlights={spotlights ? 1 : 0}>
+		<DemocraticDiv ref={peersRef} headless={headless ? 1 : 0} horizontal={horizontal ? 1 : 0} spotlights={spotlights ? 1 : 0} share={share}>
 			<Me style={style} />
 			{ webcamConsumers.map((consumer) => (
 				<VideoConsumer
