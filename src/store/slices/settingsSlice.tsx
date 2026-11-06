@@ -18,6 +18,9 @@ export interface SettingsState {
 	// a screen share, set by dragging the divider between them. One per
 	// layout: side by side (row) or above each other (column).
 	videoSplit?: { row?: number; column?: number };
+	// Share (0-1) of the side panel area that the participant list gets next
+	// to the chat, per layout like videoSplit.
+	sidePanelSplit?: { row?: number; column?: number };
 	aspectRatio: number;
 	selectedAudioDevice?: string;
 	selectedAudioOutputDevice?: string;
@@ -119,6 +122,11 @@ const settingsSlice = createSlice({
 			const { layout, share } = action.payload;
 
 			state.videoSplit = { ...state.videoSplit, [layout]: share };
+		}),
+		setSidePanelSplit: ((state, action: PayloadAction<{ layout: 'row' | 'column'; share?: number }>) => {
+			const { layout, share } = action.payload;
+
+			state.sidePanelSplit = { ...state.sidePanelSplit, [layout]: share };
 		}),
 		setAspectRatio: ((state, action: PayloadAction<number>) => {
 			state.aspectRatio = action.payload;

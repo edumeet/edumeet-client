@@ -12,13 +12,14 @@ import ControlButtonsBar from '../controlbuttonsbar/ControlButtonsBar';
 import GeneralStats from '../rtpquality/GeneralStats';
 import ResizeHandle from './ResizeHandle';
 import { useResizable } from './useResizable';
-import { resizeSidePanelsLabel, resizeVideoAreasLabel } from '../translated/translatedComponents';
+import { resizeParticipantListAndChatLabel, resizeSidePanelsLabel, resizeVideoAreasLabel } from '../translated/translatedComponents';
 
 // Limits for the dividers, in px.
 const MIN_SIDE_PANEL_WIDTH = 240;
 const MIN_VIDEO_AREA_WIDTH = 320;
 const MIN_PARTICIPANT_VIDEOS_SIZE = 160;
 const MIN_SPOTLIGHTS_SIZE = 240;
+const MIN_SIDE_PANEL_SIZE = 120;
 
 // Half the gap between the areas; a divider sits in the middle of the gap.
 const HALF_GAP = 2;
@@ -131,6 +132,7 @@ const MainContent = (): React.JSX.Element => {
 	const showStats = useAppSelector((state) => state.ui.showStats);
 	const sidePanelWidth = useAppSelector((state) => state.settings.sidePanelWidth);
 	const videoSplit = useAppSelector((state) => state.settings.videoSplit);
+	const sidePanelSplit = useAppSelector((state) => state.settings.sidePanelSplit);
 
 	const showSidePanels = !isMobile && eitherOpen;
 	const showVideoSplit = !headless && spotlightsVisible && videosVisible;
@@ -191,6 +193,59 @@ const MainContent = (): React.JSX.Element => {
 			videoSplit?.[splitLayout];
 
 	const height = (chatOpen && participantListOpen) && verticalDivide ? '50%' : '100%';
+
+	// Divider between the participant list and the chat when both are open:
+	// across the axis they are laid out on, with the share the participant
+	// list gets kept per layout.
+	const sideSplitLayout = verticalDivide ? 'column' : 'row';
+	const sidePanelsSize = (): number => {
+		const current = sideContent.current;
+
+		if (!current) return 0;
+
+		return verticalDivide ? current.clientHeight : current.clientWidth;
+	};
+	// Sizes here are from the start of the side panels to the middle of the
+	// divider, so the participant list itself is HALF_GAP smaller.
+	const sidePanelsSplit = useResizable({
+		measure: (handle) => {
+			const container = sideContent.current?.getBoundingClientRect();
+			const own = handle.getBoundingClientRect();
+
+			if (!container) return 0;
+
+			return verticalDivide ?
+				((own.top + own.bottom) / 2) - container.top :
+				((own.left + own.right) / 2) - container.left;
+		},
+		clamp: (size) => clamp(
+			size,
+			MIN_SIDE_PANEL_SIZE + HALF_GAP,
+			sidePanelsSize() - MIN_SIDE_PANEL_SIZE - HALF_GAP
+		),
+		commit: (size) => {
+			const total = sidePanelsSize();
+
+			if (total > 0)
+				dispatch(settingsActions.setSidePanelSplit({ layout: sideSplitLayout, share: size / total }));
+		},
+	});
+	const participantListShare = !bothOpen ? undefined :
+		sidePanelsSplit.dragSize !== undefined ? sidePanelsSplit.dragSize / Math.max(1, sidePanelsSize()) :
+			sidePanelSplit?.[sideSplitLayout];
+
+	// Height and width of the participant list and the chat.
+	const sideSize = (share: number) => `calc(${share * 100}% - ${HALF_GAP}px)`;
+	const participantListSize = participantListShare === undefined ?
+		{ height, width: '100%' } :
+		verticalDivide ?
+			{ height: sideSize(participantListShare), width: '100%' } :
+			{ height, width: sideSize(participantListShare) };
+	const chatSize = participantListShare === undefined ?
+		{ height, width: '100%' } :
+		verticalDivide ?
+			{ height: sideSize(1 - participantListShare), width: '100%' } :
+			{ height, width: sideSize(1 - participantListShare) };
 
 	useEffect(() => {
 		const videos = videoContainer.current;
@@ -259,8 +314,16 @@ const MainContent = (): React.JSX.Element => {
 					bothopen={bothOpen ? 1 : 0}
 					customwidth={sideWidth}
 				>
-					{ participantListOpen && <SideContainer height={height} width='100%'><ParticipantList /></SideContainer> }
-					{ chatOpen && <SideContainer height={height} width='100%'><Chat /></SideContainer> }
+					{ participantListOpen && <SideContainer {...participantListSize}><ParticipantList /></SideContainer> }
+					{ bothOpen &&
+						<ResizeHandle
+							orientation={verticalDivide ? 'horizontal' : 'vertical'}
+							label={resizeParticipantListAndChatLabel()}
+							onReset={() => dispatch(settingsActions.setSidePanelSplit({ layout: sideSplitLayout, share: undefined }))}
+							{...sidePanelsSplit.handleProps}
+						/>
+					}
+					{ chatOpen && <SideContainer {...chatSize}><Chat /></SideContainer> }
 				</SideContent>
 			}
 		</WrapperContainer>

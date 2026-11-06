@@ -329,6 +329,7 @@
   "settings.showNotifications": "Vis varslinger",
   "settings.testAudioOutput": "Test lydutgang",
   "settings.tryToLoadAudioDevices": "Prøv å laste lydenheter",
+  "label.resizeParticipantListAndChat": "Endre fordelingen mellom deltakerliste og chat",
   "label.resizeVideoAreas": "Endre fordelingen mellom videoene",
   "label.resizeSidePanels": "Endre bredde på sidepanelene",
   "settings.verticallyStackedSidePanels": "Stable sidepaneler vertikalt",
