@@ -10,6 +10,7 @@ import { isMobileSelector, selectedVideoBoxesSelector, videoBoxesSelector } from
 import Spotlights from '../spotlights/Spotlights';
 import ControlButtonsBar from '../controlbuttonsbar/ControlButtonsBar';
 import GeneralStats from '../rtpquality/GeneralStats';
+import { chooseHorizontal } from '../../utils/videoLayout';
 import ResizeHandle from './ResizeHandle';
 import { useResizable } from './useResizable';
 import { resizeParticipantListAndChatLabel, resizeSidePanelsLabel, resizeVideoAreasLabel } from '../translated/translatedComponents';
@@ -110,8 +111,9 @@ const SideContainer = styled(Paper)<SideContainerProps>(({ theme, height, width 
 }));
 
 const MainContent = (): React.JSX.Element => {
-	const [ windowSize, setWindowSize ] = useState(0);
+	const [ videoArea, setVideoArea ] = useState({ width: 0, height: 0 });
 	const [ horizontal, setHorizontal ] = useState(true);
+	const windowSize = videoArea.width + videoArea.height;
 
 	const mainContainer = useRef<HTMLDivElement>(null);
 	const videoContainer = useRef<HTMLDivElement>(null);
@@ -127,8 +129,10 @@ const MainContent = (): React.JSX.Element => {
 	const bothOpen = chatOpen && participantListOpen;
 	const verticalDivide = useAppSelector((state) => state.settings.verticalDivide);
 	const headless = useAppSelector((state) => state.room.headless);
-	const spotlightsVisible = useAppSelector(selectedVideoBoxesSelector) > 0;
-	const videosVisible = useAppSelector(videoBoxesSelector) > 0;
+	const spotlightCount = useAppSelector(selectedVideoBoxesSelector);
+	const videoCount = useAppSelector(videoBoxesSelector);
+	const spotlightsVisible = spotlightCount > 0;
+	const videosVisible = videoCount > 0;
 	const showStats = useAppSelector((state) => state.ui.showStats);
 	const sidePanelWidth = useAppSelector((state) => state.settings.sidePanelWidth);
 	const videoSplit = useAppSelector((state) => state.settings.videoSplit);
@@ -254,15 +258,13 @@ const MainContent = (): React.JSX.Element => {
 
 		let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-		// Whether the spotlights and the participant videos go next to or above
-		// each other follows the shape of the space the videos get, which also
-		// changes when the side panels are resized.
+		// The space the videos get, which also changes when the side panels
+		// are resized.
 		const resizeListener = () => {
 			clearTimeout(timeoutId);
 
 			timeoutId = setTimeout(() => {
-				setHorizontal((videos.clientWidth / videos.clientHeight) > aspectRatio);
-				setWindowSize(videos.clientWidth + videos.clientHeight);
+				setVideoArea({ width: videos.clientWidth, height: videos.clientHeight });
 			}, 100);
 		};
 
@@ -275,6 +277,19 @@ const MainContent = (): React.JSX.Element => {
 			resizeObserver.disconnect();
 		};
 	}, []);
+
+	// Whether the spotlights and the participant videos go next to or above
+	// each other: whichever shows them bigger in the space there is.
+	useEffect(() => {
+		setHorizontal((current) => chooseHorizontal({
+			...videoArea,
+			spotlights: spotlightCount,
+			videos: videoCount,
+			aspectRatio,
+			headless,
+			horizontal: current,
+		}));
+	}, [ videoArea, spotlightCount, videoCount, aspectRatio, headless ]);
 
 	return (
 		<WrapperContainer ref={mainContainer}>
