@@ -49,6 +49,14 @@ var config = {
 	askForMediaOnJoin: true,
 
 	/**
+	 * Join a large room with microphone and camera off: when the room already has at
+	 * least this many participants, both start off, even if they were on in the join
+	 * dialog. Every microphone or camera that is on costs the server one consumer per
+	 * participant. -1 means no limit.
+	 */
+	largeRoomThreshold: 50,
+
+	/**
 	 * Default webcam capture resolution: low | medium | high | veryhigh | ultra
 	 */
 	resolution: 'medium',

@@ -14,6 +14,9 @@ import { getSignalingUrl } from '../../utils/signalingHelpers';
 import { Logger } from '../../utils/Logger';
 import { stopListeners } from './startActions';
 import { stopRecording } from './recordingActions';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { largeRoomMediaOffLabel } from '../../components/translated/translatedComponents';
+import edumeetConfig from '../../utils/edumeetConfig';
 
 const logger = new Logger('RoomActions');
 
@@ -50,7 +53,7 @@ export const connect = (roomId: string): AppThunk<Promise<void>> => async (
 // 2. Discover our capabilities
 // 3. Signal the server that we are ready
 // 4. Update the state
-const enterRoom = (): AppThunk<Promise<void>> => async (
+const enterRoom = (fromPrecall: boolean): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
 	{ signalingService, mediaService /* , performanceMonitor */ }
@@ -124,10 +127,24 @@ const enterRoom = (): AppThunk<Promise<void>> => async (
 	if (lostAudio) dispatch(meActions.setLostAudio(false));
 	if (lostVideo) dispatch(meActions.setLostVideo(false));
 
+	// Only a first join: someone back after a long disconnect keeps the media they had.
+	const participants = peers.filter((peer: { headless?: boolean }) => !peer.headless).length;
+	const largeRoom = fromPrecall && edumeetConfig.largeRoomThreshold >= 0 && participants >= edumeetConfig.largeRoomThreshold;
+	const { audioMuted, videoMuted } = getState().me;
+
+	if (largeRoom && (!audioMuted || !videoMuted)) {
+		dispatch(meActions.setAudioMuted(true));
+		dispatch(meActions.setVideoMuted(true));
+		dispatch(notificationsActions.enqueueNotification({
+			message: largeRoomMediaOffLabel(),
+			options: { variant: 'info' }
+		}));
+	}
+
 	const startingMedia: Promise<void>[] = [];
 
-	if (lostAudio || !getState().me.audioMuted) startingMedia.push(dispatch(updateMic()));
-	if (lostVideo || !getState().me.videoMuted) startingMedia.push(dispatch(updateWebcam()));
+	if (lostAudio || (!audioMuted && !largeRoom)) startingMedia.push(dispatch(updateMic()));
+	if (lostVideo || (!videoMuted && !largeRoom)) startingMedia.push(dispatch(updateWebcam()));
 	if (getState().me.extraVideoEnabled) dispatch(startExtraVideo());
 
 	await Promise.all(startingMedia);
@@ -141,7 +158,7 @@ export const joinRoom = ({ fromPrecall = false }: { fromPrecall?: boolean } = {}
 	const { previewMicRequest, previewWebcamRequest } = mediaService;
 
 	try {
-		await dispatch(enterRoom());
+		await dispatch(enterRoom(fromPrecall));
 	} finally {
 		if (fromPrecall) {
 			if (mediaService.previewMicRequest === previewMicRequest) await dispatch(stopPreviewMic());

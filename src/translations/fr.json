@@ -696,6 +696,7 @@
   "label.managementservice.endToEndEncryption": "Chiffrement de bout en bout",
   "label.managementservice.endToEndEncryptionTooltip": "Lorsqu'il est activé, les médias des salles de ce locataire sont chiffrés de bout en bout. Le verrou l'impose, de sorte que les propriétaires de salle ne peuvent pas le désactiver.",
   "room.e2eeUnsupported": "Cette salle nécessite un chiffrement de bout en bout que votre navigateur ne prend pas en charge. Veuillez utiliser une version récente de Chrome, Edge ou Firefox pour rejoindre.",
+  "room.largeRoomMediaOff": "Il s'agit d'une grande réunion : vous l'avez rejointe avec le microphone et la caméra désactivés. Activez-les lorsque vous souhaitez parler.",
   "room.endToEndEncrypted": "Cette salle est chiffrée de bout en bout",
   "room.peerE2eeSecuring": "Sécurisation, en attente de la clé de ce participant",
   "room.peerIdentityChanged": "Avertissement de sécurité : l'identité de chiffrement de {peer} a changé. Cela peut se produire lors d'une reconnexion, mais pourrait aussi indiquer que quelqu'un intercepte la connexion. Vérifiez avec cette personne avant de partager quoi que ce soit de sensible.",

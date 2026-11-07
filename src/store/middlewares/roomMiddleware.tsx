@@ -330,11 +330,14 @@ const createRoomMiddleware = ({
 							if (lostAudio) dispatch(meActions.setLostAudio(false));
 							if (lostVideo) dispatch(meActions.setLostVideo(false));
 
-							const audioMuted = getState().me.audioMuted;
+							const { micEnabled, audioMuted } = getState().me;
 
-							dispatch(updateMic()).then(() => {
-								if (!lostAudio && audioMuted) dispatch(pauseMic());
-							});
+							// Muted and off look alike in audioMuted; only a microphone that was on comes back.
+							if (lostAudio || micEnabled) {
+								dispatch(updateMic()).then(() => {
+									if (!lostAudio && audioMuted) dispatch(pauseMic());
+								});
+							}
 							if (lostVideo || !getState().me.videoMuted) dispatch(updateWebcam());
 							if (getState().me.extraVideoEnabled) dispatch(startExtraVideo());
 

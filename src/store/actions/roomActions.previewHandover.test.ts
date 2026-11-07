@@ -17,6 +17,7 @@ vi.mock('../../utils/edumeetConfig', () => ({ default: { theme: {}, browserWarni
 vi.mock('../store', () => ({ fileService: {} }));
 vi.mock('./startActions', () => ({ stopListeners: vi.fn() }));
 vi.mock('./recordingActions', () => ({ stopRecording: vi.fn() }));
+vi.mock('../../components/translated/translatedComponents', () => ({ largeRoomMediaOffLabel: () => 'large room' }));
 vi.mock('./mediaActions', () => ({
 	updateMic: () => async () => {
 		media.calls.push('updateMic');

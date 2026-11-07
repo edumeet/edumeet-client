@@ -696,6 +696,7 @@
   "label.managementservice.endToEndEncryption": "Encriptação ponta a ponta",
   "label.managementservice.endToEndEncryptionTooltip": "Quando ativada, os conteúdos multimédia nas salas deste inquilino são encriptados ponta a ponta. O cadeado força a ativação, para que os proprietários das salas não a possam desativar.",
   "room.e2eeUnsupported": "Esta sala requer encriptação ponto a ponto, que o seu navegador não suporta. Utilize uma versão recente do Chrome, Edge ou Firefox para entrar.",
+  "room.largeRoomMediaOff": "Esta é uma reunião grande, por isso o microfone e a câmara estão desligados ao entrar. Ative-os quando quiser falar.",
   "room.endToEndEncrypted": "Esta sala está encriptada ponta a ponta",
   "room.peerE2eeSecuring": "A proteger, à espera da chave deste participante",
   "room.peerIdentityChanged": "Aviso de segurança: a identidade de encriptação de {peer} mudou. Isto pode acontecer ao reconectar, mas também pode indicar que alguém está a intercetar a ligação. Confirme com a pessoa antes de partilhar algo confidencial.",

@@ -1688,6 +1688,10 @@ export const roomE2eeUnsupportedLabel = (): string => intl.formatMessage({
 	id: 'room.e2eeUnsupported',
 	defaultMessage: 'This room requires end-to-end encryption, which your browser does not support. Please use a recent version of Chrome, Edge or Firefox to join.'
 });
+export const largeRoomMediaOffLabel = (): string => intl.formatMessage({
+	id: 'room.largeRoomMediaOff',
+	defaultMessage: 'This is a large meeting, so you joined with your microphone and camera off. Turn them on when you want to speak.'
+});
 export const roomE2eeSecuringLabel = (): string => intl.formatMessage({
 	id: 'room.e2eeSecuring',
 	defaultMessage: 'Securing this room, encryption not confirmed yet'

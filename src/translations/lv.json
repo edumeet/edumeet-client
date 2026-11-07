@@ -696,6 +696,7 @@
   "label.managementservice.endToEndEncryption": null,
   "label.managementservice.endToEndEncryptionTooltip": null,
   "room.e2eeUnsupported": null,
+  "room.largeRoomMediaOff": null,
   "room.endToEndEncrypted": null,
   "room.peerE2eeSecuring": null,
   "room.peerIdentityChanged": null,

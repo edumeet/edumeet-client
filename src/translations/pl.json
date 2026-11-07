@@ -696,6 +696,7 @@
   "label.managementservice.endToEndEncryption": "Szyfrowanie end-to-end",
   "label.managementservice.endToEndEncryptionTooltip": "Po włączeniu multimedia w pokojach tego najemcy są szyfrowane end-to-end. Blokada wymusza włączenie, więc właściciele pokojów nie mogą go wyłączyć.",
   "room.e2eeUnsupported": "Ten pokój wymaga szyfrowania end-to-end, którego Twoja przeglądarka nie obsługuje. Aby dołączyć, użyj aktualnej wersji przeglądarki Chrome, Edge lub Firefox.",
+  "room.largeRoomMediaOff": "To duże spotkanie, dlatego po dołączeniu mikrofon i kamera są wyłączone. Włącz je, gdy zechcesz zabrać głos.",
   "room.endToEndEncrypted": "Ten pokój jest szyfrowany end-to-end",
   "room.peerE2eeSecuring": "Zabezpieczanie, oczekiwanie na klucz tego uczestnika",
   "room.peerIdentityChanged": "Ostrzeżenie bezpieczeństwa: tożsamość szyfrowania uczestnika {peer} uległa zmianie. Może się to zdarzyć po ponownym połączeniu, ale może też oznaczać, że ktoś przechwytuje połączenie. Zweryfikuj to z tą osobą przed udostępnieniem czegokolwiek poufnego.",

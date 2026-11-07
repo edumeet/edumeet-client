@@ -92,6 +92,7 @@ The client merges your `window.config` with built-in defaults (see `src/utils/ty
 | developmentPort | Development room-server websocket port. | `number` | `8443` |
 | productionPort | Production room-server websocket port. | `number` | `443` |
 | serverHostname | Room-server hostname if different from client host (optional). | `string` | *(unset)* |
+| largeRoomThreshold | A participant who joins a room that already has at least this many participants (bots not counted) starts with microphone and camera off and is told why, even if both were on in the join screen. Every microphone or camera that is on, muted ones included, costs the server one stream per participant. A participant back after a disconnect keeps the media they had. `-1` means no limit. | `number` | `50` |
 | resolution | Default webcam capture resolution. | `low \| medium \| high \| veryhigh \| ultra` | `medium` |
 | frameRate | Default webcam capture framerate (fps). | `number` | `30` |
 | screenSharingResolution | Default screen sharing resolution. | `low \| medium \| high \| veryhigh \| ultra` | `veryhigh` |

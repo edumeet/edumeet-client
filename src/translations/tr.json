@@ -696,6 +696,7 @@
   "label.managementservice.endToEndEncryption": "Uçtan uca şifreleme",
   "label.managementservice.endToEndEncryptionTooltip": "Etkinleştirildiğinde, bu kiracının odalarındaki medya uçtan uca şifrelenir. Kilit bunu zorunlu kılar, böylece oda sahipleri kapatamaz.",
   "room.e2eeUnsupported": "Bu oda, tarayıcınızın desteklemediği uçtan uca şifreleme gerektiriyor. Katılmak için Chrome, Edge veya Firefox tarayıcısının güncel bir sürümünü kullanın.",
+  "room.largeRoomMediaOff": "Bu büyük bir toplantı, bu nedenle katıldığınızda mikrofonunuz ve kameranız kapalıdır. Konuşmak istediğinizde bunları açın.",
   "room.endToEndEncrypted": "Bu oda uçtan uca şifrelidir",
   "room.peerE2eeSecuring": "Güvenli hale getiriliyor, bu katılımcının anahtarı bekleniyor",
   "room.peerIdentityChanged": "Güvenlik uyarısı: {peer} adlı katılımcının şifreleme kimliği değişti. Bu, yeniden bağlanırken olabilir, ancak birinin bağlantıyı ele geçirdiğini de gösterebilir. Hassas bir şey paylaşmadan önce kişiyle doğrulayın.",

@@ -773,6 +773,7 @@
   "label.managementservice.endToEndEncryption": "Végpontok közötti titkosítás",
   "label.managementservice.endToEndEncryptionTooltip": "Ha engedélyezve van, a bérlő szobáiban a média végpontok között titkosított. A zár kötelezővé teszi, így a szobatulajdonosok nem kapcsolhatják ki.",
   "room.e2eeUnsupported": "Ez a szoba végpontok közötti titkosítást igényel, amelyet a böngészője nem támogat. A csatlakozáshoz használja a Chrome, az Edge vagy a Firefox friss verzióját.",
+  "room.largeRoomMediaOff": "Ez egy nagy értekezlet, ezért a csatlakozáskor a mikrofon és a kamera ki van kapcsolva. Kapcsolja be őket, amikor beszélni szeretne.",
   "room.endToEndEncrypted": "Ez a szoba végpontok között titkosított",
   "room.peerE2eeSecuring": "Védelem folyamatban, várakozás a résztvevő kulcsára",
   "room.peerIdentityChanged": "Biztonsági figyelmeztetés: {peer} titkosítási azonosítója megváltozott. Ez előfordulhat újracsatlakozáskor, de azt is jelezheti, hogy valaki lehallgatja a kapcsolatot. Egyeztessen a személlyel, mielőtt bármi érzékenyet megosztana.",

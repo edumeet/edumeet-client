@@ -696,6 +696,7 @@
   "label.managementservice.endToEndEncryption": "End-to-end-kryptering",
   "label.managementservice.endToEndEncryptionTooltip": "Når den er aktiveret, er medier i denne lejers rum end-to-end-krypteret. Låsen gennemtvinger den, så rumejere ikke kan slå den fra.",
   "room.e2eeUnsupported": "Dette rum kræver end-to-end-kryptering, som din browser ikke understøtter. Brug en nyere version af Chrome, Edge eller Firefox for at deltage.",
+  "room.largeRoomMediaOff": "Dette er et stort møde, så din mikrofon og dit kamera er slået fra, når du deltager. Slå dem til, når du vil tale.",
   "room.endToEndEncrypted": "Dette rum er end-to-end-krypteret",
   "room.peerE2eeSecuring": "Sikrer, venter på denne deltagers nøgle",
   "room.peerIdentityChanged": "Sikkerhedsadvarsel: krypteringsidentiteten for {peer} er ændret. Det kan ske ved genopkobling, men kan også betyde, at nogen aflytter forbindelsen. Bekræft med personen, før du deler noget følsomt.",
