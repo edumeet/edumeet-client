@@ -1202,6 +1202,21 @@ export const enableVerticallyStackedSidePanels = (): string => intl.formatMessag
 	defaultMessage: 'Vertically stacked side panels'
 });
 
+export const resizeSidePanelsLabel = (): string => intl.formatMessage({
+	id: 'label.resizeSidePanels',
+	defaultMessage: 'Resize side panels'
+});
+
+export const resizeVideoAreasLabel = (): string => intl.formatMessage({
+	id: 'label.resizeVideoAreas',
+	defaultMessage: 'Resize video areas'
+});
+
+export const resizeParticipantListAndChatLabel = (): string => intl.formatMessage({
+	id: 'label.resizeParticipantListAndChat',
+	defaultMessage: 'Resize participant list and chat'
+});
+
 export const enableConfirmOnExit = (): string => intl.formatMessage({
 	id: 'settings.confirmOnExit',
 	defaultMessage: 'Confirm on exit'

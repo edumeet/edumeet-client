@@ -4,11 +4,27 @@ import { Box, Paper } from '@mui/material';
 import ParticipantList from '../participantlist/ParticipantList';
 import Democratic from '../democratic/Democratic';
 import Chat from '../chat/Chat';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { settingsActions } from '../../store/slices/settingsSlice';
 import { isMobileSelector, selectedVideoBoxesSelector, videoBoxesSelector } from '../../store/selectors';
 import Spotlights from '../spotlights/Spotlights';
 import ControlButtonsBar from '../controlbuttonsbar/ControlButtonsBar';
 import GeneralStats from '../rtpquality/GeneralStats';
+import { chooseHorizontal, MIN_PARTICIPANT_VIDEOS_SIZE, MIN_SPOTLIGHTS_SIZE } from '../../utils/videoLayout';
+import ResizeHandle from './ResizeHandle';
+import { useResizable } from './useResizable';
+import { resizeParticipantListAndChatLabel, resizeSidePanelsLabel, resizeVideoAreasLabel } from '../translated/translatedComponents';
+
+// Limits for the dividers, in px.
+const MIN_SIDE_PANEL_WIDTH = 240;
+const MIN_VIDEO_AREA_WIDTH = 320;
+const MIN_SIDE_PANEL_SIZE = 120;
+
+// Half the gap between the areas; a divider sits in the middle of the gap.
+const HALF_GAP = 2;
+
+const clamp = (value: number, min: number, max: number): number =>
+	Math.round(Math.min(Math.max(min, max), Math.max(min, value)));
 
 const WrapperContainer = styled(Box)(({ theme }) => ({
 	width: 'calc(100% - 8px)',
@@ -37,28 +53,42 @@ const MainContainer = styled(Box)<MainContainerProps>(({ theme, horizontal }) =>
 	flexDirection: horizontal ? 'row' : 'column',
 	gap: theme.spacing(0.5),
 	overflow: 'auto',
+	minWidth: 0,
 }));
 
 interface SideContentProps {
 	verticaldivide?: number;
 	bothopen?: number;
+	customwidth?: number;
 }
 
 const SideContent = styled(Box)<SideContentProps>(({
 	theme,
 	verticaldivide,
 	bothopen,
+	customwidth,
 }) => ({
 	height: '100%',
 	display: 'flex',
 	flexDirection: verticaldivide ? 'column' : 'row',
 	gap: theme.spacing(0.5),
 	width: bothopen && !verticaldivide ? '60rem' : '30rem',
+	// A width chosen by dragging the divider is used as is, as long as some
+	// room is left for the videos.
+	...(customwidth !== undefined && {
+		width: customwidth,
+		flexShrink: 0,
+		maxWidth: `calc(100% - ${MIN_VIDEO_AREA_WIDTH}px)`,
+	}),
 }));
 
 interface SideContainerProps {
 	height: string;
 	width?: string;
+	// Smallest size along the axis the panels share, when they share it by a
+	// saved split: keeps both usable when the side panels shrink later.
+	minheight?: number;
+	minwidth?: number;
 }
 
 // The client level stats panel is part of the stats overlay toggled with 'Q'.
@@ -74,19 +104,28 @@ const GeneralStatsContainer = styled(Box)(({ theme }) => ({
 	overflow: 'auto',
 }));
 
-const SideContainer = styled(Paper)<SideContainerProps>(({ theme, height, width }) => ({
+const SideContainer = styled(Paper, {
+	shouldForwardProp: (prop) => prop !== 'minheight' && prop !== 'minwidth',
+})<SideContainerProps>(({ theme, height, width, minheight, minwidth }) => ({
 	height,
 	width,
+	minHeight: minheight,
+	minWidth: minwidth,
 	overflowY: 'auto',
 	borderRadius: theme.roundedness,
 	backgroundColor: theme.sideContainerBackgroundColor,
 }));
 
 const MainContent = (): React.JSX.Element => {
-	const [ windowSize, setWindowSize ] = useState(0);
+	const [ videoArea, setVideoArea ] = useState({ width: 0, height: 0 });
 	const [ horizontal, setHorizontal ] = useState(true);
+	const windowSize = videoArea.width + videoArea.height;
 
 	const mainContainer = useRef<HTMLDivElement>(null);
+	const videoContainer = useRef<HTMLDivElement>(null);
+	const sideContent = useRef<HTMLDivElement>(null);
+
+	const dispatch = useAppDispatch();
 
 	const isMobile = useAppSelector(isMobileSelector);
 	const aspectRatio = useAppSelector((state) => state.settings.aspectRatio);
@@ -96,52 +135,219 @@ const MainContent = (): React.JSX.Element => {
 	const bothOpen = chatOpen && participantListOpen;
 	const verticalDivide = useAppSelector((state) => state.settings.verticalDivide);
 	const headless = useAppSelector((state) => state.room.headless);
-	const spotlightsVisible = useAppSelector(selectedVideoBoxesSelector) > 0;
-	const videosVisible = useAppSelector(videoBoxesSelector) > 0;
+	const spotlightCount = useAppSelector(selectedVideoBoxesSelector);
+	const videoCount = useAppSelector(videoBoxesSelector);
+	const spotlightsVisible = spotlightCount > 0;
+	const videosVisible = videoCount > 0;
 	const showStats = useAppSelector((state) => state.ui.showStats);
+	const sidePanelWidth = useAppSelector((state) => state.settings.sidePanelWidth);
+	const videoSplit = useAppSelector((state) => state.settings.videoSplit);
+	const sidePanelSplit = useAppSelector((state) => state.settings.sidePanelSplit);
+
+	const showSidePanels = !isMobile && eitherOpen;
+	const showVideoSplit = !headless && spotlightsVisible && videosVisible;
+
+	// Divider between the videos and the side panels. The stored width is per
+	// panel, so two panels side by side get twice as much.
+	const sideColumns = bothOpen && !verticalDivide ? 2 : 1;
+	const sidePanels = useResizable({
+		after: true,
+		total: () => mainContainer.current?.clientWidth ?? 0,
+		measure: () => sideContent.current?.getBoundingClientRect().width ?? 0,
+		clamp: (width) => clamp(
+			width,
+			MIN_SIDE_PANEL_WIDTH * sideColumns,
+			(mainContainer.current?.clientWidth ?? Infinity) - MIN_VIDEO_AREA_WIDTH
+		),
+		commit: (width) => dispatch(settingsActions.setSidePanelWidth(Math.round(width / sideColumns))),
+	});
+	const sideWidth = sidePanels.dragSize ??
+		(sidePanelWidth !== undefined ? sidePanelWidth * sideColumns : undefined);
+
+	// Divider between the spotlights (screen shares etc.) and the participant
+	// videos. It lies across the axis the two are laid out on, and the share the
+	// participant videos get is kept per layout.
+	const splitLayout = horizontal ? 'row' : 'column';
+	const videoAreaSize = (): number => {
+		const current = videoContainer.current;
+
+		if (!current) return 0;
+
+		return horizontal ? current.clientWidth : current.clientHeight;
+	};
+	const videoAreas = useResizable({
+		after: true,
+		total: videoAreaSize,
+		measure: (handle) => {
+			const container = videoContainer.current?.getBoundingClientRect();
+			const own = handle.getBoundingClientRect();
+
+			if (!container) return 0;
+
+			return horizontal ?
+				container.right - ((own.left + own.right) / 2) - HALF_GAP :
+				container.bottom - ((own.top + own.bottom) / 2) - HALF_GAP;
+		},
+		clamp: (size) => clamp(
+			size,
+			MIN_PARTICIPANT_VIDEOS_SIZE,
+			videoAreaSize() - MIN_SPOTLIGHTS_SIZE - (2 * HALF_GAP)
+		),
+		commit: (size) => {
+			const total = videoAreaSize();
+
+			if (total > 0)
+				dispatch(settingsActions.setVideoSplit({ layout: splitLayout, share: size / total }));
+		},
+	});
+	const participantVideosShare = !showVideoSplit ? undefined :
+		videoAreas.dragSize !== undefined ? videoAreas.dragSize / Math.max(1, videoAreaSize()) :
+			videoSplit?.[splitLayout];
 
 	const height = (chatOpen && participantListOpen) && verticalDivide ? '50%' : '100%';
 
+	// Divider between the participant list and the chat when both are open:
+	// across the axis they are laid out on, with the share the participant
+	// list gets kept per layout.
+	const sideSplitLayout = verticalDivide ? 'column' : 'row';
+	const sidePanelsSize = (): number => {
+		const current = sideContent.current;
+
+		if (!current) return 0;
+
+		return verticalDivide ? current.clientHeight : current.clientWidth;
+	};
+	// Sizes here are from the start of the side panels to the middle of the
+	// divider, so the participant list itself is HALF_GAP smaller.
+	const sidePanelsSplit = useResizable({
+		total: sidePanelsSize,
+		measure: (handle) => {
+			const container = sideContent.current?.getBoundingClientRect();
+			const own = handle.getBoundingClientRect();
+
+			if (!container) return 0;
+
+			return verticalDivide ?
+				((own.top + own.bottom) / 2) - container.top :
+				((own.left + own.right) / 2) - container.left;
+		},
+		clamp: (size) => clamp(
+			size,
+			MIN_SIDE_PANEL_SIZE + HALF_GAP,
+			sidePanelsSize() - MIN_SIDE_PANEL_SIZE - HALF_GAP
+		),
+		commit: (size) => {
+			const total = sidePanelsSize();
+
+			if (total > 0)
+				dispatch(settingsActions.setSidePanelSplit({ layout: sideSplitLayout, share: size / total }));
+		},
+	});
+	const participantListShare = !bothOpen ? undefined :
+		sidePanelsSplit.dragSize !== undefined ? sidePanelsSplit.dragSize / Math.max(1, sidePanelsSize()) :
+			sidePanelSplit?.[sideSplitLayout];
+
+	// Height and width of the participant list and the chat.
+	const sideSize = (share: number) => `calc(${share * 100}% - ${HALF_GAP}px)`;
+	const participantListSize = participantListShare === undefined ?
+		{ height, width: '100%' } :
+		verticalDivide ?
+			{ height: sideSize(participantListShare), width: '100%', minheight: MIN_SIDE_PANEL_SIZE } :
+			{ height, width: sideSize(participantListShare), minwidth: MIN_SIDE_PANEL_SIZE };
+	const chatSize = participantListShare === undefined ?
+		{ height, width: '100%' } :
+		verticalDivide ?
+			{ height: sideSize(1 - participantListShare), width: '100%', minheight: MIN_SIDE_PANEL_SIZE } :
+			{ height, width: sideSize(1 - participantListShare), minwidth: MIN_SIDE_PANEL_SIZE };
+
 	useEffect(() => {
-		if (!mainContainer.current) return;
+		const videos = videoContainer.current;
+
+		if (!videos) return;
 
 		let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-		const resizeListener = (entries: ResizeObserverEntry[]) => {
+		// The space the videos get, which also changes when the side panels
+		// are resized.
+		const resizeListener = () => {
 			clearTimeout(timeoutId);
 
-			const { contentRect: { width: mainWidth, height: mainHeight } } = entries[0];
-
 			timeoutId = setTimeout(() => {
-				setHorizontal((mainWidth / mainHeight) > aspectRatio);
-				setWindowSize(mainWidth + mainHeight);
+				setVideoArea({ width: videos.clientWidth, height: videos.clientHeight });
 			}, 100);
 		};
 
 		const resizeObserver = new ResizeObserver(resizeListener);
 
-		resizeObserver.observe(mainContainer.current);
+		resizeObserver.observe(videos);
 
 		return () => {
+			clearTimeout(timeoutId);
 			resizeObserver.disconnect();
 		};
 	}, []);
+
+	// Whether the spotlights and the participant videos go next to or above
+	// each other: whichever shows them bigger in the space there is.
+	useEffect(() => {
+		setHorizontal((current) => chooseHorizontal({
+			...videoArea,
+			spotlights: spotlightCount,
+			videos: videoCount,
+			aspectRatio,
+			headless,
+			horizontal: current,
+		}));
+	}, [ videoArea, spotlightCount, videoCount, aspectRatio, headless ]);
 
 	return (
 		<WrapperContainer ref={mainContainer}>
 			{ !headless && <ControlButtonsBar /> }
 			{ !isMobile && showStats && <GeneralStatsContainer><GeneralStats /></GeneralStatsContainer> }
-			<MainContainer horizontal={horizontal ? 1 : 0} >
+			<MainContainer ref={videoContainer} horizontal={horizontal ? 1 : 0} >
 				{ spotlightsVisible && <Spotlights windowSize={windowSize} horizontal={horizontal} videos={videosVisible} /> }
-				{ videosVisible && <Democratic windowSize={windowSize} horizontal={spotlightsVisible && horizontal} spotlights={spotlightsVisible} /> }
+				{ showVideoSplit &&
+					<ResizeHandle
+						orientation={horizontal ? 'vertical' : 'horizontal'}
+						label={resizeVideoAreasLabel()}
+						onReset={() => dispatch(settingsActions.setVideoSplit({ layout: splitLayout, share: undefined }))}
+						{...videoAreas.handleProps}
+					/>
+				}
+				{ videosVisible &&
+					<Democratic
+						windowSize={windowSize}
+						horizontal={spotlightsVisible && horizontal}
+						spotlights={spotlightsVisible}
+						share={participantVideosShare}
+					/>
+				}
 			</MainContainer>
-			{ !isMobile && eitherOpen &&
+			{ showSidePanels &&
+				<ResizeHandle
+					orientation='vertical'
+					label={resizeSidePanelsLabel()}
+					onReset={() => dispatch(settingsActions.setSidePanelWidth(undefined))}
+					{...sidePanels.handleProps}
+				/>
+			}
+			{ showSidePanels &&
 				<SideContent
+					ref={sideContent}
 					verticaldivide={verticalDivide ? 1 : 0}
 					bothopen={bothOpen ? 1 : 0}
+					customwidth={sideWidth}
 				>
-					{ participantListOpen && <SideContainer height={height} width='100%'><ParticipantList /></SideContainer> }
-					{ chatOpen && <SideContainer height={height} width='100%'><Chat /></SideContainer> }
+					{ participantListOpen && <SideContainer {...participantListSize}><ParticipantList /></SideContainer> }
+					{ bothOpen &&
+						<ResizeHandle
+							orientation={verticalDivide ? 'horizontal' : 'vertical'}
+							label={resizeParticipantListAndChatLabel()}
+							onReset={() => dispatch(settingsActions.setSidePanelSplit({ layout: sideSplitLayout, share: undefined }))}
+							{...sidePanelsSplit.handleProps}
+						/>
+					}
+					{ chatOpen && <SideContainer {...chatSize}><Chat /></SideContainer> }
 				</SideContent>
 			}
 		</WrapperContainer>

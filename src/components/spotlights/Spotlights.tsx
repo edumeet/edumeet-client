@@ -6,6 +6,7 @@ import { selectedVideoConsumersSelector } from '../../store/selectors';
 import VideoConsumer from '../videoconsumer/VideoConsumer';
 import { Box } from '@mui/material';
 import VideoBox from '../videobox/VideoBox';
+import { useElementSize } from '../../utils/useElementSize';
 import VideoView from '../videoview/VideoView';
 const DrawingView = lazy(() => import('../drawing/DrawingView')); // import DrawingView from '../drawing/DrawingView';
 
@@ -71,6 +72,8 @@ const Spotlights = ({
 	const drawingEnabled = useAppSelector((state) => state.drawing.drawingEnabled);
 
 	const displayName = useAppSelector((state) => state.settings.displayName);
+
+	const ownSize = useElementSize(peersRef);
 
 	const [ aspects, setAspects ] = useState<Record<string, number>>({});
 	const [ sizes, setSizes ] = useState<Record<string, TileSize>>({});
@@ -192,6 +195,8 @@ const Spotlights = ({
 		horizontal,
 		videos,
 		aspects,
+		ownSize.width,
+		ownSize.height,
 	]);
 
 	const sizeFor = (k: string): TileSize => sizes[k] ?? { width: 0, height: 0 };
