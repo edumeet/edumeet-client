@@ -1,3 +1,11 @@
+@font-face {
+	font-family: 'Vazirmatn RD';
+	src: url('/fonts/vazirmatn/Vazirmatn.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
 html {
 	height: 100%;
 	width: 100%;
@@ -5,6 +13,10 @@ html {
 	font-weight: 300;
 	margin : 0;
 	box-sizing: border-box;
+}
+
+html[dir='rtl'] {
+	font-family: 'Vazirmatn RD', 'Roboto', sans-serif;
 }
 
 *, *:before, *:after {
@@ -16,6 +28,10 @@ body {
 	width: 100%;
 	font-size: 16px;
 	margin: 0;
+}
+
+[dir='auto'] {
+	unicode-bidi: plaintext;
 }
 
 #edumeet {

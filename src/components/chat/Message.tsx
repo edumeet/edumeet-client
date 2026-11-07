@@ -145,7 +145,7 @@ const Message = ({
 				{(format === 'single' || format ==='combinedBegin') &&
 					<>
 						<Typography variant='body2' sx={{ display: 'flex', alignItems: 'center' }}>
-							<b>{ isMe ? meLabel() : name }</b><StyledMessageTime>
+							<b dir='auto'>{ isMe ? meLabel() : name }</b><StyledMessageTime>
 								&nbsp;- { <FormattedTime value={new Date(time || Date.now())} hour12={false}/> }
 							</StyledMessageTime>
 							{ showActions &&
@@ -177,6 +177,7 @@ const Message = ({
 				{ text &&
 					<Typography
 						variant='body2'
+						dir='auto'
 						dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
 							marked.parse(text, { renderer: linkRenderer, async: false }) as string,
 							allowedHTMLNodes

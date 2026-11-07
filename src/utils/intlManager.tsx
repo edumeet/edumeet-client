@@ -1,14 +1,16 @@
 import { createIntl, createIntlCache } from 'react-intl';
+import type { Direction } from './direction';
 
 export interface ILocale {
 	name: string;
 	file: string;
 	locale: string[];
+	direction?: Direction;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	messages?: any;
 }
 
-export const localeList = [
+export const localeList: ILocale[] = [
 	{
 		name: 'English',
 		file: 'en',
@@ -118,6 +120,12 @@ export const localeList = [
 		name: 'Ukrainian',
 		file: 'uk',
 		locale: [ 'uk', 'uk-uk' ]
+	},
+	{
+		name: 'Persian',
+		file: 'fa',
+		locale: [ 'fa', 'fa-ir' ],
+		direction: 'rtl'
 	}
 ];
 

@@ -1,22 +1,19 @@
 import React, { useEffect, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
-import { RawIntlProvider } from 'react-intl';
 import './index.css';
 import debug from 'debug';
 import { persistor, store, mediaService, fileService, ServiceContext } from './store/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
 import edumeetConfig from './utils/edumeetConfig';
-import { intl } from './utils/intlManager';
 import { useAppDispatch } from './store/hooks';
 import { setLocale } from './store/actions/localeActions';
-import { CssBaseline } from '@mui/material';
 import { Logger } from './utils/Logger';
 import { SnackbarProvider } from 'notistack';
 import Management from './views/management/Management';
+import AppProviders from './components/AppProviders';
 
 const ErrorBoundary = lazy(() => import('./views/errorboundary/ErrorBoundary'));
 const App = lazy(() => import('./App'));
@@ -28,7 +25,6 @@ if (import.meta.env.VITE_APP_DEBUG === '*' || !import.meta.env.PROD) {
 }
 
 const logger = new Logger('index.tsx');
-const theme = createTheme(edumeetConfig.theme);
 const device = deviceInfo();
 const unsupportedBrowser = !browserInfo.satisfies(supportedBrowsers);
 const webrtcUnavailable = !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.RTCPeerConnection;
@@ -86,16 +82,13 @@ const root = createRoot(container!);
 
 root.render(
 	<>
-		<CssBaseline />
 		<Provider store={store}>
 			<PersistGate persistor={persistor}>
-				<ThemeProvider theme={theme}>
-					<RawIntlProvider value={intl}>
-						<ServiceContext.Provider value={{ mediaService, fileService }}>
-							<RootComponent />
-						</ServiceContext.Provider>
-					</RawIntlProvider>
-				</ThemeProvider>
+				<AppProviders>
+					<ServiceContext.Provider value={{ mediaService, fileService }}>
+						<RootComponent />
+					</ServiceContext.Provider>
+				</AppProviders>
 			</PersistGate>
 		</Provider>
 	</>
