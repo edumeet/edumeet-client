@@ -117,7 +117,8 @@ const ResizeHandle = ({
 	const [ dragging, setDragging ] = useState(false);
 	const [ value, setValue ] = useState<HandlePosition | undefined>();
 	const handle = useRef<HTMLDivElement>(null);
-	const start = useRef<number | undefined>(undefined);
+	// The drag in progress: where it started, and the one pointer driving it.
+	const drag = useRef<{ start: number; pointerId: number } | undefined>(undefined);
 	// Body styles from before the drag, to put back afterwards.
 	const bodyStyle = useRef({ cursor: '', userSelect: '' });
 	const cancel = useRef(onResizeCancel);
@@ -141,26 +142,52 @@ const ResizeHandle = ({
 		));
 	});
 
-	// The handle can go away while it is dragged, for example when the last
-	// screen share ends: do not leave the page with a resize cursor and text
-	// selection off, and drop the unfinished size.
-	useEffect(() => () => {
-		if (start.current === undefined) return;
+	// Ends a drag without a result: puts the page styles back and drops the
+	// unfinished size.
+	const cancelDrag = () => {
+		const current = drag.current;
 
-		start.current = undefined;
+		if (!current) return;
+
+		drag.current = undefined;
 		restoreBody();
+
+		if (handle.current?.hasPointerCapture(current.pointerId))
+			handle.current.releasePointerCapture(current.pointerId);
+
 		cancel.current();
-	}, []);
+	};
+
+	// The handle can go away while it is dragged, for example when the last
+	// screen share ends.
+	useEffect(() => () => cancelDrag(), []);
+
+	// The layout can turn while the handle is dragged, for example when the
+	// window or the number of videos changes. The drag was measured along the
+	// other axis, so it cannot go on.
+	const previousOrientation = useRef(orientation);
+
+	useEffect(() => {
+		if (previousOrientation.current === orientation) return;
+
+		previousOrientation.current = orientation;
+
+		if (!drag.current) return;
+
+		cancelDrag();
+		setDragging(false);
+	}, [ orientation ]);
 
 	const position = (event: PointerEvent) => (vertical ? event.clientX : event.clientY);
 
 	const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-		if (event.button !== 0) return;
+		// One pointer drives a drag; a second finger on the handle is ignored.
+		if (event.button !== 0 || drag.current) return;
 
 		event.preventDefault();
 		event.currentTarget.setPointerCapture(event.pointerId);
 
-		start.current = position(event);
+		drag.current = { start: position(event), pointerId: event.pointerId };
 		setDragging(true);
 		onResizeStart(event.currentTarget);
 
@@ -171,15 +198,15 @@ const ResizeHandle = ({
 	};
 
 	const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
-		if (start.current === undefined) return;
+		if (!drag.current || event.pointerId !== drag.current.pointerId) return;
 
-		onResize(position(event) - start.current);
+		onResize(position(event) - drag.current.start);
 	};
 
 	const stopDragging = (event: PointerEvent<HTMLDivElement>) => {
-		if (start.current === undefined) return;
+		if (!drag.current || event.pointerId !== drag.current.pointerId) return;
 
-		start.current = undefined;
+		drag.current = undefined;
 		setDragging(false);
 		restoreBody();
 
@@ -190,6 +217,14 @@ const ResizeHandle = ({
 	};
 
 	const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+		// Enter goes back to the default, like a double click.
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			onReset();
+
+			return;
+		}
+
 		const step = event.shiftKey ? KEYBOARD_STEP * 4 : KEYBOARD_STEP;
 		const keys: Record<string, number> = vertical ?
 			{ ArrowLeft: -step, ArrowRight: step, Home: -Infinity, End: Infinity } :

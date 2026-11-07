@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chooseHorizontal, layoutScore, tileArea } from './videoLayout';
+import { chooseHorizontal, layoutScore, shrinkToFit, tileArea } from './videoLayout';
 
 const ASPECT = 16 / 9;
 
@@ -16,7 +16,28 @@ describe('tileArea', () => {
 	});
 });
 
+describe('shrinkToFit', () => {
+	it('keeps the base sizes when they fit', () => {
+		expect(shrinkToFit(1000, 600, 300)).toEqual([ 600, 300 ]);
+	});
+
+	it('shrinks both in proportion to their base size', () => {
+		// 100% wide spotlights next to a 400px area in 1000px: 400px too much.
+		const [ first, second ] = shrinkToFit(1000, 1000, 400);
+
+		expect(first + second).toBeCloseTo(1000);
+		expect(first).toBeCloseTo(1000 - (400 * 1000 / 1400));
+		expect(second).toBeCloseTo(400 - (400 * 400 / 1400));
+	});
+});
+
 describe('chooseHorizontal', () => {
+	it('stacks a screen share above two cameras in a small square area', () => {
+		// From the review: with the areas shrinking to fit, side by side leaves
+		// the screen share about 350px wide; stacked gives it the full width.
+		expect(chooseHorizontal({ width: 600, height: 600, spotlights: 1, videos: 2, aspectRatio: ASPECT })).toBe(false);
+	});
+
 	it('puts a screen share next to two cameras in a slightly narrower than 16:9 area', () => {
 		// The reported case: wide screen with the side panel open. The old rule
 		// (width / height > 16 / 9) stacked them.

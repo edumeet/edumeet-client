@@ -2,9 +2,10 @@
 // board) and the participant videos go next to each other (row) or above
 // each other (column).
 //
-// Both layouts are tried on the space the videos get, using the default size
-// of the participant video area (25rem across the layout axis), and the one
-// that shows the videos biggest wins. The spotlights are what people look at,
+// Both layouts are tried on the space the videos get, with the areas sized as
+// their default styles size them (the participant videos 25rem across the
+// layout axis, both shrinking to fit), and the one that shows the videos
+// biggest wins. The spotlights are what people look at,
 // so their area counts double. To keep the layout from flipping back and
 // forth near the break-even point, it only changes when the other layout is
 // clearly better.
@@ -60,20 +61,49 @@ export interface VideoLayoutInput {
 	participantVideosSize?: number;
 }
 
+// Sizes of two flex items with these base sizes in the given space: when they
+// do not fit, both shrink in proportion to their base size (flex-shrink: 1).
+export const shrinkToFit = (space: number, first: number, second: number): [ number, number ] => {
+	const overflow = first + second - space;
+
+	if (overflow <= 0) return [ first, second ];
+
+	const total = first + second;
+
+	return [ first - (overflow * (first / total)), second - (overflow * (second / total)) ];
+};
+
 export const layoutScore = (
 	{ width, height, spotlights, videos, aspectRatio, headless, participantVideosSize = PARTICIPANT_VIDEOS_SIZE }: VideoLayoutInput,
 	horizontal: boolean
 ): number => {
 	const controls = headless ? 0 : CONTROLS_SPACE;
 	const size = participantVideosSize;
+	let spotlightArea: number;
+	let videoArea: number;
 
-	// Mirrors the styles of Spotlights and Democratic in each layout.
-	const spotlightArea = horizontal ?
-		tileArea(spotlights, width - size - AREA_GAP, height - controls, aspectRatio) :
-		tileArea(spotlights, width, height - size - AREA_GAP - TILE_GAP, aspectRatio);
-	const videoArea = horizontal ?
-		tileArea(videos, size, height - controls, aspectRatio) :
-		tileArea(videos, width, size - controls, aspectRatio);
+	// Mirrors the default styles of Spotlights and Democratic.
+	if (horizontal) {
+		// Spotlights 100% wide, participant videos 25rem, the gap between them;
+		// both as high as the space minus the controls (8px when headless).
+		const tileHeight = height - (headless ? TILE_GAP : controls);
+		const [ spotlightWidth, videoWidth ] = shrinkToFit(width - AREA_GAP, width, size);
+
+		spotlightArea = tileArea(spotlights, spotlightWidth, tileHeight, aspectRatio);
+		videoArea = tileArea(videos, videoWidth, tileHeight, aspectRatio);
+	} else {
+		// Spotlights 100% - 8px high; participant videos 25rem minus the
+		// controls (8px when headless), plus a margin for the controls that
+		// does not shrink.
+		const [ spotlightHeight, videoHeight ] = shrinkToFit(
+			height - AREA_GAP - controls,
+			height - TILE_GAP,
+			size - (headless ? TILE_GAP : controls)
+		);
+
+		spotlightArea = tileArea(spotlights, width, spotlightHeight, aspectRatio);
+		videoArea = tileArea(videos, width, videoHeight, aspectRatio);
+	}
 
 	return (SPOTLIGHT_WEIGHT * spotlightArea) + videoArea;
 };
