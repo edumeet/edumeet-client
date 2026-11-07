@@ -1,9 +1,15 @@
 import { RefObject, useEffect, useState } from 'react';
 
-// Width plus height of an element, updated at most once per frame while it
-// changes size. Meant as an effect dependency to lay out content again.
-export const useElementSize = (ref: RefObject<HTMLElement | null>): number => {
-	const [ size, setSize ] = useState(0);
+export interface ElementSize {
+	width: number;
+	height: number;
+}
+
+// Size of an element, updated at most once per frame while it changes. Meant
+// as effect dependencies (width and height separately) to lay out content
+// again.
+export const useElementSize = (ref: RefObject<HTMLElement | null>): ElementSize => {
+	const [ size, setSize ] = useState<ElementSize>({ width: 0, height: 0 });
 
 	useEffect(() => {
 		const element = ref.current;
@@ -17,7 +23,12 @@ export const useElementSize = (ref: RefObject<HTMLElement | null>): number => {
 
 			frame = requestAnimationFrame(() => {
 				frame = undefined;
-				setSize(element.clientWidth + element.clientHeight);
+
+				const width = element.clientWidth;
+				const height = element.clientHeight;
+
+				// Keep the same object when nothing changed, so no render follows.
+				setSize((current) => (current.width === width && current.height === height ? current : { width, height }));
 			});
 		});
 

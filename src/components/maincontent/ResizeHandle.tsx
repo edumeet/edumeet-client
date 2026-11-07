@@ -1,4 +1,4 @@
-import { KeyboardEvent, PointerEvent, useRef, useState } from 'react';
+import { KeyboardEvent, PointerEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
@@ -79,9 +79,21 @@ export interface ResizeHandleCallbacks {
 	// eslint-disable-next-line no-unused-vars
 	onResize: (delta: number) => void;
 	onResizeEnd: () => void;
+	// Dragging stops without a result, as when the handle goes away mid-drag.
+	onResizeCancel: () => void;
 	// One keyboard step of delta px; +-Infinity for Home and End.
 	// eslint-disable-next-line no-unused-vars
 	onStep: (handle: HTMLElement, delta: number) => void;
+	// Position of the handle and its limits, in percent, for assistive
+	// technology; undefined while it cannot be measured.
+	// eslint-disable-next-line no-unused-vars
+	describe: (handle: HTMLElement) => HandlePosition | undefined;
+}
+
+export interface HandlePosition {
+	now: number;
+	min: number;
+	max: number;
 }
 
 interface ResizeHandleProps extends ResizeHandleCallbacks {
@@ -97,12 +109,48 @@ const ResizeHandle = ({
 	onResizeStart,
 	onResize,
 	onResizeEnd,
+	onResizeCancel,
 	onStep,
+	describe,
 	onReset,
 }: ResizeHandleProps): React.JSX.Element => {
 	const [ dragging, setDragging ] = useState(false);
+	const [ value, setValue ] = useState<HandlePosition | undefined>();
+	const handle = useRef<HTMLDivElement>(null);
 	const start = useRef<number | undefined>(undefined);
+	// Body styles from before the drag, to put back afterwards.
+	const bodyStyle = useRef({ cursor: '', userSelect: '' });
+	const cancel = useRef(onResizeCancel);
 	const vertical = orientation === 'vertical';
+
+	cancel.current = onResizeCancel;
+
+	const restoreBody = () => {
+		document.body.style.cursor = bodyStyle.current.cursor;
+		document.body.style.userSelect = bodyStyle.current.userSelect;
+	};
+
+	// Keep the reported position current. It follows the layout, so measure
+	// after every render (the parent renders again when the layout changes)
+	// and only store a changed value.
+	useLayoutEffect(() => {
+		const next = handle.current ? describe(handle.current) : undefined;
+
+		setValue((current) => (
+			current?.now === next?.now && current?.min === next?.min && current?.max === next?.max ? current : next
+		));
+	});
+
+	// The handle can go away while it is dragged, for example when the last
+	// screen share ends: do not leave the page with a resize cursor and text
+	// selection off, and drop the unfinished size.
+	useEffect(() => () => {
+		if (start.current === undefined) return;
+
+		start.current = undefined;
+		restoreBody();
+		cancel.current();
+	}, []);
 
 	const position = (event: PointerEvent) => (vertical ? event.clientX : event.clientY);
 
@@ -117,6 +165,7 @@ const ResizeHandle = ({
 		onResizeStart(event.currentTarget);
 
 		// Keep the cursor and avoid selecting text while dragging across the page.
+		bodyStyle.current = { cursor: document.body.style.cursor, userSelect: document.body.style.userSelect };
 		document.body.style.cursor = vertical ? 'col-resize' : 'row-resize';
 		document.body.style.userSelect = 'none';
 	};
@@ -132,8 +181,7 @@ const ResizeHandle = ({
 
 		start.current = undefined;
 		setDragging(false);
-		document.body.style.cursor = '';
-		document.body.style.userSelect = '';
+		restoreBody();
 
 		if (event.currentTarget.hasPointerCapture(event.pointerId))
 			event.currentTarget.releasePointerCapture(event.pointerId);
@@ -156,11 +204,16 @@ const ResizeHandle = ({
 
 	return (
 		<Handle
+			ref={handle}
 			orientation={orientation}
 			active={dragging ? 1 : 0}
 			role='separator'
 			aria-orientation={orientation}
 			aria-label={label}
+			aria-valuenow={value?.now}
+			aria-valuemin={value?.min}
+			aria-valuemax={value?.max}
+			aria-valuetext={value ? `${value.now}%` : undefined}
 			tabIndex={0}
 			onPointerDown={onPointerDown}
 			onPointerMove={onPointerMove}

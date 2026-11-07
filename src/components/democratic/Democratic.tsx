@@ -7,6 +7,7 @@ import VideoConsumer from '../videoconsumer/VideoConsumer';
 import Peers from '../peers/Peers';
 import { Box } from '@mui/material';
 import { useElementSize } from '../../utils/useElementSize';
+import { AREA_GAP, CONTROLS_SPACE, MIN_PARTICIPANT_VIDEOS_SIZE, MIN_SPOTLIGHTS_SIZE } from '../../utils/videoLayout';
 
 type DemocraticDivProps = {
 	headless: number;
@@ -34,13 +35,20 @@ const DemocraticDiv = styled(Box)<DemocraticDivProps>(({
 	alignItems: 'center',
 	alignContent: 'center',
 	// A share chosen by dragging the divider to the screen share. It covers the
-	// bottom margin too, so it matches the space taken in the layout.
-	...(share !== undefined && spotlights && {
+	// bottom margin too, so it matches the space taken in the layout. The
+	// limits keep both areas at their minimum size when the space shrinks
+	// later, without changing the saved share.
+	...(share !== undefined && spotlights && (horizontal ? {
 		flex: '0 0 auto',
-		...(horizontal ?
-			{ width: `${share * 100}%` } :
-			{ height: `calc(${share * 100}% - ${headless ? 0 : 64}px)` }),
-	}),
+		width: `${share * 100}%`,
+		minWidth: MIN_PARTICIPANT_VIDEOS_SIZE,
+		maxWidth: `calc(100% - ${MIN_SPOTLIGHTS_SIZE + AREA_GAP}px)`,
+	} : {
+		flex: '0 0 auto',
+		height: `calc(${share * 100}% - ${headless ? 0 : CONTROLS_SPACE}px)`,
+		minHeight: MIN_PARTICIPANT_VIDEOS_SIZE - (headless ? 0 : CONTROLS_SPACE),
+		maxHeight: `calc(100% - ${MIN_SPOTLIGHTS_SIZE + AREA_GAP + (headless ? 0 : CONTROLS_SPACE)}px)`,
+	})),
 }));
 
 type DemocraticProps = {
@@ -126,7 +134,8 @@ const Democratic = ({
 		webcamConsumers,
 		horizontal,
 		spotlights,
-		ownSize,
+		ownSize.width,
+		ownSize.height,
 	]);
 
 	const style = {

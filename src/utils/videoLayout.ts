@@ -14,9 +14,13 @@
 export const PARTICIPANT_VIDEOS_SIZE = 400;
 // Space kept free below the videos for the control buttons bar.
 export const CONTROLS_SPACE = 64;
-// Gap between tiles, and between the two areas.
+// Smallest sizes the divider between the two areas leaves them, in px.
+export const MIN_PARTICIPANT_VIDEOS_SIZE = 160;
+export const MIN_SPOTLIGHTS_SIZE = 240;
+// Gap between the two areas.
+export const AREA_GAP = 4;
+// Gap between tiles.
 const TILE_GAP = 8;
-const AREA_GAP = 4;
 
 const SPOTLIGHT_WEIGHT = 2;
 // The other layout has to be this much better to switch to it.

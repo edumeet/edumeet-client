@@ -195,7 +195,8 @@ const Spotlights = ({
 		horizontal,
 		videos,
 		aspects,
-		ownSize,
+		ownSize.width,
+		ownSize.height,
 	]);
 
 	const sizeFor = (k: string): TileSize => sizes[k] ?? { width: 0, height: 0 };

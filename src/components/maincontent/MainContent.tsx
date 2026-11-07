@@ -10,7 +10,7 @@ import { isMobileSelector, selectedVideoBoxesSelector, videoBoxesSelector } from
 import Spotlights from '../spotlights/Spotlights';
 import ControlButtonsBar from '../controlbuttonsbar/ControlButtonsBar';
 import GeneralStats from '../rtpquality/GeneralStats';
-import { chooseHorizontal } from '../../utils/videoLayout';
+import { chooseHorizontal, MIN_PARTICIPANT_VIDEOS_SIZE, MIN_SPOTLIGHTS_SIZE } from '../../utils/videoLayout';
 import ResizeHandle from './ResizeHandle';
 import { useResizable } from './useResizable';
 import { resizeParticipantListAndChatLabel, resizeSidePanelsLabel, resizeVideoAreasLabel } from '../translated/translatedComponents';
@@ -18,8 +18,6 @@ import { resizeParticipantListAndChatLabel, resizeSidePanelsLabel, resizeVideoAr
 // Limits for the dividers, in px.
 const MIN_SIDE_PANEL_WIDTH = 240;
 const MIN_VIDEO_AREA_WIDTH = 320;
-const MIN_PARTICIPANT_VIDEOS_SIZE = 160;
-const MIN_SPOTLIGHTS_SIZE = 240;
 const MIN_SIDE_PANEL_SIZE = 120;
 
 // Half the gap between the areas; a divider sits in the middle of the gap.
@@ -87,6 +85,10 @@ const SideContent = styled(Box)<SideContentProps>(({
 interface SideContainerProps {
 	height: string;
 	width?: string;
+	// Smallest size along the axis the panels share, when they share it by a
+	// saved split: keeps both usable when the side panels shrink later.
+	minheight?: number;
+	minwidth?: number;
 }
 
 // The client level stats panel is part of the stats overlay toggled with 'Q'.
@@ -102,9 +104,13 @@ const GeneralStatsContainer = styled(Box)(({ theme }) => ({
 	overflow: 'auto',
 }));
 
-const SideContainer = styled(Paper)<SideContainerProps>(({ theme, height, width }) => ({
+const SideContainer = styled(Paper, {
+	shouldForwardProp: (prop) => prop !== 'minheight' && prop !== 'minwidth',
+})<SideContainerProps>(({ theme, height, width, minheight, minwidth }) => ({
 	height,
 	width,
+	minHeight: minheight,
+	minWidth: minwidth,
 	overflowY: 'auto',
 	borderRadius: theme.roundedness,
 	backgroundColor: theme.sideContainerBackgroundColor,
@@ -146,6 +152,7 @@ const MainContent = (): React.JSX.Element => {
 	const sideColumns = bothOpen && !verticalDivide ? 2 : 1;
 	const sidePanels = useResizable({
 		after: true,
+		total: () => mainContainer.current?.clientWidth ?? 0,
 		measure: () => sideContent.current?.getBoundingClientRect().width ?? 0,
 		clamp: (width) => clamp(
 			width,
@@ -170,6 +177,7 @@ const MainContent = (): React.JSX.Element => {
 	};
 	const videoAreas = useResizable({
 		after: true,
+		total: videoAreaSize,
 		measure: (handle) => {
 			const container = videoContainer.current?.getBoundingClientRect();
 			const own = handle.getBoundingClientRect();
@@ -212,6 +220,7 @@ const MainContent = (): React.JSX.Element => {
 	// Sizes here are from the start of the side panels to the middle of the
 	// divider, so the participant list itself is HALF_GAP smaller.
 	const sidePanelsSplit = useResizable({
+		total: sidePanelsSize,
 		measure: (handle) => {
 			const container = sideContent.current?.getBoundingClientRect();
 			const own = handle.getBoundingClientRect();
@@ -243,13 +252,13 @@ const MainContent = (): React.JSX.Element => {
 	const participantListSize = participantListShare === undefined ?
 		{ height, width: '100%' } :
 		verticalDivide ?
-			{ height: sideSize(participantListShare), width: '100%' } :
-			{ height, width: sideSize(participantListShare) };
+			{ height: sideSize(participantListShare), width: '100%', minheight: MIN_SIDE_PANEL_SIZE } :
+			{ height, width: sideSize(participantListShare), minwidth: MIN_SIDE_PANEL_SIZE };
 	const chatSize = participantListShare === undefined ?
 		{ height, width: '100%' } :
 		verticalDivide ?
-			{ height: sideSize(1 - participantListShare), width: '100%' } :
-			{ height, width: sideSize(1 - participantListShare) };
+			{ height: sideSize(1 - participantListShare), width: '100%', minheight: MIN_SIDE_PANEL_SIZE } :
+			{ height, width: sideSize(1 - participantListShare), minwidth: MIN_SIDE_PANEL_SIZE };
 
 	useEffect(() => {
 		const videos = videoContainer.current;
