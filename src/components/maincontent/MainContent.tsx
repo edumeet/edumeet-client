@@ -135,6 +135,10 @@ const MainContent = (): React.JSX.Element => {
 	const bothOpen = chatOpen && participantListOpen;
 	const verticalDivide = useAppSelector((state) => state.settings.verticalDivide);
 	const headless = useAppSelector((state) => state.room.headless);
+
+	// The divider labels are read from intl at render time; this memoized
+	// component has to render again when the language changes.
+	useAppSelector((state) => state.settings.locale);
 	const spotlightCount = useAppSelector(selectedVideoBoxesSelector);
 	const videoCount = useAppSelector(videoBoxesSelector);
 	const spotlightsVisible = spotlightCount > 0;
