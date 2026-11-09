@@ -2,6 +2,7 @@ import { Box, Paper, TextField, styled } from '@mui/material';
 import {
 	useAppDispatch,
 	useAppSelector,
+	usePermissionSelector,
 } from '../../store/hooks';
 import EscapeMeetingButton from '../controlbuttons/EscapeMeetingButton';
 import RaiseHandButton from '../controlbuttons/RaiseHandButton';
@@ -9,6 +10,8 @@ import { meLabel } from '../translated/translatedComponents';
 import { useEffect, useState } from 'react';
 import { setDisplayName } from '../../store/actions/meActions';
 import { isMobileSelector } from '../../store/selectors';
+import { permissions } from '../../utils/roles';
+import ModeratorIcon from '../moderatoricon/ModeratorIcon';
 
 const StyledTextField = styled(TextField)(() => ({
 	flexGrow: 1,
@@ -48,6 +51,7 @@ const MeAvatar = styled('img')({
 
 const ListMe = (): React.JSX.Element => {
 	const isMobile = useAppSelector(isMobileSelector);
+	const isModerator = usePermissionSelector(permissions.MODERATE_ROOM);
 	const raiseHandEnabled = useAppSelector((state) => state.room.raiseHandEnabled);
 	const picture = useAppSelector((state) => state.me.picture);
 	const displayName = useAppSelector((state) => state.settings.displayName);
@@ -89,6 +93,7 @@ const ListMe = (): React.JSX.Element => {
 				:
 				<MeInfoDiv onClick={() => setIsEditing(true)}>
 					{`${prefix}${value}`}
+					{ isModerator && <ModeratorIcon /> }
 				</MeInfoDiv>
 			}
 			<EscapeMeetingButton type='iconbutton' size='small' />

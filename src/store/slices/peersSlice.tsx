@@ -22,6 +22,8 @@ export interface Peer {
 	reactionTimestamp?: number;
 	recording?: boolean;
 	headless?: boolean;
+	// Holds MODERATE_ROOM, as the server tells everyone, so the participant list can show who controls the room
+	moderator?: boolean;
 	transcripts?: Transcript[];
 }
 
@@ -71,7 +73,11 @@ const peersSlice = createSlice({
 					reaction,
 					reactionTimestamp,
 					recording,
+					moderator,
 				} = action.payload;
+
+				if (moderator !== undefined)
+					peer.moderator = moderator;
 
 				if (displayName)
 					peer.displayName = displayName;

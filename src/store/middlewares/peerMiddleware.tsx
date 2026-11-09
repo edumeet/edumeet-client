@@ -10,6 +10,8 @@ import { settingsActions } from '../slices/settingsSlice';
 import { p2pModeSelector } from '../selectors';
 import { Logger } from '../../utils/Logger';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { peerIsModeratorLabel, youAreModeratorLabel } from '../../components/translated/translatedComponents';
 
 const logger = new Logger('PeerMiddleware');
 
@@ -41,6 +43,7 @@ const createPeerMiddleware = ({
 									raisedHandTimestamp,
 									recording,
 									headless,
+									moderator,
 								} = notification.data;
 
 								dispatch(peersActions.addPeer({
@@ -52,8 +55,30 @@ const createPeerMiddleware = ({
 									raisedHandTimestamp,
 									recording,
 									headless,
+									moderator,
 									transcripts: [],
 								}));
+
+								break;
+							}
+
+							case 'peerModeratorChanged': {
+								const { peerId, moderator } = notification.data;
+
+								dispatch(peersActions.updatePeer({ id: peerId, moderator: Boolean(moderator) }));
+
+								break;
+							}
+
+							// The last moderator of an unmanaged room left and the server passed moderation on
+							case 'moderatorHandover': {
+								const { peerId } = notification.data;
+								const state = getState();
+								const message = peerId === state.me.id
+									? youAreModeratorLabel()
+									: peerIsModeratorLabel(state.peers[peerId]?.displayName ?? '');
+
+								dispatch(notificationsActions.enqueueNotification({ message, options: { variant: 'info' } }));
 
 								break;
 							}
