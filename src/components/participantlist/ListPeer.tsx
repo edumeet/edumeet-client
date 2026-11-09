@@ -15,6 +15,7 @@ import MoreButton from '../controlbuttons/MoreButton';
 import { roomSessionsActions } from '../../store/slices/roomSessionsSlice';
 import RecordIcon from '../recordicon/RecordIcon';
 import PeerMediaIndicator from '../rtpquality/PeerMediaIndicator';
+import ModeratorIcon from '../moderatoricon/ModeratorIcon';
 
 interface ListPeerProps {
 	peer: Peer;
@@ -97,7 +98,10 @@ const ListPeer = ({ peer, isModerator }: ListPeerProps): React.JSX.Element => {
 						<PanIcon fontSize='small' />
 					</IconButton>
 				}
-				<PeerInfoDiv>{ peer.displayName }</PeerInfoDiv>
+				<PeerInfoDiv>
+					{ peer.displayName }
+					{ peer.moderator && <ModeratorIcon /> }
+				</PeerInfoDiv>
 				<StyledIcons>
 					{ e2eeEnabled && <E2eeIndicator peer peerSecured={peerSecured} identityChanged={peerIdentityChanged} small /> }
 					{ hasScreen && /* <StyledChip disabled label={ */ <ScreenShareIcon fontSize='small' /> /* } variant='filled' size='small' /> */ }

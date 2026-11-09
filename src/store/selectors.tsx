@@ -409,24 +409,23 @@ export const spotlightExtraVideoConsumerSelector = createSelector(
 export const parentParticipantListSelector = createSelector(
 	[ parentRoomPeersSelector, sessionIdSpotlightsSelector ],
 	(peers, spotlights) => {
+		const byName = (a: Peer, b: Peer) => String(a.displayName || '').localeCompare(String(b.displayName || ''));
+		// Moderators first, so everyone sees at the top who controls the room
+		const moderators = peers.filter((peer) => peer.moderator).sort(byName);
+		const others = peers.filter((peer) => !peer.moderator);
+
 		const raisedHandSortedPeers =
-			peers.filter((peer) => peer.raisedHand)
+			others.filter((peer) => peer.raisedHand)
 				.sort((a, b) => 
 					(a.raisedHandTimestamp || 0) -
 					(b.raisedHandTimestamp || 0)
 				);
 		const spotlightSortedPeers =
-			peers.filter((peer) => spotlights.includes(peer.id) && !peer.raisedHand)
-				.sort((a, b) => String(a.displayName || '')
-					.localeCompare(String(b.displayName || ''))
-				);
+			others.filter((peer) => spotlights.includes(peer.id) && !peer.raisedHand).sort(byName);
 		const peersSorted =
-			peers.filter((peer) => !spotlights.includes(peer.id) && !peer.raisedHand)
-				.sort((a, b) => String(a.displayName || '')
-					.localeCompare(String(b.displayName || ''))
-				);
+			others.filter((peer) => !spotlights.includes(peer.id) && !peer.raisedHand).sort(byName);
 
-		return [ ...raisedHandSortedPeers, ...spotlightSortedPeers, ...peersSorted ];
+		return [ ...moderators, ...raisedHandSortedPeers, ...spotlightSortedPeers, ...peersSorted ];
 	}
 );
 

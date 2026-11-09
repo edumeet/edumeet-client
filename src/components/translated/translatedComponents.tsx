@@ -2825,3 +2825,18 @@ export const tenantLocaleTooltipLabel = (): string => intl.formatMessage({
 	id: 'label.managementservice.tenantLocaleTooltip',
 	defaultMessage: 'The language of the emails this tenant sends, such as the notice that a recording is ready, and the language a new meeting invitation starts with. Empty means English.'
 });
+
+export const moderatorLabel = (): string => intl.formatMessage({
+	id: 'room.moderator',
+	defaultMessage: 'Moderator'
+});
+
+export const youAreModeratorLabel = (): string => intl.formatMessage({
+	id: 'room.youAreModerator',
+	defaultMessage: 'You are now the moderator'
+});
+
+export const peerIsModeratorLabel = (displayName: string): string => intl.formatMessage({
+	id: 'room.peerIsModerator',
+	defaultMessage: '{displayName} is now the moderator'
+}, { displayName });

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../utils/edumeetConfig', () => ({ default: { theme: {}, p2penabled: true } }));
 
-import { botsSelector, p2pModeSelector, peersArraySelector, spotlightAudioOnlyPeersSelector, spotlightPeersSelector, videoBoxesSelector } from './selectors';
+import { botsSelector, p2pModeSelector, parentParticipantListSelector, peersArraySelector, spotlightAudioOnlyPeersSelector, spotlightPeersSelector, videoBoxesSelector } from './selectors';
 import { RootState } from './store';
 import { StateConsumer } from './slices/consumersSlice';
 import { Peer } from './slices/peersSlice';
@@ -244,5 +244,35 @@ describe('headless peers', () => {
 		const bot = state({ peers: [ 'C1' ], cameras: [ 'C1' ], spotlights: [ 'C1' ], headless: true });
 
 		expect(p2pModeSelector(bot)).toBe(false);
+	});
+});
+
+describe('moderators in the participant list', () => {
+	const named = (peers: Record<string, Partial<Peer>>, spotlights: string[] = []) => {
+		const s = state({ peers: Object.keys(peers), spotlights });
+
+		return {
+			...s,
+			roomSessions: { [SESSION]: { ...s.roomSessions[SESSION], parent: true } },
+			peers: Object.fromEntries(Object.entries(peers).map(([ id, p ]) => [ id, { id, sessionId: SESSION, displayName: id, ...p } ])),
+		} as RootState;
+	};
+
+	it('come first, by name, ahead of raised hands and spotlights', () => {
+		const s = named({
+			Anne: {},
+			Per: { raisedHand: true, raisedHandTimestamp: 1 },
+			Ola: { moderator: true },
+			Kari: { moderator: true, raisedHand: true, raisedHandTimestamp: 2 },
+			Bo: {},
+		}, [ 'Bo' ]);
+
+		expect(ids(parentParticipantListSelector(s))).toEqual([ 'Kari', 'Ola', 'Per', 'Bo', 'Anne' ]);
+	});
+
+	it('leave the order as before when nobody else moderates', () => {
+		const s = named({ Per: {}, Anne: { raisedHand: true, raisedHandTimestamp: 1 }, Bo: {} });
+
+		expect(ids(parentParticipantListSelector(s))).toEqual([ 'Anne', 'Bo', 'Per' ]);
 	});
 });
