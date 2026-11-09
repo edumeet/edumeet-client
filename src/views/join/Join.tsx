@@ -14,6 +14,7 @@ import { botDisplayName, botIdFromUrl, botSessionFromUrl, botTokenFromUrl, botTy
 import { JOIN_ERROR_KEY } from '../../store/middlewares/roomMiddleware';
 import { connect } from '../../store/actions/roomActions';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
+import LanguageSelector from '../../components/languageselector/LanguageSelector';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import { meActions } from '../../store/slices/meSlice';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
@@ -49,6 +50,9 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 	const meetingTokenRejection = useAppSelector((state) => state.me.meetingTokenRejection);
 
 	const headless = useAppSelector((state) => state.room.headless);
+
+	// Labels are read from intl when rendering; the language button at the bottom can change it.
+	useAppSelector((state) => state.settings.locale);
 
 	const handleDisplayNameChange = (value: string) => dispatch(settingsActions.setDisplayName(value.trim() ? value : value.trim()));
 
@@ -176,6 +180,9 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 						>
 							{ joinLabel() }
 						</Button>
+					</Box>
+					<Box sx={{ display: 'flex', mt: 1 }}>
+						<LanguageSelector compact />
 					</Box>
 				</Box>
 			}

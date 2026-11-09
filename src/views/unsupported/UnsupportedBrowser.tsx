@@ -124,7 +124,7 @@ const UnsupportedBrowser = ({
 						</Link>
 					)}
 					{privacyUrl.trim() !== '' && (
-						<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
+						<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginInlineStart: '16px' }}>
 							<Typography variant="body2">{ privacyLabel() }</Typography>
 						</Link>
 					)}

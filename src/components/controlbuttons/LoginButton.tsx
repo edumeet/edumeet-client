@@ -7,6 +7,7 @@ import React from 'react';
 import { Button } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import LoginIcon from '@mui/icons-material/Login';
+import { mirrorInRtl } from '../../utils/rtl';
 import edumeetConfig from '../../utils/edumeetConfig';
 
 const LoginButton = ({
@@ -37,7 +38,7 @@ export const CustomLoginButton = (): React.JSX.Element => {
 			<Grid container spacing={2}>
 				<Grid size={12}>
 					{ loginImageURL!='' && <img src={loginImageURL} alt='login' />}
-					{ loginImageURL=='' && <LoginIcon />}
+					{ loginImageURL=='' && <LoginIcon sx={mirrorInRtl} />}
 				</Grid>
 				<Grid size={12}>
 					{tenantLoginLabel()}

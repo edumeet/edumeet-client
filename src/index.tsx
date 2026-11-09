@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense } from 'react';
+import React, { useEffect, useLayoutEffect, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import { RawIntlProvider } from 'react-intl';
@@ -7,11 +7,14 @@ import debug from 'debug';
 import { persistor, store, mediaService, fileService, ServiceContext } from './store/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme, type Theme } from '@mui/material/styles';
+import { CacheProvider } from '@emotion/react';
+import createCache from '@emotion/cache';
 import { supportedBrowsers, deviceInfo, browserInfo } from './utils/deviceInfo';
 import edumeetConfig from './utils/edumeetConfig';
 import { intl } from './utils/intlManager';
-import { useAppDispatch } from './store/hooks';
+import { useAppDispatch, useAppSelector } from './store/hooks';
+import { rtlCache } from './utils/rtl';
 import { setLocale } from './store/actions/localeActions';
 import { CssBaseline } from '@mui/material';
 import { Logger } from './utils/Logger';
@@ -29,6 +32,35 @@ if (import.meta.env.VITE_APP_DEBUG === '*' || !import.meta.env.PROD) {
 
 const logger = new Logger('index.tsx');
 const theme = createTheme(edumeetConfig.theme);
+// Same settings as emotion's built-in cache, so left to right renders as before.
+const ltrCache = createCache({ key: 'css' });
+let rtlTheme: Theme | undefined;
+
+const getRtlTheme = (): Theme => {
+	if (!rtlTheme) rtlTheme = createTheme({ ...edumeetConfig.theme, direction: 'rtl' });
+
+	return rtlTheme;
+};
+
+// The tree keeps its shape when the direction changes: replacing it would
+// remount App, whose cleanup sends a user in a meeting back to the join page.
+const ThemedRoot = ({ children }: React.PropsWithChildren): React.JSX.Element => {
+	const rtl = useAppSelector((state) => state.room.rtl);
+	const cache = (rtl && rtlCache()) || ltrCache;
+	const isRtl = cache !== ltrCache;
+
+	useLayoutEffect(() => {
+		if (isRtl) document.documentElement.setAttribute('dir', 'rtl');
+		else document.documentElement.removeAttribute('dir');
+	}, [ isRtl ]);
+
+	return (
+		<CacheProvider value={cache}>
+			<ThemeProvider theme={isRtl ? getRtlTheme() : theme}>{children}</ThemeProvider>
+		</CacheProvider>
+	);
+};
+
 const device = deviceInfo();
 const unsupportedBrowser = !browserInfo.satisfies(supportedBrowsers);
 const webrtcUnavailable = !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.RTCPeerConnection;
@@ -89,13 +121,13 @@ root.render(
 		<CssBaseline />
 		<Provider store={store}>
 			<PersistGate persistor={persistor}>
-				<ThemeProvider theme={theme}>
+				<ThemedRoot>
 					<RawIntlProvider value={intl}>
 						<ServiceContext.Provider value={{ mediaService, fileService }}>
 							<RootComponent />
 						</ServiceContext.Provider>
 					</RawIntlProvider>
-				</ThemeProvider>
+				</ThemedRoot>
 			</PersistGate>
 		</Provider>
 	</>

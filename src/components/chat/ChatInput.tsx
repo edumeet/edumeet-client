@@ -1,4 +1,5 @@
 import { Send } from '@mui/icons-material';
+import { mirrorInRtl } from '../../utils/rtl';
 import { IconButton, styled } from '@mui/material';
 import { useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
@@ -53,7 +54,7 @@ const ChatInput = ({ label, onSend, disabled }: ChatInputProps): React.JSX.Eleme
 						disabled={disabled || !message}
 						onClick={handleSendMessage}
 					>
-						<Send />
+						<Send sx={mirrorInRtl} />
 					</IconButton>
 				}
 			/>

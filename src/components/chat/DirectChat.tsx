@@ -1,5 +1,6 @@
 import { Box, IconButton, styled, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { mirrorInRtl } from '../../utils/rtl';
 import { useEffect } from 'react';
 import { useAppDispatch } from '../../store/hooks';
 import { sendDirectChat } from '../../store/actions/chatActions';
@@ -57,7 +58,7 @@ const DirectChat = ({ thread, canChat }: DirectChatProps): React.JSX.Element => 
 					size='small'
 					onClick={() => dispatch(uiActions.setUi({ activeChatThread: null }))}
 				>
-					<ArrowBackIcon fontSize='small' />
+					<ArrowBackIcon fontSize='small' sx={mirrorInRtl} />
 				</IconButton>
 				<Typography variant='body2' sx={{ flexGrow: 1 }}><b>{ displayName }</b></Typography>
 			</HeaderDiv>

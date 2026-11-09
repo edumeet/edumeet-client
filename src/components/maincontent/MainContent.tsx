@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Box, Paper } from '@mui/material';
 import ParticipantList from '../participantlist/ParticipantList';
 import Democratic from '../democratic/Democratic';
@@ -13,6 +13,7 @@ import GeneralStats from '../rtpquality/GeneralStats';
 import { chooseHorizontal, MIN_PARTICIPANT_VIDEOS_SIZE, MIN_SPOTLIGHTS_SIZE } from '../../utils/videoLayout';
 import ResizeHandle from './ResizeHandle';
 import { useResizable } from './useResizable';
+import { distanceToEdge } from './distanceToEdge';
 import { resizeParticipantListAndChatLabel, resizeSidePanelsLabel, resizeVideoAreasLabel } from '../translated/translatedComponents';
 
 // Limits for the dividers, in px.
@@ -151,11 +152,15 @@ const MainContent = (): React.JSX.Element => {
 	const showSidePanels = !isMobile && eitherOpen;
 	const showVideoSplit = !headless && spotlightsVisible && videosVisible;
 
+	// Right to left, the areas laid out in a row swap sides: what follows a
+	// divider sits to its left.
+	const rtl = useTheme().direction === 'rtl';
+
 	// Divider between the videos and the side panels. The stored width is per
 	// panel, so two panels side by side get twice as much.
 	const sideColumns = bothOpen && !verticalDivide ? 2 : 1;
 	const sidePanels = useResizable({
-		after: true,
+		after: !rtl,
 		total: () => mainContainer.current?.clientWidth ?? 0,
 		measure: () => sideContent.current?.getBoundingClientRect().width ?? 0,
 		clamp: (width) => clamp(
@@ -180,17 +185,18 @@ const MainContent = (): React.JSX.Element => {
 		return horizontal ? current.clientWidth : current.clientHeight;
 	};
 	const videoAreas = useResizable({
-		after: true,
+		after: !(rtl && horizontal),
 		total: videoAreaSize,
 		measure: (handle) => {
 			const container = videoContainer.current?.getBoundingClientRect();
-			const own = handle.getBoundingClientRect();
 
 			if (!container) return 0;
 
-			return horizontal ?
-				container.right - ((own.left + own.right) / 2) - HALF_GAP :
-				container.bottom - ((own.top + own.bottom) / 2) - HALF_GAP;
+			return distanceToEdge(
+				container,
+				handle.getBoundingClientRect(),
+				horizontal ? (rtl ? 'left' : 'right') : 'bottom'
+			) - HALF_GAP;
 		},
 		clamp: (size) => clamp(
 			size,
@@ -224,16 +230,18 @@ const MainContent = (): React.JSX.Element => {
 	// Sizes here are from the start of the side panels to the middle of the
 	// divider, so the participant list itself is HALF_GAP smaller.
 	const sidePanelsSplit = useResizable({
+		after: rtl && !verticalDivide,
 		total: sidePanelsSize,
 		measure: (handle) => {
 			const container = sideContent.current?.getBoundingClientRect();
-			const own = handle.getBoundingClientRect();
 
 			if (!container) return 0;
 
-			return verticalDivide ?
-				((own.top + own.bottom) / 2) - container.top :
-				((own.left + own.right) / 2) - container.left;
+			return distanceToEdge(
+				container,
+				handle.getBoundingClientRect(),
+				verticalDivide ? 'top' : (rtl ? 'right' : 'left')
+			);
 		},
 		clamp: (size) => clamp(
 			size,

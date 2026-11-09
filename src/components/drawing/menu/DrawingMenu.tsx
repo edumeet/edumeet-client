@@ -7,6 +7,7 @@ import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
 import AbcIcon from '@mui/icons-material/Abc';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
+import { mirrorInRtl } from '../../../utils/rtl';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 
@@ -250,7 +251,7 @@ const DrawingMenu = ({
 						size='small'
 						disabled={pastActions.length === 0}
 					>
-						<UndoIcon />
+						<UndoIcon sx={mirrorInRtl} />
 						<sub>{pastActions.length}</sub>
 					</IconButton>
 
@@ -262,7 +263,7 @@ const DrawingMenu = ({
 						size='small'
 						disabled={futureActions.length === 0}
 					>
-						<RedoIcon />
+						<RedoIcon sx={mirrorInRtl} />
 						<sub>{futureActions.length}</sub>
 					</IconButton>
 						

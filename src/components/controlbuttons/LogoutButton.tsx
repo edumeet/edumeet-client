@@ -1,6 +1,7 @@
 import { useAppDispatch } from '../../store/hooks';
 import ControlButton, { ControlButtonProps } from './ControlButton';
 import Logout from '@mui/icons-material/Logout';
+import { mirrorInRtl } from '../../utils/rtl';
 import { logoutLabel } from '../translated/translatedComponents';
 import { logout } from '../../store/actions/permissionsActions';
 import React from 'react';
@@ -16,7 +17,7 @@ const LogoutButton = ({
 			onClick={() => dispatch(logout())}
 			{ ...props }
 		>
-			<Logout />
+			<Logout sx={mirrorInRtl} />
 		</ControlButton>
 	);
 };

@@ -11,7 +11,7 @@ import TenantFQDNTable from './TenatnFQDN';
 import TenantOAuthTable from './TenantOAuth';
 import TenantInviteConfigPanel from './TenantInviteConfig';
 import TenantBotCredentialTable from './TenantBotCredential';
-import { localeList } from '../../../utils/intlManager';
+import { invitationLocales } from '../../../utils/intlManager';
 import { addNewLabel, allowedMediaNodeRegionsLabel, tenantLocaleLabel, tenantLocaleNoneLabel, tenantLocaleTooltipLabel, applyLabel, authenticationLabel, botProvidersLabel, botPolicyLabel, botPolicyOptionLabel, botPolicyTooltipLabel, botsLabel, cancelLabel, deleteLabel, descLabel, fqdnLabel, genericItemDescLabel, hideUserDetailsLabel, inviteEmailConfigLabel, limitMediaNodeRegionsLabel, manageItemLabel, maxBotJobsPerRoomHelperLabel, maxBotJobsPerRoomLabel, maxBotJobsPerRoomTooltipLabel, mediaNodeRegionsLabel, nameLabel, selectAtLeastOneRegionLabel, tenantLabel } from '../../translated/translatedComponents';
 import { managamentActions } from '../../../store/slices/managementSlice';
 import edumeetConfig from '../../../utils/edumeetConfig';
@@ -255,8 +255,8 @@ const TenantTable = () => {
 								onChange={(event) => setLocale(event.target.value)}
 							>
 								<MenuItem value="">{tenantLocaleNoneLabel()}</MenuItem>
-								{ localeList.map((entry) => <MenuItem key={entry.file} value={entry.file}>{entry.name}</MenuItem>) }
-								{ locale && !localeList.some((entry) => entry.file === locale) && <MenuItem value={locale}>{locale}</MenuItem> }
+								{ invitationLocales.map((entry) => <MenuItem key={entry.file} value={entry.file}>{entry.name}</MenuItem>) }
+								{ locale && !invitationLocales.some((entry) => entry.file === locale) && <MenuItem value={locale}>{locale}</MenuItem> }
 							</TextField>
 						</Tooltip>
 						<TenantInviteConfigPanel tenantId={id} />

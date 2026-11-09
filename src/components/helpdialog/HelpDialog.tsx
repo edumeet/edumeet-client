@@ -39,7 +39,7 @@ const HelpDialog = (): React.JSX.Element => {
 							</Link>
 						)}
 						{privacyUrl.trim() !== '' && (
-							<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
+							<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginInlineStart: '16px' }}>
 								<Typography variant="caption" color="text.secondary">{ privacyLabel() }</Typography>
 							</Link>
 						)}

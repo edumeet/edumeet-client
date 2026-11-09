@@ -161,7 +161,7 @@ const LandingPage = (): React.JSX.Element | null => {
 										label={roomNameLabel()}
 										onChange={(event) => { handleRoomSelect(event as React.ChangeEvent<{ value: unknown }>); }}
 										autoFocus
-										style={{ textAlign: 'left' }}
+										style={{ textAlign: 'start' }}
 									>
 										{rooms.map((room) => (
 											<MenuItem key={room.id} value={room.name ?? ''}>{room.name ?? ''}</MenuItem>

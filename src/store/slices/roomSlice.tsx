@@ -46,6 +46,7 @@ export interface RoomState {
 	savingProgress?: number;
 	lockInProgress?: boolean;
 	localeInProgress?: boolean;
+	rtl?: boolean;
 	muteAllInProgress?: boolean;
 	lobbyPeersPromotionInProgress?: boolean;
 	stopAllVideoInProgress?: boolean;

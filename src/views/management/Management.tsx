@@ -10,6 +10,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { mirrorInRtl } from '../../utils/rtl';
 import TenantTable from '../../components/managementservice/tenants/Tenant';
 import { useEffect, useState } from 'react';
 import RoomTable from '../../components/managementservice/rooms/Room';
@@ -212,7 +213,7 @@ export default function ManagementUI(/* props: Props */) {
 					}>
 						<ListItemButton>
 							<ListItemIcon>
-								<LogoutIcon />
+								<LogoutIcon sx={mirrorInRtl} />
 							</ListItemIcon>
 							<ListItemText primary={logoutLabel()} />
 						</ListItemButton>

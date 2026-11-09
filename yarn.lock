@@ -1721,6 +1721,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/stylis@npm:^4.2.7":
+  version: 4.2.7
+  resolution: "@types/stylis@npm:4.2.7"
+  checksum: 10c0/01a9679addb3f63951a9c09729564e2205581f2db40875a28b25cc461efc52ba17a711cc50cdb5e7d3a67c5f2cd60580e078c8a69b8df7b67699d89060d2a977
+  languageName: node
+  linkType: hard
+
 "@types/superagent@npm:^8.1.11":
   version: 8.1.11
   resolution: "@types/superagent@npm:8.1.11"
@@ -2877,6 +2884,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cssjanus@npm:^2.0.1":
+  version: 2.3.1
+  resolution: "cssjanus@npm:2.3.1"
+  checksum: 10c0/05b5044d5e98f53108c0c15c985f4f6cb0155509b1695f639c52f2055224c9afb96bf1de86943fc7aabfc3a61777b97970a84c36e8b335d6c8e73553ce6cc8dc
+  languageName: node
+  linkType: hard
+
 "cssstyle@npm:^4.2.1":
   version: 4.6.0
   resolution: "cssstyle@npm:4.6.0"
@@ -3168,6 +3182,7 @@ __metadata:
     "@types/react-redux": "npm:^7.1.34"
     "@types/redux-logger": "npm:^3.0.13"
     "@types/sdp-transform": "npm:^2.15.0"
+    "@types/stylis": "npm:^4.2.7"
     "@types/ua-parser-js": "npm:^0.7.39"
     "@types/webtorrent": "npm:^0.110.2"
     "@typescript-eslint/eslint-plugin": "npm:^8.65.0"
@@ -3210,6 +3225,8 @@ __metadata:
     rollup-plugin-visualizer: "npm:^7.0.1"
     rrule: "npm:^2.8.1"
     socket.io-client: "npm:^4.8.4"
+    stylis: "npm:4.2.0"
+    stylis-plugin-rtl: "npm:^2.1.1"
     ts-mls: "npm:2.0.0-rc.16"
     typescript: "npm:^5.9.3"
     uuid: "npm:^14.0.2"
@@ -7353,6 +7370,17 @@ __metadata:
   version: 2.0.1
   resolution: "strip-json-comments@npm:2.0.1"
   checksum: 10c0/b509231cbdee45064ff4f9fd73609e2bcc4e84a4d508e9dd0f31f70356473fde18abfb5838c17d56fb236f5a06b102ef115438de0600b749e818a35fbbc48c43
+  languageName: node
+  linkType: hard
+
+"stylis-plugin-rtl@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "stylis-plugin-rtl@npm:2.1.1"
+  dependencies:
+    cssjanus: "npm:^2.0.1"
+  peerDependencies:
+    stylis: 4.x
+  checksum: 10c0/706640bba51ca75e3a824f781b59e8d8b8d034a10b839aa93daea166aac6cc67a4e7c063496ea8a09c396b639cff9859a42f5d03937d8f89f8922fd6c7435739
   languageName: node
   linkType: hard
 

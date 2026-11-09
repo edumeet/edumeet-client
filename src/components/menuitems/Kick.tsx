@@ -3,6 +3,7 @@ import {
 	useAppDispatch
 } from '../../store/hooks';
 import ExitIcon from '@mui/icons-material/ExitToApp';
+import { mirrorInRtl } from '../../utils/rtl';
 import { MenuItemProps } from '../floatingmenu/FloatingMenu';
 import MoreActions from '../moreactions/MoreActions';
 import { kickLabel } from '../translated/translatedComponents';
@@ -31,7 +32,7 @@ const Kick = ({
 				dispatch(kickPeer(peer.id));
 			}}
 		>
-			<ExitIcon />
+			<ExitIcon sx={mirrorInRtl} />
 			<MoreActions>
 				{ kickLabel() }
 			</MoreActions>

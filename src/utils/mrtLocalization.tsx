@@ -11,10 +11,10 @@ type LocaleLoader = () => Promise<MRT_Localization>;
 const loaders: Record<string, LocaleLoader> = {
 	en: () => import('material-react-table/locales/en').then((m) => m.MRT_Localization_EN),
 	cs: () => import('material-react-table/locales/cs').then((m) => m.MRT_Localization_CS),
-	cn: () => import('material-react-table/locales/zh-Hans').then((m) => m.MRT_Localization_ZH_HANS),
-	tw: () => import('material-react-table/locales/zh-Hant').then((m) => m.MRT_Localization_ZH_HANT),
+	zh: () => import('material-react-table/locales/zh-Hans').then((m) => m.MRT_Localization_ZH_HANS),
+	'zh-tw': () => import('material-react-table/locales/zh-Hant').then((m) => m.MRT_Localization_ZH_HANT),
 	hr: () => import('material-react-table/locales/hr').then((m) => m.MRT_Localization_HR),
-	dk: () => import('material-react-table/locales/da').then((m) => m.MRT_Localization_DA),
+	da: () => import('material-react-table/locales/da').then((m) => m.MRT_Localization_DA),
 	fr: () => import('material-react-table/locales/fr').then((m) => m.MRT_Localization_FR),
 	de: () => import('material-react-table/locales/de').then((m) => m.MRT_Localization_DE),
 	el: () => import('material-react-table/locales/el').then((m) => m.MRT_Localization_EL),
@@ -28,6 +28,7 @@ const loaders: Record<string, LocaleLoader> = {
 	es: () => import('material-react-table/locales/es').then((m) => m.MRT_Localization_ES),
 	tr: () => import('material-react-table/locales/tr').then((m) => m.MRT_Localization_TR),
 	uk: () => import('material-react-table/locales/uk').then((m) => m.MRT_Localization_UK),
+	fa: () => import('material-react-table/locales/fa').then((m) => m.MRT_Localization_FA),
 };
 
 // eslint-disable-next-line camelcase

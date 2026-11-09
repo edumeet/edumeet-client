@@ -14,6 +14,7 @@ import {
 	useNotifier,
 } from '../../store/hooks';
 import PrecallTitle from '../../components/precalltitle/PrecallTitle';
+import LanguageSelector from '../../components/languageselector/LanguageSelector';
 import { ChooserDiv } from '../../components/devicechooser/DeviceChooser';
 import AudioOutputChooser from '../../components/devicechooser/AudioOutputChooser';
 import { canSelectAudioOutput } from '../../store/selectors';
@@ -29,6 +30,9 @@ const Lobby = (): React.JSX.Element | null => {
 	const showAudioOutputChooser = useAppSelector(canSelectAudioOutput);
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 	const videoMuted = useAppSelector((state) => state.me.videoMuted);
+
+	// Labels are read from intl when rendering; the language button at the bottom can change it.
+	useAppSelector((state) => state.settings.locale);
 
 	const handleDisplayNameChange = () => {
 		dispatch(setDisplayName(
@@ -79,10 +83,13 @@ const Lobby = (): React.JSX.Element | null => {
 							</Link>
 						)}
 						{privacyUrl.trim() !== '' && (
-							<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginLeft: '16px' }}>
+							<Link href={privacyUrl} target="_blank" color="inherit" underline="none" style={{ marginInlineStart: '16px' }}>
 								<Typography variant="body2">{ privacyLabel() }</Typography>
 							</Link>
 						)}
+					</Box>
+					<Box sx={{ mt: 1 }}>
+						<LanguageSelector compact />
 					</Box>
 				</Box>
 			}

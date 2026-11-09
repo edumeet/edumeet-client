@@ -28,7 +28,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment, { Moment } from 'moment';
 import { Meeting, MeetingAttendee, MeetingOccurrenceRsvp, MeetingPartstat, Room, User, Tenant } from '../../../utils/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { localeList } from '../../../utils/intlManager';
+import { findLocale, invitationLocales } from '../../../utils/intlManager';
 import { browserTimezone, instantToWallClock, timezoneOptions, wallClockToInstant } from '../../../utils/timezones';
 import { toMomentLocale } from '../../../utils/momentLocale';
 import {
@@ -83,14 +83,11 @@ type RepeatMode = 'NEVER' | 'DAILY' | 'WEEKLY' | 'MONTHLY';
 // Maps a UI locale code ("pl", "pl-pl", "en-us", etc.) to a translation file code
 // matching localeList entries; falls back to "en" if nothing matches.
 // The server-side email template lookup (getTemplate in invites/templates/index.ts)
-// falls back to English too when a template isn't present, so any selection is safe.
+// falls back to English too when a template isn't present.
 const mapUiLocaleToFile = (uiLocale: string | undefined): string => {
 	if (!uiLocale) return 'en';
-	const normalized = uiLocale.toLowerCase();
-	const lang = normalized.split('-')[0];
-	const entry = localeList.find((l) => l.locale.some((loc) => loc === normalized || loc === lang));
 
-	return entry?.file ?? 'en';
+	return findLocale(uiLocale)?.file ?? 'en';
 };
 
 const partstatLabel = (p?: MeetingPartstat): string => {
@@ -176,6 +173,7 @@ const MeetingsTable = ({ roomId: roomIdProp, tenantId: tenantIdProp }: MeetingsT
 	// moment locales are pre-registered on the single shared instance. We just compute
 	// the moment locale code from the UI locale and pass it as `adapterLocale`.
 	const momentLocale = toMomentLocale(defaultLocale);
+	const defaultInviteLocale = invitationLocales.some((entry) => entry.file === defaultLocale) ? defaultLocale : 'en';
 
 	const [ data, setData ] = useState<Meeting[]>([]);
 	const [ rooms, setRooms ] = useState<Room[]>([]);
@@ -197,7 +195,7 @@ const MeetingsTable = ({ roomId: roomIdProp, tenantId: tenantIdProp }: MeetingsT
 		.add(2, 'hour')
 		.startOf('hour'));
 	const [ timezone, setTimezone ] = useState(browserTimezone());
-	const [ locale, setLocale ] = useState(defaultLocale);
+	const [ locale, setLocale ] = useState(defaultInviteLocale);
 
 	// A new invitation starts in the language its tenant writes in, when one is set;
 	// the language of the interface is the fallback, as before.
@@ -346,7 +344,7 @@ const MeetingsTable = ({ roomId: roomIdProp, tenantId: tenantIdProp }: MeetingsT
 			.add(2, 'hour')
 			.startOf('hour'));
 		setTimezone(browserTimezone());
-		setLocale(tenantLocale(isRoomScoped ? tenantIdProp : (rooms.length > 0 ? rooms[0].tenantId : undefined)) ?? defaultLocale);
+		setLocale(tenantLocale(isRoomScoped ? tenantIdProp : (rooms.length > 0 ? rooms[0].tenantId : undefined)) ?? defaultInviteLocale);
 		setRepeatMode('NEVER');
 		setRepeatInterval(1);
 		setRepeatCount(10);
@@ -371,7 +369,7 @@ const MeetingsTable = ({ roomId: roomIdProp, tenantId: tenantIdProp }: MeetingsT
 		setStartsAt(m.startsAt ? wallClockMoment(Number(m.startsAt), tz) : null);
 		setEndsAt(m.endsAt ? wallClockMoment(Number(m.endsAt), tz) : null);
 		setTimezone(tz);
-		setLocale(m.locale ?? defaultLocale);
+		setLocale(m.locale ?? defaultInviteLocale);
 		const p = parseRrule(m.rrule);
 
 		setRepeatMode(p.mode);
@@ -675,7 +673,7 @@ const MeetingsTable = ({ roomId: roomIdProp, tenantId: tenantIdProp }: MeetingsT
 								value={locale}
 								onChange={(e) => setLocale(e.target.value)}
 							>
-								{localeList.map(({ file, name }) => (
+								{invitationLocales.map(({ file, name }) => (
 									<MenuItem key={file} value={file}>{name}</MenuItem>
 								))}
 							</Select>
