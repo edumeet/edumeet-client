@@ -330,7 +330,7 @@ describe('E2EE service', () => {
 
 		it('drops the keys of a member the next epoch no longer holds', async () => {
 			const { alice, a, aliceDec, b } = await group();
-			const removal = await a.commitRemove([ 'bob' ]);
+			const removal = await a.commitRemove(new Set([ 'alice' ]));
 
 			a.accept(removal!);
 			await alice.applyEpochKeys();
@@ -472,6 +472,25 @@ describe('E2EE service', () => {
 
 			expect(pushed).toHaveLength(2);
 			expect((pushed[1].keyId as number) & 0xff).toBe(3);
+		});
+
+		it('leaves the sender key alone when the same epoch is applied again, and switches on the next one', async () => {
+			const { service, provider, enc, dec } = await enabledService();
+
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+
+			await service.applyEpochKeys();
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(600);
+
+			expect(dec.postedOfType('decKeys')).toHaveLength(3);
+			expect(enc.postedOfType('encKey')).toHaveLength(1);
+
+			provider.accept(await provider.commitUpdate());
+			await service.applyEpochKeys();
+			await vi.advanceTimersByTimeAsync(300);
+
+			expect(enc.postedOfType('encKey')).toHaveLength(2);
 		});
 
 		it('pushes the epoch keys, and keeps pushing after one application failed', async () => {

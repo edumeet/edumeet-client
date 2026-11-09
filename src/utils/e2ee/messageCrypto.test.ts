@@ -53,6 +53,23 @@ describe('message crypto', () => {
 		expect(utf8.decode(await opener.open(b!))).toBe('same');
 	});
 
+	it('keeps counting when a key is set again, so a repeated install repeats no nonce', async () => {
+		const { sealer } = pair();
+		const raw = randomKeyRaw();
+		const counter = (sealed: Bytes): number => Number(new DataView(sealed.buffer, sealed.byteOffset + 4, 8).getBigUint64(0));
+
+		await sealer.setKey(kid(0), raw);
+		const first = await sealer.seal(text.encode('one'));
+
+		await sealer.setKey(kid(0), raw);
+		const second = await sealer.seal(text.encode('two'));
+
+		await sealer.setKey(kid(1), randomKeyRaw());
+		const third = await sealer.seal(text.encode('three'));
+
+		expect([ counter(first!), counter(second!), counter(third!) ]).toEqual([ 0, 1, 2 ]);
+	});
+
 	it('opens nothing it holds no key for, nothing tampered with, and nothing too short', async () => {
 		const { sealer, opener, store } = pair();
 		const raw = randomKeyRaw();

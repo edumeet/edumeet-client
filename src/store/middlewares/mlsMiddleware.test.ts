@@ -58,9 +58,11 @@ const makeProvider = (myPeerId: string) => {
 	let joined = false;
 	let epoch = -1;
 	let seq = 0;
+	const removed: string[][] = [];
 	const pending = (label: string, nextMembers: Member[]) => ({
 		epoch, commit: `${label}-${++seq}`, groupInfo: `gi-${label}-${seq}`, state: { members: nextMembers },
 	});
+	const unaccounted = (present: Set<string>): Member[] => members.filter((m) => m.peerId !== myPeerId && !present.has(m.peerId));
 
 	return {
 		peerId: myPeerId,
@@ -100,12 +102,16 @@ const makeProvider = (myPeerId: string) => {
 			joined = true;
 			epoch = 1;
 		}),
-		commitRemove: vi.fn(async (peerIds: string[]) => {
-			const gone = members.filter((m) => peerIds.includes(m.peerId));
+		removed,
+		unaccounted,
+		commitRemove: vi.fn(async (present: Set<string>) => {
+			const gone = unaccounted(present);
 
 			if (gone.length === 0) return undefined;
 
-			return pending(`remove:${gone.map((m) => m.peerId).join(',')}`, members.filter((m) => !peerIds.includes(m.peerId)));
+			removed.push(gone.map((m) => m.peerId));
+
+			return pending(`remove:${gone.map((m) => m.peerId).join(',')}`, members.filter((m) => !gone.includes(m)));
 		}),
 		commitUpdate: vi.fn(async () => pending('update', members)),
 		accept: vi.fn((p: { state: { members: Member[] }; target?: number }) => {
@@ -113,8 +119,8 @@ const makeProvider = (myPeerId: string) => {
 			joined = true;
 			epoch = p.target !== undefined ? p.target + 1 : epoch + 1;
 		}),
-		committerRank: vi.fn((departed: Set<string>) => {
-			const remaining = members.filter((m) => !departed.has(m.peerId)).map((m) => m.leafIndex)
+		committerRank: vi.fn((present: Set<string>) => {
+			const remaining = members.filter((m) => !unaccounted(present).includes(m)).map((m) => m.leafIndex)
 				.sort((a, b) => a - b);
 
 			return remaining.indexOf(members.find((m) => m.peerId === myPeerId)?.leafIndex ?? -1);
@@ -144,20 +150,46 @@ const setup = ({ e2eeEnabled = true } = {}) => {
 	};
 	const dispatch = vi.fn();
 	const next = vi.fn((action: unknown) => action);
+	// The room lists every member of the group until a peer leaves it, as a real room does. A test
+	// breaks that link on purpose through notInRoom, or lists a peer outright through peersInRoom.
+	// Emptying the list and filling it again follow the real actions.
 	const peersInRoom: Record<string, { id: string }> = {};
-	const getState = () => ({ room: { e2eeEnabled }, me: { id: 'me' }, peers: peersInRoom });
-	const run = createMlsMiddleware({ signalingService: signaling, e2eeService: service } as unknown as MiddlewareInput)(
+	const notInRoom = new Set<string>();
+	let roomEmptied = false;
+	const roomPeers = () => ({
+		...(roomEmptied ? {} : Object.fromEntries(provider.members().filter((m) => m.peerId !== 'me' && !notInRoom.has(m.peerId))
+			.map((m) => [ m.peerId, { id: m.peerId } ]))),
+		...peersInRoom,
+	});
+	const getState = () => ({ room: { e2eeEnabled }, me: { id: 'me' }, peers: roomPeers() });
+	const middleware = createMlsMiddleware({ signalingService: signaling, e2eeService: service } as unknown as MiddlewareInput)(
 		{ dispatch, getState } as unknown as ApiInput
 	)(next);
+	const run = (action: Parameters<typeof middleware>[0]): unknown => {
+		const result = middleware(action);
+
+		if (peersActions.removePeer.match(action)) notInRoom.add(action.payload.id);
+		if (peersActions.addPeer.match(action)) notInRoom.delete(action.payload.id);
+		if (peersActions.removeAllPeers.match(action)) roomEmptied = true;
+
+		if (peersActions.addPeers.match(action)) {
+			roomEmptied = false;
+			for (const peer of action.payload) notInRoom.delete(peer.id);
+		}
+
+		return result;
+	};
 
 	run({ type: signalingActions.connect.type });
+	// A real client fills its peer list from the join response; here the room is complete from the start.
+	run(peersActions.addPeers([]));
 
 	const join = async (): Promise<void> => {
 		run(roomActions.setState('joined'));
 		await flush();
 	};
 
-	return { signaling, service, provider, dispatch, run, join, peersInRoom };
+	return { signaling, service, provider, dispatch, run, join, peersInRoom, notInRoom };
 };
 
 const requested = (signaling: ReturnType<typeof makeSignaling>): string[] => signaling.sendRequest.mock.calls.map(([ method ]) => method as string);
@@ -275,7 +307,7 @@ describe('MLS middleware', () => {
 		await vi.advanceTimersByTimeAsync(250);
 
 		expect(provider.commitRemove).toHaveBeenCalledTimes(1);
-		expect(provider.commitRemove).toHaveBeenCalledWith(expect.arrayContaining([ 'bob', 'carol' ]));
+		expect(provider.removed).toEqual([ [ 'bob', 'carol' ] ]);
 		expect(requested(signaling)).toEqual([ 'mlsCommit' ]);
 		expect(provider.members().map((m) => m.peerId)).toEqual([ 'me' ]);
 	});
@@ -308,7 +340,7 @@ describe('MLS middleware', () => {
 
 		await vi.advanceTimersByTimeAsync(3300);
 
-		expect(provider.commitRemove).toHaveBeenCalledWith([ 'carol' ]);
+		expect(provider.removed).toEqual([ [ 'carol' ] ]);
 		expect(requested(signaling)).toEqual([ 'mlsCommit' ]);
 	});
 
@@ -369,7 +401,7 @@ describe('MLS middleware', () => {
 		signaling.answers.push({ accepted: true, epoch: 3 });
 		await vi.advanceTimersByTimeAsync(3300);
 
-		expect(provider.commitRemove).toHaveBeenCalledWith([ 'dave' ]);
+		expect(provider.removed).toEqual([ [ 'dave' ] ]);
 		expect(requested(signaling)).toEqual([ 'mlsCommit' ]);
 	});
 
@@ -495,7 +527,7 @@ describe('MLS middleware', () => {
 
 		await vi.advanceTimersByTimeAsync(100);
 
-		expect(provider.commitRemove).toHaveBeenCalledWith([ 'alice' ]);
+		expect(provider.removed).toEqual([ [ 'alice' ] ]);
 	});
 	it('keeps a resync waiting through a long join queue instead of giving up', async () => {
 		const { signaling, service, provider, join } = setup();
@@ -646,7 +678,8 @@ describe('MLS middleware', () => {
 		run(peersActions.removePeer({ id: 'ghost' }));
 		await vi.advanceTimersByTimeAsync(5000);
 
-		expect(provider.commitRemove).toHaveBeenCalledWith([ 'ghost' ]);
+		expect(provider.commitRemove).toHaveBeenCalledTimes(1);
+		expect(provider.removed).toEqual([]);
 		expect(signaling.sendRequest).not.toHaveBeenCalled();
 	});
 
@@ -695,7 +728,7 @@ describe('MLS middleware', () => {
 		signaling.answers.push({ accepted: true, epoch: 6 });
 		await vi.advanceTimersByTimeAsync(400);
 
-		expect(provider.commitRemove).toHaveBeenCalledWith([ 'bob' ]);
+		expect(provider.removed).toEqual([ [ 'bob' ] ]);
 	});
 	it('forgets a founded group when publishing it fails, and joins once the request works again', async () => {
 		const { signaling, provider, dispatch, join } = setup();
@@ -761,7 +794,7 @@ describe('MLS middleware', () => {
 		peersInRoom.bob = { id: 'bob' };
 		await vi.advanceTimersByTimeAsync(250);
 
-		expect(provider.commitRemove).toHaveBeenCalledWith([ 'carol' ]);
+		expect(provider.removed).toEqual([ [ 'carol' ] ]);
 		expect(provider.members().map((m) => m.peerId)).toEqual([ 'me', 'bob' ]);
 	});
 
@@ -780,5 +813,106 @@ describe('MLS middleware', () => {
 
 		expect(provider.commitRemove).not.toHaveBeenCalled();
 		expect(signaling.sendRequest).not.toHaveBeenCalled();
+	});
+
+	it('removes a leaver whose leaf carries an identity that is nobody in the room', async () => {
+		const { signaling, provider, run, notInRoom } = setup();
+
+		signaling.answers.push({ role: 'founder' }, { accepted: true, epoch: 0 });
+		run(roomActions.setState('joined'));
+		await flush();
+		provider.setMembers([ { peerId: 'me', leafIndex: 0 }, { peerId: 'ghost', leafIndex: 1 }, { peerId: 'bob', leafIndex: 2 } ]);
+		notInRoom.add('ghost');
+		signaling.sendRequest.mockClear();
+		signaling.answers.push({ accepted: true, epoch: 2 });
+
+		run(peersActions.removePeer({ id: 'carol' }));
+		await vi.advanceTimersByTimeAsync(250);
+
+		expect(provider.removed).toEqual([ [ 'ghost' ] ]);
+		expect(requested(signaling)).toEqual([ 'mlsCommit' ]);
+		expect(provider.members().map((m) => m.peerId)).toEqual([ 'me', 'bob' ]);
+	});
+
+	it('still removes such a leaver when an unrelated commit arrives while the departure is batched', async () => {
+		const { signaling, provider, run, notInRoom } = setup();
+
+		signaling.answers.push({ role: 'founder' }, { accepted: true, epoch: 0 });
+		run(roomActions.setState('joined'));
+		await flush();
+		provider.setMembers([ { peerId: 'me', leafIndex: 0 }, { peerId: 'ghost', leafIndex: 1 }, { peerId: 'bob', leafIndex: 2 } ]);
+		notInRoom.add('ghost');
+		signaling.sendRequest.mockClear();
+
+		run(peersActions.removePeer({ id: 'carol' }));
+		await vi.advanceTimersByTimeAsync(100);
+		await signaling.deliver('mlsCommit', { fromPeerId: 'bob', epoch: 2, commit: 'update-2' });
+		signaling.answers.push({ accepted: true, epoch: 3 });
+		await vi.advanceTimersByTimeAsync(150);
+
+		expect(provider.removed).toEqual([ [ 'ghost' ] ]);
+	});
+
+	it('commits no departure while a reconnect has emptied the peer list, and catches up once the list is back', async () => {
+		const { signaling, provider, run } = setup();
+
+		signaling.answers.push({ role: 'founder' }, { accepted: true, epoch: 0 });
+		run(roomActions.setState('joined'));
+		await flush();
+		provider.setMembers([ { peerId: 'me', leafIndex: 0 }, { peerId: 'bob', leafIndex: 1 }, { peerId: 'carol', leafIndex: 2 } ]);
+		signaling.sendRequest.mockClear();
+		signaling.answers.push({ accepted: true, epoch: 2 });
+
+		run(peersActions.removeAllPeers());
+		run(peersActions.removePeer({ id: 'bob' }));
+		await vi.advanceTimersByTimeAsync(5000);
+
+		expect(provider.commitRemove).not.toHaveBeenCalled();
+
+		run(peersActions.addPeers([ { id: 'carol' } as never ]));
+		await vi.advanceTimersByTimeAsync(250);
+
+		expect(provider.removed).toEqual([ [ 'bob' ] ]);
+		expect(provider.members().map((m) => m.peerId)).toEqual([ 'me', 'carol' ]);
+	});
+
+	it('commits no departure between the room becoming ready and the join response that lists the peers', async () => {
+		const { signaling, provider, run } = setup();
+
+		run(roomActions.setEntered(false));
+		signaling.answers.push({ role: 'joiner', epoch: 0, groupInfo: 'gi-one@0' }, { accepted: true, epoch: 1 });
+		run(roomActions.setState('joined'));
+		await flush();
+		provider.setMembers([ { peerId: 'alice', leafIndex: 0 }, { peerId: 'me', leafIndex: 1 } ]);
+		signaling.sendRequest.mockClear();
+		signaling.answers.push({ accepted: true, epoch: 2 });
+
+		run(peersActions.removePeer({ id: 'alice' }));
+		await vi.advanceTimersByTimeAsync(5000);
+
+		expect(provider.commitRemove).not.toHaveBeenCalled();
+
+		run(peersActions.addPeers([]));
+		await vi.advanceTimersByTimeAsync(250);
+
+		expect(provider.removed).toEqual([ [ 'alice' ] ]);
+	});
+
+	it('does not wait behind a leaf the room does not list for the committer seat', async () => {
+		const { signaling, provider, run, notInRoom } = setup();
+
+		signaling.answers.push({ role: 'joiner', epoch: 0, groupInfo: 'gi-two@0' }, { accepted: true, epoch: 1 });
+		run(roomActions.setState('joined'));
+		await flush();
+		provider.setMembers([ { peerId: 'ghost', leafIndex: 0 }, { peerId: 'me', leafIndex: 1 }, { peerId: 'bob', leafIndex: 2 } ]);
+		notInRoom.add('ghost');
+		signaling.sendRequest.mockClear();
+		signaling.answers.push({ accepted: true, epoch: 2 });
+
+		run(peersActions.removePeer({ id: 'bob' }));
+		await vi.advanceTimersByTimeAsync(250);
+
+		expect(provider.removed).toEqual([ [ 'ghost', 'bob' ] ]);
+		expect(provider.members().map((m) => m.peerId)).toEqual([ 'me' ]);
 	});
 });

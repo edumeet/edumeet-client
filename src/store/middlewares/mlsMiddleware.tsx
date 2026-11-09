@@ -39,9 +39,20 @@ const createMlsMiddleware = ({ signalingService, e2eeService }: MiddlewareOption
 	let listening = false;
 	let lastEpochCheck = 0;
 	let stateOf: (() => RootState) | undefined;
+	let peersListed = false;
 	const secured = new Set<string>();
 
 	const mls = (): MlsKeyProvider | undefined => e2eeService.mls;
+
+	// The room's peer list decides which leaves stay in the group, so it is read only while it is the
+	// whole list: not between the room becoming ready and the join response that fills it, and not
+	// while a reconnect has emptied it and waits for the server to fill it again. An incomplete list
+	// would read as members having left.
+	const presentPeers = (myPeerId: string): Set<string> | undefined => {
+		if (!stateOf || !peersListed) return undefined;
+
+		return new Set([ myPeerId, ...Object.keys(stateOf().peers) ]);
+	};
 
 	const fail = (dispatch: AppDispatch, reason: string, error?: unknown): void => {
 		logger.error('%s, leaving the room rather than sending unencrypted media [error:%o]', reason, error);
@@ -74,11 +85,12 @@ const createMlsMiddleware = ({ signalingService, e2eeService }: MiddlewareOption
 			dispatch(e2eeActions.setPeerSecured({ peerId: member.peerId }));
 		}
 
-		for (const peerId of [ ...departed ]) {
-			if (!members.some((m) => m.peerId === peerId)) departed.delete(peerId);
-		}
+		if (departed.size === 0) return;
 
-		if (departed.size > 0) scheduleDeparture(dispatch, myPeerId);
+		const present = presentPeers(myPeerId);
+
+		if (present && provider.unaccounted(present).length === 0) departed.clear();
+		else scheduleDeparture(dispatch, myPeerId);
 	};
 
 	// One round trip that can fail while the socket is reconnecting. That is a reason to ask again,
@@ -201,7 +213,8 @@ const createMlsMiddleware = ({ signalingService, e2eeService }: MiddlewareOption
 	};
 
 	// The worker cannot decrypt someone, which in a quiet room is the only sign that a commit was
-	// missed. The server's epoch says whether that is so; if not, the keys are simply pushed again.
+	// missed. The server's epoch says whether that is so; if not, the decrypt keys are pushed again
+	// and our own sender key stays as it is.
 	// Commits still queued or being applied are let through first: a slow tab is behind the server
 	// for the seconds a commit takes it, and that is not a reason to rejoin.
 	const checkEpoch = async (dispatch: AppDispatch, myPeerId: string): Promise<void> => {
@@ -268,21 +281,22 @@ const createMlsMiddleware = ({ signalingService, e2eeService }: MiddlewareOption
 
 	// A peer that is back in the room, under the same id, is not departed whatever the set says: the
 	// room can collapse and re-form around a member whose earlier disappearance is still remembered,
-	// and removing it then would throw a present member out of the group.
+	// and removing it then would throw a present member out of the group. The commit removes every
+	// leaf the room does not account for, not only leaves named after the leavers, so a leaver whose
+	// leaf carries some other identity loses the keys like anyone else.
 	const commitDepartures = async (dispatch: AppDispatch, myPeerId: string): Promise<void> => {
 		const provider = mls();
+		const present = presentPeers(myPeerId);
 
-		if (!provider?.joined || departed.size === 0) return;
-
-		const present = stateOf?.().peers ?? {};
+		if (!provider?.joined || departed.size === 0 || !present) return;
 
 		for (const peerId of [ ...departed ]) {
-			if (present[peerId]) departed.delete(peerId);
+			if (present.has(peerId)) departed.delete(peerId);
 		}
 
 		if (departed.size === 0) return;
 
-		const pending = await provider.commitRemove([ ...departed ]);
+		const pending = await provider.commitRemove(present);
 
 		if (!pending) {
 			departed.clear();
@@ -291,7 +305,7 @@ const createMlsMiddleware = ({ signalingService, e2eeService }: MiddlewareOption
 		}
 
 		if (await offer(provider, pending)) {
-			logger.debug('committed the departure of %d peer(s) [epoch:%d]', departed.size, provider.epoch);
+			logger.debug('committed the removal of departed members [epoch:%d]', provider.epoch);
 			await synced(dispatch, myPeerId);
 		}
 	};
@@ -307,11 +321,12 @@ const createMlsMiddleware = ({ signalingService, e2eeService }: MiddlewareOption
 
 			void (async () => {
 				const provider = mls();
+				const present = presentPeers(myPeerId);
 
-				if (!provider?.joined) return;
+				if (!provider?.joined || !present) return;
 
 				try {
-					const rank = provider.committerRank(departed);
+					const rank = provider.committerRank(present);
 
 					if (rank === 0) {
 						await commitDepartures(dispatch, myPeerId);
@@ -451,7 +466,15 @@ const createMlsMiddleware = ({ signalingService, e2eeService }: MiddlewareOption
 			}
 
 			if (peersActions.addPeer.match(action)) departed.delete(action.payload.id);
-			if (peersActions.addPeers.match(action)) for (const peer of action.payload) departed.delete(peer.id);
+
+			if (peersActions.addPeers.match(action)) {
+				for (const peer of action.payload) departed.delete(peer.id);
+
+				peersListed = true;
+				if (departed.size > 0 && active()) scheduleDeparture(dispatch, getState().me.id);
+			}
+
+			if (peersActions.removeAllPeers.match(action) || (roomActions.setEntered.match(action) && !action.payload)) peersListed = false;
 
 			if (peersActions.removePeer.match(action) && e2eeService.enabled) {
 				e2eeService.removePeer(action.payload.id);

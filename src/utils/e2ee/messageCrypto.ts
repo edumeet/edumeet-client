@@ -10,6 +10,7 @@ import { DecryptKeyStore } from './keyStore';
 export class MessageSealer {
 	#keyId?: number;
 	#key?: CryptoKey;
+	// Never reset: the same key can be set twice, and a nonce must never repeat under it.
 	#counter = 0;
 	// Key changes are applied in order and a seal waits for the latest, so a message sent right after
 	// an epoch change never goes out under the key it replaced.
@@ -25,7 +26,6 @@ export class MessageSealer {
 
 			this.#keyId = keyId;
 			this.#key = key;
-			this.#counter = 0;
 		});
 
 		return this.#change;

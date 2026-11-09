@@ -219,12 +219,22 @@ export class MlsKeyProvider {
 		this.#state = result.newState;
 	}
 
-	async commitRemove(peerIds: string[]): Promise<PendingCommit | undefined> {
+	// Leaves that belong to nobody in the room: an identity the room does not list, or one claimed by
+	// more than one leaf. Each client writes its own identity, so a leaf cannot be trusted to carry its
+	// owner's peer id, and only the room's list of peers says who is here.
+	unaccounted(present: Set<string>): Member[] {
+		const members = this.members();
+		const claims = new Map<string, number>();
+
+		for (const m of members) claims.set(m.peerId, (claims.get(m.peerId) ?? 0) + 1);
+
+		return members.filter((m) => m.leafIndex !== this.myLeafIndex && (!present.has(m.peerId) || (claims.get(m.peerId) ?? 0) > 1));
+	}
+
+	async commitRemove(present: Set<string>): Promise<PendingCommit | undefined> {
 		const { context } = this.#required();
 		const state = this.#joinedState();
-		const present = new Set(peerIds);
-		const proposals: Proposal[] = this.members()
-			.filter((m) => present.has(m.peerId))
+		const proposals: Proposal[] = this.unaccounted(present)
 			.map((m) => ({ proposalType: defaultProposalTypes.remove, remove: { removed: m.leafIndex } }));
 
 		if (proposals.length === 0) return undefined;
@@ -263,19 +273,20 @@ export class MlsKeyProvider {
 	}
 
 	// Departures are committed by one member so that a room does not produce a commit per remaining
-	// member. The lowest leaf index still present is that member, rank 0; the others step in after a
-	// timeout in rank order if it is slow or gone. Minus one means we are not in the group.
-	committerRank(departed: Set<string>): number {
+	// member. The lowest leaf index the room accounts for is that member, rank 0; the others step in
+	// after a timeout in rank order if it is slow or gone. Minus one means we are not in the group.
+	committerRank(present: Set<string>): number {
+		const gone = new Set(this.unaccounted(present).map((m) => m.leafIndex));
 		const remaining = this.members()
-			.filter((m) => !departed.has(m.peerId))
 			.map((m) => m.leafIndex)
+			.filter((leafIndex) => !gone.has(leafIndex))
 			.sort((a, b) => a - b);
 
 		return remaining.indexOf(this.myLeafIndex);
 	}
 
-	isCommitter(departed: Set<string>): boolean {
-		return this.committerRank(departed) === 0;
+	isCommitter(present: Set<string>): boolean {
+		return this.committerRank(present) === 0;
 	}
 
 	// RFC 9605 section 5.2: one base key per epoch from the exporter, one key per sender derived

@@ -262,7 +262,9 @@ function requestKeyFrames(transformers: any[], method: 'generateKeyFrame' | 'sen
 	const m: any = e.data;
 
 	if (m.type === 'encKey') {
-		enc.key = m.key; enc.keyId = m.keyId >>> 0; enc.counter = 0;
+		// The counter carries on across keys: the same key can be installed twice, and a nonce must
+		// never repeat under it.
+		enc.key = m.key; enc.keyId = m.keyId >>> 0;
 		report({ level: 'debug', event: 'encKey', keyId: enc.keyId });
 		// A new key needs a fresh keyframe so receivers re-sync.
 		requestKeyFrames(encTransformers, 'generateKeyFrame');
@@ -271,10 +273,18 @@ function requestKeyFrames(transformers: any[], method: 'generateKeyFrame' | 'sen
 		report({ level: 'debug', event: 'dropKeys', namespace: m.namespace >>> 0, knownKeyIds: dec.knownKeyIds() });
 	} else if (m.type === 'decKeys') {
 		// An epoch change hands over every sender's key at once. Keyframes are requested once for the
-		// batch: asking per key would send every receiver a request per member of the room.
+		// batch: asking per key would send every receiver a request per member of the room. A batch of
+		// keys already held, which a recovery check in an unchanged epoch sends, asks for none: every
+		// sender would answer with a keyframe that helps nobody.
+		const fresh = m.keys.some((k: any) => {
+			const held = dec.get(k.keyId >>> 0)?.raw;
+
+			return !held || held.length !== k.raw.length || held.some((byte: number, i: number) => byte !== k.raw[i]);
+		});
+
 		for (const k of m.keys) dec.set(k.keyId >>> 0, { key: k.key, raw: k.raw });
-		report({ level: 'debug', event: 'decKeys', count: m.keys.length, knownKeyIds: dec.knownKeyIds() });
-		requestKeyFrames(decTransformers, 'sendKeyFrameRequest');
+		report({ level: 'debug', event: 'decKeys', count: m.keys.length, fresh, knownKeyIds: dec.knownKeyIds() });
+		if (fresh) requestKeyFrames(decTransformers, 'sendKeyFrameRequest');
 	}
 };
 

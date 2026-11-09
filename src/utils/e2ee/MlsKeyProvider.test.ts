@@ -111,16 +111,16 @@ describe('MlsKeyProvider', () => {
 
 		await relay(carolJoin, carol, [ alice, bob ]);
 
-		const departed = new Set([ 'carol' ]);
+		const present = new Set([ 'alice', 'bob' ]);
 
-		expect(alice.isCommitter(departed)).toBe(true);
-		expect(bob.isCommitter(departed)).toBe(false);
-		expect(alice.committerRank(departed)).toBe(0);
-		expect(bob.committerRank(departed)).toBe(1);
-		expect(carol.committerRank(departed)).toBe(-1);
+		expect(alice.isCommitter(present)).toBe(true);
+		expect(bob.isCommitter(present)).toBe(false);
+		expect(alice.committerRank(present)).toBe(0);
+		expect(bob.committerRank(present)).toBe(1);
+		expect(alice.unaccounted(present)).toEqual([ { peerId: 'carol', leafIndex: 2 } ]);
 
 		const before = await carol.frameKeys();
-		const removal = await alice.commitRemove([ 'carol', 'nobody' ]);
+		const removal = await alice.commitRemove(present);
 
 		expect(removal).toBeDefined();
 		await relay(removal!, alice, [ bob ]);
@@ -132,7 +132,7 @@ describe('MlsKeyProvider', () => {
 
 		expect(after.epoch).toBe(before.epoch + 1);
 		expect(hex(after.local!.raw)).not.toBe(hex(before.remote.find((r) => r.peerId === 'alice')!.raw));
-		expect(await alice.commitRemove([ 'nobody' ])).toBeUndefined();
+		expect(await alice.commitRemove(present)).toBeUndefined();
 	});
 
 	it('keeps its state when the server refuses a commit, so the winning commit still applies', async () => {
@@ -185,7 +185,7 @@ describe('MlsKeyProvider', () => {
 
 		await relay(await bob.joinExternal(await alice.found('room')), bob, [ alice ]);
 
-		const removal = await alice.commitRemove([ 'bob' ]);
+		const removal = await alice.commitRemove(new Set([ 'alice' ]));
 
 		alice.accept(removal!);
 		expect(alice.members().map((m) => m.peerId)).toEqual([ 'alice' ]);
@@ -224,10 +224,11 @@ describe('MlsKeyProvider', () => {
 
 		await relay(joinAsBob, impostor, [ alice ]);
 
-		// The library keeps both leaves: only a resync replaces one, and this was a plain join. The
-		// warning is the defence; the group itself does not judge.
+		// The library keeps both leaves: only a resync replaces one, and this was a plain join. Besides
+		// the warning, neither leaf counts as accounted for, so the next removal takes both.
 		expect(changed).toEqual([ 'bob' ]);
 		expect(alice.members().filter((m) => m.peerId === 'bob').length).toBe(2);
+		expect(alice.unaccounted(new Set([ 'alice', 'bob' ])).map((m) => m.leafIndex)).toEqual([ 1, 2 ]);
 	});
 
 	it('reports the other keys but no key of its own once its leaf has been removed', async () => {
@@ -236,7 +237,7 @@ describe('MlsKeyProvider', () => {
 
 		await relay(await bob.joinExternal(await alice.found('room')), bob, [ alice ]);
 
-		const removal = await alice.commitRemove([ 'bob' ]);
+		const removal = await alice.commitRemove(new Set([ 'alice' ]));
 
 		await relay(removal!, alice, [ bob ]);
 
@@ -347,7 +348,7 @@ describe('MlsKeyProvider', () => {
 		await relay(carolJoin, carol, [ alice, bob ]);
 
 		const bobKeys = await bob.frameKeys();
-		const removal = await alice.commitRemove([ 'bob' ]);
+		const removal = await alice.commitRemove(new Set([ 'alice', 'carol' ]));
 
 		await relay(removal!, alice, [ carol ]);
 
@@ -383,4 +384,67 @@ describe('MlsKeyProvider', () => {
 		expect(hex(wrapped.local!.raw)).not.toBe(hex(first.local!.raw));
 		await inSync([ alice, bob ]);
 	}, 60000);
+
+	// A modified client is in the room as some peer id but writes another identity into its leaf.
+	it('removes a leaf whose identity is nobody in the room, and that leaf cannot follow the group', async () => {
+		const alice = await provider('alice');
+		const bob = await provider('bob');
+		const ghost = await provider('ghost');
+
+		await relay(await bob.joinExternal(await alice.found('room')), bob, [ alice ]);
+		await relay(await ghost.joinExternal(await alice.groupInfo()), ghost, [ alice, bob ]);
+
+		const present = new Set([ 'alice', 'bob' ]);
+
+		expect(alice.unaccounted(present)).toEqual([ { peerId: 'ghost', leafIndex: 2 } ]);
+
+		const removal = await alice.commitRemove(present);
+
+		await relay(removal!, alice, [ bob ]);
+		expect(bob.members().map((m) => m.peerId)).toEqual([ 'alice', 'bob' ]);
+		await inSync([ alice, bob ]);
+
+		await ghost.applyCommit(removal!.commit).catch(() => undefined);
+
+		const aliceKey = hex((await alice.frameKeys()).local!.raw);
+		const seenByGhost = await ghost.frameKeys().catch(() => undefined);
+
+		expect((seenByGhost?.remote ?? []).map((r) => hex(r.raw))).not.toContain(aliceKey);
+	});
+
+	it('removes both leaves of an identity that two leaves claim, and the real member rejoins', async () => {
+		const alice = await provider('alice');
+		const bob = await provider('bob');
+		const impostor = await provider('bob');
+
+		await relay(await bob.joinExternal(await alice.found('room')), bob, [ alice ]);
+		await relay(await impostor.joinExternal(await alice.groupInfo()), impostor, [ alice, bob ]);
+
+		const present = new Set([ 'alice', 'bob' ]);
+		const removal = await alice.commitRemove(present);
+
+		await relay(removal!, alice, [ bob ]);
+		expect(alice.members().map((m) => m.peerId)).toEqual([ 'alice' ]);
+		expect((await bob.frameKeys()).local).toBeUndefined();
+
+		await relay(await bob.joinExternal(await alice.groupInfo()), bob, [ alice ]);
+		expect(alice.members().map((m) => m.peerId)).toEqual([ 'alice', 'bob' ]);
+		await inSync([ alice, bob ]);
+	});
+
+	it('never ranks a leaf the room does not list ahead of a member, even in the lowest free slot', async () => {
+		const alice = await provider('alice');
+		const bob = await provider('bob');
+		const carol = await provider('carol');
+		const ghost = await provider('ghost');
+
+		await relay(await bob.joinExternal(await alice.found('room')), bob, [ alice ]);
+		await relay(await carol.joinExternal(await alice.groupInfo()), carol, [ alice, bob ]);
+		await relay((await alice.commitRemove(new Set([ 'alice', 'carol' ])))!, alice, [ carol ]);
+		await relay(await ghost.joinExternal(await alice.groupInfo()), ghost, [ alice, carol ]);
+
+		expect(ghost.myLeafIndex).toBe(1);
+		expect(carol.committerRank(new Set([ 'carol' ]))).toBe(0);
+		expect(carol.committerRank(new Set([ 'carol', 'ghost' ]))).toBe(1);
+	});
 });

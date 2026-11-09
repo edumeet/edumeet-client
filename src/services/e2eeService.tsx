@@ -36,6 +36,8 @@ const ENCRYPT_KEY_GRACE_MS = 250;
 // eslint-disable-next-line no-unused-vars
 type ProtectionWaiter = (confirmed: boolean) => void;
 
+const sameBytes = (a: Bytes, b: Bytes): boolean => a.length === b.length && a.every((byte, i) => byte === b[i]);
+
 // Never fall back to 'opus' for an unrecognised mimeType: the worker splits audio at 1 clear byte
 // and video at 3 or 10, so mislabelling a video stream as audio desynchronises encrypt from decrypt
 // and every frame is dropped with no error. An unknown codec gets its own value, which lands on the
@@ -85,6 +87,7 @@ export class E2eeService {
 
 		await mls.init();
 		this.#mls = mls;
+		this.#localRaw = undefined;
 		if (!this.#encWorker) this.#startWorkers();
 
 		return mls;
@@ -140,6 +143,13 @@ export class E2eeService {
 		}
 
 		const local = keys.local;
+
+		// The decrypt side asks for the keys again when it cannot read someone, which frames from the
+		// media node can trigger at will. Our own key has not changed then, so the sender is left alone.
+		if (this.#localRaw && sameBytes(this.#localRaw, local.raw)) return;
+
+		this.#localRaw = local.raw;
+
 		const now = Date.now();
 
 		if (this.#pendingEncKey) clearTimeout(this.#pendingEncKey);
@@ -161,6 +171,7 @@ export class E2eeService {
 
 	#pendingEncKey?: ReturnType<typeof setTimeout>;
 	#graceStarted = 0;
+	#localRaw?: Bytes;
 
 	#mls?: MlsKeyProvider;
 
