@@ -100,8 +100,10 @@ export const nextOccurrenceStart = (m: OccurrenceSource, now: number): number =>
 		const w = walk(m, now);
 
 		if (!w) return startsAt >= now ? startsAt : 0;
+		if (w.next !== undefined) return w.next;
 
-		return w.next ?? 0;
+		// Nothing up to the walk's end and nothing before now: the series starts after the end.
+		return w.last === undefined && startsAt >= now ? startsAt : 0;
 	} catch {
 		return startsAt >= now ? startsAt : 0;
 	}
@@ -119,7 +121,7 @@ export const isMeetingOver = (m: OccurrenceSource, now: number): boolean => {
 		if (!w) return endsAt < now;
 		if (w.next !== undefined) return false;
 		if (w.tooMany) return true;
-		if (w.last === undefined) return true;
+		if (w.last === undefined) return endsAt < now;
 
 		return w.last + (endsAt - startsAt) < now;
 	} catch {

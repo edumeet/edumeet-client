@@ -63,6 +63,17 @@ describe('isMeetingOver', () => {
 	});
 });
 
+describe('a series that starts years ahead', () => {
+	// The walk looks about two years ahead; this series starts three years after now.
+	const now = Date.UTC(2026, 9, 1);
+	const later = { ...weekly, startsAt: Date.UTC(2029, 9, 3, 10, 0), endsAt: Date.UTC(2029, 9, 3, 11, 0) };
+
+	it('is upcoming, with its first start as the next one', () => {
+		expect(nextOccurrenceStart(later, now)).toBe(later.startsAt);
+		expect(isMeetingOver(later, now)).toBe(false);
+	});
+});
+
 describe('rules the meeting dialog cannot write', () => {
 	it('are shown as single meetings, without walking them', () => {
 		const started = performance.now();

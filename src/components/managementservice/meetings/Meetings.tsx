@@ -126,10 +126,16 @@ const formatInZone = (ms: number, tz: string): string => {
 	return tz === browserTimezone() ? text : `${text} ${tz}`;
 };
 
+// The largest values the management server accepts in a rule.
+const MAX_REPEAT_INTERVAL = 999;
+const MAX_REPEAT_COUNT = 9999;
+
+const repeatValue = (value: number, max: number): number => Math.min(max, Math.max(1, value || 1));
+
 const buildRrule = (mode: RepeatMode, interval: number, count: number): string | undefined => {
 	if (mode === 'NEVER') return undefined;
 
-	return `FREQ=${mode};INTERVAL=${Math.max(1, interval)};COUNT=${Math.max(1, count)}`;
+	return `FREQ=${mode};INTERVAL=${repeatValue(interval, MAX_REPEAT_INTERVAL)};COUNT=${repeatValue(count, MAX_REPEAT_COUNT)}`;
 };
 
 const parseRrule = (rrule?: string): { mode: RepeatMode, interval: number, count: number } => {
@@ -698,7 +704,8 @@ const MeetingsTable = ({ roomId: roomIdProp, tenantId: tenantIdProp }: MeetingsT
 							label={repeatIntervalLabel()}
 							type="number"
 							value={repeatInterval}
-							onChange={(e) => setRepeatInterval(parseInt(e.target.value, 10) || 1)}
+							onChange={(e) => setRepeatInterval(repeatValue(parseInt(e.target.value, 10), MAX_REPEAT_INTERVAL))}
+							slotProps={{ htmlInput: { min: 1, max: MAX_REPEAT_INTERVAL } }}
 							disabled={repeatMode === 'NEVER'}
 							sx={{ flex: '1 1 120px', minWidth: 120 }}
 						/>
@@ -706,7 +713,8 @@ const MeetingsTable = ({ roomId: roomIdProp, tenantId: tenantIdProp }: MeetingsT
 							label={repeatCountLabel()}
 							type="number"
 							value={repeatCount}
-							onChange={(e) => setRepeatCount(parseInt(e.target.value, 10) || 1)}
+							onChange={(e) => setRepeatCount(repeatValue(parseInt(e.target.value, 10), MAX_REPEAT_COUNT))}
+							slotProps={{ htmlInput: { min: 1, max: MAX_REPEAT_COUNT } }}
 							disabled={repeatMode === 'NEVER'}
 							sx={{ flex: '1 1 160px', minWidth: 140 }}
 						/>
