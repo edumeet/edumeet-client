@@ -135,6 +135,7 @@ export class MediaService extends EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private speechRecognition?: any;
 	private speechRecognitionRunning = false;
+	private transcriptionProducer?: DataProducer;
 	// A track can be rendered by several <video> elements at once (tile plus
 	// fullscreen or windowed view); the monitor gets the largest one.
 	private inboundVideoElements = new Map<string, HTMLVideoElement[]>();
@@ -202,6 +203,9 @@ export class MediaService extends EventEmitter {
 		// This will close all consumers and producers.
 		this.sendTransport?.close();
 		this.recvTransport?.close();
+
+		// The transcription's data producer went with the send transport; recognition would keep running without a channel.
+		this.stopTranscription();
 	}
 
 	public setP2PMode(p2pMode: boolean): void {
@@ -1296,6 +1300,7 @@ export class MediaService extends EventEmitter {
 			label: 'transcription',
 		});
 
+		this.transcriptionProducer = dataProducer;
 		this.speechRecognition = new window.webkitSpeechRecognition();
 
 		this.speechRecognition.continuous = true;
@@ -1307,11 +1312,13 @@ export class MediaService extends EventEmitter {
 		let sending = Promise.resolve();
 		const send = (payload: string): Promise<void> => {
 			sending = sending.catch(() => undefined).then(async () => {
+				if (dataProducer.closed) return;
 				if (!this.e2eeService?.enabled) return dataProducer.send(payload);
 
 				const sealed = await this.e2eeService.sealMessage(new TextEncoder().encode(payload));
 
 				if (!sealed) return logger.warn('transcript dropped, there is no key to encrypt it with yet');
+				if (dataProducer.closed) return;
 
 				dataProducer.send(sealed);
 			});
@@ -1357,8 +1364,6 @@ export class MediaService extends EventEmitter {
 
 			if (this.speechRecognitionRunning)
 				this.speechRecognition.start();
-			else
-				this.closeDataProducer(dataProducer.id, true);
 		};
 
 		this.speechRecognition.onerror = (event: Event) => {
@@ -1382,6 +1387,9 @@ export class MediaService extends EventEmitter {
 		delete this.speechRecognition.onend;
 		delete this.speechRecognition.onresult;
 		this.speechRecognition = undefined;
+
+		if (this.transcriptionProducer) this.closeDataProducer(this.transcriptionProducer.id, true);
+		this.transcriptionProducer = undefined;
 
 		this.emit('transcriptionStopped');
 	}
