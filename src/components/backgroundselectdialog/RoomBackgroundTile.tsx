@@ -2,6 +2,7 @@ import { styled } from '@mui/material';
 import React from 'react';
 import { useAppSelector } from '../../store/hooks';
 import edumeetConfig from '../../utils/edumeetConfig';
+import { cssUrl } from '../../utils/imageUrl';
 
 interface RoomBgTileProps {
 	backgroundImage?: string;
@@ -15,7 +16,7 @@ export const RoomBgTile = styled('img')<RoomBgTileProps>(({ backgroundImage }) =
 	overflow: 'initial',
 	backgroundPosition: 'center',
 	...(backgroundImage && {
-		backgroundImage: `url(${backgroundImage})`
+		backgroundImage: cssUrl(backgroundImage)
 	}),
 }));
 

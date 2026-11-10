@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { memo } from 'react';
+import { cssUrl } from '../utils/imageUrl';
 
 interface BackgroundProps {
 	backgroundimage?: string;
@@ -11,7 +12,7 @@ export default memo(styled('div')<BackgroundProps>(({ theme, backgroundimage }) 
 	height: '100%',
 	background: theme.background,
 	...(backgroundimage && {
-		backgroundImage: `url(${backgroundimage})`
+		backgroundImage: cssUrl(backgroundimage)
 	}),
 	backgroundAttachment: 'fixed',
 	backgroundPosition: 'center',

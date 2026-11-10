@@ -20,6 +20,7 @@ import { notificationsActions } from '../slices/notificationsSlice';
 import { isInsertableStreamsSupported } from '../selectors';
 import { botJobBusyLabel, botJobFailedLabel, roomE2eeUnsupportedLabel } from '../../components/translated/translatedComponents';
 import { Logger } from '../../utils/Logger';
+import { safeImageUrl } from '../../utils/imageUrl';
 
 // Survives the full page reload that setState('left') triggers (App.tsx) — read + shown on landing.
 export const JOIN_ERROR_KEY = 'edumeet.joinError';
@@ -109,8 +110,8 @@ const createRoomMiddleware = ({
 								reactionsEnabled,
 								localRecordingEnabled,
 								e2eeEnabled: endToEndEncryption,
-								logo: settings.logo,
-								backgroundImage: settings.background,
+								logo: safeImageUrl(settings.logo),
+								backgroundImage: safeImageUrl(settings.background),
 								videoCodec: settings.videoCodec ?? 'vp8',
 								simulcast: settings.simulcast ?? true,
 								audioCodec: settings.audioCodec ?? 'opus',
@@ -163,8 +164,8 @@ const createRoomMiddleware = ({
 								reactionsEnabled,
 								localRecordingEnabled,
 								breakoutsEnabled,
-								logo: settings.logo,
-								backgroundImage: settings.background,
+								logo: safeImageUrl(settings.logo),
+								backgroundImage: safeImageUrl(settings.background),
 								videoCodec: settings.videoCodec ?? 'vp8',
 								simulcast: settings.simulcast ?? true,
 								audioCodec: settings.audioCodec ?? 'opus',
