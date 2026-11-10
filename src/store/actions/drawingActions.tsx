@@ -1,8 +1,13 @@
 import { Logger } from '../../utils/Logger';
 import { drawingActions, DrawingState, FabricAction, } from '../slices/drawingSlice';
+import { notificationsActions } from '../slices/notificationsSlice';
+import { drawingChangeRefusedLabel } from '../../components/translated/translatedComponents';
 import { AppThunk } from '../store';
 
 const logger = new Logger('DrawingActions');
+
+const REFUSED_NOTICE_INTERVAL_MS = 10_000;
+let refusedNoticeAt = -Infinity;
 
 /**
  * This thunk action enables the drawing.
@@ -90,6 +95,15 @@ AppThunk<Promise<void>> => async (
 
 	} catch (error) {
 		logger.error('updateCanvasState() [error:"%o"]', error);
+
+		if (Date.now() - refusedNoticeAt >= REFUSED_NOTICE_INTERVAL_MS) {
+			refusedNoticeAt = Date.now();
+
+			dispatch(notificationsActions.enqueueNotification({
+				message: drawingChangeRefusedLabel(),
+				options: { variant: 'warning' }
+			}));
+		}
 	}
 };
 

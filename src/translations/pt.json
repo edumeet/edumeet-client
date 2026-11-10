@@ -722,6 +722,7 @@
   "label.hideConversation": "Ocultar conversa",
   "label.peerLeftMeeting": "{displayName} saiu da reunião",
   "label.chatMessageFailed": "Não foi possível entregar a mensagem",
+  "label.drawingChangeRefused": "Os outros não veem a última alteração: há demasiados desenhos ou a alteração é demasiado grande.",
   "room.e2eeSecuring": "A proteger esta sala, encriptação ainda não confirmada",
   "room.e2eeFailed": "Esta sala requer encriptação ponto a ponto, mas o seu navegador não encriptou os conteúdos. Foi removido da sala para evitar enviá-los sem proteção.",
   "label.managementservice.meetingsOnly": "Apenas reuniões",

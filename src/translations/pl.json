@@ -722,6 +722,7 @@
   "label.hideConversation": "Ukryj rozmowę",
   "label.peerLeftMeeting": "{displayName} opuścił(a) spotkanie",
   "label.chatMessageFailed": "Nie udało się dostarczyć wiadomości",
+  "label.drawingChangeRefused": "Pozostali nie widzą ostatniej zmiany: rysunków jest za dużo lub zmiana jest za duża.",
   "room.e2eeSecuring": "Zabezpieczanie pokoju, szyfrowanie jeszcze niepotwierdzone",
   "room.e2eeFailed": "Ten pokój wymaga szyfrowania end-to-end, ale Twoja przeglądarka nie zaszyfrowała mediów. Zostałeś usunięty z pokoju, aby nie wysyłać ich bez ochrony.",
   "label.managementservice.meetingsOnly": "Tylko spotkania",

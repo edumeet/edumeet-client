@@ -722,6 +722,7 @@
   "label.hideConversation": "Skjul samtale",
   "label.peerLeftMeeting": "{displayName} forlod mødet",
   "label.chatMessageFailed": "Beskeden kunne ikke leveres",
+  "label.drawingChangeRefused": "De andre kan ikke se den seneste ændring: der er for mange tegninger, eller ændringen er for stor.",
   "room.e2eeSecuring": "Sikrer dette rum, kryptering endnu ikke bekræftet",
   "room.e2eeFailed": "Dette rum kræver end-to-end-kryptering, men din browser krypterede ikke mediet. Du er blevet fjernet fra rummet for at undgå at sende det ubeskyttet.",
   "label.managementservice.meetingsOnly": "Kun møder",

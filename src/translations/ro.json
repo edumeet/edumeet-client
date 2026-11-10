@@ -722,6 +722,7 @@
   "label.hideConversation": "Ascunde conversația",
   "label.peerLeftMeeting": "{displayName} a părăsit întâlnirea",
   "label.chatMessageFailed": "Mesajul nu a putut fi livrat",
+  "label.drawingChangeRefused": "Ceilalți nu văd ultima modificare: sunt prea multe desene sau modificarea este prea mare.",
   "room.e2eeSecuring": "Se securizează camera, criptarea nu este încă confirmată",
   "room.e2eeFailed": "Această cameră necesită criptare end-to-end, dar browserul dumneavoastră nu a criptat conținutul media. Ați fost eliminat din cameră pentru a evita trimiterea lui neprotejată.",
   "label.managementservice.meetingsOnly": "Doar întâlniri",

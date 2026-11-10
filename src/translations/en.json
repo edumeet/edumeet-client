@@ -799,6 +799,7 @@
 	"label.hideConversation": "Hide conversation",
 	"label.peerLeftMeeting": "{displayName} left the meeting",
 	"label.chatMessageFailed": "Could not deliver the message",
+	"label.drawingChangeRefused": "The others do not see the last change: there are too many drawings, or the change is too large.",
 	"room.e2eeSecuring": "Securing this room, encryption not confirmed yet",
 	"room.e2eeFailed": "This room requires end-to-end encryption, but your browser did not encrypt the media. You have been removed from the room to avoid sending it unprotected.",
 	"label.managementservice.meetingsOnly": "Meetings only",

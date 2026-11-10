@@ -722,6 +722,7 @@
   "label.hideConversation": "Konuşmayı gizle",
   "label.peerLeftMeeting": "{displayName} toplantıdan ayrıldı",
   "label.chatMessageFailed": "Mesaj iletilemedi",
+  "label.drawingChangeRefused": "Diğerleri son değişikliği görmüyor: çok fazla çizim var veya değişiklik çok büyük.",
   "room.e2eeSecuring": "Oda güvenliği sağlanıyor, şifreleme henüz doğrulanmadı",
   "room.e2eeFailed": "Bu oda uçtan uca şifreleme gerektiriyor ancak tarayıcınız ortamı şifrelemedi. Korumasız gönderilmesini önlemek için odadan çıkarıldınız.",
   "label.managementservice.meetingsOnly": "Yalnızca toplantılar",

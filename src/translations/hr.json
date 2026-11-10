@@ -722,6 +722,7 @@
   "label.hideConversation": "Sakrij razgovor",
   "label.peerLeftMeeting": "{displayName} je napustio(la) sastanak",
   "label.chatMessageFailed": "Poruku nije bilo moguće isporučiti",
+  "label.drawingChangeRefused": "Drugi ne vide posljednju promjenu: previše je crteža ili je promjena prevelika.",
   "room.e2eeSecuring": "Osiguravanje sobe, enkripcija još nije potvrđena",
   "room.e2eeFailed": "Ova soba zahtijeva end-to-end enkripciju, ali vaš preglednik nije šifrirao medije. Uklonjeni ste iz sobe kako se ne bi slali nezaštićeni.",
   "label.managementservice.meetingsOnly": "Samo sastanci",

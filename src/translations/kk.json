@@ -722,6 +722,7 @@
   "label.hideConversation": null,
   "label.peerLeftMeeting": null,
   "label.chatMessageFailed": null,
+  "label.drawingChangeRefused": null,
   "room.e2eeSecuring": null,
   "room.e2eeFailed": null,
   "label.managementservice.meetingsOnly": null,

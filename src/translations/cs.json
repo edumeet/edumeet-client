@@ -722,6 +722,7 @@
   "label.hideConversation": "Skrýt konverzaci",
   "label.peerLeftMeeting": "{displayName} opustil(a) schůzku",
   "label.chatMessageFailed": "Zprávu se nepodařilo doručit",
+  "label.drawingChangeRefused": "Ostatní nevidí poslední změnu: kreseb je příliš mnoho nebo je změna příliš velká.",
   "room.e2eeSecuring": "Zabezpečování místnosti, šifrování zatím nepotvrzeno",
   "room.e2eeFailed": "Tato místnost vyžaduje koncové šifrování, ale váš prohlížeč média nezašifroval. Byli jste z místnosti odebráni, aby se neodesílala nechráněná.",
   "label.managementservice.meetingsOnly": "Pouze schůzky",

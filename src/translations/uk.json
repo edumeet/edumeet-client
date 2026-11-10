@@ -722,6 +722,7 @@
   "label.hideConversation": "Сховати розмову",
   "label.peerLeftMeeting": "{displayName} залишив(ла) зустріч",
   "label.chatMessageFailed": "Не вдалося доставити повідомлення",
+  "label.drawingChangeRefused": "Інші не бачать останньої зміни: забагато малюнків або зміна завелика.",
   "room.e2eeSecuring": "Захист кімнати, шифрування ще не підтверджено",
   "room.e2eeFailed": "Ця кімната потребує наскрізного шифрування, але ваш браузер не зашифрував медіа. Вас вилучено з кімнати, щоб не надсилати їх незахищеними.",
   "label.managementservice.meetingsOnly": "Лише зустрічі",

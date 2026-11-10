@@ -722,6 +722,7 @@
   "label.hideConversation": "Ocultar conversación",
   "label.peerLeftMeeting": "{displayName} salió de la reunión",
   "label.chatMessageFailed": "No se pudo entregar el mensaje",
+  "label.drawingChangeRefused": "Los demás no ven el último cambio: hay demasiados dibujos o el cambio es demasiado grande.",
   "room.e2eeSecuring": "Asegurando esta sala, cifrado aún no confirmado",
   "room.e2eeFailed": "Esta sala requiere cifrado de extremo a extremo, pero su navegador no cifró los medios. Se le ha retirado de la sala para evitar enviarlos sin protección.",
   "label.managementservice.meetingsOnly": "Solo reuniones",

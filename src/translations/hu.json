@@ -799,6 +799,7 @@
   "label.hideConversation": "Beszélgetés elrejtése",
   "label.peerLeftMeeting": "{displayName} elhagyta a megbeszélést",
   "label.chatMessageFailed": "Az üzenetet nem sikerült kézbesíteni",
+  "label.drawingChangeRefused": "A többiek nem látják az utolsó módosítást: túl sok a rajz, vagy a módosítás túl nagy.",
   "room.e2eeSecuring": "A szoba védelme folyamatban, a titkosítás még nincs megerősítve",
   "room.e2eeFailed": "Ez a szoba végpontok közötti titkosítást igényel, de a böngészője nem titkosította a médiát. Eltávolítottuk a szobából, hogy ne küldje védelem nélkül.",
   "label.managementservice.meetingsOnly": "Csak megbeszélések",

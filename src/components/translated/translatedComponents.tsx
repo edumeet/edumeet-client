@@ -305,6 +305,11 @@ export const chatMessageFailedLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Could not deliver the message'
 });
 
+export const drawingChangeRefusedLabel = (): string => intl.formatMessage({
+	id: 'label.drawingChangeRefused',
+	defaultMessage: 'The others do not see the last change: there are too many drawings, or the change is too large.'
+});
+
 export const chatScrollToBottomLabel = (): string => intl.formatMessage({
 	id: 'label.chatScrollToBottom',
 	defaultMessage: 'Scroll to bottom'

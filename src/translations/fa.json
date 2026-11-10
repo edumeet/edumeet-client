@@ -796,6 +796,7 @@
 	"label.hideConversation": "پنهان کردن گفت‌وگو",
 	"label.peerLeftMeeting": "{displayName} از جلسه خارج شد",
 	"label.chatMessageFailed": "ارسال پیام ناموفق بود",
+	"label.drawingChangeRefused": null,
 	"room.e2eeSecuring": "در حال ایمن‌سازی این اتاق؛ رمزگذاری هنوز تأیید نشده است",
 	"room.e2eeFailed": "این اتاق به رمزگذاری سرتاسری نیاز دارد، اما مرورگر شما صدا و تصویر را رمزگذاری نکرده است. برای جلوگیری از ارسال بدون محافظت، از اتاق خارج شدید.",
 	"label.managementservice.meetingsOnly": "فقط جلسات زمان‌بندی‌شده",

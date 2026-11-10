@@ -722,6 +722,7 @@
   "label.hideConversation": "Masquer la conversation",
   "label.peerLeftMeeting": "{displayName} a quitté la réunion",
   "label.chatMessageFailed": "Impossible de remettre le message",
+  "label.drawingChangeRefused": "Les autres ne voient pas la dernière modification : il y a trop de dessins ou la modification est trop volumineuse.",
   "room.e2eeSecuring": "Sécurisation de la salle, chiffrement pas encore confirmé",
   "room.e2eeFailed": "Cette salle nécessite un chiffrement de bout en bout, mais votre navigateur n'a pas chiffré les médias. Vous avez été retiré de la salle afin de ne rien envoyer sans protection.",
   "label.managementservice.meetingsOnly": "Réunions uniquement",
