@@ -263,6 +263,7 @@ export interface ChatMessage {
 
 export const MAX_DISPLAY_NAME_LENGTH = 128;
 export const MAX_CHAT_MESSAGE_LENGTH = 10000;
+export const MAX_BREAKOUT_ROOM_NAME_LENGTH = 128;
 
 export interface DirectChatMessage {
 	peerId: string;

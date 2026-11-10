@@ -82,6 +82,7 @@ const ListBreakoutRoom = ({
 	const [ expanded, setExpanded ] = useState(false);
 	const sessionId = useAppSelector((state) => state.me.sessionId);
 	const inSession = room.sessionId === sessionId;
+	const roomName = typeof room.name === 'string' ? room.name : '';
 	const participants = usePeersInSession(room.sessionId);
 	const isMobile = useAppSelector(isMobileSelector);
 	const showParticipantsList = participants.filter((peer) => !draggedPeerids.includes(peer.id));
@@ -97,11 +98,11 @@ const ListBreakoutRoom = ({
 		>
 			<AccordionSummary
 				expandIcon={<ExpandMoreIcon />}
-				aria-controls={room.name}
+				aria-controls={roomName}
 			>
 				<BreakoutRoomNameDiv>
 					<BreakoutRoomChip label={participants.length + (inSession ? 1 : 0)} size='small' />
-					{ room.name }
+					{ roomName }
 				</BreakoutRoomNameDiv>
 				{ canChangeRoom && (inSession ? (
 					<BreakoutRoomButtonDiv>

@@ -6,6 +6,7 @@ import { createBreakoutRoom } from '../../store/actions/roomActions';
 import TextInputField from '../textinputfield/TextInputField';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import { fullscreenConsumerSelector } from '../../store/selectors';
+import { MAX_BREAKOUT_ROOM_NAME_LENGTH } from '../../utils/types';
 
 const ModeratorDiv = styled('div')(({ theme }) => ({
 	width: '100%',
@@ -37,6 +38,7 @@ const BreakoutModerator = (): React.JSX.Element => {
 				value={name}
 				margin='dense'
 				setValue={setName}
+				maxLength={MAX_BREAKOUT_ROOM_NAME_LENGTH}
 				onEnter={handleCreateBreakoutRoom}
 				endAdornment={
 					<IconButton

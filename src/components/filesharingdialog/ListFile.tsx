@@ -185,7 +185,7 @@ const ListFile = ({
 							wordBreak: 'break-word', // fallback
 							lineHeight: 1.2,
 						}}>
-						{ file.displayName }: { new URLSearchParams(file.magnetURI.slice(8)).get('dn') }
+						{ file.displayName }: { typeof file.magnetURI === 'string' ? new URLSearchParams(file.magnetURI.slice(8)).get('dn') : '' }
 					</Typography>
 
 					{ !file.started &&

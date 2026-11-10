@@ -31,29 +31,35 @@ type PeerUpdate = Omit<Peer, 'sessionId' | 'transcripts'>;
 
 const initialState: Record<string, Peer> = {};
 
+// Peer ids come from other participants. One that names an Object.prototype property
+// (__proto__, constructor, ...) must neither be stored nor resolve to the prototype.
+const isSafeId = (id: unknown): id is string => typeof id === 'string' && !(id in Object.prototype);
+const ownPeer = (state: Record<string, Peer>, id: string): Peer | undefined =>
+	(Object.hasOwn(state, id) ? state[id] : undefined);
+
 const peersSlice = createSlice({
 	name: 'peers',
 	initialState,
 	reducers: {
 		addPeer: ((state, action: PayloadAction<Peer>) => {
-			state[action.payload.id] = action.payload;
+			if (isSafeId(action.payload.id)) state[action.payload.id] = action.payload;
 		}),
 		addPeers: ((state, action: PayloadAction<Peer[]>) => {
 			for (const peer of action.payload) {
-				state[peer.id] = peer;
+				if (isSafeId(peer.id)) state[peer.id] = peer;
 			}
 		}),
 		removePeer: ((state, action: PayloadAction<{ id: string }>) => {
-			delete state[action.payload.id];
+			if (ownPeer(state, action.payload.id)) delete state[action.payload.id];
 		}),
 		setPeerSessionId: ((state, action: PayloadAction<{ id: string, sessionId: string, oldSessionId: string }>) => {
-			const peer = state[action.payload.id];
+			const peer = ownPeer(state, action.payload.id);
 
 			if (peer)
 				peer.sessionId = action.payload.sessionId;
 		}),
 		updatePeer: ((state, action: PayloadAction<PeerUpdate>) => {
-			const peer = state[action.payload.id];
+			const peer = ownPeer(state, action.payload.id);
 
 			if (peer) {
 				const {
@@ -81,7 +87,7 @@ const peersSlice = createSlice({
 
 				if (displayName)
 					peer.displayName = displayName;
-				if (picture)
+				if (picture && typeof picture === 'string')
 					peer.picture = picture;
 				if (videoInProgress !== undefined)
 					peer.videoInProgress = videoInProgress;
@@ -115,7 +121,7 @@ const peersSlice = createSlice({
 		}),
 		updateTranscript: ((state, action: PayloadAction<PeerTranscript>) => {
 			const { id, transcript, peerId, done } = action.payload;
-			const peer = state[peerId];
+			const peer = ownPeer(state, peerId);
 
 			if (peer) {
 				if (!peer.transcripts)
@@ -135,7 +141,7 @@ const peersSlice = createSlice({
 		}),
 		removeTranscript: ((state, action: PayloadAction<Omit<PeerTranscript, 'transcript' | 'done'>>) => {
 			const { id, peerId } = action.payload;
-			const peer = state[peerId];
+			const peer = ownPeer(state, peerId);
 
 			if (peer) {
 				peer.transcripts =
@@ -143,7 +149,7 @@ const peersSlice = createSlice({
 			}
 		}),
 		clearTranscripts: ((state, action: PayloadAction<string>) => {
-			const peer = state[action.payload];
+			const peer = ownPeer(state, action.payload);
 
 			if (peer)
 				peer.transcripts = [];
