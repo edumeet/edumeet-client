@@ -62,3 +62,34 @@ describe('isMeetingOver', () => {
 		expect(isMeetingOver(weekly, Date.UTC(2026, 10, 4, 12, 0, 0, 1))).toBe(true);
 	});
 });
+
+describe('rules the meeting dialog cannot write', () => {
+	it('are shown as single meetings, without walking them', () => {
+		const started = performance.now();
+		const after = Date.UTC(2026, 9, 15);
+
+		for (const rrule of [ 'FREQ=SECONDLY', 'FREQ=WEEKLY', 'FREQ=DAILY;BYMONTH=2;BYMONTHDAY=30;COUNT=1', 'FREQ=DAILY;BYHOUR=1,2;COUNT=5' ]) {
+			const m = { ...weekly, rrule };
+
+			expect(nextOccurrenceStart(m, after), rrule).toBe(0);
+			expect(isMeetingOver(m, after), rrule).toBe(true);
+		}
+
+		// Starts before 2000, which the server refuses: yearly since 1970 would still be running.
+		expect(isMeetingOver({ startsAt: 0, endsAt: 1000, rrule: 'FREQ=YEARLY;UNTIL=20991231' }, after)).toBe(true);
+		expect(performance.now() - started).toBeLessThan(200);
+	});
+});
+
+describe('a long series', () => {
+	it('still finds the next occurrence of the longest rule the server accepts, quickly', () => {
+		const daily = { startsAt: Date.UTC(2000, 0, 1, 10), endsAt: Date.UTC(2000, 0, 1, 11), rrule: 'FREQ=DAILY;UNTIL=20991231' };
+		const now = Date.UTC(2026, 10, 10, 12);
+		const started = performance.now();
+
+		expect(nextOccurrenceStart(daily, now)).toBe(Date.UTC(2026, 10, 11, 10));
+		expect(performance.now() - started).toBeLessThan(500);
+		expect(isMeetingOver(daily, now)).toBe(false);
+		expect(isMeetingOver(daily, Date.UTC(2026, 10, 10, 10, 30))).toBe(false);
+	});
+});
