@@ -8,6 +8,7 @@ import ClapIcon from '@mui/icons-material/SignLanguage';
 import PartyIcon from '@mui/icons-material/Celebration';
 import LaughIcon from '@mui/icons-material/SentimentVerySatisfied';
 import { Box } from '@mui/material';
+import { Reaction, reactionEntry } from '../../utils/reactions';
 import DisplayName from '../displayname/DisplayName';
 import UnmuteAlert from '../unmutealert/UnmuteAlert';
 import VideoBox from '../videobox/VideoBox';
@@ -34,7 +35,7 @@ const ReactionIconContainer = styled(Box)(({ theme }) => ({
 	fontSize: '2rem',
 }));
 
-const reactionIcons: { [key: string]: React.JSX.Element } = {
+const reactionIcons: Record<Reaction, React.JSX.Element> = {
 	thumbup: <ThumbUpIcon fontSize="inherit" style={{ color: 'white' }} />,
 	clap: <ClapIcon fontSize="inherit" style={{ color: 'white' }} />,
 	party: <PartyIcon fontSize="inherit" style={{ color: 'white' }} />,
@@ -57,7 +58,7 @@ const Me = ({ style }: MeProps): React.JSX.Element => {
 
 	useEffect(() => {}, [ reaction, dispatch ]);
 
-	const currentReactionIcon = reaction ? reactionIcons[reaction] : null;
+	const currentReactionIcon = reactionEntry(reactionIcons, reaction) ?? null;
 
 	return (
 		<>

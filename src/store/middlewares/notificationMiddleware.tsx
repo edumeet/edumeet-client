@@ -11,6 +11,7 @@ import { isSinkIdSupported } from '../selectors';
 import { settingsActions } from '../slices/settingsSlice';
 import { Logger } from '../../utils/Logger';
 import { peerJoinedRoomLabel, peersJoinedRoomLabel } from '../../components/translated/translatedComponents';
+import { isReaction } from '../../utils/reactions';
 
 interface SoundAlert {
 	[type: string]: {
@@ -169,7 +170,7 @@ const createNotificationMiddleware = ({
 					if (raisedHand) playNotificationSounds('raisedHand');
 
 					// Reactions
-					if (reaction && config.reactionsSoundEnabled) {
+					if (isReaction(reaction) && config.reactionsSoundEnabled) {
 					// Construct a sound key like 'reactionThumbup' for reaction "thumbup"
 						const soundKey = `reaction${reaction.charAt(0).toUpperCase() + reaction.slice(1)}`;
 					

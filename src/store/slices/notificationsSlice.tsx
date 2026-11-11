@@ -4,6 +4,7 @@ import { roomActions } from './roomSlice';
 import { v4 as uuid } from 'uuid';
 import { peersActions } from './peersSlice';
 import { peerSentReactionLabel } from '../../components/translated/translatedComponents';
+import { reactionEmojis, reactionEntry } from '../../utils/reactions';
 
 export interface Notification {
 	key: SnackbarKey;
@@ -41,17 +42,12 @@ const notificationsSlice = createSlice({
 			.addCase(peersActions.updatePeer, (state, action) => {
 				const { displayName, reaction } = action.payload;
 
-				const reactionEmojis: { [key: string]: string } = {
-					thumbup: '👍',
-					clap: '👏',
-					party: '🎉',
-					laugh: '😂'
-				};
-				
-				if (reaction) {
+				const emoji = reactionEntry(reactionEmojis, reaction);
+
+				if (emoji) {
 					state.push({
 						key: uuid(),
-						message: peerSentReactionLabel(displayName || 'Someone', reactionEmojis[reaction] || reaction),
+						message: peerSentReactionLabel(typeof displayName === 'string' && displayName ? displayName : 'Someone', emoji),
 					});
 				}
 			});

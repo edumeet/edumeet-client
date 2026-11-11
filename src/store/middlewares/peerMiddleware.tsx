@@ -12,6 +12,7 @@ import { Logger } from '../../utils/Logger';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { peerIsModeratorLabel, youAreModeratorLabel } from '../../components/translated/translatedComponents';
+import { receivedReaction } from '../../utils/reactions';
 
 const logger = new Logger('PeerMiddleware');
 
@@ -110,10 +111,10 @@ const createPeerMiddleware = ({
 									picture,
 									raisedHand,
 									raisedHandTimestamp,
-									reaction,
 									reactionTimestamp,
 									recording,
 								} = notification.data;
+								const reaction = receivedReaction(notification.data.reaction);
 
 								const peer = getState().peers[peerId];
 
