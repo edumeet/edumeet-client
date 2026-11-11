@@ -15,6 +15,7 @@ import {
 	sessionEndedLabel
 } from '../../components/translated/translatedComponents';
 
+import { expectLoginFrom, loginAbandoned } from '../../utils/loginMessage';
 const logger = new Logger('PermissionsActions');
 
 // Holds the pending token-refresh timer so it can be cancelled on logout.
@@ -83,9 +84,13 @@ export const login = (): AppThunk<Promise<void>> => async (
 		return logger.error('login() | the browser blocked the login tab');
 	}
 
+	// Only this tab may hand back a token (see utils/loginMessage).
+	expectLoginFrom(loginTab);
+
 	const tenantId = await dispatch(getTenantFromFqdn(window.location.hostname));
 
 	if (!tenantId) {
+		loginAbandoned(loginTab);
 		loginTab.close();
 
 		dispatch(notificationsActions.enqueueNotification({
