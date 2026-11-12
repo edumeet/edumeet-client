@@ -88,12 +88,14 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 	/* create canvas object */
 	useEffect(() => {
+		let created: Canvas | undefined;
 
 		if (canvasRef.current) {
 			// Create a new canvas
-			setCanvas(new Canvas(canvasRef.current, {
+			created = new Canvas(canvasRef.current, {
 				backgroundColor: bgColor,
-			}));
+			});
+			setCanvas(created);
 
 			initateCanvas();
 			
@@ -141,6 +143,7 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 		}
 
 		return () => {
+			if (created) dispatch(drawingActions.keepCanvas(created.getObjects().map((object) => ({ object: object.toObject(), status: 'added' }))));
 			dispatch(drawingActions.clear());
 		};
 	}, []);

@@ -109,6 +109,13 @@ const drawingSlice = createSlice({
 			state.initiateAction = castDraft(action.payload);
 		}),
 
+		// The board of a whiteboard view that closes, drawn again when it opens. The last change
+		// from others is part of it already and must not be applied a second time then.
+		keepCanvas: ((state, action: PayloadAction<FabricAction[]>) => {
+			state.initiateAction = castDraft(action.payload);
+			state.updateAction = undefined;
+		}),
+
 		clearCanvas: (state) => {
 			state.clearAction = !state.clearAction;
 		},
