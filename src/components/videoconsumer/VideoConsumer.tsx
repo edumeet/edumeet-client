@@ -8,6 +8,7 @@ import ClapIcon from '@mui/icons-material/SignLanguage';
 import PartyIcon from '@mui/icons-material/Celebration';
 import LaughIcon from '@mui/icons-material/SentimentVerySatisfied';
 import { Box } from '@mui/material';
+import { Reaction, reactionEntry } from '../../utils/reactions';
 import FullscreenVideoButton from '../controlbuttons/FullscreenVideoButton';
 import WindowedVideoButton from '../controlbuttons/WindowedVideoButton';
 import DisplayName from '../displayname/DisplayName';
@@ -39,7 +40,7 @@ const ReactionIconContainer = styled(Box)(({ theme }) => ({
 	fontSize: '2rem',
 }));
 
-const reactionIcons: { [key: string]: React.JSX.Element } = {
+const reactionIcons: Record<Reaction, React.JSX.Element> = {
 	thumbup: <ThumbUpIcon fontSize="inherit" style={{ color: 'white' }} />,
 	clap: <ClapIcon fontSize="inherit" style={{ color: 'white' }} />,
 	party: <PartyIcon fontSize="inherit" style={{ color: 'white' }} />,
@@ -60,7 +61,7 @@ const VideoConsumer = ({ consumer, style, onAspectChange }: VideoConsumerProps):
 
 	useEffect(() => {}, [ peer?.reaction, dispatch ]);
 
-	const currentReactionIcon = peer?.reaction ? reactionIcons[peer?.reaction] : null;
+	const currentReactionIcon = reactionEntry(reactionIcons, peer?.reaction) ?? null;
 
 	return (
 		<VideoBox

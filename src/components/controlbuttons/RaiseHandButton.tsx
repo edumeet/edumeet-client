@@ -17,8 +17,9 @@ import { Box, Divider, MenuItem } from '@mui/material';
 import { setRaisedHand } from '../../store/actions/meActions';
 import SettingsBadge from '../settingsbadge/SettingsBadge';
 import { setSendReaction } from '../../store/actions/meActions';
+import { Reaction } from '../../utils/reactions';
 
-const reactionTypes = [
+const reactionTypes: { id: Reaction; icon: React.JSX.Element }[] = [
 	{ id: 'laugh', icon: <LaughIcon fontSize="small" /> },
 	{ id: 'party', icon: <PartyIcon fontSize="small" /> },
 	{ id: 'clap', icon: <ClapIcon fontSize="small" /> },
