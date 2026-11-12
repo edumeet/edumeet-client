@@ -168,6 +168,12 @@ export class MediaService extends EventEmitter {
 			extraaudio: new MediaSender(this, this.signalingService, 'extraaudio').on('closed', () => this.emit('mediaClosed', 'extraaudio')),
 		};
 
+		// client-monitor-js keeps the issues of a closed peer connection active for good,
+		// so after a reconnect the old transports' failed ICE kept the connectivity check red.
+		this.monitor?.on('new-peerconnnection-monitor', ({ peerConnectionMonitor }) => {
+			peerConnectionMonitor.once('close', () => peerConnectionMonitor.issues.resolveAll('peer connection closed'));
+		});
+
 		this.reset();
 	}
 
