@@ -5,8 +5,7 @@ import { FormattedTime } from 'react-intl';
 import FloatingMenu from '../floatingmenu/FloatingMenu';
 import SendPrivateMessage from '../menuitems/SendPrivateMessage';
 import { meLabel, moreActionsLabel } from '../translated/translatedComponents';
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
+import { chatMessageHtml } from '../../utils/chatHtml';
 
 export type MessageFormat = 'single' | 'combinedBegin' | 'combinedMiddle' | 'combinedEnd';
 
@@ -90,11 +89,6 @@ const StyledMessageContent = styled('div')<StyledMessageContentProps>(({
 	}
 }));
 
-const allowedHTMLNodes = {
-	ALLOWED_TAGS: [ 'a', 'b', 'strong', 'i', 'em', 'u', 'strike', 'p', 'br' ],
-	ALLOWED_ATTR: [ 'href', 'target', 'title' ]
-};
-
 interface MessageProps {
 	time?: number;
 	name?: string;
@@ -116,17 +110,7 @@ const Message = ({
 }: MessageProps): React.JSX.Element => {
 	const [ moreAnchorEl, setMoreAnchorEl ] = useState<HTMLElement | null>(null);
 	const showActions = Boolean(peerActions && peerId && !isMe);
-	const linkRenderer = new marked.Renderer();
-
-	linkRenderer.link = ({ href, title, tokens }) => {
-		const linkTitle = title ? title : href;
-		// marked >= 16 passes the raw token; the label must be parsed so that
-		// inline markdown inside the link text still renders.
-		const linkText = linkRenderer.parser.parseInline(tokens) || href;
-
-		return `<a target='_blank' href='${href}' title='${linkTitle}'>${linkText}</a>`;
-	};
-
+	
 	return (
 		<StyledMessage isMe={isMe ? 1 : 0} format={format}>
 			<StyledMessageAvatar>
@@ -178,10 +162,7 @@ const Message = ({
 					<Typography
 						variant='body2'
 						dir='auto'
-						dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(
-							marked.parse(text, { renderer: linkRenderer, async: false }) as string,
-							allowedHTMLNodes
-						) }}
+						dangerouslySetInnerHTML={{ __html: chatMessageHtml(text) }}
 					/>
 				}
 			</StyledMessageContent>

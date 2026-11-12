@@ -16,6 +16,7 @@ import {
 	modificationUnsuccessfulLabel,
 } from '../../components/translated/translatedComponents';
 
+import { acceptLoginMessage } from '../../utils/loginMessage';
 const logger = new Logger('ManagementActions');
 
 const handleAuthError = (error: unknown): AppThunk<Promise<void>> => async (
@@ -544,45 +545,37 @@ export const startMGMTListeners = (): AppThunk<Promise<void>> => async (
 ): Promise<void> => {
 	logger.debug('startMGMTListeners()');
 
-	messageListener = async ({ data, origin }: MessageEvent) => {
-		if (data.type === 'edumeet-login') {
-			// validate origin
-			const url = edumeetConfig.managementUrl;
+	messageListener = async (event: MessageEvent) => {
+		const message = acceptLoginMessage(event, edumeetConfig.managementUrl);
 
-			if (url) {
-				const { host, protocol } = new URL(url);
+		if (!message) return;
 
-				if (origin && origin === `${protocol}//${host}`) {
-					const { data: token, idToken } = data;
+		const { token, idToken } = message;
 
-					await (await managementService).authentication.setAccessToken(token);
-					await (await managementService).reAuthenticate();
+		await (await managementService).authentication.setAccessToken(token);
+		await (await managementService).reAuthenticate();
 
-					if (idToken) {
-						localStorage.setItem('oidcIdToken', idToken);
-					}
+		if (idToken) {
+			localStorage.setItem('oidcIdToken', idToken);
+		}
 
-					dispatch(updateLoginState(token));
+		dispatch(updateLoginState(token));
 
-					// Populate management.username from OIDC user data
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					const userData: any = await dispatch(getUserData());
+		// Populate management.username from OIDC user data
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const userData: any = await dispatch(getUserData());
 
-					const mgmtName = userData?.user?.name || userData?.user?.email || '';
+		const mgmtName = userData?.user?.name || userData?.user?.email || '';
 
-					if (mgmtName) {
-						dispatch(managamentActions.setUsername(mgmtName));
+		if (mgmtName) {
+			dispatch(managamentActions.setUsername(mgmtName));
 
-						// Update the display name if user hasn't set one
-						const currentName = getState().settings.displayName;
+			// Update the display name if user hasn't set one
+			const currentName = getState().settings.displayName;
 
-						if (!currentName || currentName === 'Guest') {
-							dispatch(settingsActions.setDisplayName(mgmtName));
-						}
-					}
-				}
+			if (!currentName || currentName === 'Guest') {
+				dispatch(settingsActions.setDisplayName(mgmtName));
 			}
-
 		}
 	};
 
