@@ -171,7 +171,8 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 	/* tools */
 	useEffect(() => {
 
-		switch (tool) {
+		// Where drawing is off (mobile, the headless view) the toolbar is hidden, so nothing may draw.
+		switch (disableDraw ? 'edit' : tool) {
 			case 'edit':
 				setSize(0);
 				handleUseEditTool();
@@ -1021,17 +1022,6 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 						size = {{ xs: 'auto' }}
 						wrap='nowrap'
 					>
-						{/* Edit */}
-						<IconButton
-							aria-label={useEditToolLabel()}
-							onClick={handleUseEditTool}
-							title={useEditToolLabel()}
-							style={{ border: tool === 'edit' ? '2px solid gray' : '2px solid lightgray' }}
-							size='small'
-						>
-							<PanToolIcon />
-						</IconButton>
-
 						{/* PencilBrush */}
 						<IconButton
 							aria-label={usePencilBrushToolLabel()}
@@ -1063,6 +1053,17 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 							size='small'
 						>
 							<AutoFixNormalIcon />
+						</IconButton>
+
+						{/* Edit */}
+						<IconButton
+							aria-label={useEditToolLabel()}
+							onClick={handleUseEditTool}
+							title={useEditToolLabel()}
+							style={{ border: tool === 'edit' ? '2px solid gray' : '2px solid lightgray' }}
+							size='small'
+						>
+							<PanToolIcon />
 						</IconButton>
 					</Grid> 
 
