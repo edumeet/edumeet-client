@@ -22,6 +22,7 @@ import ColorsPicker from './menu/ColorsPicker';
 import BgColorsPicker from './menu/BgColorsPicker';
 import { FabricAction } from '../../store/slices/drawingSlice';
 import DownloadCanvasButton from './menu/DownloadCanvasButton';
+import { pathNearBox } from './pathNearBox';
 import { isMobileSelector } from '../../store/selectors';
 import { decreaseSizeLabel, increaseSizeLabel, redoLabel, undoLabel, useEditToolLabel, useEraserToolLabel, usePencilBrushToolLabel, useTextToolLabel } from '../translated/translatedComponents';
 
@@ -577,9 +578,16 @@ const DrawingView = ({ width, height }: DrawingViewProps): React.JSX.Element => 
 
 				eraser.on('end', async (e) => {
 					e.preventDefault();
-					const { targets } = e.detail;
+					const { path: stroke, targets } = e.detail;
 
-					await eraser.commit(e.detail);
+					// Each object stores only the part of the stroke near it; a copy of the whole stroke in every object made erasing send megabytes
+					const pieces = targets.flatMap((target) => {
+						const near = pathNearBox(stroke.path, target.getBoundingRect(), (stroke.strokeWidth / 2) + 2);
+
+						return near.length ? [ { path: eraser.createPath(near), targets: [ target ] } ] : [];
+					});
+
+					await Promise.all(pieces.map((piece) => eraser.commit(piece)));
 
 					// array of all objects on the canvas that erase have been used on
 					const masking = await Promise.all(
