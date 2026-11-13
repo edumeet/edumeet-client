@@ -68,7 +68,8 @@ export class RoomServerConnection extends EventEmitter {
 		const socket = io(url, {
 			// Read again on every (re)connect, and sent in the handshake body, not the URL.
 			auth: (cb) => cb(getAuth()),
-			transports: [ 'websocket', 'polling' ],
+			// The room server takes WebSocket only.
+			transports: [ 'websocket' ],
 			rejectUnauthorized: true,
 			closeOnBeforeunload: false,
 			reconnection: true,
