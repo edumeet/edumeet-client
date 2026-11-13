@@ -182,6 +182,19 @@ export const leaveRoom = (): AppThunk<Promise<void>> => async (
 	dispatch(signalingActions.disconnect());
 };
 
+// The page is going away, also on a reload, which the browser asks to confirm: the room server
+// is told now, as with the leave button, instead of keeping the participant for a reconnect that
+// will not come. Only the connection is closed: the state 'left' would make the page reload.
+export const leaveOnPageHide = (): AppThunk<void> => (
+	_dispatch,
+	_getState,
+	{ signalingService }
+): void => {
+	logger.debug('leaveOnPageHide()');
+
+	signalingService.disconnect();
+};
+
 export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,

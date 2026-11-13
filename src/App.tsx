@@ -11,6 +11,7 @@ import { uiActions } from './store/slices/uiSlice';
 import { roomActions } from './store/slices/roomSlice';
 import { notificationsActions } from './store/slices/notificationsSlice';
 import { stopRecording } from './store/actions/recordingActions';
+import { leaveOnPageHide } from './store/actions/roomActions';
 import { permissions } from './utils/roles';
 import { SnackbarKey, SnackbarProvider, useSnackbar } from 'notistack';
 import { IconButton } from '@mui/material';
@@ -84,6 +85,7 @@ const App = (): React.JSX.Element => {
 			if (event.persisted) return;
 
 			dispatch(stopRecording(true));
+			dispatch(leaveOnPageHide());
 		};
 
 		if (!headless) window.addEventListener('beforeunload', onBeforeUnload);
