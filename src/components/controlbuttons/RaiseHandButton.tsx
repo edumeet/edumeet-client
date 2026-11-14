@@ -74,6 +74,8 @@ const RaiseHandButton = ({
 				}}
 				disabled={raisedHandInProgress || !raiseHandEnabled}
 				size={size}
+				on={raisedHand}
+				control='raisehand'
 				{ ...props }
 			>
 				{ raisedHand ? <PanIconFilled fontSize={size} /> : <PanIcon fontSize={size} /> }
@@ -82,6 +84,7 @@ const RaiseHandButton = ({
 			{ reactionsEnabled && (
 				<SettingsBadge
 					color='primary'
+					control='reactions'
 					onClick={(event) => handleOpenSelect(event)} />
 			) }
 
@@ -99,6 +102,7 @@ const RaiseHandButton = ({
 					{reactionTypes.map((reaction) => (
 						<MenuItem
 							key={reaction.id}
+							data-edumeet-reaction={reaction.id}
 							onClick={() => {
 								dispatch(setSendReaction(reaction.id));
 							}}

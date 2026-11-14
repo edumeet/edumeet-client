@@ -96,6 +96,7 @@ const MicButton = (props: ControlButtonProps): React.JSX.Element => {
 				}}
 				disabled={micState === 'unsupported' || audioInProgress}
 				on={micState === 'on'}
+				control='mic'
 				{...props}
 			>
 				<MicStateIcon micState={micState} />

@@ -205,6 +205,7 @@ const VideoView = ({
 			playsInline
 			muted
 			controls={false}
+			data-edumeet-video={consumer?.source ?? source}
 			mirrored={mirrored ? 1 : 0}
 			contain={contain ? 1 : 0}
 			roundedcorners={roundedCorners ? 1 : 0}

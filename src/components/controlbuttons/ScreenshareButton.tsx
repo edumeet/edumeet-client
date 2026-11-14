@@ -48,6 +48,7 @@ const ScreenshareButton = (props: ControlButtonProps): React.JSX.Element => {
 			}}
 			disabled={screenState === 'unsupported' || screenSharingInProgress}
 			on={screenState === 'on'}
+			control='screenshare'
 			{ ...props }
 		>
 			{ screenState === 'on' ? <StopScreenIcon /> : <ScreenIcon /> }

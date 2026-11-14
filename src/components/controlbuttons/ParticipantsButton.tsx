@@ -26,6 +26,8 @@ const ParticipantsButton = ({
 			onClick={() => openUsersTab()}
 			on={participantListOpen}
 			onColor='primary'
+			control='participants'
+			count={peersLength + 1}
 			{ ...props }
 		>
 			<PulsingBadge color='primary' badgeContent={peersLength + 1} key={peersLength}>

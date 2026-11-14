@@ -90,6 +90,7 @@ const WebcamButton = (props: ControlButtonProps): React.JSX.Element => {
 				}}
 				disabled={webcamState === 'unsupported' || videoInProgress}
 				on={webcamState === 'on'}
+				control='webcam'
 				{ ...props }
 			>
 				<WebcamStateIcon webcamState={webcamState} />

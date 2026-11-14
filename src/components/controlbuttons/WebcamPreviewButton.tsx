@@ -50,6 +50,7 @@ const WebcamPreviewButton = (props: ControlButtonProps): React.JSX.Element => {
 			}}
 			disabled={videoInProgress}
 			on={webcamState === 'on'}
+			control='webcam'
 			{ ...props }
 		>
 			{ webcamState === 'on' ? <VideoIcon /> : <VideoOffIcon /> }
