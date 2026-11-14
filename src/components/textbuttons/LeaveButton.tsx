@@ -34,6 +34,7 @@ const LeaveButton = (): React.JSX.Element => {
 		<>
 			<Button
 				aria-label={leaveLabel()}
+				data-edumeet-control='leave'
 				color='error'
 				variant='contained'
 				onClick={handleOpenConfirm}
@@ -56,10 +57,10 @@ const LeaveButton = (): React.JSX.Element => {
 
 						{/* Grouped together on the far right */}
 						<Box sx={{ display: 'flex', gap: 1 }}>
-							<Button onClick={handleCloseConfirm} variant='outlined'>
+							<Button onClick={handleCloseConfirm} variant='outlined' data-edumeet-control='leave-cancel'>
 								{noLabel()}
 							</Button>
-							<Button color='error' variant='contained' onClick={handleConfirmLeave}>
+							<Button color='error' variant='contained' onClick={handleConfirmLeave} data-edumeet-control='leave-confirm'>
 								{yesLabel()}
 							</Button>
 						</Box>

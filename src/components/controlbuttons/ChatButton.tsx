@@ -22,6 +22,7 @@ const ChatButton = ({
 			toolTip={showChatLabel()}
 			onClick={() => openChatTab()}
 			on={chatOpen}
+			control='chat'
 			{ ...props }
 		>
 			<PulsingBadge color='primary' badgeContent={unreadMessages} key={unreadMessages}>

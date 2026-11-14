@@ -45,6 +45,7 @@ const MicPreviewButton = (props: ControlButtonProps): React.JSX.Element => {
 			}}
 			disabled={audioInProgress}
 			on={micState === 'on'}
+			control='mic'
 			{ ...props }
 		>
 			{ micState === 'on' ? <MicIcon /> : <MicOffIcon /> }

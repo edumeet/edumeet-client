@@ -1,6 +1,6 @@
 import { memo, ReactNode } from 'react';
 import { Fab, IconButton, Tooltip } from '@mui/material';
-import { ButtonColor, ButtonSize } from '../../utils/types';
+import { AutomationControl, ButtonColor, ButtonSize } from '../../utils/types';
 
 export interface ControlButtonProps {
 	type?: 'fab' | 'iconbutton';
@@ -16,6 +16,8 @@ export interface ControlButtonProps {
 	// eslint-disable-next-line
 	onClick?: (event?: any) => void;
 	children?: ReactNode;
+	control?: AutomationControl;
+	count?: number;
 }
 
 const ControlButton = ({
@@ -30,7 +32,9 @@ const ControlButton = ({
 	disabledColor = 'inherit',
 	size = 'small',
 	onClick,
-	children
+	children,
+	control,
+	count
 }: ControlButtonProps): React.JSX.Element => {
 	const Button = ((type === 'fab') ? Fab : IconButton) as React.ElementType;
 
@@ -42,6 +46,9 @@ const ControlButton = ({
 			<div>
 				<Button
 					aria-label={toolTip}
+					data-edumeet-control={control}
+					data-edumeet-on={control ? String(Boolean(on)) : undefined}
+					data-edumeet-count={count}
 					disabled={disabled}
 					color={disabled ? disabledColor : on ? onColor : offColor}
 					size={size}

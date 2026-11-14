@@ -304,6 +304,14 @@ export type InboundRequest = (
 
 export type ProducerSource = 'mic' | 'webcam' | 'screen' | 'screenaudio' | 'extravideo' | 'extraaudio';
 
+// Values of data-edumeet-control: a public contract for room connectors and other automation,
+// documented in the edumeet repository. Keep a name when its control is redesigned.
+export type AutomationControl =
+	'name' | 'meeting-token' | 'join' |
+	'mic' | 'webcam' | 'screenshare' | 'raisehand' | 'reactions' | 'participants' | 'chat' |
+	'leave' | 'leave-confirm' | 'leave-cancel' |
+	'chat-input' | 'chat-send';
+
 export type MediaState = 'unsupported' | 'off' | 'on' | 'muted';
 
 export type ButtonSize = 'small' | 'medium' | 'large';

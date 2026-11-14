@@ -1,6 +1,7 @@
 import { ChangeEvent, FocusEvent, KeyboardEvent, ReactNode } from 'react';
 import { InputAdornment, TextField } from '@mui/material';
 import randomString from 'random-string';
+import { AutomationControl } from '../../utils/types';
 
 interface TextInputFieldProps {
 	label: string;
@@ -17,6 +18,7 @@ interface TextInputFieldProps {
 	autoFocus?: boolean;
 	maxLength?: number;
 	autoComplete?: string;
+	control?: AutomationControl;
 }
 
 const TextInputField = ({
@@ -28,6 +30,7 @@ const TextInputField = ({
 	endAdornment,
 	randomizeOnBlank,
 	maxLength,
+	control,
 	...rest
 }: TextInputFieldProps): React.JSX.Element => {
 	return (
@@ -44,7 +47,7 @@ const TextInputField = ({
 						<InputAdornment position='end' children={endAdornment} />
 					),
 				},
-				htmlInput: maxLength ? { maxLength } : undefined,
+				htmlInput: { maxLength, 'data-edumeet-control': control },
 			}}
 			onChange={(event: ChangeEvent<HTMLInputElement>) => {
 				setValue(event.target.value);

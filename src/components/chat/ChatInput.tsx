@@ -45,11 +45,13 @@ const ChatInput = ({ label, onSend, disabled }: ChatInputProps): React.JSX.Eleme
 				maxLength={MAX_CHAT_MESSAGE_LENGTH}
 				autoComplete='off'
 				disabled={disabled}
+				control='chat-input'
 				setValue={setMessage}
 				onEnter={handleSendMessage}
 				endAdornment={
 					<IconButton
 						aria-label={label}
+						data-edumeet-control='chat-send'
 						size='small'
 						disabled={disabled || !message}
 						onClick={handleSendMessage}

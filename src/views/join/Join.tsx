@@ -137,6 +137,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 							onEnter={handleJoin}
 							maxLength={MAX_DISPLAY_NAME_LENGTH}
 							startAdornment={<AccountCircle />}
+							control='name'
 							autoFocus
 						/>
 					</ChooserDiv>
@@ -148,6 +149,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 								setValue={(value) => dispatch(meActions.setMeetingToken(normalizeMeetingToken(value)))}
 								onEnter={handleJoin}
 								startAdornment={<Key />}
+								control='meeting-token'
 								autoFocus
 							/>
 						</ChooserDiv>
@@ -176,6 +178,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 							onClick={handleJoin}
 							variant='contained'
 							disabled={!displayName || joinInProgress || mediaLoading}
+							data-edumeet-control='join'
 							size='small'
 						>
 							{ joinLabel() }

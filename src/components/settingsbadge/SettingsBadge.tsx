@@ -2,12 +2,14 @@ import { styled } from '@mui/material/styles';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { memo } from 'react';
 import PulsingBadge from '../pulsingbadge/PulsingBadge';
+import { AutomationControl } from '../../utils/types';
 
 interface SettingsBadgeProps {
     // eslint-disable-next-line
 	onClick?: (event?: any) => void;
 	size?: number;
 	color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+	control?: AutomationControl;
 }
 
 const BadgeIcon = styled(ExpandLessIcon)(() => ({
@@ -37,6 +39,7 @@ function SettingsBadgeComponent({
 	onClick,
 	size = 20,
 	color = 'primary',
+	control,
 }: SettingsBadgeProps): React.JSX.Element {
 	return (
 		<StyledBadge
@@ -44,6 +47,7 @@ function SettingsBadgeComponent({
 			color={color}
 			badgeContent={<BadgeIcon />}
 			onClick={onClick}
+			data-edumeet-control={control}
 		/>
 	);
 }
