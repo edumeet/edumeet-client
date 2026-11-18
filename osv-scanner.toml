@@ -9,3 +9,30 @@ id = "CVE-2024-29415"
 #     field maps ./server.js to false, so it is excluded from the browser bundle.
 # Re-check if bittorrent-tracker ever drops the ip dependency.
 reason = "ip@2.0.1 has no patched version upstream (node-ip unmaintained); the affected isPublic path lives in bittorrent-tracker's UDP tracker server, which the browser field excludes from our bundle."
+
+# glob, minimatch and picomatch below never reach the browser bundle. The only
+# path from a runtime dependency is webtorrent > utp-native > node-gyp, which
+# runs at install time to build utp-native's native addon (a Node module the
+# browser build does not use). The rest come from build, test and lint tooling
+# (vite, vitest, rollup, eslint, typescript-eslint), which only matches
+# patterns from our own config and source tree.
+
+[[IgnoredVulns]]
+id = "GHSA-fc5q-39xc-vjpf"
+# picomatch ReDoS. No patched version exists (last_affected 4.0.7, the latest).
+ignoreUntil = 2027-02-18
+reason = "picomatch has no fixed release; only reached via build/install tooling (vite, vitest, rollup, node-gyp) matching our own patterns, never shipped in the browser bundle."
+
+[[IgnoredVulns]]
+id = "GHSA-g3hv-75wg-m249"
+# minimatch DoS. Fixed only in minimatch 11, a new major that eslint,
+# typescript-eslint and glob do not accept yet.
+ignoreUntil = 2027-02-18
+reason = "minimatch fix needs major 11, not yet accepted by eslint/typescript-eslint/glob; only reached via lint and install tooling, never shipped in the browser bundle."
+
+[[IgnoredVulns]]
+id = "GHSA-3g3m-2fjr-6pw4"
+# glob AbortSignal bypass. Fixed only in glob 14, a new major. Reached only via
+# node-gyp > make-fetch-happen > cacache.
+ignoreUntil = 2027-02-18
+reason = "glob fix needs major 14, not yet accepted by node-gyp's cacache; only used at install time to build utp-native, never shipped in the browser bundle."
