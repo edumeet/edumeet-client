@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { meetingTokenRejected } from './meetingTokenActions';
-import { MEETING_TOKEN_REJECTION_KEY } from '../../utils/meetingToken';
+import { MEETING_TOKEN_REJECTION_KEY, MeetingTokenRejection } from '../../utils/meetingToken';
 
 const makeStorage = () => {
 	const items = new Map<string, string>();
@@ -14,11 +14,11 @@ const makeStorage = () => {
 	};
 };
 
-const run = (reason: 'required' | 'invalid', meetingToken?: string) => {
+const run = (reason: MeetingTokenRejection, meetingToken?: string, data?: { startsAt?: unknown, endsAt?: unknown }) => {
 	const dispatch = vi.fn();
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	(meetingTokenRejected(reason) as any)(dispatch, () => ({ me: { meetingToken } }), {});
+	(meetingTokenRejected(reason, data) as any)(dispatch, () => ({ me: { meetingToken } }), {});
 
 	return dispatch;
 };
@@ -50,6 +50,18 @@ describe('meetingTokenRejected', () => {
 
 		expect(JSON.parse(storage.items.get(MEETING_TOKEN_REJECTION_KEY) ?? '{}')).toEqual({ reason: 'required' });
 		expect(reload).toHaveBeenCalledTimes(1);
+	});
+
+	it('keeps the meeting times of a token refused too early or too late', () => {
+		run('early', 'GOOD', { reason: 'early', startsAt: 1000, endsAt: 2000 } as never);
+
+		expect(JSON.parse(storage.items.get(MEETING_TOKEN_REJECTION_KEY) ?? '{}')).toEqual({ reason: 'early', meetingToken: 'GOOD', startsAt: 1000, endsAt: 2000 });
+	});
+
+	it('drops times that are not numbers', () => {
+		run('over', 'GOOD', { startsAt: '1000', endsAt: null });
+
+		expect(JSON.parse(storage.items.get(MEETING_TOKEN_REJECTION_KEY) ?? '{}')).toEqual({ reason: 'over', meetingToken: 'GOOD' });
 	});
 
 	it('reloads even when storage is unavailable, so the user is never left hanging', () => {

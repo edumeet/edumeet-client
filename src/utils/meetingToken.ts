@@ -1,11 +1,28 @@
 import type { Meeting } from './types';
 
-export type MeetingTokenRejection = 'required' | 'invalid';
+export type MeetingTokenRejection = 'required' | 'invalid' | 'early' | 'over';
 
-export interface StoredMeetingTokenRejection {
+const REJECTIONS: MeetingTokenRejection[] = [ 'required', 'invalid', 'early', 'over' ];
+
+// The meeting a refused token belongs to, for early and over: the token is right, the time is not.
+export interface MeetingTokenWindow {
+	startsAt?: number;
+	endsAt?: number;
+}
+
+export interface StoredMeetingTokenRejection extends MeetingTokenWindow {
 	reason: MeetingTokenRejection;
 	meetingToken?: string;
 }
+
+export const isMeetingClosed = (reason?: MeetingTokenRejection): boolean => reason === 'early' || reason === 'over';
+
+const finite = (value: unknown): number | undefined => (typeof value === 'number' && Number.isFinite(value) ? value : undefined);
+
+export const meetingTokenWindow = (raw?: { startsAt?: unknown, endsAt?: unknown }): MeetingTokenWindow => ({
+	startsAt: finite(raw?.startsAt),
+	endsAt: finite(raw?.endsAt)
+});
 
 export const MEETING_TOKEN_REJECTION_KEY = 'edumeet.meetingTokenRejection';
 
@@ -43,9 +60,9 @@ export const takeMeetingTokenRejection = (): StoredMeetingTokenRejection | undef
 
 		const parsed = JSON.parse(raw) as Partial<StoredMeetingTokenRejection>;
 
-		if (parsed.reason !== 'required' && parsed.reason !== 'invalid') return undefined;
+		if (!parsed.reason || !REJECTIONS.includes(parsed.reason)) return undefined;
 
-		return { reason: parsed.reason, meetingToken: normalizeMeetingToken(parsed.meetingToken) };
+		return { reason: parsed.reason, meetingToken: normalizeMeetingToken(parsed.meetingToken), ...meetingTokenWindow(parsed) };
 	} catch {
 		return undefined;
 	}

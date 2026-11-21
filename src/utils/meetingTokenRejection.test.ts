@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MEETING_TOKEN_REJECTION_KEY, storeMeetingTokenRejection, takeMeetingTokenRejection } from './meetingToken';
+import { MEETING_TOKEN_REJECTION_KEY, isMeetingClosed, meetingTokenWindow, storeMeetingTokenRejection, takeMeetingTokenRejection } from './meetingToken';
 
 const makeStorage = () => {
 	const items = new Map<string, string>();
@@ -29,6 +29,18 @@ describe('stored meeting token rejection', () => {
 		expect(storage.items.has(MEETING_TOKEN_REJECTION_KEY)).toBe(false);
 	});
 
+	it('carries the meeting times of a token refused too early or too late through the reload', () => {
+		storeMeetingTokenRejection({ reason: 'early', meetingToken: 'GOOD', startsAt: 1000, endsAt: 2000 });
+
+		expect(takeMeetingTokenRejection()).toEqual({ reason: 'early', meetingToken: 'GOOD', startsAt: 1000, endsAt: 2000 });
+	});
+
+	it('drops stored times that are not numbers', () => {
+		storage.items.set(MEETING_TOKEN_REJECTION_KEY, JSON.stringify({ reason: 'over', startsAt: 'soon', endsAt: 2000 }));
+
+		expect(takeMeetingTokenRejection()).toEqual({ reason: 'over', meetingToken: undefined, startsAt: undefined, endsAt: 2000 });
+	});
+
 	it('is absent on a fresh page', () => {
 		expect(takeMeetingTokenRejection()).toBeUndefined();
 	});
@@ -52,5 +64,21 @@ describe('stored meeting token rejection', () => {
 
 		storeMeetingTokenRejection({ reason: 'required' });
 		expect(takeMeetingTokenRejection()).toBeUndefined();
+	});
+});
+
+describe('closed meeting', () => {
+	it('is closed only for a token refused too early or too late', () => {
+		expect(isMeetingClosed('early')).toBe(true);
+		expect(isMeetingClosed('over')).toBe(true);
+		expect(isMeetingClosed('required')).toBe(false);
+		expect(isMeetingClosed('invalid')).toBe(false);
+		expect(isMeetingClosed(undefined)).toBe(false);
+	});
+
+	it('takes the meeting times only when they are numbers', () => {
+		expect(meetingTokenWindow({ startsAt: 1000, endsAt: 2000 })).toEqual({ startsAt: 1000, endsAt: 2000 });
+		expect(meetingTokenWindow({ startsAt: '1000', endsAt: Number.NaN })).toEqual({ startsAt: undefined, endsAt: undefined });
+		expect(meetingTokenWindow(undefined)).toEqual({ startsAt: undefined, endsAt: undefined });
 	});
 });

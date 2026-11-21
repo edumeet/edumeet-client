@@ -2586,6 +2586,16 @@ export const meetingTokenInvalidLabel = (): string => intl.formatMessage({
 	defaultMessage: 'This meeting token is not valid for this room. Check the invitation link or the token.'
 });
 
+export const meetingTokenEarlyLabel = (start: string): string => intl.formatMessage({
+	id: 'room.meetingTokenEarly',
+	defaultMessage: 'This meeting has not started yet. It starts at {start}.'
+}, { start });
+
+export const meetingTokenOverLabel = (end: string): string => intl.formatMessage({
+	id: 'room.meetingTokenOver',
+	defaultMessage: 'This meeting is over. It ended at {end}.'
+}, { end });
+
 export const botJobStartRecorderLabel = (): string => intl.formatMessage({
 	id: 'room.botJobStartRecorder',
 	defaultMessage: 'Start server recording'

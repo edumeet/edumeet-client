@@ -803,5 +803,7 @@
 	"label.managementservice.meetingsOnlyTooltip": "با فعال بودن این گزینه، فقط افرادی که لینک یا توکن جلسه زمان‌بندی‌شده این اتاق را دارند می‌توانند وارد شوند؛ حتی مالک اتاق نیز باید این شرط را داشته باشد.",
 	"label.meetingToken": "توکن جلسه",
 	"room.meetingTokenRequired": "این اتاق فقط جلسات زمان‌بندی‌شده را می‌پذیرد. توکن جلسه را از دعوت‌نامه وارد کنید.",
-	"room.meetingTokenInvalid": "توکن جلسه برای این اتاق معتبر نیست. لینک دعوت‌نامه یا توکن را بررسی کنید."
+	"room.meetingTokenInvalid": "توکن جلسه برای این اتاق معتبر نیست. لینک دعوت‌نامه یا توکن را بررسی کنید.",
+	"room.meetingTokenEarly": null,
+	"room.meetingTokenOver": null
 }

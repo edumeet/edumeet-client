@@ -730,6 +730,8 @@
   "label.meetingToken": "Møtetoken",
   "room.meetingTokenRequired": "Dette rommet slipper bare inn planlagte møter. Skriv inn møtetokenet fra invitasjonen din.",
   "room.meetingTokenInvalid": "Dette møtetokenet er ikke gyldig for dette rommet. Sjekk invitasjonslenken eller tokenet.",
+  "room.meetingTokenEarly": "Dette møtet har ikke begynt ennå. Det begynner {start}.",
+  "room.meetingTokenOver": "Dette møtet er over. Det sluttet {end}.",
   "label.checkConnection": "Sjekk tilkobling",
   "connectivity.title": "Det er oppdaget et tilkoblingsproblem",
   "connectivity.titleCheck": "Tilkoblingssjekk",

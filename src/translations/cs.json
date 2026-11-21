@@ -730,6 +730,8 @@
   "label.meetingToken": "Token schůzky",
   "room.meetingTokenRequired": "Tato místnost přijímá pouze naplánované schůzky. Zadejte token schůzky z pozvánky.",
   "room.meetingTokenInvalid": "Tento token schůzky není pro tuto místnost platný. Zkontrolujte odkaz z pozvánky nebo token.",
+  "room.meetingTokenEarly": "Tato schůzka ještě nezačala. Začíná {start}.",
+  "room.meetingTokenOver": "Tato schůzka už skončila. Skončila {end}.",
   "label.checkConnection": "Zkontrolovat připojení",
   "connectivity.title": "Zjištěn problém s připojením",
   "connectivity.titleCheck": "Kontrola připojení",

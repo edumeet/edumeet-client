@@ -6,6 +6,8 @@ export type RoomConnectionState = 'new' | 'lobby' | 'joined' | 'left' | 'mgmt-ad
 export type LeaveReason =
 	| 'meetingTokenRequired'
 	| 'meetingTokenInvalid'
+	| 'meetingTokenEarly'
+	| 'meetingTokenOver'
 	| 'e2eeUnsupported'
 	| 'e2eeFailed'
 	| 'kicked'

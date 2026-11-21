@@ -730,6 +730,8 @@
   "label.meetingToken": "Meeting-Token",
   "room.meetingTokenRequired": "Dieser Raum lässt nur geplante Meetings zu. Geben Sie das Meeting-Token aus Ihrer Einladung ein.",
   "room.meetingTokenInvalid": "Dieses Meeting-Token ist für diesen Raum nicht gültig. Prüfen Sie den Einladungslink oder das Token.",
+  "room.meetingTokenEarly": "Dieses Meeting hat noch nicht begonnen. Es beginnt am {start}.",
+  "room.meetingTokenOver": "Dieses Meeting ist vorbei. Es endete am {end}.",
   "label.checkConnection": "Verbindung prüfen",
   "connectivity.title": "Verbindungsproblem erkannt",
   "connectivity.titleCheck": "Verbindungsprüfung",

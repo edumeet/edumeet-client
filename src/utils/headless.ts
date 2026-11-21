@@ -113,6 +113,13 @@ export const layoutSettingsActions = ({ hideSelfView, groupAudioOnly, hideNonVid
 // stored in the browser profile, because that name is shown to everyone as the bot's.
 export const botDisplayName = (fromUrl: string | null | undefined): string => fromUrl?.trim() || 'Bot';
 
+const REJECTION_REASONS: Record<MeetingTokenRejection, LeaveReason> = {
+	required: 'meetingTokenRequired',
+	invalid: 'meetingTokenInvalid',
+	early: 'meetingTokenEarly',
+	over: 'meetingTokenOver'
+};
+
 export interface HeadlessJoinPlan {
 	reason?: LeaveReason;
 	autoJoin: boolean;
@@ -123,7 +130,7 @@ export const headlessJoinPlan = ({ rejection, joinErrorPending }: {
 	rejection?: MeetingTokenRejection,
 	joinErrorPending: boolean,
 }): HeadlessJoinPlan => {
-	if (rejection) return { reason: rejection === 'invalid' ? 'meetingTokenInvalid' : 'meetingTokenRequired', autoJoin: false };
+	if (rejection) return { reason: REJECTION_REASONS[rejection], autoJoin: false };
 	if (joinErrorPending) return { reason: 'joinErrorPending', autoJoin: false };
 
 	return { autoJoin: true };

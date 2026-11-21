@@ -730,6 +730,8 @@
   "label.meetingToken": "Token de întâlnire",
   "room.meetingTokenRequired": "Această cameră admite doar întâlniri programate. Introduceți tokenul întâlnirii din invitație.",
   "room.meetingTokenInvalid": "Acest token de întâlnire nu este valid pentru această cameră. Verificați linkul din invitație sau tokenul.",
+  "room.meetingTokenEarly": "Această întâlnire nu a început încă. Începe pe {start}.",
+  "room.meetingTokenOver": "Această întâlnire s-a încheiat. S-a încheiat pe {end}.",
   "label.checkConnection": "Verifică conexiunea",
   "connectivity.title": "Problemă de conexiune detectată",
   "connectivity.titleCheck": "Verificarea conexiunii",

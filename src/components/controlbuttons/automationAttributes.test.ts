@@ -63,6 +63,7 @@ const src = new URL('../../', import.meta.url);
 const owners: Record<AutomationControl, string[]> = {
 	'name': [ 'views/join/Join.tsx' ],
 	'meeting-token': [ 'views/join/Join.tsx' ],
+	'meeting-closed': [ 'views/join/Join.tsx' ],
 	'join': [ 'views/join/Join.tsx' ],
 	'mic': [ 'components/controlbuttons/MicButton.tsx', 'components/controlbuttons/MicPreviewButton.tsx' ],
 	'webcam': [ 'components/controlbuttons/WebcamButton.tsx', 'components/controlbuttons/WebcamPreviewButton.tsx' ],
@@ -92,6 +93,14 @@ describe('the documented controls', () => {
 		const source = readFileSync(new URL('components/controlbuttons/RaiseHandButton.tsx', src), 'utf8');
 
 		expect(source).toContain('data-edumeet-reaction={reaction.id}');
+	});
+
+	it('gives the reason and the meeting times with the closed-meeting message', () => {
+		const source = readFileSync(new URL('views/join/Join.tsx', src), 'utf8');
+
+		expect(source).toContain('data-edumeet-reason={meetingTokenRejection}');
+		expect(source).toContain('data-edumeet-starts-at={meetingTokenWindow?.startsAt}');
+		expect(source).toContain('data-edumeet-ends-at={meetingTokenWindow?.endsAt}');
 	});
 
 	it('marks every video with its source', () => {

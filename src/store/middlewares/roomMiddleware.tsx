@@ -200,7 +200,7 @@ const createRoomMiddleware = ({
 						}
 
 						case 'meetingTokenRejected': {
-							dispatch(meetingTokenRejected(notification.data.reason));
+							dispatch(meetingTokenRejected(notification.data.reason, notification.data));
 
 							break;
 						}

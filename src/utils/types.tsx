@@ -307,7 +307,7 @@ export type ProducerSource = 'mic' | 'webcam' | 'screen' | 'screenaudio' | 'extr
 // Values of data-edumeet-control: a public contract for room connectors and other automation,
 // documented in the edumeet repository. Keep a name when its control is redesigned.
 export type AutomationControl =
-	'name' | 'meeting-token' | 'join' |
+	'name' | 'meeting-token' | 'meeting-closed' | 'join' |
 	'mic' | 'webcam' | 'screenshare' | 'raisehand' | 'reactions' | 'participants' | 'chat' |
 	'leave' | 'leave-confirm' | 'leave-cancel' |
 	'chat-input' | 'chat-send';

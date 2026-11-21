@@ -730,6 +730,8 @@
   "label.meetingToken": "Токен встречи",
   "room.meetingTokenRequired": "Эта комната принимает только запланированные встречи. Введите токен встречи из приглашения.",
   "room.meetingTokenInvalid": "Этот токен встречи недействителен для этой комнаты. Проверьте ссылку из приглашения или токен.",
+  "room.meetingTokenEarly": "Эта встреча ещё не началась. Она начинается {start}.",
+  "room.meetingTokenOver": "Эта встреча уже закончилась. Она закончилась {end}.",
   "label.checkConnection": "Проверить соединение",
   "connectivity.title": "Обнаружена проблема с соединением",
   "connectivity.titleCheck": "Проверка соединения",
