@@ -16,6 +16,7 @@ import { intl } from './utils/intlManager';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { rtlCache } from './utils/rtl';
 import { setLocale } from './store/actions/localeActions';
+import { listenForLocaleRequests } from './utils/localeRequest';
 import { CssBaseline } from '@mui/material';
 import { Logger } from './utils/Logger';
 import { SnackbarProvider } from 'notistack';
@@ -100,7 +101,9 @@ const RootComponent = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		dispatch(setLocale());
+		const ready = dispatch(setLocale());
+
+		return listenForLocaleRequests(dispatch, { ready });
 	}, [ dispatch ]);
 
 	if (unsupportedBrowser || webrtcUnavailable) {
