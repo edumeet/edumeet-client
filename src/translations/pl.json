@@ -730,6 +730,8 @@
   "label.meetingToken": "Token spotkania",
   "room.meetingTokenRequired": "Ten pokój przyjmuje tylko zaplanowane spotkania. Wpisz token spotkania z zaproszenia.",
   "room.meetingTokenInvalid": "Ten token spotkania nie jest ważny dla tego pokoju. Sprawdź link z zaproszenia lub token.",
+  "room.meetingTokenEarly": "To spotkanie jeszcze się nie rozpoczęło. Rozpoczyna się {start}.",
+  "room.meetingTokenOver": "To spotkanie już się zakończyło. Zakończyło się {end}.",
   "label.checkConnection": "Sprawdź połączenie",
   "connectivity.title": "Wykryto problem z połączeniem",
   "connectivity.titleCheck": "Sprawdzanie połączenia",

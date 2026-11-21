@@ -806,5 +806,7 @@
 	"label.managementservice.meetingsOnlyTooltip": "When enabled, only people with the link or token of a meeting scheduled for this room can enter it, the room owner included.",
 	"label.meetingToken": "Meeting token",
 	"room.meetingTokenRequired": "This room only admits scheduled meetings. Enter the meeting token from your invitation.",
-	"room.meetingTokenInvalid": "This meeting token is not valid for this room. Check the invitation link or the token."
+	"room.meetingTokenInvalid": "This meeting token is not valid for this room. Check the invitation link or the token.",
+	"room.meetingTokenEarly": "This meeting has not started yet. It starts at {start}.",
+	"room.meetingTokenOver": "This meeting is over. It ended at {end}."
 }

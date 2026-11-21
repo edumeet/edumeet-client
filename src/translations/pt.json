@@ -730,6 +730,8 @@
   "label.meetingToken": "Token da reunião",
   "room.meetingTokenRequired": "Esta sala só admite reuniões agendadas. Introduza o token da reunião do seu convite.",
   "room.meetingTokenInvalid": "Este token de reunião não é válido para esta sala. Verifique o link do convite ou o token.",
+  "room.meetingTokenEarly": "Esta reunião ainda não começou. Começa em {start}.",
+  "room.meetingTokenOver": "Esta reunião já terminou. Terminou em {end}.",
   "label.checkConnection": "Verificar ligação",
   "connectivity.title": "Problema de ligação detetado",
   "connectivity.titleCheck": "Verificação da ligação",

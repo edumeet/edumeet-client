@@ -730,6 +730,8 @@
   "label.meetingToken": "Token sastanka",
   "room.meetingTokenRequired": "Ova soba prima samo zakazane sastanke. Unesite token sastanka iz pozivnice.",
   "room.meetingTokenInvalid": "Ovaj token sastanka nije valjan za ovu sobu. Provjerite poveznicu iz pozivnice ili token.",
+  "room.meetingTokenEarly": "Ovaj sastanak još nije počeo. Počinje {start}.",
+  "room.meetingTokenOver": "Ovaj sastanak je završio. Završio je {end}.",
   "label.checkConnection": "Provjeri vezu",
   "connectivity.title": "Otkriven je problem s vezom",
   "connectivity.titleCheck": "Provjera veze",

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Button, Box, Link, Typography } from '@mui/material';
 import TextInputField from '../../components/textinputfield/TextInputField';
 import { useAppDispatch, useAppSelector, useNotifier } from '../../store/hooks';
-import { joinLabel, yourNameLabel, imprintLabel, joinConsentLabel, privacyPolicyLabel, meetingTokenLabel, meetingTokenInvalidLabel, meetingTokenRequiredLabel } from '../../components/translated/translatedComponents';
+import { joinLabel, yourNameLabel, imprintLabel, joinConsentLabel, privacyPolicyLabel, meetingTokenLabel, meetingTokenInvalidLabel, meetingTokenRequiredLabel, meetingTokenEarlyLabel, meetingTokenOverLabel } from '../../components/translated/translatedComponents';
 import { AccountCircle, Key } from '@mui/icons-material';
 import MediaPreview from '../../components/mediapreview/MediaPreview';
 import AudioInputChooser from '../../components/devicechooser/AudioInputChooser';
@@ -21,7 +21,8 @@ import AudioOutputChooser from '../../components/devicechooser/AudioOutputChoose
 import { canSelectAudioOutput } from '../../store/selectors';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { MAX_DISPLAY_NAME_LENGTH } from '../../utils/types';
-import { meetingTokenFromUrl, normalizeMeetingToken, takeMeetingTokenRejection } from '../../utils/meetingToken';
+import { MeetingTokenRejection, MeetingTokenWindow, isMeetingClosed, meetingTokenFromUrl, normalizeMeetingToken, takeMeetingTokenRejection } from '../../utils/meetingToken';
+import { intl } from '../../utils/intlManager';
 import { notificationsActions } from '../../store/slices/notificationsSlice';
 
 interface JoinProps {
@@ -36,6 +37,15 @@ const hasStoredJoinError = (): boolean => {
 	}
 };
 
+const atTime = (ms?: number): string => (ms === undefined ? '' : intl.formatDate(ms, { dateStyle: 'medium', timeStyle: 'short' }));
+
+const closedMessage = (reason?: MeetingTokenRejection, window?: MeetingTokenWindow): string | undefined => {
+	if (reason === 'early') return meetingTokenEarlyLabel(atTime(window?.startsAt));
+	if (reason === 'over') return meetingTokenOverLabel(atTime(window?.endsAt));
+
+	return undefined;
+};
+
 const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 	useNotifier();
 	const dispatch = useAppDispatch();
@@ -48,6 +58,7 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 	const showAudioOutputChooser = useAppSelector(canSelectAudioOutput);
 	const meetingToken = useAppSelector((state) => state.me.meetingToken);
 	const meetingTokenRejection = useAppSelector((state) => state.me.meetingTokenRejection);
+	const meetingTokenWindow = useAppSelector((state) => state.me.meetingTokenWindow);
 
 	const headless = useAppSelector((state) => state.room.headless);
 
@@ -75,8 +86,9 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 		if (rejection) {
 			if (rejection.meetingToken) dispatch(meActions.setMeetingToken(rejection.meetingToken));
 			dispatch(meActions.setMeetingTokenRejection(rejection.reason));
+			dispatch(meActions.setMeetingTokenWindow({ startsAt: rejection.startsAt, endsAt: rejection.endsAt }));
 			dispatch(notificationsActions.enqueueNotification({
-				message: rejection.reason === 'invalid' ? meetingTokenInvalidLabel() : meetingTokenRequiredLabel(),
+				message: closedMessage(rejection.reason, rejection) ?? (rejection.reason === 'invalid' ? meetingTokenInvalidLabel() : meetingTokenRequiredLabel()),
 				options: { variant: 'error' }
 			}));
 		}
@@ -141,7 +153,21 @@ const Join = ({ roomId }: JoinProps): React.JSX.Element | null => {
 							autoFocus
 						/>
 					</ChooserDiv>
-					{ meetingTokenRejection && (
+					{ isMeetingClosed(meetingTokenRejection) && (
+						<ChooserDiv>
+							<Typography
+								variant='body2'
+								color='error'
+								data-edumeet-control='meeting-closed'
+								data-edumeet-reason={meetingTokenRejection}
+								data-edumeet-starts-at={meetingTokenWindow?.startsAt}
+								data-edumeet-ends-at={meetingTokenWindow?.endsAt}
+							>
+								{ closedMessage(meetingTokenRejection, meetingTokenWindow) }
+							</Typography>
+						</ChooserDiv>
+					) }
+					{ meetingTokenRejection && !isMeetingClosed(meetingTokenRejection) && (
 						<ChooserDiv>
 							<TextInputField
 								label={meetingTokenLabel()}

@@ -730,6 +730,8 @@
   "label.meetingToken": null,
   "room.meetingTokenRequired": null,
   "room.meetingTokenInvalid": null,
+  "room.meetingTokenEarly": null,
+  "room.meetingTokenOver": null,
   "label.checkConnection": null,
   "connectivity.title": null,
   "connectivity.titleCheck": null,

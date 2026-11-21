@@ -730,6 +730,8 @@
   "label.meetingToken": "Jeton de réunion",
   "room.meetingTokenRequired": "Cette salle n'admet que des réunions planifiées. Saisissez le jeton de réunion de votre invitation.",
   "room.meetingTokenInvalid": "Ce jeton de réunion n'est pas valide pour cette salle. Vérifiez le lien d'invitation ou le jeton.",
+  "room.meetingTokenEarly": "Cette réunion n'a pas encore commencé. Elle commence le {start}.",
+  "room.meetingTokenOver": "Cette réunion est terminée. Elle s'est terminée le {end}.",
   "label.checkConnection": "Vérifier la connexion",
   "connectivity.title": "Problème de connexion détecté",
   "connectivity.titleCheck": "Vérification de la connexion",

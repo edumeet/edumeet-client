@@ -73,6 +73,8 @@ describe('headlessJoinPlan', () => {
 	it('stays out and names the rejected meeting token', () => {
 		expect(headlessJoinPlan({ rejection: 'invalid', joinErrorPending: false })).toEqual({ reason: 'meetingTokenInvalid', autoJoin: false });
 		expect(headlessJoinPlan({ rejection: 'required', joinErrorPending: true })).toEqual({ reason: 'meetingTokenRequired', autoJoin: false });
+		expect(headlessJoinPlan({ rejection: 'early', joinErrorPending: false })).toEqual({ reason: 'meetingTokenEarly', autoJoin: false });
+		expect(headlessJoinPlan({ rejection: 'over', joinErrorPending: false })).toEqual({ reason: 'meetingTokenOver', autoJoin: false });
 	});
 
 	it('stays out while an earlier join error is still stored', () => {

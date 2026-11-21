@@ -6,7 +6,7 @@ import { deviceInfo, DeviceInfo } from '../../utils/deviceInfo';
 import edumeetConfig from '../../utils/edumeetConfig';
 import { roomActions } from './roomSlice';
 import { BackgroundConfig, BackgroundType } from '../../utils/types';
-import type { MeetingTokenRejection } from '../../utils/meetingToken';
+import type { MeetingTokenRejection, MeetingTokenWindow } from '../../utils/meetingToken';
 
 export interface MeState {
 	id: string;
@@ -57,6 +57,7 @@ export interface MeState {
 	videoBackgroundEffect: BackgroundConfig | null;
 	meetingToken?: string;
 	meetingTokenRejection?: MeetingTokenRejection;
+	meetingTokenWindow?: MeetingTokenWindow;
 	botToken?: string;
 	botType?: string;
 	botSession?: string;
@@ -172,6 +173,9 @@ const meSlice = createSlice({
 		}),
 		setMeetingTokenRejection: ((state, action: PayloadAction<MeetingTokenRejection | undefined>) => {
 			state.meetingTokenRejection = action.payload;
+		}),
+		setMeetingTokenWindow: ((state, action: PayloadAction<MeetingTokenWindow | undefined>) => {
+			state.meetingTokenWindow = action.payload;
 		}),
 		setBotToken: ((state, action: PayloadAction<string | undefined>) => {
 			state.botToken = action.payload;

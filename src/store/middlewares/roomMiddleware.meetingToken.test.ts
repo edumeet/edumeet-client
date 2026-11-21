@@ -43,8 +43,16 @@ describe('roomMiddleware on meetingTokenRejected', () => {
 
 		deliver('meetingTokenRejected', { reason: 'invalid' });
 
-		expect(meetingTokenRejected).toHaveBeenCalledWith('invalid');
+		expect(meetingTokenRejected).toHaveBeenCalledWith('invalid', { reason: 'invalid' });
 		expect(dispatch).toHaveBeenCalledWith({ type: 'meetingTokenRejected', payload: 'invalid' });
+	});
+
+	it('hands the meeting times of an early or over refusal to the thunk too', () => {
+		const { deliver } = setup();
+
+		deliver('meetingTokenRejected', { reason: 'early', startsAt: 1000, endsAt: 2000 });
+
+		expect(meetingTokenRejected).toHaveBeenCalledWith('early', { reason: 'early', startsAt: 1000, endsAt: 2000 });
 	});
 
 	it('does not treat the rejection as a leave', () => {

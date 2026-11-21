@@ -730,6 +730,8 @@
   "label.meetingToken": "Toplantı belirteci",
   "room.meetingTokenRequired": "Bu oda yalnızca planlanmış toplantıları kabul eder. Davetiyenizdeki toplantı belirtecini girin.",
   "room.meetingTokenInvalid": "Bu toplantı belirteci bu oda için geçerli değil. Davet bağlantısını veya belirteci kontrol edin.",
+  "room.meetingTokenEarly": "Bu toplantı henüz başlamadı. Başlangıç: {start}.",
+  "room.meetingTokenOver": "Bu toplantı sona erdi. Bitiş: {end}.",
   "label.checkConnection": "Bağlantıyı kontrol et",
   "connectivity.title": "Bağlantı sorunu tespit edildi",
   "connectivity.titleCheck": "Bağlantı kontrolü",
