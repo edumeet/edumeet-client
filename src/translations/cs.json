@@ -337,6 +337,7 @@
   "label.resizeSidePanels": "Změnit velikost bočních panelů",
   "settings.verticallyStackedSidePanels": "Svisle seřazené boční panely",
   "settings.voiceDetectionThreshold": "Práh detekce hlasu",
+  "settings.voiceDetectionThresholdHint": "Ukazatel hlasitosti a upozornění na vypnutý mikrofon ignorují zvuk pod touto úrovní",
   "settings.webcamFrameRate": "Vyberte snímkovou frekvenci webkamery",
   "socket.disconnected": "Spojení přerušeno",
   "socket.reconnected": "Znovu připojeno",

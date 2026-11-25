@@ -1022,6 +1022,11 @@ export const voiceDetectionThresholdLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Voice detection threshold'
 });
 
+export const voiceDetectionThresholdHintLabel = (): string => intl.formatMessage({
+	id: 'settings.voiceDetectionThresholdHint',
+	defaultMessage: 'Your volume indicator and the muted warning ignore sound below this level'
+});
+
 export const selectAudioSampleRateLabel = (): string => intl.formatMessage({
 	id: 'settings.sampleRate',
 	defaultMessage: 'Select the audio sample rate'

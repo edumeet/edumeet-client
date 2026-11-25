@@ -337,6 +337,7 @@
   "label.resizeSidePanels": "Tilpas størrelsen på sidepanelerne",
   "settings.verticallyStackedSidePanels": "Vertikalt stablede sidepaneler",
   "settings.voiceDetectionThreshold": "Tærskel for stemmedetektering",
+  "settings.voiceDetectionThresholdHint": "Lydstyrkeindikatoren og advarslen om slukket mikrofon ignorerer lyd under dette niveau",
   "settings.webcamFrameRate": "Vælg billedfrekvens for webcam",
   "socket.disconnected": "Du er frakoblet",
   "socket.reconnected": "Du er tilsluttet igen",

@@ -1,10 +1,10 @@
-import { Slider, styled, Typography } from '@mui/material';
+import { FormHelperText, Slider, styled, Typography } from '@mui/material';
 import { SyntheticEvent, useContext, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { ServiceContext } from '../../store/store';
 import { validNoiseThreshold, VolumeWatcher } from '../../utils/volumeWatcher';
-import { voiceDetectionThresholdLabel } from '../translated/translatedComponents';
+import { voiceDetectionThresholdHintLabel, voiceDetectionThresholdLabel } from '../translated/translatedComponents';
 
 const StyledSlider = styled(Slider)(() => ({
 	'.MuiSlider-root': {
@@ -70,7 +70,8 @@ const NoiseSlider = (): React.JSX.Element => {
 		_event: Event | SyntheticEvent,
 		value: number | number[]
 	): void => {
-		if (sliderValue !== noiseThreshold) {
+		// The committed value, not sliderValue: a key press changes and commits in one event, before the re-render.
+		if (value !== noiseThreshold) {
 			mediaService.mediaSenders['mic'].volumeWatcher?.setThreshold(value as number);
 			dispatch(settingsActions.setNoiseThreshold(value as number));
 		}
@@ -90,6 +91,9 @@ const NoiseSlider = (): React.JSX.Element => {
 				onChangeCommitted={ handleSliderChangeCommitted }
 				marks={[ { value: volumeLevel, label: `${volumeLevel.toFixed(0)} dB` } ]}
 			/>
+			<FormHelperText>
+				{ voiceDetectionThresholdHintLabel() }
+			</FormHelperText>
 		</>
 	);
 };
