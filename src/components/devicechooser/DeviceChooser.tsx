@@ -7,7 +7,7 @@ import {
 	Select,
 	styled
 } from '@mui/material';
-import { memo, ReactElement } from 'react';
+import { memo, ReactElement, useId } from 'react';
 import { MediaDevice } from '../../services/deviceService';
 import { applyLabel } from '../translated/translatedComponents';
 
@@ -54,15 +54,15 @@ const DeviceChooser = ({
 	extraButtons
 }: DeviceChooserProps): React.JSX.Element => {
 	const label = devices.length ? devicesLabel : noDevicesLabel;
-	const labelId = new Date().getUTCMilliseconds();
-	
+	const labelId = `device-select-label-${useId()}`;
+
 	return (
 		<FormControl variant='outlined' fullWidth>
-			<InputLabel id={`device-simple-select-helper-label-${labelId}`}>
+			<InputLabel id={labelId}>
 				{ label }
 			</InputLabel>
 			<Select
-				labelId={`device-simple-select-helper-label-${labelId}`}
+				labelId={labelId}
 				label={label}
 				startAdornment={extraButtons}
 				value={devices.length ? (value || '') : ''}

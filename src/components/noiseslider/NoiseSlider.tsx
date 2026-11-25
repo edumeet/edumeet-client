@@ -91,7 +91,7 @@ const NoiseSlider = (): React.JSX.Element => {
 				onChangeCommitted={ handleSliderChangeCommitted }
 				marks={[ { value: volumeLevel, label: `${volumeLevel.toFixed(0)} dB` } ]}
 			/>
-			<FormHelperText>
+			<FormHelperText sx={{ mx: '14px' }}>
 				{ voiceDetectionThresholdHintLabel() }
 			</FormHelperText>
 		</>
