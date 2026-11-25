@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { updatePreviewWebcam, updateWebcam } from '../../store/actions/mediaActions';
+import { updateWebcam } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -7,30 +6,20 @@ import {
 } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { MenuItem, MenuList } from '@mui/material';
-import { meActions } from '../../store/slices/meSlice';
 
 const VideoInputList = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
 	const videoDevices = useDeviceSelector('videoinput');
 	const webcamEnabled = useAppSelector((state) => state.me.webcamEnabled);
-	const [ selectedVideoDevice, setSelectedVideoDevice ] = useState(videoDevice);
+	const videoInProgress = useAppSelector((state) => state.me.videoInProgress);
 
-	const handleDeviceChange = async (deviceId: string): Promise<void> => {
+	const handleDeviceChange = (deviceId: string): void => {
 		if (deviceId) {
-			setSelectedVideoDevice(deviceId);
-			if (webcamEnabled) {
-				dispatch(meActions.setWebcamEnabled(false));
-				await dispatch(updateWebcam({ newDeviceId: deviceId }));
-			}
-			dispatch(settingsActions.setSelectedVideoDevice(deviceId));
-			await dispatch(updatePreviewWebcam({ newDeviceId: deviceId }));
+			if (webcamEnabled) dispatch(updateWebcam({ newDeviceId: deviceId }));
+			else dispatch(settingsActions.setSelectedVideoDevice(deviceId));
 		}
 	};
-
-	useEffect(() => {
-		setSelectedVideoDevice(videoDevice);
-	}, [ videoDevice ]);
 
 	return (
 		<>
@@ -40,7 +29,8 @@ const VideoInputList = (): React.JSX.Element => {
 							<MenuItem
 								key={index}
 								value={device.deviceId}
-								selected={device.deviceId === selectedVideoDevice}
+								selected={device.deviceId === videoDevice}
+								disabled={videoInProgress}
 								onClick={() => handleDeviceChange(device.deviceId)}>
 								{ device?.label ?? (index + 1) }
 							</MenuItem>

@@ -9,7 +9,7 @@ vi.mock('./startActions', () => ({ stopListeners: vi.fn() }));
 vi.mock('./recordingActions', () => ({ stopRecording: vi.fn() }));
 vi.mock('../../components/translated/translatedComponents', () => ({ largeRoomMediaOffLabel: () => 'large room' }));
 vi.mock('./mediaActions', () => ({
-	updateMic: () => async () => { calls.push('updateMic'); },
+	updateMic: (options?: { startMuted?: boolean }) => async () => { calls.push(options?.startMuted ? 'updateMic muted' : 'updateMic'); },
 	updateWebcam: () => async () => { calls.push('updateWebcam'); },
 	startExtraVideo: () => async () => { calls.push('startExtraVideo'); },
 	stopPreviewMic: () => async () => undefined,
@@ -135,5 +135,21 @@ describe('joining a large room', () => {
 		const result = await run({ peerCount: 10, fromPrecall: false, me: { audioMuted: true, videoMuted: true, lostAudio: true, lostVideo: true } });
 
 		expect(result.calls).toEqual([ 'updateMic', 'updateWebcam' ]);
+	});
+
+	it('brings a muted microphone back muted after a long disconnect', async () => {
+		config.largeRoomThreshold = 3;
+
+		const result = await run({ peerCount: 2, fromPrecall: false, me: { micEnabled: true, audioMuted: true, videoMuted: true } });
+
+		expect(result.calls).toEqual([ 'updateMic muted' ]);
+	});
+
+	it('leaves a microphone that was off off after a long disconnect', async () => {
+		config.largeRoomThreshold = 3;
+
+		const result = await run({ peerCount: 2, fromPrecall: false, me: { micEnabled: false, audioMuted: true, videoMuted: true } });
+
+		expect(result.calls).toEqual([]);
 	});
 });

@@ -336,6 +336,7 @@
   "label.resizeVideoAreas": "Redimensionează zonele video",
   "label.resizeSidePanels": "Redimensionează panourile laterale",
   "settings.verticallyStackedSidePanels": "Panouri laterale stivuite vertical",
+  "settings.voiceDetectionThreshold": "Prag de detectare a vocii",
   "settings.webcamFrameRate": "Selectează rata de cadre a webcam-ului",
   "socket.disconnected": "Ești disconectat",
   "socket.reconnected": "Ești reconectat",

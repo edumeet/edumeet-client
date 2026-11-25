@@ -333,6 +333,7 @@
   "label.resizeVideoAreas": "Videóterületek átméretezése",
   "label.resizeSidePanels": "Oldalsó panelek átméretezése",
   "settings.verticallyStackedSidePanels": "Függőlegesen egymásra rakott oldalsó panelek",
+  "settings.voiceDetectionThreshold": "Hangérzékelési küszöb",
   "settings.webcamFrameRate": "Válaszd ki a webkamera képfrekvenciáját",
   "socket.disconnected": "A kapcsolat lebomlott",
   "socket.reconnected": "Sikeres újrakapcsolódás",

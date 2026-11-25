@@ -336,6 +336,7 @@
   "label.resizeVideoAreas": "Promijeni veličinu video područja",
   "label.resizeSidePanels": "Promijeni veličinu bočnih ploča",
   "settings.verticallyStackedSidePanels": "Okomito složene bočne ploče",
+  "settings.voiceDetectionThreshold": "Prag detekcije glasa",
   "settings.webcamFrameRate": "Brzina osvježavanja kamere",
   "socket.disconnected": "Niste spojeni",
   "socket.reconnected": "Ponovno ste spojeni",

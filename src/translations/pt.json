@@ -336,6 +336,7 @@
   "label.resizeVideoAreas": "Redimensionar as áreas de vídeo",
   "label.resizeSidePanels": "Redimensionar os painéis laterais",
   "settings.verticallyStackedSidePanels": "Painéis laterais empilhados verticalmente",
+  "settings.voiceDetectionThreshold": "Limiar de deteção de voz",
   "settings.webcamFrameRate": "Selecionar frequência de imagens da webcam",
   "socket.disconnected": "Está desligado",
   "socket.reconnected": "Está novamente em sessão",

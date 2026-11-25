@@ -302,9 +302,11 @@ var config = {
 	opusMaxPlaybackRate: 48000,
 
 	/**
-	 * Optional: noise threshold used by parts of the UI.
+	 * Optional: microphone sound below this level (dB, -100 to 0) is ignored by
+	 * your own volume indicator and by the "muted but speaking" alert. A value
+	 * closer to 0 ignores more. Users can change it in the advanced audio settings.
 	 */
-	noiseThreshold: 0.2,
+	noiseThreshold: -60,
 
 	/**
 	 * Notification sound configuration.

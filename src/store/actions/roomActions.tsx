@@ -130,7 +130,7 @@ const enterRoom = (fromPrecall: boolean): AppThunk<Promise<void>> => async (
 	// Only a first join: someone back after a long disconnect keeps the media they had.
 	const participants = peers.filter((peer: { headless?: boolean }) => !peer.headless).length;
 	const largeRoom = fromPrecall && edumeetConfig.largeRoomThreshold >= 0 && participants >= edumeetConfig.largeRoomThreshold;
-	const { audioMuted, videoMuted } = getState().me;
+	const { audioMuted, videoMuted, micEnabled } = getState().me;
 
 	if (largeRoom && (!audioMuted || !videoMuted)) {
 		dispatch(meActions.setAudioMuted(true));
@@ -143,7 +143,10 @@ const enterRoom = (fromPrecall: boolean): AppThunk<Promise<void>> => async (
 
 	const startingMedia: Promise<void>[] = [];
 
-	if (lostAudio || (!audioMuted && !largeRoom)) startingMedia.push(dispatch(updateMic()));
+	// Muted and off look alike in audioMuted; a microphone that was on, muted or not, comes back as it was.
+	if (lostAudio || micEnabled || (!audioMuted && !largeRoom)) {
+		startingMedia.push(dispatch(updateMic({ startMuted: !lostAudio && micEnabled && audioMuted })));
+	}
 	if (lostVideo || (!videoMuted && !largeRoom)) startingMedia.push(dispatch(updateWebcam()));
 	if (getState().me.extraVideoEnabled) dispatch(startExtraVideo());
 
@@ -198,7 +201,7 @@ export const leaveOnPageHide = (): AppThunk<void> => (
 export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
-	{ mediaService }
+	{ mediaService, effectsService }
 ): Promise<void> => {
 	logger.debug('reconnectRoom()');
 
@@ -210,6 +213,10 @@ export const reconnectRoom = (): AppThunk<Promise<void>> => async (
 
 	// 2. Stop all active senders so they restart cleanly after rejoin.
 	//    local=true (default) suppresses mediaClosed, avoids setting audioMuted/videoMuted here.
+	//    A blur or background effect keeps its input camera open until the effect is stopped.
+	effectsService.stop(mediaService.mediaSenders['webcam'].track?.id);
+	effectsService.stop(mediaService.mediaSenders['extravideo'].track?.id);
+
 	for (const sender of Object.values(mediaService.mediaSenders)) {
 		sender.stop();
 	}

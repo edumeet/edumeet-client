@@ -1,6 +1,13 @@
 import EventEmitter from 'events';
 import { Harker } from 'hark';
 
+export const DEFAULT_NOISE_THRESHOLD = -60;
+
+// Only the slider range (-100 to 0 dB) is accepted. Anything else, such as a value in another unit
+// in a config file, would hide every sound, so it falls back to the default.
+export const validNoiseThreshold = (threshold: unknown): number =>
+	(typeof threshold === 'number' && threshold >= -100 && threshold <= 0 ? threshold : DEFAULT_NOISE_THRESHOLD);
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface VolumeWatcher {
 	// eslint-disable-next-line no-unused-vars
@@ -20,15 +27,29 @@ export declare interface VolumeWatcher {
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class VolumeWatcher extends EventEmitter {
 	public hark: Harker;
+	public threshold: number;
 	private lastVolume = -100;
 	public lastScaledVolume = 0;
 
-	constructor({ hark }: { hark: Harker }) {
+	constructor({ hark, threshold }: { hark: Harker, threshold?: number }) {
 		super();
 
 		this.hark = hark;
+		this.threshold = validNoiseThreshold(threshold);
 
 		this.handleHark();
+	}
+
+	public setThreshold(threshold: number): void {
+		this.threshold = validNoiseThreshold(threshold);
+		this.hark.setThreshold(this.threshold);
+	}
+
+	public stop(): void {
+		this.hark.stop();
+		this.lastVolume = -100;
+		this.lastScaledVolume = 0;
+		this.emit('volumeChange', { volume: -100, scaledVolume: 0 });
 	}
 
 	private handleHark(): void {
@@ -46,7 +67,7 @@ export class VolumeWatcher extends EventEmitter {
 				}
 
 				this.lastVolume = newVolume;
-				let lastScaledVolume = Math.round((newVolume - -60) * -100 / (-60) / 10);
+				let lastScaledVolume = Math.round((newVolume - this.threshold) * 10 / Math.max(-this.threshold, 1));
 
 				if (lastScaledVolume < 0)
 					lastScaledVolume = 0;

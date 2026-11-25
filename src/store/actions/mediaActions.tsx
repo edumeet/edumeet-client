@@ -22,6 +22,11 @@ const logger = new Logger('MediaActions');
 
 type MediaKind = 'camera' | 'microphone' | 'screen';
 
+const UNAVAILABLE_DEVICE_ERRORS = [ 'NotReadableError', 'TrackStartError', 'NotFoundError', 'OverconstrainedError', 'AbortError' ];
+
+const isUnavailableDevice = (error: unknown): boolean =>
+	UNAVAILABLE_DEVICE_ERRORS.includes(String((error as { name?: unknown } | null)?.name));
+
 function showMediaErrorToast(
 	// eslint-disable-next-line no-unused-vars
 	dispatch: (...args: unknown[]) => unknown,
@@ -125,6 +130,10 @@ function showMediaErrorToast(
 interface UpdateDeviceOptions {
 	newDeviceId?: string;
 	updateSelection?: boolean;
+}
+
+interface UpdateMicOptions extends UpdateDeviceOptions {
+	startMuted?: boolean;
 }
 
 interface AudioSettings {
@@ -501,10 +510,7 @@ export const updateAudioSettings = (
 	dispatch(meActions.setMicEnabled(false));
 	dispatch(stopMic());
 
-	if (micEnabled) {
-		await dispatch(updateMic());
-		if (audioMuted) dispatch(pauseMic());
-	}
+	if (micEnabled) await dispatch(updateMic({ startMuted: audioMuted }));
 };
 
 /**
@@ -515,7 +521,7 @@ export const updateAudioSettings = (
  * @param options - Options.
  * @returns {Promise<void>} Promise.
  */
-export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<Promise<void>> => async (
+export const updateMic = ({ newDeviceId, startMuted = false }: UpdateMicOptions = {}): AppThunk<Promise<void>> => async (
 	dispatch,
 	getState,
 	{ mediaService, deviceService }
@@ -532,16 +538,18 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 
 	const start = !mediaService.mediaSenders['mic'].running;
 	const replace = mediaService.mediaSenders['mic'].running && Boolean(newDeviceId);
+	// A microphone that is on but muted comes back muted, whoever starts it again (reconnect, device pick).
+	const startsMuted = start && (startMuted || (getState().me.micEnabled && getState().me.audioMuted));
 
 	let track: MediaStreamTrack | null = null;
+	let resumesLostMic = false;
 
 	try {
 		const canSendMic = getState().me.canSendMic;
 
 		if (!canSendMic) throw new Error('cannot produce audio');
-		if (newDeviceId) dispatch(settingsActions.setSelectedAudioDevice(newDeviceId));
 
-		const deviceId = deviceService.getDeviceId(newDeviceId, 'audioinput');
+		const deviceId = deviceService.getDeviceId(newDeviceId ?? getState().settings.selectedAudioDevice, 'audioinput');
 
 		if (!deviceId) logger.warn('no audio devices');
 
@@ -563,33 +571,55 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 			if (start) track = mediaService.previewMicTrack;
 
 			if (!track) {
-				const stream = await navigator.mediaDevices.getUserMedia({
-					audio: {
-						deviceId: { exact: deviceId },
-						sampleRate,
-						channelCount,
-						autoGainControl,
-						echoCancellation,
-						noiseSuppression,
-						sampleSize
-					}
-				});
+				const audioConstraints = {
+					sampleRate,
+					channelCount,
+					autoGainControl,
+					echoCancellation,
+					noiseSuppression,
+					sampleSize
+				};
+				let stream: MediaStream;
+
+				try {
+					stream = await navigator.mediaDevices.getUserMedia({
+						audio: { deviceId: { exact: deviceId }, ...audioConstraints }
+					});
+				} catch (error) {
+					// Only when turning the microphone on, never for a switch the user asked for.
+					if (newDeviceId || !isUnavailableDevice(error)) throw error;
+
+					logger.debug('updateMic() the selected microphone cannot be opened, using the default one [error:%o]', error);
+
+					stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
+				}
 
 				([ track ] = stream.getAudioTracks());
 			}
 
 			if (!track) throw new Error('no mic track');
 
-			dispatch(meActions.setPreviewMicTrackId());
-
 			const isPreview = track === mediaService.previewMicTrack;
 
 			// If we are taking the preview track we need to remove it from the media service
-			if (isPreview) mediaService.previewMicTrack = null;
+			if (isPreview) {
+				mediaService.previewMicTrack = null;
+				dispatch(meActions.setPreviewMicTrackId());
+			}
 
 			const { deviceId: trackDeviceId } = track.getSettings();
 
-			dispatch(settingsActions.setSelectedAudioDevice(trackDeviceId));
+			if (replace && !mediaService.mediaSenders['mic'].running) {
+				if (!getState().me.lostAudio) {
+					logger.debug('updateMic() the microphone was stopped during the switch, not starting it again');
+					track.stop();
+					dispatch(settingsActions.setSelectedAudioDevice(trackDeviceId));
+
+					return;
+				}
+
+				resumesLostMic = true;
+			}
 
 			if (mediaService.mediaSenders['mic'].running) {
 				await mediaService.mediaSenders['mic'].replaceTrack(track);
@@ -605,7 +635,15 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 						opusPtime: opusPtime
 					},
 					appData: { source: 'mic' }
-				});
+				}, { paused: startsMuted });
+			}
+
+			dispatch(settingsActions.setSelectedAudioDevice(trackDeviceId));
+
+			if (!mediaService.mediaSenders['mic'].running) {
+				logger.debug('updateMic() the microphone was stopped while the new track was attached');
+
+				return;
 			}
 		} else {
 			await mediaService.mediaSenders['mic'].track?.applyConstraints({
@@ -619,11 +657,24 @@ export const updateMic = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThunk<P
 		}
 
 		dispatch(meActions.setMicTrackId(mediaService.mediaSenders['mic'].track?.id));
-		if (start) dispatch(meActions.setAudioMuted(false));
+		if (start) dispatch(meActions.setAudioMuted(startsMuted));
+		else if (resumesLostMic) dispatch(meActions.setAudioMuted(false));
+		if (getState().me.lostAudio) dispatch(meActions.setLostAudio(false));
 		dispatch(meActions.setMicEnabled(true));
+		mediaService.mediaSenders['mic'].volumeWatcher?.setThreshold(getState().settings.noiseThreshold);
 	} catch (error) {
-		logger.error('updateMic() [error:%o]', error);
-		showMediaErrorToast(dispatch, error, 'microphone');
+		if (replace && !mediaService.mediaSenders['mic'].running) {
+			// A reconnect or a moderator stopped the microphone during the switch; they set its state.
+			logger.debug('updateMic() the microphone was stopped during the switch [error:%o]', error);
+		} else {
+			logger.error('updateMic() [error:%o]', error);
+			showMediaErrorToast(dispatch, error, 'microphone');
+
+			if (!mediaService.mediaSenders['mic'].running && getState().me.micEnabled) {
+				dispatch(meActions.setMicEnabled(false));
+				dispatch(meActions.setMicTrackId(undefined));
+			}
+		}
 	} finally {
 		dispatch(meActions.setAudioInProgress(false));
 	}
@@ -640,6 +691,7 @@ export const stopMic = (): AppThunk<void> => (
 	dispatch(meActions.setMicEnabled(false));
 	dispatch(meActions.setMicTrackId(undefined));
 	dispatch(meActions.setAudioMuted(true));
+	dispatch(meActions.setLostAudio(false));
 };
 
 export const pauseMic = (): AppThunk<void> => (
@@ -753,7 +805,6 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 		const canSendWebcam = getState().me.canSendWebcam;
 
 		if (!canSendWebcam) throw new Error('cannot produce video');
-		if (newDeviceId) dispatch(settingsActions.setSelectedVideoDevice(newDeviceId));
 
 		const {
 			aspectRatio,
@@ -762,7 +813,7 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 			selectedVideoDevice,
 		} = getState().settings;
 
-		const deviceId = deviceService.getDeviceId(selectedVideoDevice, 'videoinput');
+		const deviceId = deviceService.getDeviceId(newDeviceId ?? selectedVideoDevice, 'videoinput');
 
 		if (!deviceId) logger.warn('no webcam devices');
 
@@ -787,9 +838,9 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 
 			if (!track) throw new Error('no webcam track');
 
-			dispatch(meActions.setPreviewWebcamTrackId());
-
 			const isPreview = track === mediaService.previewWebcamTrack;
+
+			if (isPreview) dispatch(meActions.setPreviewWebcamTrackId());
 			const inputTrack = effectsService.effectTracks.get(track.id)?.inputTrack;
 
 			{
@@ -809,14 +860,23 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 			// If we are taking the preview track we need to remove it from the media service
 			if (isPreview) mediaService.previewWebcamTrack = null;
 
-			// User may have chosen a different device than the one initially selected
-			// so we need to update the selected device in the settings just in case
-			dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
+			// A camera that was lost (its track ended) is started with the new device; one that was turned off stays off.
+			if (replace && !mediaService.mediaSenders['webcam'].running) {
+				if (!getState().me.lostVideo) {
+					logger.debug('updateWebcam() the camera was stopped during the switch, not starting it again');
+					effectsService.stop(track.id);
+					track.stop();
+					dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
+
+					return;
+				}
+			}
 
 			if (mediaService.mediaSenders['webcam'].running) {
-				effectsService.stop(mediaService.mediaSenders['webcam'].track?.id);
+				const oldTrackId = mediaService.mediaSenders['webcam'].track?.id;
 
 				await mediaService.mediaSenders['webcam'].replaceTrack(track);
+				effectsService.stop(oldTrackId);
 				dispatch(meActions.setWebcamTrackId(mediaService.mediaSenders['webcam'].track?.id));
 			} else if (config.simulcast) {
 				const encodings = getEncodings(width, height);
@@ -835,6 +895,16 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 					appData: { source: 'webcam' }
 				});
 			}
+
+			// User may have chosen a different device than the one initially selected
+			// so we need to update the selected device in the settings just in case
+			dispatch(settingsActions.setSelectedVideoDevice(trackDeviceId));
+
+			if (!mediaService.mediaSenders['webcam'].running) {
+				logger.debug('updateWebcam() the camera was stopped while the new track was attached');
+
+				return;
+			}
 		} else {
 			await mediaService.mediaSenders['webcam'].track?.applyConstraints({
 				...getVideoConstrains(resolution, aspectRatio),
@@ -849,10 +919,23 @@ export const updateWebcam = ({ newDeviceId }: UpdateDeviceOptions = {}): AppThun
 
 		dispatch(meActions.setWebcamTrackId(mediaService.mediaSenders['webcam'].track?.id));
 		dispatch(meActions.setVideoMuted(false));
+		if (getState().me.lostVideo) dispatch(meActions.setLostVideo(false));
 		dispatch(meActions.setWebcamEnabled(true));
 	} catch (error) {
-		logger.error('updateWebcam() [error:%o]', error);
-		showMediaErrorToast(dispatch, error, 'camera');
+		if (track && track !== mediaService.mediaSenders['webcam'].track) effectsService.stop(track.id);
+
+		if (replace && !mediaService.mediaSenders['webcam'].running) {
+			// A reconnect or a moderator stopped the camera during the switch; they set its state.
+			logger.debug('updateWebcam() the camera was stopped during the switch [error:%o]', error);
+		} else {
+			logger.error('updateWebcam() [error:%o]', error);
+			showMediaErrorToast(dispatch, error, 'camera');
+
+			if (!mediaService.mediaSenders['webcam'].running && getState().me.webcamEnabled) {
+				dispatch(meActions.setWebcamEnabled(false));
+				dispatch(meActions.setWebcamTrackId(undefined));
+			}
+		}
 	} finally {
 		dispatch(meActions.setVideoInProgress(false));
 	}
@@ -870,6 +953,7 @@ export const stopWebcam = (): AppThunk<void> => (
 	dispatch(meActions.setWebcamEnabled(false));
 	dispatch(meActions.setWebcamTrackId(undefined));
 	dispatch(meActions.setVideoMuted(true));
+	dispatch(meActions.setLostVideo(false));
 };
 
 /**
@@ -885,12 +969,11 @@ export const updateScreenshareSettings = (
 	dispatch,
 	getState
 ) => {
-	logger.debug('updateVideoSettings()');
+	logger.debug('updateScreenshareSettings()');
 
 	const screenEnabled = getState().me.screenEnabled;
 
 	dispatch(settingsActions.updateSettings(settings));
-	dispatch(meActions.setScreenEnabled(false));
 
 	if (screenEnabled) await dispatch(updateScreenSharing());
 };
@@ -993,6 +1076,14 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 					appData: { source: 'screen' }
 				});
 			}
+
+			if (!mediaService.mediaSenders['screen'].running) {
+				logger.debug('updateScreenSharing() the screen share was stopped while it started');
+				stream.getTracks().forEach((streamTrack) => streamTrack.stop());
+
+				return;
+			}
+
 			mediaService.monitor?.setOutboundTrackContext(videoTrack.id, { contentType: 'screenshare' });
 
 			dispatch(meActions.setScreenEnabled(true));
@@ -1024,7 +1115,7 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 				});
 				mediaService.monitor?.setOutboundTrackContext(audioTrack.id, { contentType: 'screenshare' });
 
-				dispatch(meActions.setScreenAudioEnabled(true));
+				if (mediaService.mediaSenders['screenaudio'].running) dispatch(meActions.setScreenAudioEnabled(true));
 			}
 		} else {
 			await mediaService.mediaSenders['screen'].track?.applyConstraints({
@@ -1162,6 +1253,14 @@ export const startExtraVideo = ({ newDeviceId }: UpdateDeviceOptions = {}): AppT
 					zeroRtpOnPause: true,
 					appData: { source: 'extravideo' }
 				});
+			}
+
+			if (!mediaService.mediaSenders['extravideo'].running) {
+				logger.debug('startExtraVideo() the extra video was stopped while it started');
+				effectsService.stop(track.id);
+				dispatch(meActions.setExtraVideoTrackId(undefined));
+
+				return;
 			}
 		} else {
 			await mediaService.mediaSenders['extravideo'].track?.applyConstraints({
