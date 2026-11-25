@@ -30,6 +30,7 @@ const VideoInputChooser = ({
 	const videoDevices = useDeviceSelector('videoinput');
 	const videoInProgress = useAppSelector((state) => state.me.videoInProgress);
 	const videoDevice = useAppSelector((state) => state.settings.selectedVideoDevice);
+	const previewWebcamTrackId = useAppSelector((state) => state.me.previewWebcamTrackId);
 	const [ selectedVideoDevice, setSelectedVideoDevice ] = useState(videoDevice);
 
 	const handleDeviceChange = (deviceId: string): void => {
@@ -38,7 +39,8 @@ const VideoInputChooser = ({
 
 			if (!withConfirm) dispatch(settingsActions.setSelectedVideoDevice(deviceId));
 
-			dispatch(updatePreviewWebcam({ newDeviceId: deviceId }));
+			// On the join and lobby screens the preview is the camera's on/off state, so a camera that is off stays off.
+			if (withConfirm || previewWebcamTrackId) dispatch(updatePreviewWebcam({ newDeviceId: deviceId }));
 		}
 	};
 

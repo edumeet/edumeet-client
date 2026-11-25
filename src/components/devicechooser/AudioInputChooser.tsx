@@ -25,6 +25,7 @@ const AudioInputChooser = ({
 	const audioDevices = useDeviceSelector('audioinput');
 	const audioInProgress = useAppSelector((state) => state.me.audioInProgress);
 	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);
+	const previewMicTrackId = useAppSelector((state) => state.me.previewMicTrackId);
 	const [ selectedAudioDevice, setSelectedAudioDevice ] = useState(audioDevice);
 
 	const handleDeviceChange = (deviceId: string): void => {
@@ -33,7 +34,8 @@ const AudioInputChooser = ({
 
 			if (!withConfirm) dispatch(settingsActions.setSelectedAudioDevice(deviceId));
 
-			dispatch(updatePreviewMic({ newDeviceId: deviceId }));
+			// On the join and lobby screens the preview is the microphone's on/off state, so a microphone that is off stays off.
+			if (withConfirm || previewMicTrackId) dispatch(updatePreviewMic({ newDeviceId: deviceId }));
 		}
 	};
 

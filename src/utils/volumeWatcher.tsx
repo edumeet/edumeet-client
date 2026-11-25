@@ -28,6 +28,7 @@ export declare interface VolumeWatcher {
 export class VolumeWatcher extends EventEmitter {
 	public hark: Harker;
 	public threshold: number;
+	public stopped = false;
 	private lastVolume = -100;
 	public lastScaledVolume = 0;
 
@@ -46,6 +47,7 @@ export class VolumeWatcher extends EventEmitter {
 	}
 
 	public stop(): void {
+		this.stopped = true;
 		this.hark.stop();
 		this.lastVolume = -100;
 		this.lastScaledVolume = 0;
