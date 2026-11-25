@@ -1,4 +1,5 @@
 import type { Consumer } from 'mediasoup-client/lib/Consumer';
+import type { MediaService } from '../../services/mediaService';
 import { AppThunk } from '../store';
 import { roomActions } from '../slices/roomSlice';
 import { Logger } from '../../utils/Logger';
@@ -51,6 +52,20 @@ let rollingOver = false;
 let active = false;
 let lastProgress = -1;
 let detachListeners: Array<() => void> = [];
+
+type RemoteAudio = Pick<Consumer, 'id' | 'kind' | 'track'>;
+
+// eslint-disable-next-line no-unused-vars
+let attachConsumerAudio: ((consumer: RemoteAudio) => void) | undefined;
+
+// A long reconnect clears every listener on the media service, so the recording listens again
+// and picks up the remote audio that arrived meanwhile.
+export const reattachRecordingListeners = (mediaService: MediaService): void => {
+	if (!attachConsumerAudio) return;
+
+	mediaService.on('consumerCreated', attachConsumerAudio);
+	mediaService.getConsumers().forEach(attachConsumerAudio);
+};
 
 const recordingFilename = (): string => {
 	const now = new Date();
@@ -295,54 +310,60 @@ export const startRecording = (): AppThunk<Promise<void>> => async (
 		audioDestination = audioContext.createMediaStreamDestination();
 		audioContext.createGain().connect(audioDestination);
 
-		if (mediaService.mediaSenders['mic'].track) {
-			audioContext.createMediaStreamSource(
-				new MediaStream([ mediaService.mediaSenders['mic'].track ])
-			).connect(audioDestination);
-		}
-
-		if (mediaService.mediaSenders['screenaudio'].track) {
-			audioContext.createMediaStreamSource(
-				new MediaStream([ mediaService.mediaSenders['screenaudio'].track ])
-			).connect(audioDestination);
-		}
-
 		for (const device of [ 'mic', 'screenaudio' ] as const) {
 			const sender = mediaService.mediaSenders[device];
-			const onStarted = (): void => {
+			// The sender track stays live while muted, so the gate keeps muted audio out of the recording.
+			const gate = audioContext.createGain();
+			let source: MediaStreamAudioSourceNode | undefined;
+			const followMute = (): void => {
+				gate.gain.value = sender.paused ? 0 : 1;
+			};
+			const attachTrack = (): void => {
+				source?.disconnect();
+				source = undefined;
+
 				if (sender.track) {
-					audioContext.createMediaStreamSource(
-						new MediaStream([ sender.track ])
-					).connect(audioDestination);
+					source = audioContext.createMediaStreamSource(new MediaStream([ sender.track ]));
+					source.connect(gate);
 				}
+
+				followMute();
 			};
 
-			sender.on('started', onStarted);
-			detachListeners.push(() => sender.off('started', onStarted));
+			gate.connect(audioDestination);
+			attachTrack();
+			sender.on('started', attachTrack);
+			sender.on('trackReplaced', attachTrack);
+			sender.on('paused', followMute);
+			sender.on('resumed', followMute);
+			detachListeners.push(() => {
+				sender.off('started', attachTrack);
+				sender.off('trackReplaced', attachTrack);
+				sender.off('paused', followMute);
+				sender.off('resumed', followMute);
+			});
 		}
 
-		const onConsumerCreated = (consumer: Consumer): void => {
-			if (consumer.kind === 'audio') {
-				logger.debug('consumerCreated event');
+		const attachedConsumers = new Set<string>();
+		const onConsumerCreated = (consumer: RemoteAudio): void => {
+			if (consumer.kind !== 'audio' || attachedConsumers.has(consumer.id)) return;
 
-				audioContext.createMediaStreamSource(
-					new MediaStream([ consumer.track ])
-				).connect(audioDestination);
-			}
-		};
-
-		mediaService.on('consumerCreated', onConsumerCreated);
-		detachListeners.push(() => mediaService.off('consumerCreated', onConsumerCreated));
-
-		const audioConsumers = mediaService.getConsumers().filter((consumer) => consumer.kind === 'audio');
-
-		for (const consumer of audioConsumers) {
-			logger.debug('audioConsumer [consumer:%o]', consumer);
+			logger.debug('audioConsumer [consumerId:%s]', consumer.id);
+			attachedConsumers.add(consumer.id);
 
 			audioContext.createMediaStreamSource(
 				new MediaStream([ consumer.track ])
 			).connect(audioDestination);
-		}
+		};
+
+		attachConsumerAudio = onConsumerCreated;
+		mediaService.on('consumerCreated', onConsumerCreated);
+		detachListeners.push(() => {
+			mediaService.off('consumerCreated', onConsumerCreated);
+			attachConsumerAudio = undefined;
+		});
+
+		mediaService.getConsumers().forEach(onConsumerCreated);
 
 		screenStream = await navigator.mediaDevices.getDisplayMedia(RECORDING_CONSTRAINTS);
 

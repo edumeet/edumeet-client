@@ -92,7 +92,7 @@ export declare interface MediaService {
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'consumerScore', listener: (consumerId: string, score: number) => void): this;
 	// eslint-disable-next-line no-unused-vars
-	on(event: 'mediaClosed', listener: (source: ProducerSource) => void): this;
+	on(event: 'mediaClosed', listener: (source: ProducerSource, trackId?: string) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'transcriptionStarted', listener: () => void): this;
 	// eslint-disable-next-line no-unused-vars
@@ -160,12 +160,12 @@ export class MediaService extends EventEmitter {
 		this.signalingService = signalingService;
 
 		this.mediaSenders = {
-			mic: new MediaSender(this, this.signalingService, 'mic').on('closed', () => this.emit('mediaClosed', 'mic')),
-			webcam: new MediaSender(this, this.signalingService, 'webcam').on('closed', () => this.emit('mediaClosed', 'webcam')),
-			screen: new MediaSender(this, this.signalingService, 'screen').on('closed', () => this.emit('mediaClosed', 'screen')),
-			screenaudio: new MediaSender(this, this.signalingService, 'screenaudio').on('closed', () => this.emit('mediaClosed', 'screenaudio')),
-			extravideo: new MediaSender(this, this.signalingService, 'extravideo').on('closed', () => this.emit('mediaClosed', 'extravideo')),
-			extraaudio: new MediaSender(this, this.signalingService, 'extraaudio').on('closed', () => this.emit('mediaClosed', 'extraaudio')),
+			mic: new MediaSender(this, this.signalingService, 'mic').on('closed', (trackId) => this.emit('mediaClosed', 'mic', trackId)),
+			webcam: new MediaSender(this, this.signalingService, 'webcam').on('closed', (trackId) => this.emit('mediaClosed', 'webcam', trackId)),
+			screen: new MediaSender(this, this.signalingService, 'screen').on('closed', (trackId) => this.emit('mediaClosed', 'screen', trackId)),
+			screenaudio: new MediaSender(this, this.signalingService, 'screenaudio').on('closed', (trackId) => this.emit('mediaClosed', 'screenaudio', trackId)),
+			extravideo: new MediaSender(this, this.signalingService, 'extravideo').on('closed', (trackId) => this.emit('mediaClosed', 'extravideo', trackId)),
+			extraaudio: new MediaSender(this, this.signalingService, 'extraaudio').on('closed', (trackId) => this.emit('mediaClosed', 'extraaudio', trackId)),
 		};
 
 		// client-monitor-js keeps the issues of a closed peer connection active for good,

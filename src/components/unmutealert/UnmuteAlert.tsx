@@ -25,6 +25,7 @@ const UnmuteAlert = (): React.JSX.Element => {
 	const { mediaService } = useContext(ServiceContext);
 	const [ speaking, setSpeaking ] = useState(false);
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
+	const micTrackId = useAppSelector((state) => state.me.micTrackId);
 
 	useEffect(() => {
 		const volumeWatcher = mediaService.mediaSenders['mic'].volumeWatcher;
@@ -37,8 +38,9 @@ const UnmuteAlert = (): React.JSX.Element => {
 
 		return () => {
 			volumeWatcher?.off('volumeChange', onVolumeChange);
+			setSpeaking(false);
 		};
-	}, []);
+	}, [ micTrackId ]);
 
 	return (
 		<StyledAlert

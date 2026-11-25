@@ -82,7 +82,7 @@ overriding either map.
 | autoGainControl | Audio auto gain control. | `boolean` | `true` |
 | echoCancellation | Audio echo cancellation. | `boolean` | `true` |
 | noiseSuppression | Audio noise suppression. | `boolean` | `true` |
-| noiseThreshold | Microphone voice/noise threshold in dB. | `number` | `-60` |
+| noiseThreshold | Microphone sound below this level (dB, -100 to 0) is ignored by your own volume indicator and by the "muted but speaking" alert. A value closer to 0 ignores more. Users can change it in the advanced audio settings. | `number` | `-60` |
 | sampleRate | Audio sample rate (Hz). | `number` | `48000` |
 | channelCount | Audio channel count. | `1 \| 2` | `1` |
 | sampleSize | Audio sample size (bits). | `8 \| 16 \| 24 \| 32` | `16` |

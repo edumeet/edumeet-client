@@ -54,10 +54,12 @@ const Volume = ({
 	const [ volume, setVolume ] = useState<number>(0);
 	const audioMuted = useAppSelector((state) => state.me.audioMuted);
 	const micTrackId = useAppSelector((state) => state.me.micTrackId);
+	const noiseThreshold = useAppSelector((state) => state.settings.noiseThreshold);
 
 	useEffect(() => {
 		let media: Consumer | PeerConsumer | undefined;
 		let volumeWatcher: VolumeWatcher | undefined;
+		let previewHarkTrack: MediaStreamTrack | undefined;
 
 		if (consumer)
 			media = mediaService.getConsumer(consumer.id);
@@ -66,17 +68,18 @@ const Volume = ({
 		else if (mediaService.previewMicTrack) {
 			// We do not send it so the state is different on join dialog.
 			const harkStream = new MediaStream();
-			
-			harkStream.addTrack(mediaService.previewMicTrack.clone());
-			
+
+			previewHarkTrack = mediaService.previewMicTrack.clone();
+			harkStream.addTrack(previewHarkTrack);
+
 			const micHark = hark(harkStream, {
 				play: false,
 				interval: 50,
 				threshold: -60,
 				history: 100
 			});
-			
-			volumeWatcher = new VolumeWatcher({ hark: micHark });
+
+			volumeWatcher = new VolumeWatcher({ hark: micHark, threshold: noiseThreshold });
 		}
 
 		if (media)
@@ -90,8 +93,13 @@ const Volume = ({
 
 		return () => {
 			volumeWatcher?.off('volumeChange', onVolumeChange);
+
+			if (previewHarkTrack) {
+				volumeWatcher?.stop();
+				previewHarkTrack.stop();
+			}
 		};
-	}, [ consumer, mediaService.previewMicTrack, micTrackId ]);
+	}, [ consumer, mediaService.previewMicTrack, micTrackId, noiseThreshold ]);
 
 	// Props workaround for: https://github.com/mui/material-ui/issues/25925
 	return (

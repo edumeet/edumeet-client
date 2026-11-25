@@ -336,6 +336,7 @@
   "label.resizeVideoAreas": null,
   "label.resizeSidePanels": null,
   "settings.verticallyStackedSidePanels": null,
+  "settings.voiceDetectionThreshold": null,
   "settings.webcamFrameRate": null,
   "socket.disconnected": "आपका संपर्क टूट चूका है",
   "socket.reconnected": "आपका संपर्क पुनह जुड़ चुका है",

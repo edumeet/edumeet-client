@@ -336,6 +336,7 @@
   "label.resizeVideoAreas": "Zmień rozmiar obszarów wideo",
   "label.resizeSidePanels": "Zmień rozmiar paneli bocznych",
   "settings.verticallyStackedSidePanels": "Panele boczne ułożone pionowo",
+  "settings.voiceDetectionThreshold": "Próg wykrywania głosu",
   "settings.webcamFrameRate": "Wybierz liczbę klatek na sekundę kamery internetowej",
   "socket.disconnected": "Rozłączono",
   "socket.reconnected": "Połączono",

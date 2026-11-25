@@ -10,6 +10,7 @@ import { settingsActions } from '../slices/settingsSlice';
 import { meActions } from '../slices/meSlice';
 import { notificationsActions } from '../slices/notificationsSlice';
 import { updateMic, updateWebcam } from '../actions/mediaActions';
+import { reattachRecordingListeners } from '../actions/recordingActions';
 import { ProducerSource } from '../../utils/types';
 import { Logger } from '../../utils/Logger';
 import edumeetConfig from '../../utils/edumeetConfig';
@@ -36,6 +37,7 @@ const logger = new Logger('MediaMiddleware');
  */
 const createMediaMiddleware = ({
 	mediaService,
+	effectsService,
 }: MiddlewareOptions): Middleware => {
 	logger.debug('createMediaMiddleware()');
 
@@ -56,6 +58,7 @@ const createMediaMiddleware = ({
 				// Clear any stale listeners before re-registering (e.g. after long-disconnect reconnect
 				// where roomReady fires again and setState('joined') is dispatched a second time).
 				mediaService.removeAllListeners();
+				reattachRecordingListeners(mediaService);
 
 				// Show browser-specific warnings if configured
 				for (const warning of edumeetConfig.browserWarnings) {
@@ -216,8 +219,11 @@ const createMediaMiddleware = ({
 					}
 				});
 
-				mediaService.on('mediaClosed', (source) => {
+				mediaService.on('mediaClosed', (source, trackId) => {
 					logger.debug('mediaClosed() [source:%s]', source);
+
+					// A camera with blur or a background sends the effect's output; its input camera keeps running until the effect is stopped.
+					effectsService.stop(trackId);
 
 					if (source === 'webcam') {
 						if (!mediaService.mediaSenders['webcam'].paused) {

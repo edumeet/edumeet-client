@@ -1,11 +1,10 @@
 import { Slider, styled, Typography } from '@mui/material';
-import { Harker } from 'hark';
 import { SyntheticEvent, useContext, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { settingsActions } from '../../store/slices/settingsSlice';
 import { ServiceContext } from '../../store/store';
-import { VolumeWatcher } from '../../utils/volumeWatcher';
-import { noiseSuppressionLabel } from '../translated/translatedComponents';
+import { validNoiseThreshold, VolumeWatcher } from '../../utils/volumeWatcher';
+import { voiceDetectionThresholdLabel } from '../translated/translatedComponents';
 
 const StyledSlider = styled(Slider)(() => ({
 	'.MuiSlider-root': {
@@ -35,10 +34,15 @@ const StyledSlider = styled(Slider)(() => ({
 const NoiseSlider = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const micEnabled = useAppSelector((state) => state.me.micEnabled);
+	const micTrackId = useAppSelector((state) => state.me.micTrackId);
 	const noiseThreshold = useAppSelector((state) => state.settings.noiseThreshold);
 	const { mediaService } = useContext(ServiceContext);
 	const [ volumeLevel, setVolume ] = useState<number>(0);
-	const [ sliderValue, setSliderValue ] = useState<number>(noiseThreshold);
+	const [ sliderValue, setSliderValue ] = useState<number>(validNoiseThreshold(noiseThreshold));
+
+	useEffect(() => {
+		setSliderValue(validNoiseThreshold(noiseThreshold));
+	}, [ noiseThreshold ]);
 
 	useEffect(() => {
 		let volumeWatcher: VolumeWatcher | undefined;
@@ -55,7 +59,7 @@ const NoiseSlider = (): React.JSX.Element => {
 		return () => {
 			volumeWatcher?.off('volumeChange', onVolumeChange);
 		};
-	}, []);
+	}, [ micEnabled, micTrackId ]);
 
 	const handleSliderChange = (_event: Event, value: number | number[]): void => {
 		setSliderValue(value as number);
@@ -66,12 +70,7 @@ const NoiseSlider = (): React.JSX.Element => {
 		value: number | number[]
 	): void => {
 		if (sliderValue !== noiseThreshold) {
-			let hark: Harker | undefined;
-	
-			if (micEnabled)
-				hark = mediaService.mediaSenders['mic'].volumeWatcher?.hark;
-	
-			hark?.setThreshold(value as number);
+			mediaService.mediaSenders['mic'].volumeWatcher?.setThreshold(value as number);
 			dispatch(settingsActions.setNoiseThreshold(value as number));
 		}
 	};
@@ -79,7 +78,7 @@ const NoiseSlider = (): React.JSX.Element => {
 	return (
 		<>
 			<Typography gutterBottom>
-				{ noiseSuppressionLabel() }:
+				{ voiceDetectionThresholdLabel() }:
 			</Typography>
 			<StyledSlider
 				min={ -100 }

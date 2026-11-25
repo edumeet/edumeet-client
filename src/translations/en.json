@@ -347,6 +347,7 @@
 	"label.resizeVideoAreas": "Resize video areas",
 	"label.resizeSidePanels": "Resize side panels",
 	"settings.verticallyStackedSidePanels": "Vertically stacked side panels",
+	"settings.voiceDetectionThreshold": "Voice detection threshold",
 	"settings.webcamFrameRate": "Select your webcam frame rate",
 	"settings.enableBlurBackground": "Enable blur background effect",
 	"settings.blurBackgroundNotSupported": "Blur background effect not supported",

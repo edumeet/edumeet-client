@@ -12,7 +12,6 @@ import {
 } from '../translated/translatedComponents';
 import DeviceChooser, { ApplyButton, ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
-import { meActions } from '../../store/slices/meSlice';
 
 interface AudioInputChooserProps {
 	withConfirm?: boolean;
@@ -40,13 +39,10 @@ const AudioInputChooser = ({
 
 	const handleConfirm = (): void => {
 		if (micEnabled) {
-			dispatch(meActions.setMicEnabled(false));
 			dispatch(updateMic({ newDeviceId: selectedAudioDevice }));
 		} else {
 			dispatch(settingsActions.setSelectedAudioDevice(selectedAudioDevice));
 		}
-
-		dispatch(updatePreviewMic({ newDeviceId: selectedAudioDevice }));
 	};
 
 	useEffect(() => {

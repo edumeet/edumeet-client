@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { updateMic, updatePreviewMic } from '../../store/actions/mediaActions';
+import { updateMic } from '../../store/actions/mediaActions';
 import {
 	useAppDispatch,
 	useAppSelector,
@@ -12,20 +11,15 @@ const AudioInputList = (): React.JSX.Element => {
 	const dispatch = useAppDispatch();
 	const audioDevices = useDeviceSelector('audioinput');
 	const audioDevice = useAppSelector((state) => state.settings.selectedAudioDevice);
-	const [ selectedAudioDevice, setSelectedAudioDevice ] = useState(audioDevice);
+	const micEnabled = useAppSelector((state) => state.me.micEnabled);
+	const audioInProgress = useAppSelector((state) => state.me.audioInProgress);
 
 	const handleDeviceChange = (deviceId: string): void => {
 		if (deviceId) {
-			setSelectedAudioDevice(deviceId);
-			dispatch(settingsActions.setSelectedAudioDevice(deviceId));
-			dispatch(updatePreviewMic({ newDeviceId: deviceId }));
-			dispatch(updateMic({ newDeviceId: deviceId }));
+			if (micEnabled) dispatch(updateMic({ newDeviceId: deviceId }));
+			else dispatch(settingsActions.setSelectedAudioDevice(deviceId));
 		}
 	};
-
-	useEffect(() => {
-		setSelectedAudioDevice(audioDevice);
-	}, [ audioDevice ]);
 
 	return (
 		<>
@@ -35,7 +29,8 @@ const AudioInputList = (): React.JSX.Element => {
 						<MenuItem
 							key={index}
 							value={device.deviceId}
-							selected={device.deviceId === selectedAudioDevice}
+							selected={device.deviceId === audioDevice}
+							disabled={audioInProgress}
 							onClick={() => handleDeviceChange(device.deviceId)}>
 							{ device?.label ?? (index + 1) }
 						</MenuItem>

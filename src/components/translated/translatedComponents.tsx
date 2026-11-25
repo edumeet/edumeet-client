@@ -1017,6 +1017,11 @@ export const noiseSuppressionLabel = (): string => intl.formatMessage({
 	defaultMessage: 'Noise suppression'
 });
 
+export const voiceDetectionThresholdLabel = (): string => intl.formatMessage({
+	id: 'settings.voiceDetectionThreshold',
+	defaultMessage: 'Voice detection threshold'
+});
+
 export const selectAudioSampleRateLabel = (): string => intl.formatMessage({
 	id: 'settings.sampleRate',
 	defaultMessage: 'Select the audio sample rate'

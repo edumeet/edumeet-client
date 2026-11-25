@@ -12,7 +12,6 @@ import {
 } from '../translated/translatedComponents';
 import DeviceChooser, { ApplyButton, ChooserDiv } from './DeviceChooser';
 import { settingsActions } from '../../store/slices/settingsSlice';
-import { meActions } from '../../store/slices/meSlice';
 import { BlurButton, VideoBackgroundButton } from '../settingsdialog/SettingsSwitches';
 
 interface VideoInputChooserProps {
@@ -43,15 +42,12 @@ const VideoInputChooser = ({
 		}
 	};
 
-	const handleConfirm = async () => {
+	const handleConfirm = (): void => {
 		if (webcamEnabled) {
-			dispatch(meActions.setWebcamEnabled(false));
-			await dispatch(updateWebcam({ newDeviceId: selectedVideoDevice }));
+			dispatch(updateWebcam({ newDeviceId: selectedVideoDevice }));
 		} else {
 			dispatch(settingsActions.setSelectedVideoDevice(selectedVideoDevice));
 		}
-
-		await dispatch(updatePreviewWebcam({ newDeviceId: selectedVideoDevice }));
 	};
 
 	useEffect(() => {

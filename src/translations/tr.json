@@ -336,6 +336,7 @@
   "label.resizeVideoAreas": "Video alanlarını yeniden boyutlandır",
   "label.resizeSidePanels": "Yan panelleri yeniden boyutlandır",
   "settings.verticallyStackedSidePanels": "Dikey istiflenmiş yan paneller",
+  "settings.voiceDetectionThreshold": "Ses algılama eşiği",
   "settings.webcamFrameRate": "Web kamerası kare hızını seçin",
   "socket.disconnected": "Bağlantınız Kesildi",
   "socket.reconnected": "Yeniden bağlandınız",

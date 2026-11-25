@@ -336,6 +336,7 @@
   "label.resizeVideoAreas": null,
   "label.resizeSidePanels": null,
   "settings.verticallyStackedSidePanels": null,
+  "settings.voiceDetectionThreshold": null,
   "settings.webcamFrameRate": null,
   "socket.disconnected": "您已中斷連線",
   "socket.reconnected": "已恢復連線",

@@ -14,11 +14,17 @@ const logger = new Logger('MediaSender');
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export declare interface MediaSender {
 	// eslint-disable-next-line no-unused-vars
-	on(event: 'closed', listener: () => void): this;
+	on(event: 'closed', listener: (trackId?: string) => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'started', listener: () => void): this;
 	// eslint-disable-next-line no-unused-vars
 	on(event: 'stopped', listener: () => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'trackReplaced', listener: () => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'paused', listener: () => void): this;
+	// eslint-disable-next-line no-unused-vars
+	on(event: 'resumed', listener: () => void): this;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -27,6 +33,7 @@ export class MediaSender extends EventEmitter {
 	private signalingService: SignalingService;
 	public source: ProducerSource;
 	public volumeWatcher?: VolumeWatcher;
+	private harkTrack?: MediaStreamTrack;
 
 	public running = false;
 	public paused = false;
@@ -85,12 +92,16 @@ export class MediaSender extends EventEmitter {
 		});
 	}
 
-	public async start(producerOptions: ProducerOptions, codec?: ProducerCodec): Promise<void> {
-		logger.debug('produce() [options:%o]', producerOptions);
+	public async start(
+		producerOptions: ProducerOptions,
+		{ codec, paused = false }: { codec?: ProducerCodec; paused?: boolean } = {}
+	): Promise<void> {
+		logger.debug('produce() [options:%o, paused:%s]', producerOptions, paused);
 
 		if (this.running) throw new Error('Already producing');
 
 		this.running = true;
+		this.paused = paused;
 		this.producerOptions = producerOptions;
 		this.codec = codec;
 		this.handleTrack();
@@ -104,12 +115,17 @@ export class MediaSender extends EventEmitter {
 		const [ sfuResult ] = await Promise.allSettled(promises);
 
 		if (sfuResult.status === 'rejected') {
+			// Stopped meanwhile (for example by a reconnect): whoever stopped it decides what comes next.
+			if (!this.running) return;
+
 			this.stop();
-			
+
 			throw sfuResult.reason;
 		} else if (this.p2pProduce) {
 			sfuResult.value.pause();
 		}
+
+		if (!this.running) return;
 
 		this.emit('started');
 		this.maybeAddHark();
@@ -141,11 +157,15 @@ export class MediaSender extends EventEmitter {
 			});
 		}
 
+		const trackId = this.track?.id;
+
 		this.track?.stop();
+		this.stopHark();
+		this.producer = undefined;
 		this.producerOptions = {};
 		this.codec = undefined;
 
-		if (!local) this.emit('closed');
+		if (!local) this.emit('closed', trackId);
 		this.emit('stopped');
 
 		this.paused = false;
@@ -212,6 +232,8 @@ export class MediaSender extends EventEmitter {
 	public pause(): void {
 		logger.debug('pause()');
 
+		if (!this.running) return;
+
 		this.paused = true;
 
 		this.producer?.pause();
@@ -228,10 +250,14 @@ export class MediaSender extends EventEmitter {
 				else producer.resume();
 			});
 		}
+
+		this.emit('paused');
 	}
 
 	public resume(): void {
 		logger.debug('resume()');
+
+		if (!this.running) return;
 
 		this.paused = false;
 
@@ -249,15 +275,25 @@ export class MediaSender extends EventEmitter {
 				else producer.resume();
 			});
 		}
+
+		this.emit('resumed');
+	}
+
+	private stopHark(): void {
+		this.volumeWatcher?.stop();
+		this.harkTrack?.stop();
+		this.volumeWatcher = undefined;
+		this.harkTrack = undefined;
 	}
 
 	private maybeAddHark(): void {
-		this.volumeWatcher?.hark.stop();
+		this.stopHark();
 
 		if (this.track?.kind === 'audio') {
 			const harkStream = new MediaStream();
 
-			harkStream.addTrack(this.track.clone());
+			this.harkTrack = this.track.clone();
+			harkStream.addTrack(this.harkTrack);
 
 			const producerHark = hark(harkStream, {
 				play: false,
@@ -275,23 +311,34 @@ export class MediaSender extends EventEmitter {
 
 		if (!this.running) throw new Error('Not producing');
 
+		// The new track becomes ours only when every producer took it. Otherwise (stopped or
+		// closed meanwhile) it is stopped here and the old track stays, so nothing is left open.
+		try {
+			await this.producer?.replaceTrack({ track: track.clone() });
+
+			for (const producer of this.peerProducers.values()) {
+				await producer.replaceTrack({ track: track.clone() });
+			}
+
+			// A pending peer producer that ends up not being created does not need the track.
+			for (const producerPromise of this.peerProducingPromises.values()) {
+				await producerPromise.then((producer) => producer.replaceTrack({ track: track.clone() }), () => undefined);
+			}
+
+			if (!this.running) throw new Error('Not producing');
+		} catch (error) {
+			track.stop();
+
+			throw error;
+		}
+
 		const oldTrack = this.track;
 
 		this.producerOptions.track = track;
 		this.handleTrack();
 		this.maybeAddHark();
-		
-		await this.producer?.replaceTrack({ track: this.track?.clone() ?? null });
-
-		for (const producer of this.peerProducers.values()) {
-			await producer.replaceTrack({ track: this.track?.clone() ?? null });
-		}
-
-		for (const producerPromise of this.peerProducingPromises.values()) {
-			await producerPromise.then((producer) => producer.replaceTrack({ track: this.track?.clone() ?? null }));
-		}
-
 		oldTrack?.stop();
+		this.emit('trackReplaced');
 	}
 
 	private async sfuProduce(): Promise<Producer> {
@@ -309,7 +356,8 @@ export class MediaSender extends EventEmitter {
 		// black/silence (no real content); we re-enable it once the transform is on.
 		const holdForE2ee = Boolean(this.mediaService.e2eeService?.enabled) && Boolean(clonedTrack);
 
-		if (holdForE2ee && clonedTrack) clonedTrack.enabled = false;
+		// A sender started paused (a muted microphone) sends silence until the pause reaches the server.
+		if ((holdForE2ee || this.paused) && clonedTrack) clonedTrack.enabled = false;
 
 		const producerOptions = {
 			...this.producerOptions,
@@ -383,8 +431,10 @@ export class MediaSender extends EventEmitter {
 		producer.observer.on('pause', pauseListener);
 		producer.observer.on('resume', resumeListener);
 
-		// Re-apply pause if it was requested during the await sendTransport.produce() gap
-		if (this.paused) this.producer.pause();
+		// Re-apply pause if it was requested during the await sendTransport.produce() gap. A producer
+		// created from a disabled copy starts paused, so one resumed meanwhile is resumed here.
+		if (this.paused) producer.pause();
+		else if (!holdForE2ee && producer.paused) producer.resume();
 
 		return producer;
 	}

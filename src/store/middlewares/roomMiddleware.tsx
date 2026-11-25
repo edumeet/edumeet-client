@@ -8,7 +8,7 @@ import { AppDispatch, MiddlewareOptions, RootState } from '../store';
 import { joinRoom, leaveRoom } from '../actions/roomActions';
 import { meetingTokenRejected } from '../actions/meetingTokenActions';
 import { setDisplayName, setPicture } from '../actions/meActions';
-import { pauseMic, startExtraVideo, updateMic, updateWebcam } from '../actions/mediaActions';
+import { startExtraVideo, updateMic, updateWebcam } from '../actions/mediaActions';
 import { permissionsActions } from '../slices/permissionsSlice';
 import { meActions } from '../slices/meSlice';
 import { initialRoomSession, roomSessionsActions } from '../slices/roomSessionsSlice';
@@ -334,11 +334,7 @@ const createRoomMiddleware = ({
 							const { micEnabled, audioMuted } = getState().me;
 
 							// Muted and off look alike in audioMuted; only a microphone that was on comes back.
-							if (lostAudio || micEnabled) {
-								dispatch(updateMic()).then(() => {
-									if (!lostAudio && audioMuted) dispatch(pauseMic());
-								});
-							}
+							if (lostAudio || micEnabled) dispatch(updateMic({ startMuted: !lostAudio && audioMuted }));
 							if (lostVideo || !getState().me.videoMuted) dispatch(updateWebcam());
 							if (getState().me.extraVideoEnabled) dispatch(startExtraVideo());
 

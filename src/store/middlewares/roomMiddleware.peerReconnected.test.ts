@@ -8,9 +8,8 @@ vi.mock('../selectors', () => ({ isInsertableStreamsSupported: () => false }));
 vi.mock('../actions/roomActions', () => ({ joinRoom: vi.fn(), leaveRoom: vi.fn() }));
 vi.mock('../actions/meActions', () => ({ setDisplayName: vi.fn(), setPicture: vi.fn() }));
 vi.mock('../actions/mediaActions', () => ({
-	pauseMic: () => ({ type: 'pauseMic' }),
 	startExtraVideo: () => ({ type: 'startExtraVideo' }),
-	updateMic: () => ({ type: 'updateMic' }),
+	updateMic: (options?: { startMuted?: boolean }) => ({ type: options?.startMuted ? 'updateMic muted' : 'updateMic' }),
 	updateWebcam: () => ({ type: 'updateWebcam' }),
 }));
 vi.mock('../actions/meetingTokenActions', () => ({ meetingTokenRejected: vi.fn() }));
@@ -35,7 +34,7 @@ const mediaAfterReconnect = async (me: Record<string, unknown>) => {
 	const mediaService = { setMonitorAttachments: vi.fn() };
 	const started: string[] = [];
 	const dispatch = vi.fn((action: { type: string }) => {
-		if ([ 'updateMic', 'pauseMic', 'updateWebcam' ].includes(action.type)) {
+		if ([ 'updateMic', 'updateMic muted', 'updateWebcam' ].includes(action.type)) {
 			started.push(action.type);
 
 			return Promise.resolve();
@@ -74,8 +73,8 @@ describe('peerReconnected brings the microphone back as it was', () => {
 		expect(await mediaAfterReconnect({ micEnabled: false, audioMuted: true })).toEqual([]);
 	});
 
-	it('brings a muted microphone back muted', async () => {
-		expect(await mediaAfterReconnect({ micEnabled: true, audioMuted: true })).toEqual([ 'updateMic', 'pauseMic' ]);
+	it('brings a muted microphone back muted, without a moment unmuted', async () => {
+		expect(await mediaAfterReconnect({ micEnabled: true, audioMuted: true })).toEqual([ 'updateMic muted' ]);
 	});
 
 	it('brings a microphone that was on back on', async () => {

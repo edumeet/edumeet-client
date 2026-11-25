@@ -336,6 +336,7 @@
   "label.resizeVideoAreas": "Змінити розмір областей відео",
   "label.resizeSidePanels": "Змінити розмір бічних панелей",
   "settings.verticallyStackedSidePanels": "Вертикально розташовані бічні панелі",
+  "settings.voiceDetectionThreshold": "Поріг виявлення голосу",
   "settings.webcamFrameRate": "Виберіть частоту кадрів вебкамери",
   "socket.disconnected": "Ви відключені",
   "socket.reconnected": "Ви знову підключилися",
