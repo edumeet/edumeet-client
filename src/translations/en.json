@@ -348,6 +348,7 @@
 	"label.resizeSidePanels": "Resize side panels",
 	"settings.verticallyStackedSidePanels": "Vertically stacked side panels",
 	"settings.voiceDetectionThreshold": "Voice detection threshold",
+	"settings.voiceDetectionThresholdHint": "Your volume indicator and the muted warning ignore sound below this level",
 	"settings.webcamFrameRate": "Select your webcam frame rate",
 	"settings.enableBlurBackground": "Enable blur background effect",
 	"settings.blurBackgroundNotSupported": "Blur background effect not supported",

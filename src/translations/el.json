@@ -337,6 +337,7 @@
   "label.resizeSidePanels": "Αλλαγή μεγέθους πλευρικών πάνελ",
   "settings.verticallyStackedSidePanels": "Κάθετα τοποθετημένα πλευρικά πάνελ",
   "settings.voiceDetectionThreshold": "Όριο ανίχνευσης φωνής",
+  "settings.voiceDetectionThresholdHint": "Η ένδειξη έντασης και η προειδοποίηση σίγασης αγνοούν τον ήχο κάτω από αυτό το επίπεδο",
   "settings.webcamFrameRate": "Επιλέξτε ρυθμό καρέ της κάμερας",
   "socket.disconnected": "Είστε αποσυνδεδεμένος",
   "socket.reconnected": "Επανασυνδεθήκατε",

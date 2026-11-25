@@ -346,6 +346,7 @@
 	"label.resizeSidePanels": null,
 	"settings.verticallyStackedSidePanels": "پنل‌های کناری روی هم قرار گیرند",
 	"settings.voiceDetectionThreshold": null,
+	"settings.voiceDetectionThresholdHint": null,
 	"settings.webcamFrameRate": "انتخاب نرخ فریم دوربین",
 	"settings.enableBlurBackground": "فعال‌سازی جلوه تار کردن پس‌زمینه",
 	"settings.blurBackgroundNotSupported": "جلوه تار کردن پس‌زمینه پشتیبانی نمی‌شود",

@@ -334,6 +334,7 @@
   "label.resizeSidePanels": "Oldalsó panelek átméretezése",
   "settings.verticallyStackedSidePanels": "Függőlegesen egymásra rakott oldalsó panelek",
   "settings.voiceDetectionThreshold": "Hangérzékelési küszöb",
+  "settings.voiceDetectionThresholdHint": "A hangerőjelző és a némítási figyelmeztetés figyelmen kívül hagyja az e szint alatti hangot",
   "settings.webcamFrameRate": "Válaszd ki a webkamera képfrekvenciáját",
   "socket.disconnected": "A kapcsolat lebomlott",
   "socket.reconnected": "Sikeres újrakapcsolódás",

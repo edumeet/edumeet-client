@@ -337,6 +337,7 @@
   "label.resizeSidePanels": "Größe der Seitenpanels ändern",
   "settings.verticallyStackedSidePanels": "Seitenpanels vertikal stapeln",
   "settings.voiceDetectionThreshold": "Schwellenwert für Sprachaktivität",
+  "settings.voiceDetectionThresholdHint": "Deine Lautstärkeanzeige und der Stummschalt-Hinweis ignorieren Geräusche unter diesem Pegel",
   "settings.webcamFrameRate": "Webcam-Bildrate auswählen",
   "socket.disconnected": "Verbindung unterbrochen",
   "socket.reconnected": "Verbindung wiederhergestellt",

@@ -1118,18 +1118,10 @@ export const updateScreenSharing = (): AppThunk<Promise<void>> => async (
 				if (mediaService.mediaSenders['screenaudio'].running) dispatch(meActions.setScreenAudioEnabled(true));
 			}
 		} else {
+			// Only the video: Chrome rejects any applyConstraints on shared screen audio (OverconstrainedError).
 			await mediaService.mediaSenders['screen'].track?.applyConstraints({
 				...getScreenshareVideoConstrains(screenSharingResolution),
 				frameRate: screenSharingFrameRate
-			});
-
-			await mediaService.mediaSenders['screenaudio'].track?.applyConstraints({
-				sampleRate,
-				channelCount,
-				autoGainControl,
-				echoCancellation,
-				noiseSuppression,
-				sampleSize
 			});
 		}
 	} catch (error) {

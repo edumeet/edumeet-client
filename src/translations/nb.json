@@ -337,6 +337,7 @@
   "label.resizeSidePanels": "Endre bredde på sidepanelene",
   "settings.verticallyStackedSidePanels": "Stable sidepaneler vertikalt",
   "settings.voiceDetectionThreshold": "Terskel for stemmedeteksjon",
+  "settings.voiceDetectionThresholdHint": "Lydnivåindikatoren og varselet om dempet mikrofon ignorerer lyd under dette nivået",
   "settings.webcamFrameRate": "Velg webkamera bildefrekvens",
   "socket.disconnected": "Du er frakoblet",
   "socket.reconnected": "Du er koblet til igjen",

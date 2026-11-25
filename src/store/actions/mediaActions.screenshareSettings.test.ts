@@ -11,12 +11,14 @@ import permissionsSlice, { permissionsActions } from '../slices/permissionsSlice
 import { permissions } from '../../utils/roles';
 import { updateScreenSharing, updateScreenshareSettings } from './mediaActions';
 
-const setup = (sharing: boolean) => {
+const setup = (sharing: boolean, withAudio = false) => {
 	const screenTrack = { applyConstraints: vi.fn(async () => undefined) };
+	// Chrome rejects any applyConstraints on shared screen audio.
+	const screenAudioTrack = { applyConstraints: vi.fn(async () => { throw new DOMException('Cannot satisfy constraints', 'OverconstrainedError'); }) };
 	const mediaService = {
 		mediaSenders: {
 			screen: { running: sharing, track: sharing ? screenTrack : null, start: vi.fn() },
-			screenaudio: { running: false, track: null, start: vi.fn() },
+			screenaudio: { running: withAudio, track: withAudio ? screenAudioTrack : null, start: vi.fn() },
 		},
 	};
 	const store = configureStore({
@@ -33,7 +35,7 @@ const setup = (sharing: boolean) => {
 	store.dispatch(permissionsActions.setPermissions([ permissions.SHARE_SCREEN ]));
 	store.dispatch(meActions.setScreenEnabled(sharing));
 
-	return { mediaService, screenTrack, store, dispatch };
+	return { mediaService, screenTrack, screenAudioTrack, store, dispatch };
 };
 
 describe('changing the screen sharing frame rate', () => {
@@ -47,6 +49,16 @@ describe('changing the screen sharing frame rate', () => {
 		expect(store.getState().settings.screenSharingFrameRate).toBe(30);
 		expect(screenTrack.applyConstraints).toHaveBeenCalledWith(expect.objectContaining({ frameRate: 30 }));
 		expect(mediaService.mediaSenders.screen.start).not.toHaveBeenCalled();
+	});
+
+	it('leaves shared screen audio alone, so no error is shown for it', async () => {
+		const { screenTrack, screenAudioTrack, store, dispatch } = setup(true, true);
+
+		await dispatch(updateScreenshareSettings({ screenSharingFrameRate: 15 }));
+
+		expect(screenTrack.applyConstraints).toHaveBeenCalledWith(expect.objectContaining({ frameRate: 15 }));
+		expect(screenAudioTrack.applyConstraints).not.toHaveBeenCalled();
+		expect(store.getState().me.screenEnabled).toBe(true);
 	});
 
 	it('only stores the frame rate when nothing is shared', async () => {

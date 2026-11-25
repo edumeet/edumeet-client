@@ -337,6 +337,7 @@
   "label.resizeSidePanels": "Ridimensiona i pannelli laterali",
   "settings.verticallyStackedSidePanels": "Pannelli laterali impilati verticalmente",
   "settings.voiceDetectionThreshold": "Soglia di rilevamento della voce",
+  "settings.voiceDetectionThresholdHint": "L'indicatore del volume e l'avviso di microfono disattivato ignorano i suoni sotto questo livello",
   "settings.webcamFrameRate": "Seleziona il frame rate della videocamera",
   "socket.disconnected": "Sei stato disconnesso",
   "socket.reconnected": "Sei stato riconnesso",

@@ -337,6 +337,7 @@
   "label.resizeSidePanels": null,
   "settings.verticallyStackedSidePanels": null,
   "settings.voiceDetectionThreshold": null,
+  "settings.voiceDetectionThresholdHint": null,
   "settings.webcamFrameRate": null,
   "socket.disconnected": "Байланыс ажыратылды",
   "socket.reconnected": "Сіз қайта қосылдыңыз",
