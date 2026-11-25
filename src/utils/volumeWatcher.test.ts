@@ -70,5 +70,6 @@ describe('the noise threshold of a volume meter', () => {
 
 		expect(hark.stop).toHaveBeenCalled();
 		expect(scaled[scaled.length - 1]).toBe(0);
+		expect(watcher.stopped).toBe(true);
 	});
 });

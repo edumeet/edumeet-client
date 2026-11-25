@@ -50,8 +50,9 @@ const NoiseSlider = (): React.JSX.Element => {
 		if (micEnabled)
 			volumeWatcher = mediaService.mediaSenders['mic'].volumeWatcher;
 
+		// A microphone that restarts (audio settings) stops its meter; the level stays until the new one reports.
 		const onVolumeChange = ({ volume }: { volume: number }): void => {
-			setVolume(volume);
+			if (!volumeWatcher?.stopped) setVolume(volume);
 		};
 
 		volumeWatcher?.on('volumeChange', onVolumeChange);
