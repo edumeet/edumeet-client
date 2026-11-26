@@ -471,6 +471,12 @@ var config = {
 		logo: 'images/logo.edumeet.svg',
 
 		/**
+		 * Logo image URL in the app bar. Unset: the logo, or the light eduMEET logo on the
+		 * default dark app bar.
+		 */
+		appBarLogo: 'images/logo.edumeet.light.svg',
+
+		/**
 		 * Border style for the active speaker tile.
 		 */
 		activeSpeakerBorder: '1px solid rgba(255, 255, 255, 1.0)',

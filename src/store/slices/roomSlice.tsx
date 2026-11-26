@@ -80,7 +80,7 @@ type RoomUpdate = Omit<RoomState, 'roomMode' | 'state' | 'countdownTimer'>;
 
 const initialState: RoomState = {
 	headless: headlessFromUrl(typeof window === 'undefined' ? undefined : window.location.href) === true,
-	logo: edumeetConfig.theme.logo,
+	logo: undefined,
 	backgroundImage: edumeetConfig.theme.backgroundImage,
 	roomMode: 'P2P',
 	state: 'new',

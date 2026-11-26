@@ -1,4 +1,5 @@
 import { ClientMonitorConfig } from '@observertc/client-monitor-js';
+import { ThemeOptions } from '@mui/material';
 import { defaultEdumeetConfig, EdumeetConfig } from './types';
 
 declare module '@mui/material/styles' {
@@ -13,6 +14,7 @@ declare module '@mui/material/styles' {
 		precallTitleTextColor: string;
 		precallTitleIconColor: string;
 		logo: string;
+		appBarLogo?: string;
 		activeSpeakerBorder: string;
 		videoBackroundColor: string;
 		videoAvatarImage: string;
@@ -33,6 +35,7 @@ declare module '@mui/material/styles' {
 		precallTitleTextColor?: string;
 		precallTitleIconColor?: string;
 		logo?: string;
+		appBarLogo?: string;
 		activeSpeakerBorder?: string;
 		videoBackroundColor?: string;
 		videoAvatarImage?: string;
@@ -72,9 +75,24 @@ const resolveClientMonitorConfig = (): ClientMonitorConfig | undefined => {
 	return { ...defaultEdumeetConfig.clientMonitor, ...configured };
 };
 
+/**
+ * The default app bar is dark: a deployment that sets neither its own logo nor its own app bar
+ * colour gets the light eduMEET logo there. Any other deployment keeps its logo in the app bar,
+ * unless it sets appBarLogo.
+ */
+const resolveTheme = (): ThemeOptions => {
+	const configured = windowConfig.theme ?? {};
+	const theme = { ...defaultEdumeetConfig.theme, ...configured };
+	const defaultLook = !configured.logo && !configured.appBarColor;
+
+	const fallback = defaultLook ? 'images/logo.edumeet.light.svg' : theme.logo;
+
+	return { ...theme, appBarLogo: configured.appBarLogo || fallback };
+};
+
 export default {
 	...defaultEdumeetConfig,
 	...windowConfig,
-	theme: { ...defaultEdumeetConfig.theme, ...windowConfig.theme },
+	theme: resolveTheme(),
 	clientMonitor: resolveClientMonitorConfig(),
 };
