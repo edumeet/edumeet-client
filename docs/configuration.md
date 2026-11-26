@@ -41,7 +41,8 @@ var config = {
     precallTitleTextColor: 'rgba(0, 0, 0, 1.0)',
     precallTitleIconColor: 'rgba(0, 0, 0, 1.0)',
 
-    logo: 'images/logo.edumeet.svg'
+    logo: 'images/logo.edumeet.svg',
+    appBarLogo: 'images/logo.edumeet.light.svg'
   }
 };
 ```
@@ -178,6 +179,7 @@ Theme/UI parameters live under `config.theme` (they were previously shown mixed 
 | theme.precallTitleIconColor | Pre-call title icon color. | `string` | `rgba(0, 0, 0, 1.0)` |
 | theme.backgroundImage | Optional background image URL. | `string` | *(unset)* |
 | theme.logo | Logo URL. | `string` | `images/logo.edumeet.svg` |
+| theme.appBarLogo | Logo URL in the app bar. | `string` | `images/logo.edumeet.light.svg` when neither `theme.logo` nor `theme.appBarColor` is set, else `theme.logo` |
 | theme.activeSpeakerBorder | Active speaker border CSS. | `string` | `1px solid rgba(255, 255, 255, 1.0)` |
 | theme.videoBackroundColor | Video tile background color. | `string` | `rgba(49, 49, 49, 0.9)` |
 | theme.videoAvatarImage | Fallback avatar image URL. | `string` | `images/buddy.svg` |
