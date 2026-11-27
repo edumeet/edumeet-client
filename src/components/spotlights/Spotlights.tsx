@@ -89,12 +89,13 @@ const Spotlights = ({
 		});
 	}, []);
 
-	const tileKeys: string[] = [];
+	// The order the tiles are shown in (their CSS order): the rows computed
+	// below are only the rows the browser wraps them into if it is the same.
+	const tileKeys: string[] = videoConsumers.map((c) => c.id);
 
 	if (!hideSelfView && screenEnabled) tileKeys.push(SCREEN_KEY);
 	if (!hideSelfView && extraVideoEnabled) tileKeys.push(EXTRAVIDEO_KEY);
 	if (drawingEnabled) tileKeys.push(DRAWING_KEY);
-	videoConsumers.forEach((c) => tileKeys.push(c.id));
 
 	const tileKeysSig = tileKeys.join('|');
 
