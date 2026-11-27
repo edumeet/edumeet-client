@@ -5,7 +5,7 @@ import { useMRTLocalization } from '../../../utils/mrtLocalization';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
 import { Tenant, TenantOAuth } from '../../../utils/types';
 import edumeetConfig from '../../../utils/edumeetConfig';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { createData, deleteData, getData, getDataByTenantID, patchData } from '../../../store/actions/managementActions';
 import { notificationsActions } from '../../../store/slices/notificationsSlice';
 import { TenantProp } from './Tenant';
@@ -16,6 +16,8 @@ const TenantOAuthTable = (props: TenantProp) => {
 
 	const dispatch = useAppDispatch();
 	const localization = useMRTLocalization();
+	// Where the sign-in goes is set by a super admin; client id, secret and scope by the tenant's admins.
+	const { superAdmin } = useAppSelector((state) => state.management);
 
 	type TenantOptionTypes = Array<Tenant>
 
@@ -277,13 +279,18 @@ const TenantOAuthTable = (props: TenantProp) => {
 		} else if (id != 0) {
 			dispatch(patchData(id, { 
 				'tenantId': tenantId,
-				'access_url': accessUrl,
-				'authorize_url': authorizeUrl,
-				'profile_url': profileUrl,
+				...(superAdmin ? {
+					'access_url': accessUrl,
+					'authorize_url': authorizeUrl,
+					'profile_url': profileUrl,
+					'end_session_endpoint': end_session_endpoint
+				} : {}),
+				// Never shown, so only sent when entered: an empty field keeps the stored value.
+				...(key ? { 'key': key } : {}),
+				...(secret ? { 'secret': secret } : {}),
 				'redirect_uri': redirect,
 				'scope': scope,
 				'scope_delimiter': scopeDelimeter,
-				'end_session_endpoint': end_session_endpoint,
 				'name_parameter': name_parameter
 			}, 'tenantOAuths')).then(() => {
 				fetchProduct();
@@ -295,7 +302,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 	
 	return <>
 		<div>
-			<Button variant="outlined" onClick={() => handleClickOpen()}>
+			<Button variant="outlined" disabled={!superAdmin} onClick={() => handleClickOpen()}>
 				{addNewLabel()}
 			</Button>
 			<hr/>
@@ -314,9 +321,10 @@ const TenantOAuthTable = (props: TenantProp) => {
 						type="text"
 						fullWidth
 						value={wellknown}
+						disabled={!superAdmin}
 						onChange={handleWellknownChange}
 					/>
-					<Button onClick={handleWellknownUpdate} variant="contained" fullWidth disabled={wellknownEmpty} >{updateParamsFromUrlLabel()}</Button>
+					<Button onClick={handleWellknownUpdate} variant="contained" fullWidth disabled={wellknownEmpty || !superAdmin} >{updateParamsFromUrlLabel()}</Button>
 					<TextField
 						margin="dense"
 						required
@@ -346,6 +354,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						type="text"
 						fullWidth
 						value={accessUrl}
+						disabled={!superAdmin}
 						onChange={handleAccessUrlChange}
 					/>
 					<TextField
@@ -357,6 +366,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						type="text"
 						fullWidth
 						value={authorizeUrl}
+						disabled={!superAdmin}
 						onChange={handleAuthorizeUrlChange}
 					/>
 					<TextField
@@ -368,6 +378,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						fullWidth
 						onChange={handleProfileUrlChange}
 						value={profileUrl}
+						disabled={!superAdmin}
 					/>
 					<TextField
 						required
@@ -409,6 +420,7 @@ const TenantOAuthTable = (props: TenantProp) => {
 						type="text"
 						fullWidth
 						value={end_session_endpoint}
+						disabled={!superAdmin}
 						onChange={handleEndSessionChange}
 					/>
 					<TextField
@@ -476,6 +488,8 @@ const TenantOAuthTable = (props: TenantProp) => {
 					if (typeof tname_parameter === 'string') { setNameParameter(tname_parameter); } else {
 						setNameParameter('');
 					}
+					setKey('');
+					setSecret('');
 
 					handleClickOpenNoreset();
 
