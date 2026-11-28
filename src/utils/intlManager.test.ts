@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { findLocale, invitationLocales, isRtlLocale, localeList } from './intlManager';
+import { describe, expect, it, vi } from 'vitest';
+import { findLocale, invitationLocales, isRtlLocale, languageTag, localeList, translatedLanguageName } from './intlManager';
 
 describe('findLocale', () => {
 	it.each([
@@ -61,8 +61,53 @@ describe('localeList', () => {
 	// The first code becomes the page language and the locale for dates and numbers.
 	const languageNames = new Intl.DisplayNames([ 'en' ], { type: 'language', fallback: 'none' });
 
-	it.each(localeList.map(({ name, locale }) => [ name, locale[0] ]))('%s uses a real language code (%s)', (_name, code) => {
+	it.each(localeList.map(({ nativeName, locale }) => [ nativeName, locale[0] ]))('%s uses a real language code (%s)', (_name, code) => {
 		expect(languageNames.of(code)).toBeDefined();
+	});
+
+	it.each(localeList.map((entry) => [ entry.nativeName, entry ] as const))('%s is the name of the language in itself', (_name, entry) => {
+		expect(translatedLanguageName(entry, languageTag(entry))).toBeUndefined();
+	});
+
+	it('is sorted by the native name', () => {
+		const names = localeList.map(({ nativeName }) => nativeName);
+
+		expect(names).toEqual([ ...names ].sort(new Intl.Collator('en').compare));
+	});
+});
+
+describe('translatedLanguageName', () => {
+	it.each([
+		[ 'de', 'en', 'German' ],
+		[ 'cn', 'en', 'Simplified Chinese' ],
+		[ 'tw', 'en', 'Traditional Chinese' ],
+		[ 'en', 'de', 'Englisch' ],
+	])('names %s in %s (%s)', (file, uiLocale, name) => {
+		expect(translatedLanguageName(localeList.find((entry) => entry.file === file)!, uiLocale)).toBe(name);
+	});
+
+	it('starts the name with a capital letter in a menu', () => {
+		expect(translatedLanguageName(findLocale('de')!, 'pl')).toBe('Niemiecki');
+	});
+
+	it('gives nothing when the name is the same as the native name', () => {
+		expect(translatedLanguageName(findLocale('pl')!, 'pl')).toBeUndefined();
+	});
+
+	it('gives nothing when the browser has no names in the UI language', () => {
+		const of = vi.spyOn(Intl.DisplayNames.prototype, 'of').mockReturnValue(undefined);
+
+		expect(translatedLanguageName(findLocale('de')!, 'kk')).toBeUndefined();
+		of.mockRestore();
+	});
+
+	it('gives nothing when the browser falls back to English names', () => {
+		const english = new Intl.DisplayNames([ 'en' ], { type: 'language' });
+		const original = Intl.DisplayNames.prototype.of;
+		const of = vi.spyOn(Intl.DisplayNames.prototype, 'of').mockImplementation((code) => original.call(english, code));
+
+		expect(translatedLanguageName(findLocale('de')!, 'kk')).toBeUndefined();
+		of.mockRestore();
 	});
 });
 

@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { setLocale } from '../../store/actions/localeActions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { findLocale, localeList } from '../../utils/intlManager';
+import LanguageName from './LanguageName';
 import {
 	selectLanguageLabel
 } from '../translated/translatedComponents';
@@ -55,16 +56,16 @@ const LanguageSelector = ({ compact = false }: LanguageSelectorProps): React.JSX
 					</span>
 				</Tooltip>
 				<Menu anchorEl={menuAnchor} open={menuAnchor !== null} onClose={() => setMenuAnchor(null)}>
-					{ localeList.map(({ name, locale: listLocale }) => (
+					{ localeList.map((language) => (
 						<MenuItem
-							key={listLocale[0]}
-							selected={listLocale[0] === value}
+							key={language.locale[0]}
+							selected={language.locale[0] === value}
 							onClick={() => {
 								setMenuAnchor(null);
-								dispatch(setLocale(listLocale[0]));
+								dispatch(setLocale(language.locale[0]));
 							}}
 						>
-							{ name }
+							<LanguageName language={language} />
 						</MenuItem>
 					))}
 				</Menu>
@@ -81,9 +82,9 @@ const LanguageSelector = ({ compact = false }: LanguageSelectorProps): React.JSX
 				autoWidth
 				disabled={localeInProgress}
 			>
-				{ localeList.map(({ name, locale: listLocale }) => (
-					<MenuItem key={listLocale[0]} value={listLocale[0]} >
-						{ name }
+				{ localeList.map((language) => (
+					<MenuItem key={language.locale[0]} value={language.locale[0]} >
+						<LanguageName language={language} />
 					</MenuItem>
 				))}
 			</Select>

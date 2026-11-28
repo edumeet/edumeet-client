@@ -31,6 +31,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { findLocale, invitationLocales } from '../../../utils/intlManager';
 import { browserTimezone, instantToWallClock, timezoneOptions, wallClockToInstant } from '../../../utils/timezones';
 import { toMomentLocale } from '../../../utils/momentLocale';
+import LanguageName from '../../languageselector/LanguageName';
 import {
 	createData,
 	deleteData,
@@ -679,8 +680,10 @@ const MeetingsTable = ({ roomId: roomIdProp, tenantId: tenantIdProp }: MeetingsT
 								value={locale}
 								onChange={(e) => setLocale(e.target.value)}
 							>
-								{invitationLocales.map(({ file, name }) => (
-									<MenuItem key={file} value={file}>{name}</MenuItem>
+								{invitationLocales.map((language) => (
+									<MenuItem key={language.file} value={language.file}>
+										<LanguageName language={language} />
+									</MenuItem>
 								))}
 							</Select>
 						</FormControl>

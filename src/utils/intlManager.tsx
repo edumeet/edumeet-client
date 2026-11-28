@@ -1,9 +1,10 @@
 import { createIntl, createIntlCache } from 'react-intl';
 
 export interface ILocale {
-	name: string;
+	nativeName: string;
 	file: string;
 	locale: string[];
+	tag?: string;
 	direction?: 'rtl';
 	// The management server has no invitation e-mail template in this language.
 	invitations?: false;
@@ -13,121 +14,124 @@ export interface ILocale {
 
 export const localeList: ILocale[] = [
 	{
-		name: 'English',
-		file: 'en',
-		locale: [ 'en', 'en-en' ]
-	},
-	{
-		name: 'Czech',
+		nativeName: 'Čeština',
 		file: 'cs',
 		locale: [ 'cs', 'cs-cs' ]
 	},
 	{
-		name: 'Chinese (Simplified)',
-		file: 'cn',
-		locale: [ 'zh', 'zh-cn', 'zh-sg', 'zh-hans' ]
-	}, // hans
-	{
-		name: 'Chinese (Traditional)',
-		file: 'tw',
-		locale: [ 'zh-tw', 'zh-hk', 'zh-mo', 'zh-hant' ]
-	}, // hant
-	{
-		name: 'Croatian',
-		file: 'hr',
-		locale: [ 'hr', 'hr-hr' ]
-	},
-	{
-		name: 'Danish',
+		nativeName: 'Dansk',
 		file: 'dk',
 		locale: [ 'da', 'da-dk' ]
 	},
 	{
-		name: 'French',
-		file: 'fr',
-		locale: [ 'fr', 'fr-fr' ]
-	},
-	{
-		name: 'German',
+		nativeName: 'Deutsch',
 		file: 'de',
 		locale: [ 'de', 'de-de' ]
 	},
 	{
-		name: 'Greek',
-		file: 'el',
-		locale: [ 'el', 'el-el' ]
+		nativeName: 'English',
+		file: 'en',
+		locale: [ 'en', 'en-en' ]
 	},
 	{
-		name: 'Hindi',
-		file: 'hi',
-		locale: [ 'hi', 'hi-hi' ]
+		nativeName: 'Español',
+		file: 'es',
+		locale: [ 'es', 'es-es' ]
 	},
 	{
-		name: 'Hungarian (magyar)',
-		file: 'hu',
-		locale: [ 'hu', 'hu-hu' ]
+		nativeName: 'Français',
+		file: 'fr',
+		locale: [ 'fr', 'fr-fr' ]
 	},
 	{
-		name: 'Italian',
+		nativeName: 'Hrvatski',
+		file: 'hr',
+		locale: [ 'hr', 'hr-hr' ]
+	},
+	{
+		nativeName: 'Italiano',
 		file: 'it',
 		locale: [ 'it', 'it-it' ]
 	},
 	{
-		name: 'Kazakh',
-		file: 'kk',
-		locale: [ 'kk', 'kk-kz' ]
-	},
-	{
-		name: 'Latvian',
+		nativeName: 'Latviešu',
 		file: 'lv',
 		locale: [ 'lv', 'lv-lv' ]
 	},
 	{
-		name: 'Norwegian',
-		file: 'nb',
-		locale: [ 'nb', 'nb-no', 'no' ]
+		nativeName: 'Magyar',
+		file: 'hu',
+		locale: [ 'hu', 'hu-hu' ]
 	},
 	{
-		name: 'Persian',
+		nativeName: 'Norsk',
+		file: 'nb',
+		locale: [ 'nb', 'nb-no', 'no' ],
+		tag: 'no'
+	},
+	{
+		nativeName: 'Polski',
+		file: 'pl',
+		locale: [ 'pl', 'pl-pl' ]
+	},
+	{
+		nativeName: 'Português',
+		file: 'pt',
+		locale: [ 'pt', 'pt-pt' ]
+	},
+	{
+		nativeName: 'Română',
+		file: 'ro',
+		locale: [ 'ro', 'ro-ro' ]
+	},
+	{
+		nativeName: 'Türkçe',
+		file: 'tr',
+		locale: [ 'tr', 'tr-tr' ]
+	},
+	{
+		nativeName: 'Ελληνικά',
+		file: 'el',
+		locale: [ 'el', 'el-el' ]
+	},
+	{
+		nativeName: 'Қазақ тілі',
+		file: 'kk',
+		locale: [ 'kk', 'kk-kz' ]
+	},
+	{
+		nativeName: 'Русский',
+		file: 'ru',
+		locale: [ 'ru', 'ru-ru' ]
+	},
+	{
+		nativeName: 'Українська',
+		file: 'uk',
+		locale: [ 'uk', 'uk-uk' ]
+	},
+	{
+		nativeName: 'فارسی',
 		file: 'fa',
 		locale: [ 'fa', 'fa-ir' ],
 		direction: 'rtl',
 		invitations: false
 	},
 	{
-		name: 'Polish',
-		file: 'pl',
-		locale: [ 'pl', 'pl-pl' ]
+		nativeName: 'हिन्दी',
+		file: 'hi',
+		locale: [ 'hi', 'hi-hi' ]
 	},
 	{
-		name: 'Portuguese',
-		file: 'pt',
-		locale: [ 'pt', 'pt-pt' ]
+		nativeName: '简体中文',
+		file: 'cn',
+		locale: [ 'zh', 'zh-cn', 'zh-sg', 'zh-hans' ],
+		tag: 'zh-Hans'
 	},
 	{
-		name: 'Romanian',
-		file: 'ro',
-		locale: [ 'ro', 'ro-ro' ]
-	},
-	{
-		name: 'Russian',
-		file: 'ru',
-		locale: [ 'ru', 'ru-ru' ]
-	},
-	{
-		name: 'Spanish',
-		file: 'es',
-		locale: [ 'es', 'es-es' ]
-	},
-	{
-		name: 'Turkish',
-		file: 'tr',
-		locale: [ 'tr', 'tr-tr' ]
-	},
-	{
-		name: 'Ukrainian',
-		file: 'uk',
-		locale: [ 'uk', 'uk-uk' ]
+		nativeName: '繁體中文',
+		file: 'tw',
+		locale: [ 'zh-tw', 'zh-hk', 'zh-mo', 'zh-hant' ],
+		tag: 'zh-Hant'
 	}
 ];
 
@@ -152,6 +156,31 @@ export const findLocale = (locale: string): ILocale | undefined => {
 
 export const isRtlLocale = (locale?: string): boolean =>
 	locale !== undefined && findLocale(locale)?.direction === 'rtl';
+
+export const languageTag = ({ tag, locale }: ILocale): string => tag ?? locale[0];
+
+const sameName = (a: string | undefined, b: string, locale: string): boolean =>
+	a !== undefined && a.localeCompare(b, locale, { sensitivity: 'accent' }) === 0;
+
+export const translatedLanguageName = (entry: ILocale, uiLocale: string): string | undefined => {
+	const uiEntry = findLocale(uiLocale);
+	let names: Intl.DisplayNames;
+
+	try {
+		names = new Intl.DisplayNames([ uiLocale ], { type: 'language', fallback: 'none' });
+	} catch {
+		return undefined;
+	}
+
+	// A browser without names in the UI language gives none, or English ones.
+	if (!uiEntry || !sameName(names.of(languageTag(uiEntry)), uiEntry.nativeName, uiLocale)) return undefined;
+
+	const translated = names.of(languageTag(entry));
+
+	if (!translated || sameName(translated, entry.nativeName, uiLocale)) return undefined;
+
+	return translated.charAt(0).toLocaleUpperCase(uiLocale) + translated.slice(1);
+};
 
 export const invitationLocales = localeList.filter((entry) => entry.invitations !== false);
 
